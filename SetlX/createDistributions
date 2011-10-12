@@ -1,0 +1,53 @@
+#!/bin/sh
+
+cd interpreter
+
+# clean the interpreter source
+make -s dist-clean
+
+# build the binary version
+echo "Rebuilding the SetlX Interpreter ..."
+make -s jar
+if [ -f setlX.jar ]
+  then
+    # clean it up again (does not remove the jar)
+    make -s clean
+    echo "The SetlX Interpreter was build correctly."
+else
+    echo "Building failed ..."
+    # break
+    exit 1
+fi
+
+# get version from executable (jar)
+version=$(java -jar setlX.jar --version | tr "." "-")
+
+cd ..
+
+# create distribution names
+binOnly="SetlX_v$version.binary_only"
+source="SetlX_v$version.source"
+devel="SetlX_v$version.devel"
+
+# remove distribution zips if present
+rm -f "$binOnly.zip"
+rm -f "$source.zip"
+rm -f "$devel.zip"
+
+# create binary only zip
+echo -n "Creating binary only distribution ... "
+zip -q "$binOnly.zip" Readme* interpreter/setlX interpreter/setlX.jar  interpreter/win-setlX.cmd
+echo "done"
+
+# remove the jar
+cd interpreter;make -s dist-clean;cd ..
+
+# create source zip
+echo -n "Creating source distribution ... "
+zip -qr "$source.zip" Readme* interpreter
+echo "done"
+
+# create development zip
+echo -n "Creating development kit ... "
+zip -qr "$devel.zip" . -x \*.zip
+echo "done"

@@ -17,7 +17,7 @@ public class SetlX {
 
     private final static String VERSION         = "1.0.1";
     private final static String VERSION_PREFIX  = "v";
-    private final static String HEADER          = "===============================Some=Sort=of=Setl2===============================";
+    private final static String HEADER          = "=====================================SetlX======================================";
 
     public static void main(String[] args) throws Exception {
         boolean            help        = false;
@@ -57,7 +57,7 @@ public class SetlX {
             // print header
             System.out.println("\n" + header + "\n");
             if (! help) {
-                System.out.println("Welcome to the SomeSortOfSetl2 Interpreter by Yvonne Petersen and Tom Herrmann!\n\n"
+                System.out.println("Welcome to the SetlX Interpreter Tom Herrmann!\n\n"
                                  + "You can display some helpful information by using '--help' as parameter when\n"
                                  + "launching this program.\n");
             }

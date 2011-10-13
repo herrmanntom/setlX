@@ -25,7 +25,7 @@ public class IfThen extends Statement {
     }
 
     public String toString(int tabs) {
-        String result = " ";
+        String result = "";
         for (AbstractBranch b : mBranchList) {
             result += b.toString(tabs);
         }

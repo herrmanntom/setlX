@@ -29,6 +29,8 @@ public class SetlX {
             if (s.equals("--version")) {
                 System.out.println(VERSION);
                 return;
+            } else if (s.equals("--help")) {
+                help = true;
             } else if (s.equals("--predictableRandom")) { //easier debugging
                 Environment.setPredictableRandoom();
             } else if (s.equals("--real32")) {
@@ -39,10 +41,10 @@ public class SetlX {
                 SetlReal.setPrecision128();
             } else if (s.equals("--real256")) {
                 SetlReal.setPrecision256();
-            } else if (s.equals("--help")) {
-                help = true;
             } else if (s.equals("--verbose")) {
                 verbose = true;
+            } else if (s.substring(0,2).equals("--")) {
+                help    = true;
             } else {
                 files.add(s);
             }

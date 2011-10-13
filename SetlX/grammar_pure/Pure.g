@@ -51,6 +51,11 @@ expr
     | conjunction ('||' conjunction)*
     ;
 
+assignment
+    :
+      (ID ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=') expr
+    ;
+
 definition
     :
       'procedure' '(' definitionParameters? ')' block
@@ -63,12 +68,8 @@ definitionParameters
 
 definitionParameter
     :
-      'rw'? ID
-    ;
-
-assignment
-    :
-      (ID ('(' sum ')')* | list) (':=' | '+:=' | '-:=' | '*:=' | '/:=') expr
+      'rw' ID
+    | ID
     ;
 
 conjunction
@@ -78,13 +79,23 @@ conjunction
 
 literal
     :
-      '!' boolFactor
-    | boolFactor
+      '!' inclusion
+    | inclusion
+    ;
+
+inclusion
+    :
+      equation (('in' | 'notin') equation)*
+    ;
+
+equation
+    :
+      boolFactor (('==' | '!=') boolFactor)*
     ;
 
 boolFactor
     :
-      sum (('in' | 'notin' | '==' | '!=' | '<' | '<=' | '>' | '>=') sum)*
+      sum (('<' | '<=' | '>' | '>=') sum)*
     ;
 
 sum
@@ -94,7 +105,7 @@ sum
 
 product
     :
-      power (('*' | '/' | '%' | 'mod') power)*
+      power (('*' | '/' | '%') power)*
     ;
 
 power

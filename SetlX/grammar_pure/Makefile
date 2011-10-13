@@ -1,4 +1,4 @@
-CLASSPATH=.:../setl2interpreter/antlr/antlr-3.3-complete.jar
+CLASSPATH=.:../interpreter/antlr/antlr-3.3-complete.jar
 
 run: PureLexer.class PureParser.class ParsePure.class input.txt
 	java -cp $(CLASSPATH) ParsePure < input.txt

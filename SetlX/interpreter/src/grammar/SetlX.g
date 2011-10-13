@@ -13,7 +13,7 @@ grammar SetlX;
     import java.util.List;
 }
 
-@lexer::header{
+@lexer::header {
     package grammar;
 }
 

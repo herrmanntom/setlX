@@ -1,4 +1,4 @@
-package interpreter.expressions;
+package interpreter.utilities;
 
 import interpreter.exceptions.SetlException;
 import interpreter.types.Value;

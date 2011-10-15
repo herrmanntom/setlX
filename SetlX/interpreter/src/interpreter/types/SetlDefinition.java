@@ -71,10 +71,7 @@ public class SetlDefinition extends Value {
     }
 
     public String toString(int tabs) {
-        String endl = " ";
-        if (Environment.isPrintVerbose()) {
-            endl = "\n";
-        }
+        String endl = Environment.getEndl();
         String result = endl + Environment.getTabs(tabs) + "procedure " + mName + "(";
         for (int i = 0; i < mParameters.size(); ++i) {
             if (i > 0) {

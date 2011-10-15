@@ -146,6 +146,14 @@ public class Environment {
         return r;
     }
 
+    public static String getEndl() {
+        if (sPrintVerbose) {
+            return "\n";
+        } else {
+            return " ";
+        }
+    }
+
     /*========================== end static ==========================*/
 
     private Map<String, Value> mVarBindings;

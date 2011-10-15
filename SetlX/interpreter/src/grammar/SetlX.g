@@ -8,6 +8,7 @@ grammar SetlX;
     import interpreter.expressions.*;
     import interpreter.statements.*;
     import interpreter.types.*;
+	import interpreter.utilities.*;
 
     import java.util.LinkedList;
     import java.util.List;
@@ -17,36 +18,57 @@ grammar SetlX;
     package grammar;
 }
 
-setlInterpreterProgram returns [InterpreterProgram p]
-    @init{
-        List<Statement>      stmnts = new LinkedList<Statement>();
-        List<SetlDefinition> dfntns = new LinkedList<SetlDefinition>();
-    }
+program returns [Program p]
     :
-      (
-          s = statement  { stmnts.add($s.stmnt); }
-        | d = definition { dfntns.add($d.dfntn); }
-      )*
-      { $p = new InterpreterProgram(stmnts, dfntns); }
+      block
+      { $p = new Program($block.blk); }
     ;
 
-fullSetlProgram returns [Program p]
+block returns [Block blk]
     @init{
-        List<Statement>      stmnts = new LinkedList<Statement>();
-        List<SetlDefinition> dfntns = new LinkedList<SetlDefinition>();
+        List<Statement>      stmnts     = new LinkedList<Statement>();
     }
     :
-      'program' n1 = ID ';'
+       (
+         statement      { stmnts.add($statement.stmnt);   }
+       )*
+       { blk = new Block(stmnts);        }
+    ;
+
+statement returns [Statement stmnt]
+    @init{
+        List<BranchAbstract> branchList = new LinkedList<BranchAbstract>();
+    }
+    :
+      'var' ID ';'                                            { stmnt = new GlobalDefinition($ID.text);             }
+    | expr ';'                                                { stmnt = new ExpressionStatement($expr.ex);          }
+    | 'if' '(' c1 = condition ')' '{' b1 = block '}'          { branchList.add(new BranchIf($c1.bex, $b1.blk));     }
       (
-          s = statement  { stmnts.add($s.stmnt); }
-        | d = definition { dfntns.add($d.dfntn); }
+        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.bex, $b2.blk)); }
       )*
-      'end' n2 = ID ';'
-      { if(!($n1.text).equals($n2.text)){
-            System.err.println("Program name `"+ $n1.text +"´ does not match program end `"+ $n2.text +"´!");
-        }
-        $p = new Program($n1.text, stmnts, dfntns);
-      }
+      (
+        'else' '{' b3 = block '}'                             { branchList.add(new BranchElse($b3.blk));            }
+      )?
+      { stmnt = new IfThen(branchList); }
+    | 'switch' '{'
+      (
+        'case' c1 = condition ':' b1 = block                  { branchList.add(new BranchCase($c1.bex, $b1.blk));   }
+      )*
+      (
+        'default' ':' b2 = block                              { branchList.add(new BranchDefault($b2.blk));         }
+      )?
+      '}' { stmnt = new Switch(branchList); }
+    | 'for'   '(' iterator  ')' '{' block '}'                 { stmnt = new For($iterator.iter, $block.blk);        }
+    | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.bex, $block.blk);      }
+    | 'return' expr? ';'                                      { stmnt = new Return($expr.ex);                       }
+    | 'continue' ';'                                          { stmnt = new Continue();                             }
+    | 'break' ';'                                             { stmnt = new Break();                                }
+    | 'exit' ';'                                              { stmnt = new Exit();                                 }
+    ;
+
+condition returns [BoolExpr bex]
+    :
+      expr   { bex = new BoolExpr($expr.ex); }
     ;
 
 definition returns [SetlDefinition dfntn]
@@ -110,73 +132,6 @@ call returns [ Expr c ]
           | '}'  { if(!relation) System.err.println("Closing bracket does not match!"); }
         )        { c = new Call(c, args, relation); }
       )*
-    ;
-
-statement returns [Statement stmnt]
-    @init{ List<Statement>      stmnts     = new ArrayList<Statement>();
-           List<AbstractBranch> branchList = new ArrayList<AbstractBranch>(); }
-    :
-      'var' ID ';'                                      { stmnt = new GlobalDefinition($ID.text);         }
-    | expr ';'                                          { stmnt = new ExpressionStatement($expr.ex);      }
-    | 'if' b1 = expr 'then'
-      (
-        s1 = statement       { stmnts.add($s1.stmnt);     }
-      )*
-      { branchList.add(new IfBranch(IfBranch.IF, new BoolExpr($b1.ex), stmnts)); stmnts = new ArrayList<Statement>(); }
-      (
-        'elseif' b2 = expr 'then'
-        (
-          s2 = statement     { stmnts.add($s2.stmnt);     }
-        )*
-        { branchList.add(new IfBranch(IfBranch.ELSEIF, new BoolExpr($b2.ex), stmnts)); stmnts = new ArrayList<Statement>(); }
-      )*
-      (
-        'else'
-        (
-          s3 = statement     { stmnts.add($s3.stmnt);     }
-        )*
-        { branchList.add(new IfBranch(IfBranch.ELSE, null, stmnts)); }
-      )?
-      'end' 'if' ';'                                    { stmnt = new IfThen(branchList);                 }
-    | 'case'
-      (
-        'when' b = expr '=>'
-        (
-          s = statement      { stmnts.add($s.stmnt);      }
-        )*
-        { branchList.add(new CaseBranch(new BoolExpr($b.ex), stmnts)); stmnts = new ArrayList<Statement>(); }
-      )*
-      (
-        'otherwise' '=>'
-        (
-          s = statement      { stmnts.add($s.stmnt);      }
-        )*
-        { branchList.add(new DefaultBranch(stmnts)); }
-      )?
-      'end' 'case' ';'                                  { stmnt = new Case(branchList);                   }
-    | 'while' b = expr 'loop'
-      (
-        s = statement        { stmnts.add($s.stmnt);      }
-      )*
-      'end' 'loop' ';'                                  { stmnt = new While(new BoolExpr($b.ex), stmnts); }
-    | 'until' b = expr 'loop'
-      (
-        s = statement        { stmnts.add($s.stmnt);      }
-      )*
-      'end' 'loop' ';'                                  { stmnt = new Until(new BoolExpr($b.ex), stmnts); }
-    | 'for' iterator 'loop'
-      (
-        s = statement        { stmnts.add($s.stmnt);      }
-      )*
-      'end' 'loop' ';'                                  { stmnt = new For($iterator.iter, stmnts); }
-    | 'loop'
-      (
-        s = statement        { stmnts.add($s.stmnt);      }
-      )*
-      'end' 'loop' ';'                                  { stmnt = new Loop(stmnts);                       }
-    | 'return' expr? ';'                                { stmnt = new Return($expr.ex);                   }
-    | 'continue' ';'                                    { stmnt = new Continue();                         }
-    | 'exit' ';'                                        { stmnt = new Exit();                             }
     ;
 
 expr returns [Expr ex]

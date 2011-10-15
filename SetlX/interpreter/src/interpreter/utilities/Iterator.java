@@ -1,11 +1,13 @@
-package interpreter.expressions;
+package interpreter.utilities;
 
 import interpreter.Environment;
 import interpreter.exceptions.ContinueException;
-import interpreter.exceptions.ExitException;
+import interpreter.exceptions.BreakException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
+import interpreter.expressions.SetTupleConstructor;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlTuple;
@@ -41,7 +43,7 @@ public class Iterator {
         Environment outerEnv = Environment.getEnv();
         try {
             evaluate(exec);
-        } catch (ExitException ee) {
+        } catch (BreakException ee) {
             // nothing to be done, not a real error
         } catch (SetlException e) {
             ex = e;

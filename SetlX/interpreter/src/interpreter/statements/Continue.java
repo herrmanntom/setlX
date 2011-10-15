@@ -5,9 +5,7 @@ import interpreter.exceptions.ContinueException;
 
 public class Continue extends Statement {
 
-    public Continue() {
-
-    }
+    public Continue() {  }
 
     public void execute() throws ContinueException {
         throw new ContinueException("continue");

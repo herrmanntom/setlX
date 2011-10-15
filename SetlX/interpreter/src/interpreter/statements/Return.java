@@ -21,10 +21,11 @@ public class Return extends Statement {
     }
 
     public String toString(int tabs) {
-        if (mResult == null){
-            return Environment.getTabs(tabs) + "return;";
-        } else {
-            return Environment.getTabs(tabs) + "return " + mResult + ";";
+    	String result = Environment.getTabs(tabs) + "return";
+        if (mResult != null){
+            result += " " + mResult;
         }
+        result += ";";
+        return result;
     }
 }

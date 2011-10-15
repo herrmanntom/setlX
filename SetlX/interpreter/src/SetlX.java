@@ -1,7 +1,6 @@
 import grammar.*;
 import interpreter.Environment;
 import interpreter.InputReader;
-import interpreter.InterpreterProgram;
 import interpreter.Program;
 import interpreter.exceptions.ExitException;
 import interpreter.exceptions.SetlException;
@@ -15,14 +14,15 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String VERSION         = "1.0.1";
+    private final static String VERSION         = "0.0.1";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "=====================================SetlX======================================";
 
     public static void main(String[] args) throws Exception {
         boolean            help        = false;
         boolean            interactive = false;
-        boolean            verbose     = false;
+        boolean            verbose     = false; /* print extra information and use correct indentation when
+                                                   printing statements etc.                                 */
         LinkedList<String> files       = new LinkedList<String>();
 
         for (String s: args) {
@@ -31,7 +31,7 @@ public class SetlX {
                 return;
             } else if (s.equals("--help")) {
                 help = true;
-            } else if (s.equals("--predictableRandom")) { //easier debugging
+            } else if (s.equals("--predictableRandom")) { // easier debugging
                 Environment.setPredictableRandoom();
             } else if (s.equals("--real32")) {
                 SetlReal.setPrecision32();
@@ -43,57 +43,35 @@ public class SetlX {
                 SetlReal.setPrecision256();
             } else if (s.equals("--verbose")) {
                 verbose = true;
-            } else if (s.substring(0,2).equals("--")) {
+            } else if (s.substring(0,2).equals("--")) { // invalid option
                 help    = true;
             } else {
                 files.add(s);
             }
         }
-        interactive = files.size() == 0;
+        interactive = (files.size() == 0); // interactive == no files supplied as parameters
 
         if (interactive || verbose || help) {
-            // embed version number into header
-            int     versionSize = VERSION.length() + VERSION_PREFIX.length();
-            String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 1) );
-            header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 1);
-            // print header
-            System.out.println("\n" + header + "\n");
+            printHeader();
             if (! help) {
-                System.out.println("Welcome to the SetlX Interpreter Tom Herrmann!\n\n"
-                                 + "You can display some helpful information by using '--help' as parameter when\n"
-                                 + "launching this program.\n");
+                printShortHelp();
             }
         }
-        if (interactive && !help) {
-            printHelpInteractive();
+        if (interactive && ! help) {
+            printInteractiveBegin();
             parseInteractive();
         } else if (! help) {
             for (String file: files) {
                 parseFile(file, verbose);
             }
         } else {
-            System.out.println("File paths supplied as parameters for this program will be parsed and executed.\n"
-                             + "The interactive mode will be started if called without any file parameters.\n");
-            printHelpInteractive();
-            System.out.println("Additional parameters:\n"
-                             + "  --predictableRandom\n"
-                             + "      always use same random sequence (debugging)\n"
-                             + "  --real32\n"
-                             + "  --real64\n"
-                             + "  --real128\n"
-                             + "  --real256\n"
-                             + "      sets the width of the real-type in bits (real64 is the default)\n"
-                             + "  --verbose\n"
-                             + "      display the parsed program before executing it\n"
-                             + "  --version\n"
-                             + "      displays the interpreter version and terminates\n");
+            printHelp();
         }
     }
 
     private static void parseInteractive() throws Exception {
         Environment.setInteractive(true);
-        System.out.println("================================Interactive=Mode================================\n");
-        InterpreterProgram p = null;
+        Program p = null;
         do {
             try {
                 InputStream         stream = InputReader.getStream();
@@ -101,7 +79,7 @@ public class SetlX {
                 SetlXLexer          lexer  = new SetlXLexer(input);
                 CommonTokenStream   ts     = new CommonTokenStream(lexer);
                 SetlXParser         parser = new SetlXParser(ts);
-                p = parser.setlInterpreterProgram();
+                p = parser.program();
             } catch (EOFException eof) {
                 break;
             }
@@ -116,28 +94,41 @@ public class SetlX {
             SetlXLexer          lexer  = new SetlXLexer(input);
             CommonTokenStream   ts     = new CommonTokenStream(lexer);
             SetlXParser         parser = new SetlXParser(ts);
+
+
             if (verbose) {
                 System.out.println("=================================Parser=Errors==================================\n");
             }
-            Program             p      = parser.fullSetlProgram();
+            // parse the file contents
+            Program             p      = parser.program();
+
+            // now Antlr will print its parser errors into the output ...
+
             if (parser.getNumberOfSyntaxErrors() > 0) {
                 if (verbose) {
                     System.out.println("\n=================================Parsing=Failed=================================\n");
                 } else {
                     System.err.println("Execution terminated due to previous errors.");
                 }
-                return;
+
+                return; // terminate execution
+
             } else if (verbose) {
-                System.out.println("none\n");
+                System.out.println("none\n"); // no parser errors
             }
+
+            // in verbose mode the parsed program is echoed
             if (verbose) {
                 System.out.println("=================================Parsed=Program=================================\n");
-                Environment.setPrintVerbose(true);
+                Environment.setPrintVerbose(true); // enables correct indentation etc
                 System.out.println(p + "\n");
                 Environment.setPrintVerbose(false);
                 System.out.println("================================Execution=Result================================\n");
             }
+
+            // run the parsed code
             executeProgram(p);
+
             if (verbose) {
                 printExecutionFinished();
             }
@@ -146,51 +137,102 @@ public class SetlX {
         }
     }
 
-    private static boolean executeProgram(InterpreterProgram p) {
+    private static boolean executeProgram(Program p) {
         try {
+
             p.execute();
-        } catch (ExitException ee) {
+
+        } catch (ExitException ee) { // user/code wants to quit
             if (Environment.isInteractive()) {
-                System.err.print("-- ");
+                System.err.print("// ");
             }
             System.err.println(ee.getMessage());
-            return false;
-        } catch (SetlException se) {
+
+            return false; // breaks loop while parsing interactively
+
+        } catch (SetlException se) { // user/code did something wrong
             if (Environment.isInteractive()) {
                 System.err.println("/*");
             }
-            List<String> trace = se.getTrace();
-            int end = trace.size();
-            int max = 40;
-            int m_2 = max / 2;
-            for (int i = 0; i < end; ++i) {
-                if (end > max && i > m_2 - 1 && i < end - (m_2 + 1)) {
-                    if (i == m_2) {
-                        System.err.println(" ... \n     omitted " + (end - max) + " messages\n ... ");
-                    }
-                } else {
-                    System.err.println(trace.get(i));
-                }
-            }
+
+            printExceptionsTrace(se.getTrace());
+
             if (Environment.isInteractive()) {
                 System.err.println("*/");
             }
-        } catch (NullPointerException e) {
-            System.err.println("-- Syntax Error.");
+        } catch (NullPointerException e) { // code syntax was not parsed correctly
+            System.err.println("// Syntax Error.");
         }
+
         if (Environment.isInteractive()) {
-            System.out.println();
+            System.out.println(); // newline to visually separate the next input
         }
-        return true;
+
+        return true; // continue loop while parsing interactively
+    }
+
+    private static void printHeader() {
+        // embed version number into header
+        int     versionSize = VERSION.length() + VERSION_PREFIX.length();
+        String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 1) );
+        header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 1);
+        // print header
+        System.out.println("\n" + header + "\n");
+    }
+
+    private static void printShortHelp() {
+        System.out.println("Welcome to the SetlX Interpreter!\n"
+                         + "\n"
+                         + "You can display some helpful information by using '--help' as parameter when\n"
+                         + "launching this program.\n");
+    }
+
+    private static void printInteractiveBegin() {
+        printHelpInteractive();
+        System.out.println("================================Interactive=Mode================================\n");
     }
 
     private static void printHelpInteractive() {
         System.out.println("Interactive-Mode:\n"
                          + "  Two newline characters execute previous input.\n"
-                         + "  The 'exit;' statement (outside of loop statements) terminates the interpreter.\n");
+                         + "  The 'exit;' statement terminates the interpreter.\n");
+    }
+
+    private static void printHelp() {
+        System.out.println("File paths supplied as parameters for this program will be parsed and executed.\n"
+                         + "The interactive mode will be started if called without any file parameters.\n");
+        printHelpInteractive();
+        System.out.println("Additional parameters:\n"
+                         + "  --predictableRandom\n"
+                         + "      always use same random sequence (debugging)\n"
+                         + "  --real32\n"
+                         + "  --real64\n"
+                         + "  --real128\n"
+                         + "  --real256\n"
+                         + "      sets the width of the real-type in bits (real64 is the default)\n"
+                         + "  --verbose\n"
+                         + "      display the parsed program before executing it\n"
+                         + "  --version\n"
+                         + "      displays the interpreter version and terminates\n");
     }
 
     private static void printExecutionFinished() {
         System.out.println("\n===============================Execution=Finished===============================\n");
+    }
+
+    private static void printExceptionsTrace(List<String> trace) {
+        int end = trace.size();
+        int max = 40;
+        int m_2 = max / 2;
+        for (int i = 0; i < end; ++i) {
+            // leave out some messages in the middle, which are most likely just clutter
+            if (end > max && i > m_2 - 1 && i < end - (m_2 + 1)) {
+                if (i == m_2) {
+                    System.err.println(" ... \n     omitted " + (end - max) + " messages\n ... ");
+                }
+            } else {
+                System.err.println(trace.get(i));
+            }
+        }
     }
 }

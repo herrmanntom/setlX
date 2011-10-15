@@ -68,7 +68,9 @@ bin/interpreter/statements/*.class :                         \
         src/interpreter/Environment.java                             \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
-        src/interpreter/expressions/*.java
+        src/interpreter/expressions/*.java                           \
+        src/interpreter/utilities/*.java                             \
+        src/interpreter/boolExpressions/*.java
 	javac -d bin -sourcepath src src/interpreter/statements/*.java
 
 bin/interpreter/expressions/*.class :                        \
@@ -77,17 +79,17 @@ bin/interpreter/expressions/*.class :                        \
         src/interpreter/statements/Statement.java                    \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
+        src/interpreter/utilities/*.java                             \
         src/interpreter/boolExpressions/*.java
 	javac -d bin -sourcepath src src/interpreter/expressions/*.java
 
 bin/interpreter/boolExpressions/*.class :                    \
         src/interpreter/boolExpressions/*.java                       \
         src/interpreter/expressions/Expr.java                        \
-        src/interpreter/expressions/Iterator.java                    \
-        src/interpreter/expressions/IteratorExecutionContainer.java  \
         src/interpreter/Environment.java                             \
         src/interpreter/exceptions/*.java                            \
-        src/interpreter/types/*.java
+        src/interpreter/types/*.java                                 \
+        src/interpreter/utilities/*.java
 	javac -d bin -sourcepath src src/interpreter/boolExpressions/*.java
 
 bin/interpreter/functions/*.class :                          \
@@ -97,6 +99,15 @@ bin/interpreter/functions/*.class :                          \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java
 	javac -d bin -sourcepath src src/interpreter/functions/*.java
+
+bin/interpreter/utilities/*.class :                          \
+        src/interpreter/utilities/*.java                             \
+        src/interpreter/expressions/Expr.java                        \
+        src/interpreter/expressions/SetTupleConstructor.java         \
+        src/interpreter/Environment.java                             \
+        src/interpreter/exceptions/*.java                            \
+        src/interpreter/types/*.java
+	javac -d bin -sourcepath src src/interpreter/utilities/*.java
 
 bin/interpreter/types/*.class :                              \
         src/interpreter/types/*.java                                 \

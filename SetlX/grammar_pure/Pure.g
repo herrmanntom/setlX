@@ -2,30 +2,24 @@ grammar Pure;
 
 program
     :
+      block
+    ;
+
+block
+    :
       statement*
-    ;
-
-// this could be either 'id' or 'call' or 'element of collection'
-// decide at runtime
-call
-    :
-      ID ( '(' callParameters? ')' | '{' expr '}' )*
-    ;
-
-callParameters
-    :
-      expr ((',' expr)* | '..' sum?)
-    | '..' sum
     ;
 
 statement
     :
       'var' ID ';'
     | expr ';'
-    | 'if'    condition block ('else' 'if' condition block)* ('else' block)?
-    | 'switch' '{' ('case' expr ':' statement*)* ('default' ':' statement*)? '}'
-    | 'for'   '(' iterator ')' block
-    | 'while' condition block
+    | 'if'    '(' condition ')' '{' block '}'
+      ('else' 'if' '(' condition ')' '{' block '}')*
+      ('else' '{' block '}')?
+    | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+    | 'for'   '(' iterator  ')' '{' block '}'
+    | 'while' '(' condition ')' '{' block '}'
     | 'return' expr? ';'
     | 'continue' ';'
     | 'break' ';'
@@ -34,17 +28,12 @@ statement
 
 condition
     :
-      '(' expr ')'
-    ;
-
-block
-    :
-      '{' statement* '}'
+      expr
     ;
 
 expr
     :
-      (assignment)=> assignment
+      ( assignment )=> assignment
     | definition
     | 'forall' '(' iterator '|' expr ')'
     | 'exists' '(' iterator '|' expr ')'
@@ -58,7 +47,7 @@ assignment
 
 definition
     :
-      'procedure' '(' definitionParameters? ')' block
+      'procedure' '(' definitionParameters? ')' '{' block '}'
     ;
 
 definitionParameters
@@ -79,23 +68,23 @@ conjunction
 
 literal
     :
-      '!' inclusion
-    | inclusion
-    ;
-
-inclusion
-    :
-      equation (('in' | 'notin') equation)*
-    ;
-
-equation
-    :
-      boolFactor (('==' | '!=') boolFactor)*
+      '!' boolFactor
+    | boolFactor
     ;
 
 boolFactor
     :
-      sum (('<' | '<=' | '>' | '>=') sum)*
+      equation (('<' | '<=' | '>' | '>=') equation)*
+    ;
+
+equation
+    :
+      inclusion (('==' | '!=') inclusion)*
+    ;
+
+inclusion
+    :
+      sum (('in' | 'notin') sum)*
     ;
 
 sum
@@ -133,19 +122,17 @@ factor
     | value
     ;
 
-value
+// this could be either 'id' or 'call' or 'element of collection'
+// decide at runtime
+call
     :
-      NUMBER
-    | real
-    | STRING
-    | ( 'TRUE'  | 'true'  )
-    | ( 'FALSE' | 'false' )
-    | ( 'om'    | '<om>'  )
+      ID ( '(' callParameters? ')' | '{' expr '}' )*
     ;
 
-real
+callParameters
     :
-      NUMBER? REAL
+      expr ((',' expr)* | '..' sum?)
+    | '..' sum
     ;
 
 set
@@ -172,7 +159,7 @@ range
 
 iterate
     :
-        (shortIterate)=>shortIterate
+        ( shortIterate )=> shortIterate
       | expr ':' iterator ('|' expr)?
     ;
 
@@ -189,6 +176,21 @@ shortIterate
 explicitList
     :
       expr (',' expr)*
+    ;
+
+value
+    :
+      NUMBER
+    | real
+    | STRING
+    | ( 'TRUE'  | 'true'  )
+    | ( 'FALSE' | 'false' )
+    | ( 'om'    | '<om>'  )
+    ;
+
+real
+    :
+      NUMBER? REAL
     ;
 
 ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;

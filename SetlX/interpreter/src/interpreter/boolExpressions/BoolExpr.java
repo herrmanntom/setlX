@@ -26,7 +26,7 @@ public class BoolExpr extends Expr {
         return eval();
     }
 
-    public boolean evalToBool() throws IncompatibleTypeException {
+    public boolean evalToBool() throws SetlException {
         return (this.eval() == SetlBoolean.TRUE);
     }
 

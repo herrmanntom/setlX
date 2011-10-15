@@ -2,13 +2,10 @@ package interpreter.statements;
 
 import interpreter.Environment;
 import interpreter.exceptions.ExitException;
-import interpreter.exceptions.SetlException;
 
 public class Exit extends Statement {
 
-    public Exit() {
-
-    }
+    public Exit() {  }
 
     public void execute() throws ExitException {
         throw new ExitException("Good Bye! (exit)");

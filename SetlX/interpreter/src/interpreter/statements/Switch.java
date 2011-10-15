@@ -5,10 +5,10 @@ import interpreter.exceptions.SetlException;
 
 import java.util.List;
 
-public class IfThen extends Statement {
+public class Switch extends Statement {
     private List<BranchAbstract> mBranchList;
 
-    public IfThen(List<BranchAbstract> branchList) {
+    public Switch(List<BranchAbstract> branchList) {
         mBranchList = branchList;
     }
 
@@ -22,10 +22,15 @@ public class IfThen extends Statement {
     }
 
     public String toString(int tabs) {
-        String result = "";
-        for (BranchAbstract b : mBranchList) {
-            result += b.toString(tabs);
+        String endl = " ";
+        if (Environment.isPrintVerbose()) {
+            endl = "\n";
         }
+        String result = Environment.getTabs(tabs) + "switch {" + endl;
+        for (BranchAbstract b : mBranchList) {
+            result += b.toString(tabs + 1);
+        }
+        result += Environment.getTabs(tabs) + "}";
         return result;
     }
 }

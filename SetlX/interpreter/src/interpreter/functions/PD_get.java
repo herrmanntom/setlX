@@ -1,7 +1,6 @@
 package interpreter.functions;
 
 import interpreter.Environment;
-import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
@@ -18,10 +17,7 @@ public class PD_get extends PreDefinedFunction {
         super("get");
     }
 
-    public Value call(List<Value> args, boolean returnCollection) throws UndefinedOperationException {
-        if (returnCollection) {
-            throw new UndefinedOperationException("Incorrect set of brackets for function call.");
-        }
+    public Value call(List<Value> args) {
         if (Environment.isInteractive()) {
             System.out.println("/*");
         }

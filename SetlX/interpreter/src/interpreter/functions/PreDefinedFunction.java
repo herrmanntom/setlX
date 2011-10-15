@@ -1,12 +1,9 @@
 package interpreter.functions;
 
 import interpreter.exceptions.SetlException;
-import interpreter.expressions.ValueExpr;
+import interpreter.exceptions.UndefinedOperationException;
 import interpreter.statements.Statement;
-import interpreter.statements.ExpressionStatement;
 import interpreter.types.SetlDefinition;
-import interpreter.types.SetlOm;
-import interpreter.types.SetlString;
 import interpreter.types.Value;
 
 import java.util.LinkedList;
@@ -18,7 +15,13 @@ public abstract class PreDefinedFunction extends SetlDefinition {
         super(name, new LinkedList<String>(), new LinkedList<Statement>(), new LinkedList<SetlDefinition>());
     }
 
-    public abstract Value   call(List<Value> args, boolean returnCollection) throws SetlException;
+    public Value   call(List<Value> args, boolean returnCollection) throws SetlException {
+        if (returnCollection) {
+            throw new UndefinedOperationException("Incorrect set of brackets for function call.");
+        }
+        return this.call(args);
+    }
+    public abstract Value   call(List<Value> args) throws SetlException;
 
     public abstract boolean writeVars();
 

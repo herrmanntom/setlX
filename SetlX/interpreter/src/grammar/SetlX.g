@@ -42,12 +42,12 @@ statement returns [Statement stmnt]
     :
       'var' ID ';'                                            { stmnt = new GlobalDefinition($ID.text);             }
     | expr ';'                                                { stmnt = new ExpressionStatement($expr.ex);          }
-    | 'if' '(' c1 = condition ')' '{' b1 = block '}'          { branchList.add(new BranchIf($c1.bex, $b1.blk));     }
+    | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.bex, $b1.blk));     }
       (
         'else' 'if' '(' c2 = condition ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.bex, $b2.blk)); }
       )*
       (
-        'else' '{' b3 = block '}'                             { branchList.add(new BranchElse($b3.blk));            }
+        'else'                             '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));            }
       )?
       { stmnt = new IfThen(branchList); }
     | 'switch' '{'
@@ -55,7 +55,7 @@ statement returns [Statement stmnt]
         'case' c1 = condition ':' b1 = block                  { branchList.add(new BranchCase($c1.bex, $b1.blk));   }
       )*
       (
-        'default' ':' b2 = block                              { branchList.add(new BranchDefault($b2.blk));         }
+        'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));         }
       )?
       '}' { stmnt = new Switch(branchList); }
     | 'for'   '(' iterator  ')' '{' block '}'                 { stmnt = new For($iterator.iter, $block.blk);        }

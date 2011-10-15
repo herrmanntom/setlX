@@ -4,7 +4,6 @@ import interpreter.exceptions.IncorrectNumberOfParametersException;
 import interpreter.exceptions.JVMException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.NumberValue;
 import interpreter.types.SetlReal;
 import interpreter.types.Value;
@@ -20,10 +19,7 @@ public class MathFunction extends PreDefinedFunction {
         mFunction = function;
     }
 
-    public SetlReal call(List<Value> args, boolean returnCollection) throws SetlException {
-        if (returnCollection) {
-            throw new UndefinedOperationException("Incorrect set of brackets for function call.");
-        }
+    public SetlReal call(List<Value> args) throws SetlException {
         if (args.size() != 1 || !(args.get(0) instanceof NumberValue)) {
             throw new IncorrectNumberOfParametersException("This function requires a single number as parameter.");
         }

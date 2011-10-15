@@ -1,7 +1,6 @@
 package interpreter.functions;
 
 import interpreter.exceptions.AbortException;
-import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 
@@ -14,10 +13,7 @@ public class PD_abort extends PreDefinedFunction {
         super("abort");
     }
 
-    public Value call(List<Value> args, boolean returnCollection) throws AbortException {
-        if (returnCollection) {
-            throw new UndefinedOperationException("Incorrect set of brackets for function call.");
-        }
+    public Value call(List<Value> args) throws AbortException {
         String msg = "";
         for (Value arg : args) {
             // output Strings without double-quotes and escape characters

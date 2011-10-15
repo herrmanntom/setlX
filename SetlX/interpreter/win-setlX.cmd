@@ -12,6 +12,7 @@ IF NOT EXIST setlX.jar (
         javac -d bin -sourcepath src src\comparableSet\*.java
         javac -d bin -sourcepath src src\interpreter\exceptions\*.java
         javac -d bin -sourcepath src src\interpreter\types\*.java
+        javac -d bin -sourcepath src src\interpreter\utilities\*.java
         javac -d bin -sourcepath src src\interpreter\functions\*.java
         javac -d bin -sourcepath src src\interpreter\boolExpressions\*.java
         javac -d bin -sourcepath src src\interpreter\expressions\*.java

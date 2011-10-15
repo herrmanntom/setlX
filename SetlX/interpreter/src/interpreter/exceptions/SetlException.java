@@ -7,7 +7,7 @@ public abstract class SetlException extends RuntimeException {
 
     private LinkedList<String> trace;
 
-    public SetlException(String msg){
+    public SetlException(String msg) {
         super(msg);
         trace = new LinkedList<String>();
         trace.add(msg);

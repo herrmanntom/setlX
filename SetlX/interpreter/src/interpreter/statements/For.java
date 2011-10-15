@@ -24,7 +24,7 @@ public class For extends Statement {
     }
 
     public For(Iterator iterator, Block statements) {
-        mIterator  	= iterator;
+        mIterator   = iterator;
         mStatements = statements;
     }
 

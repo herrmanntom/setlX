@@ -7,7 +7,7 @@ public class SetlBoolean extends Value {
     public final static SetlBoolean FALSE = new SetlBoolean();
     public final static SetlBoolean TRUE  = new SetlBoolean();
 
-    private SetlBoolean(){}
+    private SetlBoolean() {  }
 
     public SetlBoolean clone() {
         // this value is atomic and can not be changed once set
@@ -54,7 +54,7 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public String toString(){
+    public String toString() {
         if (this == TRUE) {
             return "true";
         } else {

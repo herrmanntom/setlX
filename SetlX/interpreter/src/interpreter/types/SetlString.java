@@ -134,7 +134,7 @@ public class SetlString extends Value {
         return this;
     }
 
-    public String toString(){
+    public String toString() {
         return "\"" + mString + "\"";
     }
 

@@ -119,7 +119,7 @@ public class SetlInt extends NumberValue {
         }
     }
 
-    public String toString(){
+    public String toString() {
         return mNumber.toString();
     }
 

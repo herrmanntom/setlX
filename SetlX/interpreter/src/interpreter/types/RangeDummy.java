@@ -13,7 +13,7 @@ public class RangeDummy extends Value {
         return this;
     }
 
-    public String toString(){
+    public String toString() {
         return "..";
     }
 

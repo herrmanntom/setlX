@@ -21,7 +21,7 @@ public class Return extends Statement {
     }
 
     public String toString(int tabs) {
-    	String result = Environment.getTabs(tabs) + "return";
+        String result = Environment.getTabs(tabs) + "return";
         if (mResult != null){
             result += " " + mResult;
         }

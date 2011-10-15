@@ -277,7 +277,7 @@ public class SetlTuple extends CollectionValue {
         }
     }
 
-    public String toString(){
+    public String toString() {
         return getList().toString();
     }
 

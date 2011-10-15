@@ -4,14 +4,14 @@ public class SetlOm extends Value {
 
     public final static SetlOm OM = new SetlOm();
 
-    private SetlOm(){}
+    private SetlOm() {  }
 
     public SetlOm clone() {
         // this value is atomic and can not be changed
         return this;
     }
 
-    public String toString(){
+    public String toString() {
         return "om";
     }
 

@@ -183,9 +183,9 @@ value
       NUMBER
     | real
     | STRING
-    | ( 'TRUE'  | 'true'  )
-    | ( 'FALSE' | 'false' )
-    | ( 'om'    | '<om>'  )
+    | 'true'
+    | 'false'
+    | 'om'
     ;
 
 real

@@ -8,7 +8,7 @@ grammar SetlX;
     import interpreter.expressions.*;
     import interpreter.statements.*;
     import interpreter.types.*;
-	import interpreter.utilities.*;
+    import interpreter.utilities.*;
 
     import java.util.LinkedList;
     import java.util.List;
@@ -159,10 +159,10 @@ assignment returns [Assignment assign]
       )
        (
           ':='    e1 = expr  { $assign = new Assignment(lhs, $e1.ex);                                         }
-        | '+:='   e2 = expr  { $assign = new Assignment(lhs, new Sum(new Variable($ID.text), $e2.ex));        }
-        | '-:='   e3 = expr  { $assign = new Assignment(lhs, new Difference(new Variable($ID.text), $e3.ex)); }
-        | '*:='   e4 = expr  { $assign = new Assignment(lhs, new Product(new Variable($ID.text), $e4.ex));    }
-        | '/:='   e5 = expr  { $assign = new Assignment(lhs, new Division(new Variable($ID.text), $e5.ex));   }
+        | '+='    e2 = expr  { $assign = new Assignment(lhs, new Sum(new Variable($ID.text), $e2.ex));        }
+        | '-='    e3 = expr  { $assign = new Assignment(lhs, new Difference(new Variable($ID.text), $e3.ex)); }
+        | '*='    e4 = expr  { $assign = new Assignment(lhs, new Product(new Variable($ID.text), $e4.ex));    }
+        | '/='    e5 = expr  { $assign = new Assignment(lhs, new Division(new Variable($ID.text), $e5.ex));   }
         | 'from'  e6 = expr  { $assign = new Assignment(lhs, new From($e6.ex));                               }
         | 'fromb' e7 = expr  { $assign = new Assignment(lhs, new FromB($e7.ex));                              }
         | 'frome' e8 = expr  { $assign = new Assignment(lhs, new FromE($e8.ex));                              }
@@ -191,8 +191,8 @@ boolFactor returns [Expr f]
         (
             'in'    { type = Comparison.IN;          }
           | 'notin' { type = Comparison.NOTIN;       }
-          | '='     { type = Comparison.EQUAL;       }
-          | '/='    { type = Comparison.UNEQUAL;     }
+          | '=='    { type = Comparison.EQUAL;       }
+          | '!='    { type = Comparison.UNEQUAL;     }
           | '<'     { type = Comparison.LESSTHAN;    }
           | '<='    { type = Comparison.EQUALORLESS; }
           | '>'     { type = Comparison.MORETHAN;    }
@@ -277,12 +277,12 @@ factor returns [Expr f]
 
 value returns [Value v]
     :
-      NUMBER                    { v = new SetlInt($NUMBER.text);      }
-    | real                      { v = $real.r;                        }
-    | STRING                    { v = new SetlString($STRING.text);   }
-    | ( 'TRUE'  | 'true'  )     { v = SetlBoolean.TRUE;               }
-    | ( 'FALSE' | 'false' )     { v = SetlBoolean.FALSE;              }
-    | ( 'om'    | '<om>'  )     { v = SetlOm.OM;                      }
+      NUMBER        { v = new SetlInt($NUMBER.text);      }
+    | real          { v = $real.r;                        }
+    | STRING        { v = new SetlString($STRING.text);   }
+    | 'true'        { v = SetlBoolean.TRUE;               }
+    | 'false'       { v = SetlBoolean.FALSE;              }
+    | 'om'          { v = SetlOm.OM;                      }
     ;
 
 real returns [SetlReal r]

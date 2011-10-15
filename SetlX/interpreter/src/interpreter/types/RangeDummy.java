@@ -1,7 +1,5 @@
 package interpreter.types;
 
-import interpreter.exceptions.UndefinedOperationException;
-
 public class RangeDummy extends Value {
 
     public final static RangeDummy RD = new RangeDummy();
@@ -17,7 +15,7 @@ public class RangeDummy extends Value {
         return "..";
     }
 
-    public int compareTo(Value v) throws UndefinedOperationException {
-        throw new UndefinedOperationException("dummy is uncomparable");
+    public int compareTo(Value v) {
+        return -1; // dummy is uncomparable, but throwable interface does not handle exceptions...
     }
 }

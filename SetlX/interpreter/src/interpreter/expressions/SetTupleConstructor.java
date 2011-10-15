@@ -43,7 +43,7 @@ public class SetTupleConstructor extends Expr {
         return result;
     }
 
-    public boolean setIds(SetlTuple tuple) throws UndefinedOperationException {
+    public boolean setIds(SetlTuple tuple) throws SetlException {
         if (mType == TUPLE && mConstructor instanceof ExplicitList) {
             return ((ExplicitList) mConstructor).setIds(tuple);
         } else {

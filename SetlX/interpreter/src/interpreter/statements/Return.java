@@ -2,6 +2,7 @@ package interpreter.statements;
 
 import interpreter.Environment;
 import interpreter.exceptions.ReturnException;
+import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlOm;
 
@@ -12,7 +13,7 @@ public class Return extends Statement {
         mResult = result;
     }
 
-    public void execute() throws ReturnException {
+    public void execute() throws SetlException {
         if (mResult != null) {
             throw new ReturnException(mResult.eval());
         } else {

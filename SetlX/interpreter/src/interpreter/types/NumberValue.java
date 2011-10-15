@@ -18,11 +18,11 @@ public abstract class NumberValue extends Value {
 
     public abstract NumberValue absoluteValue();
 
-    public abstract Value add(Value summand) throws IncompatibleTypeException;
+    public abstract Value add(Value summand) throws SetlException;
 
     public abstract NumberValue divide(Value divisor) throws SetlException;
 
-    public abstract Value multiply(Value multiplier) throws IncompatibleTypeException;
+    public abstract Value multiply(Value multiplier) throws SetlException;
 
     public abstract NumberValue negate() throws IncompatibleTypeException;
 

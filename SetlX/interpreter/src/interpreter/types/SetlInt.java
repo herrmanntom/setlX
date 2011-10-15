@@ -47,7 +47,7 @@ public class SetlInt extends NumberValue {
         return new SetlInt(mNumber.abs());
     }
 
-    public Value add(Value summand) throws IncompatibleTypeException {
+    public Value add(Value summand) throws SetlException {
         if (summand instanceof SetlInt) {
             return new SetlInt(mNumber.add(((SetlInt) summand).mNumber));
         } else if (summand instanceof SetlReal) {
@@ -81,7 +81,7 @@ public class SetlInt extends NumberValue {
         }
     }
 
-    public Value multiply(Value multiplier) throws IncompatibleTypeException {
+    public Value multiply(Value multiplier) throws SetlException {
         if (multiplier instanceof SetlInt) {
             return new SetlInt(mNumber.multiply(((SetlInt) multiplier).mNumber));
         } else if (multiplier instanceof SetlReal || multiplier instanceof SetlString) {

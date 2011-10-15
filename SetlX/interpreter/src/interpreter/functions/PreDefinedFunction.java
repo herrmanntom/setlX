@@ -1,5 +1,6 @@
 package interpreter.functions;
 
+import interpreter.exceptions.SetlException;
 import interpreter.expressions.ValueExpr;
 import interpreter.statements.Statement;
 import interpreter.statements.ExpressionStatement;
@@ -17,7 +18,7 @@ public abstract class PreDefinedFunction extends SetlDefinition {
         super(name, new LinkedList<String>(), new LinkedList<Statement>(), new LinkedList<SetlDefinition>());
     }
 
-    public abstract Value   call(List<Value> args, boolean returnCollection);
+    public abstract Value   call(List<Value> args, boolean returnCollection) throws SetlException;
 
     public abstract boolean writeVars();
 

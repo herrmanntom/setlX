@@ -108,7 +108,7 @@ public class SetlTuple extends CollectionValue {
         return getList().getFirst().clone();
     }
 
-    public Value getMember(Value index) {
+    public Value getMember(Value index) throws SetlException {
         return getMemberZZZInternal(index).clone();
     }
 
@@ -170,7 +170,7 @@ public class SetlTuple extends CollectionValue {
         return getList().getLast().clone();
     }
 
-    public Value maximumMember() {
+    public Value maximumMember() throws SetlException {
         Value max = SetlOm.OM;
         for (Value v: getList()) {
             if (v.maximum(max).equals(v)) {
@@ -180,7 +180,7 @@ public class SetlTuple extends CollectionValue {
         return max.clone();
     }
 
-    public Value minimumMember() {
+    public Value minimumMember() throws SetlException {
         if (size() < 1) {
             return SetlOm.OM;
         }
@@ -224,7 +224,7 @@ public class SetlTuple extends CollectionValue {
         compress();
     }
 
-    public void setMember(Value vIndex, Value v) throws NumberToLargeException {
+    public void setMember(Value vIndex, Value v) throws SetlException {
         separateFromOriginal();
         int index = 0;
         if (vIndex instanceof SetlInt) {

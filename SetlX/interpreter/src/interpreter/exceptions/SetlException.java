@@ -3,7 +3,7 @@ package interpreter.exceptions;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class SetlException extends RuntimeException {
+public abstract class SetlException extends Exception {
 
     private LinkedList<String> trace;
 

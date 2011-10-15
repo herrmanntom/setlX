@@ -114,7 +114,7 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Right-hand-side of `+/ " + this + "´ is not a compound value.");
     }
 
-    public Value arbitraryMember() throws NumberToLargeException {
+    public Value arbitraryMember() throws SetlException {
         throw new IncompatibleTypeException("Operand of `arb " + this + "´ is not a compound value.");
     }
 
@@ -130,7 +130,7 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Right-hand-side of `" + element  + " in " + this + "´ is not a compound value.");
     }
 
-    public SetlSet domain() throws IncompatibleTypeException {
+    public SetlSet domain() throws SetlException {
         throw new IncompatibleTypeException("Operand of `domain " + this + "´ is not a set.");
     }
 
@@ -158,11 +158,11 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Can not get last member from operand; `" + this + "´ is not a compound value.");
     }
 
-    public Value maximumMember() throws IncompatibleTypeException {
+    public Value maximumMember() throws SetlException {
         throw new IncompatibleTypeException("Right-hand-side of `max/ " + this + "´ is not a compound value.");
     }
 
-    public Value minimumMember() throws IncompatibleTypeException {
+    public Value minimumMember() throws SetlException {
         throw new IncompatibleTypeException("Right-hand-side of `min/ " + this + "´ is not a compound value.");
     }
 
@@ -174,7 +174,7 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Operand of `pow " + this + "´ is not a set.");
     }
 
-    public SetlSet range() throws IncompatibleTypeException {
+    public SetlSet range() throws SetlException {
         throw new IncompatibleTypeException("Operand of `range " + this + "´ is not a set.");
     }
 

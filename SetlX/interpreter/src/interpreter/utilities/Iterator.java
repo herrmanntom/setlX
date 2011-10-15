@@ -55,7 +55,7 @@ public class Iterator {
     }
 
     // sets all variables used in this iterator to OM
-    public void setToOm() {
+    public void setToOm() throws UndefinedOperationException {
         if (mNext != null) {
             mNext.setToOm();
         }

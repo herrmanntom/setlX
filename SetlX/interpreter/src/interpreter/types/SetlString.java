@@ -76,7 +76,7 @@ public class SetlString extends Value {
         return new SetlString(mString.substring(index - 1, index));
     }
 
-    public Value getMembers(Value vLow, Value vHigh) throws NumberToLargeException {
+    public Value getMembers(Value vLow, Value vHigh) throws SetlException {
         int low = 0, high = 0;
         if (vLow instanceof SetlInt) {
             low = ((SetlInt)vLow).intValue();

@@ -24,7 +24,7 @@ public class ExplicitList extends Constructor {
         }
     }
 
-    public boolean setIds(SetlTuple tuple) throws UndefinedOperationException {
+    public boolean setIds(SetlTuple tuple) throws SetlException {
         if (tuple.size() != mList.size()) {
             return false;
         }

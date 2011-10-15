@@ -107,7 +107,7 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public SetlSet collectMembers(Value element) throws IncompatibleTypeException {
+    public SetlSet collectMembers(Value element) throws SetlException {
         SetlSet result = new SetlSet();
         for (Value v: getSet()) {
             if (v instanceof SetlTuple) {
@@ -129,7 +129,7 @@ public class SetlSet extends CollectionValue {
         return SetlBoolean.get(getSet().member(element));
     }
 
-    public SetlSet domain() {
+    public SetlSet domain() throws SetlException {
         SetlSet result = new SetlSet();
         for (Value v: getSet()) {
             if (v instanceof SetlTuple) {
@@ -149,7 +149,7 @@ public class SetlSet extends CollectionValue {
         return minimumMember();
     }
 
-    public Value getMember(Value element) throws IncompatibleTypeException {
+    public Value getMember(Value element) throws SetlException {
         Value result = SetlOm.OM;
         for (Value v: getSet()) {
             if (v instanceof SetlTuple) {
@@ -176,7 +176,7 @@ public class SetlSet extends CollectionValue {
     public SetlBoolean isMap() {
         for (Value v: getSet()) {
             if (v instanceof SetlTuple) {
-                if (v.size() != 2) {
+                if (((SetlTuple) v).size() != 2) {
                     return SetlBoolean.FALSE;
                 }
             } else {
@@ -213,7 +213,7 @@ public class SetlSet extends CollectionValue {
         return new SetlSet(newSet);
     }
 
-    public SetlSet range() {
+    public SetlSet range() throws SetlException {
         SetlSet result = new SetlSet();
         for (Value v: getSet()) {
             if (v instanceof SetlTuple) {
@@ -230,14 +230,18 @@ public class SetlSet extends CollectionValue {
         return result;
     }
 
-    public void setMember(Value index, Value v) throws IncompatibleTypeException {
+    public void setMember(Value index, Value v) throws SetlException {
         separateFromOriginal();
         for (Value element: mSet) {
             if (element instanceof SetlTuple) {
                 SetlTuple list  = (SetlTuple) element;
                 if (list.size() == 2) {
                     if (list.getMember(new SetlInt(1)).equals(index)) {
-                        list.setMember(new SetlInt(2), v);
+                        try {
+                            list.setMember(new SetlInt(2), v);
+                        } catch (NumberToLargeException ne) {
+                            // the index can not be out of range when size() == 2
+                        }
                     }
                 } else {
                     throw new IncompatibleTypeException("`" + this + "´ is not a relation.");

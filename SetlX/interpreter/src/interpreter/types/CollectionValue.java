@@ -46,9 +46,9 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Value           lastMember();
 
-    public abstract Value           maximumMember();
+    public abstract Value           maximumMember() throws SetlException;
 
-    public abstract Value           minimumMember();
+    public abstract Value           minimumMember() throws SetlException;
 
     public final    Value           multiplyMembers() throws SetlException {
         Value product = null;

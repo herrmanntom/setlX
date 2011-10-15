@@ -1,6 +1,7 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.exceptions.SetlException;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.Value;
@@ -18,7 +19,7 @@ public class Range extends Constructor {
         mStop   = stop;
     }
 
-    public void fillCollection(CollectionValue collection) throws IncompatibleTypeException {
+    public void fillCollection(CollectionValue collection) throws SetlException {
         Value       startV = null, secondV = null, stopV = null;
         BigInteger  start  = null, second  = null, stop  = null;
         boolean     bigIntegerRequired = true;

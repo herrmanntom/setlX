@@ -22,7 +22,7 @@ public class BoolExpr extends Expr {
         }
     }
 
-    public Value evaluate() {
+    public Value evaluate() throws SetlException {
         return eval();
     }
 

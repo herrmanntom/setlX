@@ -9,25 +9,25 @@ import interpreter.exceptions.UndefinedOperationException;
 import java.util.Iterator;
 import java.util.List;
 
-public class SetlTuple extends CollectionValue {
+public class SetlList extends CollectionValue {
 
     private ComparableList<Value> mList;
     private ComparableList<Value> mOriginalList;
 
-    public SetlTuple(){
+    public SetlList(){
         mList               = new ComparableList<Value>();
         mOriginalList       = null;
     }
 
-    private SetlTuple(ComparableList<Value> list){
+    private SetlList(ComparableList<Value> list){
         mList               = null;
         mOriginalList       = list;
     }
 
-    public SetlTuple clone() {
+    public SetlList clone() {
         mOriginalList = getList();
         mList         = null;
-        return new SetlTuple(mOriginalList);
+        return new SetlList(mOriginalList);
     }
 
     public void separateFromOriginal() {
@@ -69,17 +69,17 @@ public class SetlTuple extends CollectionValue {
     /* arithmetic operations */
 
     public Value add(Value summand) throws IncompatibleTypeException {
-        if (summand instanceof SetlTuple) {
-            SetlTuple s      = ((SetlTuple) summand).clone();
+        if (summand instanceof SetlList) {
+            SetlList s      = ((SetlList) summand).clone();
             s.separateFromOriginal();
-            SetlTuple result = this.clone();
+            SetlList result = this.clone();
             result.separateFromOriginal();
             result.mList.addAll(s.mList);
             return result;
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
         }  else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " + " + summand + "´ is not a tuple or string.");
+            throw new IncompatibleTypeException("Right-hand-side of `" + this + " + " + summand + "´ is not a list or string.");
         }
     }
 
@@ -146,7 +146,7 @@ public class SetlTuple extends CollectionValue {
             throw new IncompatibleTypeException("Upper bound `" + vHigh + "´ is not a integer.");
         }
 
-        SetlTuple result = new SetlTuple();
+        SetlList result = new SetlList();
 
         if (high > size()) {
             throw new NumberToLargeException("Upper bound `" + high + "´ is larger as list size `" + size() + "´.");
@@ -286,11 +286,11 @@ public class SetlTuple extends CollectionValue {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlTuple < SetlDefinition
+    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
-        if (v instanceof SetlTuple) {
-            SetlTuple l = (SetlTuple) v;
+        if (v instanceof SetlList) {
+            SetlList l = (SetlList) v;
             return getList().compareTo(l.getList());
         } else if (v instanceof SetlDefinition) {
             // only SetlDefinition is bigger
@@ -302,5 +302,4 @@ public class SetlTuple extends CollectionValue {
     }
 
 }
-
 

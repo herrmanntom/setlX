@@ -95,7 +95,7 @@ bin/interpreter/functions/*.class :                          \
 bin/interpreter/utilities/*.class :                          \
         src/interpreter/utilities/*.java                             \
         src/interpreter/expressions/Expr.java                        \
-        src/interpreter/expressions/SetTupleConstructor.java         \
+        src/interpreter/expressions/SetListConstructor.java          \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/functions/MathFunction.java                  \
         src/interpreter/functions/PreDefinedFunction.java            \

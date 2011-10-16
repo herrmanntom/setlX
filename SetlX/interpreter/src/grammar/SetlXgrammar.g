@@ -66,70 +66,39 @@ condition returns [BoolExpr bex]
 
 expr returns [Expr ex]
     :
-      (assignment)=>assignment { ex = $assignment.assign;                                   }
-    | 'forall' iterator '|' b = expr
-      { ex = new Forall($iterator.iter, new BoolExpr($b.ex)); }
-    | 'exists' iterator '|' b = expr
-      { ex = new Exists($iterator.iter, new BoolExpr($b.ex)); }
-    | c1 = conjunction        {ex = $c1.c;                                                  }
+      (assignment)=>assignment { ex = $assignment.assign;                                    }
+    | 'forall' '(' iterator '|' condition ')'
+                               { ex = new Forall($iterator.iter, $condition.bex);            }
+    | 'exists' '(' iterator '|' condition ')'
+                               { ex = new Exists($iterator.iter, $condition.bex);            }
+    | c1 = conjunction         {ex = $c1.c;                                                  }
       (
-        'or' c2 = conjunction {ex = new Disjunction(new BoolExpr(ex), new BoolExpr($c2.c)); }
+        'or' c2 = conjunction  {ex = new Disjunction(new BoolExpr(ex), new BoolExpr($c2.c)); }
       )*
     ;
 
 assignment returns [Assignment assign]
-    @init { AssignmentLhs lhs = null;  List<Expr> items = new ArrayList<Expr>(); }
-    :
-      (
-          ID
-          (
-            '(' sum ')'  { items.add($sum.s);                        }
-          )*             { lhs = new AssignmentLhs($ID.text, items); }
-        | tuple          { lhs = new AssignmentLhs($tuple.tc);       }
-      )
-       (
-          ':='    e1 = expr  { $assign = new Assignment(lhs, $e1.ex);                                         }
-        | '+='    e2 = expr  { $assign = new Assignment(lhs, new Sum(new Variable($ID.text), $e2.ex));        }
-        | '-='    e3 = expr  { $assign = new Assignment(lhs, new Difference(new Variable($ID.text), $e3.ex)); }
-        | '*='    e4 = expr  { $assign = new Assignment(lhs, new Product(new Variable($ID.text), $e4.ex));    }
-        | '/='    e5 = expr  { $assign = new Assignment(lhs, new Division(new Variable($ID.text), $e5.ex));   }
-        | 'from'  e6 = expr  { $assign = new Assignment(lhs, new From($e6.ex));                               }
-        | 'fromb' e7 = expr  { $assign = new Assignment(lhs, new FromB($e7.ex));                              }
-        | 'frome' e8 = expr  { $assign = new Assignment(lhs, new FromE($e8.ex));                              }
-       )
-    ;
-
-
-definition returns [SetlDefinition dfntn]
-    @init{
-        List<Statement>      stmnts = new LinkedList<Statement>();
-        List<SetlDefinition> dfntns = new LinkedList<SetlDefinition>();
+    @init {
+        AssignmentLhs lhs   = null;
+        List<Expr>    items = new ArrayList<Expr>();
+        int           type  = -1;
     }
     :
-      'procedure' n1 = ID '(' p = paramDefinitionList ')' ';'
-        (
-            s = statement  { stmnts.add($s.stmnt); }
-          | d = definition { dfntns.add($d.dfntn); }
-        )*
-      'end' n2 = ID ';'
-      {
-        if(!($n1.text).equals($n2.text)){
-            System.err.println("Procedure name `"+ $n1.text +"´ does not match procedure end `"+ $n2.text +"´!");
-        }
-        dfntn = new SetlDefinition($n1.text, $p.paramList, stmnts, dfntns);
-      }
-    ;
-
-paramDefinitionList returns [List<String> paramList]
-    @init{ List<String> list = new ArrayList<String>(); }
-    :
       (
-        i1 = ID { list.add($i1.text); }
-        (
-           ',' i2 = ID { list.add($i2.text); }
-        )*
-      )?
-      { paramList = list; }
+         ID
+         (
+           '(' sum ')'  { items.add($sum.s);                        }
+         )*             { lhs = new AssignmentLhs($ID.text, items); }
+       | list           { lhs = new AssignmentLhs($list.lc);        }
+      )
+      (
+         ':='           { type = Assignment.DIRECT; }
+       | '+='           { type = Assignment.SUM; }
+       | '-='           { type = Assignment.DIFFERENCE; }
+       | '*='           { type = Assignment.PRODUCT; }
+       | '/='           { type = Assignment.DIVISION; }
+      )
+      expr              { $assign = new Assignment(lhs, type, $expr.ex); }
     ;
 
 conjunction returns [Expr c]
@@ -147,7 +116,9 @@ literal returns [Expr l]
     ;
 
 boolFactor returns [Expr f]
-    @init{ int type = -1; }
+    @init{
+        int type = -1;
+    }
     :
       s1 = sum      { f = $s1.s;                     }
       (
@@ -233,15 +204,19 @@ factor returns [Expr f]
     | 'range'      fa = factor { f = new RelationalRange($fa.f);       }
     | 'str'        fa = factor { f = new Str($fa.f);                   }
     | call                     { f = $call.c;                          }
+    | definition               { f = new ValueExpr($definition.dfntn); }
+    | list                     { f = $list.lc;                         }
     | set                      { f = $set.sc;                          }
-    | tuple                    { f = $tuple.tc;                        }
     | value                    { f = new ValueExpr($value.v);          }
     ;
 
 // this could be either 'id' or 'call' or 'element of collection'
 // decide at runtime
 call returns [ Expr c ]
-    @init {List<Expr> args = null; boolean relation = false; }
+    @init {
+        List<Expr> args = null;
+        boolean relation = false;
+    }
     :
       ID          { c = new Variable($ID.text); }
       (
@@ -269,6 +244,39 @@ call returns [ Expr c ]
       )*
     ;
 
+definition returns [SetlDefinition dfntn]
+    @init{
+        List<Statement>      stmnts = new LinkedList<Statement>();
+        List<SetlDefinition> dfntns = new LinkedList<SetlDefinition>();
+    }
+    :
+      'procedure' n1 = ID '(' p = paramDefinitionList ')' ';'
+        (
+            s = statement  { stmnts.add($s.stmnt); }
+        )*
+      'end' n2 = ID ';'
+      {
+        if(!($n1.text).equals($n2.text)){
+            System.err.println("Procedure name `"+ $n1.text +"´ does not match procedure end `"+ $n2.text +"´!");
+        }
+        dfntn = new SetlDefinition($n1.text, $p.paramList, stmnts, dfntns);
+      }
+    ;
+
+paramDefinitionList returns [List<String> paramList]
+    @init {
+        List<String> list = new ArrayList<String>();
+    }
+    :
+      (
+        i1 = ID { list.add($i1.text); }
+        (
+           ',' i2 = ID { list.add($i2.text); }
+        )*
+      )?
+      { paramList = list; }
+    ;
+
 value returns [Value v]
     :
       NUMBER        { v = new SetlInt($NUMBER.text);      }
@@ -280,21 +288,23 @@ value returns [Value v]
     ;
 
 real returns [SetlReal r]
-    @init { String n = ""; }
+    @init {
+        String n = "";
+    }
     :
       (
         NUMBER                  { n = $NUMBER.text;                  }
       )? REAL                   { r = new SetlReal(n + $REAL.text);  }
     ;
 
-set returns [SetTupleConstructor sc]
+list returns [SetListConstructor lc]
     :
-      '{' constructor? '}' { sc = new SetTupleConstructor(SetTupleConstructor.SET, $constructor.c); }
+      '[' constructor? ']' { lc = new SetListConstructor(SetListConstructor.LIST, $constructor.c); }
     ;
 
-tuple returns [SetTupleConstructor tc]
+set returns [SetListConstructor sc]
     :
-      '[' constructor? ']' { tc = new SetTupleConstructor(SetTupleConstructor.TUPLE, $constructor.c); }
+      '{' constructor? '}' { sc = new SetListConstructor(SetListConstructor.SET, $constructor.c); }
     ;
 
 constructor returns [Constructor c]
@@ -305,7 +315,9 @@ constructor returns [Constructor c]
     ;
 
 range returns [Range r]
-    @init { Expr e = null; }
+    @init {
+        Expr e = null;
+    }
     :
       e1 = expr
       (
@@ -316,7 +328,9 @@ range returns [Range r]
     ;
 
 iterate returns [Iteration i]
-    @init { BoolExpr bex = null; }
+    @init {
+        BoolExpr bex = null;
+    }
     :
         (shortIterate)=>shortIterate {i = $shortIterate.si; }
       | e1 = expr ':' iterator
@@ -327,36 +341,42 @@ iterate returns [Iteration i]
     ;
 
 iterator returns [Iterator iter]
-    @init{ String               id         = null;
-           SetTupleConstructor  tc         = null; }
-    : ( i1 = ID | t1 = tuple )
-      'in' e1 = expr         { iter = new Iterator($i1.text, $t1.tc, $e1.ex); }
+    @init{
+        String               id         = null;
+        SetListConstructor   lc         = null;
+    }
+    : ( i1 = ID | l1 = list )
+      'in' e1 = expr         { iter = new Iterator($i1.text, $l1.lc, $e1.ex); }
       (
         ','
         (
-            i2 = ID          { id = $i2.text; tc = null;   }
-          | t2 = tuple       { id = null;     tc = $t2.tc; }
+            i2 = ID          { id = $i2.text; lc = null;   }
+          | l2 = list        { id = null;     lc = $l2.lc; }
         )
-        'in' e2 = expr       { iter.add(new Iterator(id, tc, $e2.ex)); }
+        'in' e2 = expr       { iter.add(new Iterator(id, lc, $e2.ex)); }
       )*
     ;
 
 shortIterate returns [Iteration si]
-    @init { BoolExpr bex = null; }
+    @init {
+        BoolExpr bex = null;
+    }
     :
       (
           ID
-        | tuple
+        | list
       )
       'in' e1 = expr
       (
         '|' b = expr { bex = new BoolExpr($b.ex); }
       )?
-      { si = new Iteration(null, new Iterator($ID.text, $tuple.tc, $e1.ex) , bex); }
+      { si = new Iteration(null, new Iterator($ID.text, $list.lc, $e1.ex) , bex); }
     ;
 
 explicitList returns [ExplicitList el]
-    @init {List<Expr> exprs = new ArrayList<Expr>();}
+    @init {
+        List<Expr> exprs = new ArrayList<Expr>();
+    }
     :
       e1 = expr        { exprs.add($e1.ex); }
       (

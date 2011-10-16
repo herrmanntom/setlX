@@ -4,8 +4,8 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
+import interpreter.types.SetlList;
 import interpreter.types.SetlOm;
-import interpreter.types.SetlTuple;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
@@ -24,18 +24,18 @@ public class ExplicitList extends Constructor {
         }
     }
 
-    public boolean setIds(SetlTuple tuple) throws SetlException {
-        if (tuple.size() != mList.size()) {
+    public boolean setIds(SetlList list) throws SetlException {
+        if (list.size() != mList.size()) {
             return false;
         }
         for (int i = 0; i < mList.size(); ++i) {
             Expr  e = mList.get(i);
-            Value v = tuple.getMember(new SetlInt(i + 1));
+            Value v = list.getMember(new SetlInt(i + 1));
             if (e instanceof Variable) {
                 Environment.putValue(((Variable)e).getId(), v.clone());
-            } else if (e instanceof SetTupleConstructor) {
-                if (v instanceof SetlTuple) {
-                    ((SetTupleConstructor) e).setIds((SetlTuple) v);
+            } else if (e instanceof SetListConstructor) {
+                if (v instanceof SetlList) {
+                    ((SetListConstructor) e).setIds((SetlList) v);
                 } else {
                     return false;
                 }
@@ -51,8 +51,8 @@ public class ExplicitList extends Constructor {
             Expr  e = mList.get(i);
             if (e instanceof Variable) {
                 Environment.putValue(((Variable)e).getId(), SetlOm.OM);
-            } else if (e instanceof SetTupleConstructor) {
-                ((SetTupleConstructor) e).setIdsToOm();
+            } else if (e instanceof SetListConstructor) {
+                ((SetListConstructor) e).setIdsToOm();
             } else {
                 throw new UndefinedOperationException("Error in '" + this + "':\n"
                                                 +     "Only explicit tuples of variables are allowed in iterations.");

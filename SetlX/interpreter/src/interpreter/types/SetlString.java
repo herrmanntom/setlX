@@ -181,13 +181,13 @@ public class SetlString extends Value {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlTuple < SetlDefinition
+    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (v instanceof SetlString) {
             SetlString str = (SetlString) v;
             return mString.compareTo(str.mString);
-        } else if (v instanceof SetlSet || v instanceof SetlTuple || v instanceof SetlDefinition) {
+        } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof SetlDefinition) {
             // SetlSet, SetlTuple and SetlDefinition are bigger
             return -1;
         } else {

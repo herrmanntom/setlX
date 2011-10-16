@@ -29,31 +29,14 @@ condition
 expr
     :
       ( assignment )=> assignment
-    | definition
-    | 'forall' '(' iterator '|' expr ')'
-    | 'exists' '(' iterator '|' expr ')'
+    | 'forall' '(' iterator '|' condition ')'
+    | 'exists' '(' iterator '|' condition ')'
     | conjunction ('||' conjunction)*
     ;
 
 assignment
     :
       (ID ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=') expr
-    ;
-
-definition
-    :
-      'procedure' '(' definitionParameters? ')' '{' block '}'
-    ;
-
-definitionParameters
-    :
-      definitionParameter (',' definitionParameter)*
-    ;
-
-definitionParameter
-    :
-      'rw' ID
-    | ID
     ;
 
 conjunction
@@ -112,8 +95,9 @@ factor
     | '-'          factor
     | '#'          factor
     | call
-    | set
+    | definition
     | list
+    | set
     | value
     ;
 
@@ -130,14 +114,30 @@ callParameters
     | '..' sum
     ;
 
-set
+definition
     :
-      '{' constructor? '}'
+      'procedure' '(' definitionParameters? ')' '{' block '}'
+    ;
+
+definitionParameters
+    :
+      definitionParameter (',' definitionParameter)*
+    ;
+
+definitionParameter
+    :
+      'rw' ID
+    | ID
     ;
 
 list
     :
       '[' constructor? ']'
+    ;
+
+set
+    :
+      '{' constructor? '}'
     ;
 
 constructor

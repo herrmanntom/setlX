@@ -2,22 +2,22 @@ package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.types.SetlList;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlSet;
-import interpreter.types.SetlTuple;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
 import java.util.List;
 
-public class SetTupleConstructor extends Expr {
-    public final static int SET   = 23;
-    public final static int TUPLE = 42;
+public class SetListConstructor extends Expr {
+    public final static int LIST  = 23;
+    public final static int SET   = 42;
 
     private int         mType;
     private Constructor mConstructor;
 
-    public SetTupleConstructor(int type, Constructor constructor) {
+    public SetListConstructor(int type, Constructor constructor) {
         mType        = type;
         mConstructor = constructor;
     }
@@ -30,34 +30,34 @@ public class SetTupleConstructor extends Expr {
                 mConstructor.fillCollection(set);
             }
             result = set;
-        } else if (mType == TUPLE) {
-            SetlTuple tuple = new SetlTuple();
+        } else if (mType == LIST) {
+            SetlList list = new SetlList();
             if (mConstructor != null) {
-                mConstructor.fillCollection(tuple);
+                mConstructor.fillCollection(list);
             }
-            tuple.compress();
-            result = tuple;
+            list.compress();
+            result = list;
         } else {
             result = SetlOm.OM;
         }
         return result;
     }
 
-    public boolean setIds(SetlTuple tuple) throws SetlException {
-        if (mType == TUPLE && mConstructor instanceof ExplicitList) {
-            return ((ExplicitList) mConstructor).setIds(tuple);
+    public boolean setIds(SetlList list) throws SetlException {
+        if (mType == LIST && mConstructor instanceof ExplicitList) {
+            return ((ExplicitList) mConstructor).setIds(list);
         } else {
             throw new UndefinedOperationException("Error in '" + this + "':\n"
-                                                + "Only explicit tuples of variables are allowed in iterations.");
+                                                + "Only explicit lists of variables are allowed in iterations.");
         }
     }
 
     public void setIdsToOm() throws UndefinedOperationException {
-        if (mType == TUPLE && mConstructor instanceof ExplicitList) {
+        if (mType == LIST && mConstructor instanceof ExplicitList) {
             ((ExplicitList) mConstructor).setIdsToOm();
         } else {
             throw new UndefinedOperationException("Error in '" + this + "':\n"
-                                                + "Only explicit tuples of variables are allowed in iterations.");
+                                                + "Only explicit lists of variables are allowed in iterations.");
         }
     }
 
@@ -65,7 +65,7 @@ public class SetTupleConstructor extends Expr {
         String r;
         if (mType == SET) {
             r = "{";
-        } else if (mType == TUPLE) {
+        } else if (mType == LIST) {
             r = "[";
         } else {
             r = "";
@@ -75,11 +75,10 @@ public class SetTupleConstructor extends Expr {
         }
         if (mType == SET) {
             r += "}";
-        } else if (mType == TUPLE) {
+        } else if (mType == LIST) {
             r += "]";
         }
         return r;
     }
 }
-
 

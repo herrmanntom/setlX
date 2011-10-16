@@ -3,7 +3,7 @@ package interpreter.boolExpressions;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
-import interpreter.types.SetlTuple;
+import interpreter.types.SetlList;
 import interpreter.types.Value;
 
 public class IsTuple extends Expr {
@@ -14,7 +14,7 @@ public class IsTuple extends Expr {
     }
 
     public SetlBoolean evaluate() throws SetlException {
-        if (mExpr.eval() instanceof SetlTuple) {
+        if (mExpr.eval() instanceof SetlList) {
             return SetlBoolean.TRUE;
         } else {
             return SetlBoolean.FALSE;

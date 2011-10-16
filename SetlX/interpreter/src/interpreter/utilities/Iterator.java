@@ -6,23 +6,23 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
-import interpreter.expressions.SetTupleConstructor;
+import interpreter.expressions.SetListConstructor;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlOm;
-import interpreter.types.SetlTuple;
+import interpreter.types.SetlList;
 import interpreter.types.Value;
 
 public class Iterator {
     private String              mId;
-    private SetTupleConstructor mTupleConstructor;
+    private SetListConstructor  mListConstructor;
     private Expr                mExpr;
     private Iterator            mNext;
 
-    public Iterator(String id, SetTupleConstructor tupleConstructor, Expr expr) {
-        mId               = id;
-        mTupleConstructor = tupleConstructor;
-        mExpr             = expr;
-        mNext             = null;
+    public Iterator(String id, SetListConstructor listConstructor, Expr expr) {
+        mId              = id;
+        mListConstructor = listConstructor;
+        mExpr            = expr;
+        mNext            = null;
     }
 
     // adds next iterator to end of current iterator chain
@@ -43,6 +43,7 @@ public class Iterator {
         try {
             evaluate(exec);
         } catch (BreakException ee) {
+            // throwing the exception already broke the loop
             // nothing to be done, not a real error
         } catch (SetlException e) {
             ex = e;
@@ -60,8 +61,8 @@ public class Iterator {
         }
         if (mId != null) {
             Environment.putValue(mId, SetlOm.OM);
-        } else if (mTupleConstructor != null) {
-            mTupleConstructor.setIdsToOm();
+        } else if (mListConstructor != null) {
+            mListConstructor.setIdsToOm();
         } else {
             throw malformedError();
         }
@@ -71,8 +72,8 @@ public class Iterator {
         String r = "";
         if (mId != null) {
             r = mId;
-        } else if (mTupleConstructor != null) {
-            r = mTupleConstructor.toString();
+        } else if (mListConstructor != null) {
+            r = mListConstructor.toString();
         }
         r += " in " + mExpr;
         if (mNext != null) {
@@ -94,10 +95,10 @@ public class Iterator {
                 innerEnv.setWriteThrough(false); // force iteration variables to be local to this block
                 if (mId != null) { // single variable as target
                     Environment.putValue(mId, v);
-                } else if (mTupleConstructor != null) { // tuple as target
-                    if (v instanceof SetlTuple) {
-                        if (mTupleConstructor.setIds((SetlTuple) v)) {
-                            // tuple extraction successful
+                } else if (mListConstructor != null) { // list as target
+                    if (v instanceof SetlList) {
+                        if (mListConstructor.setIds((SetlList) v)) {
+                            // list extraction successful
                         } else {
                             throw membersUnusableError(coll);
                         }
@@ -112,7 +113,7 @@ public class Iterator {
                 /* Starts iteration of next iterator or execution if this is the
                    last iterator.
                    Stops iteration if requested by execution.
-                   Note: ExitException breaks the loop and is handled by eval() */
+                   Note: BreakException breaks the loop and is handled by eval() */
                 try {
                     if (mNext != null) {
                         mNext.evaluate(exec);
@@ -129,11 +130,11 @@ public class Iterator {
     }
 
     private UndefinedOperationException malformedError() {
-        return new UndefinedOperationException("Tuple/Set iteration is malformed.");
+        return new UndefinedOperationException("List/Set iteration is malformed.");
     }
 
     private IncompatibleTypeException membersUnusableError(Value v) {
-        return new IncompatibleTypeException("Members of `" + v + "´ are unusable for tuple extraction.");
+        return new IncompatibleTypeException("Members of `" + v + "´ are unusable for list extraction.");
     }
 }
 

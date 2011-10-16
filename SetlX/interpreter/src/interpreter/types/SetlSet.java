@@ -110,7 +110,7 @@ public class SetlSet extends CollectionValue {
     public SetlSet collectMembers(Value element) throws SetlException {
         SetlSet result = new SetlSet();
         for (Value v: getSet()) {
-            if (v instanceof SetlTuple) {
+            if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     if (v.getMember(new SetlInt(1)).equals(element)) {
                         result.addMember(v.getMember(new SetlInt(2)));
@@ -132,7 +132,7 @@ public class SetlSet extends CollectionValue {
     public SetlSet domain() throws SetlException {
         SetlSet result = new SetlSet();
         for (Value v: getSet()) {
-            if (v instanceof SetlTuple) {
+            if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     result.addMember(v.getMember(new SetlInt(1)));
                 } else {
@@ -152,7 +152,7 @@ public class SetlSet extends CollectionValue {
     public Value getMember(Value element) throws SetlException {
         Value result = SetlOm.OM;
         for (Value v: getSet()) {
-            if (v instanceof SetlTuple) {
+            if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     if (v.getMember(new SetlInt(1)).equals(element)) {
                         if (result instanceof SetlOm) {
@@ -175,8 +175,8 @@ public class SetlSet extends CollectionValue {
 
     public SetlBoolean isMap() {
         for (Value v: getSet()) {
-            if (v instanceof SetlTuple) {
-                if (((SetlTuple) v).size() != 2) {
+            if (v instanceof SetlList) {
+                if (((SetlList) v).size() != 2) {
                     return SetlBoolean.FALSE;
                 }
             } else {
@@ -216,8 +216,8 @@ public class SetlSet extends CollectionValue {
     public SetlSet range() throws SetlException {
         SetlSet result = new SetlSet();
         for (Value v: getSet()) {
-            if (v instanceof SetlTuple) {
-                SetlTuple list  = (SetlTuple) v;
+            if (v instanceof SetlList) {
+                SetlList list  = (SetlList) v;
                 if (list.size() == 2) {
                     result.addMember(list.getMember(new SetlInt(2)));
                 } else {
@@ -233,8 +233,8 @@ public class SetlSet extends CollectionValue {
     public void setMember(Value index, Value v) throws SetlException {
         separateFromOriginal();
         for (Value element: mSet) {
-            if (element instanceof SetlTuple) {
-                SetlTuple list  = (SetlTuple) element;
+            if (element instanceof SetlList) {
+                SetlList list  = (SetlList) element;
                 if (list.size() == 2) {
                     if (list.getMember(new SetlInt(1)).equals(index)) {
                         try {
@@ -293,14 +293,14 @@ public class SetlSet extends CollectionValue {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlTuple < SetlDefinition
+    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (v instanceof SetlSet) {
             SetlSet s = (SetlSet) v;
             return getSet().compareTo(s.getSet());
-        } else if (v instanceof SetlTuple || v instanceof SetlDefinition) {
-            // only SetlTuple and SetlDefinition are bigger
+        } else if (v instanceof SetlList || v instanceof SetlDefinition) {
+            // only SetlList and SetlDefinition are bigger
             return -1;
         } else {
             return 1;

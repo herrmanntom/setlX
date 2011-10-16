@@ -1,7 +1,7 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.BreakException;
+import interpreter.utilities.Environment;
 
 public class Break extends Statement {
 

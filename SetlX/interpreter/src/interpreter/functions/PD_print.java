@@ -1,9 +1,9 @@
 package interpreter.functions;
 
-import interpreter.Environment;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 import java.util.List;
 

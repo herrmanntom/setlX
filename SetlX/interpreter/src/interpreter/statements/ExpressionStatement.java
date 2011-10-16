@@ -1,9 +1,9 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 public class ExpressionStatement extends Statement {
     private Expr   mExpr;

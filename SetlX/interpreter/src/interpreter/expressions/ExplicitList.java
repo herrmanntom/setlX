@@ -1,6 +1,5 @@
 package interpreter.expressions;
 
-import interpreter.Environment;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.CollectionValue;
@@ -8,6 +7,7 @@ import interpreter.types.SetlInt;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlTuple;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 import java.util.List;
 

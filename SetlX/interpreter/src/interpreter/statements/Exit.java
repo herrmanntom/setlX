@@ -1,7 +1,7 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.ExitException;
+import interpreter.utilities.Environment;
 
 public class Exit extends Statement {
 

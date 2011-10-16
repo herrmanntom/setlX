@@ -1,9 +1,8 @@
-grammar SetlX;
+grammar SetlXgrammar;
 
 @header {
     package grammar;
 
-    import interpreter.*;
     import interpreter.boolExpressions.*;
     import interpreter.expressions.*;
     import interpreter.statements.*;
@@ -17,12 +16,6 @@ grammar SetlX;
 @lexer::header {
     package grammar;
 }
-
-program returns [Program p]
-    :
-      block
-      { $p = new Program($block.blk); }
-    ;
 
 block returns [Block blk]
     @init{
@@ -71,69 +64,6 @@ condition returns [BoolExpr bex]
       expr   { bex = new BoolExpr($expr.ex); }
     ;
 
-definition returns [SetlDefinition dfntn]
-    @init{
-        List<Statement>      stmnts = new LinkedList<Statement>();
-        List<SetlDefinition> dfntns = new LinkedList<SetlDefinition>();
-    }
-    :
-      'procedure' n1 = ID '(' p = paramDefinitionList ')' ';'
-        (
-            s = statement  { stmnts.add($s.stmnt); }
-          | d = definition { dfntns.add($d.dfntn); }
-        )*
-      'end' n2 = ID ';'
-      {
-        if(!($n1.text).equals($n2.text)){
-            System.err.println("Procedure name `"+ $n1.text +"´ does not match procedure end `"+ $n2.text +"´!");
-        }
-        dfntn = new SetlDefinition($n1.text, $p.paramList, stmnts, dfntns);
-      }
-    ;
-
-paramDefinitionList returns [List<String> paramList]
-    @init{ List<String> list = new ArrayList<String>(); }
-    :
-      (
-        i1 = ID { list.add($i1.text); }
-        (
-           ',' i2 = ID { list.add($i2.text); }
-        )*
-      )?
-      { paramList = list; }
-    ;
-
-// this could be either 'id' or 'call' or 'element of collection'
-// decide at runtime
-call returns [ Expr c ]
-    @init {List<Expr> args = null; boolean relation = false; }
-    :
-      ID          { c = new Variable($ID.text); }
-      (
-        (
-            '('   { relation = false; }
-          | '{'   { relation = true;  }
-        )         { args = new ArrayList<Expr>(); }
-        (
-            e1 = expr           { args.add($e1.ex);                                     }
-            (
-                (
-                  ',' e2 = expr { args.add($e2.ex);                                     }
-                )*
-              | '..'            { args.add(CallRangeDummy.CRD);                         }
-                (
-                  s1 = sum      { args.add($s1.s);                                      }
-                )?
-            )
-          | '..' s1 = sum       { args.add(CallRangeDummy.CRD); args.add($s1.s);        }
-        )?
-        (
-            ')'  { if( relation) System.err.println("Closing bracket does not match!"); }
-          | '}'  { if(!relation) System.err.println("Closing bracket does not match!"); }
-        )        { c = new Call(c, args, relation); }
-      )*
-    ;
-
 expr returns [Expr ex]
     :
       (assignment)=>assignment { ex = $assignment.assign;                                   }
@@ -167,6 +97,39 @@ assignment returns [Assignment assign]
         | 'fromb' e7 = expr  { $assign = new Assignment(lhs, new FromB($e7.ex));                              }
         | 'frome' e8 = expr  { $assign = new Assignment(lhs, new FromE($e8.ex));                              }
        )
+    ;
+
+
+definition returns [SetlDefinition dfntn]
+    @init{
+        List<Statement>      stmnts = new LinkedList<Statement>();
+        List<SetlDefinition> dfntns = new LinkedList<SetlDefinition>();
+    }
+    :
+      'procedure' n1 = ID '(' p = paramDefinitionList ')' ';'
+        (
+            s = statement  { stmnts.add($s.stmnt); }
+          | d = definition { dfntns.add($d.dfntn); }
+        )*
+      'end' n2 = ID ';'
+      {
+        if(!($n1.text).equals($n2.text)){
+            System.err.println("Procedure name `"+ $n1.text +"´ does not match procedure end `"+ $n2.text +"´!");
+        }
+        dfntn = new SetlDefinition($n1.text, $p.paramList, stmnts, dfntns);
+      }
+    ;
+
+paramDefinitionList returns [List<String> paramList]
+    @init{ List<String> list = new ArrayList<String>(); }
+    :
+      (
+        i1 = ID { list.add($i1.text); }
+        (
+           ',' i2 = ID { list.add($i2.text); }
+        )*
+      )?
+      { paramList = list; }
     ;
 
 conjunction returns [Expr c]
@@ -275,6 +238,37 @@ factor returns [Expr f]
     | value                    { f = new ValueExpr($value.v);          }
     ;
 
+// this could be either 'id' or 'call' or 'element of collection'
+// decide at runtime
+call returns [ Expr c ]
+    @init {List<Expr> args = null; boolean relation = false; }
+    :
+      ID          { c = new Variable($ID.text); }
+      (
+        (
+            '('   { relation = false; }
+          | '{'   { relation = true;  }
+        )         { args = new ArrayList<Expr>(); }
+        (
+            e1 = expr           { args.add($e1.ex);                                     }
+            (
+                (
+                  ',' e2 = expr { args.add($e2.ex);                                     }
+                )*
+              | '..'            { args.add(CallRangeDummy.CRD);                         }
+                (
+                  s1 = sum      { args.add($s1.s);                                      }
+                )?
+            )
+          | '..' s1 = sum       { args.add(CallRangeDummy.CRD); args.add($s1.s);        }
+        )?
+        (
+            ')'  { if( relation) System.err.println("Closing bracket does not match!"); }
+          | '}'  { if(!relation) System.err.println("Closing bracket does not match!"); }
+        )        { c = new Call(c, args, relation); }
+      )*
+    ;
+
 value returns [Value v]
     :
       NUMBER        { v = new SetlInt($NUMBER.text);      }
@@ -376,7 +370,7 @@ NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : '.'('0' .. '9')+ (('e'|'E') '-'? ('0' .. '9')+)? ;
 STRING          : '"' ('\\"'|~('"'))* '"';
 
-SETL_COMMENT    : '--' ~('\n')*                             { skip(); } ;
-MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
 LINE_COMMENT    : '//' ~('\n')*                             { skip(); } ;
+MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
 WS              : (' '|'\t'|'\n'|'r')                       { skip(); } ;
+

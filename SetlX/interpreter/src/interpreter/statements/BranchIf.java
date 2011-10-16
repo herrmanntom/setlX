@@ -1,8 +1,8 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.boolExpressions.BoolExpr;
 import interpreter.exceptions.SetlException;
+import interpreter.utilities.Environment;
 
 public class BranchIf extends BranchAbstract {
     private BoolExpr    mBoolExpr;

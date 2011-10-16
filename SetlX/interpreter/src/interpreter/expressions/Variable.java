@@ -1,9 +1,9 @@
 package interpreter.expressions;
 
-import interpreter.Environment;
 import interpreter.exceptions.SetlException;
 import interpreter.types.SetlOm;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 public class Variable extends Expr {
     private String mId;

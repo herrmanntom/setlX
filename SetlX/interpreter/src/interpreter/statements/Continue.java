@@ -1,7 +1,7 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.ContinueException;
+import interpreter.utilities.Environment;
 
 public class Continue extends Statement {
 

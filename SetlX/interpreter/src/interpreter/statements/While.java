@@ -1,10 +1,10 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.boolExpressions.BoolExpr;
 import interpreter.exceptions.BreakException;
 import interpreter.exceptions.ContinueException;
 import interpreter.exceptions.SetlException;
+import interpreter.utilities.Environment;
 
 public class While extends Statement {
     private BoolExpr    mCondition;

@@ -1,10 +1,10 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlOm;
+import interpreter.utilities.Environment;
 
 public class Return extends Statement {
     private Expr mResult;

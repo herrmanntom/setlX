@@ -1,6 +1,5 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.SetlException;
 
 import java.util.List;

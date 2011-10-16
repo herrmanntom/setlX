@@ -1,10 +1,5 @@
 grammar Pure;
 
-program
-    :
-      block
-    ;
-
 block
     :
       statement*

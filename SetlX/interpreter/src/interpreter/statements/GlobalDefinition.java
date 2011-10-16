@@ -1,8 +1,8 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
+import interpreter.utilities.Environment;
 
 public class GlobalDefinition extends Statement {
     private String mId;

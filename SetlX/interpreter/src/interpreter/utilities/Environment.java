@@ -1,4 +1,4 @@
-package interpreter;
+package interpreter.utilities;
 
 import interpreter.functions.MathFunction;
 import interpreter.functions.PreDefinedFunction;

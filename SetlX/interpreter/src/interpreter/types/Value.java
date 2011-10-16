@@ -1,10 +1,10 @@
 package interpreter.types;
 
-import interpreter.Environment;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.utilities.Environment;
 
 import java.util.List;
 

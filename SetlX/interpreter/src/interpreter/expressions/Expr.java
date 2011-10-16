@@ -1,9 +1,9 @@
 package interpreter.expressions;
 
-import interpreter.Environment;
 import interpreter.exceptions.AbortException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 public abstract class Expr {
     public Value eval() throws SetlException {

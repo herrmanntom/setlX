@@ -1,11 +1,11 @@
 package interpreter.boolExpressions;
 
-import interpreter.Environment;
 import interpreter.exceptions.BreakException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.Iterator;
 import interpreter.utilities.IteratorExecutionContainer;
 

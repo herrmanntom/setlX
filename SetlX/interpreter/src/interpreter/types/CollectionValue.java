@@ -1,8 +1,8 @@
 package interpreter.types;
 
-import interpreter.Environment;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
+import interpreter.utilities.Environment;
 
 import java.util.Iterator;
 

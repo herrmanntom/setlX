@@ -26,46 +26,40 @@ bin/.buildSuccessful:                                        \
         bin/comparableSet/*.class                                    \
         bin/interpreter/exceptions/*.class                           \
         bin/interpreter/types/*.class                                \
+        bin/interpreter/utilities/*.class                            \
         bin/interpreter/functions/*.class                            \
         bin/interpreter/boolExpressions/*.class                      \
         bin/interpreter/expressions/*.class                          \
         bin/interpreter/statements/*.class                           \
-        bin/interpreter/*.class                                      \
-        bin/grammar/SetlX*.class                                     \
+        bin/grammar/SetlXgrammar*.class                              \
         bin/SetlX.class
 	if [ ! -x setlX ]; then chmod +x setlX; fi
 	touch bin/.buildSuccessful
 
 bin/SetlX.class :                                            \
-        src/SetlX.java                                              \
-        src/interpreter/*.java                                       \
-        src/grammar/SetlX*.java
+        src/SetlX.java                                               \
+        src/interpreter/exceptions/*.java                            \
+        src/interpreter/types/*.java                                 \
+        src/interpreter/utilities/*.java                             \
+        src/interpreter/statements/Block.java                        \
+        src/grammar/SetlXgrammar*.java
 	javac -cp $(CLASSPATH) -d bin -sourcepath src src/SetlX.java
 
-bin/grammar/SetlX*.class :                                   \
-        src/grammar/SetlX*.java                                      \
-        src/interpreter/*.java                                       \
+bin/grammar/SetlXgrammar*.class :                            \
+        src/grammar/SetlXgrammar*.java                               \
         src/interpreter/types/*.java                                 \
+        src/interpreter/utilities/*.java                             \
         src/interpreter/boolExpressions/*.java                       \
         src/interpreter/expressions/*.java                           \
         src/interpreter/statements/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath src src/grammar/SetlX*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/grammar/SetlXgrammar*.java
 
-src/grammar/SetlX*.java :                                    \
-        src/grammar/SetlX.g
-	java  -cp $(CLASSPATH) org.antlr.Tool -fo src/grammar src/grammar/SetlX.g
-
-bin/interpreter/*.class :                                    \
-        src/interpreter/*.java                                       \
-        src/interpreter/exceptions/*.java                            \
-        src/interpreter/types/*.java                                 \
-        src/interpreter/functions/*.java                             \
-        src/interpreter/statements/*.java 
-	javac -d bin -sourcepath src src/interpreter/*.java
+src/grammar/SetlXgrammar*.java :                             \
+        src/grammar/SetlXgrammar.g
+	java  -cp $(CLASSPATH) org.antlr.Tool -fo src/grammar src/grammar/SetlXgrammar.g
 
 bin/interpreter/statements/*.class :                         \
         src/interpreter/statements/*.java                            \
-        src/interpreter/Environment.java                             \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
         src/interpreter/expressions/*.java                           \
@@ -75,7 +69,6 @@ bin/interpreter/statements/*.class :                         \
 
 bin/interpreter/expressions/*.class :                        \
         src/interpreter/expressions/*.java                           \
-        src/interpreter/Environment.java                             \
         src/interpreter/statements/Statement.java                    \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
@@ -86,7 +79,6 @@ bin/interpreter/expressions/*.class :                        \
 bin/interpreter/boolExpressions/*.class :                    \
         src/interpreter/boolExpressions/*.java                       \
         src/interpreter/expressions/Expr.java                        \
-        src/interpreter/Environment.java                             \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
         src/interpreter/utilities/*.java
@@ -94,25 +86,26 @@ bin/interpreter/boolExpressions/*.class :                    \
 
 bin/interpreter/functions/*.class :                          \
         src/interpreter/functions/*.java                             \
-        src/interpreter/Environment.java                             \
         src/interpreter/statements/Statement.java                    \
         src/interpreter/exceptions/*.java                            \
-        src/interpreter/types/*.java
+        src/interpreter/types/*.java                                 \
+        src/interpreter/utilities/*.java
 	javac -d bin -sourcepath src src/interpreter/functions/*.java
 
 bin/interpreter/utilities/*.class :                          \
         src/interpreter/utilities/*.java                             \
         src/interpreter/expressions/Expr.java                        \
         src/interpreter/expressions/SetTupleConstructor.java         \
-        src/interpreter/Environment.java                             \
         src/interpreter/exceptions/*.java                            \
+        src/interpreter/functions/MathFunction.java                  \
+        src/interpreter/functions/PreDefinedFunction.java            \
         src/interpreter/types/*.java
 	javac -d bin -sourcepath src src/interpreter/utilities/*.java
 
 bin/interpreter/types/*.class :                              \
         src/interpreter/types/*.java                                 \
-        src/interpreter/Environment.java                             \
         src/interpreter/statements/Statement.java                    \
+        src/interpreter/utilities/Environment.java                   \
         src/comparableSet/*.java                                     \
         src/interpreter/exceptions/*.java
 	javac -d bin -sourcepath src src/interpreter/types/*.java

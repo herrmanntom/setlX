@@ -1,6 +1,5 @@
 package interpreter.utilities;
 
-import interpreter.Environment;
 import interpreter.exceptions.ContinueException;
 import interpreter.exceptions.BreakException;
 import interpreter.exceptions.IncompatibleTypeException;

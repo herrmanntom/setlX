@@ -1,4 +1,4 @@
-package interpreter;
+package interpreter.utilities;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;

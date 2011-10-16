@@ -1,12 +1,12 @@
 package interpreter.expressions;
 
-import interpreter.Environment;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlTuple;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 import java.util.List;
 

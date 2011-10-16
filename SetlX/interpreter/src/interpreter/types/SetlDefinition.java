@@ -1,12 +1,12 @@
 package interpreter.types;
 
-import interpreter.Environment;
 import interpreter.exceptions.IncorrectNumberOfParametersException;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.statements.Statement;
+import interpreter.utilities.Environment;
 
 import java.util.List;
 

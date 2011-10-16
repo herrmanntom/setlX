@@ -1,10 +1,10 @@
 package interpreter.functions;
 
-import interpreter.Environment;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

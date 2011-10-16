@@ -1,10 +1,11 @@
 import grammar.*;
-import interpreter.Environment;
-import interpreter.InputReader;
-import interpreter.Program;
+
 import interpreter.exceptions.ExitException;
 import interpreter.exceptions.SetlException;
+import interpreter.statements.Block;
 import interpreter.types.SetlReal;
+import interpreter.utilities.Environment;
+import interpreter.utilities.InputReader;
 
 import org.antlr.runtime.*;
 
@@ -71,19 +72,19 @@ public class SetlX {
 
     private static void parseInteractive() throws Exception {
         Environment.setInteractive(true);
-        Program p = null;
+        Block blk = null;
         do {
             try {
                 InputStream         stream = InputReader.getStream();
                 ANTLRInputStream    input  = new ANTLRInputStream(stream);
-                SetlXLexer          lexer  = new SetlXLexer(input);
+                SetlXgrammarLexer   lexer  = new SetlXgrammarLexer(input);
                 CommonTokenStream   ts     = new CommonTokenStream(lexer);
-                SetlXParser         parser = new SetlXParser(ts);
-                p = parser.program();
+                SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
+                blk = parser.block();
             } catch (EOFException eof) {
                 break;
             }
-        } while (p != null && executeProgram(p));
+        } while (blk != null && execute(blk));
         printExecutionFinished();
     }
 
@@ -91,16 +92,15 @@ public class SetlX {
         Environment.setInteractive(false);
         try {
             ANTLRStringStream   input  = new ANTLRFileStream(fileName);
-            SetlXLexer          lexer  = new SetlXLexer(input);
+            SetlXgrammarLexer   lexer  = new SetlXgrammarLexer(input);
             CommonTokenStream   ts     = new CommonTokenStream(lexer);
-            SetlXParser         parser = new SetlXParser(ts);
-
+            SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
 
             if (verbose) {
                 System.out.println("=================================Parser=Errors==================================\n");
             }
             // parse the file contents
-            Program             p      = parser.program();
+            Block               blk    = parser.block();
 
             // now Antlr will print its parser errors into the output ...
 
@@ -121,13 +121,13 @@ public class SetlX {
             if (verbose) {
                 System.out.println("=================================Parsed=Program=================================\n");
                 Environment.setPrintVerbose(true); // enables correct indentation etc
-                System.out.println(p + "\n");
+                System.out.println(blk + "\n");
                 Environment.setPrintVerbose(false);
                 System.out.println("================================Execution=Result================================\n");
             }
 
             // run the parsed code
-            executeProgram(p);
+            execute(blk);
 
             if (verbose) {
                 printExecutionFinished();
@@ -137,10 +137,10 @@ public class SetlX {
         }
     }
 
-    private static boolean executeProgram(Program p) {
+    private static boolean execute(Block b) {
         try {
 
-            p.execute();
+            b.execute();
 
         } catch (ExitException ee) { // user/code wants to quit
             if (Environment.isInteractive()) {

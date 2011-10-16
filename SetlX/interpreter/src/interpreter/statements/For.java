@@ -1,8 +1,8 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.SetlException;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.Iterator;
 import interpreter.utilities.IteratorExecutionContainer;
 

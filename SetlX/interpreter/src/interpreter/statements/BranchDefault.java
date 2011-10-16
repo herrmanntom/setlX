@@ -1,7 +1,7 @@
 package interpreter.statements;
 
-import interpreter.Environment;
 import interpreter.exceptions.SetlException;
+import interpreter.utilities.Environment;
 
 public class BranchDefault extends BranchAbstract {
     private Block       mStatements;

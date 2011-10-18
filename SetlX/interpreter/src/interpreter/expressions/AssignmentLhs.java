@@ -36,7 +36,7 @@ public class AssignmentLhs {
             for (Expr e : mItems) {
                 List<Expr> args = new LinkedList<Expr>();
                 args.add(e);
-                call = new Call(call, args, false);
+                call = new Call(call, args);
             }
             return call;
         } else if (mLhs == null && mItems == null && mLc != null) {

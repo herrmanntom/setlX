@@ -15,6 +15,7 @@ public class Negative extends Expr {
     }
 
     public String toString() {
-        return "- " + mExpr;
+        return "-" + mExpr;
     }
 }
+

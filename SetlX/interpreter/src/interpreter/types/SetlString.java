@@ -101,10 +101,7 @@ public class SetlString extends Value {
 
     /* calls (element access) */
 
-    public Value call(List<Value> args, boolean returnCollection) throws SetlException {
-        if (returnCollection) {
-            throw new IncompatibleTypeException("`" + this + "´ is not a map.");
-        }
+    public Value call(List<Value> args) throws SetlException {
         int   aSize  = args.size();
         Value vFirst = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {

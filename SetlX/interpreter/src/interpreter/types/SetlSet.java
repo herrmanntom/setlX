@@ -269,17 +269,18 @@ public class SetlSet extends CollectionValue {
 
     /* calls (element access) */
 
-    public Value call(List<Value> args, boolean returnCollection) throws SetlException {
+    public Value call(List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException("Range operations are unsupported on `" + this + "´.");
         } else if (args.size() != 1) {
             throw new UndefinedOperationException("Can not perform call with arguments `" + args + "´ on `" + this + "´; arguments are malformed.");
         }
-        if (returnCollection) {
-            return collectMembers(args.get(0));
-        } else {
-            return getMember(args.get(0));
-        }
+        return getMember(args.get(0));
+    }
+
+    // this call returns a set, not a single value
+    public Value callCollection(List<Value> args, boolean returnCollection) throws SetlException {
+        return collectMembers(args.get(0));
     }
 
     public String toString() {

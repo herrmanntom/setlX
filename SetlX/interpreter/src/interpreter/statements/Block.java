@@ -3,10 +3,15 @@ package interpreter.statements;
 import interpreter.exceptions.SetlException;
 import interpreter.utilities.Environment;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class Block extends Statement {
     private List<Statement>  mStatements;
+
+    public Block(){
+        this(new LinkedList<Statement>());
+    }
 
     public Block(List<Statement> statements){
         mStatements = statements;
@@ -23,7 +28,8 @@ public class Block extends Statement {
     }
 
     public String toString(int tabs, boolean brackets) {
-        int stmntTabs  = tabs;
+        String endl      = Environment.getEndl();
+        int    stmntTabs = tabs;
         if ( ! brackets) {
             stmntTabs += 1;
         }
@@ -31,11 +37,16 @@ public class Block extends Statement {
         if (brackets) {
             result += "{";
         }
+        int count = 1;
         for (Statement stmnt: mStatements) {
-            result += stmnt.toString(stmntTabs) + Environment.getEndl();
+            result += stmnt.toString(stmntTabs);
+            if (count < mStatements.size()) {
+                result += endl;
+            }
+            count++;
         }
         if (brackets) {
-            result += Environment.getTabs(tabs) + "}";
+            result += endl + Environment.getTabs(tabs) + "}";
         }
         return result;
     }

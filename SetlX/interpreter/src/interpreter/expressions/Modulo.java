@@ -19,6 +19,6 @@ public class Modulo extends Expr {
     }
 
     public String toString() {
-        return mLhs.toString() + " % " + mRhs.toString();
+        return mLhs + " % " + mRhs;
     }
 }

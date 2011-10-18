@@ -23,6 +23,7 @@ public class MaximumMember extends Expr {
     }
 
     public String toString() {
-        return ((mLhs != null)? mLhs + " ":"") + "max/ " + mRhs.toString();
+        return ((mLhs != null)? mLhs + " ":"") + "max/" + mRhs;
     }
 }
+

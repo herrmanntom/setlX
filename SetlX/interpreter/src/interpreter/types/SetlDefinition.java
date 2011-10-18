@@ -5,42 +5,31 @@ import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.functions.PreDefinedFunction;
-import interpreter.statements.Statement;
+import interpreter.statements.Block;
 import interpreter.utilities.Environment;
 
 import java.util.List;
 
 // This class represents a function definition
 public class SetlDefinition extends Value {
-    private String               mName;        // initial function name
-    private List<String>         mParameters;  // parameter list
-    private List<Statement>      mStatements;  // statements in the body of the definition
-    private List<SetlDefinition> mDefinitions; // definitions in the body of the definition
+    protected List<String> mParameters;  // parameter list
+    private   Block        mStatements;  // statements in the body of the definition
 
-    public SetlDefinition(String name, List<String> parameters, List<Statement> statements, List<SetlDefinition> definitions) {
-        mName        = name;
-        mParameters  = parameters;
-        mStatements  = statements;
-        mDefinitions = definitions;
+    public SetlDefinition(List<String> parameters, Block statements) {
+        mParameters = parameters;
+        mStatements = statements;
     }
 
     public SetlDefinition clone() {
-        // this value can not be changed once set
+        // this value can not be changed once set => no harm in returning the original
         return this;
-    }
-
-    public void addToEnvironment() {
-        Environment.putValue(mName, this);
     }
 
     /* calls (function calls) */
 
-    public Value call(List<Value> args, boolean returnCollection) throws SetlException {
-        if (returnCollection) {
-            throw new UndefinedOperationException("Incorrect set of brackets for function call.");
-        }
+    public Value call(List<Value> args) throws SetlException {
         if (mParameters.size() != args.size()) {
-            throw new IncorrectNumberOfParametersException("Function is defined with a different number of parameters.");
+            throw new IncorrectNumberOfParametersException("Procedure is defined with a different number of parameters.");
         }
 
         // save old environment
@@ -52,16 +41,10 @@ public class SetlDefinition extends Value {
         for (int i = 0; i < args.size(); ++i) {
             Environment.putValue(mParameters.get(i), args.get(i));
         }
-        // execute the definitions, because statments might call them later
-        for(SetlDefinition d : mDefinitions){
-            d.addToEnvironment();
-        }
 
         Value result = SetlOm.OM;
         try {
-            for (Statement stmnt: mStatements) {
-                stmnt.execute();
-            }
+            mStatements.execute();
         } catch (ReturnException re) {
             result = re.getValue();
         }
@@ -71,22 +54,15 @@ public class SetlDefinition extends Value {
     }
 
     public String toString(int tabs) {
-        String endl = Environment.getEndl();
-        String result = endl + Environment.getTabs(tabs) + "procedure " + mName + "(";
+        String result = "procedure (";
         for (int i = 0; i < mParameters.size(); ++i) {
             if (i > 0) {
                 result += ", ";
             }
             result += mParameters.get(i);
         }
-        result += ");" + endl;
-        for (Statement stmnt: mStatements) {
-            result += stmnt.toString(tabs + 1) + endl;
-        }
-        for (SetlDefinition dfntn: mDefinitions) {
-            result += dfntn.toString(tabs + 1) + endl;
-        }
-        result += Environment.getTabs(tabs) + "end " + mName + ";";
+        result += ")";
+        result += mStatements.toString(tabs, true);
         return result;
     }
 
@@ -107,17 +83,15 @@ public class SetlDefinition extends Value {
         } else if (v instanceof SetlDefinition) {
             SetlDefinition other = (SetlDefinition) v;
             if (this instanceof PreDefinedFunction && other instanceof PreDefinedFunction) {
-                return mName.compareTo(other.mName);
+                PreDefinedFunction _this  = (PreDefinedFunction) this;
+                PreDefinedFunction _other = (PreDefinedFunction) other;
+                return _this.getName().compareTo(_other.getName());
             } else {
                 int cmp = mParameters.toString().compareTo(other.mParameters.toString());
                 if (cmp != 0) {
                     return cmp;
                 }
-                cmp = mStatements.toString().compareTo(other.mStatements.toString());
-                if (cmp != 0) {
-                    return cmp;
-                }
-                return mDefinitions.toString().compareTo(other.mDefinitions.toString());
+                return cmp = mStatements.toString().compareTo(other.mStatements.toString());
             }
         } else {
             // everything else is smaller
@@ -125,3 +99,4 @@ public class SetlDefinition extends Value {
         }
     }
 }
+

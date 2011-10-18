@@ -199,11 +199,6 @@ minmax returns [Expr mm]
 factor returns [Expr f]
     :
       '(' expr ')'             { f = new BracketedExpr($expr.ex);       }
-    | 'arb'        fa = factor { f = new Arb($fa.f);                    }
-    | 'from'       fa = factor { f = new From($fa.f);                   }
-    | 'fromb'      fa = factor { f = new FromB($fa.f);                  }
-    | 'frome'      fa = factor { f = new FromE($fa.f);                  }
-    | 'pow'        fa = factor { f = new Pow($fa.f);                    }
     | 'min/'       fa = factor { f = new MinimumMember(null, $fa.f);    }
     | 'max/'       fa = factor { f = new MaximumMember(null, $fa.f);    }
     | '+/'         fa = factor { f = new SumMembers(null, $fa.f);       }
@@ -211,17 +206,6 @@ factor returns [Expr f]
     | '-'          fa = factor { f = new Negative($fa.f);               }
     | '!'          fa = factor { f = new Negation(new BoolExpr($fa.f)); }
     | '#'          fa = factor { f = new Cardinality($fa.f);            }
-    | 'abs'        fa = factor { f = new Abs($fa.f);                    }
-    | 'char'       fa = factor { f = new Char($fa.f);                   }
-    | 'domain'     fa = factor { f = new Domain($fa.f);                 }
-    | 'is_integer' fa = factor { f = new IsInteger($fa.f);              }
-    | 'is_map'     fa = factor { f = new IsMap($fa.f);                  }
-    | 'is_real'    fa = factor { f = new IsReal($fa.f);                 }
-    | 'is_set'     fa = factor { f = new IsSet($fa.f);                  }
-    | 'is_string'  fa = factor { f = new IsString($fa.f);               }
-    | 'is_tuple'   fa = factor { f = new IsTuple($fa.f);                }
-    | 'range'      fa = factor { f = new RelationalRange($fa.f);        }
-    | 'str'        fa = factor { f = new Str($fa.f);                    }
     | call                     { f = $call.c;                           }
     | definition               { f = new ValueExpr($definition.dfntn);  }
     | list                     { f = $list.lc;                          }
@@ -232,88 +216,55 @@ factor returns [Expr f]
 // this could be either 'id' or 'call' or 'element of collection'
 // decide at runtime
 call returns [ Expr c ]
-    @init {
-        List<Expr> args = null;
-        boolean relation = false;
-    }
     :
-      ID          { c = new Variable($ID.text); }
+      ID                         { c = new Variable($ID.text);            }
       (
-        (
-            '('   { relation = false; }
-          | '{'   { relation = true;  }
-        )         { args = new ArrayList<Expr>(); }
-        (
-            e1 = expr           { args.add($e1.ex);                                     }
-            (
-                (
-                  ',' e2 = expr { args.add($e2.ex);                                     }
-                )*
-              | '..'            { args.add(CallRangeDummy.CRD);                         }
-                (
-                  s1 = sum      { args.add($s1.s);                                      }
-                )?
-            )
-          | '..' s1 = sum       { args.add(CallRangeDummy.CRD); args.add($s1.s);        }
-        )?
-        (
-            ')'  { if( relation) System.err.println("Closing bracket does not match!"); }
-          | '}'  { if(!relation) System.err.println("Closing bracket does not match!"); }
-        )        { c = new Call(c, args, relation); }
+         '(' callParameters? ')' { c = new Call(c, $callParameters.args); }
+       | '{' expr '}'            { c = new CallCollection(c, $expr.ex);   }
       )*
     ;
 
-definition returns [SetlDefinition dfntn]
-    @init{
-        List<Statement>      stmnts = new LinkedList<Statement>();
-        List<SetlDefinition> dfntns = new LinkedList<SetlDefinition>();
+callParameters returns [List<Expr> args]
+    @init {
+        args = new LinkedList<Expr>();
     }
     :
-      'procedure' n1 = ID '(' p = paramDefinitionList ')' ';'
-        (
-            s = statement  { stmnts.add($s.stmnt); }
-        )*
-      'end' n2 = ID ';'
-      {
-        if(!($n1.text).equals($n2.text)){
-            System.err.println("Procedure name `"+ $n1.text +"´ does not match procedure end `"+ $n2.text +"´!");
-        }
-        dfntn = new SetlDefinition($n1.text, $p.paramList, stmnts, dfntns);
-      }
+      e1 = expr          { args.add($e1.ex);                               }
+      (
+         (
+           ',' e2 = expr { args.add($e2.ex);                               }
+         )*
+       | '..'            { args.add(CallRangeDummy.CRD);                   }
+         (
+           sum           { args.add($sum.s);                               }
+         )?
+      )
+    | '..' sum           { args.add(CallRangeDummy.CRD); args.add($sum.s); }
     ;
 
-paramDefinitionList returns [List<String> paramList]
+definition returns [SetlDefinition dfntn]
+    :
+      'procedure' '(' definitionParameters ')' '{' block '}'
+      { dfntn = new SetlDefinition($definitionParameters.paramList, $block.blk); }
+    ;
+
+definitionParameters returns [List<String> paramList]
     @init {
-        List<String> list = new ArrayList<String>();
+        paramList = new LinkedList<String>();
     }
     :
       (
-        i1 = ID { list.add($i1.text); }
+        dp1 = definitionParameter        { paramList.add($dp1.param); }
         (
-           ',' i2 = ID { list.add($i2.text); }
+          ',' dp2 = definitionParameter  { paramList.add($dp1.param); }
         )*
       )?
-      { paramList = list; }
     ;
 
-value returns [Value v]
+definitionParameter returns [String param]
     :
-      NUMBER        { v = new SetlInt($NUMBER.text);      }
-    | real          { v = $real.r;                        }
-    | STRING        { v = new SetlString($STRING.text);   }
-    | 'true'        { v = SetlBoolean.TRUE;               }
-    | 'false'       { v = SetlBoolean.FALSE;              }
-    | 'om'          { v = SetlOm.OM;                      }
-    ;
-
-real returns [SetlReal r]
-    @init {
-        String n = "";
-    }
-    :
-      (
-        NUMBER                  { n = $NUMBER.text;                  }
-      )? REAL                   { r = new SetlReal(n + $REAL.text);  }
+      'rw' ID       { param = $ID.text; }
+    | ID            { param = $ID.text; }
     ;
 
 list returns [SetListConstructor lc]
@@ -402,6 +353,26 @@ explicitList returns [ExplicitList el]
         ',' e2 = expr  { exprs.add($e2.ex); }
       )*
       { el = new ExplicitList(exprs); }
+    ;
+
+value returns [Value v]
+    :
+      NUMBER        { v = new SetlInt($NUMBER.text);      }
+    | real          { v = $real.r;                        }
+    | STRING        { v = new SetlString($STRING.text);   }
+    | 'true'        { v = SetlBoolean.TRUE;               }
+    | 'false'       { v = SetlBoolean.FALSE;              }
+    | 'om'          { v = SetlOm.OM;                      }
+    ;
+
+real returns [SetlReal r]
+    @init {
+        String n = "";
+    }
+    :
+      (
+        NUMBER                  { n = $NUMBER.text;                  }
+      )? REAL                   { r = new SetlReal(n + $REAL.text);  }
     ;
 
 ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;

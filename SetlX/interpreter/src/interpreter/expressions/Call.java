@@ -14,16 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Call extends Expr {
-    private Expr       mLhs;              // left hand side (function name, variable, etc)
-    private List<Expr> mArgs;             // list of arguments
-    private boolean    mReturnCollection; // true if arguments enclosed with { }
-    private boolean    isRange;           // true if mArgs contains 'CallRangeDummy.CRD', which represents '..'
-    private String     _this;             // pre-computed toString() which has less stack penalty in case of stack overflow error...
+    private Expr       mLhs;       // left hand side (function name, other call, variable, etc)
+    private List<Expr> mArgs;      // list of arguments
+    private boolean    isRange;    // true if mArgs contains 'CallRangeDummy.CRD', which represents '..'
+    private String     _this;      // pre-computed toString() which has less stack penalty in case of stack overflow error...
 
-    public Call(Expr lhs, List<Expr> args, boolean returnCollection) {
+    public Call(Expr lhs, List<Expr> args) {
         mLhs              = lhs;
         mArgs             = args;
-        mReturnCollection = returnCollection;
         isRange           = mArgs.contains(CallRangeDummy.CRD);
         _this             = _toString();
     }
@@ -52,7 +50,7 @@ public class Call extends Expr {
             }
         }
         try {
-            return lhs.call(args, mReturnCollection);
+            return lhs.call(args);
         } catch (StackOverflowError e) {
             throw new JVMException("Stack overflow.\n"
                                  + "Try preventing recursion and/or execute with larger stack size.\n"
@@ -65,14 +63,14 @@ public class Call extends Expr {
     }
 
     public String _toString() {
-        String result = mLhs + ((mReturnCollection)? "{" : "(");
+        String result = mLhs + "(";
         for (int i = 0; i < mArgs.size(); ++i) {
             if (i > 0 && !isRange) {
                 result += ", ";
             }
             result += mArgs.get(i);
         }
-        result += (mReturnCollection)? "}" : ")";
+        result += ")";
         return result;
     }
 }

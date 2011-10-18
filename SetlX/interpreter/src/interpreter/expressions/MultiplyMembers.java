@@ -25,6 +25,6 @@ public class MultiplyMembers extends Expr {
     }
 
     public String toString() {
-        return ((mLhs != null)? mLhs + " ":"") + "*/ " + mRhs.toString();
+        return ((mLhs != null)? mLhs + " ":"") + "*/" + mRhs;
     }
 }

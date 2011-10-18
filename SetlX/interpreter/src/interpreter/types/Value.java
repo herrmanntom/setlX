@@ -200,8 +200,13 @@ public abstract class Value implements Comparable<Value> {
 
     /* calls (element access or function call) */
 
-    public Value call(List<Value> args, boolean returnCollection) throws SetlException {
-        throw new IncompatibleTypeException("Can not perform call with arguments `" + args + "´ on this operand-type; `" + this + "´ is not a function or compound value.");
+    public Value call(List<Value> args) throws SetlException {
+        throw new IncompatibleTypeException("Can not perform call with arguments `" + args + "´ on this operand-type; `" + this + "´ is not a procedure or compound value.");
+    }
+
+    // this call returns a set, not a single value
+    public Value callCollection(Value arg) throws SetlException {
+        throw new IncompatibleTypeException("Can not perform call with argument `{" + arg + "}´ on this operand-type; `" + this + "´ is not a map.");
     }
 
     /* String and Char operations */

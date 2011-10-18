@@ -111,12 +111,12 @@ callParameters
 
 definition
     :
-      'procedure' '(' definitionParameters? ')' '{' block '}'
+      'procedure' '(' definitionParameters ')' '{' block '}'
     ;
 
 definitionParameters
     :
-      definitionParameter (',' definitionParameter)*
+      ( definitionParameter (',' definitionParameter)* )?
     ;
 
 definitionParameter

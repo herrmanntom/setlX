@@ -302,29 +302,11 @@ iterate returns [Iteration i]
         BoolExpr bex = null;
     }
     :
-        (shortIterate)=>shortIterate {i = $shortIterate.si; }
-      | e1 = expr ':' iterator
-        (
-          '|' b = expr  { bex = new BoolExpr($b.ex);                     }
-        )?
-        { i = new Iteration($e1.ex, $iterator.iter, bex); }
-    ;
-
-iterator returns [Iterator iter]
-    @init{
-        String               id         = null;
-        SetListConstructor   lc         = null;
-    }
-    : ( i1 = ID | l1 = list )
-      'in' e1 = expr         { iter = new Iterator($i1.text, $l1.lc, $e1.ex); }
+      (shortIterate)=> shortIterate { i = $shortIterate.si;                             }
+    | expr ':' iterator
       (
-        ','
-        (
-            i2 = ID          { id = $i2.text; lc = null;   }
-          | l2 = list        { id = null;     lc = $l2.lc; }
-        )
-        'in' e2 = expr       { iter.add(new Iterator(id, lc, $e2.ex)); }
-      )*
+        '|' condition               { bex = $condition.bex;                             }
+      )?                            { i = new Iteration($expr.ex, $iterator.iter, bex); }
     ;
 
 shortIterate returns [Iteration si]
@@ -336,23 +318,40 @@ shortIterate returns [Iteration si]
           ID
         | list
       )
-      'in' e1 = expr
+      'in' expr
       (
-        '|' b = expr { bex = new BoolExpr($b.ex); }
+        '|' condition   { bex = $condition.bex; }
       )?
-      { si = new Iteration(null, new Iterator($ID.text, $list.lc, $e1.ex) , bex); }
+      { si = new Iteration(null, new Iterator($ID.text, $list.lc, $expr.ex), bex); }
+    ;
+
+iterator returns [Iterator iter]
+    @init{
+        String               id         = null;
+        SetListConstructor   lc         = null;
+    }
+    :
+      ( i1 = ID | l1 = list )
+      'in' e1 = expr         { iter = new Iterator($i1.text, $l1.lc, $e1.ex); }
+      (
+        ','
+        (
+            i2 = ID          { id = $i2.text; lc = null;                      }
+          | l2 = list        { id = null;     lc = $l2.lc;                    }
+        )
+        'in' e2 = expr       { iter.add(new Iterator(id, lc, $e2.ex));        }
+      )*
     ;
 
 explicitList returns [ExplicitList el]
     @init {
-        List<Expr> exprs = new ArrayList<Expr>();
+        List<Expr> exprs = new LinkedList<Expr>();
     }
     :
-      e1 = expr        { exprs.add($e1.ex); }
+      e1 = expr        { exprs.add($e1.ex);            }
       (
-        ',' e2 = expr  { exprs.add($e2.ex); }
-      )*
-      { el = new ExplicitList(exprs); }
+        ',' e2 = expr  { exprs.add($e2.ex);            }
+      )*               { el = new ExplicitList(exprs); }
     ;
 
 value returns [Value v]

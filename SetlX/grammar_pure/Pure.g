@@ -150,17 +150,17 @@ range
 iterate
     :
         ( shortIterate )=> shortIterate
-      | expr ':' iterator ('|' expr)?
+      | expr ':' iterator ('|' condition)?
+    ;
+
+shortIterate
+    :
+      ( ID | list ) 'in' expr ('|' condition)?
     ;
 
 iterator
     :
       ( ID | list ) 'in' expr (',' ( ID | list ) 'in' expr )*
-    ;
-
-shortIterate
-    :
-      ( ID | list ) 'in' expr ('|' expr)?
     ;
 
 explicitList

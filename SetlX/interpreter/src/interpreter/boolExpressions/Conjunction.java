@@ -21,6 +21,6 @@ public class Conjunction extends Expr {
     }
 
     public String toString() {
-        return mLhs + " and " + mRhs;
+        return mLhs + " && " + mRhs;
     }
 }

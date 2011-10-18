@@ -73,7 +73,7 @@ expr returns [Expr ex]
                                { ex = new Exists($iterator.iter, $condition.bex);            }
     | c1 = conjunction         {ex = $c1.c;                                                  }
       (
-        'or' c2 = conjunction  {ex = new Disjunction(new BoolExpr(ex), new BoolExpr($c2.c)); }
+        '||' c2 = conjunction  {ex = new Disjunction(new BoolExpr(ex), new BoolExpr($c2.c)); }
       )*
     ;
 
@@ -103,37 +103,56 @@ assignment returns [Assignment assign]
 
 conjunction returns [Expr c]
     :
-      l1 = literal         {c = $l1.l;                                                 }
+      e1 = equation        {c = $e1.eq;                                                 }
       (
-        'and' l2 = literal {c = new Conjunction(new BoolExpr(c), new BoolExpr($l2.l)); }
+        '&&' e2 = equation {c = new Conjunction(new BoolExpr(c), new BoolExpr($e2.eq)); }
       )*
     ;
 
-literal returns [Expr l]
-    :
-      'not' boolFactor {l = new Negation(new BoolExpr($boolFactor.f)); }
-    | boolFactor       {l = $boolFactor.f;                             }
-    ;
-
-boolFactor returns [Expr f]
+equation returns [Expr eq]
     @init{
         int type = -1;
     }
     :
-      s1 = sum      { f = $s1.s;                     }
+      c1 = comparison   { eq = $c1.comp;                                }
       (
         (
-            'in'    { type = Comparison.IN;          }
-          | 'notin' { type = Comparison.NOTIN;       }
-          | '=='    { type = Comparison.EQUAL;       }
-          | '!='    { type = Comparison.UNEQUAL;     }
-          | '<'     { type = Comparison.LESSTHAN;    }
-          | '<='    { type = Comparison.EQUALORLESS; }
-          | '>'     { type = Comparison.MORETHAN;    }
-          | '>='    { type = Comparison.EQUALORMORE; }
+           '=='         { type = Comparison.EQUAL;                      }
+         | '!='         { type = Comparison.UNEQUAL;                    }
         )
-        s2 = sum
-        { f = new Comparison (f, type, $s2.s); }
+        c2 = comparison { eq = new Comparison (eq, type, $c2.comp);     }
+      )*
+    ;
+
+comparison returns [Expr comp]
+    @init{
+        int type = -1;
+    }
+    :
+      i1 = inclusion    { comp = $i1.incl;                              }
+      (
+        (
+           '<'          { type = Comparison.LESSTHAN;                   }
+         | '<='         { type = Comparison.EQUALORLESS;                }
+         | '>'          { type = Comparison.MORETHAN;                   }
+         | '>='         { type = Comparison.EQUALORMORE;                }
+        )
+        i2 = inclusion  { comp = new Comparison (comp, type, $i2.incl); }
+      )*
+    ;
+
+inclusion returns [Expr incl]
+    @init{
+        int type = -1;
+    }
+    :
+      s1 = sum          { incl = $s1.s;                                 }
+      (
+        (
+            'in'        { type = Comparison.IN;                         }
+          | 'notin'     { type = Comparison.NOTIN;                      }
+        )
+        s2 = sum        { incl = new Comparison (incl, type, $s2.s);    }
       )*
     ;
 
@@ -155,7 +174,6 @@ product returns [Expr p]
         | '/'   pow2 = power   { p = new Division(p, $pow2.pow);        }
         | '*/'  pow2 = power   { p = new MultiplyMembers(p, $pow2.pow); }
         | '%'   pow2 = power   { p = new Modulo(p, $pow2.pow);          }
-        | 'mod' pow2 = power   { p = new Modulo(p, $pow2.pow);          }
       )*
     ;
 
@@ -180,34 +198,35 @@ minmax returns [Expr mm]
 
 factor returns [Expr f]
     :
-      '(' expr ')'             { f = new BracketedExpr($expr.ex);      }
-    | 'arb'        fa = factor { f = new Arb($fa.f);                   }
-    | 'from'       fa = factor { f = new From($fa.f);                  }
-    | 'fromb'      fa = factor { f = new FromB($fa.f);                 }
-    | 'frome'      fa = factor { f = new FromE($fa.f);                 }
-    | 'pow'        fa = factor { f = new Pow($fa.f);                   }
-    | 'min/'       fa = factor { f = new MinimumMember(null, $fa.f);   }
-    | 'max/'       fa = factor { f = new MaximumMember(null, $fa.f);   }
-    | '+/'         fa = factor { f = new SumMembers(null, $fa.f);      }
-    | '*/'         fa = factor { f = new MultiplyMembers(null, $fa.f); }
-    | '-'          fa = factor { f = new Negative($fa.f);              }
-    | '#'          fa = factor { f = new Cardinality($fa.f);           }
-    | 'abs'        fa = factor { f = new Abs($fa.f);                   }
-    | 'char'       fa = factor { f = new Char($fa.f);                  }
-    | 'domain'     fa = factor { f = new Domain($fa.f);                }
-    | 'is_integer' fa = factor { f = new IsInteger($fa.f);             }
-    | 'is_map'     fa = factor { f = new IsMap($fa.f);                 }
-    | 'is_real'    fa = factor { f = new IsReal($fa.f);                }
-    | 'is_set'     fa = factor { f = new IsSet($fa.f);                 }
-    | 'is_string'  fa = factor { f = new IsString($fa.f);              }
-    | 'is_tuple'   fa = factor { f = new IsTuple($fa.f);               }
-    | 'range'      fa = factor { f = new RelationalRange($fa.f);       }
-    | 'str'        fa = factor { f = new Str($fa.f);                   }
-    | call                     { f = $call.c;                          }
-    | definition               { f = new ValueExpr($definition.dfntn); }
-    | list                     { f = $list.lc;                         }
-    | set                      { f = $set.sc;                          }
-    | value                    { f = new ValueExpr($value.v);          }
+      '(' expr ')'             { f = new BracketedExpr($expr.ex);       }
+    | 'arb'        fa = factor { f = new Arb($fa.f);                    }
+    | 'from'       fa = factor { f = new From($fa.f);                   }
+    | 'fromb'      fa = factor { f = new FromB($fa.f);                  }
+    | 'frome'      fa = factor { f = new FromE($fa.f);                  }
+    | 'pow'        fa = factor { f = new Pow($fa.f);                    }
+    | 'min/'       fa = factor { f = new MinimumMember(null, $fa.f);    }
+    | 'max/'       fa = factor { f = new MaximumMember(null, $fa.f);    }
+    | '+/'         fa = factor { f = new SumMembers(null, $fa.f);       }
+    | '*/'         fa = factor { f = new MultiplyMembers(null, $fa.f);  }
+    | '-'          fa = factor { f = new Negative($fa.f);               }
+    | '!'          fa = factor { f = new Negation(new BoolExpr($fa.f)); }
+    | '#'          fa = factor { f = new Cardinality($fa.f);            }
+    | 'abs'        fa = factor { f = new Abs($fa.f);                    }
+    | 'char'       fa = factor { f = new Char($fa.f);                   }
+    | 'domain'     fa = factor { f = new Domain($fa.f);                 }
+    | 'is_integer' fa = factor { f = new IsInteger($fa.f);              }
+    | 'is_map'     fa = factor { f = new IsMap($fa.f);                  }
+    | 'is_real'    fa = factor { f = new IsReal($fa.f);                 }
+    | 'is_set'     fa = factor { f = new IsSet($fa.f);                  }
+    | 'is_string'  fa = factor { f = new IsString($fa.f);               }
+    | 'is_tuple'   fa = factor { f = new IsTuple($fa.f);                }
+    | 'range'      fa = factor { f = new RelationalRange($fa.f);        }
+    | 'str'        fa = factor { f = new Str($fa.f);                    }
+    | call                     { f = $call.c;                           }
+    | definition               { f = new ValueExpr($definition.dfntn);  }
+    | list                     { f = $list.lc;                          }
+    | set                      { f = $set.sc;                           }
+    | value                    { f = new ValueExpr($value.v);           }
     ;
 
 // this could be either 'id' or 'call' or 'element of collection'

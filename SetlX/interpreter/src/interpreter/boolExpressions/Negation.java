@@ -16,6 +16,7 @@ public class Negation extends Expr {
     }
 
     public String toString() {
-        return "not " + mExpr;
+        return "! " + mExpr;
     }
 }
+

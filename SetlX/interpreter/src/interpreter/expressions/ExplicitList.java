@@ -55,7 +55,7 @@ public class ExplicitList extends Constructor {
                 ((SetListConstructor) e).setIdsToOm();
             } else {
                 throw new UndefinedOperationException("Error in '" + this + "':\n"
-                                                +     "Only explicit tuples of variables are allowed in iterations.");
+                                                +     "Only explicit lists of variables are allowed in iterations.");
             }
         }
     }

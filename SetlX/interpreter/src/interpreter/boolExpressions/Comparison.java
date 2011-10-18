@@ -52,7 +52,7 @@ public class Comparison extends Expr {
     }
 
     public String toString() {
-        String result   = mLhs.toString() + " ";
+        String result   = mLhs + " ";
         switch (mType) {
             case IN:
                 result += "in";
@@ -64,7 +64,7 @@ public class Comparison extends Expr {
                 result += "=";
                 break;
             case UNEQUAL:
-                result += "/=";
+                result += "!=";
                 break;
             case LESSTHAN:
                 result += "<";

@@ -41,23 +41,17 @@ assignment
 
 conjunction
     :
-      literal ('&&' literal)*
-    ;
-
-literal
-    :
-      '!' boolFactor
-    | boolFactor
-    ;
-
-boolFactor
-    :
-      equation (('<' | '<=' | '>' | '>=') equation)*
+      equation ('&&' equation)*
     ;
 
 equation
     :
-      inclusion (('==' | '!=') inclusion)*
+      comparison (('==' | '!=') comparison)*
+    ;
+
+comparison
+    :
+      inclusion (('<' | '<=' | '>' | '>=') inclusion)*
     ;
 
 inclusion
@@ -93,6 +87,7 @@ factor
     | '+/'         factor
     | '-/'         factor
     | '-'          factor
+    | '!'          factor
     | '#'          factor
     | call
     | definition

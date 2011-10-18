@@ -188,7 +188,7 @@ public class SetlString extends Value {
             SetlString str = (SetlString) v;
             return mString.compareTo(str.mString);
         } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof SetlDefinition) {
-            // SetlSet, SetlTuple and SetlDefinition are bigger
+            // SetlSet, SetlList and SetlDefinition are bigger
             return -1;
         } else {
             return 1;

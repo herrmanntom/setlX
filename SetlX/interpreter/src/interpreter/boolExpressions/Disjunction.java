@@ -21,6 +21,6 @@ public class Disjunction extends Expr {
     }
 
     public String toString() {
-        return mLhs + " or " + mRhs;
+        return mLhs + " || " + mRhs;
     }
 }

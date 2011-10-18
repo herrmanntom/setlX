@@ -5,6 +5,7 @@ import interpreter.exceptions.JVMException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.NumberValue;
+import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlReal;
 import interpreter.types.Value;
 
@@ -16,11 +17,12 @@ public class MathFunction extends PreDefinedFunction {
 
     public MathFunction(String name, Method function) {
         super(name);
+        addParameter(new SetlDefinitionParameter("x"));
         mFunction = function;
     }
 
-    public SetlReal call(List<Value> args) throws SetlException {
-        if (args.size() != 1 || !(args.get(0) instanceof NumberValue)) {
+    public SetlReal execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+        if (!(args.get(0) instanceof NumberValue)) {
             throw new IncorrectNumberOfParametersException("This function requires a single number as parameter.");
         }
         try {
@@ -34,8 +36,5 @@ public class MathFunction extends PreDefinedFunction {
                                  + "Please report it including executed source example.");
         }
     }
-
-    public boolean writeVars() {
-        return false;
-    }
 }
+

@@ -5,6 +5,7 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
 
 import java.util.Iterator;
 import java.util.List;
@@ -258,18 +259,16 @@ public class SetlSet extends CollectionValue {
     }
 
     public void removeFirstMember() {
-        separateFromOriginal();
         removeMember(firstMember());
     }
 
     public void removeLastMember() {
-        separateFromOriginal();
         removeMember(lastMember());
     }
 
     /* calls (element access) */
 
-    public Value call(List<Value> args) throws SetlException {
+    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException("Range operations are unsupported on `" + this + "´.");
         } else if (args.size() != 1) {

@@ -1,5 +1,6 @@
 package interpreter.functions;
 
+import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
@@ -8,13 +9,15 @@ import interpreter.utilities.Environment;
 import java.util.List;
 
 public class PD_print extends PreDefinedFunction {
-    public final static PD_print DEFINITION = new PD_print();
+    public final static PreDefinedFunction DEFINITION = new PD_print();
 
     private PD_print() {
         super("print");
+        addParameter(new SetlDefinitionParameter("firstValue"));
+        enableUnlimitedParameters();
     }
 
-    public Value call(List<Value> args) {
+    public Value execute(List<Value> args, List<Value> writeBackVars) {
         if (Environment.isInteractive()) {
             System.out.println("/*");
         }
@@ -26,9 +29,5 @@ public class PD_print extends PreDefinedFunction {
             System.out.println("*/");
         }
         return SetlOm.OM;
-    }
-
-    public boolean writeVars() {
-        return false;
     }
 }

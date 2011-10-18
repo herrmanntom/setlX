@@ -1,0 +1,20 @@
+package interpreter.functions;
+
+import interpreter.exceptions.SetlException;
+import interpreter.types.SetlDefinitionParameter;
+import interpreter.types.Value;
+
+import java.util.List;
+
+public class PD_arb extends PreDefinedFunction {
+    public final static PreDefinedFunction DEFINITION = new PD_arb();
+
+    private PD_arb() {
+        super("arb");
+        addParameter(new SetlDefinitionParameter("compoundValue"));
+    }
+
+    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+        return args.get(0).arbitraryMember();
+    }
+}

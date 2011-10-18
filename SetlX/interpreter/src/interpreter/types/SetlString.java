@@ -4,6 +4,7 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
 
 import java.util.List;
 
@@ -101,7 +102,7 @@ public class SetlString extends Value {
 
     /* calls (element access) */
 
-    public Value call(List<Value> args) throws SetlException {
+    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
         int   aSize  = args.size();
         Value vFirst = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {

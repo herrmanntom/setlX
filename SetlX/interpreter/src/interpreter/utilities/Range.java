@@ -1,7 +1,8 @@
-package interpreter.expressions;
+package interpreter.utilities;
 
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
+import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.Value;

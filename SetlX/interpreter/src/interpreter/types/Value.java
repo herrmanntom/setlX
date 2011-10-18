@@ -4,6 +4,7 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
 import interpreter.utilities.Environment;
 
 import java.util.List;
@@ -200,7 +201,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* calls (element access or function call) */
 
-    public Value call(List<Value> args) throws SetlException {
+    public Value call(List<Expr> exprs,List<Value> args) throws SetlException {
         throw new IncompatibleTypeException("Can not perform call with arguments `" + args + "´ on this operand-type; `" + this + "´ is not a procedure or compound value.");
     }
 

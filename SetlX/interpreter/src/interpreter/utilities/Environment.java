@@ -53,8 +53,8 @@ public class Environment {
         SearchItem i = sEnvironment.locateValue(var);
         if (i.mIsClone) { // will never be clone when sEnvironment.mReadThrough is true
             sEnvironment.putValue(var, i.mV); // store values found in outer env into current env
-        } else if (i.mV == null && var.toLowerCase().equals(var)) {
-            // search if name matches a predefined function (which are all lower case and start with 'PD_')
+        } else if (i.mV == null) {
+            // search if name matches a predefined function (which start with 'PD_')
             String packageName = PreDefinedFunction.class.getPackage().getName();
             String className   = "PD_" + var;
             try {
@@ -64,8 +64,8 @@ public class Environment {
                 /* Name does not match predefined function.
                    But return value already is null, no change necessary.     */
             }
-            if (i.mV == null) {
-               // search if name matches a java Math.x function
+            if (i.mV == null && var.toLowerCase().equals(var)) {
+               // search if name matches a java Math.x function (which are all lower case)
                 try {
                     Method f = Math.class.getMethod(var, double.class);
                     i.mV     = new MathFunction(var, f);

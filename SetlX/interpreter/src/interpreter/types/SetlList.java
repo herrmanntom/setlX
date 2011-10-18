@@ -5,6 +5,7 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
 
 import java.util.Iterator;
 import java.util.List;
@@ -14,12 +15,12 @@ public class SetlList extends CollectionValue {
     private ComparableList<Value> mList;
     private ComparableList<Value> mOriginalList;
 
-    public SetlList(){
+    public SetlList() {
         mList               = new ComparableList<Value>();
         mOriginalList       = null;
     }
 
-    private SetlList(ComparableList<Value> list){
+    private SetlList(ComparableList<Value> list) {
         mList               = null;
         mOriginalList       = list;
     }
@@ -250,7 +251,7 @@ public class SetlList extends CollectionValue {
 
     /* calls (element access) */
 
-    public Value call(List<Value> args) throws SetlException {
+    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
         int   aSize  = args.size();
         Value vFirst = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {

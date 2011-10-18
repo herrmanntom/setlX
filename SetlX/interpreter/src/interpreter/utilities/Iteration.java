@@ -1,7 +1,8 @@
-package interpreter.expressions;
+package interpreter.utilities;
 
 import interpreter.boolExpressions.BoolExpr;
 import interpreter.exceptions.SetlException;
+import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
 import interpreter.types.Value;
 import interpreter.utilities.Iterator;

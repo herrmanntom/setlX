@@ -86,6 +86,7 @@ bin/interpreter/boolExpressions/*.class :                    \
 
 bin/interpreter/functions/*.class :                          \
         src/interpreter/functions/*.java                             \
+        src/interpreter/expressions/Expr.java                        \
         src/interpreter/statements/Statement.java                    \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
@@ -94,7 +95,9 @@ bin/interpreter/functions/*.class :                          \
 
 bin/interpreter/utilities/*.class :                          \
         src/interpreter/utilities/*.java                             \
+        src/interpreter/boolExpressions/BoolExpr.java                \
         src/interpreter/expressions/Expr.java                        \
+        src/interpreter/expressions/Variable.java                    \
         src/interpreter/expressions/SetListConstructor.java          \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/functions/MathFunction.java                  \
@@ -104,6 +107,7 @@ bin/interpreter/utilities/*.class :                          \
 
 bin/interpreter/types/*.class :                              \
         src/interpreter/types/*.java                                 \
+        src/interpreter/expressions/Expr.java                        \
         src/interpreter/statements/Statement.java                    \
         src/interpreter/utilities/Environment.java                   \
         src/comparableSet/*.java                                     \

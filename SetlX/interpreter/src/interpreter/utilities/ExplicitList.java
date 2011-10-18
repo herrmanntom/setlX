@@ -1,7 +1,10 @@
-package interpreter.expressions;
+package interpreter.utilities;
 
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
+import interpreter.expressions.SetListConstructor;
+import interpreter.expressions.Variable;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlList;
@@ -75,5 +78,4 @@ public class ExplicitList extends Constructor {
         return r;
     }
 }
-
 

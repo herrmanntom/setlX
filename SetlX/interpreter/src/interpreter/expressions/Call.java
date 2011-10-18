@@ -31,26 +31,18 @@ public class Call extends Expr {
         if (lhs == SetlOm.OM) {
             throw new UnknownFunctionException("Identifier `" + mLhs + "´ is undefined.");
         }
+        // evaluate all arguments
         List<Value> args = new ArrayList<Value>(mArgs.size());
-        if (lhs instanceof PreDefinedFunction && ((PreDefinedFunction) lhs).writeVars()) {
-            for (Expr arg: mArgs) {
-                if (arg instanceof Variable) {
-                    args.add(new SetlString(((Variable) arg).getId()));
-                } else {
-                    throw new IncompatibleTypeException("Only variables are allowed as parameters for get() and read().");
-                }
-            }
-        } else {
-            for (Expr arg: mArgs) {
-                if (arg == CallRangeDummy.CRD) {
-                    args.add(RangeDummy.RD);
-                } else if (arg != null) {
-                    args.add(arg.eval().clone());
-                }
+        for (Expr arg: mArgs) {
+            if (arg == CallRangeDummy.CRD) {
+                args.add(RangeDummy.RD);
+            } else if (arg != null) {
+                args.add(arg.eval().clone());
             }
         }
         try {
-            return lhs.call(args);
+            // but also supply the original expressions, which are needed for 'rw' parameters
+            return lhs.call(mArgs, args);
         } catch (StackOverflowError e) {
             throw new JVMException("Stack overflow.\n"
                                  + "Try preventing recursion and/or execute with larger stack size.\n"

@@ -4,18 +4,20 @@ import interpreter.exceptions.IncorrectNumberOfParametersException;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.statements.Block;
 import interpreter.utilities.Environment;
+import interpreter.utilities.WriteBackAgent;
 
 import java.util.List;
 
 // This class represents a function definition
 public class SetlDefinition extends Value {
-    protected List<String> mParameters;  // parameter list
-    private   Block        mStatements;  // statements in the body of the definition
+    protected List<SetlDefinitionParameter> mParameters;  // parameter list
+    private   Block                         mStatements;  // statements in the body of the definition
 
-    public SetlDefinition(List<String> parameters, Block statements) {
+    public SetlDefinition(List<SetlDefinitionParameter> parameters, Block statements) {
         mParameters = parameters;
         mStatements = statements;
     }
@@ -27,7 +29,7 @@ public class SetlDefinition extends Value {
 
     /* calls (function calls) */
 
-    public Value call(List<Value> args) throws SetlException {
+    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
         if (mParameters.size() != args.size()) {
             throw new IncorrectNumberOfParametersException("Procedure is defined with a different number of parameters.");
         }
@@ -38,8 +40,8 @@ public class SetlDefinition extends Value {
         Environment.setEnv(oldEnv.cloneFunctions());
 
         // put arguments into environment
-        for (int i = 0; i < args.size(); ++i) {
-            Environment.putValue(mParameters.get(i), args.get(i));
+        for (int i = 0; i < mParameters.size(); ++i) {
+            Environment.putValue(mParameters.get(i).getId(), args.get(i));
         }
 
         Value result = SetlOm.OM;
@@ -48,8 +50,28 @@ public class SetlDefinition extends Value {
         } catch (ReturnException re) {
             result = re.getValue();
         }
+
+        // extract 'rw' arguments from environment and store them into WriteBackAgent
+        WriteBackAgent wba = new WriteBackAgent();
+        for (int i = 0; i < mParameters.size(); ++i) {
+            SetlDefinitionParameter param = mParameters.get(i);
+            if (param.getType() == SetlDefinitionParameter.READ_WRITE) {
+                // value of parameter after execution
+                Value postValue = Environment.findValue(param.getId());
+                // expression used to fill parameter before execution
+                Expr  preExpr   = exprs.get(i);
+                /* if possible the WriteBackAgent will set the variable used in this
+                   expression to its postExecution state in the outer environment    */
+                wba.add(preExpr, postValue);
+            }
+        }
+
         // restore old environment
         Environment.setEnv(oldEnv);
+
+        // write values in WriteBackAgent into restored environment
+        wba.writeBack();
+
         return result;
     }
 

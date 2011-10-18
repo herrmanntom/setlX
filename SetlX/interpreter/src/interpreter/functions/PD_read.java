@@ -17,7 +17,6 @@ public class PD_read extends PreDefinedFunction {
 
     private PD_read() {
         super("read");
-        addParameter(new SetlDefinitionParameter("variable", SetlDefinitionParameter.READ_WRITE));
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
@@ -46,13 +45,11 @@ public class PD_read extends PreDefinedFunction {
         } else {
             inputValue = SetlOm.OM;
         }
-        // reading the input value is finished, write it back into the outer env
-        writeBackVars.add(inputValue);
 
         if (Environment.isInteractive()) {
             System.out.println("*/");
         }
 
-        return inputValue.clone();
+        return inputValue;
     }
 }

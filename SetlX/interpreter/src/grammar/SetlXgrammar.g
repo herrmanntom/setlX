@@ -219,7 +219,7 @@ call returns [ Expr c ]
     :
       ID                         { c = new Variable($ID.text);            }
       (
-         '(' callParameters? ')' { c = new Call(c, $callParameters.args); }
+         '(' callParameters ')' { c = new Call(c, $callParameters.args); }
        | '{' expr '}'            { c = new CallCollection(c, $expr.ex);   }
       )*
     ;
@@ -229,17 +229,19 @@ callParameters returns [List<Expr> args]
         args = new LinkedList<Expr>();
     }
     :
-      e1 = expr          { args.add($e1.ex);                               }
       (
+         e1 = expr          { args.add($e1.ex);                               }
          (
-           ',' e2 = expr { args.add($e2.ex);                               }
-         )*
-       | '..'            { args.add(CallRangeDummy.CRD);                   }
-         (
-           sum           { args.add($sum.s);                               }
-         )?
-      )
-    | '..' sum           { args.add(CallRangeDummy.CRD); args.add($sum.s); }
+            (
+              ',' e2 = expr { args.add($e2.ex);                               }
+            )*
+          | '..'            { args.add(CallRangeDummy.CRD);                   }
+            (
+              s1 = sum      { args.add($s1.s);                                }
+            )?
+         )
+       | '..' s2 = sum      { args.add(CallRangeDummy.CRD); args.add($s2.s);  }
+      )?
     ;
 
 definition returns [SetlDefinition dfntn]

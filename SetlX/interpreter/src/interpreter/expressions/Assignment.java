@@ -24,7 +24,7 @@ public class Assignment extends Expr {
     public Value evaluate() throws SetlException {
         Expr  rhs = null;
         Expr  lhs = mLhs.getExpr();
-        if (mType != DIRECT) {
+        if (mType == DIRECT) {
             rhs = mRhs;
         } else if (mType == SUM) {
             rhs = new Sum(lhs, mRhs);

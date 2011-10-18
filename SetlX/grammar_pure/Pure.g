@@ -100,13 +100,15 @@ factor
 // decide at runtime
 call
     :
-      ID ( '(' callParameters? ')' | '{' expr '}' )*
+      ID ( '(' callParameters ')' | '{' expr '}' )*
     ;
 
 callParameters
     :
-      expr ((',' expr)* | '..' sum?)
-    | '..' sum
+      (
+         expr ((',' expr)* | '..' sum?)
+       | '..' sum
+      )?
     ;
 
 definition

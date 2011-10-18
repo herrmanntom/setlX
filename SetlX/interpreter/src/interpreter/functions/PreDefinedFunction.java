@@ -45,7 +45,13 @@ public abstract class PreDefinedFunction extends SetlDefinition {
         if (mParameters.size() != args.size()) {
             // unlimited means: at least the number of defined parameters or more
             if ( ! (mUnlimitedParameters && mParameters.size() < args.size())) {
-                throw new IncorrectNumberOfParametersException("Procedure is defined with a different number of parameters.");
+                String error = "Procedure is defined with a different number of parameters ";
+                error +=       "(" + mParameters.size();
+                if (mUnlimitedParameters) {
+                    error += " or more";
+                }
+                error +=       ").";
+                throw new IncorrectNumberOfParametersException(error);
             }
         }
 
@@ -100,7 +106,7 @@ public abstract class PreDefinedFunction extends SetlDefinition {
             result += "...";
         }
         result += ") {" + endl;
-        result += Environment.getTabs(tabs + 1) + "// predefined procedure `" + mName + "'";
+        result += Environment.getTabs(tabs + 1) + "/* predefined procedure `" + mName + "' */" + endl;
         result += Environment.getTabs(tabs) + "}";
         return result;
     }

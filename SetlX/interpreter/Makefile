@@ -131,5 +131,5 @@ clean:
 
 dist-clean:                                                  \
         clean
-	rm -f  SetlX.jar
+	rm -f  setlX.jar
 

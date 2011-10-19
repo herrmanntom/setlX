@@ -20,14 +20,34 @@ else
 fi
 
 # get version from executable (jar)
-version=$(java -jar setlX.jar --version | tr "." "-")
+version=$(java -jar setlX.jar --version)
+versionForFileNames=$(echo $version | tr "." "-")
 
+# goto documentation source
+cd ../documentation
+
+# clean the documentation source
+make -s dist-clean
+
+# set version for documentation
+echo "$version" > version.tex
+
+# make documentation
+make
+
+# move the finished PDFs where they belong
+mv *.pdf ../.
+
+# clean the documentation source (again)
+make -s dist-clean
+
+# go to project root
 cd ..
 
 # create distribution names
-binOnly="SetlX_v$version.binary_only"
-source="SetlX_v$version.source"
-devel="SetlX_v$version.devel"
+binOnly="SetlX_v$versionForFileNames.binary_only"
+source="SetlX_v$versionForFileNames.source"
+devel="SetlX_v$versionForFileNames.devel"
 
 # remove distribution zips if present
 rm -f "$binOnly.zip"
@@ -36,7 +56,7 @@ rm -f "$devel.zip"
 
 # create binary only zip
 echo -n "Creating binary only distribution ... "
-zip -q "$binOnly.zip" Readme* interpreter/setlX interpreter/setlX.jar  interpreter/win-setlX.cmd
+zip -q "$binOnly.zip" manual.pdf interpreter/setlX interpreter/setlX.jar  interpreter/win-setlX.cmd
 echo "done"
 
 # remove the jar
@@ -44,7 +64,7 @@ cd interpreter;make -s dist-clean;cd ..
 
 # create source zip
 echo -n "Creating source distribution ... "
-zip -qr "$source.zip" Readme* interpreter
+zip -qr "$source.zip" manual.pdf interpreter
 echo "done"
 
 # create development zip

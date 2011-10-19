@@ -1,0 +1,155 @@
+\def\myDocumentTypeArticle{-}
+\InputIfFileExists{\jobname_header}{}{\input{config/header_V001}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% document specific %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% define the author, title etc
+\globalTitle{Interpreter Manual}
+\globalSubject{setlX \input{version}}
+\globalAuthor{Herrmann, Tom}
+\globalDate{\today}
+\globalKeywords{readme}
+
+% frequently used configuration options
+\setboolean{linkHighlighting}{true}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\InputIfFileExists{\jobname_configuration}{}{\input{config/configuration_V001}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% document text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+\begin{titlepage}
+\maketitle
+\vfill
+\tableofcontents
+\end{titlepage}
+
+\section{Overview}
+
+This is the manual of \textbf{setlX}, an interpreter for the \textbf{SetlX} programming-language.
+
+\section{Usage}
+    If file paths are supplied as parameters for this program, then they will be
+    parsed and executed.
+
+    The interactive mode will be started if called without any file parameters.
+    Note that input will be executed after entering a empty line.
+    The 'exit;' statement will terminate the interpreter.
+
+\nonSubsection{Additional parameters}
+        --help
+            displays some helpful information
+        --predictableRandom
+            always returns the same pseudo random sequence of numbers from the
+            internal random number generator (for debugging)
+        --real32
+        --real64
+        --real128
+        --real256
+            sets the width of the real-type in bits (64 is the sane default)
+        --verbose
+            display the parsed program before executing it
+            (has no effect in interactive mode)
+        --version
+            displays the interpreter version and terminates
+
+\section{System Requirements}
+    - To execute this program the Java JRE Version 1.5 (aka `JRE 5') or higher
+      must be installed.
+    - To build the interpreter from source the corresponding Java JDK has to be
+      present as well.
+
+\section{Build \& Launching}
+
+\subsection{Unix-like OS}
+    The interpreter will try to automatically build a self-contained `.jar' file
+    on first launch (if no manually build version is already present).
+
+    The program can be launched by changing into the `interpreter' sub-directory
+
+        cd interpreter
+
+    and executing a SetlX program
+
+        ./setlX <path>/<name>.stlx
+
+    or launching the interactive mode
+
+        ./setlX
+
+
+    Optionally the interpreter can be intelligently (re)build by executing
+
+        make
+
+    and/or
+
+        make jar
+
+    The later will create a self-contained `.jar' file. This file can be
+    launched on all Java-Platforms without additional scripts, jars or
+    environment-variables by executing
+
+        java -jar setlX.jar <path>/<name>.stlx
+
+    or
+
+        java -jar setlX.jar
+
+
+    Some additional make targets are also available:
+
+        make interactive
+
+    will build a current version from source and execute the interactive mode;
+
+        make test
+
+    will build a current version from source and execute a small set of tests;
+
+        make clean
+
+    will delete all created binary files, except the `.jar' file;
+
+        make dist-clean
+
+    will delete all created files.
+
+\subsection{Microsoft Windows}
+    The interpreter will try to automatically build a self-contained '.jar' file
+    on first launch.
+
+    It can be launched by changing into the 'interpreter' sub-directory
+
+        cd interpreter
+
+    and executing a SetlX program
+
+        win-setlX.cmd <path>\\<name>.stlx
+
+    or launching the interactive mode
+
+        win-setlX.cmd
+
+
+\section{Limitations}
+ (compared to other Setl versions)
+    - all variables and functions are 'case sensitive'
+        predefined functions and keywords use camel case and begin with a lower case letter
+    - most explicit type conversions are unsupported
+    - ignoring positions in list assignments is not possible
+        example: [x,-,y] := [1,2,3]; where '2' would not be assigned to anything
+    - explicit constants ('const') are unsupported
+    - object oriented functions are not supported
+
+\section{Disclaimer}
+    This program uses the antlr parser generator in version 3.3.
+    As per the license in antlr/antlr\_LICENSE.txt, antlr is not guaranteed to
+    work and might even destroy all life on this planet.
+
+
+\end{document}

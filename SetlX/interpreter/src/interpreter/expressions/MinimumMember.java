@@ -24,8 +24,8 @@ public class MinimumMember extends Expr {
         }
     }
 
-    public String toString() {
-        return ((mLhs != null)? mLhs + " ":"") + "min/" + mRhs;
+    public String toString(int tabs) {
+        return ((mLhs != null)? mLhs.toString(tabs) + " ":"") + "min/" + mRhs.toString(tabs);
     }
 }
 

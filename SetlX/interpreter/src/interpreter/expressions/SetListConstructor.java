@@ -63,7 +63,7 @@ public class SetListConstructor extends Expr {
         }
     }
 
-    public String toString() {
+    public String toString(int tabs) {
         String r;
         if (mType == SET) {
             r = "{";
@@ -73,7 +73,7 @@ public class SetListConstructor extends Expr {
             r = "";
         }
         if (mConstructor != null) {
-            r += mConstructor;
+            r += mConstructor.toString(tabs);
         }
         if (mType == SET) {
             r += "}";

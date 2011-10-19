@@ -7,7 +7,7 @@ import interpreter.types.Value;
 public abstract class Constructor {
     public abstract void        fillCollection(CollectionValue collection) throws SetlException;
 
-    public abstract String      toString();
+    public abstract String      toString(int tabs);
 }
 
 

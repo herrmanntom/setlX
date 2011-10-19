@@ -25,7 +25,7 @@ public class Variable extends Expr {
         }
     }
 
-    public String toString() {
+    public String toString(int tabs) {
         return this.getId();
     }
 }

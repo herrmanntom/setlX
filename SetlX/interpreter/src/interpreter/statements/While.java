@@ -28,9 +28,9 @@ public class While extends Statement {
     }
     public String toString(int tabs) {
         String result = Environment.getTabs(tabs);
-        result += "while (" + mCondition + ") {" + Environment.getEndl();
-        result += mStatements.toString(tabs + 1);
-        result += Environment.getTabs(tabs) + "}";
+        result += "while (" + mCondition + ") ";
+        result += mStatements.toString(tabs, true);
         return result;
     }
 }
+

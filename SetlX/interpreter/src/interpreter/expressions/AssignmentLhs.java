@@ -59,18 +59,18 @@ public class AssignmentLhs {
         return v.clone();
     }
 
-    public String toString() {
+    public String toString(int tabs) {
         String r = "";
         if (mLhs != null) {
-            r = mLhs.toString();
+            r = mLhs;
         }
         if (mItems != null && mItems.size() > 0) {
             for (Expr e: mItems) {
-                r += "(" + e + ")";
+                r += "(" + e.toString(tabs) + ")";
             }
         }
         if (mLc != null) {
-            r = mLc.toString();
+            r = mLc.toString(tabs);
         }
         return r;
     }
@@ -106,3 +106,4 @@ public class AssignmentLhs {
         }
     }
 }
+

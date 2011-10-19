@@ -17,8 +17,8 @@ public class Minimum extends Expr {
         return mLhs.eval().minimum(mRhs.eval());
     }
 
-    public String toString() {
-        return mLhs + " min " + mRhs;
+    public String toString(int tabs) {
+        return mLhs.toString(tabs) + " min " + mRhs.toString(tabs);
     }
 }
 

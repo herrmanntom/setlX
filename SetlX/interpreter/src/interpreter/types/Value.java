@@ -221,8 +221,10 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public String toString(int tabs) {
-        return Environment.getTabs(tabs) + toString();
+        return toString();
     }
+
+    public abstract String toString();
 
     public String toStringForPrint() {
         return toString();

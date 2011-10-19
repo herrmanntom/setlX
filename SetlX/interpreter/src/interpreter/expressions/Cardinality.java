@@ -14,8 +14,8 @@ public class Cardinality extends Expr {
         return mExpr.eval().cardinality();
     }
 
-    public String toString() {
-        return "#" + mExpr;
+    public String toString(int tabs) {
+        return "#" + mExpr.toString(tabs);
     }
 }
 

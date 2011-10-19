@@ -29,9 +29,9 @@ public class CallCollection extends Expr {
         return lhs.callCollection(mArg.eval().clone());
     }
 
-    public String toString() {
-        String result = mLhs + "{";
-        result += mArg;
+    public String toString(int tabs) {
+        String result = mLhs.toString(tabs) + "{";
+        result += mArg.toString(tabs);
         result += "}";
         return result;
     }

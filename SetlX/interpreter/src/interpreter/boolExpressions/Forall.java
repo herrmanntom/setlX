@@ -51,7 +51,8 @@ public class Forall extends Expr {
         return e.mResult;
     }
 
-    public String toString() {
-        return "forall (" + mIterator + " | " + mBoolExpr + ")";
+    public String toString(int tabs) {
+        return "forall (" + mIterator.toString(tabs) + " | " + mBoolExpr.toString(tabs) + ")";
     }
 }
+

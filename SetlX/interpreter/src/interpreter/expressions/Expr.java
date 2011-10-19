@@ -19,11 +19,10 @@ public abstract class Expr {
 
     public abstract Value evaluate() throws SetlException;
 
-    public String toString(int tabs) {
-        return Environment.getTabs(tabs) + toString();
+    public abstract String toString(int tabs);
+
+    public final String toString() {
+        return toString(0);
     }
-
-    public abstract String toString();
 }
-
 

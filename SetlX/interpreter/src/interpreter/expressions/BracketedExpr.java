@@ -14,8 +14,8 @@ public class BracketedExpr extends Expr {
         return mExpr.eval();
     }
 
-    public String toString() {
-        return "(" + mExpr + ")";
+    public String toString(int tabs) {
+        return "(" + mExpr.toString(tabs) + ")";
     }
 }
 

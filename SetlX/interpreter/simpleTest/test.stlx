@@ -161,7 +161,7 @@ forallTests := procedure() {
 	a := b := c := d := "test";
 	e := forall(a in [1 .. 5], b in [1 .. 5] | (a * b) < 16);
 	f := forall(c in [1 .. 5], d in [1 .. 5] | c * d <= 25);
-	if (a == "test" && b == "test" && c == "test" && d == "test" && e == false && f == true) {
+	if (a == 4 && b == 4 && c == "test" && d == "test" && e == false && f == true) {
 		print("test 12 successful (forall)");
 	} else {
 		print("test 12 failed (forall)");
@@ -172,7 +172,7 @@ existsTests := procedure() {
 	a := b := c := d := "test";
 	e := exists(a in [1 .. 5], b in [1 .. 5] | a * b >= 16);
 	f := exists(c in [1 .. 5], d in [1 .. 5] | c * d > 25);
-	if (a == 4 && b == 4 && c == 5 && d == 5 && e == true && f == false) {
+	if (a == 4 && b == 4 && c == "test" && d == "test" && e == true && f == false) {
 		print("test 13 successful (exists)");
 	} else {
 		print("test 13 failed (exists)");

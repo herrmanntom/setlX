@@ -17,13 +17,16 @@ public class Call extends Expr {
     private Expr       mLhs;       // left hand side (function name, other call, variable, etc)
     private List<Expr> mArgs;      // list of arguments
     private boolean    isRange;    // true if mArgs contains 'CallRangeDummy.CRD', which represents '..'
-    private String     _this;      // pre-computed toString() which has less stack penalty in case of stack overflow error...
+    private String[]   _this;      // pre-computed toString() with various tab-sizes which has less stack penalty in case of stack overflow error...
 
     public Call(Expr lhs, List<Expr> args) {
         mLhs              = lhs;
         mArgs             = args;
         isRange           = mArgs.contains(CallRangeDummy.CRD);
-        _this             = _toString();
+        _this             = new String[4];
+        for (int i = 0; i < _this.length; ++i) {
+            _this[i] = _toString(i);
+        }
     }
 
     public Value evaluate() throws SetlException {
@@ -50,17 +53,21 @@ public class Call extends Expr {
         }
     }
 
-    public String toString() {
-        return _this;
+    public String toString(int tabs) {
+        if (tabs < _this.length) {
+            return _this[tabs];
+        } else {
+            return _toString(tabs);
+        }
     }
 
-    public String _toString() {
-        String result = mLhs + "(";
+    public String _toString(int tabs) {
+        String result = mLhs.toString(tabs) + "(";
         for (int i = 0; i < mArgs.size(); ++i) {
             if (i > 0 && !isRange) {
                 result += ", ";
             }
-            result += mArgs.get(i);
+            result += mArgs.get(i).toString(tabs);
         }
         result += ")";
         return result;

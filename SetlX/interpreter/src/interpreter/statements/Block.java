@@ -30,12 +30,12 @@ public class Block extends Statement {
     public String toString(int tabs, boolean brackets) {
         String endl      = Environment.getEndl();
         int    stmntTabs = tabs;
-        if ( ! brackets) {
+        if (brackets) {
             stmntTabs += 1;
         }
         String result = "";
         if (brackets) {
-            result += "{";
+            result += "{" + endl;
         }
         int count = 1;
         for (Statement stmnt: mStatements) {

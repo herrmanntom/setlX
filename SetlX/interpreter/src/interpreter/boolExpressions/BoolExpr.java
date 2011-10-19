@@ -30,7 +30,8 @@ public class BoolExpr extends Expr {
         return (this.eval() == SetlBoolean.TRUE);
     }
 
-    public String toString() {
-        return mExpr.toString();
+    public String toString(int tabs) {
+        return mExpr.toString(tabs);
     }
 }
+

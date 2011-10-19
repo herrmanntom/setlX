@@ -48,19 +48,18 @@ public class Iteration extends Constructor {
         mIterator.eval(e);
     }
 
-    public String toString() {
+    public String toString(int tabs) {
         String r;
         if (mExpr != null) {
-            r = mExpr + ": ";
+            r = mExpr.toString(tabs) + ": ";
         } else {
             r = "";
         }
-        r += mIterator;
+        r += mIterator.toString(tabs);
         if (mBoolExpr != null) {
-            r += " | " + mBoolExpr;
+            r += " | " + mBoolExpr.toString(tabs);
         }
         return r;
     }
-
 }
 

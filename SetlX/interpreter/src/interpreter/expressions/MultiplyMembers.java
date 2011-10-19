@@ -24,7 +24,8 @@ public class MultiplyMembers extends Expr {
         }
     }
 
-    public String toString() {
-        return ((mLhs != null)? mLhs + " ":"") + "*/" + mRhs;
+    public String toString(int tabs) {
+        return ((mLhs != null)? mLhs.toString(tabs) + " ":"") + "*/" + mRhs.toString(tabs);
     }
 }
+

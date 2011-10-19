@@ -35,9 +35,9 @@ public class For extends Statement {
 
     public String toString(int tabs) {
         String result = Environment.getTabs(tabs);
-        result += "for (" + mIterator + ") {" + Environment.getEndl();
-        result += mStatements.toString(tabs + 1);
-        result += Environment.getTabs(tabs) + "}";
+        result += "for (" + mIterator.toString(tabs) + ") ";
+        result += mStatements.toString(tabs, true);
         return result;
     }
 }
+

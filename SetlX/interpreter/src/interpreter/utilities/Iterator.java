@@ -68,18 +68,22 @@ public class Iterator {
         }
     }
 
-    public String toString() {
+    public String toString(int tabs) {
         String r = "";
         if (mId != null) {
             r = mId;
         } else if (mListConstructor != null) {
-            r = mListConstructor.toString();
+            r = mListConstructor.toString(tabs);
         }
-        r += " in " + mExpr;
+        r += " in " + mExpr.toString(tabs);
         if (mNext != null) {
-            r += ", " + mNext;
+            r += ", " + mNext.toString(tabs);
         }
         return r;
+    }
+
+    public String toString() {
+        return toString(0);
     }
 
     private void evaluate(IteratorExecutionContainer exec) throws SetlException {
@@ -137,5 +141,4 @@ public class Iterator {
         return new IncompatibleTypeException("Members of `" + v + "´ are unusable for list extraction.");
     }
 }
-
 

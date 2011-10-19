@@ -67,13 +67,13 @@ public class ExplicitList extends Constructor {
         return mList.size();
     }
 
-    public String toString() {
+    public String toString(int tabs) {
         String r = "";
         for (Expr e: mList) {
             if (!r.equals("")) {
                 r += ", ";
             }
-            r += e;
+            r += e.toString(tabs);
         }
         return r;
     }

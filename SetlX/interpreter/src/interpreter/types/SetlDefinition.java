@@ -84,7 +84,7 @@ public class SetlDefinition extends Value {
             }
             result += mParameters.get(i);
         }
-        result += ")";
+        result += ") ";
         result += mStatements.toString(tabs, true);
         return result;
     }

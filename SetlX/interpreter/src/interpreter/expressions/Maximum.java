@@ -17,8 +17,8 @@ public class Maximum extends Expr {
         return mLhs.eval().maximum(mRhs.eval());
     }
 
-    public String toString() {
-        return mLhs + " max " + mRhs;
+    public String toString(int tabs) {
+        return mLhs.toString(tabs) + " max " + mRhs.toString(tabs);
     }
 }
 

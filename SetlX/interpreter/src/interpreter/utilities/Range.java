@@ -72,12 +72,12 @@ public class Range extends Constructor {
         }
     }
 
-    public String toString() {
-        String r = mStart.toString();
+    public String toString(int tabs) {
+        String r = mStart.toString(tabs);
         if (mSecond != null) {
-            r += ", " + mSecond;
+            r += ", " + mSecond.toString(tabs);
         }
-        return r + " .. " + mStop;
+        return r + " .. " + mStop.toString(tabs);
     }
 }
 

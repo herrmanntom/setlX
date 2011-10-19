@@ -20,6 +20,6 @@ public class ExpressionStatement extends Statement {
     }
 
     public String toString(int tabs) {
-        return Environment.getTabs(tabs) + mExpr + ";";
+        return Environment.getTabs(tabs) + mExpr.toString(tabs) + ";";
     }
 }

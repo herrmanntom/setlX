@@ -14,8 +14,8 @@ public class Negative extends Expr {
         return mExpr.eval().negate();
     }
 
-    public String toString() {
-        return "-" + mExpr;
+    public String toString(int tabs) {
+        return "-" + mExpr.toString(tabs);
     }
 }
 

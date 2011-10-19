@@ -17,8 +17,8 @@ public class ValueExpr extends Expr {
         return eval();
     }
 
-    public String toString() {
-        return mValue.toString();
+    public String toString(int tabs) {
+        return mValue.toString(tabs);
     }
 }
 

@@ -51,8 +51,8 @@ public class Comparison extends Expr {
         }
     }
 
-    public String toString() {
-        String result   = mLhs + " ";
+    public String toString(int tabs) {
+        String result   = mLhs.toString(tabs) + " ";
         switch (mType) {
             case IN:
                 result += "in";
@@ -61,7 +61,7 @@ public class Comparison extends Expr {
                 result += "notin";
                 break;
             case EQUAL:
-                result += "=";
+                result += "==";
                 break;
             case UNEQUAL:
                 result += "!=";
@@ -82,6 +82,7 @@ public class Comparison extends Expr {
                 result += "??";
                 break;
         }
-        return result + " " + mRhs;
+        return result + " " + mRhs.toString(tabs);
     }
 }
+

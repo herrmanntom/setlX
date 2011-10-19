@@ -258,7 +258,7 @@ definitionParameters returns [List<SetlDefinitionParameter> paramList]
       (
         dp1 = definitionParameter        { paramList.add($dp1.param); }
         (
-          ',' dp2 = definitionParameter  { paramList.add($dp1.param); }
+          ',' dp2 = definitionParameter  { paramList.add($dp2.param); }
         )*
       )?
     ;

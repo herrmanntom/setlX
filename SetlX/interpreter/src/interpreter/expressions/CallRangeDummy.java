@@ -13,7 +13,7 @@ public class CallRangeDummy extends Expr {
         throw new UndefinedOperationException("dummy called");
     }
 
-    public String toString() {
+    public String toString(int tabs) {
         return "..";
     }
 }

@@ -16,7 +16,7 @@ public class Product extends Expr {
         return mLhs.eval().multiply(mRhs.eval());
     }
 
-    public String toString() {
-        return mLhs + " * " + mRhs;
+    public String toString(int tabs) {
+        return mLhs.toString(tabs) + " * " + mRhs.toString(tabs);
     }
 }

@@ -40,8 +40,8 @@ public class Assignment extends Expr {
         return mLhs.setValue(rhs.eval());
     }
 
-    public String toString() {
-        String result   = mLhs + " ";
+    public String toString(int tabs) {
+        String result   = mLhs.toString(tabs) + " ";
         switch (mType) {
             case DIRECT:
                 result += ":=";
@@ -62,6 +62,7 @@ public class Assignment extends Expr {
                 result += "??";
                 break;
         }
-        return result + " " + mRhs;
+        return result + " " + mRhs.toString(tabs);
     }
 }
+

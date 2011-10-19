@@ -51,7 +51,8 @@ public class Exists extends Expr {
         return e.mResult;
     }
 
-    public String toString() {
-        return "exists (" + mIterator + " | " + mBoolExpr +")";
+    public String toString(int tabs) {
+        return "exists (" + mIterator.toString(tabs) + " | " + mBoolExpr.toString(tabs) +")";
     }
 }
+

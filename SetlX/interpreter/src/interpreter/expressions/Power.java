@@ -16,8 +16,8 @@ public class Power extends Expr {
         return mLhs.eval().power(mRhs.eval());
     }
 
-    public String toString() {
-        return mLhs + " ** " + mRhs;
+    public String toString(int tabs) {
+        return mLhs.toString(tabs) + " ** " + mRhs.toString(tabs);
     }
 }
 

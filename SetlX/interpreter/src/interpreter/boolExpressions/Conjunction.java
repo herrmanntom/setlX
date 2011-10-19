@@ -20,7 +20,8 @@ public class Conjunction extends Expr {
         return SetlBoolean.FALSE;
     }
 
-    public String toString() {
-        return mLhs + " && " + mRhs;
+    public String toString(int tabs) {
+        return mLhs.toString(tabs) + " && " + mRhs.toString(tabs);
     }
 }
+

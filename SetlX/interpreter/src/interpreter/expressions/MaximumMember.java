@@ -22,8 +22,8 @@ public class MaximumMember extends Expr {
         }
     }
 
-    public String toString() {
-        return ((mLhs != null)? mLhs + " ":"") + "max/" + mRhs;
+    public String toString(int tabs) {
+        return ((mLhs != null)? mLhs.toString(tabs) + " ":"") + "max/" + mRhs.toString(tabs);
     }
 }
 

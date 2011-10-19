@@ -17,9 +17,8 @@ IF NOT EXIST setlX.jar (
         javac -d bin -sourcepath src src\interpreter\boolExpressions\*.java
         javac -d bin -sourcepath src src\interpreter\expressions\*.java
         javac -d bin -sourcepath src src\interpreter\statements\*.java
-        javac -d bin -sourcepath src src\interpreter\*.java
-        java  -cp antlr\antlr-*.jar org.antlr.Tool -fo src\grammar src\grammar\SetlX.g
-        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\grammar\SetlX*.java
+        java  -cp antlr\antlr-*.jar org.antlr.Tool -fo src\grammar src\grammar\SetlXgrammar.g
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\grammar\SetlXgrammar*.java
         javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\SetlX.java
         cd bin
         jar xf ..\antlr\antlr-*.jar org/antlr/runtime

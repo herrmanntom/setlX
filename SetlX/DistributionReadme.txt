@@ -1,4 +1,4 @@
-DISTRIBUTION-README - SetlX Interpreter                                  v0.0.1
+DISTRIBUTION-README - SetlX Interpreter                                  v0.1.0
 ================================================================================
 
 Three different 'distributions' can be automatically created:

@@ -278,8 +278,8 @@ public class SetlSet extends CollectionValue {
     }
 
     // this call returns a set, not a single value
-    public Value callCollection(List<Value> args, boolean returnCollection) throws SetlException {
-        return collectMembers(args.get(0));
+    public Value callCollection(Value arg) throws SetlException {
+        return collectMembers(arg);
     }
 
     public String toString() {

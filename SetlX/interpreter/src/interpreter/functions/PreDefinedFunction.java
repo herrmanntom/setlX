@@ -17,11 +17,13 @@ public abstract class PreDefinedFunction extends SetlDefinition {
 
     private String  mName;
     private boolean mUnlimitedParameters;
+    private boolean mAllowFewerParameters;
 
     protected PreDefinedFunction(String name) {
         super(new LinkedList<SetlDefinitionParameter>(), new Block());
-        mName                = name;
-        mUnlimitedParameters = false;
+        mName                 = name;
+        mUnlimitedParameters  = false;
+        mAllowFewerParameters = false;
     }
 
     public final String getName() {
@@ -38,17 +40,37 @@ public abstract class PreDefinedFunction extends SetlDefinition {
         mUnlimitedParameters = true;
     }
 
+    // allow an calling with fewer number of parameters then specified
+    protected void allowFewerParameters() {
+        mAllowFewerParameters = true;
+    }
+
     // this call is to be implemented by all predefined functions
     public abstract Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException;
 
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        if (mParameters.size() != args.size()) {
-            // unlimited means: at least the number of defined parameters or more
-            if ( ! (mUnlimitedParameters && mParameters.size() < args.size())) {
-                String error = "Procedure is defined with a different number of parameters ";
+        if (mParameters.size() < args.size()) {
+            if (mUnlimitedParameters) {
+                // unlimited means: at least the number of defined parameters or more
+                // no error
+            } else {
+                String error = "Procedure is defined with a fewer number of parameters ";
+                error +=       "(" + mParameters.size();
+                if (mAllowFewerParameters) {
+                    error +=   " or less";
+                }
+                error +=       ").";
+                throw new IncorrectNumberOfParametersException(error);
+            }
+        } else if (mParameters.size() > args.size()) {
+            if (mAllowFewerParameters) {
+                // fewer parameters are allowed
+                // no error
+            } else {
+                String error = "Procedure is defined with a larger number of parameters ";
                 error +=       "(" + mParameters.size();
                 if (mUnlimitedParameters) {
-                    error += " or more";
+                    error +=   " or more";
                 }
                 error +=       ").";
                 throw new IncorrectNumberOfParametersException(error);

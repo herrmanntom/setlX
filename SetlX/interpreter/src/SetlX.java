@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String VERSION         = "0.0.1";
+    private final static String VERSION         = "0.1.0";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "=====================================SetlX======================================";
 

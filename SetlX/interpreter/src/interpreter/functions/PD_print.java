@@ -15,6 +15,7 @@ public class PD_print extends PreDefinedFunction {
         super("print");
         addParameter(new SetlDefinitionParameter("firstValue"));
         enableUnlimitedParameters();
+        allowFewerParameters();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
@@ -31,3 +32,4 @@ public class PD_print extends PreDefinedFunction {
         return SetlOm.OM;
     }
 }
+

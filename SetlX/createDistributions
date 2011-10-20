@@ -56,7 +56,7 @@ rm -f "$devel.zip"
 
 # create binary only zip
 echo -n "Creating binary only distribution ... "
-zip -q "$binOnly.zip" manual.pdf interpreter/setlX interpreter/setlX.jar  interpreter/win-setlX.cmd
+zip -q "$binOnly.zip" manual.pdf interpreter/antlr/antlr_LICENSE.txt interpreter/setlX interpreter/setlX.jar interpreter/win-setlX.cmd
 echo "done"
 
 # remove the jar

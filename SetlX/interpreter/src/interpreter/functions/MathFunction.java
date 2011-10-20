@@ -5,9 +5,9 @@ import interpreter.exceptions.JVMException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.NumberValue;
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlReal;
 import interpreter.types.Value;
+import interpreter.utilities.ParameterDef;
 
 import java.lang.reflect.Method;
 import java.util.List;
@@ -17,7 +17,7 @@ public class MathFunction extends PreDefinedFunction {
 
     public MathFunction(String name, Method function) {
         super(name);
-        addParameter(new SetlDefinitionParameter("x"));
+        addParameter(new ParameterDef("x"));
         mFunction = function;
     }
 

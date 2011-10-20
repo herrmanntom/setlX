@@ -1,9 +1,9 @@
 package interpreter.functions;
 
 import interpreter.exceptions.AbortException;
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
+import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class PD_abort extends PreDefinedFunction {
 
     private PD_abort() {
         super("abort");
-        addParameter(new SetlDefinitionParameter("firstMessage"));
+        addParameter(new ParameterDef("firstMessage"));
         enableUnlimitedParameters();
     }
 
@@ -29,3 +29,4 @@ public class PD_abort extends PreDefinedFunction {
         throw new AbortException("abort: " + msg);
     }
 }
+

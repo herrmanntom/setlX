@@ -1,6 +1,5 @@
 package interpreter.functions;
 
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlString;
@@ -53,3 +52,4 @@ public class PD_read extends PreDefinedFunction {
         return inputValue;
     }
 }
+

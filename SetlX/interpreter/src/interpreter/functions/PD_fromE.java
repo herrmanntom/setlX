@@ -1,9 +1,9 @@
 package interpreter.functions;
 
 import interpreter.exceptions.SetlException;
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlOm;
 import interpreter.types.Value;
+import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class PD_fromE extends PreDefinedFunction {
 
     private PD_fromE() {
         super("fromE");
-        addParameter(new SetlDefinitionParameter("compoundValue", SetlDefinitionParameter.READ_WRITE));
+        addParameter(new ParameterDef("compoundValue", ParameterDef.READ_WRITE));
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
@@ -28,3 +28,4 @@ public class PD_fromE extends PreDefinedFunction {
         return element;
     }
 }
+

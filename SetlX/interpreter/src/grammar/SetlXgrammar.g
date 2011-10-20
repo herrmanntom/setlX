@@ -250,9 +250,9 @@ definition returns [SetlDefinition dfntn]
       { dfntn = new SetlDefinition($definitionParameters.paramList, $block.blk); }
     ;
 
-definitionParameters returns [List<SetlDefinitionParameter> paramList]
+definitionParameters returns [List<ParameterDef> paramList]
     @init {
-        paramList = new LinkedList<SetlDefinitionParameter>();
+        paramList = new LinkedList<ParameterDef>();
     }
     :
       (
@@ -263,10 +263,10 @@ definitionParameters returns [List<SetlDefinitionParameter> paramList]
       )?
     ;
 
-definitionParameter returns [SetlDefinitionParameter param]
+definitionParameter returns [ParameterDef param]
     :
-      'rw' ID       { param = new SetlDefinitionParameter($ID.text, SetlDefinitionParameter.READ_WRITE); }
-    | ID            { param = new SetlDefinitionParameter($ID.text, SetlDefinitionParameter.READ_ONLY);  }
+      'rw' ID       { param = new ParameterDef($ID.text, ParameterDef.READ_WRITE); }
+    | ID            { param = new ParameterDef($ID.text, ParameterDef.READ_ONLY);  }
     ;
 
 list returns [SetListConstructor lc]

@@ -5,9 +5,9 @@ import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.statements.Block;
 import interpreter.types.SetlDefinition;
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.ParameterDef;
 import interpreter.utilities.WriteBackAgent;
 
 import java.util.LinkedList;
@@ -20,7 +20,7 @@ public abstract class PreDefinedFunction extends SetlDefinition {
     private boolean mAllowFewerParameters;
 
     protected PreDefinedFunction(String name) {
-        super(new LinkedList<SetlDefinitionParameter>(), new Block());
+        super(new LinkedList<ParameterDef>(), new Block());
         mName                 = name;
         mUnlimitedParameters  = false;
         mAllowFewerParameters = false;
@@ -31,7 +31,7 @@ public abstract class PreDefinedFunction extends SetlDefinition {
     }
 
     // add parameters to own definition (especially needed for 'rw' variables)
-    protected void addParameter(SetlDefinitionParameter param) {
+    protected void addParameter(ParameterDef param) {
         mParameters.add(param);
     }
 
@@ -91,8 +91,8 @@ public abstract class PreDefinedFunction extends SetlDefinition {
         // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
         WriteBackAgent    wba           = new WriteBackAgent();
         for (int i = 0; i < mParameters.size(); ++i) {
-            SetlDefinitionParameter param = mParameters.get(i);
-            if (param.getType() == SetlDefinitionParameter.READ_WRITE && writeBackVars.size() > 0) {
+            ParameterDef param = mParameters.get(i);
+            if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
                 // value of parameter after execution
                 Value postValue = writeBackVars.removeFirst();
                 // expression used to fill parameter before execution

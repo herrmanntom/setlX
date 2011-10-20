@@ -1,8 +1,8 @@
 package interpreter.functions;
 
 import interpreter.exceptions.SetlException;
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.Value;
+import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -11,10 +11,11 @@ public class PD_abs extends PreDefinedFunction {
 
     private PD_abs() {
         super("abs");
-        addParameter(new SetlDefinitionParameter("value"));
+        addParameter(new ParameterDef("value"));
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
         return args.get(0).absoluteValue();
     }
 }
+

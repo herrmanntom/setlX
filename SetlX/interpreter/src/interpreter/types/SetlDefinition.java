@@ -8,16 +8,17 @@ import interpreter.expressions.Expr;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.statements.Block;
 import interpreter.utilities.Environment;
+import interpreter.utilities.ParameterDef;
 import interpreter.utilities.WriteBackAgent;
 
 import java.util.List;
 
 // This class represents a function definition
 public class SetlDefinition extends Value {
-    protected List<SetlDefinitionParameter> mParameters;  // parameter list
-    private   Block                         mStatements;  // statements in the body of the definition
+    protected List<ParameterDef> mParameters;  // parameter list
+    private   Block              mStatements;  // statements in the body of the definition
 
-    public SetlDefinition(List<SetlDefinitionParameter> parameters, Block statements) {
+    public SetlDefinition(List<ParameterDef> parameters, Block statements) {
         mParameters = parameters;
         mStatements = statements;
     }
@@ -55,8 +56,8 @@ public class SetlDefinition extends Value {
         // extract 'rw' arguments from environment and store them into WriteBackAgent
         WriteBackAgent wba = new WriteBackAgent();
         for (int i = 0; i < mParameters.size(); ++i) {
-            SetlDefinitionParameter param = mParameters.get(i);
-            if (param.getType() == SetlDefinitionParameter.READ_WRITE) {
+            ParameterDef param = mParameters.get(i);
+            if (param.getType() == ParameterDef.READ_WRITE) {
                 // value of parameter after execution
                 Value postValue = Environment.findValue(param.getId());
                 // expression used to fill parameter before execution

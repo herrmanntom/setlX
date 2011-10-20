@@ -1,10 +1,10 @@
 package interpreter.functions;
 
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlOm;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class PD_print extends PreDefinedFunction {
 
     private PD_print() {
         super("print");
-        addParameter(new SetlDefinitionParameter("firstValue"));
+        addParameter(new ParameterDef("firstValue"));
         enableUnlimitedParameters();
         allowFewerParameters();
     }

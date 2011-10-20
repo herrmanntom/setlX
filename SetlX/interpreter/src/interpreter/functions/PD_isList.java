@@ -1,9 +1,9 @@
 package interpreter.functions;
 
 import interpreter.types.SetlBoolean;
-import interpreter.types.SetlDefinitionParameter;
 import interpreter.types.SetlList;
 import interpreter.types.Value;
+import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public class PD_isList extends PreDefinedFunction {
 
     private PD_isList() {
         super("isList");
-        addParameter(new SetlDefinitionParameter("value"));
+        addParameter(new ParameterDef("value"));
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
@@ -23,3 +23,4 @@ public class PD_isList extends PreDefinedFunction {
         }
     }
 }
+

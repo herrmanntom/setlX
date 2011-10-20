@@ -110,6 +110,8 @@ bin/interpreter/types/*.class :                              \
         src/interpreter/expressions/Expr.java                        \
         src/interpreter/statements/Statement.java                    \
         src/interpreter/utilities/Environment.java                   \
+        src/interpreter/utilities/ParameterDef.java                  \
+        src/interpreter/utilities/WriteBackAgent.java                \
         src/comparableSet/*.java                                     \
         src/interpreter/exceptions/*.java
 	javac -d bin -sourcepath src src/interpreter/types/*.java

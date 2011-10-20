@@ -13,41 +13,9 @@
 % frequently used configuration options
 \setboolean{linkHighlighting}{true}
 
-% command example
-\newcommand{\command}[1]{\texttt{#1}}
-
-% parameter definition
-\newcommand{\param}[2]{
-	\item[] \command{#1}\\
-            \begin{tabular}{ l p{30 em} }
-                   \hspace*{1 em} & #2 \\
-            \end{tabular}
-}
-
-% setlX and SetlX
-\def\setlX{\textsc{setlX}}    % setlX --- the interpreter
-\def\SetlX{\textsc{SetlX}}    % SetlX --- the language
-\def\Setl{\textsc{Setl}}      % Setl  --- the language
-\def\SetlTwo{\textsc{Setl2}}  % Setl2 --- the language
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \InputIfFileExists{\jobname_configuration}{}{\input{config/configuration_V001}}
-
-% special settings for listings 
-\lstset{
-	frame=none, % frame around the code
-	basicstyle=\ttfamily, % font size
-	numbers=none, % enable line numbering
-	numberstyle=\tiny, % font size for numbering
-	tabsize=4, % size of tabs in spaces
-	breaklines=false, % no line wrap
-	xleftmargin=2em, % margin between left page border and listing
-	numbersep=1.5em, % margin between numbering and code
-	captionpos=b, % caption below the listing
-	extendedchars=false % disable special char handling
-}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% document text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

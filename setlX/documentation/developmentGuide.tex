@@ -32,20 +32,50 @@
 
 This is the development guide for \setlX, an interpreter for the \SetlX{} programming-language.
 
-\section{Software Requirements}
+The \setlX{} interpreter, which currently is the reference implementation for the \SetlX{} language, was implemented by Tom Herrmann.
 
-The following software was used when developing the \setlX{} interpreter:
+I would like to encourage you to send your bug-reports, code-changes and or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}.
+
+\section{Architecture and General Concepts}
+
+tbd
+
+\nonSubsection{Source Code Structure}
 
 \begin{itemize}
-	\item OpenJDK 1.6.0\_22, compatible to Oracles JDK 1.6 (aka version 6)
-	\item Antlr 3.3, which is shipped as `.jar' with the interpreter
-	\item pdfTeX, latex and various latex packages
-	\item GNU Make 3.82
-	\item Zip 3.0
-	\item Fedora Linux 15 (64 Bit)
+	\param{boolExpressions}
+			{tbd}
+	\param{exceptions}
+			{tbd}
+	\param{expressions}
+			{tbd}
+	\param{functions}
+			{tbd}
+	\param{statements}
+			{tbd}
+	\param{types}
+			{tbd}
+	\param{utilities}
+			{tbd}
 \end{itemize}
 
-\section{Distributions}
+\section{Specific Concepts}
+
+tbd
+
+\subsection{Environment (Stores Variables in Current Scope)}
+
+tbd
+
+\subsection{Dynamically Loaded Functions}
+
+tbd
+
+\subsection{Iterators}
+
+tbd
+
+\section{Distribution}
 
 Three different `distributions' can be automatically created (on an Unix-like OS):
 
@@ -66,5 +96,24 @@ The automated distribution creation script can be launched by executing
 \end{lstlisting}
 
 Note that this process will `clean' the source (e.g. remove all automatically created files), rebuild the interpreter and all documentation and clean the source again.
+
+\subsection{Distributing setlX}
+
+You may distribute \setlX{} in all three above mentioned version, or any other version, to anyone and for any purpose, and make changed to it, without permission from the author or notice to the author, as long as you do not remove any copyright information, and also comply to the antlr license (see \command{interpreter/antlr/antlr\_LICENSE.txt}).
+
+However, I would like to encourage you to provide the full development kit to anyone you distribute one of the other versions to, at least as an option.
+
+\section{Used Software}
+
+The following software was used when developing the \setlX{} interpreter:
+
+\begin{itemize}
+	\item OpenJDK 1.6.0\_22, compatible to Oracles JDK 1.6 (aka version 6)
+	\item Antlr 3.3, which is shipped as `.jar' with the interpreter
+	\item pdfTeX, latex and various latex packages
+	\item GNU Make 3.82
+	\item Zip 3.0
+	\item Fedora Linux 15 (64 Bit)
+\end{itemize}
 
 \end{document}

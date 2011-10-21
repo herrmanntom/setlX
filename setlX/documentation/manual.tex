@@ -34,7 +34,7 @@ This is the manual of \setlX, an interpreter for the \SetlX{} programming-langua
 
 The \SetlX{} language was mostly designed by Prof. Dr. Karl Stroetmann and is an evolution of \SetlTwo{} by Kirk Snyder and especially the original \Setl{} by Jack Schwartz. It was specifically conceived to make the features of \Setl{} more accessible to today's students of set theories.
 
-The \setlX{} interpreter, which currently is the \SetlX{} reference implementation was implemented by Tom Herrmann.
+The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann.
 
 \section{Usage}
 
@@ -186,6 +186,13 @@ The following limitation apply compared to other Setl versions:
         where the `2' would not be assigned to anything.
     \item Explicit constants (`\command{const}') are unsupported.
     \item Object oriented features are not supported.
+\end{itemize}
+
+\section{Known Bugs}
+The following bugs are known to be present in this version of the interpreter:
+
+\begin{itemize}
+	\item Passing paths as parameters to the \setlX{} launching script, which have spaces in them, does not work correctly.
 \end{itemize}
 
 \section{Disclaimer}

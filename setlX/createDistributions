@@ -6,13 +6,13 @@ cd interpreter
 make -s dist-clean
 
 # build the binary version
-echo "Rebuilding the SetlX Interpreter ..."
+echo "Rebuilding the setlX interpreter ..."
 make -s jar
 if [ -f setlX.jar ]
   then
     # clean it up again (does not remove the jar)
     make -s clean
-    echo "The SetlX Interpreter was build correctly."
+    echo "The setlX interpreter was build correctly."
 else
     echo "Building failed ..."
     # break
@@ -45,9 +45,9 @@ make -s dist-clean
 cd ..
 
 # create distribution names
-binOnly="SetlX_v$versionForFileNames.binary_only"
-source="SetlX_v$versionForFileNames.source"
-devel="SetlX_v$versionForFileNames.devel"
+binOnly="setlX_v$versionForFileNames.binary_only"
+source="setlX_v$versionForFileNames.source"
+devel="setlX_v$versionForFileNames.devel"
 
 # remove distribution zips if present
 rm -f "$binOnly.zip"

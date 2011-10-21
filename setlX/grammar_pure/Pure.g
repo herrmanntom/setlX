@@ -9,10 +9,13 @@ statement
     :
       'var' ID ';'
     | expr ';'
-    | 'if'    '(' condition ')' '{' block '}'
-      ('else' 'if' '(' condition ')' '{' block '}')*
-      ('else' '{' block '}')?
-    | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+    | 'if'         '(' condition ')' '{' block '}'
+      ('else' 'if' '(' condition ')' '{' block '}' )*
+      ('else'                        '{' block '}' )?
+    | 'switch' '{'
+          ('case' condition ':' block )*
+          ('default'        ':' block )?
+      '}'
     | 'for'   '(' iterator  ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'return' expr? ';'

@@ -2,66 +2,59 @@ grammar clean;
 
 program
     :
-      'program' ID ';' (definition | statement)* 'end' ID ';'
-    ;
-
-definition
-    :
-      'procedure' ID '(' (ID (',' ID)* )? ')' ';' (definition | statement)* 'end' ID ';'
-    ;
-
-call
-    :
-      ID '(' (expr (',' expr)* )? ')'
-    ;
-
-elementAccess
-    :
-      ID (('('|'{') (expr '..' expr? | '..' expr) (')'|'}'))+
+      statement*
     ;
 
 statement
     :
       'var' ID ';'
     | expr ';'
-    | 'if'    expr     'then' statement* ('elseif' expr 'then' statement*)* ('else' statement*)? 'end' 'if' ';'
-    | 'case' ('when' expr '=>' statement*)* ('otherwise' '=>' statement*)? 'end' 'case' ';'
-    | 'while' expr     'loop' statement* 'end' 'loop' ';'
-    | 'until' expr     'loop' statement* 'end' 'loop' ';'
-    | 'for' (ID | tuple) 'in' expr   'loop' statement* 'end' 'loop' ';'
-    | 'loop' statement* 'end' 'loop' ';'
+    | 'if'         '(' expr     ')' '{' statement* '}'
+      ('else' 'if' '(' expr     ')' '{' statement* '}' )*
+      ('else'                       '{' statement* '}' )?
+    | 'switch' '{'
+          ('case' condition ':' statement* )*
+          ('default'        ':' statement* )?
+      '}'
+    | 'for'        '(' iterator ')' '{' statement* '}'
+    | 'while'      '(' expr     ')' '{' statement* '}'
     | 'return' expr? ';'
     | 'continue' ';'
+    | 'break' ';'
     | 'exit' ';'
     ;
 
 expr
     :
       assignment
-    | 'forall' ID 'in' expr (',' ID 'in' expr)* '|' expr
-    | 'exists' ID 'in' expr (',' ID 'in' expr)* '|' expr
-    | conjunction ('or' conjunction)*
+    | 'forall' '(' iterator '|' expr ')'
+    | 'exists' '(' iterator '|' expr ')'
+    | conjunction ('||' conjunction)*
     ;
 
 assignment
     :
-      (ID ('(' sum ')')* | tuple) (':=' | '+:=' | '-:=' | '*:=' | '/:=' | 'from' | 'fromb' | 'frome') expr
+      (ID ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=') expr
     ;
 
 conjunction
     :
-      literal ('and' literal)*
+      equation ('&&' equation)*
     ;
 
-literal
+equation
     :
-      'not' boolFactor
-    | boolFactor
+      comparison (('==' | '!=') comparison)*
     ;
 
-boolFactor
+comparison
     :
-      sum (('in' | 'notin' | '=' | '/=' | '<' | '<=' | '>' | '>=') sum)*
+      inclusion (('<' | '<=' | '>' | '>=') inclusion)*
+    ;
+
+inclusion
+    :
+      sum (('in' | 'notin') sum)*
     ;
 
 sum
@@ -71,7 +64,7 @@ sum
 
 product
     :
-      power (('*' | '/' | '%' | 'mod') power)*
+      power (('*' | '/' | '%') power)*
     ;
 
 power
@@ -84,45 +77,49 @@ minmax
       factor (('min' | 'min/' | 'max' | 'max/') minmax)?
     ;
 
-
 factor
     :
       '(' expr ')'
-    | 'arb'        factor
-    | 'from'       factor
-    | 'fromb'      factor
-    | 'frome'      factor
     | 'min/'       factor
     | 'max/'       factor
     | '+/'         factor
     | '-/'         factor
     | '-'          factor
+    | '!'          factor
     | '#'          factor
-    | 'abs'        factor
-    | 'char'       factor
-    | 'is_integer' factor
-    | 'is_map'     factor
-    | 'is_real'    factor
-    | 'is_set'     factor
-    | 'is_string'  factor
-    | 'is_tuple'   factor
-    | 'str'        factor
     | call
-    | elementAccess
-    | ID
+    | definition
+    | list
+    | set
     | value
     ;
 
-value
+call
     :
-      NUMBER
-    | NUMBER? REAL
-    | STRING
-    | ( 'TRUE'  | 'true'  )
-    | ( 'FALSE' | 'false' )
-    | ( 'om'    | '<om>'  )
-    | set
-    | tuple
+      ID ( '(' callParameters ')' | '{' expr '}' )*
+    ;
+
+callParameters
+    :
+      (
+         expr ((',' expr)* | '..' sum?)
+       | '..' sum
+      )?
+    ;
+
+definition
+    :
+      'procedure' '(' definitionParameters ')' '{' statement* '}'
+    ;
+
+definitionParameters
+    :
+      ( ('rw' ID | ID) (',' ('rw' ID | ID) )* )?
+    ;
+
+list
+    :
+      '[' constructor? ']'
     ;
 
 set
@@ -130,17 +127,32 @@ set
       '{' constructor? '}'
     ;
 
-tuple
-    :
-      '[' constructor? ']'
-    ;
-
 constructor
     :
       expr (',' expr)? '..' expr
-    | (ID | list) 'in' expr ('|' expr)?
-    | expr ':' (ID | tuple) 'in' expr (',' (ID | tuple) 'in' expr)* ('|' expr)?
+    | ( ID | list ) 'in' expr ('|' expr )?
+    | expr ':' iterator ('|' expr )?
     | expr (',' expr)*
+    ;
+
+iterator
+    :
+      ( ID | list ) 'in' expr (',' ( ID | list ) 'in' expr )*
+    ;
+
+value
+    :
+      NUMBER
+    | real
+    | STRING
+    | 'true'
+    | 'false'
+    | 'om'
+    ;
+
+real
+    :
+      NUMBER? REAL
     ;
 
 ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;
@@ -148,8 +160,7 @@ NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : '.'('0' .. '9')+ (('e'|'E') '-'? ('0' .. '9')+)?;
 STRING          : '"' ('\\"'|~('"'))* '"';
 
-SETL_COMMENT    : '--' ~('\n')*                             { skip(); } ;
-MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
 LINE_COMMENT    : '//' ~('\n')*                             { skip(); } ;
+MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
 WS              : (' '|'\t'|'\n'|'r')                       { skip(); } ;
 

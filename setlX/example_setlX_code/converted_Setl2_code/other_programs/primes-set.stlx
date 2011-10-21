@@ -1,0 +1,5 @@
+
+n := 100;
+primes := {p in {2 .. n} | {x in {1 .. p} | p % x == 0} == {1, p}};
+print(primes);
+

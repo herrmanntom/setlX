@@ -1,0 +1,15 @@
+
+kgv := procedure(m, n) {
+	return min/ gv(m, n);
+};
+
+gv := procedure(m, n) {
+	return vielfache(m, n) * vielfache(n, m);
+};
+
+vielfache := procedure(m, n) {
+	return {m * i: i in {1 .. m}};
+};
+
+print(kgv(18, 24));
+

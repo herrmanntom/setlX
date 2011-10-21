@@ -17,7 +17,7 @@ public class SetlX {
 
     private final static String VERSION         = "0.1.0";
     private final static String VERSION_PREFIX  = "v";
-    private final static String HEADER          = "=====================================SetlX======================================";
+    private final static String HEADER          = "=====================================setlX======================================";
 
     public static void main(String[] args) throws Exception {
         boolean            help        = false;
@@ -181,7 +181,7 @@ public class SetlX {
     }
 
     private static void printShortHelp() {
-        System.out.println("Welcome to the SetlX Interpreter!\n"
+        System.out.println("Welcome to the setlX interpreter!\n"
                          + "\n"
                          + "You can display some helpful information by using '--help' as parameter when\n"
                          + "launching this program.\n");

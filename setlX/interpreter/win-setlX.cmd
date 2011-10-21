@@ -7,7 +7,7 @@ REM set javaParameters=%javaParameters% -Xss10m
 
 IF NOT EXIST setlX.jar (
     IF EXIST src (
-        echo "Building the SetlX Interpreter ..."
+        echo "Building the setlX interpreter ..."
         mkdir bin
         javac -d bin -sourcepath src src\comparableSet\*.java
         javac -d bin -sourcepath src src\interpreter\exceptions\*.java
@@ -27,9 +27,9 @@ IF NOT EXIST setlX.jar (
         rmdir /S /Q bin
         del /F /Q src\grammar\*.java
         del /F /Q src\grammar\*.tokens
-        echo "The SetlX Interpreter was (hopefully correctly) build."
+        echo "The setlX interpreter was (hopefully correctly) build."
     ) ELSE (
-        echo "No source available -- the SetlX Interpreter can not be build."
+        echo "No source available -- the setlX interpreter can not be build."
     )
 )
 IF EXIST setlX.jar (

@@ -1,0 +1,119 @@
+
+problem := procedure(M, K) {
+	linkesUferProblem := M != 0 && (M < K);
+	rechtesUferProblem := M != 3 && ((3 - M) < (3 - K));
+	return linkesUferProblem || rechtesUferProblem;
+};
+
+printPath := procedure(path) {
+	print("L�sung:\n");
+	for (i in {1 .. #path - 1}) {
+		[M1, K1, B1] := path(i);
+		[M2, K2, B2] := path(i + 1);
+		printState(M1, K1, B1);
+		printBoat(M1, K1, B1, M2, K2, B2);
+	}
+	[M, K, B] := path(#path);
+	printState(M, K, B);
+};
+
+printState := procedure(M, K, B) {
+	print(fillCharsRight(M * "M", 6) + fillCharsRight(K * "K", 6) + fillCharsRight(B * "B", 3) + "    |~~~~~|    " + fillCharsLeft((3 - M) * "M", 6) + fillCharsLeft((3 - K) * "K", 6) + fillCharsLeft((1 - B) * "B", 3));
+};
+
+printBoat := procedure(M1, K1, B1, M2, K2, B2) {
+	if (B1 == 1) {
+		if (M1 < M2) {
+			print("Fehler in printBoat: negative Anzahl von Missionaren im Boot!");
+		}
+		if (K1 < K2) {
+			print("Fehler in printBoat: negative Anzahl von Kannibalen im Boot!");
+		}
+		print(19 * " " + "> " + fillCharsBoth((M1 - M2) * "M" + " " + (K1 - K2) * "K", 3) + " >");
+	} else {
+		if (M1 > M2) {
+			print("Fehler in printBoat: negative Anzahl von Missionaren im Boot!");
+		}
+		if (K1 > K2) {
+			print("Fehler in printBoat: negative Anzahl von Kannibalen im Boot!");
+		}
+		print(19 * " " + "< " + fillCharsBoth((M2 - M1) * "M" + " " + (K2 - K1) * "K", 3) + " <");
+	}
+};
+
+fillCharsLeft := procedure(x, n) {
+	s := str((x));
+	m := n - #s;
+	return m * " " + s;
+};
+
+fillCharsRight := procedure(x, n) {
+	s := str((x));
+	m := n - #s;
+	return s + m * " ";
+};
+
+fillCharsBoth := procedure(x, n) {
+	s := str((x));
+	ml := (n - #s) / 2;
+	mr := (n + 1 - #s) / 2;
+	return ml * " " + s + mr * " ";
+};
+
+reachable := procedure(x, y, R) {
+	P := {[x]};
+	while (true) {
+		Old_P := P;
+		P := P + path_product(P, R);
+		Found := {p in P | p(#p) == y};
+		if (Found != {}) {
+			return arb(Found);
+		}
+		if (P == Old_P) {
+			return;
+		}
+	}
+};
+
+path_product := procedure(P, Q) {
+	return {add(p, q): p in P, q in Q | p(#p) == q(1) && not_cyclic(add(p, q))};
+};
+
+not_cyclic := procedure(p) {
+	return #{x: x in p} == #p;
+};
+
+add := procedure(p, q) {
+	return p + q(2..);
+};
+
+P := {[M, K, B]: M in {0 .. 3}, K in {0 .. 3}, B in {0 .. 1} | ! (problem(M, K))};
+print("M�gliche Zust�nde:\n");
+for ([M, K, B] in P) {
+	printState(M, K, B);
+}
+print("\n");
+R1 := {[[M, K, 1], [M - MB, K - KB, 0]]: [M, K, B] in P, MB in {0 .. M}, KB in {0 .. K} | (MB + KB <= 2) && (MB + KB > 0) && ! (problem(M - MB, K - KB))};
+print("R1:\n");
+for ([[M1, K1, B1], [M2, K2, B2]] in R1) {
+	print();
+	printState(M1, K1, B1);
+	printBoat(M1, K1, B1, M2, K2, B2);
+	printState(M2, K2, B2);
+}
+print("\n");
+R2 := {[[M, K, 0], [M + MB, K + KB, 1]]: [M, K, B] in P, MB in {0 .. (3 - M)}, KB in {0 .. (3 - K)} | (MB + KB <= 2) && (MB + KB > 0) && ! (problem(M + MB, K + KB))};
+print("R2:\n");
+for ([[M1, K1, B1], [M2, K2, B2]] in R2) {
+	print();
+	printState(M1, K1, B1);
+	printBoat(M1, K1, B1, M2, K2, B2);
+	printState(M2, K2, B2);
+}
+print("\n");
+R := R1 + R2;
+start := [3, 3, 1];
+goal := [0, 0, 0];
+path := reachable(start, goal, R);
+printPath(path);
+

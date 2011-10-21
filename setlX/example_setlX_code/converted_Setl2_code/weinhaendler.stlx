@@ -1,0 +1,43 @@
+
+reachable := procedure(x, y, R) {
+	P := {[x]};
+	while (true) {
+		Old_P := P;
+		P := P + path_product(P, R);
+		Found := {p in P | p(#p) == y};
+		if (Found != {}) {
+			return arb(Found);
+		}
+		if (P == Old_P) {
+			return;
+		}
+	}
+};
+
+path_product := procedure(P, Q) {
+	return {add(p, q): p in P, q in Q | p(#p) == q(1) && not_cyclic(add(p, q))};
+};
+
+not_cyclic := procedure(p) {
+	return #{x: x in p} == #p;
+};
+
+add := procedure(p, q) {
+	return p + q(2..);
+};
+
+P := {[drei, fuenf]: drei in {0 .. 3}, fuenf in {0 .. 5}};
+R35 := {[[drei, fuenf], [drei - x, fuenf + x]]: [drei, fuenf] in P, x in {1 .. drei} | (fuenf + x == 5) || (x == drei && fuenf + x < 5)};
+R53 := {[[drei, fuenf], [drei + x, fuenf - x]]: [drei, fuenf] in P, x in {1 .. fuenf} | (drei + x == 3) || (x == fuenf && drei + x < 3)};
+R3F := {[[drei, fuenf], [3, fuenf]]: [drei, fuenf] in P};
+R5F := {[[drei, fuenf], [drei, 5]]: [drei, fuenf] in P};
+R3L := {[[drei, fuenf], [0, fuenf]]: [drei, fuenf] in P};
+R5L := {[[drei, fuenf], [drei, 0]]: [drei, fuenf] in P};
+R := R35 + R53 + R3F + R5F + R3L + R5L;
+start := [0, 0];
+goal := [0, 4];
+path := reachable(start, goal, R);
+print("Path:");
+print(path);
+print("\n");
+

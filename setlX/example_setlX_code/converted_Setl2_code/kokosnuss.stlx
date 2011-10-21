@@ -1,0 +1,27 @@
+
+teile_4_mal := procedure(n) {
+	return forall(k in {0 .. 3} | teile_k_mal(n, k) % 3 == 1);
+};
+
+teile_k_mal := procedure(n, k) {
+	for (i in {1 .. k}) {
+		n := teile(n);
+	}
+	return n;
+};
+
+teile := procedure(n) {
+	m := n - 1;
+	r := m - m / 3;
+	return r;
+};
+
+S := {n in {1 .. 99} | teile_4_mal(n)};
+print(S);
+n := arb((S));
+print("Am Anfang sind es ", n, " Kokosn�sse");
+print("Nach dem ersten Teilen bleiben noch ", teile_k_mal(n, 1), " Kokosn�sse.");
+print("Nach dem zweiten Teilen bleiben noch ", teile_k_mal(n, 2), " Kokosn�sse.");
+print("Nach dem dritten Teilen bleiben noch ", teile_k_mal(n, 3), " Kokosn�sse.");
+print("Beim letzten Teilen bekommt jeder ", teile_k_mal(n, 3) / 3, " Kokosn�sse.");
+

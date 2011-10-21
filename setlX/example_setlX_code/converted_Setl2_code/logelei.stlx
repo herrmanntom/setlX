@@ -1,0 +1,49 @@
+
+createBelegung := procedure(M, A) {
+	return {[x, x in M]: x in A};
+};
+
+evalSet := procedure(FS, I) {
+	return {eval(f, I): f in FS} == {true};
+};
+
+eval := procedure(f, I) {
+	switch {
+		case f == 1 :
+			return true;
+		case f == 0 :
+			return false;
+		case isString((f)) :
+			return I(f);
+		case f(1) == "-" :
+			return ! (eval(f(2), I));
+		case f(2) == "*" :
+			return eval(f(1), I) && eval(f(3), I);
+		case f(2) == "+" :
+			return eval(f(1), I) || eval(f(3), I);
+		case f(2) == "->" :
+			return ! (eval(f(1), I)) || eval(f(3), I);
+		case f(2) == "<->" :
+			return eval(f(1), I) == eval(f(3), I);
+		default :
+			print("eval: Syntax-Fehler: ", f);
+	}
+};
+
+f1 := ["hM", "->", "fM"];
+f2 := ["W", "+", "K"];
+f3 := [["fM", "+", "F"], "*", ["-", ["fM", "*", "F"]]];
+f4 := ["F", "<->", "K"];
+f5 := ["W", "->", ["K", "*", "hM"]];
+FS := {f1, f2, f3, f4, f5};
+A := {"hM", "fM", "W", "K", "F"};
+P := pow(A);
+B := {createBelegung(M, A): M in P};
+S := {I in B | evalSet(FS, I) == true};
+print("\nMenge der Belegungen, die FS erf�llen:");
+if (#S == 1) {
+	I := arb(S);
+	Besucher := {x in A | I(x)};
+	print("\nFolgende Personen kommen: ", Besucher);
+}
+

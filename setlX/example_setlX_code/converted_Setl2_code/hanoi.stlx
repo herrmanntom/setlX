@@ -1,0 +1,74 @@
+
+lastChars := procedure(x, n) {
+	s := str((x));
+	m := n - #s;
+	return m * " " + s;
+};
+
+sort := procedure(S) {
+	return [n in [1 .. 0 max/ S] | n in S];
+};
+
+partition := procedure(S1, S2, S3, All) {
+	return S1 + S2 + S3 == All && S1 * S2 == {} && S1 * S3 == {} && S2 * S3 == {};
+};
+
+movePossible := procedure(Source, Target) {
+	return Source != [] && (Target == [] || Source(1) < Target(1));
+};
+
+oneStep := procedure(PS, R) {
+	return {p + [z]: p in PS, [y, z] in R | p(#p) == y};
+};
+
+eliminateCycles := procedure(PS) {
+	return {p in PS | ! (cyclic(p))};
+};
+
+cyclic := procedure(p) {
+	return #{x: x in p} < #p;
+};
+
+reachable := procedure(x, y, R) {
+	PS := {[x]};
+	while (true) {
+		old_PS := PS;
+		PS := eliminateCycles(PS + oneStep(PS, R));
+		P := {p in PS | p(#p) == y};
+		if (P != {}) {
+			return arb(P);
+		}
+		if (old_PS == PS) {
+			return;
+		}
+	}
+};
+
+All := {1, 2, 3};
+P := {[sort(S1), sort(S2), sort(S3)]: S1 in pow(All), S2 in pow(All), S3 in pow(All) | partition(S1, S2, S3, All)};
+print("P = ", P);
+R12 := {[[L1, L2, L3], [L1(2..), [L1(1)] + L2, L3]]: [L1, L2, L3] in P | movePossible(L1, L2)};
+R21 := {[[L1, L2, L3], [[L2(1)] + L1, L2(2..), L3]]: [L1, L2, L3] in P | movePossible(L2, L1)};
+R13 := {[[L1, L2, L3], [L1(2..), L2, [L1(1)] + L3]]: [L1, L2, L3] in P | movePossible(L1, L3)};
+R31 := {[[L1, L2, L3], [[L3(1)] + L1, L2, L3(2..)]]: [L1, L2, L3] in P | movePossible(L3, L1)};
+R23 := {[[L1, L2, L3], [L1, L2(2..), [L2(1)] + L3]]: [L1, L2, L3] in P | movePossible(L2, L3)};
+R32 := {[[L1, L2, L3], [L1, [L3(1)] + L2, L3(2..)]]: [L1, L2, L3] in P | movePossible(L3, L2)};
+for ([x, y] in R12) {
+	print(x, "  ->   ", y);
+}
+R := R12 + R21 + R31 + R13 + R23 + R32;
+print("R:");
+for ([x, y] in R) {
+	print(x, "  ->   ", y);
+}
+print();
+start := [[1, 2, 3], [], []];
+goal := [[], [1, 2, 3], []];
+path := reachable(start, goal, R);
+for (i in [1 .. #path]) {
+	t1 := lastChars(path(i)(1), 20);
+	t2 := lastChars(path(i)(2), 20);
+	t3 := lastChars(path(i)(3), 20);
+	print(t1, t2, t3);
+}
+

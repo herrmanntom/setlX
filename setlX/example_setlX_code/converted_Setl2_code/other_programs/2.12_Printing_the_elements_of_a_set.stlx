@@ -1,0 +1,13 @@
+
+printSet := procedure(S) {
+	if (S == {}) {
+		return;
+	}
+	x := from(S);
+	print(x);
+	printSet(S);
+};
+
+S := {13, 5, 7, 2, 4};
+printSet(S);
+

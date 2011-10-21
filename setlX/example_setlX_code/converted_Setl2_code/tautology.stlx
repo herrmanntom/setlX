@@ -1,0 +1,249 @@
+
+tautology := procedure(f) {
+	P := collectVars(f);
+	A := {{[x, x in M]: x in P}: M in pow(P)};
+	if ({eval(f, I): I in A} == {true}) {
+		return true;
+	} else {
+		return arb({I in A | ! (eval(f, I))});
+	}
+};
+
+collectVars := procedure(f) {
+	switch {
+		case f == 1 :
+			return {};
+		case f == 0 :
+			return {};
+		case isString((f)) :
+			return {f};
+		case f(1) == "-" :
+			return collectVars(f(2));
+		case f(2) == "*" :
+			return collectVars(f(1)) + collectVars(f(3));
+		case f(2) == "+" :
+			return collectVars(f(1)) + collectVars(f(3));
+		case f(2) == "->" :
+			return collectVars(f(1)) + collectVars(f(3));
+		case f(2) == "<->" :
+			return collectVars(f(1)) + collectVars(f(3));
+		default :
+			print("malformed formula: ", f);
+	}
+};
+
+eval := procedure(f, I) {
+	switch {
+		case f == 1 :
+			return true;
+		case f == 0 :
+			return false;
+		case isString((f)) :
+			return I(f);
+		case f(1) == "-" :
+			return ! (eval(f(2), I));
+		case f(2) == "*" :
+			return eval(f(1), I) && eval(f(3), I);
+		case f(2) == "+" :
+			return eval(f(1), I) || eval(f(3), I);
+		case f(2) == "->" :
+			return ! (eval(f(1), I)) || eval(f(3), I);
+		case f(2) == "<->" :
+			return eval(f(1), I) == eval(f(3), I);
+		default :
+			print("eval: Syntax-Fehler: ", f);
+	}
+};
+
+prettyPrint := procedure(f) {
+	switch {
+		case f == 1 :
+			return "1";
+		case f == 0 :
+			return "0";
+		case isString((f)) :
+			return f;
+		case f(1) == "-" :
+			return "-" + prettyPrint(f(2));
+		case f(2) == "*" :
+			return "(" + prettyPrint(f(1)) + " * " + prettyPrint(f(3)) + ")";
+		case f(2) == "+" :
+			return "(" + prettyPrint(f(1)) + " + " + prettyPrint(f(3)) + ")";
+		case f(2) == "->" :
+			return "(" + prettyPrint(f(1)) + " -> " + prettyPrint(f(3)) + ")";
+		case f(2) == "<->" :
+			return "(" + prettyPrint(f(1)) + " <-> " + prettyPrint(f(3)) + ")";
+		default :
+			abort("Error in prettyPrint: " + str((f)));
+	}
+};
+
+scanFormula := procedure(s) {
+	letters := {};
+	for (x in {48 .. 57} + {65 .. 90} + {97 .. 122}) {
+		letters := letters + {char((x))};
+	}
+	switch {
+		case s == "" :
+			return [];
+		case s(1) == "(" :
+			return ["("] + scanFormula(s(2..));
+		case s(1) == ")" :
+			return [")"] + scanFormula(s(2..));
+		case s(1) == "+" :
+			return ["+"] + scanFormula(s(2..));
+		case s(1) == "*" :
+			return ["*"] + scanFormula(s(2..));
+		case #s >= 2 && s(1..2) == "->" :
+			return ["->"] + scanFormula(s(3..));
+		case #s >= 3 && s(1..3) == "<->" :
+			return ["<->"] + scanFormula(s(4..));
+		case s(1) == "-" :
+			return ["-"] + scanFormula(s(2..));
+		case s(1) == " " || s(1) == "    " :
+			return scanFormula(s(2..));
+	}
+	index := 1;
+	word := "";
+	if (s(index) notin letters) {
+		abort("Error in scanFormula(" + s + ")");
+	}
+	while (s(index) in letters && index < #s) {
+		index := index + 1;
+	}
+	if (! (s(index) in letters)) {
+		return [s(1..index - 1)] + scanFormula(s(index..));
+	}
+	if (index == #s) {
+		return [s];
+	}
+	print("Error in scanFormula: s = ", s);
+};
+
+parse_formula := procedure(L) {
+	f := parse_parentheses(L);
+	if (f != om) {
+		return f;
+	}
+	f := parse_equivalence(L);
+	if (f != om) {
+		return f;
+	}
+	f := parse_implication(L);
+	if (f != om) {
+		return f;
+	}
+	f := parse_disjunction(L);
+	if (f != om) {
+		return f;
+	}
+	f := parse_conjunction(L);
+	if (f != om) {
+		return f;
+	}
+	f := parse_negation(L);
+	if (f != om) {
+		return f;
+	}
+	f := parse_atom(L);
+	if (f != om) {
+		return f;
+	}
+};
+
+parse_parentheses := procedure(L) {
+	if (L(1) == "(" && L(#L) == ")") {
+		return parse_formula(l(2..#L - 1));
+	}
+};
+
+parse_equivalence := procedure(L) {
+	for (i in [2 .. #L - 1]) {
+		if (L(i) == "<->") {
+			f1 := parse_formula(L(1..i - 1));
+			if (f1 != om) {
+				f2 := parse_formula(L(i + 1..#L));
+				if (f2 != om) {
+					return [f1, "<->", f2];
+				}
+			}
+		}
+	}
+};
+
+parse_implication := procedure(L) {
+	for (i in [2 .. #L - 1]) {
+		if (L(i) == "->") {
+			f1 := parse_formula(L(1..i - 1));
+			if (f1 != om) {
+				f2 := parse_formula(L(i + 1..#L));
+				if (f2 != om) {
+					return [f1, "->", f2];
+				}
+			}
+		}
+	}
+};
+
+parse_disjunction := procedure(L) {
+	for (i in [2 .. #L - 1]) {
+		if (L(i) == "+") {
+			f1 := parse_formula(L(1..i - 1));
+			if (f1 != om) {
+				f2 := parse_formula(L(i + 1..#L));
+				if (f2 != om) {
+					return [f1, "+", f2];
+				}
+			}
+		}
+	}
+};
+
+parse_conjunction := procedure(L) {
+	for (i in [2 .. #L - 1]) {
+		if (L(i) == "*") {
+			f1 := parse_formula(L(1..i - 1));
+			if (f1 != om) {
+				f2 := parse_formula(L(i + 1..#L));
+				if (f2 != om) {
+					return [f1, "*", f2];
+				}
+			}
+		}
+	}
+};
+
+parse_negation := procedure(L) {
+	if (L(1) == "-") {
+		f := parse_formula(L(2..#L));
+		if (f != om) {
+			return ["-", f];
+		}
+	}
+};
+
+parse_atom := procedure(L) {
+	if (#L == 1) {
+		if (L(1) == "1") {
+			return 1;
+		} else if (L(1) == "0") {
+			return 0;
+		} else if (isString((L(1)))) {
+			return L(1);
+		}
+	}
+};
+
+print("Bitte Formel eingeben");
+s := get();
+l := scanFormula(s);
+f := parse_formula(l);
+print(f);
+check := tautology(f);
+if (check == true) {
+	print("Die Formel \"" + prettyPrint(f) + "\" ist eine Tautologie.");
+} else {
+	print("Die Formel \"" + prettyPrint(f) + "\" ist keine Tautologie.");
+	print("Gegenbeispiel: ", check);
+}
+

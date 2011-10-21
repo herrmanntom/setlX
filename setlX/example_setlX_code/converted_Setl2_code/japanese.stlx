@@ -1,0 +1,66 @@
+
+erlaubt := procedure(S, All) {
+	return ! (verboten(S)) && ! (verboten(All - S));
+};
+
+verboten := procedure(S) {
+	return ("Osama" in S && #S > 1 && ! ("George" in S)) || ("Anton" in S && "Mama" in S && ! ("Papa" in S)) || ("Bruno" in S && "Mama" in S && ! ("Papa" in S)) || ("Cindy" in S && "Papa" in S && ! ("Mama" in S)) || ("Doris" in S && "Papa" in S && ! ("Mama" in S));
+};
+
+bootOK := procedure(B) {
+	return "Boot" in B && #B <= 3 && ("Mama" in B || "Papa" in B || "George" in B);
+};
+
+reachable := procedure(x, y, R) {
+	P := {[x]};
+	while (true) {
+		Old_P := P;
+		P := P + path_product(P, R);
+		Found := {p in P | p(#p) == y};
+		if (Found != {}) {
+			return arb(Found);
+		}
+		if (P == Old_P) {
+			return;
+		}
+	}
+};
+
+path_product := procedure(P, Q) {
+	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ! (cyclic(add(p, q)))};
+};
+
+cyclic := procedure(p) {
+	return #{x: x in p} < #p;
+};
+
+add := procedure(p, q) {
+	return p + q(2..);
+};
+
+All := {"George", "Osama", "Mama", "Papa", "Anton", "Bruno", "Cindy", "Doris", "Boot"};
+P := pow(All);
+R1 := {[S, S - B]: S in P, B in pow(S) | bootOK(B) && erlaubt(S - B, All)};
+R2 := {[S - B, S]: S in P, B in pow(S) | bootOK(B) && erlaubt(S, All)};
+R := R1 + R2;
+start := All;
+goal := {};
+path := reachable(start, goal, R);
+for (i in [1 .. #path]) {
+	Left := path(i);
+	Right := All - Left;
+	print(Left - {"Boot"}, 20 * " ", Right - {"Boot"});
+	print();
+	if (i == #path) {
+		break;
+	}
+	if ("Boot" in Left) {
+		M := Left - path(i + 1) - {"Boot"};
+		print("    >>>> ", M, " >>>> ");
+	} else {
+		M := Right - (All - path(i + 1)) - {"Boot"};
+		print("    <<<< ", M, " <<<< ");
+	}
+	print();
+}
+

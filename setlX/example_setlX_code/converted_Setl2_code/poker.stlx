@@ -1,0 +1,12 @@
+
+Suits := {"c", "h", "d", "s"};
+Values := {"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"};
+Deck := {[v, s]: v in Values, s in Suits};
+Hole := {["8", "s"], ["9", "s"]};
+Rest := Deck - Hole;
+Flops := {{k1, k2, k3}: k1 in Rest, k2 in Rest, k3 in Rest | #{k1, k2, k3} == 3};
+TwoSpades := {f in Flops | #{k in f | k(2) == "s"} >= 2};
+print(1.0 * #TwoSpades / #Flops);
+ThreeSpades := {f in Flops | #{k in f | k(2) == "s"} == 3};
+print(1.0 * #ThreeSpades / #Flops);
+

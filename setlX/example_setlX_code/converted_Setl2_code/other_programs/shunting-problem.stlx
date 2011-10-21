@@ -1,0 +1,77 @@
+
+reachable := procedure(x, y, R) {
+	P := {[x]};
+	while (true) {
+		Old_P := P;
+		P := path_product(P, R);
+		print("#P = ", #P, " length = ", max/ {#l: l in P});
+		print("#P = ", #P);
+		Found := {p in P | p(1) == x && p(#p) == y};
+		if (Found != {}) {
+			return arb(Found);
+		}
+		if (P == Old_P) {
+			return;
+		}
+	}
+};
+
+path_product := procedure(P, Q) {
+	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ! (cyclic(add(p, q)))};
+};
+
+cyclic := procedure(p) {
+	return #{x: x in p} < #p;
+};
+
+add := procedure(p, q) {
+	return p + q(2..);
+};
+
+toList := procedure(S) {
+	if (S == {}) {
+		return {[]};
+	}
+	return {[x] + l: x in S, l in toList(S - {x})};
+};
+
+reverse := procedure(L) {
+	n := #L;
+	return [L(n - i): i in {0 .. n - 1}];
+};
+
+inverse := procedure(R) {
+	return {[y, x]: [x, y] in R};
+};
+
+printPath := procedure(path) {
+	print("Solution:\n");
+	for ([A, B, C] in path) {
+		printState(A, B, C);
+	}
+};
+
+printState := procedure(A, B, C) {
+	print("A: ", A, "; B: ", B, "; C: ", C);
+};
+
+All := {0 .. 3};
+Partitions := {[A, B, C]: A in pow(All), B in pow(All), C in pow(All) | A * B == {} && A * C == {} && B * C == {} && A + B + C == All};
+print(#Partitions);
+P := {[LA, LB, LC]: [A, B, C] in Partitions, LA in toList(A), LB in toList(B), LC in toList(C)};
+print(#P);
+RACeast := {[[A, B, C], [A(1..k - 1), B, C + reverse(A(k..))]]: [A, B, C] in P, k in {1 .. #A} | 0 in A(k..)};
+print(#RACeast);
+RACwest := {[[A, B, C], [A(k + 1..), B, reverse(A(1..k)) + C]]: [A, B, C] in P, k in {1 .. #A} | 0 in A(1..k)};
+print(#RACwest);
+RAC := RACeast + RACwest;
+RCA := inverse(RAC);
+RBC := {[[A, B, C], [A, B(1..k - 1), B(k..) + C]]: [A, B, C] in P, k in {1 .. #B} | 0 in B(k..)};
+RCB := inverse(RBC);
+R := RAC + RCA + RBC + RCB;
+print("#R = ", #R);
+start := [[1, 2, 3], [0], []];
+goal := [[], [0], [3, 1, 2]];
+path := reachable(start, goal, R);
+printPath(path);
+

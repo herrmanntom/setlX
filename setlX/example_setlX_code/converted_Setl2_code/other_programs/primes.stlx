@@ -1,0 +1,12 @@
+
+n := 10000;
+primes := {};
+p := 2;
+while (p <= n) {
+	if ({t in primes | p % t == 0} == {}) {
+		print(p);
+		primes := primes + {p};
+	}
+	p := p + 1;
+}
+

@@ -1,0 +1,17 @@
+
+teiler := procedure(n) {
+	return {t in {1 .. n} | n % t == 0};
+};
+
+gt := procedure(m, n) {
+	return teiler(m) * teiler(n);
+};
+
+ggt := procedure(m, n) {
+	return max/ gt(m, n);
+};
+
+m := read();
+n := read();
+print("Der ggT von ", m, " und ", n, " ist ", ggt(m, n), ".");
+

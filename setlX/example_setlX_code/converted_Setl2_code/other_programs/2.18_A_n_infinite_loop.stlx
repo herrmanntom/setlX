@@ -1,0 +1,11 @@
+
+n := 10;
+i := 10;
+while (true) { 
+	print(i);
+	i := i + 1;
+	if (i == n) {
+		break;
+	}
+}
+

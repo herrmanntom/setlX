@@ -20,17 +20,17 @@ else
       then
         if [ -d src ]
           then
-            echo "Building the SetlX Interpreter ..."
+            echo "Building the setlX interpreter ..."
             make -s jar
             if [ -f setlX.jar ]
               then
                 make -s clean
-                echo "The SetlX Interpreter was build correctly."
+                echo "The setlX interpreter was build correctly."
             else
                 echo "Building failed ..."
             fi
         else
-            echo "No source available -- the SetlX Interpreter can not be build."
+            echo "No source available -- the setlX interpreter can not be build."
         fi
     fi
     if [ -f setlX.jar ]

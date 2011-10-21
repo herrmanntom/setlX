@@ -1,0 +1,15 @@
+
+n := 97;
+primes := {};
+p := 2;
+while (true) { 
+	if ({t in primes | p % t == 0} == {}) {
+		print(p);
+		primes := primes + {p};
+	}
+	p := p + 1;
+	if (p == n) {
+		break;
+	}
+}
+

@@ -1,0 +1,12 @@
+
+allPairs := procedure(n) {
+	return {[x, y]: x in {0 .. n - 1}, y in {1 .. n} | x * y == n};
+};
+
+allSets := procedure(n) {
+	return {x: x in pow({0 .. n}) | (*/ x) == n};
+};
+
+print(allPairs(6));
+print(allSets(6));
+

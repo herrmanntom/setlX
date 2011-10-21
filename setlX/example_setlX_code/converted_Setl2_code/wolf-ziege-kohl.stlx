@@ -1,0 +1,56 @@
+
+problem := procedure(S) {
+	return ("Ziege" in S && "Kohl" in S) || ("Wolf" in S && "Ziege" in S);
+};
+
+reachable := procedure(x, y, R) {
+	P := {[x]};
+	while (true) {
+		Old_P := P;
+		P := P + path_product(P, R);
+		Found := {p in P | p(#p) == y};
+		if (Found != {}) {
+			return arb(Found);
+		}
+		if (P == Old_P) {
+			return;
+		}
+	}
+};
+
+path_product := procedure(P, Q) {
+	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ! (cyclic(add(p, q)))};
+};
+
+cyclic := procedure(p) {
+	return #{x: x in p} < #p;
+};
+
+add := procedure(p, q) {
+	return p + q(2..);
+};
+
+All := {"Bauer", "Wolf", "Ziege", "Kohl"};
+P := {[S1, All - S1]: S1 in pow(All)};
+R1 := {[[S1, S2], [S1 - B, S2 + B]]: [S1, S2] in P, B in pow(S1) | "Bauer" in B && #B <= 2 && ! (problem(S1 - B))};
+R2 := {[[S1, S2], [S1 + B, S2 - B]]: [S1, S2] in P, B in pow(S2) | "Bauer" in B && #B <= 2 && ! (problem(S2 - B))};
+R := R1 + R2;
+start := [All, {}];
+goal := [{}, All];
+path := reachable(start, goal, R);
+for (i in [1 .. #path]) {
+	S1 := path(i)(1);
+	S2 := path(i)(2);
+	print(S1, 65 * " ", S2);
+	if (i == #path) {
+		break;
+	}
+	if ("Bauer" in S1) {
+		M := S1 - path(i + 1)(1);
+		print("                                     >>>> ", M, " >>>> ");
+	} else {
+		M := S2 - path(i + 1)(2);
+		print("                                     <<<< ", M, " <<<< ");
+	}
+}
+

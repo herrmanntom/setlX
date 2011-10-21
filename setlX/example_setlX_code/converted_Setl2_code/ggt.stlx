@@ -1,0 +1,15 @@
+
+ggt := procedure(m, n) {
+	return max/ gt(m, n);
+};
+
+gt := procedure(m, n) {
+	return teiler(m) * teiler(n);
+};
+
+teiler := procedure(m) {
+	return {t in {1 .. m} | m % t == 0};
+};
+
+print(ggt(666, 36));
+

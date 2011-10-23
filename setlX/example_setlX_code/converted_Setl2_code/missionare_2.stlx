@@ -87,13 +87,13 @@ add := procedure(p, q) {
 	return p + q(2..);
 };
 
-P := {[M, K, B]: M in {0 .. 3}, K in {0 .. 3}, B in {0 .. 1} | ! (problem(M, K))};
+P := {[M, K, B]: M in {0 .. 3}, K in {0 .. 3}, B in {0 .. 1} | ( ! (problem(M, K)) )};
 print("M�gliche Zust�nde:\n");
 for ([M, K, B] in P) {
 	printState(M, K, B);
 }
 print("\n");
-R1 := {[[M, K, 1], [M - MB, K - KB, 0]]: [M, K, B] in P, MB in {0 .. M}, KB in {0 .. K} | (MB + KB <= 2) && (MB + KB > 0) && ! (problem(M - MB, K - KB))};
+R1 := {[[M, K, 1], [M - MB, K - KB, 0]]: [M, K, B] in P, MB in {0 .. M}, KB in {0 .. K} | (MB + KB <= 2) && (MB + KB > 0) && ( ! (problem(M - MB, K - KB)) )};
 print("R1:\n");
 for ([[M1, K1, B1], [M2, K2, B2]] in R1) {
 	print();
@@ -102,7 +102,7 @@ for ([[M1, K1, B1], [M2, K2, B2]] in R1) {
 	printState(M2, K2, B2);
 }
 print("\n");
-R2 := {[[M, K, 0], [M + MB, K + KB, 1]]: [M, K, B] in P, MB in {0 .. (3 - M)}, KB in {0 .. (3 - K)} | (MB + KB <= 2) && (MB + KB > 0) && ! (problem(M + MB, K + KB))};
+R2 := {[[M, K, 0], [M + MB, K + KB, 1]]: [M, K, B] in P, MB in {0 .. (3 - M)}, KB in {0 .. (3 - K)} | (MB + KB <= 2) && (MB + KB > 0) && ( ! (problem(M + MB, K + KB)) )};
 print("R2:\n");
 for ([[M1, K1, B1], [M2, K2, B2]] in R2) {
 	print();

@@ -35,4 +35,5 @@ IF NOT EXIST setlX.jar (
 IF EXIST setlX.jar (
     java %javaParameters% -jar setlX.jar %*
 )
+pause
 @ECHO on

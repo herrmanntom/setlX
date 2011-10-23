@@ -1,5 +1,4 @@
-\def\myDocumentTypeArticle{-}
-\InputIfFileExists{\jobname_header}{}{\input{config/header_V001}}
+\input{config/header}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% document specific %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -15,7 +14,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\InputIfFileExists{\jobname_configuration}{}{\input{config/configuration_V001}}
+\input{config/configuration}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% document text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,6 +23,14 @@
 \begin{document}
 \begin{titlepage}
 \maketitle
+
+\vfill
+
+\begin{center}
+\Large
+``Computers make very fast, very accurate mistakes.''
+\end{center}
+
 \vfill
 \tableofcontents
 \end{titlepage}
@@ -34,7 +41,7 @@ This is the manual of \setlX, an interpreter for the \SetlX{} programming-langua
 
 The \SetlX{} language was mostly designed by Prof. Dr. Karl Stroetmann and is an evolution of \SetlTwo{} by Kirk Snyder and especially the original \Setl{} by Jack Schwartz. It was specifically conceived to make the features of \Setl{} more accessible to today's students of set theories.
 
-The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann.
+The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann. You may send bug-reports and\slash{}or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}.
 
 \section{Usage}
 
@@ -69,27 +76,27 @@ In addition to file-paths a number of options can be used when running \setlX{}:
            {displays the interpreter version and terminates}
 \end{itemize}
 
-\section{Build \& Launching}
+\section{Launching}
 
 When the start script finds the self-contained `.jar' file of the interpreter, it is directly run. If this file is not present, it will try to automatically build the `.jar' on first launch.
 
-\subsection{Unix-like OS (Linux, MacOSX, etc.)}
+\subsection{Unix-like OS (Linux, MacOS X, etc.)}
 
-The \setlX{} program can be launched by changing into the `interpreter' sub-directory
+The \setlX{} interpreter can be launched by opening a terminal, changing into the `\command{interpreter}' sub-directory
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 cd interpreter
 \end{lstlisting}
 
 and executing a SetlX program
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 ./setlX <path>/<name>.stlx
 \end{lstlisting}
 
 or launching the interactive mode.
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 ./setlX
 \end{lstlisting}
 
@@ -97,84 +104,74 @@ or launching the interactive mode.
 
 Optionally, when the interpreter source is available, the interpreter can be intelligently (re)build by executing
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 make
 \end{lstlisting}
 
 and/or
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 make jar
 \end{lstlisting}
 
 The later will create a self-contained `.jar' file. This file can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 java -jar setlX.jar <path>/<name>.stlx
 \end{lstlisting}
 
 or
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 java -jar setlX.jar
 \end{lstlisting}
 
-Some additional make targets are also available:
-
-\begin{lstlisting}
-make interactive
-\end{lstlisting}
-
-will build a current version from source and execute the interactive mode;
-
-\begin{lstlisting}
-make test
-\end{lstlisting}
-
-will build a current version from source and execute a small set of tests;
-
-\begin{lstlisting}
-make clean
-\end{lstlisting}
-
-will delete all automatically created files, except the `.jar' file;
-
-\begin{lstlisting}
-make dist-clean
-\end{lstlisting}
-
-will delete all created files.
-
 \subsection{Microsoft Windows}
 
-It can be launched by changing into the `interpreter' sub-directory
+\begin{center}
+\large
+``Here's a nickel kid. Go buy yourself a real computer.''\footnote{In reference to \url{http://dilbert.com/1995-06-24}}
+\end{center}
 
-\begin{lstlisting}
+The \setlX{} interpreter can be launched by opening Microsoft's sort-of-terminal (`Command Prompt'), changing into the `\command{interpreter}' sub-directory
+
+\begin{lstlisting}[frame=none,numbers=none]
 cd interpreter
 \end{lstlisting}
 
 and executing a SetlX program
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 win-setlX.cmd <path>\<name>.stlx
 \end{lstlisting}
 
 or launching the interactive mode.
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 win-setlX.cmd
 \end{lstlisting}
+
+It might be possible to execute a \SetlX{} file by dragging it onto the `\command{win-setlX.cmd}' script or to launch the interpreter mode by simply double clicking this script.
 
 \section{System Requirements}
 
 To run \setlX{} a Java runtime, which is compatible to Java version 1.5 (aka version 5) or higher, is required.
 
-When building from source, the corresponding Java development kit has to be present as well.
+When building from source, the corresponding Java development kit (JDK) has to be present as well.
 
 The hardware requirements are highly dependent on the executed \SetlX{} program. For optimal performance in most situations at least 512 MB of free main-memory should be available.
 
 \section{Limitations}
-The following limitation apply compared to other Setl versions:
+
+\subsection{Stack Overflow}
+
+Due to its implementation and execution by the Java Virtual Machine (JVM), a `stack overflow' error may be encountered when executing highly recursive \SetlX{} programs. The JVM is unable to dynamically increase its internal stack size, no matter how much free memory is available.
+
+To work around this problem, edit the used launching script (`\command{setlX}' or `\command{win-setlX.cmd}') with a text editor and follow the directions given at the top of the script.
+
+\subsection{Limitation Compared to other Setl Version}
+
+Apart from using a different syntax, the following limitation apply compared to other Setl versions:
 
 \begin{itemize}
 	\item All variables and functions are case sensitive.\\
@@ -185,6 +182,7 @@ The following limitation apply compared to other Setl versions:
         `\command{[x,-,y] := [1,2,3];}'\\
         where the `2' would not be assigned to anything.
     \item Explicit constants (`\command{const}') are unsupported.
+    \item There are no `\command{until}' and `pure' loops.
     \item Object oriented features are not supported.
 \end{itemize}
 
@@ -195,7 +193,10 @@ The following bugs are known to be present in this version of the interpreter:
 	\item Passing paths as parameters to the \setlX{} launching script, which have spaces in them, does not work correctly.
 \end{itemize}
 
+
 \section{Disclaimer}
+You may distribute \setlX{}, to anyone and for any purpose, and make changed to it, even without permission from the author or notice to the author, as long as you do not remove any copyright information, and also comply with the antlr license.
+
 This program uses the antlr parser generator in version 3.3. As per its license (which is shipped with the interpreter in \command{interpreter/antlr/antlr\_LICENSE.txt}) antlr is not guaranteed to work and might even destroy all life on this planet.
 
 \end{document}

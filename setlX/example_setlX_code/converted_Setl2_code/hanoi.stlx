@@ -22,7 +22,7 @@ oneStep := procedure(PS, R) {
 };
 
 eliminateCycles := procedure(PS) {
-	return {p in PS | ! (cyclic(p))};
+	return {p in PS | ( ! (cyclic(p)) )};
 };
 
 cyclic := procedure(p) {

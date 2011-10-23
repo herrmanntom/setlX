@@ -100,7 +100,7 @@ public class SetlSet extends CollectionValue {
     /* operations on compound values (Lists, Sets [, Strings]) */
 
     public void addMember(Value element) {
-        if (element instanceof SetlOm) {
+        if (element == SetlOm.OM) {
             return;
         } else {
             separateFromOriginal();

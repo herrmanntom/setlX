@@ -246,77 +246,77 @@ parsePower := procedure() {
 parseFactor := procedure() {
 	if (check("(")) {
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return expr;
 	}
 	if (check("exp")) {
-		if (! (check("("))) {
+		if (( ! (check("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["exp", expr];
 	}
 	if (check("ln")) {
-		if (! (check("("))) {
+		if (( ! (check("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["ln", expr];
 	}
 	if (check("sqrt")) {
-		if (! (check("("))) {
+		if (( ! (check("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["sqrt", expr];
 	}
 	if (check("sin")) {
-		if (! (check("("))) {
+		if (( ! (check("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["sin", expr];
 	}
 	if (check("cos")) {
-		if (! (check("("))) {
+		if (( ! (check("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["cos", expr];
 	}
 	if (check("tan")) {
-		if (! (check("("))) {
+		if (( ! (check("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["tan", expr];
 	}
 	if (check("arctan")) {
-		if (! (check("("))) {
+		if (( ! (check("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["arctan", expr];
@@ -387,7 +387,7 @@ scanExpr := procedure(s) {
 	} else {
 		token := s(1..index - 1);
 	}
-	if (! (s(index) in letters)) {
+	if (( ! (s(index) in letters) )) {
 		return [token] + scanExpr(s(index..));
 	}
 	if (index == #s) {

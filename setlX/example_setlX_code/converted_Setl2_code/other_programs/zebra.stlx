@@ -112,7 +112,7 @@ parseNegation := procedure() {
 parseAtomic := procedure() {
 	if (check("(")) {
 		formula := parseFormula();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return formula;
@@ -175,7 +175,7 @@ scanFormula := procedure(s) {
 	while (s(index) in letters && index < #s) {
 		index := index + 1;
 	}
-	if (! (s(index) in letters)) {
+	if (( ! (s(index) in letters) )) {
 		return [s(1..index - 1)] + scanFormula(s(index..));
 	}
 	if (index == #s) {
@@ -239,11 +239,11 @@ saturate := procedure(S) {
 
 reduce := procedure(S, l) {
 	notL := negateLiteral(l);
-	return {k - {notL}: k in S | notL in k} + {k in S | ! (notL in k) && ! (l in k)} + {{l}};
+	return {k - {notL}: k in S | notL in k} + {k in S | ( ! (notL in k) ) && ( ! (l in k) )} + {{l}};
 };
 
 selectLiteral := procedure(S, Forbidden) {
-	return arb({l: k in S, l in k | ! (l in Forbidden)});
+	return arb({l: k in S, l in k | ( ! (l in Forbidden) )});
 };
 
 negateLiteral := procedure(l) {

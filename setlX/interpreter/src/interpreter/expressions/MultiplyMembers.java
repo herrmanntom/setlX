@@ -15,7 +15,7 @@ public class MultiplyMembers extends Expr {
 
     public Value evaluate() throws SetlException {
         Value result = mRhs.eval().multiplyMembers();
-        if (mLhs != null && !(result instanceof SetlOm)) {
+        if (mLhs != null && result != SetlOm.OM) {
             return mLhs.eval().multiply(result);
         } else if (mLhs != null) {
             return mLhs.eval();

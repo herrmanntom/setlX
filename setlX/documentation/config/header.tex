@@ -1,0 +1,49 @@
+\documentclass[a4paper,oneside]{scrartcl}
+\def\myDocumentType{article}
+
+% conditionals
+\usepackage{ifthen}
+
+% enable special German/European characters
+%\usepackage[official]{eurosym}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+
+%% set available languages
+%\usepackage[ngerman,english]{babel}
+
+% enable (code) listings
+\usepackage{listings}
+
+%% enable graphics
+%\usepackage{graphicx}
+
+% add hyperlinks
+\usepackage[
+	pdftex, % use driver `close' to pdfLaTeX
+	unicode=true, % use unicode strings
+	bookmarksopen=true, % expand bookmarks by default
+	bookmarksnumbered=true % show chapter numbers in bookmarks
+]{hyperref}
+
+% point links to top left corner of respective element, not to caption
+\usepackage[all]{hypcap}
+
+% enable bold-face in typewriter
+\DeclareFontShape{OT1}{cmtt}{bx}{n}{<5><6><7><8><9><10><10.95><12><14.4><17.28><20.74><24.88>cmttb10}{}
+
+%%prerender some unicode characters, to enable their use in predefined commands like \title etc
+%\PrerenderUnicode{ÄäÖöÜüß}
+
+%% same for listings
+%\lstset{literate= {Ö}{{\"O}}1 {Ä}{{\"A}}1 {Ü}{{\"U}}1 {ß}{{\ss}}2 {ü}{{\"u}}1 {ä}{{\"a}}1 {ö}{{\"o}}1 }
+
+% booleans for settings
+\newboolean{linkHighlighting}
+\newboolean{tablesAsFigures}
+\newboolean{listingsAsFigures}
+\newboolean{tocAllingnNonChaptersWithNumberedChapters}
+\newboolean{tocAllingnNonSectionsWithNumberedSections}
+
+% load commands
+\input{config/commands}

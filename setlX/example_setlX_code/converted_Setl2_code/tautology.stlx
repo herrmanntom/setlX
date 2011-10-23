@@ -5,7 +5,7 @@ tautology := procedure(f) {
 	if ({eval(f, I): I in A} == {true}) {
 		return true;
 	} else {
-		return arb({I in A | ! (eval(f, I))});
+		return arb({I in A | ( ! (eval(f, I)) )});
 	}
 };
 
@@ -41,13 +41,13 @@ eval := procedure(f, I) {
 		case isString((f)) :
 			return I(f);
 		case f(1) == "-" :
-			return ! (eval(f(2), I));
+			return ( ! (eval(f(2), I)) );
 		case f(2) == "*" :
 			return eval(f(1), I) && eval(f(3), I);
 		case f(2) == "+" :
 			return eval(f(1), I) || eval(f(3), I);
 		case f(2) == "->" :
-			return ! (eval(f(1), I)) || eval(f(3), I);
+			return ( ! (eval(f(1), I)) ) || eval(f(3), I);
 		case f(2) == "<->" :
 			return eval(f(1), I) == eval(f(3), I);
 		default :
@@ -111,7 +111,7 @@ scanFormula := procedure(s) {
 	while (s(index) in letters && index < #s) {
 		index := index + 1;
 	}
-	if (! (s(index) in letters)) {
+	if (( ! (s(index) in letters) )) {
 		return [s(1..index - 1)] + scanFormula(s(index..));
 	}
 	if (index == #s) {

@@ -137,7 +137,7 @@ public class SetlInt extends NumberValue {
         } else if (v instanceof SetlReal) {
             SetlReal nr = (SetlReal) v;
             return (new BigDecimal(mNumber)).compareTo(nr.mReal);
-        } else if (v instanceof SetlOm || v instanceof SetlBoolean) {
+        } else if (v == SetlOm.OM || v instanceof SetlBoolean) {
             // SetlOm and SetlBoolean are smaller
             return 1;
         } else {

@@ -1,0 +1,76 @@
+% document layout options
+\KOMAoptions{
+	listof=totoc, % add list of figures, list of listings etc to toc
+	bibliography=totoc, % add bibliography to toc
+	abstract=true, % use special formating for abstracts
+	parskip=half % use space between paragraphs, don't indent the first line.
+}
+
+% enable or disable all indication of links
+\ifthenelse{\boolean{linkHighlighting}} {
+  % then
+	\hypersetup{
+		colorlinks=true, % set all link colors to blue
+		linkcolor=blue,
+		citecolor=red,
+		pdfborder={0 0 0} % make sure border around links stays disabled
+	}
+}{
+  % else
+	\hypersetup{
+		colorlinks=false, % disable link colors
+		pdfborder={0 0 0} % make sure border around links stays disabled
+	}
+}
+
+% set this, if you use nonSections or nonSubsections on the same level as normal numbered sections or subsections
+\setboolean{tocAllingnNonChaptersWithNumberedChapters}{false}
+\setboolean{tocAllingnNonSectionsWithNumberedSections}{false}
+
+% default settings for listings 
+\lstset{
+	frame=lines, % frame around the code
+	basicstyle=\small\ttfamily, % font size
+	numbers=left, % enable line numbering
+	numberstyle=\tiny, % font size for numbering
+	tabsize=4, % size of tabs in spaces
+	breaklines=false, % no line wrap
+	xleftmargin=2em, % margin between left page border and listing
+	numbersep=1.5em, % margin between numbering and code
+	captionpos=b, % caption below the listing
+	extendedchars=false % disable special char handling
+}
+
+% set this to true, if tables should be treated as figures (also added to \listoffigures)
+\setboolean{tablesAsFigures}{true}
+% set this to true, if listings should be treated as figures (also added to \listoffigures)
+\setboolean{listingsAsFigures}{true}
+
+%%%%%%%%%%%%%%%%%%%%% special stuff for setlX project %%%%%%%%%%%%%%%%%%%%%
+
+%%% format aliases for reformation in a context sensitive way
+
+% command example
+\newcommand{\command}[1]{\texttt{#1}}
+
+% parameter definition
+\newcommand{\param}[2]{
+	\item[] \command{#1}\\
+            \begin{tabular}{ l p{30 em} }
+                   \hspace*{1 em} & #2 \\
+            \end{tabular}
+}
+
+% folder description
+\newcommand{\folder}[2]{
+	\item \command{#1}\\
+            \begin{tabular}{ l p{30 em} }
+                   \hspace*{1 em} & #2 \\
+            \end{tabular}
+}
+
+% setlX and SetlX
+\def\setlX{\textsc{setlX}}    % setlX --- the interpreter
+\def\SetlX{\textsc{SetlX}}    % SetlX --- the language
+\def\Setl{\textsc{Setl}}      % Setl  --- the language
+\def\SetlTwo{\textsc{Setl2}}  % Setl2 --- the language

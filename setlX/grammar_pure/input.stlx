@@ -94,7 +94,7 @@ saturate := procedure(S) {
 
 reduce := procedure(S, l) {
 	notL := negateLiteral(l);
-	return {k - {notL}: k in S | notL in k} + {k: k in S | ! notL in k && (! l in k || k == {l})};
+	return {k - {notL}: k in S | notL in k} + {k: k in S | ( ! (notL in k) ) && (( ! (l in k) ) || k == {l})};
 };
 
 selectLiteral := procedure(S, Forbidden) {

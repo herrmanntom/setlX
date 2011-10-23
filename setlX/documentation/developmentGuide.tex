@@ -1,5 +1,4 @@
-\def\myDocumentTypeArticle{-}
-\InputIfFileExists{\jobname_header}{}{\input{config/header_V001}}
+\input{config/header}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% document specific %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -8,14 +7,14 @@
 \globalSubject{setlX \input{version}}
 \globalAuthor{Herrmann, Tom}
 \globalDate{\today}
-\globalKeywords{readme}
+\globalKeywords{}
 
 % frequently used configuration options
 \setboolean{linkHighlighting}{true}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% setup %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\InputIfFileExists{\jobname_configuration}{}{\input{config/configuration_V001}}
+\input{config/configuration}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% document text %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -24,6 +23,16 @@
 \begin{document}
 \begin{titlepage}
 \maketitle
+
+\vfill
+
+\begin{center}
+\Large
+``If you have any trouble sounding condescending,\\
+find a Unix user to show you how it's done.''\\
+Scott Adams
+\end{center}
+
 \vfill
 \tableofcontents
 \end{titlepage}
@@ -32,85 +41,243 @@
 
 This is the development guide for \setlX, an interpreter for the \SetlX{} programming-language.
 
-The \setlX{} interpreter, which currently is the reference implementation for the \SetlX{} language, was implemented by Tom Herrmann.
+The \setlX{} interpreter, which currently is the reference implementation for the \SetlX{} language, was implemented by Tom Herrmann. 
 
-I would like to encourage you to send your bug-reports, code-changes and or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}.
+I would like to encourage you to send your bug-reports, code-changes and\slash{}or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}.
 
-\section{Architecture and General Concepts}
+\section{General Concepts}
 
-tbd
+This interpreter is implemented in Java and uses object oriented approaches, where possible. All file and variable names are chosen to reflect their purpose in the program. Complex algorithms should be documented where implemented, but when this implementation is scattered into multiple classes they are also documented in section \ref{specificConcepts}.
 
-\nonSubsection{Source Code Structure}
+Note that this guide assumes extensive knowledge and understanding of the \SetlX{} programming language itself.
+
+\todo{Add more stuff about implementing operations on values in the value classes itself etc\ldots}
+
+\subsection{Folder Structure}
+
+The following folders are used to structure the interpreter and its surrounding components:
 
 \begin{itemize}
-	\param{boolExpressions}
-			{tbd}
-	\param{exceptions}
-			{tbd}
-	\param{expressions}
-			{tbd}
-	\param{functions}
-			{tbd}
-	\param{statements}
-			{tbd}
-	\param{types}
-			{tbd}
-	\param{utilities}
-			{tbd}
+	\folder{documentation}
+			{\LaTeX{} sources for the documentation.}
+	\folder{example\_setlX\_code}
+			{Example programs in \SetlX{} to test the interpreter.\\&
+			 (Also includes some converted \SetlTwo{} programs.)}
+	\folder{grammar\_EBNF}
+			{\SetlX{} grammar in EBNF form, which might be more readable, but can not be used for parsing \SetlX{} code with antlr.}
+	\folder{grammar\_pure}
+			{\SetlX{} grammar in antlr syntax as used by the interpreter, but without any Java statements. Also includes a simple program to parse \SetlX{} code without interpretation.}
+	\folder{interpreter}
+			{Launching script and source code of the interpreter itself.}
+	\begin{itemize}
+		\folder{antlr}
+				{Antlr `jar' file and license.}
+		\folder{simpleTest}
+				{Some very simple \SetlX{} code examples to test specific features for regressions, which are otherwise hard to detect. This test can be run by executing `\command{make test}'.}
+		\folder{src}
+				{Java code of the interpreter (see section \ref{srcStructure}).}
+	\end{itemize}
 \end{itemize}
 
-\section{Specific Concepts}
+\subsection{Source Code Structure}\label{srcStructure}
 
-tbd
+The code is structured into multiple packages. The interpreter packages are somewhat modeled after the common names which describe elements of imperative programming languages:
 
-\subsection{Environment (Stores Variables in Current Scope)}
+\begin{itemize}
+	\folder{comparableSet}
+			{Set and List wrapper classes, which fully support and use Java's comparable interface instead of comparing members via object references only.\\&
+			 (implemented by Prof. Dr. Karl Stroetmann)}
+	\folder{grammar}
+			{\SetlX{} grammar in antlr syntax.}
+	\folder{interpreter}
+			{Java code used to interpret and execute the parsed \SetlX{} code.}
+		\begin{itemize}
+		\folder{boolExpressions}
+				{Boolean expressions}
+		\folder{exceptions}
+				{Exceptions which handle the various errors which could occur.}
+		\folder{expressions}
+				{Non-boolean expressions}
+		\folder{functions}
+				{Predefined functions}
+		\folder{statements}
+				{Statements}
+		\folder{types}
+				{Value-types used by the interpreter.}
+		\folder{utilities}
+				{Various utility classes.}
+		\end{itemize}
+\end{itemize}
 
-tbd
+\section{Specific Concepts}\label{specificConcepts}
 
-\subsection{Dynamically Loaded Functions}
+This section describes specific implementations, which are scattered into multiple classes and therefore lack a dedicated place to describe their interactions.
 
-tbd
+\subsection{Environment (Stores Variables in Current and Global Scope)}
 
+\todo{tbd}
+
+\subsection{Exception Handling}
+
+\todo{tbd}
+
+\subsection{Predefined Functions}
+
+All predefined functions in \setlX{}, like `\command{read()}' and `\command{isSet(x)}', are dynamically loaded at runtime on their first invocation using Java's reflection API. This makes it relatively easy to create new functionality without the need of changing (or even understanding) the rest of the interpreter.
+
+These functions are dynamically loaded by the `Environment' class\\ (\command{interpreter/utilities/Environment.java}):
+
+When resolving an identifier the current and global scopes are searched. If no matching value is found, the predefined functions are searched for the same identifier. If still no value can be retrieved, Java's Math functions are queried.
+
+In order to be found by this algorithm, predefined functions have to follow strict guidelines:
+
+\begin{itemize}
+	\item They need to be placed in the `\command{interpreter.functions}' package.
+	\item Each functions needs a separate class named `\command{PD\_<name>}', where \command{<name>} is the name of the function in the exact case and spelling as should be used in the interpreter.\\
+		E.g. the `\command{isSet()}' function is defined in a class called `\command{PD\_isSet}'.
+	\item The class needs to inherit from `\command{PreDefinedFunction}' in the same package.
+	\item The `\command{super("name");}' constructor must be called, where \command{"name"} is the name of the function.
+	\item The following variable must be present in the class and set with the invocation of the classes constructor (which itself should be private):
+\begin{lstlisting}[frame=none,numbers=none]
+public final static PreDefinedFunction DEFINITION
+                                    = new PD_<name>();
+\end{lstlisting}
+	\item And finally the actual work of the function has to be implemented inside the `\command{execute()}' method. The value returned by this method us used as return value of the function during execution. If no value should be returned, return `\command{SetlOm.OM}' instead (import \command{interpreter.types.SetlOm}).
+
+\end{itemize}
+
+A simple predefined function with a single parameter is shown in figure \ref{lblPDFunction}.
+
+\includeListing[e]{../interpreter/src/interpreter/functions/PD_isMap.java}{language=java}{lblPDFunction}{}{Predefined Function `\command{isMap()}'}
+
+\nonSubsubsection{Using Parameters in Predefined Functions}
+
+If the predefined function uses parameters, they have to be defined in the functions constructor by invoking:
+\begin{lstlisting}[frame=none,numbers=none]
+addParameter(new ParameterDef("value"));
+\end{lstlisting}
+
+Hereby \command{"x"} is the name of the parameter. This parameter name is only shown when the function itself is used as an argument to print() inside a \SetlX{} program.
+
+Read-Write parameters (`\command{rw}') can be defined using:
+\begin{lstlisting}[frame=none,numbers=none]
+addParameter(new ParameterDef("x", ParameterDef.READ_WRITE));
+\end{lstlisting}
+
+When `\command{execute(List<Value> args, List<Value> writeBackVars)}' is called, the current values of these parameters are placed inside the `\command{args}' list in \emph{the same order as they are added in the constructor}. When the predefined function is called with a different number of parameters from within \SetlX{}, the user gets an error and the execution is halted. If the predefined function should be allowed to handle more or fewer parameters as defined, the following methods can be called inside the constructor after parameter definitions:
+\begin{lstlisting}[frame=none,numbers=none]
+enableUnlimitedParameters();
+allowFewerParameters();
+\end{lstlisting}
+
+To (re)set the value of read-write parameters, the following function as to be called inside `\command{execute()}':
+\begin{lstlisting}[frame=none,numbers=none]
+writeBackVars.add(new SetlReal("1.0"));
+\end{lstlisting}
+
+These have to occur in \emph{the same order and number} as read-write parameters are defined in the constructor. A predefined function using a single read-write parameter is shown in figure \ref{lblPDFunctionRW}.
+
+\includeListing[e]{../interpreter/src/interpreter/functions/PD_from.java}{language=java}{lblPDFunctionRW}{}{Predefined Function `\command{from()}' using a read-write parameter}
+
+\nonSubsubsection{Predefined Math Functions}
+
+When an identifier can not be found after searching for predefined functions, a query for a matching Java Math method with a single double as parameter is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{interpreter/functions/MathFunction.java}). This class behaves as any other predefined function and interfaces the \setlX{} Value types with the ones used by Java.
 \subsection{Iterators}
 
-tbd
+\todo{tbd}
+
+\section{Build Targets}
+
+The interpreter can be intelligently (re)build using make. Even though the standard java compiler can resolve and compile dependencies, the rather complex make file is required for partial (re)builds, as files are not rebuild by this compiler when one of their dependencies was updated.
+
+Make targets:
+
+\begin{itemize}
+	\item Standard build of the interpreter:
+\begin{lstlisting}[frame=none,numbers=none]
+make
+\end{lstlisting}
+
+	\item Create a self-contained `.jar' file (also see manual):
+
+\begin{lstlisting}[frame=none,numbers=none]
+make jar
+\end{lstlisting}
+
+	\item Build a current version and execute the interactive mode:
+
+\begin{lstlisting}[frame=none,numbers=none]
+make interactive
+\end{lstlisting}
+
+	\item Build a current version from source and execute a small set of regression tests:
+
+\begin{lstlisting}[frame=none,numbers=none]
+make test
+\end{lstlisting}
+
+	\item Delete all automatically created files, except the `.jar' file:
+
+\begin{lstlisting}[frame=none,numbers=none]
+make clean
+\end{lstlisting}
+
+	\item Delete all created files:
+
+\begin{lstlisting}[frame=none,numbers=none]
+make dist-clean
+\end{lstlisting}
+
+\end{itemize}
 
 \section{Distribution}
 
 Three different `distributions' can be automatically created (on an Unix-like OS):
 
 \begin{enumerate}
-	\item A binary only distribution, which should work on all Unix-like OS and Windows without the need of the full Java JDK. Any Java Runtime (JRE) installation which is newer or the same major version as the JDK which created the distribution should work. This distribution does not include any \SetlX{} code.
+	\item A binary only distribution, which should work on all Unix-like OS and Windows \emph{without} the need of the full Java JDK. Any Java Runtime (JRE) installation which is newer or the same major version as the JDK which created the distribution should work. This distribution does \emph{not} include any \SetlX{} code.
 
-	\item A source distribution, which must be rebuild by the user, which is automatically attempted on first launch. A Java JDK has to be installed for this to work. The version of the users JDK can be lower or even incompatible to the JDK which created the distribution. This distribution also does not include \SetlX{} code, except a simple program to test the interpreter (see `make test' in the manual).
+	\item A source distribution, which must be rebuild by the user, which is automatically attempted on first launch. A Java JDK has to be installed for this to work. The version of the users JDK can be lower or even incompatible to the JDK which created the distribution. This distribution also does \emph{not} include \SetlX{} code, except a simple program to test the interpreter (see `\command{make test}').
 
-	\item The development kit, which includes everything used in the development of the interpreter itself. This distribution includes various \SetlX{} example programs and the grammar of the interpreter in both `EBNF' and `pure' form.
+	\item The development kit, which includes everything used in the development of the interpreter itself: the full interpreter source, various \SetlX{} example programs, the grammar of the interpreter in both `EBNF' and `pure' form and the \LaTeX{} sources of the documentation.
 \end{enumerate}
 
 \subsection{Building distributable zip-files}
 
 The automated distribution creation script can be launched by executing
 
-\begin{lstlisting}
+\begin{lstlisting}[frame=none,numbers=none]
 ./createDistributions
 \end{lstlisting}
 
-Note that this process will `clean' the source (e.g. remove all automatically created files), rebuild the interpreter and all documentation and clean the source again.
+Note that this process will `clean' the source (e.g. remove all automatically created files), rebuild the interpreter and its documentation and finally cleans the source again.
 
 \subsection{Distributing setlX}
 
-You may distribute \setlX{} in all three above mentioned version, or any other version, to anyone and for any purpose, and make changed to it, without permission from the author or notice to the author, as long as you do not remove any copyright information, and also comply to the antlr license (see \command{interpreter/antlr/antlr\_LICENSE.txt}).
+You may distribute \setlX{} in all three above mentioned version, or any other version, to anyone and for any purpose, and make changed to it, even without permission from the author or notice to the author, as long as you do not remove any copyright information, and also comply with the antlr license (see \command{interpreter/antlr/antlr\_LICENSE.txt}).
 
-However, I would like to encourage you to provide the full development kit to anyone you distribute one of the other versions to, at least as an option.
+However, I would like to encourage you to provide the full development kit to anyone you distribute one of the other versions to, at least as an option and\slash{}or on request.
 
 \section{Used Software}
 
 The following software was used when developing the \setlX{} interpreter:
 
 \begin{itemize}
-	\item OpenJDK 1.6.0\_22, compatible to Oracles JDK 1.6 (aka version 6)
+	\item OpenJDK 1.6.0\_22, compatible to Oracles JDK 1.6 (aka JDK 6)
 	\item Antlr 3.3, which is shipped as `.jar' with the interpreter
-	\item pdfTeX, latex and various latex packages
+	\item pdfTeX, latex and various latex packages:
+		\begin{itemize}
+			\item KOMA script (scrartcl)
+			\item ifthen
+%			\item eurosym
+			\item ucs
+			\item inputenc
+%			\item babel
+			\item listings
+%			\item graphicx
+			\item hyperref
+			\item hypcap
+		\end{itemize}
 	\item GNU Make 3.82
 	\item Zip 3.0
 	\item Fedora Linux 15 (64 Bit)

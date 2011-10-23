@@ -15,7 +15,7 @@ public class MinimumMember extends Expr {
 
     public Value evaluate() throws SetlException {
         Value result = mRhs.eval().minimumMember();
-        if (mLhs != null && !(result instanceof SetlOm)) {
+        if (mLhs != null && result != SetlOm.OM) {
             return mLhs.eval().minimum(result);
         } else if (mLhs != null) {
             return mLhs.eval();

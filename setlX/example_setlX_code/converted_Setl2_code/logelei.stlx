@@ -16,13 +16,13 @@ eval := procedure(f, I) {
 		case isString((f)) :
 			return I(f);
 		case f(1) == "-" :
-			return ! (eval(f(2), I));
+			return ( ! (eval(f(2), I)) );
 		case f(2) == "*" :
 			return eval(f(1), I) && eval(f(3), I);
 		case f(2) == "+" :
 			return eval(f(1), I) || eval(f(3), I);
 		case f(2) == "->" :
-			return ! (eval(f(1), I)) || eval(f(3), I);
+			return ( ! (eval(f(1), I)) ) || eval(f(3), I);
 		case f(2) == "<->" :
 			return eval(f(1), I) == eval(f(3), I);
 		default :

@@ -109,7 +109,7 @@ knf := procedure(f) {
 };
 
 simplify := procedure(K) {
-	return {C in K | ! (isTrivial(C))};
+	return {C in K | ( ! (isTrivial(C)) )};
 };
 
 isTrivial := procedure(C) {
@@ -231,7 +231,7 @@ parseNegation := procedure() {
 parseAtomic := procedure() {
 	if (check("(")) {
 		formula := parseFormula();
-		if (! (check(")"))) {
+		if (( ! (check(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return formula;
@@ -288,7 +288,7 @@ scanFormula := procedure(s) {
 	while (s(index) in letters && index < #s) {
 		index := index + 1;
 	}
-	if (! (s(index) in letters)) {
+	if (( ! (s(index) in letters) )) {
 		return [s(1..index - 1)] + scanFormula(s(index..));
 	}
 	if (index == #s) {

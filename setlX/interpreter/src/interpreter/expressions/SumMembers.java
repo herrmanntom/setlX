@@ -15,7 +15,7 @@ public class SumMembers extends Expr {
 
     public Value evaluate() throws SetlException {
         Value result = mRhs.eval().addMembers();
-        if (mLhs != null && !(result instanceof SetlOm)) {
+        if (mLhs != null && result != SetlOm.OM) {
             return mLhs.eval().add(result);
         } else if (mLhs != null) {
             return mLhs.eval();

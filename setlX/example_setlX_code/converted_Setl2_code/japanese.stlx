@@ -1,10 +1,10 @@
 
 erlaubt := procedure(S, All) {
-	return ! (verboten(S)) && ! (verboten(All - S));
+	return ( ! (verboten(S)) ) && ( ! (verboten(All - S)) );
 };
 
 verboten := procedure(S) {
-	return ("Osama" in S && #S > 1 && ! ("George" in S)) || ("Anton" in S && "Mama" in S && ! ("Papa" in S)) || ("Bruno" in S && "Mama" in S && ! ("Papa" in S)) || ("Cindy" in S && "Papa" in S && ! ("Mama" in S)) || ("Doris" in S && "Papa" in S && ! ("Mama" in S));
+	return ("Osama" in S && #S > 1 && ( ! ("George" in S) )) || ("Anton" in S && "Mama" in S && ( ! ("Papa" in S) )) || ("Bruno" in S && "Mama" in S && ( ! ("Papa" in S) )) || ("Cindy" in S && "Papa" in S && ( ! ("Mama" in S) )) || ("Doris" in S && "Papa" in S && ( ! ("Mama" in S) ));
 };
 
 bootOK := procedure(B) {
@@ -27,7 +27,7 @@ reachable := procedure(x, y, R) {
 };
 
 path_product := procedure(P, Q) {
-	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ! (cyclic(add(p, q)))};
+	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ( ! (cyclic(add(p, q))) )};
 };
 
 cyclic := procedure(p) {

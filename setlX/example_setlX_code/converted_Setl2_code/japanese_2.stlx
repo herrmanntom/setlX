@@ -1,7 +1,7 @@
 
 verboten := procedure(S) {
-	linksVerboten := ("Papa" in S && ("Cindy" in S || "Doris" in S) && ! (("Mama" in S))) || ("Mama" in S && ("Anton" in S || "Bruno" in S) && ! (("Papa" in S))) || ("Osama" in S && (! ("George" in S)) && #S >= 2);
-	rechtsVerboten := ("Papa" notin S && ("Cindy" notin S || "Doris" notin S) && ! (("Mama" notin S))) || ("Mama" notin S && ("Anton" notin S || "Bruno" notin S) && ! (("Papa" notin S))) || ("Osama" notin S && (! ("George" notin S)) && (9 - #S) >= 2);
+	linksVerboten := ("Papa" in S && ("Cindy" in S || "Doris" in S) && ( ! (("Mama" in S)) )) || ("Mama" in S && ("Anton" in S || "Bruno" in S) && ( ! (("Papa" in S)) )) || ("Osama" in S && (( ! ("George" in S) )) && #S >= 2);
+	rechtsVerboten := ("Papa" notin S && ("Cindy" notin S || "Doris" notin S) && ( ! (("Mama" notin S)) )) || ("Mama" notin S && ("Anton" notin S || "Bruno" notin S) && ( ! (("Papa" notin S)) )) || ("Osama" notin S && (( ! ("George" notin S) )) && (9 - #S) >= 2);
 	return linksVerboten || rechtsVerboten;
 };
 
@@ -25,7 +25,7 @@ reachable := procedure(x, y, R) {
 };
 
 path_product := procedure(P, Q) {
-	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ! (cyclic(add(p, q)))};
+	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ( ! (cyclic(add(p, q))) )};
 };
 
 cyclic := procedure(p) {
@@ -38,8 +38,8 @@ add := procedure(p, q) {
 
 All := {"George", "Osama", "Mama", "Papa", "Anton", "Bruno", "Cindy", "Doris", "Boot"};
 P := pow(All);
-R1 := {[S, S - B]: S in P, B in pow(S) | ! (verboten(S)) && ! (verboten(S - B)) && bootOK(B)};
-R2 := {[S, S + B]: S in P, B in pow((All - S)) | ! (verboten(S)) && ! (verboten(S + B)) && bootOK(B)};
+R1 := {[S, S - B]: S in P, B in pow(S) | ( ! (verboten(S)) ) && ( ! (verboten(S - B)) ) && bootOK(B)};
+R2 := {[S, S + B]: S in P, B in pow((All - S)) | ( ! (verboten(S)) ) && ( ! (verboten(S + B)) ) && bootOK(B)};
 R := R1 + R2;
 start := All;
 goal := {};

@@ -70,16 +70,11 @@ public class SetlBoolean extends Value {
     // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
-        if (v instanceof SetlBoolean) {
-            if (this == v) {
-                return 0;
-            } else if (this == TRUE && v == FALSE) {
-                return 1;
-            } else {
-                return -1;
-            }
-        } else if (v instanceof SetlOm) {
-            // only SetlOm is smaller
+        if (this == v) {
+            // as only exacly one FALSE and TRUE object exist, we can compare by reference
+            return 0;
+        } else if ((this == TRUE && v == FALSE) || (v == SetlOm.OM)) {
+            // only FALSE and SetlOm is smaller
             return 1;
         } else {
             return -1;

@@ -23,8 +23,7 @@ public class SetlOm extends Value {
     // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
-        if (v instanceof SetlOm) {
-            SetlOm om = (SetlOm) v;
+        if (v == OM) {
             return 0;
         } else {
             // everything is bigger than SetlOm

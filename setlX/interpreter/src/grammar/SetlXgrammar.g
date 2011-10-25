@@ -33,7 +33,7 @@ statement returns [Statement stmnt]
         List<BranchAbstract> branchList = new LinkedList<BranchAbstract>();
     }
     :
-      'var' ID ';'                                            { stmnt = new GlobalDefinition($ID.text);             }
+      'var' variable ';'                                      { stmnt = new GlobalDefinition($variable.v);          }
     | expr ';'                                                { stmnt = new ExpressionStatement($expr.ex);          }
     | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.bex, $b1.blk));     }
       (
@@ -57,6 +57,11 @@ statement returns [Statement stmnt]
     | 'continue' ';'                                          { stmnt = new Continue();                             }
     | 'break' ';'                                             { stmnt = new Break();                                }
     | 'exit' ';'                                              { stmnt = new Exit();                                 }
+    ;
+
+variable returns [Variable v]
+    :
+      ID    { v = new Variable($ID.text); }
     ;
 
 condition returns [BoolExpr bex]
@@ -85,11 +90,11 @@ assignment returns [Assignment assign]
     }
     :
       (
-         ID
+         variable
          (
-           '(' sum ')'  { items.add($sum.s);                        }
-         )*             { lhs = new AssignmentLhs($ID.text, items); }
-       | list           { lhs = new AssignmentLhs($list.lc);        }
+           '(' sum ')'  { items.add($sum.s);                           }
+         )*             { lhs = new AssignmentLhs($variable.v, items); }
+       | list           { lhs = new AssignmentLhs($list.lc);           }
       )
       (
          ':='           { type = Assignment.DIRECT; }
@@ -213,14 +218,14 @@ factor returns [Expr f]
     | value                    { f = new ValueExpr($value.v);           }
     ;
 
-// this could be either 'id' or 'call' or 'element of collection'
+// this could be either 'variable' or 'call' or 'element of collection'
 // decide at runtime
-call returns [ Expr c ]
+call returns [Expr c]
     :
-      ID                         { c = new Variable($ID.text);            }
+      variable                  { c = $variable.v;                       }
       (
          '(' callParameters ')' { c = new Call(c, $callParameters.args); }
-       | '{' expr '}'            { c = new CallCollection(c, $expr.ex);   }
+       | '{' expr '}'           { c = new CallCollection(c, $expr.ex);   }
       )*
     ;
 
@@ -265,8 +270,8 @@ definitionParameters returns [List<ParameterDef> paramList]
 
 definitionParameter returns [ParameterDef param]
     :
-      'rw' ID       { param = new ParameterDef($ID.text, ParameterDef.READ_WRITE); }
-    | ID            { param = new ParameterDef($ID.text, ParameterDef.READ_ONLY);  }
+      'rw' variable  { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
+    | variable       { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
 list returns [SetListConstructor lc]
@@ -314,34 +319,37 @@ iterate returns [Iteration i]
 shortIterate returns [Iteration si]
     @init {
         BoolExpr bex = null;
+        Expr     ex  = null;
     }
     :
       (
-          ID
-        | list
+          variable { ex = $variable.v; }
+        | list     { ex = $list.lc;    }
       )
       'in' expr
       (
         '|' condition   { bex = $condition.bex; }
       )?
-      { si = new Iteration(null, new Iterator($ID.text, $list.lc, $expr.ex), bex); }
+      { si = new Iteration(null, new Iterator(ex, $expr.ex), bex); }
     ;
 
 iterator returns [Iterator iter]
     @init{
-        String               id         = null;
-        SetListConstructor   lc         = null;
+        Expr ex = null;
     }
     :
-      ( i1 = ID | l1 = list )
-      'in' e1 = expr         { iter = new Iterator($i1.text, $l1.lc, $e1.ex); }
+      (
+         v1 = variable       { ex = $v1.v;                         }
+       | l1 = list           { ex = $l1.lc;                        }
+      )
+      'in' e1 = expr         { iter = new Iterator(ex, $e1.ex);    }
       (
         ','
         (
-            i2 = ID          { id = $i2.text; lc = null;                      }
-          | l2 = list        { id = null;     lc = $l2.lc;                    }
+           v2 = variable     { ex = $v2.v;                         }
+         | l2 = list         { ex = $l2.lc;                        }
         )
-        'in' e2 = expr       { iter.add(new Iterator(id, lc, $e2.ex));        }
+        'in' e2 = expr       { iter.add(new Iterator(ex, $e2.ex)); }
       )*
     ;
 

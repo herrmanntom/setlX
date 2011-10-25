@@ -1,5 +1,6 @@
 package interpreter.expressions;
 
+import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.SetlList;
@@ -7,8 +8,6 @@ import interpreter.types.SetlOm;
 import interpreter.types.SetlSet;
 import interpreter.types.Value;
 import interpreter.utilities.Constructor;
-import interpreter.utilities.Environment;
-import interpreter.utilities.ExplicitList;
 
 import java.util.List;
 
@@ -45,13 +44,17 @@ public class SetListConstructor extends Expr {
         return result;
     }
 
-    // sets the variables used to form this list to the variables from the list given as a parameter
-    public boolean setIds(SetlList list) throws UndefinedOperationException {
-        if (mType == LIST) {
-            return mConstructor.setIds(list);
+    // sets this expression to the given value
+    public void assign(Value v) throws SetlException {
+        if (v instanceof SetlList) {
+            if (mType == LIST) {
+                mConstructor.setIds((SetlList) v);
+            } else {
+                throw new UndefinedOperationException("Error in '" + this + "':\n"
+                                                +     "Only explicit lists of variables can be used as targets for list assignments.");
+            }
         } else {
-            throw new UndefinedOperationException("Error in '" + this + "':\n"
-                                            +     "Only explicit lists of variables can be used as targets for list assignments.");
+            throw new IncompatibleTypeException("The value `" + v + "´ is unusable for assignment to '" + this + "'.");
         }
     }
 

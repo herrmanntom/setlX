@@ -9,11 +9,7 @@ public class Variable extends Expr {
     private String mId;
 
     public Variable(String id) {
-        mId             = id;
-    }
-
-    public String getId() {
-        return mId;
+        mId = id;
     }
 
     public Value evaluate() throws SetlException {
@@ -25,7 +21,17 @@ public class Variable extends Expr {
         }
     }
 
+    // sets this expression to the given value
+    public void assign(Value v) {
+        Environment.putValue(mId, v.clone());
+    }
+
+    // sets this expression to the given value
+    public void makeGlobal() {
+        Environment.makeGlobal(mId);
+    }
+
     public String toString(int tabs) {
-        return this.getId();
+        return mId;
     }
 }

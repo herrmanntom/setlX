@@ -98,10 +98,9 @@ bin/interpreter/utilities/*.class :                          \
         src/interpreter/boolExpressions/BoolExpr.java                \
         src/interpreter/expressions/Expr.java                        \
         src/interpreter/expressions/Variable.java                    \
-        src/interpreter/expressions/SetListConstructor.java          \
-        src/interpreter/exceptions/*.java                            \
         src/interpreter/functions/MathFunction.java                  \
         src/interpreter/functions/PreDefinedFunction.java            \
+        src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java
 	javac -d bin -sourcepath src src/interpreter/utilities/*.java
 

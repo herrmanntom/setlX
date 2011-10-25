@@ -7,7 +7,7 @@ block
 
 statement
     :
-      'var' ID ';'
+      'var' variable ';'
     | expr ';'
     | 'if'         '(' condition ')' '{' block '}'
       ('else' 'if' '(' condition ')' '{' block '}' )*
@@ -22,6 +22,11 @@ statement
     | 'continue' ';'
     | 'break' ';'
     | 'exit' ';'
+    ;
+
+variable
+    :
+      ID
     ;
 
 condition
@@ -39,7 +44,7 @@ expr
 
 assignment
     :
-      (ID ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=') expr
+      (variable ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=') expr
     ;
 
 conjunction
@@ -99,11 +104,11 @@ factor
     | value
     ;
 
-// this could be either 'id' or 'call' or 'element of collection'
+// this could be either 'variable' or 'call' or 'element of collection'
 // decide at runtime
 call
     :
-      ID ( '(' callParameters ')' | '{' expr '}' )*
+      variable ( '(' callParameters ')' | '{' expr '}' )*
     ;
 
 callParameters
@@ -126,8 +131,8 @@ definitionParameters
 
 definitionParameter
     :
-      'rw' ID
-    | ID
+      'rw' variable
+    | variable
     ;
 
 list
@@ -160,12 +165,12 @@ iterate
 
 shortIterate
     :
-      ( ID | list ) 'in' expr ('|' condition)?
+      ( variable | list ) 'in' expr ('|' condition)?
     ;
 
 iterator
     :
-      ( ID | list ) 'in' expr (',' ( ID | list ) 'in' expr )*
+      ( variable | list ) 'in' expr (',' ( variable | list ) 'in' expr )*
     ;
 
 explicitList

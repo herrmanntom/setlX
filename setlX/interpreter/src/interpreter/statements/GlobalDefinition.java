@@ -1,21 +1,21 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
-import interpreter.expressions.Expr;
+import interpreter.expressions.Variable;
 import interpreter.utilities.Environment;
 
 public class GlobalDefinition extends Statement {
-    private String mId;
+    private Variable mVar;
 
-    public GlobalDefinition(String id) {
-        mId = id;
+    public GlobalDefinition(Variable var) {
+        mVar = var;
     }
 
     public void execute() throws SetlException {
-        Environment.makeGlobal(mId);
+        mVar.makeGlobal();
     }
 
     public String toString(int tabs) {
-        return Environment.getTabs(tabs) + "var " + mId + ";";
+        return Environment.getTabs(tabs) + "var " + mVar.toString(tabs) + ";";
     }
 }

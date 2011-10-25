@@ -2,18 +2,14 @@ package interpreter.utilities;
 
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
-import interpreter.expressions.SetListConstructor;
-import interpreter.expressions.Variable;
-import interpreter.types.SetlList;
 import interpreter.types.Value;
 
 import java.util.LinkedList;
-import java.util.List;
 
 public class WriteBackAgent {
 
-    private List<Expr>  mExpressions;
-    private List<Value> mValues;
+    private LinkedList<Expr>  mExpressions;
+    private LinkedList<Value> mValues;
 
     public WriteBackAgent() {
         mExpressions = new LinkedList<Expr>();
@@ -33,23 +29,15 @@ public class WriteBackAgent {
        and
          lists of (lists of) simple variables
        If the expressions used are more complex or it is otherwise not possible
-       to write the values back, the current pair of expr+value us ignored. */
+       to write the values back, the current pair of expr+value is ignored. */
     public void writeBack() {
         for (int i = 0; i < mExpressions.size(); ++i) {
             Expr  expr  = mExpressions.get(i);
             Value value = mValues.get(i).clone();
-            if (expr instanceof Variable) {
-                Variable var = (Variable) expr;
-                Environment.putValue(var.getId(), value);
-            } else if (expr  instanceof SetListConstructor &&
-                       value instanceof SetlList              )
-            {
-                SetListConstructor lc = (SetListConstructor) expr;
-                try {
-                    lc.setIds((SetlList) value);
-                } catch (SetlException se) {
-                    // list assignment failed => just ignore it
-                }
+            try {
+                expr.assign(value);
+            } catch (SetlException se) {
+                // assignment failed => just ignore it
             }
         }
     }

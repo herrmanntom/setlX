@@ -3,7 +3,6 @@ package interpreter.types;
 import interpreter.exceptions.IncorrectNumberOfParametersException;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.statements.Block;
@@ -43,7 +42,7 @@ public class SetlDefinition extends Value {
 
         // put arguments into environment
         for (int i = 0; i < mParameters.size(); ++i) {
-            Environment.putValue(mParameters.get(i).getId(), args.get(i));
+            mParameters.get(i).assign(args.get(i));
         }
 
         Value result = SetlOm.OM;
@@ -59,7 +58,7 @@ public class SetlDefinition extends Value {
             ParameterDef param = mParameters.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
                 // value of parameter after execution
-                Value postValue = Environment.findValue(param.getId());
+                Value postValue = param.getValue();
                 // expression used to fill parameter before execution
                 Expr  preExpr   = exprs.get(i);
                 /* if possible the WriteBackAgent will set the variable used in this

@@ -4,25 +4,19 @@ import interpreter.exceptions.ContinueException;
 import interpreter.exceptions.BreakException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
-import interpreter.expressions.SetListConstructor;
 import interpreter.types.CollectionValue;
-import interpreter.types.SetlOm;
-import interpreter.types.SetlList;
 import interpreter.types.Value;
 
 public class Iterator {
-    private String              mId;                // Lhs is a simple variable
-    private SetListConstructor  mListConstructor;   // Lhs is a list (hopefully only of (lists of) variables)
-    private Expr                mExpr;              // RHS (should be Set/List)
-    private Iterator            mNext;              // next iterator
+    private Expr                mLhs;    // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
+    private Expr                mRhs;    // Rhs (should be Set/List)
+    private Iterator            mNext;   // next iterator
 
-    public Iterator(String id, SetListConstructor listConstructor, Expr expr) {
-        mId              = id;
-        mListConstructor = listConstructor;
-        mExpr            = expr;
-        mNext            = null;
+    public Iterator(Expr lhs, Expr rhs) {
+        mLhs  = lhs;
+        mRhs  = rhs;
+        mNext = null;
     }
 
     // adds next iterator to end of current iterator chain
@@ -38,8 +32,8 @@ public class Iterator {
        note: resets to outer environment after its finished!
        note: each iterator introduces a new environment to allow local variables */
     public void eval(IteratorExecutionContainer exec) throws SetlException {
-        SetlException ex = null;
-        Environment outerEnv = Environment.getEnv();
+        SetlException ex       = null;
+        Environment   outerEnv = Environment.getEnv();
         try {
             evaluate(exec);
         } catch (BreakException ee) {
@@ -55,17 +49,11 @@ public class Iterator {
     }
 
     public String toString(int tabs) {
-        String r = "";
-        if (mId != null) {
-            r = mId;
-        } else if (mListConstructor != null) {
-            r = mListConstructor.toString(tabs);
-        }
-        r += " in " + mExpr.toString(tabs);
+        String result = mLhs.toString(tabs) + " in " + mRhs.toString(tabs);
         if (mNext != null) {
-            r += ", " + mNext.toString(tabs);
+            result += ", " + mNext.toString(tabs);
         }
-        return r;
+        return result;
     }
 
     public String toString() {
@@ -73,9 +61,9 @@ public class Iterator {
     }
 
     private void evaluate(IteratorExecutionContainer exec) throws SetlException {
-        Value iterationValue = mExpr.eval(); // trying to iterate over this value
+        Value iterationValue = mRhs.eval(); // trying to iterate over this value
         if (iterationValue instanceof CollectionValue) {
-            CollectionValue  coll    = (CollectionValue) iterationValue;
+            CollectionValue coll     = (CollectionValue) iterationValue;
             // environment for inner execution/next iterator
             Environment     innerEnv = Environment.getEnv().createInteratorBlock();
             // iterate over items
@@ -83,22 +71,9 @@ public class Iterator {
                 // restore inner environment
                 Environment.setEnv(innerEnv);
                 innerEnv.setWriteThrough(false); // force iteration variables to be local to this block
-                if (mId != null) { // single variable as target
-                    Environment.putValue(mId, v);
-                } else if (mListConstructor != null) { // list as target
-                    if (v instanceof SetlList) {
-                        if (mListConstructor.setIds((SetlList) v)) {
-                            // list extraction successful
-                        } else {
-                            throw membersUnusableError(coll);
-                        }
-                    } else {
-                        throw membersUnusableError(coll);
-                    }
-                } else {
-                    throw malformedError();
-                }
-                // reset, because changes during execution are not strictly local
+                // assign value from collection
+                mLhs.assign(v);
+                // reset WriteThrough, because changes during execution are not strictly local
                 innerEnv.setWriteThrough(true);
                 /* Starts iteration of next iterator or execution if this is the
                    last iterator.
@@ -117,14 +92,6 @@ public class Iterator {
         } else {
             throw new IncompatibleTypeException("Evaluation of iterator `" + iterationValue + "´ is not a compound value.");
         }
-    }
-
-    private UndefinedOperationException malformedError() {
-        return new UndefinedOperationException("List/Set iteration is malformed.");
-    }
-
-    private IncompatibleTypeException membersUnusableError(Value v) {
-        return new IncompatibleTypeException("Members of `" + v + "´ are unusable for list assignment.");
     }
 }
 

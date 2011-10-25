@@ -2,86 +2,59 @@ package interpreter.expressions;
 
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.CollectionValue;
-import interpreter.types.SetlList;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class AssignmentLhs {
-    private String             mLhs;   // lhs is a simple ID
-    private List<Expr>         mItems; // subsequent calls upon the ID
-    private SetListConstructor mLc;    // not a simple ID, but a list
+    private Expr        mLhs;   // Lhs (should be either a Variable or ListConstructor)
+    private List<Expr>  mItems; // subsequent calls upon the Expr
 
-    public AssignmentLhs(String lhs, List<Expr> items) {
+    public AssignmentLhs(Expr lhs, List<Expr> items) {
         mLhs   = lhs;
         mItems = items;
-        mLc    = null;
+    }
+    
+    public AssignmentLhs(Expr lhs) {
+        this(lhs, null);
     }
 
-    public AssignmentLhs(SetListConstructor lc) {
-        mLhs   = null;
-        mItems = null;
-        mLc    = lc;
-    }
-
-    public Expr getExpr() throws UndefinedOperationException {
-        if (mLhs != null && mItems != null && mItems.size() <= 0) {
-            return new Variable(mLhs);
-        } else if (mLhs != null && mItems != null && mItems.size() > 0) {
-            Expr call = new Variable(mLhs);
+    public Expr getExpr() {
+        Expr result = mLhs;
+        if (mItems != null && mItems.size() > 0) {
             for (Expr e : mItems) {
                 List<Expr> args = new LinkedList<Expr>();
                 args.add(e);
-                call = new Call(call, args);
+                result = new Call(result, args);
             }
-            return call;
-        } else if (mLhs == null && mItems == null && mLc != null) {
-            return mLc;
-        } else {
-            throw new UndefinedOperationException("Left-hand-side of `" + this + " := ...´ is malformed.");
         }
+        return result;
     }
 
     public Value setValue(Value v) throws SetlException {
-        if (mLhs != null && mItems != null && mItems.size() <= 0) {
-            setVariableToValue(v);
-        } else if (mLhs != null && mItems != null && mItems.size() > 0) {
+        if (mItems != null && mItems.size() > 0) {
             setVariableAfterCallsToValue(v);
-        } else if (mLhs == null && mItems == null && mLc != null) {
-            setListToVariable(v);
         } else {
-            throw new UndefinedOperationException("Left-hand-side of `" + this + " := " + v + "´ is malformed.");
+            mLhs.assign(v);
         }
-        return v.clone();
+        return v;
     }
 
     public String toString(int tabs) {
-        String r = "";
-        if (mLhs != null) {
-            r = mLhs;
-        }
+        String result = mLhs.toString(tabs);
         if (mItems != null && mItems.size() > 0) {
             for (Expr e: mItems) {
-                r += "(" + e.toString(tabs) + ")";
+                result += "(" + e.toString(tabs) + ")";
             }
         }
-        if (mLc != null) {
-            r = mLc.toString(tabs);
-        }
-        return r;
-    }
-
-    private void setVariableToValue(Value newValue) {
-        Environment.putValue(mLhs, newValue.clone());
+        return result;
     }
 
     // first evaluate the variable, then subsequently perform all calls and assign value to last result
     private void setVariableAfterCallsToValue(Value newValue) throws SetlException {
-        Value current = (new Variable(mLhs)).eval();
+        Value current = mLhs.eval();
         for (int i = 0; i < mItems.size(); ++i) {
             if (current instanceof CollectionValue) {
                 Value index   = mItems.get(i).eval();
@@ -93,16 +66,6 @@ public class AssignmentLhs {
             } else {
                 throw new IncompatibleTypeException("Left-hand-side of `" + this + " := " + newValue + "´ is unusable for list assignment.");
             }
-        }
-    }
-
-    private void setListToVariable(Value newValue) throws SetlException {
-        if (newValue instanceof SetlList) {
-            if ( ! mLc.setIds((SetlList) newValue)) {
-                throw new IncompatibleTypeException("Right-hand-side of `" + this + " := " + newValue + "´ is unusable for list assignment.");
-            }
-        } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " := " + newValue + "´ is unusable for list assignment.");
         }
     }
 }

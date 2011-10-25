@@ -1,16 +1,12 @@
 package interpreter.utilities;
 
+import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
-import interpreter.expressions.SetListConstructor;
-import interpreter.expressions.Variable;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlList;
-import interpreter.types.SetlOm;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 
 import java.util.List;
 
@@ -28,29 +24,19 @@ public class ExplicitList extends Constructor {
     }
 
     // sets the variables used to form this list to the variables from the list given as a parameter
-    public boolean setIds(SetlList list) throws UndefinedOperationException {
+    public void setIds(SetlList list) throws SetlException {
         if (list.size() != mList.size()) {
-            return false;
+            throw new IncompatibleTypeException("Members of `" + list + "´ are unusable for list assignment.");
         }
         for (int i = 0; i < mList.size(); ++i) {
             Expr  e = mList.get(i);
             Value v = null;
             try {
-                list.getMember(new SetlInt(i + 1));
+                v = list.getMember(new SetlInt(i + 1));
             } catch (SetlException se) { /* this can not fail at this point */};
-            if (e instanceof Variable) {
-                Environment.putValue(((Variable)e).getId(), v.clone());
-            } else if (e instanceof SetListConstructor) {
-                if (v instanceof SetlList) {
-                    ((SetListConstructor) e).setIds((SetlList) v);
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+
+            e.assign(v);
         }
-        return true;
     }
 
     public int size() {

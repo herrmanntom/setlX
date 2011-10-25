@@ -10,7 +10,7 @@ public abstract class Constructor {
     public abstract void        fillCollection(CollectionValue collection) throws SetlException;
 
     // sets the variables used to form this list to the variables from the list given as a parameter
-    public boolean setIds(SetlList list) throws UndefinedOperationException {
+    public void setIds(SetlList list) throws SetlException {
         throw new UndefinedOperationException("Error in '" + this + "':\n"
                                         +     "Only explicit lists of variables can be used as targets for list assignments.");
     }

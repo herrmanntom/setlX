@@ -2,6 +2,7 @@ package interpreter.expressions;
 
 import interpreter.exceptions.AbortException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
@@ -18,6 +19,13 @@ public abstract class Expr {
     }
 
     public abstract Value evaluate() throws SetlException;
+
+    /* sets this expression to the given value
+       (only makes sense for variables and lists) */
+    public void assign(Value v) throws SetlException {
+        throw new UndefinedOperationException("Error in '" + this + "':\n"
+                                        +     "This expression can not be used as target for assignments.");
+    }
 
     public abstract String toString(int tabs);
 

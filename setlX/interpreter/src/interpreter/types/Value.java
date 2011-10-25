@@ -52,6 +52,12 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Left-hand-side of `" + this + " or " + other + "´ is not a Boolean value.");
     }
 
+    /* type checks (sort of boolean operation) */
+
+    public SetlBoolean isBoolean() {
+        return SetlBoolean.FALSE;
+    }
+
     /* arithmetic operations */
 
     public NumberValue absoluteValue() throws IncompatibleTypeException {

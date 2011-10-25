@@ -13,10 +13,10 @@ import interpreter.types.SetlList;
 import interpreter.types.Value;
 
 public class Iterator {
-    private String              mId;
-    private SetListConstructor  mListConstructor;
-    private Expr                mExpr;
-    private Iterator            mNext;
+    private String              mId;                // Lhs is a simple variable
+    private SetListConstructor  mListConstructor;   // Lhs is a list (hopefully only of (lists of) variables)
+    private Expr                mExpr;              // RHS (should be Set/List)
+    private Iterator            mNext;              // next iterator
 
     public Iterator(String id, SetListConstructor listConstructor, Expr expr) {
         mId              = id;
@@ -51,20 +51,6 @@ public class Iterator {
         Environment.setEnv(outerEnv); // make sure env is always reset
         if (ex != null) {
             throw ex;
-        }
-    }
-
-    // sets all variables used in this iterator to OM
-    public void setToOm() throws UndefinedOperationException {
-        if (mNext != null) {
-            mNext.setToOm();
-        }
-        if (mId != null) {
-            Environment.putValue(mId, SetlOm.OM);
-        } else if (mListConstructor != null) {
-            mListConstructor.setIdsToOm();
-        } else {
-            throw malformedError();
         }
     }
 
@@ -138,7 +124,7 @@ public class Iterator {
     }
 
     private IncompatibleTypeException membersUnusableError(Value v) {
-        return new IncompatibleTypeException("Members of `" + v + "´ are unusable for list extraction.");
+        return new IncompatibleTypeException("Members of `" + v + "´ are unusable for list assignment.");
     }
 }
 

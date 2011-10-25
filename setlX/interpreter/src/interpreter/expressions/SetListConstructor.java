@@ -45,21 +45,13 @@ public class SetListConstructor extends Expr {
         return result;
     }
 
-    public boolean setIds(SetlList list) throws SetlException {
-        if (mType == LIST && mConstructor instanceof ExplicitList) {
-            return ((ExplicitList) mConstructor).setIds(list);
+    // sets the variables used to form this list to the variables from the list given as a parameter
+    public boolean setIds(SetlList list) throws UndefinedOperationException {
+        if (mType == LIST) {
+            return mConstructor.setIds(list);
         } else {
             throw new UndefinedOperationException("Error in '" + this + "':\n"
-                                                + "Only explicit lists of variables are allowed in iterations.");
-        }
-    }
-
-    public void setIdsToOm() throws UndefinedOperationException {
-        if (mType == LIST && mConstructor instanceof ExplicitList) {
-            ((ExplicitList) mConstructor).setIdsToOm();
-        } else {
-            throw new UndefinedOperationException("Error in '" + this + "':\n"
-                                                + "Only explicit lists of variables are allowed in iterations.");
+                                            +     "Only explicit lists of variables can be used as targets for list assignments.");
         }
     }
 

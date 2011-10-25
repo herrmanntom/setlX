@@ -27,13 +27,17 @@ public class ExplicitList extends Constructor {
         }
     }
 
-    public boolean setIds(SetlList list) throws SetlException {
+    // sets the variables used to form this list to the variables from the list given as a parameter
+    public boolean setIds(SetlList list) throws UndefinedOperationException {
         if (list.size() != mList.size()) {
             return false;
         }
         for (int i = 0; i < mList.size(); ++i) {
             Expr  e = mList.get(i);
-            Value v = list.getMember(new SetlInt(i + 1));
+            Value v = null;
+            try {
+                list.getMember(new SetlInt(i + 1));
+            } catch (SetlException se) { /* this can not fail at this point */};
             if (e instanceof Variable) {
                 Environment.putValue(((Variable)e).getId(), v.clone());
             } else if (e instanceof SetListConstructor) {
@@ -47,20 +51,6 @@ public class ExplicitList extends Constructor {
             }
         }
         return true;
-    }
-
-    public void setIdsToOm() throws UndefinedOperationException {
-        for (int i = 0; i < mList.size(); ++i) {
-            Expr  e = mList.get(i);
-            if (e instanceof Variable) {
-                Environment.putValue(((Variable)e).getId(), SetlOm.OM);
-            } else if (e instanceof SetListConstructor) {
-                ((SetListConstructor) e).setIdsToOm();
-            } else {
-                throw new UndefinedOperationException("Error in '" + this + "':\n"
-                                                +     "Only explicit lists of variables are allowed in iterations.");
-            }
-        }
     }
 
     public int size() {

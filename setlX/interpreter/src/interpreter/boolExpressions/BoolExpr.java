@@ -15,7 +15,7 @@ public class BoolExpr extends Expr {
 
     public SetlBoolean eval() throws SetlException {
         Value v = mExpr.eval();
-        if (v instanceof SetlBoolean) {
+        if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) {
             return (SetlBoolean) v;
         } else {
             throw new IncompatibleTypeException("`" + v + "´ is not a Boolean value.");

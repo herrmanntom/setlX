@@ -23,12 +23,13 @@ public class SetlBoolean extends Value {
     }
 
     public SetlBoolean and(Value other) throws IncompatibleTypeException {
-        if (other instanceof SetlBoolean) {
-            if (this == TRUE && other == TRUE) {
+        if (other == TRUE) {
+            if (this == TRUE) {
                 return TRUE;
-            } else {
-                return FALSE;
             }
+            return FALSE;
+        } else if (other == FALSE) {
+           return FALSE;
         } else {
             throw new IncompatibleTypeException("Right-hand-side of `" + this + " and " + other + "´ is not a Boolean value.");
         }
@@ -43,15 +44,20 @@ public class SetlBoolean extends Value {
     }
 
     public SetlBoolean or(Value other) throws IncompatibleTypeException {
-        if (other instanceof SetlBoolean) {
-            if (this == TRUE || other == TRUE) {
+        if (other == TRUE) {
+            return TRUE;
+        } else if (other == FALSE) {
+            if (this == TRUE) {
                 return TRUE;
-            } else {
-                return FALSE;
             }
+            return FALSE;
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " or " + other + "´ is not a Boolean value.");
+            throw new IncompatibleTypeException("Right-hand-side of `" + this + " and " + other + "´ is not a Boolean value.");
         }
+    }
+
+    public SetlBoolean isBoolean() {
+        return SetlBoolean.TRUE;
     }
 
     public String toString() {

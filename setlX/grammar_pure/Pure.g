@@ -44,7 +44,23 @@ expr
 
 assignment
     :
-      (variable ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') expr
+      (variable ('(' sum ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') expr
+    ;
+
+idList
+    :
+      '[' explicitIdList ']'
+    ;
+
+explicitIdList
+    :
+      (assignable | '-') (',' (assignable | '-'))*
+    ;
+
+assignable
+    :
+      variable
+    | idList
     ;
 
 implication
@@ -169,18 +185,18 @@ range
 
 iterate
     :
-        ( shortIterate )=> shortIterate
-      | expr ':' iterator ('|' condition)?
+      ( shortIterate )=> shortIterate
+    | expr ':' iterator ('|' condition)?
     ;
 
 shortIterate
     :
-      ( variable | list ) 'in' expr '|' condition
+      assignable 'in' expr '|' condition
     ;
 
 iterator
     :
-      ( variable | list ) 'in' expr (',' ( variable | list ) 'in' expr )*
+      assignable 'in' expr (',' assignable 'in' expr )*
     ;
 
 explicitList

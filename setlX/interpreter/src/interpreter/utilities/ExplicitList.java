@@ -3,6 +3,7 @@ package interpreter.utilities;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
+import interpreter.expressions.IdListIgnoreDummy;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlList;
@@ -30,6 +31,9 @@ public class ExplicitList extends Constructor {
         }
         for (int i = 0; i < mList.size(); ++i) {
             Expr  e = mList.get(i);
+            if (e == IdListIgnoreDummy.ILID) { // ignore this position `[x,-,y]'
+                continue;
+            }
             Value v = null;
             try {
                 v = list.getMember(new SetlInt(i + 1));

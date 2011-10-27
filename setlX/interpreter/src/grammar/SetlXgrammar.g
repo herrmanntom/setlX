@@ -22,10 +22,10 @@ block returns [Block blk]
         List<Statement>      stmnts     = new LinkedList<Statement>();
     }
     :
-       (
-         statement      { stmnts.add($statement.stmnt);   }
-       )*
-       { blk = new Block(stmnts);        }
+      (
+        statement      { stmnts.add($statement.stmnt);   }
+      )*
+      { blk = new Block(stmnts);        }
     ;
 
 statement returns [Statement stmnt]
@@ -61,12 +61,12 @@ statement returns [Statement stmnt]
 
 variable returns [Variable v]
     :
-      ID    { v = new Variable($ID.text); }
+      ID    { v = new Variable($ID.text);   }
     ;
 
 condition returns [BoolExpr bex]
     :
-      expr   { bex = new BoolExpr($expr.ex); }
+      expr  { bex = new BoolExpr($expr.ex); }
     ;
 
 expr returns [Expr ex]
@@ -91,7 +91,7 @@ assignment returns [Assignment assign]
          (
            '(' sum ')'  { items.add($sum.s);                           }
          )*             { lhs = new AssignmentLhs($variable.v, items); }
-       | list           { lhs = new AssignmentLhs($list.lc);           }
+       | idList         { lhs = new AssignmentLhs($idList.ilc);        }
       )
       (
          ':='           { type = Assignment.DIRECT; }
@@ -103,6 +103,36 @@ assignment returns [Assignment assign]
       )
       expr              { $assign = new Assignment(lhs, type, $expr.ex); }
     ;
+
+idList returns [SetListConstructor ilc]
+    :
+      '[' explicitIdList ']' { ilc = new SetListConstructor(SetListConstructor.LIST, $explicitIdList.eil); }
+    ;
+
+explicitIdList returns [ExplicitList eil]
+    @init {
+        List<Expr> exprs = new LinkedList<Expr>();
+    }
+    :
+      (
+         a1 = assignable   { exprs.add($a1.a);                  }
+       | '-'               { exprs.add(IdListIgnoreDummy.ILID); }
+      )
+      (
+        ','
+        (
+           a2 = assignable { exprs.add($a2.a);                  }
+         | '-'             { exprs.add(IdListIgnoreDummy.ILID); }
+        )
+      )*                   { eil = new ExplicitList(exprs);     }
+    ;
+
+assignable returns [Expr a]
+    :
+      variable { a = $variable.v; }
+    | idList   { a = $idList.ilc; }
+    ;
+
 
 implication returns [Expr i]
     :
@@ -331,36 +361,16 @@ iterate returns [Iteration i]
     ;
 
 shortIterate returns [Iteration si]
-    @init {
-        BoolExpr bex = null;
-        Expr     ex  = null;
-    }
     :
-      (
-          variable            { ex = $variable.v;     }
-        | list                { ex = $list.lc;        }
-      )
-      'in' expr '|' condition { bex = $condition.bex; }
-      { si = new Iteration(null, new Iterator(ex, $expr.ex), bex); }
+      assignable 'in' expr '|' condition  { si = new Iteration(null, new Iterator($assignable.a, $expr.ex), $condition.bex); }
     ;
 
 iterator returns [Iterator iter]
-    @init{
-        Expr ex = null;
-    }
     :
-      (
-         v1 = variable       { ex = $v1.v;                         }
-       | l1 = list           { ex = $l1.lc;                        }
-      )
-      'in' e1 = expr         { iter = new Iterator(ex, $e1.ex);    }
+      a1 = assignable 'in' e1 = expr   { iter = new Iterator($a1.a, $e1.ex);    }
       (
         ','
-        (
-           v2 = variable     { ex = $v2.v;                         }
-         | l2 = list         { ex = $l2.lc;                        }
-        )
-        'in' e2 = expr       { iter.add(new Iterator(ex, $e2.ex)); }
+        a2 = assignable 'in' e2 = expr { iter.add(new Iterator($a2.a, $e2.ex)); }
       )*
     ;
 

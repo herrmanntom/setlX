@@ -51,7 +51,7 @@ The \setlX{} interpreter has two basic modes of operation:
 	\item interactive mode
 \end{itemize}
 
-The `file execution mode' will be started if one or more paths to code files are supplied as parameters for this program. These files will then be parsed and executed in the order in which they are listed as parameters. When executing multiple files, they share the outer most scope.
+The `file execution mode' will be started if one or more paths to code files are supplied as parameters for this program. These files will then be parsed and executed in the order in which they are listed as parameters. When executing multiple files, they share the outermost scope.
 
 When no paths are supplied, the `interactive mode' will be started.\\
 Note that input will be executed after entering an additional empty line. Hereby multiple lines of input can be parsed and evaluated. Executing the `\command{exit;}' statement will terminate the interpreter.
@@ -114,7 +114,7 @@ and/or
 make jar
 \end{lstlisting}
 
-The later will create a self-contained `.jar' file. This file can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
+The second one will create a self-contained `.jar' file. This file can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
 java -jar setlX.jar <path>/<name>.stlx
@@ -155,7 +155,7 @@ It might be possible to execute a \SetlX{} file by dragging it onto the `\comman
 
 \section{System Requirements}
 
-To run \setlX{} a Java runtime, which is compatible to Java version 1.5 (aka version 5) or higher, is required.
+To run \setlX{} a Java runtime is required, which is compatible to Java version 1.5 (aka version 5) or higher.
 
 When building from source, the corresponding Java development kit (JDK) has to be present as well.
 
@@ -169,7 +169,7 @@ Due to its implementation and execution by the Java Virtual Machine (JVM), a `st
 
 To work around this problem, edit the used launching script (`\command{setlX}' or `\command{win-setlX.cmd}') with a text editor and follow the directions given at the top of the script.
 
-\subsection{Limitation Compared to other Setl Version}
+\subsection{Limitation Compared to other Setl Versions}
 
 Apart from using a different syntax, the following limitation apply compared to other Setl versions:
 

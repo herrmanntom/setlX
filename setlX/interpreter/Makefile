@@ -97,6 +97,7 @@ bin/interpreter/utilities/*.class :                          \
         src/interpreter/utilities/*.java                             \
         src/interpreter/boolExpressions/BoolExpr.java                \
         src/interpreter/expressions/Expr.java                        \
+        src/interpreter/expressions/IdListIgnoreDummy.java           \
         src/interpreter/expressions/Variable.java                    \
         src/interpreter/functions/MathFunction.java                  \
         src/interpreter/functions/PreDefinedFunction.java            \

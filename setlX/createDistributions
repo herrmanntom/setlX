@@ -6,15 +6,15 @@ cd interpreter
 make dist-clean
 
 # build the binary version
-echo "Rebuilding the setlX interpreter ..."
+echo "=> Rebuilding the setlX interpreter ..."
 make jar
 if [ -f setlX.jar ]
   then
     # clean it up again (does not remove the jar)
     make clean
-    echo "The setlX interpreter was build correctly."
+    echo "=> The setlX interpreter was build correctly."
 else
-    echo "Building failed ..."
+    echo "=> Building failed ..."
     # break
     exit 1
 fi
@@ -55,7 +55,7 @@ rm -f "$source.zip"
 rm -f "$devel.zip"
 
 # create binary only zip
-echo -n "Creating binary only distribution ... "
+echo -n "=> Creating binary only distribution ... "
 zip -q "$binOnly.zip" manual.pdf interpreter/antlr/antlr_LICENSE.txt interpreter/setlX interpreter/setlX.jar interpreter/win-setlX.cmd
 echo "done"
 
@@ -63,11 +63,11 @@ echo "done"
 cd interpreter;make -s dist-clean;cd ..
 
 # create source zip
-echo -n "Creating source distribution ... "
+echo -n "=> Creating source distribution ... "
 zip -qr "$source.zip" manual.pdf interpreter
 echo "done"
 
 # create development zip
-echo -n "Creating development kit ... "
+echo -n "=> Creating development kit ... "
 zip -qr "$devel.zip" . -x \*.zip
 echo "done"

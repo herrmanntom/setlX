@@ -14,27 +14,28 @@ javaParameters=""
 
 if [ -f bin/.buildSuccessful ]
   then
-    java $javaParameters -cp bin:antlr/* SetlX $@
+    java $javaParameters -cp bin:antlr/* SetlX "$@"
 else
     if [ ! -f setlX.jar ]
       then
         if [ -d src ]
           then
-            echo "Building the setlX interpreter ..."
-            make -s jar
+            echo "=> Building the setlX interpreter ..."
+            make jar
             if [ -f setlX.jar ]
               then
-                make -s clean
-                echo "The setlX interpreter was build correctly."
+                make clean
+                echo "=> The setlX interpreter was build correctly."
             else
-                echo "Building failed ..."
+                echo "=> Building failed ..."
             fi
         else
-            echo "No source available -- the setlX interpreter can not be build."
+            echo "=> No source available -- the setlX interpreter can not be build."
         fi
     fi
     if [ -f setlX.jar ]
       then
-        java $javaParameters -jar setlX.jar $@
+        java $javaParameters -jar setlX.jar "$@"
     fi
 fi
+

@@ -10,6 +10,7 @@ public class Assignment extends Expr {
     public final static int DIFFERENCE  = 2;
     public final static int PRODUCT     = 3;
     public final static int DIVISION    = 4;
+    public final static int MODULO      = 5;
 
     private AssignmentLhs mLhs;
     private int           mType;
@@ -34,6 +35,8 @@ public class Assignment extends Expr {
             rhs = new Product(lhs, mRhs);
         } else if (mType == DIVISION) {
             rhs = new Division(lhs, mRhs);
+        } else if (mType == MODULO) {
+            rhs = new Modulo(lhs, mRhs);
         } else {
             throw new UndefinedOperationException("This assignment type is undefined.");
         }
@@ -57,6 +60,9 @@ public class Assignment extends Expr {
                 break;
             case DIVISION:
                 result += "/=";
+                break;
+            case MODULO:
+                result += "%=";
                 break;
             default:
                 result += "??";

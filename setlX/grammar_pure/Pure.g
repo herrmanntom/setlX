@@ -39,12 +39,22 @@ expr
       ( assignment )=> assignment
     | 'forall' '(' iterator '|' condition ')'
     | 'exists' '(' iterator '|' condition ')'
-    | conjunction ('||' conjunction)*
+    | implication
     ;
 
 assignment
     :
-      (variable ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=') expr
+      (variable ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') expr
+    ;
+
+implication
+    :
+      disjunction ('->' implication)?
+    ;
+
+disjunction
+    :
+      conjunction ('||' conjunction)*
     ;
 
 conjunction
@@ -84,7 +94,7 @@ power
 
 minmax
     :
-      factor (('min' | 'min/' | 'max' | 'max/') minmax)?
+      factor (('min' | 'min/' | 'max' | 'max/') factor)?
     ;
 
 factor
@@ -93,7 +103,7 @@ factor
     | 'min/'       factor
     | 'max/'       factor
     | '+/'         factor
-    | '-/'         factor
+    | '*/'         factor
     | '-'          factor
     | '!'          factor
     | '#'          factor
@@ -165,7 +175,7 @@ iterate
 
 shortIterate
     :
-      ( variable | list ) 'in' expr ('|' condition)?
+      ( variable | list ) 'in' expr '|' condition
     ;
 
 iterator

@@ -71,15 +71,12 @@ condition returns [BoolExpr bex]
 
 expr returns [Expr ex]
     :
-      (assignment)=>assignment { ex = $assignment.assign;                                    }
+      (assignment)=>assignment { ex = $assignment.assign;                         }
     | 'forall' '(' iterator '|' condition ')'
-                               { ex = new Forall($iterator.iter, $condition.bex);            }
+                               { ex = new Forall($iterator.iter, $condition.bex); }
     | 'exists' '(' iterator '|' condition ')'
-                               { ex = new Exists($iterator.iter, $condition.bex);            }
-    | c1 = conjunction         {ex = $c1.c;                                                  }
-      (
-        '||' c2 = conjunction  {ex = new Disjunction(new BoolExpr(ex), new BoolExpr($c2.c)); }
-      )*
+                               { ex = new Exists($iterator.iter, $condition.bex); }
+    | implication              { ex = $implication.i;                             }
     ;
 
 assignment returns [Assignment assign]
@@ -102,8 +99,25 @@ assignment returns [Assignment assign]
        | '-='           { type = Assignment.DIFFERENCE; }
        | '*='           { type = Assignment.PRODUCT; }
        | '/='           { type = Assignment.DIVISION; }
+       | '%='           { type = Assignment.MODULO; }
       )
       expr              { $assign = new Assignment(lhs, type, $expr.ex); }
+    ;
+
+implication returns [Expr i]
+    :
+      disjunction             {i = $disjunction.d;                                        }
+      (
+        '->' im = implication {i = new Implication(new BoolExpr(i), new BoolExpr($im.i)); }
+      )?
+    ;
+
+disjunction returns [Expr d]
+    :
+      c1 = conjunction        {d = $c1.c;                                                 }
+      (
+        '||' c2 = conjunction {d = new Disjunction(new BoolExpr(d), new BoolExpr($c2.c)); }
+      )*
     ;
 
 conjunction returns [Expr c]
@@ -192,12 +206,12 @@ power returns [Expr pow]
 
 minmax returns [Expr mm]
     :
-      factor                { mm = $factor.f;                    }
+      f1 = factor            { mm = $f1.f;                        }
       (
-          'min'  m = minmax { mm = new Minimum(mm, $m.mm);       }
-        | 'min/' m = minmax { mm = new MinimumMember(mm, $m.mm); }
-        | 'max'  m = minmax { mm = new Maximum(mm, $m.mm);       }
-        | 'max/' m = minmax { mm = new MaximumMember(mm, $m.mm); }
+          'min'  f2 = factor { mm = new Minimum      (mm, $f2.f); }
+        | 'min/' f2 = factor { mm = new MinimumMember(mm, $f2.f); }
+        | 'max'  f2 = factor { mm = new Maximum      (mm, $f2.f); }
+        | 'max/' f2 = factor { mm = new MaximumMember(mm, $f2.f); }
       )?
     ;
 
@@ -323,13 +337,10 @@ shortIterate returns [Iteration si]
     }
     :
       (
-          variable { ex = $variable.v; }
-        | list     { ex = $list.lc;    }
+          variable            { ex = $variable.v;     }
+        | list                { ex = $list.lc;        }
       )
-      'in' expr
-      (
-        '|' condition   { bex = $condition.bex; }
-      )?
+      'in' expr '|' condition { bex = $condition.bex; }
       { si = new Iteration(null, new Iterator(ex, $expr.ex), bex); }
     ;
 

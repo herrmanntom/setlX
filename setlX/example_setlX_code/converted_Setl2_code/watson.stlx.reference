@@ -1,0 +1,5 @@
+P = {{}, {"a"}, {"a", "b"}, {"a", "b", "c"}, {"a", "c"}, {"b"}, {"b", "c"}, {"c"}}
+
+Menge der Belegungen, die FS erf�llen:
+
+Menge der T�ter: {"b", "c"}

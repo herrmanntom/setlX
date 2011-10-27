@@ -1,0 +1,15 @@
+{"Bauer", "Kohl", "Wolf", "Ziege"}                                                                 {}
+                                     >>>> {"Bauer", "Ziege"} >>>> 
+{"Kohl", "Wolf"}                                                                 {"Bauer", "Ziege"}
+                                     <<<< {"Bauer"} <<<< 
+{"Bauer", "Kohl", "Wolf"}                                                                 {"Ziege"}
+                                     >>>> {"Bauer", "Kohl"} >>>> 
+{"Wolf"}                                                                 {"Bauer", "Kohl", "Ziege"}
+                                     <<<< {"Bauer", "Ziege"} <<<< 
+{"Bauer", "Wolf", "Ziege"}                                                                 {"Kohl"}
+                                     >>>> {"Bauer", "Wolf"} >>>> 
+{"Ziege"}                                                                 {"Bauer", "Kohl", "Wolf"}
+                                     <<<< {"Bauer"} <<<< 
+{"Bauer", "Ziege"}                                                                 {"Kohl", "Wolf"}
+                                     >>>> {"Bauer", "Ziege"} >>>> 
+{}                                                                 {"Bauer", "Kohl", "Wolf", "Ziege"}

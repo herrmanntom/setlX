@@ -1,0 +1,5 @@
+   allVars( (x + y) * (x + y) + z) = {"x", "y", "z"}
+ countVars( (x + y) * (x + y) + z, x) = 2
+singleVars( (x + y) * (x + y) + z) = {"z"}
+
+

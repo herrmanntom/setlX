@@ -1,0 +1,70 @@
+{"Anton", "Bruno", "Cindy", "Doris", "George", "Mama", "Osama", "Papa"}                    {}
+
+    >>>> {"George", "Osama"} >>>> 
+
+{"Anton", "Bruno", "Cindy", "Doris", "Mama", "Papa"}                    {"George", "Osama"}
+
+    <<<< {"George"} <<<< 
+
+{"Anton", "Bruno", "Cindy", "Doris", "George", "Mama", "Papa"}                    {"Osama"}
+
+    >>>> {"Bruno", "George"} >>>> 
+
+{"Anton", "Cindy", "Doris", "Mama", "Papa"}                    {"Bruno", "George", "Osama"}
+
+    <<<< {"George", "Osama"} <<<< 
+
+{"Anton", "Cindy", "Doris", "George", "Mama", "Osama", "Papa"}                    {"Bruno"}
+
+    >>>> {"Anton", "Papa"} >>>> 
+
+{"Cindy", "Doris", "George", "Mama", "Osama"}                    {"Anton", "Bruno", "Papa"}
+
+    <<<< {"Papa"} <<<< 
+
+{"Cindy", "Doris", "George", "Mama", "Osama", "Papa"}                    {"Anton", "Bruno"}
+
+    >>>> {"Mama", "Papa"} >>>> 
+
+{"Cindy", "Doris", "George", "Osama"}                    {"Anton", "Bruno", "Mama", "Papa"}
+
+    <<<< {"Mama"} <<<< 
+
+{"Cindy", "Doris", "George", "Mama", "Osama"}                    {"Anton", "Bruno", "Papa"}
+
+    >>>> {"George", "Osama"} >>>> 
+
+{"Cindy", "Doris", "Mama"}                    {"Anton", "Bruno", "George", "Osama", "Papa"}
+
+    <<<< {"Papa"} <<<< 
+
+{"Cindy", "Doris", "Mama", "Papa"}                    {"Anton", "Bruno", "George", "Osama"}
+
+    >>>> {"Mama", "Papa"} >>>> 
+
+{"Cindy", "Doris"}                    {"Anton", "Bruno", "George", "Mama", "Osama", "Papa"}
+
+    <<<< {"Mama"} <<<< 
+
+{"Cindy", "Doris", "Mama"}                    {"Anton", "Bruno", "George", "Osama", "Papa"}
+
+    >>>> {"Cindy", "Mama"} >>>> 
+
+{"Doris"}                    {"Anton", "Bruno", "Cindy", "George", "Mama", "Osama", "Papa"}
+
+    <<<< {"George", "Osama"} <<<< 
+
+{"Doris", "George", "Osama"}                    {"Anton", "Bruno", "Cindy", "Mama", "Papa"}
+
+    >>>> {"Doris", "George"} >>>> 
+
+{"Osama"}                    {"Anton", "Bruno", "Cindy", "Doris", "George", "Mama", "Papa"}
+
+    <<<< {"George"} <<<< 
+
+{"George", "Osama"}                    {"Anton", "Bruno", "Cindy", "Doris", "Mama", "Papa"}
+
+    >>>> {"George", "Osama"} >>>> 
+
+{}                    {"Anton", "Bruno", "Cindy", "Doris", "George", "Mama", "Osama", "Papa"}
+

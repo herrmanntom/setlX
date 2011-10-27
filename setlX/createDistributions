@@ -3,15 +3,15 @@
 cd interpreter
 
 # clean the interpreter source
-make -s dist-clean
+make dist-clean
 
 # build the binary version
 echo "Rebuilding the setlX interpreter ..."
-make -s jar
+make jar
 if [ -f setlX.jar ]
   then
     # clean it up again (does not remove the jar)
-    make -s clean
+    make clean
     echo "The setlX interpreter was build correctly."
 else
     echo "Building failed ..."
@@ -27,7 +27,7 @@ versionForFileNames=$(echo $version | tr "." "-")
 cd ../documentation
 
 # clean the documentation source
-make -s dist-clean
+make dist-clean
 
 # set version for documentation
 echo "$version" > version.tex
@@ -39,7 +39,7 @@ make
 mv *.pdf ../.
 
 # clean the documentation source (again)
-make -s dist-clean
+make dist-clean
 
 # go to project root
 cd ..

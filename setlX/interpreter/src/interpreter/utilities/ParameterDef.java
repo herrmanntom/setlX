@@ -18,7 +18,7 @@ public class ParameterDef {
     }
 
     public ParameterDef(String id, int type) {
-        this(new Variable(id), READ_ONLY);
+        this(new Variable(id), type);
     }
 
     public ParameterDef(Variable var) {

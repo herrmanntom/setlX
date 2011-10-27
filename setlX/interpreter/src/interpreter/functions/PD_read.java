@@ -19,15 +19,12 @@ public class PD_read extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        if (Environment.isInteractive()) {
-            System.out.println("/*");
-        }
         BufferedReader br         = new BufferedReader(new InputStreamReader(System.in));
         Value          inputValue = SetlOm.OM;
         String         input      = null;
         try {
             do {
-                System.out.print(":");
+                System.out.print(": ");
                 input = br.readLine().trim();
             } while (input != null && input.equals(""));
         } catch (IOException ioe) {
@@ -43,10 +40,6 @@ public class PD_read extends PreDefinedFunction {
             }
         } else {
             inputValue = SetlOm.OM;
-        }
-
-        if (Environment.isInteractive()) {
-            System.out.println("*/");
         }
 
         return inputValue;

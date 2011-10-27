@@ -19,16 +19,10 @@ public class PD_print extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        if (Environment.isInteractive()) {
-            System.out.println("/*");
-        }
         for (Value arg : args) {
             System.out.print(arg.toStringForPrint());
         }
         System.out.println();
-        if (Environment.isInteractive()) {
-            System.out.println("*/");
-        }
         return SetlOm.OM;
     }
 }

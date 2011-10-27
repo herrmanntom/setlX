@@ -74,6 +74,7 @@ public class SetlX {
         Environment.setInteractive(true);
         Block blk = null;
         do {
+            System.out.print("=> ");
             try {
                 InputStream         stream = InputReader.getStream();
                 ANTLRInputStream    input  = new ANTLRInputStream(stream);

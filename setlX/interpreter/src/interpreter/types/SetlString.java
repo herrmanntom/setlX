@@ -193,6 +193,8 @@ public class SetlString extends Value {
             } else if (c == '\0') {
                 sb.append('\\');
                 sb.append('0');
+            } else {
+                sb.append(c);
             }
         }
         return "\"" + sb.toString() + "\"";

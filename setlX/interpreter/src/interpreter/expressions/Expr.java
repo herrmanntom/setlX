@@ -13,7 +13,7 @@ public abstract class Expr {
         } catch (AbortException ae) {
             throw ae;
         } catch (SetlException se) {
-            se.addToTrace("Error in '" + this + "':");
+            se.addToTrace("Error in \"" + this + "\":");
             throw se;
         }
     }
@@ -23,7 +23,7 @@ public abstract class Expr {
     /* sets this expression to the given value
        (only makes sense for variables and lists) */
     public void assign(Value v) throws SetlException {
-        throw new UndefinedOperationException("Error in '" + this + "':\n"
+        throw new UndefinedOperationException("Error in \"" + this + "\":\n"
                                         +     "This expression can not be used as target for assignments.");
     }
 

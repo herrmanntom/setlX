@@ -64,7 +64,7 @@ public class AssignmentLhs {
                     current.setMember(index, newValue); // no v.clone() here, because setMember() already clones
                 }
             } else {
-                throw new IncompatibleTypeException("Left-hand-side of `" + this + " := " + newValue + "´ is unusable for list assignment.");
+                throw new IncompatibleTypeException("Left-hand-side of \"" + this + " := " + newValue + "\" is unusable for list assignment.");
             }
         }
     }

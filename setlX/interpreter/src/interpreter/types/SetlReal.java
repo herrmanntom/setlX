@@ -65,7 +65,7 @@ public class SetlReal extends NumberValue {
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " + " + summand + "´ is not a number or string.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
         }
     }
 
@@ -80,10 +80,10 @@ public class SetlReal extends NumberValue {
             try {
                 return new SetlReal(mReal.divide(right, mathContext));
             } catch (ArithmeticException ae) {
-                throw new UndefinedOperationException("`" + this + " / " + divisor + "´ is undefined.");
+                throw new UndefinedOperationException("'" + this + " / " + divisor + "' is undefined.");
             }
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " / " + divisor + "´ is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " / " + divisor + "' is not a number.");
         }
     }
 
@@ -102,7 +102,7 @@ public class SetlReal extends NumberValue {
             }
             return new SetlReal(mReal.multiply(right, mathContext));
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " * " + multiplier + "´ is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " * " + multiplier + "' is not a number.");
         }
     }
 
@@ -124,7 +124,7 @@ public class SetlReal extends NumberValue {
             }
             return new SetlReal(mReal.subtract(right, mathContext));
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " - " + subtrahend + "´ is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
         }
     }
 

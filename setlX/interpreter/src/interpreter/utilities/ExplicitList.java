@@ -27,12 +27,12 @@ public class ExplicitList extends Constructor {
     // sets the variables used to form this list to the variables from the list given as a parameter
     public void setIds(SetlList list) throws SetlException {
         if (list.size() != mList.size()) {
-            throw new IncompatibleTypeException("Members of `" + list + "´ are unusable for list assignment.");
+            throw new IncompatibleTypeException("Members of '" + list + "' are unusable for list assignment.");
         }
         for (int i = 0; i < mList.size(); ++i) {
             Expr  e = mList.get(i);
-            if (e == IdListIgnoreDummy.ILID) { // ignore this position `[x,-,y]'
-                continue;
+            if (e == IdListIgnoreDummy.ILID) {
+                continue; // ignore this position `[x,-,y]'
             }
             Value v = null;
             try {

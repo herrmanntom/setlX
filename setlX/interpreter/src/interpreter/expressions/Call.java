@@ -32,7 +32,7 @@ public class Call extends Expr {
     public Value evaluate() throws SetlException {
         Value lhs = mLhs.eval();
         if (lhs == SetlOm.OM) {
-            throw new UnknownFunctionException("Identifier `" + mLhs + "´ is undefined.");
+            throw new UnknownFunctionException("Identifier \"" + mLhs + "\" is undefined.");
         }
         // evaluate all arguments
         List<Value> args = new ArrayList<Value>(mArgs.size());

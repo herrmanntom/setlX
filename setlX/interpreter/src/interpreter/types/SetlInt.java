@@ -35,9 +35,9 @@ public class SetlInt extends NumberValue {
 
     public int intValue() throws NumberToLargeException {
         if (mNumber.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
-            throw new NumberToLargeException("`" + mNumber + "´ is to large for this operation.");
+            throw new NumberToLargeException("'" + mNumber + "' is to large for this operation.");
         } else if (mNumber.compareTo(BigInteger.ZERO) < 0) {
-            throw new NumberToLargeException("`" + mNumber + "´ is negative, which is not allowed for this operation.");
+            throw new NumberToLargeException("'" + mNumber + "' is negative, which is not allowed for this operation.");
         } else {
             return mNumber.intValue();
         }
@@ -55,7 +55,7 @@ public class SetlInt extends NumberValue {
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " + " + summand + "´ is not a number or string.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
         }
     }
 
@@ -64,12 +64,12 @@ public class SetlInt extends NumberValue {
             try {
                 return new SetlInt(mNumber.divide(((SetlInt) divisor).mNumber));
             } catch (ArithmeticException ae) {
-                throw new UndefinedOperationException("`" + this + " / " + divisor + "´ is undefined.");
+                throw new UndefinedOperationException("'" + this + " / " + divisor + "' is undefined.");
             }
         } else if (divisor instanceof SetlReal) {
             return ((SetlReal) divisor).divideFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " / " + divisor + "´ is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " / " + divisor + "' is not a number.");
         }
     }
 
@@ -77,7 +77,7 @@ public class SetlInt extends NumberValue {
         if (modulo instanceof SetlInt) {
             return new SetlInt(mNumber.mod(((SetlInt) modulo).mNumber));
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " % " + modulo + "´ is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " % " + modulo + "' is not a number.");
         }
     }
 
@@ -87,7 +87,7 @@ public class SetlInt extends NumberValue {
         } else if (multiplier instanceof SetlReal || multiplier instanceof SetlString) {
             return multiplier.multiply(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side  of `" + this + " * " + multiplier + "´ is not a number or string.");
+            throw new IncompatibleTypeException("Right-hand-side  of '" + this + " * " + multiplier + "' is not a number or string.");
         }
     }
 
@@ -105,17 +105,17 @@ public class SetlInt extends NumberValue {
         } else if (subtrahend instanceof SetlReal) {
             return ((SetlReal) subtrahend).subtractFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " - " + subtrahend + "´ is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
         }
     }
 
     public SetlString charConvert() throws NumberToLargeException {
-        if (mNumber.compareTo(BigInteger.valueOf(255)) <= 0 &&
+        if (mNumber.compareTo(BigInteger.valueOf(127)) <= 0 &&
             mNumber.compareTo(BigInteger.ZERO) >= 0)
         {
             return new SetlString("" + (char) mNumber.intValue());
         } else {
-            throw new NumberToLargeException("`" + mNumber + "´ is not usable for ASCII conversation (>255 or negative).");
+            throw new NumberToLargeException("'" + mNumber + "' is not usable for ASCII conversation (it is >127 or negative).");
         }
     }
 

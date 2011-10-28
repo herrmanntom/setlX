@@ -31,7 +31,7 @@ public class SetlBoolean extends Value {
         } else if (other == FALSE) {
            return FALSE;
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " and " + other + "´ is not a Boolean value.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " && " + other + "' is not a Boolean value.");
         }
     }
 
@@ -52,7 +52,7 @@ public class SetlBoolean extends Value {
             }
             return FALSE;
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " and " + other + "´ is not a Boolean value.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " || " + other + "' is not a Boolean value.");
         }
     }
 

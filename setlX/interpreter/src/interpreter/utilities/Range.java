@@ -35,13 +35,13 @@ public class Range extends Constructor {
         if (startV instanceof SetlInt) {
             start = ((SetlInt) startV).getNumber();
         } else {
-            throw new IncompatibleTypeException("Start argument `" + startV + "' is not an integer.");
+            throw new IncompatibleTypeException("Start argument '" + startV + "' is not an integer.");
         }
         if (secondV != null) {
             if (secondV instanceof SetlInt) {
                 second = ((SetlInt) secondV).getNumber();
             } else {
-                throw new IncompatibleTypeException("Second argument `" + secondV + "' is not an integer.");
+                throw new IncompatibleTypeException("Second argument '" + secondV + "' is not an integer.");
             }
         } else {
             second = start.add(BigInteger.ONE);
@@ -49,7 +49,7 @@ public class Range extends Constructor {
         if (stopV instanceof SetlInt) {
             stop = ((SetlInt) stopV).getNumber();
         } else {
-            throw new IncompatibleTypeException("Stop argument `" + stopV + "' is not an integer.");
+            throw new IncompatibleTypeException("Stop argument '" + stopV + "' is not an integer.");
         }
 
         BigInteger  step = second.subtract(start);

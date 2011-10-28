@@ -90,7 +90,7 @@ public class Iterator {
                 }
             }
         } else {
-            throw new IncompatibleTypeException("Evaluation of iterator `" + iterationValue + "´ is not a compound value.");
+            throw new IncompatibleTypeException("Evaluation of iterator '" + iterationValue + "' is not a compound value.");
         }
     }
 }

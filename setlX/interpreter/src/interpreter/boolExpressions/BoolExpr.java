@@ -18,7 +18,7 @@ public class BoolExpr extends Expr {
         if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) {
             return (SetlBoolean) v;
         } else {
-            throw new IncompatibleTypeException("`" + v + "´ is not a Boolean value.");
+            throw new IncompatibleTypeException("'" + v + "' is not a Boolean value.");
         }
     }
 

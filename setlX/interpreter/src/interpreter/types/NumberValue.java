@@ -12,7 +12,7 @@ public abstract class NumberValue extends Value {
         if (other instanceof NumberValue) {
             return SetlBoolean.get(this.compareTo(other) < 0);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " < " + other + "´ is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " < " + other + "' is not a number.");
         }
     }
 
@@ -30,7 +30,7 @@ public abstract class NumberValue extends Value {
         if (exponent instanceof SetlInt) {
             return this.power(((SetlInt) exponent).intValue());
         } else {
-            throw new IncompatibleTypeException("Exponent of `" + this + " ** " + exponent + "´ is not a number.");
+            throw new IncompatibleTypeException("Exponent of '" + this + " ** " + exponent + "' is not an integer.");
         }
     }
 

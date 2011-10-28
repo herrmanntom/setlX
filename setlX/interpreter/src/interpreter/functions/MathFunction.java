@@ -29,7 +29,7 @@ public class MathFunction extends PreDefinedFunction {
             Object result = mFunction.invoke(null, new Double(args.get(0).toString()));
             return new SetlReal(new Double(result.toString()));
         } catch (NumberFormatException nfe) {
-            throw new NumberToLargeException("`" + args.get(0) + "´ is to large for this operation.");
+            throw new NumberToLargeException("'" + args.get(0) + "' is to large for this operation.");
         } catch (Exception e) {
             throw new JVMException("Error during calling a predefined mathematical function.\n"
                                  + "This is probably a bug in the interpreter.\n"

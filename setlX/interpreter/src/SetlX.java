@@ -134,7 +134,7 @@ public class SetlX {
                 printExecutionFinished();
             }
         } catch (IOException e) {
-            System.err.println("File " + fileName + " could not be read.");
+            System.err.println("File '" + fileName + "' could not be read.");
         }
     }
 

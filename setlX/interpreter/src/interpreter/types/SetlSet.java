@@ -62,7 +62,7 @@ public class SetlSet extends CollectionValue {
             SetlSet otr = (SetlSet) other;
             return SetlBoolean.get(getSet().isSubset(otr.getSet()) && getSet().compareTo(otr.getSet()) != 0);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " < " + other + "´ is not a set.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " < " + other + "' is not a set.");
         }
     }
 
@@ -75,7 +75,7 @@ public class SetlSet extends CollectionValue {
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " + " + summand + "´ is not a set or string.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a set or string.");
         }
     }
 
@@ -84,7 +84,7 @@ public class SetlSet extends CollectionValue {
             SetlSet m = (SetlSet) multiplier;
             return new SetlSet(getSet().intersection(m.getSet()));
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " * " + multiplier + "´ is not a set.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " * " + multiplier + "' is not a set.");
         }
     }
 
@@ -93,7 +93,7 @@ public class SetlSet extends CollectionValue {
             SetlSet s = (SetlSet) subtrahend;
             return new SetlSet(getSet().difference(s.getSet()));
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " - " + subtrahend + "´ is not a set.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a set.");
         }
     }
 
@@ -117,10 +117,10 @@ public class SetlSet extends CollectionValue {
                         result.addMember(v.getMember(new SetlInt(2)));
                     }
                 } else {
-                    throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                    throw new IncompatibleTypeException("'" + this + "' is not a map.");
                 }
             } else {
-                throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                throw new IncompatibleTypeException("'" + this + "' is not a map.");
             }
         }
         return result;
@@ -137,10 +137,10 @@ public class SetlSet extends CollectionValue {
                 if (v.size() == 2) {
                     result.addMember(v.getMember(new SetlInt(1)));
                 } else {
-                    throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                    throw new IncompatibleTypeException("'" + this + "' is not a map.");
                 }
             } else {
-                throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                throw new IncompatibleTypeException("'" + this + "' is not a map.");
             }
         }
         return result;
@@ -165,10 +165,10 @@ public class SetlSet extends CollectionValue {
                         }
                     }
                 } else {
-                    throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                    throw new IncompatibleTypeException("'" + this + "' is not a map.");
                 }
             } else {
-                throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                throw new IncompatibleTypeException("'" + this + "' is not a map.");
             }
         }
         return result;
@@ -222,10 +222,10 @@ public class SetlSet extends CollectionValue {
                 if (list.size() == 2) {
                     result.addMember(list.getMember(new SetlInt(2)));
                 } else {
-                    throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                    throw new IncompatibleTypeException("'" + this + "' is not a map.");
                 }
             } else {
-                throw new IncompatibleTypeException("`" + this + "´ is not a map.");
+                throw new IncompatibleTypeException("'" + this + "' is not a map.");
             }
         }
         return result;
@@ -245,10 +245,10 @@ public class SetlSet extends CollectionValue {
                         }
                     }
                 } else {
-                    throw new IncompatibleTypeException("`" + this + "´ is not a relation.");
+                    throw new IncompatibleTypeException("'" + this + "' is not a relation.");
                 }
             } else {
-                throw new IncompatibleTypeException("`" + this + "´ is not a relation.");
+                throw new IncompatibleTypeException("'" + this + "' is not a relation.");
             }
         }
     }
@@ -270,9 +270,9 @@ public class SetlSet extends CollectionValue {
 
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
-            throw new UndefinedOperationException("Range operations are unsupported on `" + this + "´.");
+            throw new UndefinedOperationException("Range operations are unsupported on '" + this + "'.");
         } else if (args.size() != 1) {
-            throw new UndefinedOperationException("Can not perform call with arguments `" + args + "´ on `" + this + "´; arguments are malformed.");
+            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
         }
         return getMember(args.get(0));
     }

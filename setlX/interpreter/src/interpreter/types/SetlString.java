@@ -62,7 +62,7 @@ public class SetlString extends Value {
         if (mString.length() == 1) {
             return new SetlInt((int) mString.charAt(0));
         } else {
-            throw new IncompatibleTypeException("Operand of `abs " + this + "´ is not a singe character.");
+            throw new IncompatibleTypeException("Operand of 'abs(" + this + ")' is not a singe character.");
         }
     }
 
@@ -88,7 +88,7 @@ public class SetlString extends Value {
             }
             return new SetlString(result);
         } else {
-            throw new IncompatibleTypeException("String multiplier `" + multiplier + "´ is not a integer.");
+            throw new IncompatibleTypeException("String multiplier '" + multiplier + "' is not an integer.");
         }
     }
 
@@ -99,10 +99,10 @@ public class SetlString extends Value {
         if (vIndex instanceof SetlInt) {
             index = ((SetlInt)vIndex).intValue();
         } else {
-            throw new IncompatibleTypeException("Index `" + vIndex + "´ is not a integer.");
+            throw new IncompatibleTypeException("Index '" + vIndex + "' is not an integer.");
         }
         if (index > mString.length()) {
-            throw new NumberToLargeException("Index `" + index + "´ is larger as string size `" + mString.length() + "´.");
+            throw new NumberToLargeException("Index '" + index + "' is larger as string size '" + mString.length() + "'.");
         }
         return new SetlString(mString.substring(index - 1, index));
     }
@@ -112,15 +112,15 @@ public class SetlString extends Value {
         if (vLow instanceof SetlInt) {
             low = ((SetlInt)vLow).intValue();
         } else {
-            throw new IncompatibleTypeException("Lower bound `" + vLow + "´ is not a integer.");
+            throw new IncompatibleTypeException("Lower bound '" + vLow + "' is not an integer.");
         }
         if (vHigh instanceof SetlInt) {
             high = ((SetlInt)vHigh).intValue();
         } else {
-            throw new IncompatibleTypeException("Upper bound `" + vHigh + "´ is not a integer.");
+            throw new IncompatibleTypeException("Upper bound '" + vHigh + "' is not an integer.");
         }
         if (high > mString.length()) {
-            throw new NumberToLargeException("Upper bound `" + high + "´ is larger as string size `" + mString.length() + "´.");
+            throw new NumberToLargeException("Upper bound '" + high + "' is larger as string size '" + mString.length() + "'.");
         }
         String result = mString.substring(low - 1, high);
         return new SetlString(result);
@@ -148,11 +148,11 @@ public class SetlString extends Value {
                 // full range spec:                this(x .. y);
                 return getMembers(vFirst, args.get(2));
             }
-            throw new UndefinedOperationException("Can not perform call with arguments `" + args + "´ on `" + this + "´; arguments are malformed.");
+            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
         } else if (aSize == 1) {
             return getMember(vFirst);
         } else {
-            throw new UndefinedOperationException("Can not perform call with arguments `" + args + "´ on `" + this + "´; arguments are malformed.");
+            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
         }
     }
 

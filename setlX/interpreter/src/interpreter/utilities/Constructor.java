@@ -11,7 +11,7 @@ public abstract class Constructor {
 
     // sets the variables used to form this list to the variables from the list given as a parameter
     public void setIds(SetlList list) throws SetlException {
-        throw new UndefinedOperationException("Error in '" + this + "':\n"
+        throw new UndefinedOperationException("Error in \"" + this + "\":\n"
                                         +     "Only explicit lists of variables can be used as targets for list assignments.");
     }
 

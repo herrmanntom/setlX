@@ -80,7 +80,7 @@ public class SetlList extends CollectionValue {
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
         }  else {
-            throw new IncompatibleTypeException("Right-hand-side of `" + this + " + " + summand + "´ is not a list or string.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a list or string.");
         }
     }
 
@@ -123,10 +123,10 @@ public class SetlList extends CollectionValue {
         if (vIndex instanceof SetlInt) {
             index = ((SetlInt)vIndex).intValue();
         } else {
-            throw new IncompatibleTypeException("Index `" + vIndex + "´ is not a integer.");
+            throw new IncompatibleTypeException("Index '" + vIndex + "' is not a integer.");
         }
         if (index < 1) {
-            throw new NumberToLargeException("Index `" + index + "´ is lower as `1´.");
+            throw new NumberToLargeException("Index '" + index + "' is lower as '1'.");
         }
         if (index > size()) {
             return SetlOm.OM;
@@ -139,24 +139,24 @@ public class SetlList extends CollectionValue {
         if (vLow instanceof SetlInt) {
             low = ((SetlInt)vLow).intValue();
         } else {
-            throw new IncompatibleTypeException("Lower bound `" + vLow + "´ is not a integer.");
+            throw new IncompatibleTypeException("Lower bound '" + vLow + "' is not a integer.");
         }
         if (vHigh instanceof SetlInt) {
             high = ((SetlInt)vHigh).intValue();
         } else {
-            throw new IncompatibleTypeException("Upper bound `" + vHigh + "´ is not a integer.");
+            throw new IncompatibleTypeException("Upper bound '" + vHigh + "' is not a integer.");
         }
 
         SetlList result = new SetlList();
 
         if (high > size()) {
-            throw new NumberToLargeException("Upper bound `" + high + "´ is larger as list size `" + size() + "´.");
+            throw new NumberToLargeException("Upper bound '" + high + "' is larger as list size '" + size() + "'.");
         }
         if (size() == 0) {
-            throw new NumberToLargeException("Lower bound `" + low + "´ is larger as list size `" + size() + "´.");
+            throw new NumberToLargeException("Lower bound '" + low + "' is larger as list size '" + size() + "'.");
         }
         if (low < 1) {
-            throw new NumberToLargeException("Lower bound `" + low + "´ is lower as `1´.");
+            throw new NumberToLargeException("Lower bound '" + low + "' is lower as '1'.");
         }
         for (int i = low - 1; i < high; i++) {
             result.addMember(getList().get(i).clone());
@@ -231,10 +231,10 @@ public class SetlList extends CollectionValue {
         if (vIndex instanceof SetlInt) {
             index = ((SetlInt)vIndex).intValue();
         } else {
-            throw new IncompatibleTypeException("Index `" + vIndex + "´ is not a integer.");
+            throw new IncompatibleTypeException("Index '" + vIndex + "' is not a integer.");
         }
         if (index < 1) {
-            throw new NumberToLargeException("Index `" + index + "´ is lower as `1´.");
+            throw new NumberToLargeException("Index '" + index + "' is lower as '1'.");
         }
         if (v == SetlOm.OM) {
             if (index <= mList.size()) {
@@ -267,11 +267,11 @@ public class SetlList extends CollectionValue {
                 // full range spec:                this(x .. y);
                 return getMembers(vFirst, args.get(2));
             }
-            throw new UndefinedOperationException("Can not perform call with arguments `" + args + "´ on `" + this + "´; arguments are malformed.");
+            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
         } else if (aSize == 1) {
             return getMember(vFirst);
         } else {
-            throw new UndefinedOperationException("Can not perform call with arguments `" + args + "´ on `" + this + "´; arguments are malformed.");
+            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
         }
     }
 

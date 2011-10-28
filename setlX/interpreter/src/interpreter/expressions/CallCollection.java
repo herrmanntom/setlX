@@ -21,7 +21,7 @@ public class CallCollection extends Expr {
     public Value evaluate() throws SetlException {
         Value lhs = mLhs.eval();
         if (lhs == SetlOm.OM) {
-            throw new UnknownFunctionException("Identifier `" + mLhs + "´ is undefined.");
+            throw new UnknownFunctionException("Identifier \"" + mLhs + "\" is undefined.");
         }
         if (lhs instanceof SetlDefinition) {
             throw new UndefinedOperationException("Incorrect set of brackets for function call.");

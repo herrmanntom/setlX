@@ -60,7 +60,7 @@ zip -q "$binOnly.zip" manual.pdf interpreter/antlr/antlr_LICENSE.txt interpreter
 echo "done"
 
 # remove the jar
-cd interpreter;make -s dist-clean;cd ..
+cd interpreter;make dist-clean;cd ..
 
 # create source zip
 echo -n "=> Creating source distribution ... "

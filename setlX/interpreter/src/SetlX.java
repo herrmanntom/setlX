@@ -144,25 +144,14 @@ public class SetlX {
             b.execute();
 
         } catch (ExitException ee) { // user/code wants to quit
-            if (Environment.isInteractive()) {
-                System.err.print("// ");
-            }
-            System.err.println(ee.getMessage());
+            System.out.println(ee.getMessage());
 
             return false; // breaks loop while parsing interactively
 
         } catch (SetlException se) { // user/code did something wrong
-            if (Environment.isInteractive()) {
-                System.err.println("/*");
-            }
-
             printExceptionsTrace(se.getTrace());
-
-            if (Environment.isInteractive()) {
-                System.err.println("*/");
-            }
         } catch (NullPointerException e) { // code syntax was not parsed correctly
-            System.err.println("// Syntax Error.");
+            System.err.println("Syntax Error.");
         }
 
         if (Environment.isInteractive()) {

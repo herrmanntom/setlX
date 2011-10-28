@@ -18,7 +18,37 @@ public class SetlString extends Value {
         if (length >= 2 && s.charAt(0) == '"' && s.charAt(length - 1) == '"') {
             s = s.substring(1, length - 1);
         }
-        mString = new String(s);
+        // parse escape sequences
+        length              = s.length();
+        StringBuilder sb    = new StringBuilder(length);
+        for (int i = 0; i < length; ) {
+            char c = s.charAt(i);                          // current
+            char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next
+            if (c == '\\') {
+                if (n == '\\') {
+                    sb.append('\\');
+                } else if (n == 'n') {
+                    sb.append('\n');
+                } else if (n == 'r') {
+                    sb.append('\r');
+                } else if (n == 't') {
+                    sb.append('\t');
+                } else if (n == '"') {
+                    sb.append('"');
+                } else if (n == '0') {
+                    sb.append('\0');
+                } else {
+                    // seems like not part of known escape sequence
+                    sb.append('\\');
+                    i -= 1; // char sequence read was only one char long
+                }
+                i += 2;
+            } else {
+                sb.append(c);
+                i += 1;
+            }
+        }
+        mString = sb.toString();
     }
 
     public SetlString clone() {
@@ -132,46 +162,44 @@ public class SetlString extends Value {
         return this;
     }
 
+    /*  When string is printed 'inside' some compound value (Lists etc),
+       all non-printable characters should be replaced with their
+       escape sequences using this function.
+
+       However, when using a string as argument for print all
+       non-printable characters escape sequence should be left alone
+       before passing to System.out                                     */
+
     public String toString() {
-        return "\"" + mString + "\"";
-    }
-
-    /* when using a string as argument for print all escape sequence should be
-       replaced with their non-printable char before passing to System.out
-
-       however when string is printed 'inside' some compound value (Lists etc)
-       escape sequences should not be replaced with this function             */
-    public String toStringForPrint() {
         int           length = mString.length();
         StringBuilder sb     = new StringBuilder(length);
-        for (int i = 0; i < length; ) {
-            char c = mString.charAt(i);                         // current
-            char n = (i+1 < length)? mString.charAt(i+1) : '0'; // next
+        for (int i = 0; i < length; ++i) {
+            char c = mString.charAt(i);  // current
             if (c == '\\') {
-                if (n == '\\') {
-                    sb.append('\\');
-                } else if (n == 'n') {
-                    sb.append('\n');
-                } else if (n == 'r') {
-                    sb.append('\r');
-                } else if (n == 't') {
-                    sb.append('\t');
-                } else if (n == '"') {
-                    sb.append('"');
-                } else if (n == '0') {
-                    sb.append('\0');
-                } else {
-                    // seems like not part of known escape sequence
-                    sb.append('\\');
-                    i -= 1; // only one char long ([i - 1] + 2 == i + 1)
-                }
-                i += 2;
-            } else {
-                sb.append(c);
-                i += 1;
+                sb.append('\\');
+                sb.append('\\');
+            } else if (c == '\n') {
+                sb.append('\\');
+                sb.append('n');
+            } else if (c == '\r') {
+                sb.append('\\');
+                sb.append('r');
+            } else if (c == '\t') {
+                sb.append('\\');
+                sb.append('t');
+            } else if (c == '"') {
+                sb.append('\\');
+                sb.append('"');
+            } else if (c == '\0') {
+                sb.append('\\');
+                sb.append('0');
             }
         }
-        return sb.toString();
+        return "\"" + sb.toString() + "\"";
+    }
+
+    public String toStringForPrint() {
+        return mString;
     }
 
     // Compare two Values.  Returns -1 if this value is less than the value given

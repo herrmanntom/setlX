@@ -3,6 +3,7 @@
 cd interpreter
 
 # clean the interpreter source
+echo "=> Cleaning the setlX interpreter's source ..."
 make dist-clean
 
 # build the binary version
@@ -27,18 +28,21 @@ versionForFileNames=$(echo $version | tr "." "-")
 cd ../documentation
 
 # clean the documentation source
+echo "=> Cleaning the documentation's source ..."
 make dist-clean
 
 # set version for documentation
 echo "$version" > version.tex
 
 # make documentation
+echo "=> Rebuilding the documentation ..."
 make
 
 # move the finished PDFs where they belong
 mv *.pdf ../.
 
 # clean the documentation source (again)
+echo "=> Cleaning the documentation's source (again) ..."
 make dist-clean
 
 # go to project root
@@ -53,6 +57,8 @@ devel="setlX_v$versionForFileNames.devel"
 rm -f "$binOnly.zip"
 rm -f "$source.zip"
 rm -f "$devel.zip"
+# remove other stuff
+rm -f "diff.result"
 
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "

@@ -4,6 +4,10 @@ tmpFile=$(mktemp)
 
 manualTestFiles=""
 
+# prepare the interpreter
+cd interpreter; ./setlX simpleTest/test.stlx > /dev/null; cd ..
+
+# loop through all SetlX files, execute them and compare to reference result
 while IFS= read path
   do
     filename="${path#example_setlX_code/}"

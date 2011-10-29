@@ -17,7 +17,7 @@ public class SetlX {
 
     private final static String VERSION         = "0.1.1";
     private final static String VERSION_PREFIX  = "v";
-    private final static String HEADER          = "=====================================setlX======================================";
+    private final static String HEADER          = "-====================================setlX====================================-";
 
     public static void main(String[] args) throws Exception {
         boolean            help        = false;
@@ -72,8 +72,10 @@ public class SetlX {
 
     private static void parseInteractive() throws Exception {
         Environment.setInteractive(true);
-        Block blk = null;
+        Block   blk      = null;
+        boolean skipTest = false;
         do {
+            System.out.println(); // newline to visually separate the next input
             System.out.print("=> ");
             try {
                 InputStream         stream = InputReader.getStream();
@@ -82,10 +84,17 @@ public class SetlX {
                 CommonTokenStream   ts     = new CommonTokenStream(lexer);
                 SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
                 blk = parser.block();
+                if (parser.getNumberOfSyntaxErrors() > 0) {
+                    System.err.println("\nLast input not executed due to previous errors.");
+                    skipTest = true;
+                    blk      = null;
+                } else {
+                    skipTest = false;
+                }
             } catch (EOFException eof) {
                 break;
             }
-        } while (blk != null && execute(blk));
+        } while (skipTest || (blk != null && execute(blk)));
         printExecutionFinished();
     }
 
@@ -98,7 +107,7 @@ public class SetlX {
             SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
 
             if (verbose) {
-                System.out.println("=================================Parser=Errors==================================\n");
+                System.out.println("-================================Parser=Errors================================-\n");
             }
             // parse the file contents
             Block               blk    = parser.block();
@@ -107,7 +116,7 @@ public class SetlX {
 
             if (parser.getNumberOfSyntaxErrors() > 0) {
                 if (verbose) {
-                    System.out.println("\n=================================Parsing=Failed=================================\n");
+                    System.out.println("\n-================================Parsing=Failed===============================-\n");
                 } else {
                     System.err.println("Execution terminated due to previous errors.");
                 }
@@ -120,11 +129,11 @@ public class SetlX {
 
             // in verbose mode the parsed program is echoed
             if (verbose) {
-                System.out.println("=================================Parsed=Program=================================\n");
+                System.out.println("-================================Parsed=Program===============================-\n");
                 Environment.setPrintVerbose(true); // enables correct indentation etc
                 System.out.println(blk + "\n");
                 Environment.setPrintVerbose(false);
-                System.out.println("================================Execution=Result================================\n");
+                System.out.println("-===============================Execution=Result==============================-\n");
             }
 
             // run the parsed code
@@ -153,19 +162,14 @@ public class SetlX {
         } catch (NullPointerException e) { // code syntax was not parsed correctly
             System.err.println("Syntax Error.");
         }
-
-        if (Environment.isInteractive()) {
-            System.out.println(); // newline to visually separate the next input
-        }
-
         return true; // continue loop while parsing interactively
     }
 
     private static void printHeader() {
         // embed version number into header
         int     versionSize = VERSION.length() + VERSION_PREFIX.length();
-        String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 1) );
-        header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 1);
+        String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 2) );
+        header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 2);
         // print header
         System.out.println("\n" + header + "\n");
     }
@@ -179,7 +183,7 @@ public class SetlX {
 
     private static void printInteractiveBegin() {
         printHelpInteractive();
-        System.out.println("================================Interactive=Mode================================\n");
+        System.out.print("-===============================Interactive=Mode==============================-\n");
     }
 
     private static void printHelpInteractive() {
@@ -207,7 +211,7 @@ public class SetlX {
     }
 
     private static void printExecutionFinished() {
-        System.out.println("\n===============================Execution=Finished===============================\n");
+        System.out.println("\n-==============================Execution=Finished=============================-\n");
     }
 
     private static void printExceptionsTrace(List<String> trace) {

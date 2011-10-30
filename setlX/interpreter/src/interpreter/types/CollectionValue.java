@@ -10,6 +10,8 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Iterator<Value> iterator();
 
+    /* operations on compound values (Lists/Tuples, Sets [, Strings]) */
+
     public abstract void            addMember(Value element);
 
     public final    Value           addMembers() throws SetlException {

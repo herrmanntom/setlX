@@ -27,6 +27,12 @@ public class SetlDefinition extends Value {
         return this;
     }
 
+    /* type checks (sort of Boolean operation) */
+
+    public SetlBoolean isProcedure() {
+        return SetlBoolean.TRUE;
+    }
+
     /* calls (function calls) */
 
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
@@ -76,6 +82,8 @@ public class SetlDefinition extends Value {
         return result;
     }
 
+    /* String and Char operations */
+
     public String toString(int tabs) {
         String result = "procedure (";
         for (int i = 0; i < mParameters.size(); ++i) {
@@ -92,6 +100,8 @@ public class SetlDefinition extends Value {
     public String toString() {
         return toString(0);
     }
+
+    /* Comparisons */
 
     // Compare two Values.  Returns -1 if this value is less than the value given
     // as argument, +1 if its greater and 0 if both values contain the same

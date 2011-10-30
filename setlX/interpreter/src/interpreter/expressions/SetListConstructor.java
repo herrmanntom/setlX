@@ -50,8 +50,7 @@ public class SetListConstructor extends Expr {
             if (mType == LIST) {
                 mConstructor.setIds((SetlList) v);
             } else {
-                throw new UndefinedOperationException("Error in \"" + this + "\":\n"
-                                                +     "Only explicit lists of variables can be used as targets for list assignments.");
+                throw new UndefinedOperationException("Only explicit lists of variables can be used as targets for list assignments.");
             }
         } else {
             throw new IncompatibleTypeException("The value '" + v + "' is unusable for assignment to \"" + this + "\".");

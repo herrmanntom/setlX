@@ -16,11 +16,7 @@ public class PD_isInteger extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        if (args.get(0) instanceof SetlInt) {
-            return SetlBoolean.TRUE;
-        } else {
-            return SetlBoolean.FALSE;
-        }
+        return args.get(0).isInteger();
     }
 }
 

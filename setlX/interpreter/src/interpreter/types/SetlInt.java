@@ -43,6 +43,14 @@ public class SetlInt extends NumberValue {
         }
     }
 
+    /* type checks (sort of Boolean operation) */
+
+    public SetlBoolean isInteger() {
+        return SetlBoolean.TRUE;
+    }
+
+    /* arithmetic operations */
+
     public SetlInt absoluteValue() {
         return new SetlInt(mNumber.abs());
     }
@@ -109,6 +117,8 @@ public class SetlInt extends NumberValue {
         }
     }
 
+    /* String and Char operations */
+
     public SetlString charConvert() throws NumberToLargeException {
         if (mNumber.compareTo(BigInteger.valueOf(127)) <= 0 &&
             mNumber.compareTo(BigInteger.ZERO) >= 0)
@@ -122,6 +132,8 @@ public class SetlInt extends NumberValue {
     public String toString() {
         return mNumber.toString();
     }
+
+    /* Comparisons */
 
     // Compare two Values.  Returns -1 if this value is less than the value given
     // as argument, +1 if its greater and 0 if both values contain the same

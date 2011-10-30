@@ -16,11 +16,7 @@ public class PD_isReal extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        if (args.get(0) instanceof SetlReal) {
-            return SetlBoolean.TRUE;
-        } else {
-            return SetlBoolean.FALSE;
-        }
+        return args.get(0).isReal();
     }
 }
 

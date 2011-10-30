@@ -66,6 +66,25 @@ public class SetlSet extends CollectionValue {
         }
     }
 
+    /* type checks (sort of boolean operation) */
+
+    public SetlBoolean isMap() {
+        for (Value v: getSet()) {
+            if (v instanceof SetlList) {
+                if (((SetlList) v).size() != 2) {
+                    return SetlBoolean.FALSE;
+                }
+            } else {
+                return SetlBoolean.FALSE;
+            }
+        }
+        return SetlBoolean.TRUE;
+    }
+
+    public SetlBoolean isSet() {
+        return SetlBoolean.TRUE;
+    }
+
     /* arithmetic operations */
 
     public Value add(Value summand) throws IncompatibleTypeException {
@@ -174,19 +193,6 @@ public class SetlSet extends CollectionValue {
         return result;
     }
 
-    public SetlBoolean isMap() {
-        for (Value v: getSet()) {
-            if (v instanceof SetlList) {
-                if (((SetlList) v).size() != 2) {
-                    return SetlBoolean.FALSE;
-                }
-            } else {
-                return SetlBoolean.FALSE;
-            }
-        }
-        return SetlBoolean.TRUE;
-    }
-
     public Value lastMember() {
         return maximumMember();
     }
@@ -282,11 +288,15 @@ public class SetlSet extends CollectionValue {
         return collectMembers(arg);
     }
 
+    /* String and Char operations */
+
     public String toString() {
         // unfortunately sets in java use [] in toString...
         String s = getSet().toString();
         return "{" + s.substring(1, s.length() - 1) + "}";
     }
+
+    /* Comparisons */
 
     // Compare two Values.  Returns -1 if this value is less than the value given
     // as argument, +1 if its greater and 0 if both values contain the same

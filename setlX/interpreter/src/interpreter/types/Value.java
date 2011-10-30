@@ -13,31 +13,6 @@ public abstract class Value implements Comparable<Value> {
 
     public abstract Value   clone();
 
-    /* Comparisons */
-
-    // Compare two Values.  Returns -1 if this value is less than the value given
-    // as argument, +1 if its greater and 0 if both values contain the same
-    // elements.
-    // Useful output is only possible if both values are of the same type.
-    // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
-    // This ranking is necessary to allow sets and lists of different types.
-    public abstract int compareTo(Value v);
-
-    public final boolean equals(Value v) {
-        return this.compareTo(v) == 0;
-    }
-
-    public final SetlBoolean isEqual(Value other) {
-        return SetlBoolean.get(this.equals(other));
-    }
-
-    /* this comparison is different than `this.compareTo(other) < 0' and should
-       throw errors on seemingly incomparable types like `5 < TRUE'            */
-    public SetlBoolean isLessThan(Value other) throws SetlException {
-        throw new UndefinedOperationException("'" + this + " < " + other + "' is undefined.");
-    }
-
     /* Boolean operations */
 
     public SetlBoolean and(Expr other) throws SetlException {
@@ -56,9 +31,37 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Left-hand-side of '" + this + " || " + other + "' is not a Boolean value.");
     }
 
-    /* type checks (sort of boolean operation) */
+    /* type checks (sort of Boolean operation) */
 
     public SetlBoolean isBoolean() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isInteger() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isList() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isMap() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isProcedure() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isReal() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isSet() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isString() {
         return SetlBoolean.FALSE;
     }
 
@@ -161,10 +164,6 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Can not get member between index '" + low + "' and '" + high + "' from operand; '" + this + "' is not a compound value or ranges are unsupported for this type.");
     }
 
-    public SetlBoolean isMap() {
-        return SetlBoolean.FALSE;
-    }
-
     public Value lastMember() throws SetlException {
         throw new IncompatibleTypeException("Can not get last member from operand; '" + this + "' is not a compound value.");
     }
@@ -238,6 +237,31 @@ public abstract class Value implements Comparable<Value> {
 
     public String toStringForPrint() {
         return toString();
+    }
+
+    /* Comparisons */
+
+    // Compare two Values.  Returns -1 if this value is less than the value given
+    // as argument, +1 if its greater and 0 if both values contain the same
+    // elements.
+    // Useful output is only possible if both values are of the same type.
+    // "incomparable" values, e.g. of different types are ranked as follows:
+    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // This ranking is necessary to allow sets and lists of different types.
+    public abstract int compareTo(Value v);
+
+    public final boolean equals(Value v) {
+        return this.compareTo(v) == 0;
+    }
+
+    public final SetlBoolean isEqual(Value other) {
+        return SetlBoolean.get(this.equals(other));
+    }
+
+    /* this comparison is different than `this.compareTo(other) < 0' and should
+       throw errors on seemingly incomparable types like `5 < TRUE'            */
+    public SetlBoolean isLessThan(Value other) throws SetlException {
+        throw new UndefinedOperationException("'" + this + " < " + other + "' is undefined.");
     }
 }
 

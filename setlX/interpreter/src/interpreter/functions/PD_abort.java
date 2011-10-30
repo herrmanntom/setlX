@@ -20,11 +20,7 @@ public class PD_abort extends PreDefinedFunction {
         String msg = "";
         for (Value arg : args) {
             // output Strings without double-quotes and escape characters
-            if (arg instanceof SetlString) {
-                msg += ((SetlString) arg).toStringForPrint();
-            } else {
-                msg += arg.toString();
-            }
+            msg += arg.toStringForPrint();
         }
         throw new AbortException("abort: " + msg);
     }

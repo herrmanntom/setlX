@@ -49,6 +49,14 @@ public class SetlReal extends NumberValue {
         return this;
     }
 
+    /* type checks (sort of Boolean operation) */
+
+    public SetlBoolean isReal() {
+        return SetlBoolean.TRUE;
+    }
+
+    /* arithmetic operations */
+
     public SetlReal absoluteValue() {
         return new SetlReal(mReal.abs());
     }
@@ -133,9 +141,13 @@ public class SetlReal extends NumberValue {
         return new SetlReal(left.subtract(mReal, mathContext));
     }
 
+    /* String and Char operations */
+
     public String toString() {
         return mReal.toString();
     }
+
+    /* Comparisons */
 
     // Compare two Values.  Returns -1 if this value is less than the value given
     // as argument, +1 if its greater and 0 if both values contain the same

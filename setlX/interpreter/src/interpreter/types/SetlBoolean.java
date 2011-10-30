@@ -24,6 +24,8 @@ public class SetlBoolean extends Value {
         }
     }
 
+    /* Boolean operations */
+
     public SetlBoolean and(Expr other) throws SetlException {
         if (this == FALSE) {
             return FALSE;
@@ -77,9 +79,13 @@ public class SetlBoolean extends Value {
         }
     }
 
+    /* type checks (sort of boolean operation) */
+
     public SetlBoolean isBoolean() {
         return SetlBoolean.TRUE;
     }
+
+    /* String and Char operations */
 
     public String toString() {
         if (this == TRUE) {
@@ -88,6 +94,8 @@ public class SetlBoolean extends Value {
             return "false";
         }
     }
+
+    /* Comparisons */
 
     // Compare two Values.  Returns -1 if this value is less than the value given
     // as argument, +1 if its greater and 0 if both values contain the same

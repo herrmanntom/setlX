@@ -8,13 +8,7 @@ import java.math.BigInteger;
 
 public abstract class NumberValue extends Value {
 
-    public final SetlBoolean isLessThan(Value other) throws IncompatibleTypeException {
-        if (other instanceof NumberValue) {
-            return SetlBoolean.get(this.compareTo(other) < 0);
-        } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " < " + other + "' is not a number.");
-        }
-    }
+    /* arithmetic operations */
 
     public abstract NumberValue absoluteValue();
 
@@ -37,5 +31,15 @@ public abstract class NumberValue extends Value {
     public abstract NumberValue power(int exponent);
 
     public abstract NumberValue subtract(Value subtrahend) throws IncompatibleTypeException;
+
+    /* Comparisons */
+
+    public final SetlBoolean isLessThan(Value other) throws IncompatibleTypeException {
+        if (other instanceof NumberValue) {
+            return SetlBoolean.get(this.compareTo(other) < 0);
+        } else {
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " < " + other + "' is not a number.");
+        }
+    }
 }
 

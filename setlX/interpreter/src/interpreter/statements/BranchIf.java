@@ -1,20 +1,20 @@
 package interpreter.statements;
 
-import interpreter.boolExpressions.BoolExpr;
 import interpreter.exceptions.SetlException;
+import interpreter.utilities.Condition;
 import interpreter.utilities.Environment;
 
 public class BranchIf extends BranchAbstract {
-    private BoolExpr    mBoolExpr;
-    private Block       mStatements;
+    private Condition mCondition;
+    private Block     mStatements;
 
-    public BranchIf(BoolExpr boolExpr, Block statements){
-        mBoolExpr   = boolExpr;
+    public BranchIf(Condition condition, Block statements){
+        mCondition  = condition;
         mStatements = statements;
     }
 
     public boolean evalConditionToBool() throws SetlException {
-        return mBoolExpr.evalToBool();
+        return mCondition.evalToBool();
     }
 
     public void execute() throws SetlException {
@@ -24,9 +24,10 @@ public class BranchIf extends BranchAbstract {
     public String toString(int tabs) {
         String result = Environment.getTabs(tabs);
         result += "if (";
-        result += mBoolExpr;
+        result += mCondition.toString(tabs);
         result += ") ";
         result += mStatements.toString(tabs, true);
         return result;
     }
 }
+

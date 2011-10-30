@@ -35,9 +35,9 @@ statement returns [Statement stmnt]
     :
       'var' variable ';'                                      { stmnt = new GlobalDefinition($variable.v);          }
     | expr ';'                                                { stmnt = new ExpressionStatement($expr.ex);          }
-    | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.bex, $b1.blk));     }
+    | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));     }
       (
-        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.bex, $b2.blk)); }
+        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk)); }
       )*
       (
         'else'                             '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));            }
@@ -45,14 +45,14 @@ statement returns [Statement stmnt]
       { stmnt = new IfThen(branchList); }
     | 'switch' '{'
       (
-        'case' c1 = condition ':' b1 = block                  { branchList.add(new BranchCase($c1.bex, $b1.blk));   }
+        'case' c1 = condition ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));   }
       )*
       (
         'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));         }
       )?
       '}' { stmnt = new Switch(branchList); }
     | 'for'   '(' iterator  ')' '{' block '}'                 { stmnt = new For($iterator.iter, $block.blk);        }
-    | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.bex, $block.blk);      }
+    | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);      }
     | 'return' expr? ';'                                      { stmnt = new Return($expr.ex);                       }
     | 'continue' ';'                                          { stmnt = new Continue();                             }
     | 'break' ';'                                             { stmnt = new Break();                                }
@@ -61,21 +61,21 @@ statement returns [Statement stmnt]
 
 variable returns [Variable v]
     :
-      ID    { v = new Variable($ID.text);   }
+      ID    { v = new Variable($ID.text);    }
     ;
 
-condition returns [BoolExpr bex]
+condition returns [Condition cnd]
     :
-      expr  { bex = new BoolExpr($expr.ex); }
+      expr  { cnd = new Condition($expr.ex); }
     ;
 
 expr returns [Expr ex]
     :
       (assignment)=>assignment { ex = $assignment.assign;                         }
     | 'forall' '(' iterator '|' condition ')'
-                               { ex = new Forall($iterator.iter, $condition.bex); }
+                               { ex = new Forall($iterator.iter, $condition.cnd); }
     | 'exists' '(' iterator '|' condition ')'
-                               { ex = new Exists($iterator.iter, $condition.bex); }
+                               { ex = new Exists($iterator.iter, $condition.cnd); }
     | implication              { ex = $implication.i;                             }
     ;
 
@@ -350,19 +350,19 @@ range returns [Range r]
 
 iterate returns [Iteration i]
     @init {
-        BoolExpr bex = null;
+        Condition cnd = null;
     }
     :
       (shortIterate)=> shortIterate { i = $shortIterate.si;                             }
     | expr ':' iterator
       (
-        '|' condition               { bex = $condition.bex;                             }
-      )?                            { i = new Iteration($expr.ex, $iterator.iter, bex); }
+        '|' condition               { cnd = $condition.cnd;                             }
+      )?                            { i = new Iteration($expr.ex, $iterator.iter, cnd); }
     ;
 
 shortIterate returns [Iteration si]
     :
-      assignable 'in' expr '|' condition  { si = new Iteration(null, new Iterator($assignable.a, $expr.ex), $condition.bex); }
+      assignable 'in' expr '|' condition  { si = new Iteration(null, new Iterator($assignable.a, $expr.ex), $condition.cnd); }
     ;
 
 iterator returns [Iterator iter]

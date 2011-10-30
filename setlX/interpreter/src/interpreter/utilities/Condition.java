@@ -1,4 +1,4 @@
-package interpreter.boolExpressions;
+package interpreter.utilities;
 
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.IncompatibleTypeException;
@@ -6,28 +6,24 @@ import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
 import interpreter.types.Value;
 
-public class BoolExpr extends Expr {
+public class Condition {
     private Expr mExpr;
 
-    public BoolExpr(Expr expr) {
+    public Condition(Expr expr) {
         mExpr = expr;
     }
 
     public SetlBoolean eval() throws SetlException {
         Value v = mExpr.eval();
-        if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) {
+        if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) { // is Boolean value?
             return (SetlBoolean) v;
         } else {
             throw new IncompatibleTypeException("'" + v + "' is not a Boolean value.");
         }
     }
 
-    public Value evaluate() throws SetlException {
-        return eval();
-    }
-
     public boolean evalToBool() throws SetlException {
-        return (this.eval() == SetlBoolean.TRUE);
+        return eval() == SetlBoolean.TRUE;
     }
 
     public String toString(int tabs) {

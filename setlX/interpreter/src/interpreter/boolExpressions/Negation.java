@@ -5,14 +5,14 @@ import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
 
 public class Negation extends Expr {
-    private BoolExpr mExpr;
+    private Expr mExpr;
 
-    public Negation(BoolExpr expr) {
+    public Negation(Expr expr) {
         mExpr = expr;
     }
 
     public SetlBoolean evaluate() throws SetlException {
-        return mExpr.evaluate().not();
+        return mExpr.eval().not();
     }
 
     public String toString(int tabs) {

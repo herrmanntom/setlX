@@ -10,6 +10,7 @@ fromWithoutSideEffect := procedure() {
         print("test 01 failed (side-effects in from)");
     }
 };
+fromWithoutSideEffect();
 
 fromListWithoutSideEffect := procedure() {
     a := [{1}, {2}];
@@ -22,6 +23,7 @@ fromListWithoutSideEffect := procedure() {
         print("test 02 failed (side-effects in from lists)");
     }
 };
+fromListWithoutSideEffect();
 
 fromVariable := procedure() {
     a := {{1}, {2}};
@@ -33,6 +35,7 @@ fromVariable := procedure() {
         print("test 03 failed (from variable)");
     }
 };
+fromVariable();
 
 listIndex := procedure() {
     a := [1];
@@ -46,6 +49,7 @@ listIndex := procedure() {
         print("test 04 failed (list index)");
     }
 };
+listIndex();
 
 collectionsWithOm := procedure() {
     a := [1, om];
@@ -58,6 +62,7 @@ collectionsWithOm := procedure() {
         print("test 05 failed (collections with om)");
     }
 };
+collectionsWithOm();
 
 listAssignments := procedure() {
     [a, b, c] := [1, 2, 3];
@@ -68,6 +73,7 @@ listAssignments := procedure() {
         print("test 06 failed (list assignments)");
     }
 };
+listAssignments();
 
 innerListAssignments := procedure() {
     a := [1, 2, 3];
@@ -84,6 +90,7 @@ innerListAssignments := procedure() {
         print("test 07 failed (assignments to list content)");
     }
 };
+innerListAssignments();
 
 firstClassFunctions := procedure() {
 
@@ -100,6 +107,7 @@ firstClassFunctions := procedure() {
         print("test 08 failed (first class functions)");
     }
 };
+firstClassFunctions();
 
 nestedFunctions := procedure() {
 
@@ -127,6 +135,7 @@ nestedFunctions := procedure() {
         print("test 09 failed (nested functions)");
     }
 };
+nestedFunctions();
 
 iterator := procedure() {
     u := [[x, y, z, w]: x in {1, 2}, y in {1, 2}, [z, w] in [[x, y]]];
@@ -136,6 +145,7 @@ iterator := procedure() {
         print("test 10 failed (iterators)");
     }
 };
+iterator();
 
 scopeTests := procedure() {
     result := "";
@@ -156,6 +166,7 @@ scopeTests := procedure() {
         print("test 11 failed (scope)");
     }
 };
+scopeTests();
 
 forallTests := procedure() {
     a := b := c := d := "test";
@@ -169,6 +180,7 @@ forallTests := procedure() {
         print("test 12 failed (forall)");
     }
 };
+forallTests();
 
 existsTests := procedure() {
     a := b := c := d := "test";
@@ -182,18 +194,35 @@ existsTests := procedure() {
         print("test 13 failed (exists)");
     }
 };
-
-fromWithoutSideEffect();
-fromListWithoutSideEffect();
-fromVariable();
-listIndex();
-collectionsWithOm();
-listAssignments();
-innerListAssignments();
-firstClassFunctions();
-nestedFunctions();
-iterator();
-scopeTests();
-forallTests();
 existsTests();
+
+lazyChecking := procedure() {
+    correct := false;
+    a := b := 1;
+    increaseTrue := procedure (rw x) {
+        x += 1;
+        return true;
+    };
+    increaseFalse := procedure (rw x) {
+        x += 1;
+        return false;
+    };
+
+    // true and true (not lazy-checkable)
+    c := increaseTrue(a) && increaseTrue(b);
+    // now a and b should be 2, c should be true
+    correct := a == 2 && b == 2 && c == true;
+
+    // false and true (lazy-checkable)
+    c := increaseFalse(a) && increaseTrue(b);
+    // now a should be 3, but b still 2, c should be false
+    correct := correct && a == 3 && b == 2 && c == false;
+
+    if (correct) {
+        print("test 14 successful (lazyChecking)");
+    } else {
+        print("test 14 failed (lazyChecking)");
+    }
+};
+lazyChecking();
 

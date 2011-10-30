@@ -26,6 +26,33 @@ public class Comparison extends Expr {
         mRhs  = rhs;
     }
 
+    /*
+     * Note that these comparisons do not always behave as expected when
+     * the compared values are no numbers!
+     *
+     * For example:
+     * Set comparisons are based upon the subset relation
+     * a < b
+     * is true, when a is a subset of b.
+     *
+     * However the negation of this comparison
+     * !(a < b)
+     * is not (in all cases) equal to
+     * a >= b
+     * because it is possible that a is not a subset of b AND
+     * b is neither subset nor equal to a (e.g. a := {1}; b := {2}).
+     * In this case
+     * !(a < b)
+     * would be true, but
+     * a >= b
+     * would be false.
+     *
+     * When comparing numbers
+     * !(a < b)
+     * would always be the same as
+     * a >= b
+     */
+
     public SetlBoolean evaluate() throws SetlException {
         Value lhs           = mLhs.eval();
         Value rhs           = mRhs.eval();
@@ -41,11 +68,13 @@ public class Comparison extends Expr {
         } else if (mType == LESSTHAN) {
             return lhs.isLessThan(rhs);
         } else if (mType == EQUALORLESS) {
-            return lhs.isLessThan(rhs).or(lhs.isEqual(rhs));
+            return SetlBoolean.get(lhs.isLessThan(rhs) == SetlBoolean.TRUE || lhs.isEqual(rhs) == SetlBoolean.TRUE);
         } else if (mType == MORETHAN) {
+            // note: rhs and lhs swapped!
             return rhs.isLessThan(lhs);
         } else if (mType == EQUALORMORE) {
-            return rhs.isLessThan(lhs).or(rhs.isEqual(lhs));
+            // note: rhs and lhs swapped!
+            return SetlBoolean.get(rhs.isLessThan(lhs) == SetlBoolean.TRUE || rhs.isEqual(lhs) == SetlBoolean.TRUE);
         } else {
             throw new UndefinedOperationException("This comparison type is undefined.");
         }

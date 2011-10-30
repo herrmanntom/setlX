@@ -40,15 +40,19 @@ public abstract class Value implements Comparable<Value> {
 
     /* Boolean operations */
 
-    public SetlBoolean and(Value other) throws IncompatibleTypeException {
+    public SetlBoolean and(Expr other) throws SetlException {
         throw new IncompatibleTypeException("Left-hand-side of '" + this + " && " + other + "' is not a Boolean value.");
     }
 
-    public SetlBoolean not() throws IncompatibleTypeException {
+    public SetlBoolean implies(Expr other) throws SetlException {
+        throw new IncompatibleTypeException("Left-hand-side of '" + this + "-> " + other + "' is not a Boolean value.");
+    }
+
+    public SetlBoolean not() throws SetlException {
         throw new IncompatibleTypeException("Operand of '!" + this + "' is not a Boolean value.");
     }
 
-    public SetlBoolean or(Value other) throws IncompatibleTypeException {
+    public SetlBoolean or(Expr other) throws SetlException {
         throw new IncompatibleTypeException("Left-hand-side of '" + this + " || " + other + "' is not a Boolean value.");
     }
 

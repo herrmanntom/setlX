@@ -136,25 +136,25 @@ assignable returns [Expr a]
 
 implication returns [Expr i]
     :
-      disjunction             {i = $disjunction.d;                                        }
+      disjunction             {i = $disjunction.d;             }
       (
-        '->' im = implication {i = new Implication(new BoolExpr(i), new BoolExpr($im.i)); }
+        '->' im = implication {i = new Implication(i, $im.i);  }
       )?
     ;
 
 disjunction returns [Expr d]
     :
-      c1 = conjunction        {d = $c1.c;                                                 }
+      c1 = conjunction        {d = $c1.c;                      }
       (
-        '||' c2 = conjunction {d = new Disjunction(new BoolExpr(d), new BoolExpr($c2.c)); }
+        '||' c2 = conjunction {d = new Disjunction(d, $c2.c);  }
       )*
     ;
 
 conjunction returns [Expr c]
     :
-      e1 = equation        {c = $e1.eq;                                                 }
+      e1 = equation           {c = $e1.eq;                     }
       (
-        '&&' e2 = equation {c = new Conjunction(new BoolExpr(c), new BoolExpr($e2.eq)); }
+        '&&' e2 = equation    {c = new Conjunction(c, $e2.eq); }
       )*
     ;
 
@@ -247,19 +247,19 @@ minmax returns [Expr mm]
 
 factor returns [Expr f]
     :
-      '(' expr ')'             { f = new BracketedExpr($expr.ex);       }
-    | 'min/'       fa = factor { f = new MinimumMember(null, $fa.f);    }
-    | 'max/'       fa = factor { f = new MaximumMember(null, $fa.f);    }
-    | '+/'         fa = factor { f = new SumMembers(null, $fa.f);       }
-    | '*/'         fa = factor { f = new MultiplyMembers(null, $fa.f);  }
-    | '-'          fa = factor { f = new Negative($fa.f);               }
-    | '!'          fa = factor { f = new Negation(new BoolExpr($fa.f)); }
-    | '#'          fa = factor { f = new Cardinality($fa.f);            }
-    | call                     { f = $call.c;                           }
-    | definition               { f = new ValueExpr($definition.dfntn);  }
-    | list                     { f = $list.lc;                          }
-    | set                      { f = $set.sc;                           }
-    | value                    { f = new ValueExpr($value.v);           }
+      '(' expr ')'             { f = new BracketedExpr($expr.ex);      }
+    | 'min/'       fa = factor { f = new MinimumMember(null, $fa.f);   }
+    | 'max/'       fa = factor { f = new MaximumMember(null, $fa.f);   }
+    | '+/'         fa = factor { f = new SumMembers(null, $fa.f);      }
+    | '*/'         fa = factor { f = new MultiplyMembers(null, $fa.f); }
+    | '-'          fa = factor { f = new Negative($fa.f);              }
+    | '!'          fa = factor { f = new Negation($fa.f);              }
+    | '#'          fa = factor { f = new Cardinality($fa.f);           }
+    | call                     { f = $call.c;                          }
+    | definition               { f = new ValueExpr($definition.dfntn); }
+    | list                     { f = $list.lc;                         }
+    | set                      { f = $set.sc;                          }
+    | value                    { f = new ValueExpr($value.v);          }
     ;
 
 // this could be either 'variable' or 'call' or 'element of collection'

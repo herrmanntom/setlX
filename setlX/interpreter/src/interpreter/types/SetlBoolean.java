@@ -1,6 +1,8 @@
 package interpreter.types;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.exceptions.SetlException;
+import interpreter.expressions.Expr;
 
 public class SetlBoolean extends Value {
 
@@ -22,16 +24,33 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public SetlBoolean and(Value other) throws IncompatibleTypeException {
-        if (other == TRUE) {
-            if (this == TRUE) {
-                return TRUE;
-            }
+    public SetlBoolean and(Expr other) throws SetlException {
+        if (this == FALSE) {
             return FALSE;
-        } else if (other == FALSE) {
-           return FALSE;
-        } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " && " + other + "' is not a Boolean value.");
+        } else { // this == TRUE
+            Value otr = other.eval();
+            if (otr == TRUE) {
+                return TRUE;
+            } else if (otr == FALSE) {
+               return FALSE;
+            } else {
+                throw new IncompatibleTypeException("Right-hand-side of '" + this + " && " + otr + "' is not a Boolean value.");
+            }
+        }
+    }
+
+    public SetlBoolean implies(Expr other) throws SetlException {
+        if (this == FALSE) {
+            return TRUE;
+        } else { // this == TRUE
+            Value otr = other.eval();
+            if (otr == TRUE) {
+                return TRUE;
+            } else if (otr == FALSE) {
+               return FALSE;
+            } else {
+                throw new IncompatibleTypeException("Right-hand-side of '" + this + " -> " + otr + "' is not a Boolean value.");
+            }
         }
     }
 
@@ -43,16 +62,18 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public SetlBoolean or(Value other) throws IncompatibleTypeException {
-        if (other == TRUE) {
+    public SetlBoolean or(Expr other) throws SetlException {
+        if (this == TRUE) {
             return TRUE;
-        } else if (other == FALSE) {
-            if (this == TRUE) {
+        } else { // this == FALSE
+            Value otr = other.eval();
+            if (otr == TRUE) {
                 return TRUE;
+            } else if (otr == FALSE) {
+                return FALSE;
+            } else {
+                throw new IncompatibleTypeException("Right-hand-side of '" + this + " || " + otr + "' is not a Boolean value.");
             }
-            return FALSE;
-        } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " || " + other + "' is not a Boolean value.");
         }
     }
 

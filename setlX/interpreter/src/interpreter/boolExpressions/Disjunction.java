@@ -5,19 +5,16 @@ import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
 
 public class Disjunction extends Expr {
-    private BoolExpr mLhs;
-    private BoolExpr mRhs;
+    private Expr mLhs;
+    private Expr mRhs;
 
-    public Disjunction(BoolExpr lhs, BoolExpr rhs) {
+    public Disjunction(Expr lhs, Expr rhs) {
         mLhs = lhs;
         mRhs = rhs;
     }
 
     public SetlBoolean evaluate() throws SetlException {
-        if (mLhs.evalToBool() || mRhs.evalToBool()) {
-            return SetlBoolean.TRUE;
-        }
-        return SetlBoolean.FALSE;
+        return mLhs.eval().or(mRhs);
     }
 
     public String toString(int tabs) {

@@ -13,8 +13,8 @@ statement
       ('else' 'if' '(' expr     ')' '{' statement* '}' )*
       ('else'                       '{' statement* '}' )?
     | 'switch' '{'
-          ('case' condition ':' statement* )*
-          ('default'        ':' statement* )?
+          ('case' expr   ':' statement* )*
+          ('default'     ':' statement* )?
       '}'
     | 'for'        '(' iterator ')' '{' statement* '}'
     | 'while'      '(' expr     ')' '{' statement* '}'
@@ -26,15 +26,25 @@ statement
 
 expr
     :
-      assignment
+      (ID ('(' sum ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=') expr
     | 'forall' '(' iterator '|' expr ')'
     | 'exists' '(' iterator '|' expr ')'
-    | conjunction ('||' conjunction)*
+    | implication
     ;
 
-assignment
+idList
     :
-      (ID ('(' sum ')')* | list) (':=' | '+=' | '-=' | '*=' | '/=') expr
+      '[' (variable | idList | '-') (',' (variable | idList | '-'))* ']'
+    ;
+
+implication
+    :
+      disjunction ('->' implication)?
+    ;
+
+disjunction
+    :
+      conjunction ('||' conjunction)*
     ;
 
 conjunction
@@ -74,7 +84,7 @@ power
 
 minmax
     :
-      factor (('min' | 'min/' | 'max' | 'max/') minmax)?
+      factor (('min' | 'min/' | 'max' | 'max/') factor)?
     ;
 
 factor
@@ -83,7 +93,7 @@ factor
     | 'min/'       factor
     | 'max/'       factor
     | '+/'         factor
-    | '-/'         factor
+    | '*/'         factor
     | '-'          factor
     | '!'          factor
     | '#'          factor
@@ -130,14 +140,14 @@ set
 constructor
     :
       expr (',' expr)? '..' expr
-    | ( ID | list ) 'in' expr ('|' expr )?
+    | ( ID | idList ) 'in' expr ('|' expr )?
     | expr ':' iterator ('|' expr )?
     | expr (',' expr)*
     ;
 
 iterator
     :
-      ( ID | list ) 'in' expr (',' ( ID | list ) 'in' expr )*
+      ( ID | idList ) 'in' expr (',' ( ID | idList ) 'in' expr )*
     ;
 
 value

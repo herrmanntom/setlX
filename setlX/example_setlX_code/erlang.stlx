@@ -1,14 +1,7 @@
 erlangB := procedure(A, N) {
-	P := (A ** N + 0.0) / fakultaet(N);
-	P /= +/{(A**i + 0.0) / fakultaet(i): i in {0 .. N}};
+	P := (A ** N + 0.0) / factorial(N);
+	P /= +/{(A**i + 0.0) / factorial(i): i in {0 .. N}};
 	return P;
-};
-
-fakultaet := procedure(n) {
-	if (n in {0, 1}) {
-		return 1;
-	}
-	return */{2 .. n};
 };
 
 solveA := procedure(N, P, step) {

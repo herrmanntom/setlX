@@ -6,11 +6,11 @@ import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
-public class PD_factorial extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_factorial();
+public class PD_fac extends PreDefinedFunction {
+    public final static PreDefinedFunction DEFINITION = new PD_fac();
 
-    private PD_factorial() {
-        super("factorial");
+    private PD_fac() {
+        super("fac");
         addParameter(new ParameterDef("integer"));
     }
 

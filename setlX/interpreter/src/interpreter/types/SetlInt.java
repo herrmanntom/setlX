@@ -81,6 +81,14 @@ public class SetlInt extends NumberValue {
         }
     }
 
+    public SetlInt factorial() throws SetlException {
+        BigInteger result = BigInteger.ONE;
+        for (BigInteger i = new BigInteger("2"); i.compareTo(mNumber) <= 0; i = i.add(BigInteger.ONE)) {
+            result = result.multiply(i);
+        }
+        return new SetlInt(result);
+    }
+
     public SetlInt mod(Value modulo) throws IncompatibleTypeException {
         if (modulo instanceof SetlInt) {
             return new SetlInt(mNumber.mod(((SetlInt) modulo).mNumber));

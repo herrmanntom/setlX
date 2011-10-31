@@ -82,6 +82,10 @@ public abstract class Value implements Comparable<Value> {
         throw new UndefinedOperationException("'" + this + " / " + divisor + "' is undefined.");
     }
 
+    public SetlInt factorial() throws SetlException {
+        throw new UndefinedOperationException("'factorial(" + this + ")', e.g. 'this!' is undefined.");
+    }
+
     public final Value maximum(Value other) throws SetlException {
         if(other != SetlOm.OM && this.isLessThan(other) == SetlBoolean.TRUE){
             return other.clone();

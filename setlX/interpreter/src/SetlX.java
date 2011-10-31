@@ -161,6 +161,13 @@ public class SetlX {
             printExceptionsTrace(se.getTrace());
         } catch (NullPointerException e) { // code syntax was not parsed correctly
             System.err.println("Syntax Error.");
+        } catch (OutOfMemoryError oome) {
+            System.err.println("Out of memory error.\n"
+                             + "Try improving the SetlX program and/or execute with larger maximum memory size.\n"
+                             + "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n"
+                             + "\n"
+                             + "If that does not help get a better machine ;-)\n");
+            return false; // breaks loop while parsing interactively
         }
         return true; // continue loop while parsing interactively
     }

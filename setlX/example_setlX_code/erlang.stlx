@@ -1,0 +1,28 @@
+erlangB := procedure(A, N) {
+	P := (A ** N + 0.0) / fakultaet(N);
+	P /= +/{(A**i + 0.0) / fakultaet(i): i in {0 .. N}};
+	return P;
+};
+
+fakultaet := procedure(n) {
+	if (n in {0, 1}) {
+		return 1;
+	}
+	return */{2 .. n};
+};
+
+solveA := procedure(N, P, step) {
+	lastA := A := 0;
+	while (true) {
+		A += step;
+		B := erlangB(A, N);
+		if (B <= P) {
+			lastA:= A;
+		} else if (B > (P * 1.1)) { // allow to continue while just above the threshold
+			break;
+		}
+	}
+	return lastA;
+};
+
+print("maximum A (for N = 5, P <= 5%) is ", solveA(5, 0.05, 0.00001), ".");

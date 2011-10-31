@@ -81,10 +81,58 @@ public class SetlInt extends NumberValue {
         }
     }
 
+    // subclass for threaded factorial computation
+    class Factorial extends Thread {
+        private     int        from;
+        private     int        to;
+        /*package*/ BigInteger result;
+
+        public Factorial(int from, int to) {
+            this.from   = from;
+            this.to     = to;
+            this.result = BigInteger.valueOf(from);
+        }
+
+        public void run() {
+            for (int i = from + 1; i < to; ++i) {
+                result = result.multiply(BigInteger.valueOf(i));
+            }
+        }
+    }
+
+    // number of CPU cores
+    private static final int CORES = Runtime.getRuntime().availableProcessors();
+
     public SetlInt factorial() throws SetlException {
-        BigInteger result = BigInteger.ONE;
-        for (BigInteger i = new BigInteger("2"); i.compareTo(mNumber) <= 0; i = i.add(BigInteger.ONE)) {
-            result = result.multiply(i);
+        if (mNumber.compareTo(BigInteger.ZERO) < 0) {
+            throw new UndefinedOperationException("'fac(" + this + ")', e.g. '" + this + "!' is undefined.");
+        }
+        int        n         = intValue(); // will throw exception if this is >= 2^31, but wanting that is crazy talk
+        BigInteger result    = BigInteger.ONE;
+        if (n <= 512 || CORES <= 1) { // use simple implementation when computing small factorials or having only one CPU (less overhead)
+            for (int i = 2; i <= n; ++i) {
+                result = result.multiply(BigInteger.valueOf(i));
+            }
+        } else { // use multiple threads for bigger factorials
+            // create as many threads as there are processors
+            Factorial  threads[] = new Factorial[CORES];
+            for (int i = 0; i < CORES; ++i) {
+                int from = n/CORES * (i) + 1;
+                int to   = n/CORES * (i + 1) +1;
+                if (i == CORES -1) { // last thread
+                    to += n % CORES; // pick up the slack
+                }
+                threads[i] = new Factorial(from, to);
+                // start thread
+                threads[i].start();
+            }
+            // wait for them to complete and compile end result
+            for (int i = 0; i < CORES; ++i) {
+                try {
+                    threads[i].join();
+                    result = result.multiply(threads[i].result);
+                } catch (InterruptedException ie) {}
+            }
         }
         return new SetlInt(result);
     }

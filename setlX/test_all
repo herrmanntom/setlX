@@ -15,7 +15,7 @@ while IFS= read path
     readCount=$(grep -c "read()" $path)
     getCount=$(grep -c "get()" $path)
 
-    if [ $readCount -gt 0 -o $getCount -gt 0 -o $filename == "converted_Setl2_code/other_programs/2.18_A_n_infinite_loop.stlx" ]
+    if [ $readCount -gt 0 -o $getCount -gt 0 -o ! -e $path.reference ]
       then
         manualTestFiles="$manualTestFiles$filename, "
         continue

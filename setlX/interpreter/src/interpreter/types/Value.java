@@ -83,7 +83,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlInt factorial() throws SetlException {
-        throw new UndefinedOperationException("'factorial(" + this + ")', e.g. 'this!' is undefined.");
+        throw new UndefinedOperationException("'fac(" + this + ")', e.g. '" + this + "!' is undefined.");
     }
 
     public final Value maximum(Value other) throws SetlException {

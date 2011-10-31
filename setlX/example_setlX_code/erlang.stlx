@@ -1,6 +1,6 @@
 erlangB := procedure(A, N) {
-	P := (A ** N + 0.0) / factorial(N);
-	P /= +/{(A**i + 0.0) / factorial(i): i in {0 .. N}};
+	P := (A ** N + 0.0) / fac(N);
+	P /= +/{(A**i + 0.0) / fac(i): i in {0 .. N}};
 	return P;
 };
 
@@ -18,4 +18,4 @@ solveA := procedure(N, P, step) {
 	return lastA;
 };
 
-print("maximum A (for N = 5, P <= 5%) is ", solveA(5, 0.05, 0.00001), ".");
+print("maximum A (for N = 5, P <= 5%) is ", solveA(5, 0.05, 0.0001), ".");

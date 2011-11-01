@@ -344,7 +344,7 @@ range returns [Range r]
       (
         ',' e2 = expr { e = $e2.ex; }
       )?
-      '..' e3 = expr
+      '..'  e3 = expr
       { r = new Range($e1.ex, e, $e3.ex); }
     ;
 

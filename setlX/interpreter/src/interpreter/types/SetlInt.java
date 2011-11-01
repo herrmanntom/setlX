@@ -29,15 +29,13 @@ public class SetlInt extends NumberValue {
         return this;
     }
 
-    public BigInteger getNumber() {
+    /*package*/ BigInteger getNumber() {
         return mNumber;
     }
 
-    public int intValue() throws NumberToLargeException {
-        if (mNumber.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
-            throw new NumberToLargeException("'" + mNumber + "' is to large for this operation.");
-        } else if (mNumber.compareTo(BigInteger.ZERO) < 0) {
-            throw new NumberToLargeException("'" + mNumber + "' is negative, which is not allowed for this operation.");
+    /*package*/ int intValue() throws NumberToLargeException {
+        if (mNumber.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 || mNumber.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0) {
+            throw new NumberToLargeException("'" + mNumber + "' is to large/small for this operation.");
         } else {
             return mNumber.intValue();
         }
@@ -135,6 +133,36 @@ public class SetlInt extends NumberValue {
             }
         }
         return new SetlInt(result);
+    }
+
+    public void fillCollectionWithinRange(Value step_, Value stop_, CollectionValue collection) throws SetlException {
+        SetlInt step = null;
+        SetlInt stop = null;
+
+        // check if types make sense (essentially only numbers make sense here)
+        if (step_ instanceof SetlInt) {
+            step = (SetlInt) step_;
+        } else {
+            throw new IncompatibleTypeException("Step size '" + step_ + "' is not an integer.");
+        }
+        if (stop_ instanceof SetlInt) {
+            stop = (SetlInt) stop_;
+        } else {
+            throw new IncompatibleTypeException("Stop argument '" + stop_ + "' is not an integer.");
+        }
+
+        // collect all elements in range
+        try { // maybe we can get away with using integers
+            int stopI = stop.intValue(), stepI = step.intValue();
+            for (int i = this.intValue(); i <= stopI; i = i + stepI) {
+                collection.addMember(new SetlInt(BigInteger.valueOf(i)));
+            }
+        } catch (NumberToLargeException ntle) { // maybe not
+            BigInteger stopBI = stop.mNumber, stepBI = step.mNumber;
+            for (BigInteger i = this.mNumber; i.compareTo(stopBI) <= 0; i = i.add(stepBI)) {
+                collection.addMember(new SetlInt(i));
+            }
+        }
     }
 
     public SetlInt mod(Value modulo) throws IncompatibleTypeException {

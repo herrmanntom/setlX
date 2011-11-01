@@ -86,6 +86,10 @@ public abstract class Value implements Comparable<Value> {
         throw new UndefinedOperationException("'fac(" + this + ")', e.g. '" + this + "!' is undefined.");
     }
 
+    public void fillCollectionWithinRange(Value step, Value stop, CollectionValue collection) throws SetlException {
+        throw new IncompatibleTypeException("Start argument '" + this + "' is not an integer.");
+    }
+
     public final Value maximum(Value other) throws SetlException {
         if(other != SetlOm.OM && this.isLessThan(other) == SetlBoolean.TRUE){
             return other.clone();

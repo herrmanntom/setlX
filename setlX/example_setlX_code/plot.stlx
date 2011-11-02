@@ -1,0 +1,23 @@
+plot := procedure(f, l) {
+    for (x in l) {
+        print("f(", x, ")\t:= ", f(x));
+    }
+};
+
+prettyPlot := procedure(f, l) {
+    function := str(f);
+    if (#function <= 9 || function(.. 9) != "procedure") { // is lambda function
+        function := function(6 .. #function -1); // remove beginning and end of lambda function string
+    }
+    print("f(x)\t:= " + function);
+    print();
+    plot(f,l);
+    print();
+};
+
+functions := [sin, (x)>(x), (x)>(x * x), (x)>(x * x + x), (x)>(x ** 3 - 7)];
+data      := [-5 .. 5];
+
+for (f in functions) {
+    prettyPlot(f, data);
+}

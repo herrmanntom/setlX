@@ -72,7 +72,6 @@ condition returns [Condition cnd]
 expr returns [Expr ex]
     :
       ( assignment       )=> assignment       { ex = $assignment.assign;                         }
-    | ( lambdaDefinition )=> lambdaDefinition { ex = new ValueExpr($lambdaDefinition.ld);        }
     | 'forall' '(' iterator '|' condition ')'
                                               { ex = new Forall($iterator.iter, $condition.cnd); }
     | 'exists' '(' iterator '|' condition ')'
@@ -132,18 +131,6 @@ assignable returns [Expr a]
     :
       variable { a = $variable.v; }
     | idList   { a = $idList.ilc; }
-    ;
-
-lambdaDefinition returns [LambdaDefinition ld]
-    @init {
-        List<ParameterDef> paramList = new LinkedList<ParameterDef>();
-    }
-    :
-      v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY)); }
-      (
-        ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY)); }
-      )*
-      '|->' expr          { ld = new LambdaDefinition(paramList, $expr.ex);                 }
     ;
 
 implication returns [Expr i]
@@ -268,7 +255,6 @@ factor returns [Expr f]
     | '!'          fa = factor { f = new Negation($fa.f);              }
     | '#'          fa = factor { f = new Cardinality($fa.f);           }
     | call                     { f = $call.c;                          }
-    | definition               { f = new ValueExpr($definition.dfntn); }
     | list                     { f = $list.lc;                         }
     | set                      { f = $set.sc;                          }
     | value                    { f = new ValueExpr($value.v);          }
@@ -303,31 +289,6 @@ callParameters returns [List<Expr> args]
          )
        | '..' s2 = sum      { args.add(CallRangeDummy.CRD); args.add($s2.s);  }
       )?
-    ;
-
-definition returns [SetlDefinition dfntn]
-    :
-      'procedure' '(' definitionParameters ')' '{' block '}'
-      { dfntn = new SetlDefinition($definitionParameters.paramList, $block.blk); }
-    ;
-
-definitionParameters returns [List<ParameterDef> paramList]
-    @init {
-        paramList = new LinkedList<ParameterDef>();
-    }
-    :
-      (
-        dp1 = definitionParameter        { paramList.add($dp1.param); }
-        (
-          ',' dp2 = definitionParameter  { paramList.add($dp2.param); }
-        )*
-      )?
-    ;
-
-definitionParameter returns [ParameterDef param]
-    :
-      'rw' variable  { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
-    | variable       { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
 list returns [SetListConstructor lc]
@@ -399,12 +360,57 @@ explicitList returns [ExplicitList el]
 
 value returns [Value v]
     :
-      NUMBER        { v = new SetlInt($NUMBER.text);      }
-    | real          { v = $real.r;                        }
-    | STRING        { v = new SetlString($STRING.text);   }
-    | 'true'        { v = SetlBoolean.TRUE;               }
-    | 'false'       { v = SetlBoolean.FALSE;              }
-    | 'om'          { v = SetlOm.OM;                      }
+      definition       { v = $definition.dfntn;    }
+    | lambdaDefinition { v = $lambdaDefinition.ld; }
+    | atomicValue      { v = $atomicValue.av;      }
+    ;
+
+definition returns [SetlDefinition dfntn]
+    :
+      'procedure' '(' definitionParameters ')' '{' block '}'
+      { dfntn = new SetlDefinition($definitionParameters.paramList, $block.blk); }
+    ;
+
+definitionParameters returns [List<ParameterDef> paramList]
+    @init {
+        paramList = new LinkedList<ParameterDef>();
+    }
+    :
+      (
+        dp1 = definitionParameter        { paramList.add($dp1.param); }
+        (
+          ',' dp2 = definitionParameter  { paramList.add($dp2.param); }
+        )*
+      )?
+    ;
+
+definitionParameter returns [ParameterDef param]
+    :
+      'rw' variable  { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
+    | variable       { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
+    ;
+
+lambdaDefinition returns [LambdaDefinition ld]
+    @init {
+        List<ParameterDef> paramList = new LinkedList<ParameterDef>();
+    }
+    :
+      '('
+      v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY)); }
+      (
+        ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY)); }
+      )*
+      ')$(' expr ')'      { ld = new LambdaDefinition(paramList, $expr.ex);                 }
+    ;
+
+atomicValue returns [Value av]
+    :
+      NUMBER        { av = new SetlInt($NUMBER.text);    }
+    | real          { av = $real.r;                      }
+    | STRING        { av = new SetlString($STRING.text); }
+    | 'true'        { av = SetlBoolean.TRUE;             }
+    | 'false'       { av = SetlBoolean.FALSE;            }
+    | 'om'          { av = SetlOm.OM;                    }
     ;
 
 real returns [SetlReal r]
@@ -417,7 +423,7 @@ real returns [SetlReal r]
       )? REAL                   { r = new SetlReal(n + $REAL.text);  }
     ;
 
-ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;
+ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' |'0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : '.'('0' .. '9')+ (('e'|'E') '-'? ('0' .. '9')+)? ;
 STRING          : '"' ('\\"'|~('"'))* '"';

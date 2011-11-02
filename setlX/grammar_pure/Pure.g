@@ -37,7 +37,6 @@ condition
 expr
     :
       ( assignment       )=> assignment
-    | ( lambdaDefinition )=> lambdaDefinition
     | 'forall' '(' iterator '|' condition ')'
     | 'exists' '(' iterator '|' condition ')'
     | implication
@@ -62,11 +61,6 @@ assignable
     :
       variable
     | idList
-    ;
-
-lambdaDefinition
-    :
-      variable (',' variable)* '|->' expr
     ;
 
 implication
@@ -130,7 +124,6 @@ factor
     | '!'          factor
     | '#'          factor
     | call
-    | definition
     | list
     | set
     | value
@@ -149,22 +142,6 @@ callParameters
          expr ((',' expr)* | '..' sum?)
        | '..' sum
       )?
-    ;
-
-definition
-    :
-      'procedure' '(' definitionParameters ')' '{' block '}'
-    ;
-
-definitionParameters
-    :
-      ( definitionParameter (',' definitionParameter)* )?
-    ;
-
-definitionParameter
-    :
-      'rw' variable
-    | variable
     ;
 
 list
@@ -211,6 +188,34 @@ explicitList
     ;
 
 value
+    :
+      definition
+    | lambdaDefinition
+    | atomicValue
+    ;
+
+definition
+    :
+      'procedure' '(' definitionParameters ')' '{' block '}'
+    ;
+
+definitionParameters
+    :
+      ( definitionParameter (',' definitionParameter)* )?
+    ;
+
+lambdaDefinition
+    :
+      'f(' variable (',' variable)* ')>(' expr ')'
+    ;
+
+definitionParameter
+    :
+      'rw' variable
+    | variable
+    ;
+
+atomicValue
     :
       NUMBER
     | real

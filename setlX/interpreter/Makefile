@@ -107,7 +107,9 @@ bin/interpreter/utilities/*.class :                          \
 bin/interpreter/types/*.class :                              \
         src/interpreter/types/*.java                                 \
         src/interpreter/expressions/Expr.java                        \
-        src/interpreter/statements/Statement.java                    \
+        src/interpreter/functions/PreDefinedFunction.java            \
+        src/interpreter/statements/Block.java                        \
+        src/interpreter/statements/Return.java                       \
         src/interpreter/utilities/Environment.java                   \
         src/interpreter/utilities/ParameterDef.java                  \
         src/interpreter/utilities/WriteBackAgent.java                \

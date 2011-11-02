@@ -36,7 +36,8 @@ condition
 
 expr
     :
-      ( assignment )=> assignment
+      ( assignment       )=> assignment
+    | ( lambdaDefinition )=> lambdaDefinition
     | 'forall' '(' iterator '|' condition ')'
     | 'exists' '(' iterator '|' condition ')'
     | implication
@@ -61,6 +62,11 @@ assignable
     :
       variable
     | idList
+    ;
+
+lambdaDefinition
+    :
+      variable (',' variable)* '|->' expr
     ;
 
 implication

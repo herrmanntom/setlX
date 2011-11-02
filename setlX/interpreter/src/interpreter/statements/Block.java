@@ -17,6 +17,10 @@ public class Block extends Statement {
         mStatements = statements;
     }
 
+    public void add(Statement stmnt) {
+        mStatements.add(stmnt);
+    }
+
     public void execute() throws SetlException {
         for (Statement stmnt : mStatements) {
             stmnt.execute();

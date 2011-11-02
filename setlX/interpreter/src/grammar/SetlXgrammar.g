@@ -71,12 +71,13 @@ condition returns [Condition cnd]
 
 expr returns [Expr ex]
     :
-      (assignment)=>assignment { ex = $assignment.assign;                         }
+      ( assignment       )=> assignment       { ex = $assignment.assign;                         }
+    | ( lambdaDefinition )=> lambdaDefinition { ex = new ValueExpr($lambdaDefinition.ld);        }
     | 'forall' '(' iterator '|' condition ')'
-                               { ex = new Forall($iterator.iter, $condition.cnd); }
+                                              { ex = new Forall($iterator.iter, $condition.cnd); }
     | 'exists' '(' iterator '|' condition ')'
-                               { ex = new Exists($iterator.iter, $condition.cnd); }
-    | implication              { ex = $implication.i;                             }
+                                              { ex = new Exists($iterator.iter, $condition.cnd); }
+    | implication                             { ex = $implication.i;                             }
     ;
 
 assignment returns [Assignment assign]
@@ -94,12 +95,12 @@ assignment returns [Assignment assign]
        | idList         { lhs = new AssignmentLhs($idList.ilc);        }
       )
       (
-         ':='           { type = Assignment.DIRECT; }
-       | '+='           { type = Assignment.SUM; }
+         ':='           { type = Assignment.DIRECT;     }
+       | '+='           { type = Assignment.SUM;        }
        | '-='           { type = Assignment.DIFFERENCE; }
-       | '*='           { type = Assignment.PRODUCT; }
-       | '/='           { type = Assignment.DIVISION; }
-       | '%='           { type = Assignment.MODULO; }
+       | '*='           { type = Assignment.PRODUCT;    }
+       | '/='           { type = Assignment.DIVISION;   }
+       | '%='           { type = Assignment.MODULO;     }
       )
       expr              { $assign = new Assignment(lhs, type, $expr.ex); }
     ;
@@ -133,6 +134,17 @@ assignable returns [Expr a]
     | idList   { a = $idList.ilc; }
     ;
 
+lambdaDefinition returns [LambdaDefinition ld]
+    @init {
+        List<ParameterDef> paramList = new LinkedList<ParameterDef>();
+    }
+    :
+      v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY)); }
+      (
+        ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY)); }
+      )*
+      '|->' expr          { ld = new LambdaDefinition(paramList, $expr.ex);                 }
+    ;
 
 implication returns [Expr i]
     :

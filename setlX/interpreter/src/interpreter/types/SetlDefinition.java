@@ -15,7 +15,7 @@ import java.util.List;
 // This class represents a function definition
 public class SetlDefinition extends Value {
     protected List<ParameterDef> mParameters;  // parameter list
-    private   Block              mStatements;  // statements in the body of the definition
+    protected Block              mStatements;  // statements in the body of the definition
 
     public SetlDefinition(List<ParameterDef> parameters, Block statements) {
         mParameters = parameters;

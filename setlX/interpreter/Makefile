@@ -57,6 +57,7 @@ bin/grammar/SetlXgrammar*.class :                            \
 src/grammar/SetlXgrammar*.java :                             \
         src/grammar/SetlXgrammar.g
 	java  -cp $(CLASSPATH) org.antlr.Tool -fo src/grammar src/grammar/SetlXgrammar.g
+	rm -rf bin/grammar/SetlXgrammar*.class
 
 bin/interpreter/statements/*.class :                         \
         src/interpreter/statements/*.java                            \

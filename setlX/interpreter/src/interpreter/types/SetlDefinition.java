@@ -37,7 +37,7 @@ public class SetlDefinition extends Value {
 
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
         if (mParameters.size() != args.size()) {
-            throw new IncorrectNumberOfParametersException("Procedure is defined with a different number of parameters "
+            throw new IncorrectNumberOfParametersException("'" + this + "' is defined with a different number of parameters "
                                                           +"(" + mParameters.size() + ").");
         }
 

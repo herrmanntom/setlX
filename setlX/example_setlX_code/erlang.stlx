@@ -1,6 +1,8 @@
+// this program tests the factorial syntax
+
 erlangB := procedure(A, N) {
-	P := (A ** N + 0.0) / fac(N);
-	P /= +/{(A**i + 0.0) / fac(i): i in {0 .. N}};
+	P := (A ** N + 0.0) / N!;
+	P /= +/{(A**i + 0.0) / i!: i in {0 .. N}};
 	return P;
 };
 

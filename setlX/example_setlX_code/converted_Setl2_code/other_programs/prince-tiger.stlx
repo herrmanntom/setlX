@@ -166,7 +166,7 @@ DavisPutnam := procedure(Clauses, Literals) {
 	}
 	literal := selectLiteral(Clauses, Literals);
 	Result := DavisPutnam(Clauses + {{literal}}, Literals + {literal});
-	if (Result != false) {
+	if (Result <!=> false) {
 		return Result;
 	}
 	notLiteral := negateLiteral(literal);
@@ -362,12 +362,12 @@ f44 := parse("-p8 * -t8 -> (r8 <-> e)");
 f45 := parse("-p9 * -t9 -> (r9 <-> e)");
 Clauses := +/ {f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34, f35, f36, f37, f38, f39, f40, f41, f42, f43, f44, f45};
 for (x in {"p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9"}) {
-	if (DavisPutnam(Clauses + {{x}}, {}) != false) {
+	if (DavisPutnam(Clauses + {{x}}, {}) <!=> false) {
 		print("The princess is in room ", x, ".");
 	}
 }
 for (x in {"t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"}) {
-	if (DavisPutnam(Clauses + {{x}}, {}) != false) {
+	if (DavisPutnam(Clauses + {{x}}, {}) <!=> false) {
 		print("A tiger might be in room ", x, ".");
 	}
 }

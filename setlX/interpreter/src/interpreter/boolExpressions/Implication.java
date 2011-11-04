@@ -18,7 +18,7 @@ public class Implication extends Expr {
     }
 
     public String toString(int tabs) {
-        return mLhs.toString(tabs) + " -> " + mRhs.toString(tabs);
+        return mLhs.toString(tabs) + " => " + mRhs.toString(tabs);
     }
 }
 

@@ -6,15 +6,16 @@ block
 
 statement
     : 'var' variable ';'
-    | expr ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iterator ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
-    | 'return' expr? ';'
+    | 'return' anyExpr? ';'
     | 'continue' ';'
     | 'break' ';'
     | 'exit' ';'
+    | (assignment)=> assignment ';'
+    | anyExpr ';'
     ;
 
 variable
@@ -22,18 +23,11 @@ variable
     ;
 
 condition
-    : expr
-    ;
-
-expr
-    : (assignment)=> assignment
-    | 'forall' '(' iterator '|' condition ')'
-    | 'exists' '(' iterator '|' condition ')'
-    | implication
+    : boolExpr
     ;
 
 assignment
-    : (variable ('(' sum ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') expr
+    : (variable ('(' anyExpr ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
     ;
 
 idList
@@ -49,8 +43,27 @@ assignable
     | idList
     ;
 
+anyExpr
+    : (boolExpr boolFollowToken)=> boolExpr
+    | expr
+    ;
+
+boolFollowToken
+    : ')'
+    | '}'
+    | ']'
+    | ';'
+    | ','
+    ;
+
+boolExpr
+    : 'forall' '(' iterator '|' condition ')'
+    | 'exists' '(' iterator '|' condition ')'
+    | implication
+    ;
+
 implication
-    : disjunction ('->' implication)?
+    : disjunction ('=>' implication)?
     ;
 
 disjunction
@@ -58,27 +71,41 @@ disjunction
     ;
 
 conjunction
-    : equation ('&&' equation)*
+    : boolComparison ('&&' boolComparison)*
     ;
 
-equation
-    : comparison (('==' | '!=') comparison)*
+boolComparison
+    : boolFactor (('<==>' | '<!=>') boolFactor)?
+    ;
+
+boolFactor
+    : (comparison)=> comparison
+    | '(' boolExpr ')'
+    | '!' boolFactor
+    | call
+    | boolValue
     ;
 
 comparison
-    : inclusion (('<' | '<=' | '>' | '>=') inclusion)*
+    : expr ('==' | '!=' | '<' | '<=' | '>' | '>=' | 'in' | 'notin') expr
     ;
 
-inclusion
-    : sum (('in' | 'notin') sum)*
+expr
+    : lambdaDefinition
+    | sum
+    ;
+
+lambdaDefinition
+    : variable '|->' sum
+    | '[' variable (',' variable)+ ']' '|->' sum
     ;
 
 sum
-    : product ('+' product | '-' product | '+/' product)*
+    : product ('+' product | '-' product)*
     ;
 
 product
-    : power ('*' power | '/' power | '*/' power | '%' power)*
+    : power ('*' power | '/' power | '%' power)*
     ;
 
 power
@@ -86,18 +113,30 @@ power
     ;
 
 minmax
-    : factor ('min' factor | 'min/' factor | 'max' factor | 'max/' factor)?
+    : factor ('min' factor | 'max' factor)?
     ;
 
 factor
-    : '(' expr ')'
-    | 'min/' factor
+    : (sumOperation)=> sumOperation
+    | prefixOperation
+    | simpleFactor
+    ;
+
+sumOperation
+    : simpleFactor ('min/' factor | 'max/' factor | '+/' factor | '*/' factor | '!')
+    ;
+
+prefixOperation
+    : 'min/' factor
     | 'max/' factor
     | '+/' factor
     | '*/' factor
-    | '-' factor
-    | '!' factor
     | '#' factor
+    | '-' factor
+    ;
+
+simpleFactor
+    : '(' expr ')'
     | call
     | list
     | set
@@ -105,11 +144,18 @@ factor
     ;
 
 call
-    : variable ('(' callParameters ')' | '{' expr '}')*
+    : variable ('(' callParameters ')' | '{' anyExpr '}')*
     ;
 
 callParameters
-    : (expr ((',' expr)* | '..' sum?) | '..' sum)?
+    : (expr '..')=> expr '..' expr?
+    | '..' expr
+    | anyExpr (',' anyExpr)*
+    | epsilon
+    ;
+
+epsilon
+    : /* epsilon */
     ;
 
 list
@@ -122,6 +168,7 @@ set
 
 constructor
     : (range)=> range
+    | (shortIterate)=> shortIterate
     | (iterate)=> iterate
     | explicitList
     ;
@@ -130,13 +177,12 @@ range
     : expr (',' expr)? '..' expr
     ;
 
-iterate
-    : (shortIterate)=> shortIterate
-    | expr ':' iterator ('|' condition)?
-    ;
-
 shortIterate
     : assignable 'in' expr '|' condition
+    ;
+
+iterate
+    : anyExpr ':' iterator ('|' condition)?
     ;
 
 iterator
@@ -144,12 +190,11 @@ iterator
     ;
 
 explicitList
-    : expr (',' expr)*
+    : anyExpr (',' anyExpr)*
     ;
 
 value
     : definition
-    | lambdaDefinition
     | atomicValue
     ;
 
@@ -166,21 +211,20 @@ definitionParameter
     | variable
     ;
 
-lambdaDefinition
-    : '(' variable (',' variable)* ')$(' expr ')'
-    ;
-
 atomicValue
     : NUMBER
     | real
     | STRING
-    | 'true'
-    | 'false'
     | 'om'
     ;
 
 real
     : NUMBER? REAL
+    ;
+
+boolValue
+    : 'true'
+    | 'false'
     ;
 
 

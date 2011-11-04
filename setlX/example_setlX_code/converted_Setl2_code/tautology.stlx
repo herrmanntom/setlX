@@ -240,7 +240,7 @@ l := scanFormula(s);
 f := parse_formula(l);
 print(f);
 check := tautology(f);
-if (check == true) {
+if (check <==> true) {
 	print("Die Formel \"" + prettyPrint(f) + "\" ist eine Tautologie.");
 } else {
 	print("Die Formel \"" + prettyPrint(f) + "\" ist keine Tautologie.");

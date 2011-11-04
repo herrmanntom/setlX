@@ -11,7 +11,8 @@ improvedPower := procedure(M) {
 	if (M == {}) {
 		return {M};
 	}
-	X := {X := from(M)};
+	Y := from(M);
+	X := {Y};
 	return {X + R: R in improvedPower(M)} + improvedPower(M);
 };
 

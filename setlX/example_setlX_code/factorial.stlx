@@ -1,12 +1,14 @@
+// this program can be used to test the performance of the factorial implementation
+
 print("Which factorial should be computed?");
 n := read();
 
 beginComp := now();
-f := fac(n);
+f := n!;
 endComp := now();
 
 beginPrint := now();
-print(n,"! := ", fac(n));
+print(n,"! := ", f);
 endPrint := now();
 
 print("Computing the factorial of ", n, " took \t", (endComp  - beginComp  - 0.0)/1000, " seconds.");

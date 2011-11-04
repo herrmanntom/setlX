@@ -19,44 +19,43 @@ grammar SetlXgrammar;
 
 block returns [Block blk]
     @init{
-        List<Statement>      stmnts     = new LinkedList<Statement>();
+        List<Statement> stmnts = new LinkedList<Statement>();
     }
-    :
-      (
-        statement      { stmnts.add($statement.stmnt);   }
+    : (
+        statement  { stmnts.add($statement.stmnt); }
       )*
-      { blk = new Block(stmnts);        }
+      { blk = new Block(stmnts); }
     ;
 
 statement returns [Statement stmnt]
     @init{
         List<BranchAbstract> branchList = new LinkedList<BranchAbstract>();
     }
-    :
-      'var' variable ';'                                      { stmnt = new GlobalDefinition($variable.v);          }
-    | expr ';'                                                { stmnt = new ExpressionStatement($expr.ex);          }
-    | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));     }
+    : 'var' variable ';'                                      { stmnt = new GlobalDefinition($variable.v);           }
+    | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));      }
       (
-        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk)); }
+        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk));  }
       )*
       (
-        'else'                             '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));            }
+        'else'                             '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));             }
       )?
       { stmnt = new IfThen(branchList); }
     | 'switch' '{'
       (
-        'case' c1 = condition ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));   }
+        'case' c1 = condition ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));    }
       )*
       (
-        'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));         }
+        'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));          }
       )?
       '}' { stmnt = new Switch(branchList); }
-    | 'for'   '(' iterator  ')' '{' block '}'                 { stmnt = new For($iterator.iter, $block.blk);        }
-    | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);      }
-    | 'return' expr? ';'                                      { stmnt = new Return($expr.ex);                       }
-    | 'continue' ';'                                          { stmnt = new Continue();                             }
-    | 'break' ';'                                             { stmnt = new Break();                                }
-    | 'exit' ';'                                              { stmnt = new Exit();                                 }
+    | 'for'   '(' iterator  ')' '{' block '}'                 { stmnt = new For($iterator.iter, $block.blk);         }
+    | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
+    | 'return' anyExpr? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
+    | 'continue' ';'                                          { stmnt = new Continue();                              }
+    | 'break' ';'                                             { stmnt = new Break();                                 }
+    | 'exit' ';'                                              { stmnt = new Exit();                                  }
+    | ( assignment )=> assignment ';'                         { stmnt = new ExpressionStatement($assignment.assign); }
+    | anyExpr ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);        }
     ;
 
 variable returns [Variable v]
@@ -66,30 +65,20 @@ variable returns [Variable v]
 
 condition returns [Condition cnd]
     :
-      expr  { cnd = new Condition($expr.ex); }
-    ;
-
-expr returns [Expr ex]
-    :
-      ( assignment       )=> assignment       { ex = $assignment.assign;                         }
-    | 'forall' '(' iterator '|' condition ')'
-                                              { ex = new Forall($iterator.iter, $condition.cnd); }
-    | 'exists' '(' iterator '|' condition ')'
-                                              { ex = new Exists($iterator.iter, $condition.cnd); }
-    | implication                             { ex = $implication.i;                             }
+      boolExpr  { cnd = new Condition($boolExpr.bex); }
     ;
 
 assignment returns [Assignment assign]
     @init {
         AssignmentLhs lhs   = null;
-        List<Expr>    items = new ArrayList<Expr>();
+        List<Expr>    items = new LinkedList<Expr>();
         int           type  = -1;
     }
     :
       (
          variable
          (
-           '(' sum ')'  { items.add($sum.s);                           }
+           '(' a1 = anyExpr ')' { items.add($a1.ae);                           }
          )*             { lhs = new AssignmentLhs($variable.v, items); }
        | idList         { lhs = new AssignmentLhs($idList.ilc);        }
       )
@@ -101,7 +90,11 @@ assignment returns [Assignment assign]
        | '/='           { type = Assignment.DIVISION;   }
        | '%='           { type = Assignment.MODULO;     }
       )
-      expr              { $assign = new Assignment(lhs, type, $expr.ex); }
+      (
+         ( assignment )=>
+         as = assignment { $assign = new Assignment(lhs, type, $as.assign); }
+       | a2 = anyExpr    { $assign = new Assignment(lhs, type, $a2.ae);     }
+      )
     ;
 
 idList returns [SetListConstructor ilc]
@@ -113,8 +106,7 @@ explicitIdList returns [ExplicitList eil]
     @init {
         List<Expr> exprs = new LinkedList<Expr>();
     }
-    :
-      (
+    : (
          a1 = assignable   { exprs.add($a1.a);                  }
        | '-'               { exprs.add(IdListIgnoreDummy.ILID); }
       )
@@ -128,146 +120,185 @@ explicitIdList returns [ExplicitList eil]
     ;
 
 assignable returns [Expr a]
-    :
-      variable { a = $variable.v; }
+    : variable { a = $variable.v; }
     | idList   { a = $idList.ilc; }
+    ;
+
+anyExpr returns [Expr ae]
+    : (boolExpr boolFollowToken)=>
+      boolExpr    { ae = $boolExpr.bex; }
+    | expr        { ae = $expr.ex;      }
+    ;
+
+boolFollowToken
+    : ')'
+    | '}'
+    | ']'
+    | ';'
+    | ','
+    ;
+
+boolExpr returns [Expr bex]
+    : 'forall' '(' iterator '|' condition ')' { bex = new Forall($iterator.iter, $condition.cnd); }
+    | 'exists' '(' iterator '|' condition ')' { bex = new Exists($iterator.iter, $condition.cnd); }
+    | implication                             { bex = $implication.i;                             }
     ;
 
 implication returns [Expr i]
     :
-      disjunction             {i = $disjunction.d;             }
+      disjunction             { i = $disjunction.d;            }
       (
-        '->' im = implication {i = new Implication(i, $im.i);  }
+        '=>' im = implication { i = new Implication(i, $im.i); }
       )?
     ;
 
 disjunction returns [Expr d]
     :
-      c1 = conjunction        {d = $c1.c;                      }
+      c1 = conjunction        { d = $c1.c;                     }
       (
-        '||' c2 = conjunction {d = new Disjunction(d, $c2.c);  }
+        '||' c2 = conjunction { d = new Disjunction(d, $c2.c); }
       )*
     ;
 
 conjunction returns [Expr c]
-    :
-      e1 = equation           {c = $e1.eq;                     }
+    : b1 = boolComparison        { c = $b1.bcomp;                     }
       (
-        '&&' e2 = equation    {c = new Conjunction(c, $e2.eq); }
+        '&&' b2 = boolComparison { c = new Conjunction(c, $b2.bcomp); }
       )*
     ;
 
-equation returns [Expr eq]
+boolComparison returns [Expr bcomp]
     @init{
         int type = -1;
     }
-    :
-      c1 = comparison   { eq = $c1.comp;                                }
+    : b1 = boolFactor    { bcomp = $b1.bf;                              }
       (
         (
-           '=='         { type = Comparison.EQUAL;                      }
-         | '!='         { type = Comparison.UNEQUAL;                    }
+            '<==>'       { type = Comparison.EQUAL;                     }
+          | '<!=>'       { type = Comparison.UNEQUAL;                   }
         )
-        c2 = comparison { eq = new Comparison (eq, type, $c2.comp);     }
-      )*
+        b2 = boolFactor { bcomp = new Comparison (bcomp, type, $b2.bf); }
+      )?
+    ;
+
+boolFactor returns [Expr bf]
+    : ( comparison )=>
+      comparison         { bf = $comparison.comp;                 }
+    | '(' boolExpr ')'   { bf = new BracketedExpr($boolExpr.bex); }
+    | '!' b = boolFactor { bf = new Negation($b.bf);              }
+    | call               { bf = $call.c;                          }
+    | boolValue          { bf = new ValueExpr($boolValue.bv);     }
     ;
 
 comparison returns [Expr comp]
     @init{
         int type = -1;
     }
-    :
-      i1 = inclusion    { comp = $i1.incl;                              }
+    : e1 = expr
       (
-        (
-           '<'          { type = Comparison.LESSTHAN;                   }
-         | '<='         { type = Comparison.EQUALORLESS;                }
-         | '>'          { type = Comparison.MORETHAN;                   }
-         | '>='         { type = Comparison.EQUALORMORE;                }
-        )
-        i2 = inclusion  { comp = new Comparison (comp, type, $i2.incl); }
-      )*
+          '=='    { type = Comparison.EQUAL;                      }
+        | '!='    { type = Comparison.UNEQUAL;                    }
+        | '<'     { type = Comparison.LESSTHAN;                   }
+        | '<='    { type = Comparison.EQUALORLESS;                }
+        | '>'     { type = Comparison.MORETHAN;                   }
+        | '>='    { type = Comparison.EQUALORMORE;                }
+        | 'in'    { type = Comparison.IN;                         }
+        | 'notin' { type = Comparison.NOTIN;                      }
+      )
+      e2 = expr   { comp = new Comparison ($e1.ex, type, $e2.ex); }
     ;
 
-inclusion returns [Expr incl]
-    @init{
-        int type = -1;
+expr returns [Expr ex]
+    : lambdaDefinition { ex = new ValueExpr($lambdaDefinition.ld); }
+    | sum              { ex = $sum.s;                              }
+    ;
+
+lambdaDefinition returns [LambdaDefinition ld]
+    @init {
+        List<ParameterDef> paramList = new LinkedList<ParameterDef>();
     }
-    :
-      s1 = sum          { incl = $s1.s;                                 }
+    : variable            { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
+     '|->' sum            { ld = new LambdaDefinition(paramList, $sum.s);                         }
+    | '[' v1 = variable   { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
       (
-        (
-            'in'        { type = Comparison.IN;                         }
-          | 'notin'     { type = Comparison.NOTIN;                      }
-        )
-        s2 = sum        { incl = new Comparison (incl, type, $s2.s);    }
-      )*
+        ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
+      )+
+      ']' '|->' sum       { ld = new LambdaDefinition(paramList, $sum.s);                         }
     ;
 
 sum returns [Expr s]
     :
-      p1 = product             { s = $p1.p;                         }
+      p1 = product          { s = $p1.p;                    }
       (
-          '+'  p2 = product    { s = new Sum(s, $p2.p);             }
-        | '-'  p2 = product    { s = new Difference(s, $p2.p);      }
-        | '+/' p2 = product    { s = new SumMembers(s, $p2.p);      }
+          '+'  p2 = product { s = new Sum(s, $p2.p);        }
+        | '-'  p2 = product { s = new Difference(s, $p2.p); }
       )*
     ;
 
 product returns [Expr p]
-    :
-      pow1 = power             { p = $pow1.pow;                         }
+    : p1 = power         { p = $p1.pow;                  }
       (
-          '*'   pow2 = power   { p = new Product(p, $pow2.pow);         }
-        | '/'   pow2 = power   { p = new Division(p, $pow2.pow);        }
-        | '*/'  pow2 = power   { p = new MultiplyMembers(p, $pow2.pow); }
-        | '%'   pow2 = power   { p = new Modulo(p, $pow2.pow);          }
+          '*' p2 = power { p = new Product(p, $p2.pow);  }
+        | '/' p2 = power { p = new Division(p, $p2.pow); }
+        | '%' p2 = power { p = new Modulo(p, $p2.pow);   }
       )*
     ;
 
 power returns [Expr pow]
-    :
-      minmax           { pow = $minmax.mm;              }
+    : minmax           { pow = $minmax.mm;              }
       (
         '**' p = power { pow = new Power (pow, $p.pow); }
       )?
     ;
 
 minmax returns [Expr mm]
-    :
-      f1 = factor            { mm = $f1.f;                        }
+    : f1 = factor           { mm = $f1.f;                  }
       (
-          'min'  f2 = factor { mm = new Minimum      (mm, $f2.f); }
-        | 'min/' f2 = factor { mm = new MinimumMember(mm, $f2.f); }
-        | 'max'  f2 = factor { mm = new Maximum      (mm, $f2.f); }
-        | 'max/' f2 = factor { mm = new MaximumMember(mm, $f2.f); }
+         'min'  f2 = factor { mm = new Minimum(mm, $f2.f); }
+       | 'max'  f2 = factor { mm = new Maximum(mm, $f2.f); }
       )?
     ;
 
 factor returns [Expr f]
-    :
-      '(' expr ')'             { f = new BracketedExpr($expr.ex);      }
-    | 'min/'       fa = factor { f = new MinimumMember(null, $fa.f);   }
-    | 'max/'       fa = factor { f = new MaximumMember(null, $fa.f);   }
-    | '+/'         fa = factor { f = new SumMembers(null, $fa.f);      }
-    | '*/'         fa = factor { f = new MultiplyMembers(null, $fa.f); }
-    | '-'          fa = factor { f = new Negative($fa.f);              }
-    | '!'          fa = factor { f = new Negation($fa.f);              }
-    | '#'          fa = factor { f = new Cardinality($fa.f);           }
-    | call                     { f = $call.c;                          }
-    | list                     { f = $list.lc;                         }
-    | set                      { f = $set.sc;                          }
-    | value                    { f = new ValueExpr($value.v);          }
+    : (sumOperation)=> sumOperation { f = $sumOperation.so;    }
+    | prefixOperation               { f = $prefixOperation.po; }
+    | simpleFactor                  { f = $simpleFactor.sf;    }
     ;
 
-// this could be either 'variable' or 'call' or 'element of collection'
+sumOperation returns [Expr so]
+    : simpleFactor           { so = $simpleFactor.sf;               }
+      (   'min/' f1 = factor { so = new MinimumMember  (so, $f1.f); }
+        | 'max/' f1 = factor { so = new MaximumMember  (so, $f1.f); }
+        | '+/'   f1 = factor { so = new SumMembers     (so, $f1.f); }
+        | '*/'   f1 = factor { so = new MultiplyMembers(so, $f1.f); }
+        | '!'                { so = new Factorial      (so);        }
+      )
+    ;
+
+prefixOperation returns [Expr po]
+    : 'min/' factor { po = new MinimumMember(null, $factor.f);   }
+    | 'max/' factor { po = new MaximumMember(null, $factor.f);   }
+    | '+/'   factor { po = new SumMembers(null, $factor.f);      }
+    | '*/'   factor { po = new MultiplyMembers(null, $factor.f); }
+    | '#'    factor { po = new Cardinality($factor.f);           }
+    | '-'    factor { po = new Negative($factor.f);              }
+    ;
+
+simpleFactor returns [Expr sf]
+    : '(' expr ')' { sf = new BracketedExpr($expr.ex); }
+    | call         { sf = $call.c;                     }
+    | list         { sf = $list.lc;                    }
+    | set          { sf = $set.sc;                     }
+    | value        { sf = new ValueExpr($value.v);     }
+    ;
+
+// this could be either 'id' or 'call' or 'element of collection'
 // decide at runtime
 call returns [Expr c]
-    :
-      variable                  { c = $variable.v;                       }
+    : variable                  { c = $variable.v;                        }
       (
-         '(' callParameters ')' { c = new Call(c, $callParameters.args); }
-       | '{' expr '}'           { c = new CallCollection(c, $expr.ex);   }
+         '(' callParameters ')' { c = new Call(c, $callParameters.args);  }
+       | '{' anyExpr '}'        { c = new CallCollection(c, $anyExpr.ae); }
       )*
     ;
 
@@ -275,20 +306,23 @@ callParameters returns [List<Expr> args]
     @init {
         args = new LinkedList<Expr>();
     }
-    :
+    : ( expr '..' )=>
+      e1 = expr          { args.add($e1.ex);             }
+      '..'               { args.add(CallRangeDummy.CRD); }
       (
-         e1 = expr          { args.add($e1.ex);                               }
-         (
-            (
-              ',' e2 = expr { args.add($e2.ex);                               }
-            )*
-          | '..'            { args.add(CallRangeDummy.CRD);                   }
-            (
-              s1 = sum      { args.add($s1.s);                                }
-            )?
-         )
-       | '..' s2 = sum      { args.add(CallRangeDummy.CRD); args.add($s2.s);  }
+        e2 = expr        { args.add($e2.ex);             }
       )?
+    | '..'               { args.add(CallRangeDummy.CRD); }
+      expr               { args.add($expr.ex);           }
+    | a1 = anyExpr       { args.add($a1.ae);             }
+      (
+        ',' a2 = anyExpr { args.add($a2.ae);             }
+      )*
+    | epsilon
+    ;
+
+epsilon
+    :
     ;
 
 list returns [SetListConstructor lc]
@@ -302,18 +336,17 @@ set returns [SetListConstructor sc]
     ;
 
 constructor returns [Constructor c]
-    :
-      ( range   )=> range   { c = $range.r;         }
-    | ( iterate )=> iterate { c = $iterate.i;       }
-    | explicitList          { c = $explicitList.el; }
+    : ( range        )=> range        { c = $range.r;         }
+    | ( shortIterate )=> shortIterate { c = $shortIterate.si; }
+    | ( iterate      )=> iterate      { c = $iterate.i;       }
+    | explicitList                    { c = $explicitList.el; }
     ;
 
 range returns [Range r]
     @init {
         Expr e = null;
     }
-    :
-      e1 = expr
+    : e1 = expr
       (
         ',' e2 = expr { e = $e2.ex; }
       )?
@@ -321,21 +354,18 @@ range returns [Range r]
       { r = new Range($e1.ex, e, $e3.ex); }
     ;
 
+shortIterate returns [Iteration si]
+    : assignable 'in' expr '|' condition  { si = new Iteration(null, new Iterator($assignable.a, $expr.ex), $condition.cnd); }
+    ;
+
 iterate returns [Iteration i]
     @init {
         Condition cnd = null;
     }
-    :
-      (shortIterate)=> shortIterate { i = $shortIterate.si;                             }
-    | expr ':' iterator
+    : anyExpr ':' iterator
       (
-        '|' condition               { cnd = $condition.cnd;                             }
-      )?                            { i = new Iteration($expr.ex, $iterator.iter, cnd); }
-    ;
-
-shortIterate returns [Iteration si]
-    :
-      assignable 'in' expr '|' condition  { si = new Iteration(null, new Iterator($assignable.a, $expr.ex), $condition.cnd); }
+        '|' condition               { cnd = $condition.cnd;                                }
+      )?                            { i = new Iteration($anyExpr.ae, $iterator.iter, cnd); }
     ;
 
 iterator returns [Iterator iter]
@@ -351,23 +381,19 @@ explicitList returns [ExplicitList el]
     @init {
         List<Expr> exprs = new LinkedList<Expr>();
     }
-    :
-      e1 = expr        { exprs.add($e1.ex);            }
+    : a1 = anyExpr       { exprs.add($a1.ae);            }
       (
-        ',' e2 = expr  { exprs.add($e2.ex);            }
-      )*               { el = new ExplicitList(exprs); }
+        ',' a2 = anyExpr { exprs.add($a2.ae);            }
+      )*                 { el = new ExplicitList(exprs); }
     ;
 
 value returns [Value v]
-    :
-      definition       { v = $definition.dfntn;    }
-    | lambdaDefinition { v = $lambdaDefinition.ld; }
+    : definition       { v = $definition.dfntn;    }
     | atomicValue      { v = $atomicValue.av;      }
     ;
 
 definition returns [SetlDefinition dfntn]
-    :
-      'procedure' '(' definitionParameters ')' '{' block '}'
+    : 'procedure' '(' definitionParameters ')' '{' block '}'
       { dfntn = new SetlDefinition($definitionParameters.paramList, $block.blk); }
     ;
 
@@ -375,8 +401,7 @@ definitionParameters returns [List<ParameterDef> paramList]
     @init {
         paramList = new LinkedList<ParameterDef>();
     }
-    :
-      (
+    : (
         dp1 = definitionParameter        { paramList.add($dp1.param); }
         (
           ',' dp2 = definitionParameter  { paramList.add($dp2.param); }
@@ -385,34 +410,18 @@ definitionParameters returns [List<ParameterDef> paramList]
     ;
 
 definitionParameter returns [ParameterDef param]
-    :
-      'rw' variable  { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
+    : 'rw' variable  { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
     | variable       { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
-lambdaDefinition returns [LambdaDefinition ld]
-    @init {
-        List<ParameterDef> paramList = new LinkedList<ParameterDef>();
-    }
-    :
-      '('
-      v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY)); }
-      (
-        ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY)); }
-      )*
-      ')$(' expr ')'      { ld = new LambdaDefinition(paramList, $expr.ex);                 }
-    ;
-
 atomicValue returns [Value av]
-    :
-      NUMBER        { av = new SetlInt($NUMBER.text);    }
+    : NUMBER        { av = new SetlInt($NUMBER.text);    }
     | real          { av = $real.r;                      }
     | STRING        { av = new SetlString($STRING.text); }
-    | 'true'        { av = SetlBoolean.TRUE;             }
-    | 'false'       { av = SetlBoolean.FALSE;            }
     | 'om'          { av = SetlOm.OM;                    }
     ;
 
+// this rule is required, otherwise "aaa"(2..) fails to get parsed
 real returns [SetlReal r]
     @init {
         String n = "";
@@ -423,7 +432,12 @@ real returns [SetlReal r]
       )? REAL                   { r = new SetlReal(n + $REAL.text);  }
     ;
 
-ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' |'0' .. '9')* ;
+boolValue returns [Value bv]
+    : 'true'  { bv = SetlBoolean.TRUE;  }
+    | 'false' { bv = SetlBoolean.FALSE; }
+    ;
+
+ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : '.'('0' .. '9')+ (('e'|'E') '-'? ('0' .. '9')+)? ;
 STRING          : '"' ('\\"'|~('"'))* '"';

@@ -165,7 +165,7 @@ The hardware requirements are highly dependent on the executed \SetlX{} program.
 
 \subsection{Stack Overflow \slash{} Out of Memory Error}
 
-Due to its implementation and execution by the Java Virtual Machine (JVM), a `stack overflow' error may be encountered when executing highly recursive \SetlX{} programs. An `out of memory error' might also be encountered when using very large sets or something similar.
+Due to its implementation and execution by the Java Virtual Machine (JVM), a `stack overflow' error may be encountered when executing highly recursive \SetlX{} programs. An `out of memory error' might also be encountered when using very large or very many sets and\slash{}or lists.
 
 The JVM is unable to dynamically increase its internal stack size at all and the heap space only in very limited bounds, no matter how much free memory is available.
 

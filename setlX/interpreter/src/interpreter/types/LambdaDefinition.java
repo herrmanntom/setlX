@@ -18,14 +18,13 @@ public class LambdaDefinition extends SetlDefinition {
     }
 
     public String toString(int tabs) {
-        String result = "(";
-        for (int i = 0; i < mParameters.size(); ++i) {
-            if (i > 0) {
-                result += ", ";
-            }
-            result += mParameters.get(i);
+        String result = "";
+        if (mParameters.size() == 1) {
+            result += mParameters.get(0);
+        } else {
+            result += mParameters;
         }
-        result += ")$(" + mExpr.toString(tabs) + ")";
+        result += " |-> " + mExpr.toString(tabs);
         return result;
     }
 }

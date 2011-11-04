@@ -1,13 +1,21 @@
+// this program uses lambda functions to provide a very simple plotter
+
 plot := procedure(f, l) {
     for (x in l) {
         print("f(", x, ")\t:= ", f(x));
     }
 };
 
+plot2 := procedure(f, l) {
+    for ([x,y] in l) {
+        print("f(", x, ", ", y , ")\t:= ", f(x,y));
+    }
+};
+
 prettyPlot := procedure(f, l) {
     function := str(f);
     if (#function <= 9 || function(.. 9) != "procedure") { // is lambda function
-        function := function(6 .. #function -1); // remove beginning and end of lambda function string
+        function := function(7 .. ); // remove beginning of lambda function string
     }
     print("f(x)\t:= " + function);
     print();
@@ -15,9 +23,28 @@ prettyPlot := procedure(f, l) {
     print();
 };
 
-functions := [sin, (x)$(x), (x)$(x * x), (x)$(x * x + x), (x)$(x ** 3 - 7)];
+prettyPlot2 := procedure(f, l) {
+    function := str(f);
+    if (#function <= 9 || function(.. 9) != "procedure") { // is lambda function
+        function := function(12 .. ); // remove beginning of lambda function string
+    }
+    print("f(x, y)\t:= " + function);
+    print();
+    plot2(f,l);
+    print();
+};
+
+functions := [sin, x |-> x, x |-> x * x, x |-> x * x + x, x |-> x ** 3 - 7];
 data      := [-5 .. 5];
 
 for (f in functions) {
     prettyPlot(f, data);
 }
+
+functions2 := [[x,y] |-> x, [z,k] |-> z * k, [x,y] |-> x - y ** 99];
+data2      := [[x,y]: x in data, y in data | x != y && x+y > 6];
+
+for (f in functions2) {
+    prettyPlot2(f, data2);
+}
+

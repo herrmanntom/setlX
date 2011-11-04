@@ -9,8 +9,12 @@ PureLexer.class PureParser.class ParsePure.class: PureLexer.java PureParser.java
 Pure.tokens PureLexer.java PureParser.java: Pure.g
 	java  -cp $(CLASSPATH) org.antlr.Tool Pure.g
 
+update:
+	cd EBNF_extractor; make ../Pure.g
+
 clean:
 	rm -f *.class
 	rm -f Pure.tokens
 	rm -f PureLexer.java
 	rm -f PureParser.java
+	cd EBNF_extractor; make clean

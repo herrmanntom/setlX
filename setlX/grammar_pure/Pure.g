@@ -1,22 +1,15 @@
-grammar Pure;
+grammar pure;
 
 block
-    :
-      statement*
+    : statement*
     ;
 
 statement
-    :
-      'var' variable ';'
+    : 'var' variable ';'
     | expr ';'
-    | 'if'         '(' condition ')' '{' block '}'
-      ('else' 'if' '(' condition ')' '{' block '}' )*
-      ('else'                        '{' block '}' )?
-    | 'switch' '{'
-          ('case' condition ':' block )*
-          ('default'        ':' block )?
-      '}'
-    | 'for'   '(' iterator  ')' '{' block '}'
+    | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
+    | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+    | 'for' '(' iterator ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'return' expr? ';'
     | 'continue' ';'
@@ -25,199 +18,160 @@ statement
     ;
 
 variable
-    :
-      ID
+    : ID
     ;
 
 condition
-    :
-      expr
+    : expr
     ;
 
 expr
-    :
-      ( assignment       )=> assignment
+    : (assignment)=> assignment
     | 'forall' '(' iterator '|' condition ')'
     | 'exists' '(' iterator '|' condition ')'
     | implication
     ;
 
 assignment
-    :
-      (variable ('(' sum ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') expr
+    : (variable ('(' sum ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') expr
     ;
 
 idList
-    :
-      '[' explicitIdList ']'
+    : '[' explicitIdList ']'
     ;
 
 explicitIdList
-    :
-      (assignable | '-') (',' (assignable | '-'))*
+    : (assignable | '-') (',' (assignable | '-'))*
     ;
 
 assignable
-    :
-      variable
+    : variable
     | idList
     ;
 
 implication
-    :
-      disjunction ('->' implication)?
+    : disjunction ('->' implication)?
     ;
 
 disjunction
-    :
-      conjunction ('||' conjunction)*
+    : conjunction ('||' conjunction)*
     ;
 
 conjunction
-    :
-      equation ('&&' equation)*
+    : equation ('&&' equation)*
     ;
 
 equation
-    :
-      comparison (('==' | '!=') comparison)*
+    : comparison (('==' | '!=') comparison)*
     ;
 
 comparison
-    :
-      inclusion (('<' | '<=' | '>' | '>=') inclusion)*
+    : inclusion (('<' | '<=' | '>' | '>=') inclusion)*
     ;
 
 inclusion
-    :
-      sum (('in' | 'notin') sum)*
+    : sum (('in' | 'notin') sum)*
     ;
 
 sum
-    :
-      product (('+' | '-' | '+/') product)*
+    : product ('+' product | '-' product | '+/' product)*
     ;
 
 product
-    :
-      power (('*' | '/' | '%') power)*
+    : power ('*' power | '/' power | '*/' power | '%' power)*
     ;
 
 power
-    :
-      minmax ('**' power)?
+    : minmax ('**' power)?
     ;
 
 minmax
-    :
-      factor (('min' | 'min/' | 'max' | 'max/') factor)?
+    : factor ('min' factor | 'min/' factor | 'max' factor | 'max/' factor)?
     ;
 
 factor
-    :
-      '(' expr ')'
-    | 'min/'       factor
-    | 'max/'       factor
-    | '+/'         factor
-    | '*/'         factor
-    | '-'          factor
-    | '!'          factor
-    | '#'          factor
+    : '(' expr ')'
+    | 'min/' factor
+    | 'max/' factor
+    | '+/' factor
+    | '*/' factor
+    | '-' factor
+    | '!' factor
+    | '#' factor
     | call
     | list
     | set
     | value
     ;
 
-// this could be either 'variable' or 'call' or 'element of collection'
-// decide at runtime
 call
-    :
-      variable ( '(' callParameters ')' | '{' expr '}' )*
+    : variable ('(' callParameters ')' | '{' expr '}')*
     ;
 
 callParameters
-    :
-      (
-         expr ((',' expr)* | '..' sum?)
-       | '..' sum
-      )?
+    : (expr ((',' expr)* | '..' sum?) | '..' sum)?
     ;
 
 list
-    :
-      '[' constructor? ']'
+    : '[' constructor? ']'
     ;
 
 set
-    :
-      '{' constructor? '}'
+    : '{' constructor? '}'
     ;
 
 constructor
-    :
-      ( range   )=> range
-    | ( iterate )=> iterate
+    : (range)=> range
+    | (iterate)=> iterate
     | explicitList
     ;
 
 range
-    :
-      expr (',' expr)? '..' expr
+    : expr (',' expr)? '..' expr
     ;
 
 iterate
-    :
-      ( shortIterate )=> shortIterate
+    : (shortIterate)=> shortIterate
     | expr ':' iterator ('|' condition)?
     ;
 
 shortIterate
-    :
-      assignable 'in' expr '|' condition
+    : assignable 'in' expr '|' condition
     ;
 
 iterator
-    :
-      assignable 'in' expr (',' assignable 'in' expr )*
+    : assignable 'in' expr (',' assignable 'in' expr)*
     ;
 
 explicitList
-    :
-      expr (',' expr)*
+    : expr (',' expr)*
     ;
 
 value
-    :
-      definition
+    : definition
     | lambdaDefinition
     | atomicValue
     ;
 
 definition
-    :
-      'procedure' '(' definitionParameters ')' '{' block '}'
+    : 'procedure' '(' definitionParameters ')' '{' block '}'
     ;
 
 definitionParameters
-    :
-      ( definitionParameter (',' definitionParameter)* )?
-    ;
-
-lambdaDefinition
-    :
-      'f(' variable (',' variable)* ')>(' expr ')'
+    : (definitionParameter (',' definitionParameter)*)?
     ;
 
 definitionParameter
-    :
-      'rw' variable
+    : 'rw' variable
     | variable
     ;
 
+lambdaDefinition
+    : '(' variable (',' variable)* ')$(' expr ')'
+    ;
+
 atomicValue
-    :
-      NUMBER
+    : NUMBER
     | real
     | STRING
     | 'true'
@@ -226,16 +180,16 @@ atomicValue
     ;
 
 real
-    :
-      NUMBER? REAL
+    : NUMBER? REAL
     ;
 
-ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;
-NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
-REAL            : '.'('0' .. '9')+ (('e'|'E') '-'? ('0' .. '9')+)?;
-STRING          : '"' ('\\"'|~('"'))* '"';
 
-LINE_COMMENT    : '//' ~('\n')*                             { skip(); } ;
-MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
-WS              : (' '|'\t'|'\n'|'r')                       { skip(); } ;
+
+ID : ('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+NUMBER : '0' | '1'..'9' ('0'..'9')*;
+REAL : '.' ('0'..'9')+ (('e' | 'E') '-'? ('0'..'9')+)?;
+STRING : '"' ('\\"' | ~('"'))* '"';
+LINE_COMMENT : '//' (~('\n'))*;
+MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';
+WS : ' ' | '\t' | '\n' | 'r';
 

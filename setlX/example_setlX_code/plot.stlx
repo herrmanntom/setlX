@@ -15,7 +15,7 @@ prettyPlot := procedure(f, l) {
     print();
 };
 
-functions := [sin, (x)>(x), (x)>(x * x), (x)>(x * x + x), (x)>(x ** 3 - 7)];
+functions := [sin, (x)$(x), (x)$(x * x), (x)$(x * x + x), (x)$(x ** 3 - 7)];
 data      := [-5 .. 5];
 
 for (f in functions) {

@@ -45,6 +45,21 @@ mv *.pdf ../.
 echo "=> Cleaning the documentation's source (again) ..."
 make dist-clean
 
+# goto pure grammar
+cd ../grammar_pure
+
+# clean the pure grammar source
+echo "=> Cleaning the pure grammar source ..."
+make clean
+
+# update the Pure.g grammar
+echo "=> Updating the pure grammar"
+make update
+
+# clean the pure grammar source (again)
+echo "=> Cleaning the pure grammar source (again) ..."
+make clean
+
 # go to project root
 cd ..
 

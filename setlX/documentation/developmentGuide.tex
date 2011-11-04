@@ -63,10 +63,8 @@ The following folders are used to structure the interpreter and its surrounding 
 	\folder{example\_setlX\_code}
 			{Example programs in \SetlX{} to test the interpreter.\\&
 			 (Also includes some converted \SetlTwo{} programs.)}
-	\folder{grammar\_EBNF}
-			{\SetlX{} grammar in EBNF form, which might be more readable, but can not be used for parsing \SetlX{} code with antlr.}
 	\folder{grammar\_pure}
-			{\SetlX{} grammar in antlr syntax as used by the interpreter, but without any Java statements. Also includes a simple program to parse \SetlX{} code without interpretation.}
+			{\SetlX{} grammar in antlr syntax as used by the interpreter, but without any Java statements. This `pure' version can be automatically created from the interpreter syntax with the included `EBNF\_extractor' by executing \command{make update}. Also includes a simple program to parse \SetlX{} code without interpretation.}
 	\folder{interpreter}
 			{Launching script and source code of the interpreter itself.}
 	\begin{itemize}
@@ -239,7 +237,7 @@ Three different `distributions' can be automatically created (on an Unix-like OS
 
 	\item A source distribution, which must be rebuild by the user, which is automatically attempted on first launch. A Java JDK has to be installed for this to work. The version of the users JDK can be lower or even incompatible to the JDK which created the distribution. This distribution also does \emph{not} include \SetlX{} code, except a simple program to test the interpreter (see `\command{make test}').
 
-	\item The development kit, which includes everything used in the development of the interpreter itself: the full interpreter source, various \SetlX{} example programs, the grammar of the interpreter in both `EBNF' and `pure' form and the \LaTeX{} sources of the documentation.
+	\item The development kit, which includes everything used in the development of the interpreter itself: the full interpreter source, various \SetlX{} example programs, the grammar of the interpreter in `pure' form and the \LaTeX{} sources of the documentation.
 \end{enumerate}
 
 \subsection{Building distributable zip-files}

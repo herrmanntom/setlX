@@ -174,7 +174,7 @@ forallTests := procedure() {
     e := forall(a in [1 .. 5], b in [1 .. 5] | a * b <= 25);
     // first fail: c == 4, d == 4
     f := forall(c in [1 .. 5], d in [1 .. 5] | (c * d) < 16);
-    if (a == "test" && b == "test" && e <==> true && c == 4 && d == 4 && f <==> false) {
+    if (a == "test" && b == "test" && e && c == 4 && d == 4 && !f) {
         print("test 12 successful (forall)");
     } else {
         print("test 12 failed (forall)");
@@ -188,7 +188,7 @@ existsTests := procedure() {
     e := exists(a in [1 .. 5], b in [1 .. 5] | a * b >= 16);
     // nothing exists
     f := exists(c in [1 .. 5], d in [1 .. 5] | c * d > 25);
-    if (a == 4 && b == 4 && e <==> true && c == "test" && d == "test" && f <==> false) {
+    if (a == 4 && b == 4 && e && c == "test" && d == "test" && !f) {
         print("test 13 successful (exists)");
     } else {
         print("test 13 failed (exists)");
@@ -211,12 +211,12 @@ lazyChecking := procedure() {
     // true and true (not lazy-checkable)
     c := increaseTrue(a) && increaseTrue(b);
     // now a and b should be 2, c should be true
-    correct := a == 2 && b == 2 && c <==> true;
+    correct := a == 2 && b == 2 && c;
 
     // false and true (lazy-checkable)
     c := increaseFalse(a) && increaseTrue(b);
     // now a should be 3, but b still 2, c should be false
-    correct := correct && a == 3 && b == 2 && c <==> false;
+    correct := correct && a == 3 && b == 2 && !c;
 
     if (correct) {
         print("test 14 successful (lazyChecking)");

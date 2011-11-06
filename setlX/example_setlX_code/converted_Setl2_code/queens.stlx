@@ -91,7 +91,7 @@ DavisPutnam := procedure(Clauses, Literals) {
 	}
 	literal := selectLiteral(Clauses, Literals);
 	Result := DavisPutnam(Clauses + {{literal}}, Literals + {literal});
-	if (Result <!=> false) {
+	if ((Result <!=> false)) {
 		return Result;
 	}
 	notLiteral := negateLiteral(literal);
@@ -159,7 +159,7 @@ print("\n");
 if (Clauses != om) {
 	I := DavisPutnam(Clauses, {});
 }
-if (I <!=> false) {
+if ((I <!=> false)) {
 	printBoard(I, board);
 } else {
 	print("The problem is not solvable for " + numberQueens + " queens!");

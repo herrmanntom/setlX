@@ -217,7 +217,7 @@ DavisPutnam := procedure(Clauses, Literals) {
 	}
 	literal := selectLiteral(Clauses, Literals);
 	Result := DavisPutnam(Clauses + {{literal}}, Literals + {literal});
-	if (Result <!=> false) {
+	if ((Result <!=> false)) {
 		return Result;
 	}
 	notLiteral := negateLiteral(literal);
@@ -419,7 +419,7 @@ printSolution(S);
 print("checking uniqueness ...");
 for (i in {1 .. 5}) {
 	S := DavisPutnam(F + parse(Zebra + i), {});
-	if (S <==> false) {
+	if ((S <==> false)) {
 		print("The zebra cannot be in house number " + i + ".");
 	} else {
 		print("The zebra might be in house number " + i + ".");

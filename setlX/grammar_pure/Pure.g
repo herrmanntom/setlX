@@ -59,7 +59,11 @@ boolFollowToken
 boolExpr
     : 'forall' '(' iterator '|' condition ')'
     | 'exists' '(' iterator '|' condition ')'
-    | implication
+    | equivalence
+    ;
+
+equivalence
+    : implication (('<==>' | '<!=>') implication)?
     ;
 
 implication
@@ -71,11 +75,7 @@ disjunction
     ;
 
 conjunction
-    : boolComparison ('&&' boolComparison)*
-    ;
-
-boolComparison
-    : boolFactor (('<==>' | '<!=>') boolFactor)?
+    : boolFactor ('&&' boolFactor)*
     ;
 
 boolFactor
@@ -91,13 +91,36 @@ comparison
     ;
 
 expr
-    : lambdaDefinition
+    : definition
     | sum
     ;
 
+definition
+    : lambdaDefinition
+    | procedureDefinition
+    ;
+
 lambdaDefinition
-    : variable '|->' sum
-    | '[' variable (',' variable)+ ']' '|->' sum
+    : lambdaParameters '|->' sum
+    ;
+
+lambdaParameters
+    : variable
+    | '[' variable (',' variable)+ ']'
+    ;
+
+procedureDefinition
+    : 'procedure' '(' procedureParameters ')' '{' block '}'
+    ;
+
+procedureParameters
+    : procedureParameter (',' procedureParameter)*
+    | /* epsilon */
+    ;
+
+procedureParameter
+    : 'rw' variable
+    | variable
     ;
 
 sum
@@ -138,8 +161,6 @@ prefixOperation
 simpleFactor
     : '(' expr ')'
     | call
-    | list
-    | set
     | value
     ;
 
@@ -151,11 +172,13 @@ callParameters
     : (expr '..')=> expr '..' expr?
     | '..' expr
     | anyExpr (',' anyExpr)*
-    | epsilon
+    | /* epsilon */
     ;
 
-epsilon
-    : /* epsilon */
+value
+    : list
+    | set
+    | atomicValue
     ;
 
 list
@@ -193,22 +216,9 @@ explicitList
     : anyExpr (',' anyExpr)*
     ;
 
-value
-    : definition
-    | atomicValue
-    ;
-
-definition
-    : 'procedure' '(' definitionParameters ')' '{' block '}'
-    ;
-
-definitionParameters
-    : (definitionParameter (',' definitionParameter)*)?
-    ;
-
-definitionParameter
-    : 'rw' variable
-    | variable
+boolValue
+    : 'true'
+    | 'false'
     ;
 
 atomicValue
@@ -220,11 +230,6 @@ atomicValue
 
 real
     : NUMBER? REAL
-    ;
-
-boolValue
-    : 'true'
-    | 'false'
     ;
 
 

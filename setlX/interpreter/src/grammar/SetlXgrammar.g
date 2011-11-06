@@ -141,7 +141,21 @@ boolFollowToken
 boolExpr returns [Expr bex]
     : 'forall' '(' iterator '|' condition ')' { bex = new Forall($iterator.iter, $condition.cnd); }
     | 'exists' '(' iterator '|' condition ')' { bex = new Exists($iterator.iter, $condition.cnd); }
-    | implication                             { bex = $implication.i;                             }
+    | equivalence                             { bex = $equivalence.eq;                            }
+    ;
+
+equivalence returns [Expr eq]
+    @init{
+        int type = -1;
+    }
+    : i1 = implication   { eq = $i1.i;                            }
+      (
+        (
+            '<==>'       { type = Comparison.EQUAL;               }
+          | '<!=>'       { type = Comparison.UNEQUAL;             }
+        )
+        i2 = implication { eq = new Comparison (eq, type, $i2.i); }
+      )?
     ;
 
 implication returns [Expr i]
@@ -161,24 +175,10 @@ disjunction returns [Expr d]
     ;
 
 conjunction returns [Expr c]
-    : b1 = boolComparison        { c = $b1.bcomp;                     }
+    : b1 = boolFactor         { c = $b1.bf;                     }
       (
-        '&&' b2 = boolComparison { c = new Conjunction(c, $b2.bcomp); }
+        '&&' b2 = boolFactor  { c = new Conjunction(c, $b2.bf); }
       )*
-    ;
-
-boolComparison returns [Expr bcomp]
-    @init{
-        int type = -1;
-    }
-    : b1 = boolFactor    { bcomp = $b1.bf;                              }
-      (
-        (
-            '<==>'       { type = Comparison.EQUAL;                     }
-          | '<!=>'       { type = Comparison.UNEQUAL;                   }
-        )
-        b2 = boolFactor { bcomp = new Comparison (bcomp, type, $b2.bf); }
-      )?
     ;
 
 boolFactor returns [Expr bf]
@@ -209,21 +209,50 @@ comparison returns [Expr comp]
     ;
 
 expr returns [Expr ex]
-    : lambdaDefinition { ex = new ValueExpr($lambdaDefinition.ld); }
-    | sum              { ex = $sum.s;                              }
+    : definition  { ex = new ValueExpr($definition.d); }
+    | sum         { ex = $sum.s;                       }
+    ;
+
+definition returns [Value d]
+    : lambdaDefinition    { d = $lambdaDefinition.ld;    }
+    | procedureDefinition { d = $procedureDefinition.pd; }
     ;
 
 lambdaDefinition returns [LambdaDefinition ld]
+    : lambdaParameters '|->' sum { ld = new LambdaDefinition($lambdaParameters.paramList, $sum.s); }
+    ;
+
+lambdaParameters returns [List<ParameterDef> paramList]
     @init {
-        List<ParameterDef> paramList = new LinkedList<ParameterDef>();
+        paramList = new LinkedList<ParameterDef>();
     }
     : variable            { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
-     '|->' sum            { ld = new LambdaDefinition(paramList, $sum.s);                         }
     | '[' v1 = variable   { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
       (
         ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
       )+
-      ']' '|->' sum       { ld = new LambdaDefinition(paramList, $sum.s);                         }
+      ']'
+    ;
+
+procedureDefinition returns [SetlDefinition pd]
+    : 'procedure' '(' procedureParameters ')' '{' block '}'
+      { pd = new SetlDefinition($procedureParameters.paramList, $block.blk); }
+    ;
+
+procedureParameters returns [List<ParameterDef> paramList]
+    @init {
+        paramList = new LinkedList<ParameterDef>();
+    }
+    : dp1 = procedureParameter       { paramList.add($dp1.param); }
+      (
+        ',' dp2 = procedureParameter { paramList.add($dp2.param); }
+      )*
+    | /* epsilon */
+    ;
+
+procedureParameter returns [ParameterDef param]
+    : 'rw' variable  { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
+    | variable       { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
 sum returns [Expr s]
@@ -285,11 +314,9 @@ prefixOperation returns [Expr po]
     ;
 
 simpleFactor returns [Expr sf]
-    : '(' expr ')' { sf = new BracketedExpr($expr.ex); }
-    | call         { sf = $call.c;                     }
-    | list         { sf = $list.lc;                    }
-    | set          { sf = $set.sc;                     }
-    | value        { sf = new ValueExpr($value.v);     }
+    : '(' expr ')' { sf = new BracketedExpr($expr.ex);    }
+    | call         { sf = $call.c;                        }
+    | value        { sf = $value.v;                       }
     ;
 
 // this could be either 'id' or 'call' or 'element of collection'
@@ -318,11 +345,13 @@ callParameters returns [List<Expr> args]
       (
         ',' a2 = anyExpr { args.add($a2.ae);             }
       )*
-    | epsilon
+    |  /* epsilon */
     ;
 
-epsilon
-    :
+value returns [Expr v]
+    : list         { v = $list.lc;                       }
+    | set          { v = $set.sc;                        }
+    | atomicValue  { v = new ValueExpr($atomicValue.av); }
     ;
 
 list returns [SetListConstructor lc]
@@ -387,31 +416,9 @@ explicitList returns [ExplicitList el]
       )*                 { el = new ExplicitList(exprs); }
     ;
 
-value returns [Value v]
-    : definition       { v = $definition.dfntn;    }
-    | atomicValue      { v = $atomicValue.av;      }
-    ;
-
-definition returns [SetlDefinition dfntn]
-    : 'procedure' '(' definitionParameters ')' '{' block '}'
-      { dfntn = new SetlDefinition($definitionParameters.paramList, $block.blk); }
-    ;
-
-definitionParameters returns [List<ParameterDef> paramList]
-    @init {
-        paramList = new LinkedList<ParameterDef>();
-    }
-    : (
-        dp1 = definitionParameter        { paramList.add($dp1.param); }
-        (
-          ',' dp2 = definitionParameter  { paramList.add($dp2.param); }
-        )*
-      )?
-    ;
-
-definitionParameter returns [ParameterDef param]
-    : 'rw' variable  { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
-    | variable       { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
+boolValue returns [Value bv]
+    : 'true'  { bv = SetlBoolean.TRUE;  }
+    | 'false' { bv = SetlBoolean.FALSE; }
     ;
 
 atomicValue returns [Value av]
@@ -430,11 +437,6 @@ real returns [SetlReal r]
       (
         NUMBER                  { n = $NUMBER.text;                  }
       )? REAL                   { r = new SetlReal(n + $REAL.text);  }
-    ;
-
-boolValue returns [Value bv]
-    : 'true'  { bv = SetlBoolean.TRUE;  }
-    | 'false' { bv = SetlBoolean.FALSE; }
     ;
 
 ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;

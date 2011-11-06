@@ -10,7 +10,7 @@ Pure.tokens PureLexer.java PureParser.java: Pure.g
 	java  -cp $(CLASSPATH) org.antlr.Tool Pure.g
 
 update:
-	cd EBNF_extractor; make ../Pure.g
+	cd EBNF_extractor; CLASSPATH=.:../../interpreter/antlr/antlr-3.3-complete.jar make updatePure
 
 clean:
 	rm -f *.class

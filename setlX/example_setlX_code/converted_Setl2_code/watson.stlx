@@ -41,7 +41,7 @@ A := {"a", "b", "c"};
 P := pow(A);
 print("P = ", P);
 B := {createBelegung(M, A): M in P};
-S := {I in B | evalSet(FS, I) <==> true};
+S := {I in B | (evalSet(FS, I) <==> true)};
 print("\nMenge der Belegungen, die FS erf�llen:");
 if (#S == 1) {
 	I := arb(S);

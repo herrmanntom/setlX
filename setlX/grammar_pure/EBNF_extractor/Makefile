@@ -6,7 +6,7 @@ EBNF.class: Alternative.java MyToken.java Concatenation.java Postfix.java \
             Negation.java Range.java
 	javac *.java
 
-../Pure.g: EBNF.class ../../interpreter/src/grammar/SetlXgrammar.g
+updatePure: EBNF.class ../../interpreter/src/grammar/SetlXgrammar.g
 	echo -e "grammar pure;\n" > ../Pure.g
 	java EBNF < ../../interpreter/src/grammar/SetlXgrammar.g >> ../Pure.g
 

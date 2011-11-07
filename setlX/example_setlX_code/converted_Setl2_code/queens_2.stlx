@@ -1,0 +1,168 @@
+
+atMostOne := procedure(S) {
+	return {{negateLiteral(k), negateLiteral(i)}: k in S, i in S | k != i};
+};
+
+atMostOneInColumn := procedure(board, column) {
+	columnElements := {row(column): row in board};
+	return atMostOne(columnElements);
+};
+
+atMostOneInUpperDiagonal := procedure(board, k) {
+	diagonalElements := {board(i)(j): i in {1 .. (#board)}, j in {1 .. (#board)} | (i + j == k)};
+	return atMostOne(diagonalElements);
+};
+
+atMostOneInLowerDiagonal := procedure(board, k) {
+	diagonalElements := {board(i)(j): i in {1 .. (#board)}, j in {1 .. (#board)} | (i - j == k)};
+	return atMostOne(diagonalElements);
+};
+
+oneInRow := procedure(board, row) {
+	return {{k: k in board(row)}};
+};
+
+allClauses := procedure(board) {
+	return +/ {oneInRow(board, i): i in {1 .. (#board)}} + +/ {atMostOneInColumn(board, i): i in {1 .. (#board)}} + +/ {atMostOneInUpperDiagonal(board, i): i in {3 .. (2 * #board - 1)}} + +/ {atMostOneInLowerDiagonal(board, i): i in {- (#board - 1) .. (#board - 1)}};
+};
+
+createBoard := procedure(n) {
+	return [createRow(n, i): i in [1 .. n]];
+};
+
+createRow := procedure(n, i) {
+	return ["p" + i + j: j in [1 .. n]];
+};
+
+printBoard := procedure(I, board) {
+	if (I == om) {
+		return;
+	}
+	n := #board;
+	print("        " + ((8 * n + 1) * "-"));
+	for (row in [1 .. n]) {
+		line := "        |";
+		for (col in [1 .. n]) {
+			line := line + "       |";
+		}
+		print(line);
+		line := "        |";
+		for (col in [1 .. n]) {
+			if ({board(row)(col)} in I) {
+				line := line + "   Q   |";
+			} else {
+				line := line + "       |";
+			}
+		}
+		print(line);
+		line := "        |";
+		for (col in [1 .. n]) {
+			line := line + "       |";
+		}
+		print(line);
+		print("        " + ((8 * n + 1) * "-"));
+	}
+};
+
+printBoardSmall := procedure(I, board) {
+	n := #board;
+	print("        " + ((2 * n + 1) * "-"));
+	for (row in [1 .. n]) {
+		line := "        |";
+		for (col in [1 .. n]) {
+			if ({board(row)(col)} in I) {
+				line := line + "Q|";
+			} else {
+				line := line + " |";
+			}
+		}
+		print(line);
+		print("        " + ((2 * n + 1) * "-"));
+	}
+};
+
+DavisPutnam := procedure(Clauses, Literals) {
+	Clauses := saturate(Clauses);
+	if ({} in Clauses) {
+		return false;
+	}
+	if ({k in Clauses | #k == 1} == Clauses) {
+		return Clauses;
+	}
+	literal := selectLiteral(Clauses, Literals);
+	Result := DavisPutnam(Clauses + {{literal}}, Literals + {literal});
+	if ((Result <!=> false)) {
+		return Result;
+	}
+	notLiteral := negateLiteral(literal);
+	return DavisPutnam(Clauses + {{notLiteral}}, Literals + {notliteral});
+};
+
+saturate := procedure(S) {
+	Units := {k in S | #k == 1};
+	Used := {};
+	while (Units != {}) {
+		unit := rnd(Units);
+		Used := Used + {unit};
+		literal := rnd(unit);
+		S := reduce(S, literal);
+		Units := {k in S | #k == 1} - Used;
+	}
+	return S;
+};
+
+reduce := procedure(S, l) {
+	notL := negateLiteral(l);
+	return {k - {notL}: k in S | notL in k} + {k: k in S | ( ! (notL in k) ) && (( ! (l in k) ) || k == {l})};
+};
+
+selectLiteral := procedure(S, Forbidden) {
+	return rnd({l: k in S, l in k | ( ! (l in Forbidden) )});
+};
+
+negateLiteral := procedure(l) {
+	if (l(1) == "-") {
+		return l(2);
+	} else {
+		return ["-", l];
+	}
+};
+
+numberQueens := 8;
+board := createBoard(numberQueens);
+print(board);
+print("\n");
+print("Test: Aufgabe 1");
+print(atMostOne({"a", "b", "c", "d"}));
+print("\n");
+print("Test: Aufgabe 2");
+print("This should print a formula expressing that there is at most one" + " queen in the first column.");
+print(atMostOneInColumn(board, 2));
+print("\n");
+print("Test: Aufgabe 3");
+print("This should print a formula expressing that there is at most one" + " queen in the rising main diagonal.");
+print(atMostOneInUpperDiagonal(board, numberQueens + 1));
+print("\n");
+print("Test: Aufgabe 4");
+print("This should print a formula expressing that there is at most one" + " queen in the falling main diagonal.");
+print(atMostOneInLowerDiagonal(board, 0));
+print("\n");
+print("Test: Aufgabe 5");
+print("This should print a formula expressing that there is at least one" + " queen in the first row.");
+print(oneInRow(board, 1));
+print("\n");
+Clauses := allClauses(board);
+print("Test: Aufgabe 6");
+print("This should print a formula that is equivalent to the " + numberQueens + "-queens-problem.");
+print(Clauses);
+print("\n");
+if (Clauses != om) {
+	I := DavisPutnam(Clauses, {});
+}
+if ((I <!=> false)) {
+	printBoard(I, board);
+} else {
+	print("The problem is not solvable for " + numberQueens + " queens!");
+	print("Try to increase the number of queens.");
+}
+

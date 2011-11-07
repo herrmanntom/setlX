@@ -3,11 +3,11 @@
 {"Kohl", "Wolf"}                                                                 {"Bauer", "Ziege"}
                                      <<<< {"Bauer"} <<<< 
 {"Bauer", "Kohl", "Wolf"}                                                                 {"Ziege"}
-                                     >>>> {"Bauer", "Kohl"} >>>> 
-{"Wolf"}                                                                 {"Bauer", "Kohl", "Ziege"}
-                                     <<<< {"Bauer", "Ziege"} <<<< 
-{"Bauer", "Wolf", "Ziege"}                                                                 {"Kohl"}
                                      >>>> {"Bauer", "Wolf"} >>>> 
+{"Kohl"}                                                                 {"Bauer", "Wolf", "Ziege"}
+                                     <<<< {"Bauer", "Ziege"} <<<< 
+{"Bauer", "Kohl", "Ziege"}                                                                 {"Wolf"}
+                                     >>>> {"Bauer", "Kohl"} >>>> 
 {"Ziege"}                                                                 {"Bauer", "Kohl", "Wolf"}
                                      <<<< {"Bauer"} <<<< 
 {"Bauer", "Ziege"}                                                                 {"Kohl", "Wolf"}

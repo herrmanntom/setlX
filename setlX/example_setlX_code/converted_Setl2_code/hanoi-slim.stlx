@@ -15,7 +15,7 @@ partition := procedure(S1, S2, S3, All) {
 };
 
 movePossible := procedure(Source, Target) {
-	return 4 min/ Source < 4 min/ Target;
+	return min/{4, min/ Source} < min/{4, min/ Target};
 };
 
 printPath := procedure(path) {

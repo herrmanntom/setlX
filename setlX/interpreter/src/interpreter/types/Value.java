@@ -136,7 +136,7 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Right-hand-side of '+/ " + this + "' is not a compound value.");
     }
 
-    public Value arbitraryMember() throws SetlException {
+    public Value arbitraryMember() throws IncompatibleTypeException {
         throw new IncompatibleTypeException("Operand of 'arb(" + this + ")' is not a compound value.");
     }
 
@@ -190,6 +190,10 @@ public abstract class Value implements Comparable<Value> {
 
     public SetlSet powerSet() throws IncompatibleTypeException {
         throw new IncompatibleTypeException("Operand of 'pow(" + this + ")' is not a set.");
+    }
+
+    public Value randomMember() throws SetlException {
+        throw new IncompatibleTypeException("Operand of 'rnd(" + this + ")' is not a compound value.");
     }
 
     public SetlSet range() throws SetlException {

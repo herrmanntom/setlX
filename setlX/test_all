@@ -5,7 +5,21 @@ tmpFile=$(mktemp)
 manualTestFiles=""
 
 # prepare the interpreter
-cd interpreter; ./setlX simpleTest/test.stlx > /dev/null; cd ..
+simpleTest=simpleTest/test.stlx
+cd interpreter; ./setlX "$simpleTest" > $tmpFile; cd ..
+
+# check for failed tests
+failedCount=$(grep -c "failed" $tmpFile)
+okCount=$(grep -c "successful" $tmpFile)
+
+# alert the user and stop
+if [ $failedCount -gt 0 -o $okCount -lt 14 ]
+  then
+    echo "the initial testfile '$simpleTest' failed!"
+    exit 1
+else
+    echo -e "executing file '$simpleTest' successful!\n"
+fi
 
 # loop through all SetlX files, execute them and compare to reference result
 while IFS= read path

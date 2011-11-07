@@ -230,7 +230,7 @@ lambdaParameters returns [List<ParameterDef> paramList]
     | '[' v1 = variable   { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
       (
         ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
-      )+
+      )*
       ']'
     ;
 
@@ -274,43 +274,27 @@ product returns [Expr p]
     ;
 
 power returns [Expr pow]
-    : minmax           { pow = $minmax.mm;              }
+    : factor           { pow = $factor.f;               }
       (
         '**' p = power { pow = new Power (pow, $p.pow); }
       )?
     ;
 
-minmax returns [Expr mm]
-    : f1 = factor           { mm = $f1.f;                  }
+factor returns [Expr f]
+    : prefixOperation  { f = $prefixOperation.po; }
+    | simpleFactor     { f = $simpleFactor.sf;    }
       (
-         'min'  f2 = factor { mm = new Minimum(mm, $f2.f); }
-       | 'max'  f2 = factor { mm = new Maximum(mm, $f2.f); }
+        '!'            { f = new Factorial(f);    }
       )?
     ;
 
-factor returns [Expr f]
-    : (sumOperation)=> sumOperation { f = $sumOperation.so;    }
-    | prefixOperation               { f = $prefixOperation.po; }
-    | simpleFactor                  { f = $simpleFactor.sf;    }
-    ;
-
-sumOperation returns [Expr so]
-    : simpleFactor           { so = $simpleFactor.sf;               }
-      (   'min/' f1 = factor { so = new MinimumMember  (so, $f1.f); }
-        | 'max/' f1 = factor { so = new MaximumMember  (so, $f1.f); }
-        | '+/'   f1 = factor { so = new SumMembers     (so, $f1.f); }
-        | '*/'   f1 = factor { so = new MultiplyMembers(so, $f1.f); }
-        | '!'                { so = new Factorial      (so);        }
-      )
-    ;
-
 prefixOperation returns [Expr po]
-    : 'min/' factor { po = new MinimumMember(null, $factor.f);   }
-    | 'max/' factor { po = new MaximumMember(null, $factor.f);   }
-    | '+/'   factor { po = new SumMembers(null, $factor.f);      }
-    | '*/'   factor { po = new MultiplyMembers(null, $factor.f); }
-    | '#'    factor { po = new Cardinality($factor.f);           }
-    | '-'    factor { po = new Negative($factor.f);              }
+    : 'min/' factor { po = new MinimumMember($factor.f);   }
+    | 'max/' factor { po = new MaximumMember($factor.f);   }
+    | '+/'   factor { po = new SumMembers($factor.f);      }
+    | '*/'   factor { po = new MultiplyMembers($factor.f); }
+    | '#'    factor { po = new Cardinality($factor.f);     }
+    | '-'    factor { po = new Negative($factor.f);        }
     ;
 
 simpleFactor returns [Expr sf]

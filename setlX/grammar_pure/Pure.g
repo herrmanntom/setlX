@@ -106,7 +106,7 @@ lambdaDefinition
 
 lambdaParameters
     : variable
-    | '[' variable (',' variable)+ ']'
+    | '[' variable (',' variable)* ']'
     ;
 
 procedureDefinition
@@ -132,21 +132,12 @@ product
     ;
 
 power
-    : minmax ('**' power)?
-    ;
-
-minmax
-    : factor ('min' factor | 'max' factor)?
+    : factor ('**' power)?
     ;
 
 factor
-    : (sumOperation)=> sumOperation
-    | prefixOperation
-    | simpleFactor
-    ;
-
-sumOperation
-    : simpleFactor ('min/' factor | 'max/' factor | '+/' factor | '*/' factor | '!')
+    : prefixOperation
+    | simpleFactor '!'?
     ;
 
 prefixOperation

@@ -23,23 +23,17 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 sum = sum.add(v);
             }
         }
-        return (sum != null)? sum : SetlOm.OM;
+        return (sum != null)? sum : new SetlInt(0);
     }
 
-    public final    Value           arbitraryMember() throws NumberToLargeException {
+    public final    Value           arbitraryMember() {
         if (this.size() < 1) {
             return SetlOm.OM;
+        } else if (this.size() % 2 == 0) {
+             // lets keep some balance to avoid to many restructurings of the underling collection
+            return this.firstMember();
         } else {
-            int needle = Environment.getRandomInt(this.size());
-            int pos    = 0;
-            for (Value v: this) {
-                if (pos == needle) {
-                    return v.clone();
-                }
-                pos++;
-            }
-            // this sould never be reached
-            throw new NumberToLargeException("Collection index '" + pos + "' into '" + this + "' is out of bounds.");
+            return this.lastMember();
         }
     }
 
@@ -62,8 +56,26 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 product = product.multiply(v);
             }
         }
-        return (product != null)? product : SetlOm.OM;
+        return (product != null)? product : new SetlInt(1);
     }
+
+    public final    Value           randomMember() throws NumberToLargeException {
+        if (this.size() < 1) {
+            return SetlOm.OM;
+        } else {
+            int needle = Environment.getRandomInt(this.size());
+            int pos    = 0;
+            for (Value v: this) {
+                if (pos == needle) {
+                    return v.clone();
+                }
+                pos++;
+            }
+            // this sould never be reached
+            throw new NumberToLargeException("Collection index '" + pos + "' into '" + this + "' is out of bounds.");
+        }
+    }
+
 
     public abstract void            removeMember(Value element);
 

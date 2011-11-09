@@ -5,7 +5,7 @@ import interpreter.exceptions.JVMException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.NumberValue;
-import interpreter.types.SetlReal;
+import interpreter.types.Real;
 import interpreter.types.Value;
 import interpreter.utilities.ParameterDef;
 
@@ -21,13 +21,13 @@ public class MathFunction extends PreDefinedFunction {
         mFunction = function;
     }
 
-    public SetlReal execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Real execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
         if (!(args.get(0) instanceof NumberValue)) {
             throw new IncorrectNumberOfParametersException("This function requires a single number as parameter.");
         }
         try {
             Object result = mFunction.invoke(null, new Double(args.get(0).toString()));
-            return new SetlReal(new Double(result.toString()));
+            return new Real(new Double(result.toString()));
         } catch (NumberFormatException nfe) {
             throw new NumberToLargeException("'" + args.get(0) + "' is to large for this operation.");
         } catch (Exception e) {

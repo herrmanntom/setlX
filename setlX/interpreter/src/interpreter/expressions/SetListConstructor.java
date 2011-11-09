@@ -3,8 +3,8 @@ package interpreter.expressions;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.types.Om;
 import interpreter.types.SetlList;
-import interpreter.types.SetlOm;
 import interpreter.types.SetlSet;
 import interpreter.types.Value;
 import interpreter.utilities.Constructor;
@@ -39,7 +39,7 @@ public class SetListConstructor extends Expr {
             list.compress();
             result = list;
         } else {
-            result = SetlOm.OM;
+            result = Om.OM;
         }
         return result;
     }

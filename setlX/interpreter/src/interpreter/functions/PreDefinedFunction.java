@@ -4,7 +4,7 @@ import interpreter.exceptions.IncorrectNumberOfParametersException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.statements.Block;
-import interpreter.types.SetlDefinition;
+import interpreter.types.ProcedureDefinition;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 import interpreter.utilities.ParameterDef;
@@ -13,7 +13,7 @@ import interpreter.utilities.WriteBackAgent;
 import java.util.LinkedList;
 import java.util.List;
 
-public abstract class PreDefinedFunction extends SetlDefinition {
+public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     private String  mName;
     private boolean mUnlimitedParameters;

@@ -8,7 +8,7 @@ gt := procedure(m, n) {
 };
 
 ggt := procedure(m, n) {
-	return max/ gt(m, n);
+	return max(gt(m, n));
 };
 
 m := read();

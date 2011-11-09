@@ -102,14 +102,14 @@ public class SetlBoolean extends Value {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (this == v) {
             // as only exacly one FALSE and TRUE object exist, we can compare by reference
             return 0;
-        } else if ((this == TRUE && v == FALSE) || (v == SetlOm.OM)) {
-            // only FALSE and SetlOm is smaller
+        } else if ((this == TRUE && v == FALSE) || (v == Om.OM)) {
+            // only FALSE and Om is smaller
             return 1;
         } else {
             return -1;

@@ -5,8 +5,8 @@ import interpreter.exceptions.JVMException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UnknownFunctionException;
 import interpreter.functions.PreDefinedFunction;
+import interpreter.types.Om;
 import interpreter.types.RangeDummy;
-import interpreter.types.SetlOm;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 
@@ -31,7 +31,7 @@ public class Call extends Expr {
 
     public Value evaluate() throws SetlException {
         Value lhs = mLhs.eval();
-        if (lhs == SetlOm.OM) {
+        if (lhs == Om.OM) {
             throw new UnknownFunctionException("Identifier \"" + mLhs + "\" is undefined.");
         }
         // evaluate all arguments

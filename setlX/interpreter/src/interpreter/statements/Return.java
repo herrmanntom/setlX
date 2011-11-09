@@ -3,7 +3,7 @@ package interpreter.statements;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
-import interpreter.types.SetlOm;
+import interpreter.types.Om;
 import interpreter.utilities.Environment;
 
 public class Return extends Statement {
@@ -17,7 +17,7 @@ public class Return extends Statement {
         if (mResult != null) {
             throw new ReturnException(mResult.eval());
         } else {
-            throw new ReturnException(SetlOm.OM);
+            throw new ReturnException(Om.OM);
         }
     }
 

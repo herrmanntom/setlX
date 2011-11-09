@@ -4,7 +4,7 @@ gV := procedure(m, n) {
 };
 
 kgV := procedure(m, n) {
-	return min/ gV(m, n);
+	return min(gV(m, n));
 };
 
 m := read();

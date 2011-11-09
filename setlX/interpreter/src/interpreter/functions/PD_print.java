@@ -1,6 +1,6 @@
 package interpreter.functions;
 
-import interpreter.types.SetlOm;
+import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
@@ -23,7 +23,7 @@ public class PD_print extends PreDefinedFunction {
             System.out.print(arg.toStringForPrint());
         }
         System.out.println();
-        return SetlOm.OM;
+        return Om.OM;
     }
 }
 

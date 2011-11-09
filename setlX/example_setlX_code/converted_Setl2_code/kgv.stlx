@@ -1,6 +1,6 @@
 
 kgv := procedure(m, n) {
-	return min/ gv(m, n);
+	return min(gv(m, n));
 };
 
 gv := procedure(m, n) {

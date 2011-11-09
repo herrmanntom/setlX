@@ -3,7 +3,7 @@ import grammar.*;
 import interpreter.exceptions.ExitException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
-import interpreter.types.SetlReal;
+import interpreter.types.Real;
 import interpreter.utilities.Environment;
 import interpreter.utilities.InputReader;
 
@@ -35,13 +35,13 @@ public class SetlX {
             } else if (s.equals("--predictableRandom")) { // easier debugging
                 Environment.setPredictableRandoom();
             } else if (s.equals("--real32")) {
-                SetlReal.setPrecision32();
+                Real.setPrecision32();
             } else if (s.equals("--real64")) {
-                SetlReal.setPrecision64();
+                Real.setPrecision64();
             } else if (s.equals("--real128")) {
-                SetlReal.setPrecision128();
+                Real.setPrecision128();
             } else if (s.equals("--real256")) {
-                SetlReal.setPrecision256();
+                Real.setPrecision256();
             } else if (s.equals("--verbose")) {
                 verbose = true;
             } else if (s.substring(0,2).equals("--")) { // invalid option

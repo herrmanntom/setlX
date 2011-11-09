@@ -37,6 +37,10 @@ public abstract class Value implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isInfinity() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isInteger() {
         return SetlBoolean.FALSE;
     }
@@ -91,7 +95,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public final Value maximum(Value other) throws SetlException {
-        if(other != SetlOm.OM && this.isLessThan(other) == SetlBoolean.TRUE){
+        if(other != Om.OM && this.isLessThan(other) == SetlBoolean.TRUE){
             return other.clone();
         } else {
             return this.clone();
@@ -99,7 +103,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public final Value minimum(Value other) throws SetlException {
-        if(other == SetlOm.OM || other.isLessThan(this) == SetlBoolean.TRUE){
+        if(other == Om.OM || other.isLessThan(this) == SetlBoolean.TRUE){
             return other.clone();
         } else {
             return this.clone();
@@ -258,7 +262,7 @@ public abstract class Value implements Comparable<Value> {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public abstract int compareTo(Value v);
 

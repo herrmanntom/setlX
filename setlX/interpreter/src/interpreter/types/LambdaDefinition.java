@@ -8,7 +8,7 @@ import interpreter.utilities.ParameterDef;
 import java.util.List;
 
 // This class represents a function definition
-public class LambdaDefinition extends SetlDefinition {
+public class LambdaDefinition extends ProcedureDefinition {
     private Expr mExpr; // expression in the body of the definition; used only for toString()
 
     public LambdaDefinition(List<ParameterDef> parameters, Expr expr) {

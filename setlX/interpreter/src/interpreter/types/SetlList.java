@@ -59,7 +59,7 @@ public class SetlList extends CollectionValue {
 
     public void compress() {
         while (true) {
-            if (getList().size() > 0 && getList().getLast() == SetlOm.OM) {
+            if (getList().size() > 0 && getList().getLast() == Om.OM) {
                 getList().removeLast();
             } else {
                 break;
@@ -82,6 +82,13 @@ public class SetlList extends CollectionValue {
             SetlList result = this.clone();
             result.separateFromOriginal();
             result.mList.addAll(s.mList);
+            return result;
+        } else if(summand instanceof CollectionValue) {
+            SetlList result = this.clone();
+            result.separateFromOriginal();
+            for (Value v: (CollectionValue) summand) {
+                result.addMember(v.clone());
+            }
             return result;
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
@@ -110,7 +117,7 @@ public class SetlList extends CollectionValue {
 
     public Value firstMember() {
         if (size() < 1) {
-            return SetlOm.OM;
+            return Om.OM;
         }
         return getList().getFirst().clone();
     }
@@ -135,7 +142,7 @@ public class SetlList extends CollectionValue {
             throw new NumberToLargeException("Index '" + index + "' is lower as '1'.");
         }
         if (index > size()) {
-            return SetlOm.OM;
+            return Om.OM;
         }
         return getList().get(index - 1);
     }
@@ -172,13 +179,16 @@ public class SetlList extends CollectionValue {
 
     public Value lastMember() {
         if (size() < 1) {
-            return SetlOm.OM;
+            return Om.OM;
         }
         return getList().getLast().clone();
     }
 
     public Value maximumMember() throws SetlException {
-        Value max = SetlOm.OM;
+        if (size() < 1) {
+            return Infinity.NEGATIVE;
+        }
+        Value max = getList().get(0);
         for (Value v: getList()) {
             if (v.maximum(max).equals(v)) {
                 max = v;
@@ -189,14 +199,12 @@ public class SetlList extends CollectionValue {
 
     public Value minimumMember() throws SetlException {
         if (size() < 1) {
-            return SetlOm.OM;
+            return Infinity.POSITIVE;
         }
         Value min = getList().get(0);
-        if (size() > 1) {
-            for (Value v: getList()) {
-                if (v.minimum(min).equals(v)) {
-                    min = v;
-                }
+        for (Value v: getList()) {
+            if (v.minimum(min).equals(v)) {
+                min = v;
             }
         }
         return min.clone();
@@ -242,14 +250,14 @@ public class SetlList extends CollectionValue {
         if (index < 1) {
             throw new NumberToLargeException("Index '" + index + "' is lower as '1'.");
         }
-        if (v == SetlOm.OM) {
+        if (v == Om.OM) {
             if (index <= mList.size()) {
                 mList.set(index - 1, v);
             }
             compress();
         } else {
             while (index > mList.size()) {
-                mList.add(SetlOm.OM);
+                mList.add(Om.OM);
             }
             mList.set(index - 1, v.clone());
         }
@@ -294,14 +302,14 @@ public class SetlList extends CollectionValue {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (v instanceof SetlList) {
             SetlList l = (SetlList) v;
             return getList().compareTo(l.getList());
-        } else if (v instanceof SetlDefinition) {
-            // only SetlDefinition is bigger
+        } else if (v instanceof ProcedureDefinition) {
+            // only ProcedureDefinition is bigger
             return -1;
         } else {
             // everything else is smaller

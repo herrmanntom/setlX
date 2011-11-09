@@ -4,7 +4,7 @@ reachable := procedure(x, y, R) {
 	while (true) {
 		Old_P := P;
 		P := path_product(P, R);
-		print("#P = ", #P, " length = ", max/ {#l: l in P});
+		print("#P = ", #P, " length = ", max({#l: l in P}));
 		print("#P = ", #P);
 		Found := {p in P | p(1) == x && p(#p) == y};
 		if (Found != {}) {

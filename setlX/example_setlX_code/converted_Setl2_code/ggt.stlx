@@ -1,6 +1,6 @@
 
 ggt := procedure(m, n) {
-	return max/ gt(m, n);
+	return max(gt(m, n));
 };
 
 gt := procedure(m, n) {

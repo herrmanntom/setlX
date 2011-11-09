@@ -2,8 +2,8 @@ package interpreter.utilities;
 
 import interpreter.functions.MathFunction;
 import interpreter.functions.PreDefinedFunction;
-import interpreter.types.SetlDefinition;
-import interpreter.types.SetlOm;
+import interpreter.types.Om;
+import interpreter.types.ProcedureDefinition;
 import interpreter.types.Value;
 
 import java.lang.reflect.Method;
@@ -102,7 +102,7 @@ public class Environment {
                 // remove local variable (will survive if nested somewhere in mOriginalEnv)
                 sEnvironment.mVarBindings.remove(v);
             } else {
-                sGlobals.put(var, SetlOm.OM);
+                sGlobals.put(var, Om.OM);
             }
         }
     }
@@ -217,14 +217,14 @@ public class Environment {
         Value v = mVarBindings.get(var);
         if (v == null && mOriginalEnv != null) {
             SearchItem i = mOriginalEnv.locateValue(var);
-            if (i.mV != null && (!mRestrictToFunctions || i.mV instanceof SetlDefinition)) {
+            if (i.mV != null && (!mRestrictToFunctions || i.mV instanceof ProcedureDefinition)) {
                 if (i.mIsClone || mReadThrough) { // don't clone when already cloned or readThrough is true
                     if (mRestrictToFunctions) { // i.mV must be SetlDefinition be get here
                         mVarBindings.put(var, i.mV); // cache function definitions
                     }
                     return i;
                 }
-                if (mRestrictToFunctions) { // i.mV must be SetlDefinition be get here
+                if (mRestrictToFunctions) { // i.mV must be ProcedureDefinition be get here
                     mVarBindings.put(var, i.mV.clone()); // cache clones of function definitions
                 }
                 return new SearchItem(i.mV.clone(), true);
@@ -239,7 +239,7 @@ public class Environment {
             mVarBindings.put(var, value);
         } else if (mWriteThrough        && // allowed to write into originalEnv
                    mOriginalEnv != null && // originalEnv exists
-                   (!mRestrictToFunctions || value instanceof SetlDefinition) // not restricted
+                   (!mRestrictToFunctions || value instanceof ProcedureDefinition) // not restricted
         ) {
             mOriginalEnv.storeValue(var, value);
         }

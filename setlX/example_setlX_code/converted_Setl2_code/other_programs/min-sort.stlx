@@ -3,7 +3,7 @@ minSort := procedure(L) {
 	if (L == []) {
 		return [];
 	}
-	m := min/ L;
+	m := min(L);
 	return [m] + minSort([x in L | x != m]);
 };
 

@@ -56,8 +56,10 @@ public class SetlInt extends NumberValue {
     public Value add(Value summand) throws SetlException {
         if (summand instanceof SetlInt) {
             return new SetlInt(mNumber.add(((SetlInt) summand).mNumber));
-        } else if (summand instanceof SetlReal) {
+        } else if (summand instanceof Real) {
             return summand.add(this);
+        } else if (summand.absoluteValue() == Infinity.POSITIVE) {
+            return summand;
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
         } else {
@@ -72,9 +74,13 @@ public class SetlInt extends NumberValue {
             } catch (ArithmeticException ae) {
                 throw new UndefinedOperationException("'" + this + " / " + divisor + "' is undefined.");
             }
-        } else if (divisor instanceof SetlReal) {
-            return ((SetlReal) divisor).divideFlipped(this);
-        } else {
+        } else if (divisor instanceof Real) {
+            return ((Real) divisor).divideFlipped(this);
+        } else if (divisor == Infinity.POSITIVE) {
+            return new SetlInt(0);
+        } else if (divisor == Infinity.NEGATIVE) {
+            return new SetlInt(-0);
+        }  else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " / " + divisor + "' is not a number.");
         }
     }
@@ -169,14 +175,14 @@ public class SetlInt extends NumberValue {
         if (modulo instanceof SetlInt) {
             return new SetlInt(mNumber.mod(((SetlInt) modulo).mNumber));
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " % " + modulo + "' is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " % " + modulo + "' is not an integer.");
         }
     }
 
     public Value multiply(Value multiplier) throws SetlException {
         if (multiplier instanceof SetlInt) {
             return new SetlInt(mNumber.multiply(((SetlInt) multiplier).mNumber));
-        } else if (multiplier instanceof SetlReal || multiplier instanceof SetlString) {
+        } else if (multiplier instanceof Real || multiplier instanceof SetlString || multiplier.absoluteValue() == Infinity.POSITIVE) {
             return multiplier.multiply(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side  of '" + this + " * " + multiplier + "' is not a number or string.");
@@ -191,11 +197,13 @@ public class SetlInt extends NumberValue {
         return new SetlInt(mNumber.pow(exponent));
     }
 
-    public NumberValue subtract(Value subtrahend) throws IncompatibleTypeException {
+    public NumberValue subtract(Value subtrahend) throws SetlException {
         if (subtrahend instanceof SetlInt) {
             return new SetlInt(mNumber.subtract(((SetlInt) subtrahend).mNumber));
-        } else if (subtrahend instanceof SetlReal) {
-            return ((SetlReal) subtrahend).subtractFlipped(this);
+        } else if (subtrahend instanceof Real) {
+            return ((Real) subtrahend).subtractFlipped(this);
+        } else if (subtrahend.absoluteValue() == Infinity.POSITIVE) {
+            return (Infinity) subtrahend.negate();
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
         }
@@ -224,17 +232,17 @@ public class SetlInt extends NumberValue {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (v instanceof SetlInt) {
             SetlInt nr = (SetlInt) v;
             return mNumber.compareTo(nr.mNumber);
-        } else if (v instanceof SetlReal) {
-            SetlReal nr = (SetlReal) v;
+        } else if (v instanceof Real) {
+            Real nr = (Real) v;
             return (new BigDecimal(mNumber)).compareTo(nr.mReal);
-        } else if (v == SetlOm.OM || (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE)) {
-            // SetlOm and SetlBoolean are smaller
+        } else if (v == Om.OM || v == SetlBoolean.TRUE || v == SetlBoolean.FALSE || v == Infinity.NEGATIVE) {
+            // Om, SetlBoolean and -Infinity are smaller
             return 1;
         } else {
             return -1;

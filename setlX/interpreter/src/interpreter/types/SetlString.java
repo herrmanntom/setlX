@@ -217,14 +217,14 @@ public class SetlString extends Value {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (v instanceof SetlString) {
             SetlString str = (SetlString) v;
             return mString.compareTo(str.mString);
-        } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof SetlDefinition) {
-            // SetlSet, SetlList and SetlDefinition are bigger
+        } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof ProcedureDefinition) {
+            // SetlSet, SetlList and ProcedureDefinition are bigger
             return -1;
         } else {
             return 1;

@@ -1,7 +1,7 @@
 package interpreter.functions;
 
 import interpreter.exceptions.SetlException;
-import interpreter.types.SetlOm;
+import interpreter.types.Om;
 import interpreter.types.Value;
 import interpreter.utilities.ParameterDef;
 
@@ -22,7 +22,7 @@ public class PD_from extends PreDefinedFunction {
     ) throws SetlException {
         Value collection = args.get(0);
         Value element    = collection.arbitraryMember();
-        if (element != SetlOm.OM) {
+        if (element != Om.OM) {
             collection.removeMember(element);
         }
 

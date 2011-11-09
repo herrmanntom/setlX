@@ -3,8 +3,8 @@ package interpreter.expressions;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.exceptions.UnknownFunctionException;
-import interpreter.types.SetlDefinition;
-import interpreter.types.SetlOm;
+import interpreter.types.Om;
+import interpreter.types.ProcedureDefinition;
 import interpreter.types.Value;
 
 import java.util.List;
@@ -20,10 +20,10 @@ public class CallCollection extends Expr {
 
     public Value evaluate() throws SetlException {
         Value lhs = mLhs.eval();
-        if (lhs == SetlOm.OM) {
+        if (lhs == Om.OM) {
             throw new UnknownFunctionException("\"" + mLhs + "\" is undefined.");
         }
-        if (lhs instanceof SetlDefinition) {
+        if (lhs instanceof ProcedureDefinition) {
             throw new UndefinedOperationException("Incorrect set of brackets for function call.");
         }
         return lhs.callCollection(mArg.eval().clone());

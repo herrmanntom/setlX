@@ -13,16 +13,16 @@ import interpreter.utilities.WriteBackAgent;
 import java.util.List;
 
 // This class represents a function definition
-public class SetlDefinition extends Value {
+public class ProcedureDefinition extends Value {
     protected List<ParameterDef> mParameters;  // parameter list
     protected Block              mStatements;  // statements in the body of the definition
 
-    public SetlDefinition(List<ParameterDef> parameters, Block statements) {
+    public ProcedureDefinition(List<ParameterDef> parameters, Block statements) {
         mParameters = parameters;
         mStatements = statements;
     }
 
-    public SetlDefinition clone() {
+    public ProcedureDefinition clone() {
         // this value can not be changed once set => no harm in returning the original
         return this;
     }
@@ -51,7 +51,7 @@ public class SetlDefinition extends Value {
             mParameters.get(i).assign(args.get(i));
         }
 
-        Value result = SetlOm.OM;
+        Value result = Om.OM;
         try {
             mStatements.execute();
         } catch (ReturnException re) {
@@ -108,13 +108,13 @@ public class SetlDefinition extends Value {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (this == v) { // from using clone()
             return 0;
-        } else if (v instanceof SetlDefinition) {
-            SetlDefinition other = (SetlDefinition) v;
+        } else if (v instanceof ProcedureDefinition) {
+            ProcedureDefinition other = (ProcedureDefinition) v;
             if (this instanceof PreDefinedFunction && other instanceof PreDefinedFunction) {
                 PreDefinedFunction _this  = (PreDefinedFunction) this;
                 PreDefinedFunction _other = (PreDefinedFunction) other;

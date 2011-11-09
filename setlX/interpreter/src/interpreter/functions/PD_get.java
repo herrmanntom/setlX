@@ -1,6 +1,6 @@
 package interpreter.functions;
 
-import interpreter.types.SetlOm;
+import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
@@ -19,7 +19,7 @@ public class PD_get extends PreDefinedFunction {
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         BufferedReader br         = new BufferedReader(new InputStreamReader(System.in));
-        Value          inputValue = SetlOm.OM;
+        Value          inputValue = Om.OM;
         String         input      = null;
         try {
             System.out.print(": ");
@@ -31,7 +31,7 @@ public class PD_get extends PreDefinedFunction {
         if (input != null) {
             inputValue = new SetlString(input);
         } else {
-            inputValue = SetlOm.OM;
+            inputValue = Om.OM;
         }
 
         return inputValue;

@@ -13,7 +13,7 @@ partition := procedure(S1, S2, S3, All) {
 };
 
 movePossible := procedure(Source, Target) {
-	return Target == {} || (min/ Source < min/ Target);
+	return Target == {} || (min(Source) < min(Target));
 };
 
 oneStep := procedure(PS, R) {
@@ -45,12 +45,12 @@ reachable := procedure(x, y, R) {
 
 All := {1, 2, 3};
 P := {[L1, L2, L3]: L1 in pow(All), L2 in pow(All), L3 in pow(All) | partition(L1, L2, L3, All)};
-R12 := {[[L1, L2, L3], [L1 - {x}, L2 + {x}, L3]]: [L1, L2, L3] in P, x in {min/ L1} | movePossible(L1, L2)};
-R21 := {[[L1, L2, L3], [L1 + {x}, L2 - {x}, L3]]: [L1, L2, L3] in P, x in {min/ L2} | movePossible(L2, L1)};
-R13 := {[[L1, L2, L3], [L1 - {x}, L2, L3 + {x}]]: [L1, L2, L3] in P, x in {min/ L1} | movePossible(L1, L3)};
-R31 := {[[L1, L2, L3], [L1 + {x}, L2, L3 - {x}]]: [L1, L2, L3] in P, x in {min/ L3} | movePossible(L3, L1)};
-R23 := {[[L1, L2, L3], [L1, L2 - {x}, L3 + {x}]]: [L1, L2, L3] in P, x in {min/ L2} | movePossible(L2, L3)};
-R32 := {[[L1, L2, L3], [L1, L2 + {x}, L3 - {x}]]: [L1, L2, L3] in P, x in {min/ L3} | movePossible(L3, L2)};
+R12 := {[[L1, L2, L3], [L1 - {x}, L2 + {x}, L3]]: [L1, L2, L3] in P, x in {min(L1)} | movePossible(L1, L2)};
+R21 := {[[L1, L2, L3], [L1 + {x}, L2 - {x}, L3]]: [L1, L2, L3] in P, x in {min(L2)} | movePossible(L2, L1)};
+R13 := {[[L1, L2, L3], [L1 - {x}, L2, L3 + {x}]]: [L1, L2, L3] in P, x in {min(L1)} | movePossible(L1, L3)};
+R31 := {[[L1, L2, L3], [L1 + {x}, L2, L3 - {x}]]: [L1, L2, L3] in P, x in {min(L3)} | movePossible(L3, L1)};
+R23 := {[[L1, L2, L3], [L1, L2 - {x}, L3 + {x}]]: [L1, L2, L3] in P, x in {min(L2)} | movePossible(L2, L3)};
+R32 := {[[L1, L2, L3], [L1, L2 + {x}, L3 - {x}]]: [L1, L2, L3] in P, x in {min(L3)} | movePossible(L3, L2)};
 R := R12 + R21 + R31 + R13 + R23 + R32;
 start := [{1, 2, 3}, {}, {}];
 goal := [{}, {}, {1, 2, 3}];

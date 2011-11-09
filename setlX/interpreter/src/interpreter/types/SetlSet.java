@@ -91,6 +91,13 @@ public class SetlSet extends CollectionValue {
         if (summand instanceof SetlSet) {
             SetlSet s = (SetlSet) summand;
             return new SetlSet(getSet().union(s.getSet()));
+        } else if(summand instanceof CollectionValue) {
+            SetlSet result = this.clone();
+            result.separateFromOriginal();
+            for (Value v: (CollectionValue) summand) {
+                result.addMember(v.clone());
+            }
+            return result;
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
         } else {
@@ -119,7 +126,7 @@ public class SetlSet extends CollectionValue {
     /* operations on compound values (Lists, Sets [, Strings]) */
 
     public void addMember(Value element) {
-        if (element == SetlOm.OM) {
+        if (element == Om.OM) {
             return;
         } else {
             separateFromOriginal();
@@ -166,20 +173,23 @@ public class SetlSet extends CollectionValue {
     }
 
     public Value firstMember() {
-        return minimumMember();
+        if (size() < 1) {
+            return Om.OM;
+        }
+        return getSet().getSet().first().clone();
     }
 
     public Value getMember(Value element) throws SetlException {
-        Value result = SetlOm.OM;
+        Value result = Om.OM;
         for (Value v: getSet()) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     if (v.getMember(new SetlInt(1)).equals(element)) {
-                        if (result instanceof SetlOm) {
+                        if (result instanceof Om) {
                             result = v.getMember(new SetlInt(2));
                         } else {
                             // double match!
-                            result = SetlOm.OM;
+                            result = Om.OM;
                             break;
                         }
                     }
@@ -194,21 +204,24 @@ public class SetlSet extends CollectionValue {
     }
 
     public Value lastMember() {
-        return maximumMember();
-    }
-
-    public Value maximumMember() {
-        if (getSet().size() < 1) {
-            return SetlOm.OM;
+        if (size() < 1) {
+            return Om.OM;
         }
         return getSet().getSet().last().clone();
     }
 
-    public Value minimumMember() {
-        if (getSet().size() < 1) {
-            return SetlOm.OM;
+    public Value maximumMember() {
+        if (size() < 1) {
+            return Infinity.NEGATIVE;
         }
-        return getSet().getSet().first().clone();
+        return lastMember();
+    }
+
+    public Value minimumMember() {
+        if (size() < 1) {
+            return Infinity.POSITIVE;
+        }
+        return firstMember();
     }
 
     public SetlSet powerSet() {
@@ -303,14 +316,14 @@ public class SetlSet extends CollectionValue {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (v instanceof SetlSet) {
             SetlSet s = (SetlSet) v;
             return getSet().compareTo(s.getSet());
-        } else if (v instanceof SetlList || v instanceof SetlDefinition) {
-            // only SetlList and SetlDefinition are bigger
+        } else if (v instanceof SetlList || v instanceof ProcedureDefinition) {
+            // only SetlList and ProcedureDefinition are bigger
             return -1;
         } else {
             return 1;

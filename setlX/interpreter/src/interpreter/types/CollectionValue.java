@@ -28,7 +28,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public final    Value           arbitraryMember() {
         if (this.size() < 1) {
-            return SetlOm.OM;
+            return Om.OM;
         } else if (this.size() % 2 == 0) {
              // lets keep some balance to avoid to many restructurings of the underling collection
             return this.firstMember();
@@ -61,7 +61,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public final    Value           randomMember() throws NumberToLargeException {
         if (this.size() < 1) {
-            return SetlOm.OM;
+            return Om.OM;
         } else {
             int needle = Environment.getRandomInt(this.size());
             int pos    = 0;

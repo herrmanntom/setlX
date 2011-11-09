@@ -6,7 +6,7 @@ lastChars := procedure(x, n) {
 };
 
 sort := procedure(S) {
-	return [n in [1 .. max/{0,max/ S}] | n in S];
+	return [n in [1 .. max(S + {0})] | n in S];
 };
 
 partition := procedure(S1, S2, S3, All) {

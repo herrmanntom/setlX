@@ -226,17 +226,20 @@ lambdaParameters returns [List<ParameterDef> paramList]
     @init {
         paramList = new LinkedList<ParameterDef>();
     }
-    : variable            { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
-    | '[' v1 = variable   { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
+    : variable              { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
+    | '['
       (
-        ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
-      )*
+        v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
+        (
+          ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
+        )*
+      )?
       ']'
     ;
 
-procedureDefinition returns [SetlDefinition pd]
+procedureDefinition returns [ProcedureDefinition pd]
     : 'procedure' '(' procedureParameters ')' '{' block '}'
-      { pd = new SetlDefinition($procedureParameters.paramList, $block.blk); }
+      { pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk); }
     ;
 
 procedureParameters returns [List<ParameterDef> paramList]
@@ -289,9 +292,7 @@ factor returns [Expr f]
     ;
 
 prefixOperation returns [Expr po]
-    : 'min/' factor { po = new MinimumMember($factor.f);   }
-    | 'max/' factor { po = new MaximumMember($factor.f);   }
-    | '+/'   factor { po = new SumMembers($factor.f);      }
+    : '+/'   factor { po = new SumMembers($factor.f);      }
     | '*/'   factor { po = new MultiplyMembers($factor.f); }
     | '#'    factor { po = new Cardinality($factor.f);     }
     | '-'    factor { po = new Negative($factor.f);        }
@@ -409,18 +410,18 @@ atomicValue returns [Value av]
     : NUMBER        { av = new SetlInt($NUMBER.text);    }
     | real          { av = $real.r;                      }
     | STRING        { av = new SetlString($STRING.text); }
-    | 'om'          { av = SetlOm.OM;                    }
+    | 'om'          { av = Om.OM;                        }
     ;
 
 // this rule is required, otherwise "aaa"(2..) fails to get parsed
-real returns [SetlReal r]
+real returns [Real r]
     @init {
         String n = "";
     }
     :
       (
-        NUMBER                  { n = $NUMBER.text;                  }
-      )? REAL                   { r = new SetlReal(n + $REAL.text);  }
+        NUMBER      { n = $NUMBER.text;             }
+      )? REAL       { r = new Real(n + $REAL.text); }
     ;
 
 ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;

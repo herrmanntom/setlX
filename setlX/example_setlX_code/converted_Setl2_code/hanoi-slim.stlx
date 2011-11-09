@@ -5,8 +5,8 @@ relation := procedure(P, i, j) {
 
 move := procedure(Triple, i, j) {
 	Result := Triple;
-	Result(i) := Triple(i) - {min/ Triple(i)};
-	Result(j) := Triple(j) + {min/ Triple(i)};
+	Result(i) := Triple(i) - {min(Triple(i))};
+	Result(j) := Triple(j) + {min(Triple(i))};
 	return Result;
 };
 
@@ -15,7 +15,7 @@ partition := procedure(S1, S2, S3, All) {
 };
 
 movePossible := procedure(Source, Target) {
-	return min/{4, min/ Source} < min/{4, min/ Target};
+	return min(Source + {4}) < min(Target + {4});
 };
 
 printPath := procedure(path) {

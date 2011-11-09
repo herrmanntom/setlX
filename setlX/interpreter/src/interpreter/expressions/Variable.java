@@ -1,7 +1,7 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
-import interpreter.types.SetlOm;
+import interpreter.types.Om;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
@@ -15,7 +15,7 @@ public class Variable extends Expr {
     public Value evaluate() throws SetlException {
         Value v = Environment.findValue(mId);
         if (v == null){
-            return SetlOm.OM;
+            return Om.OM;
         }else{
             return v;
         }

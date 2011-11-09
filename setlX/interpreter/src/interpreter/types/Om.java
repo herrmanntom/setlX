@@ -1,12 +1,12 @@
 package interpreter.types;
 
-public class SetlOm extends Value {
+public class Om extends Value {
 
-    public final static SetlOm OM = new SetlOm();
+    public final static Om OM = new Om();
 
-    private SetlOm() {  }
+    private Om() {  }
 
-    public SetlOm clone() {
+    public Om clone() {
         // this value is atomic and can not be changed
         return this;
     }
@@ -24,7 +24,7 @@ public class SetlOm extends Value {
     // elements.
     // Useful output is only possible if both values are of the same type.
     // "incomparable" values, e.g. of different types are ranked as follows:
-    // SetlOm < SetlBoolean < SetlInt & SetlReal < SetlString < SetlSet < SetlList < SetlDefinition
+    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
     // This ranking is necessary to allow sets and lists of different types.
     public int compareTo(Value v){
         if (v == OM) {

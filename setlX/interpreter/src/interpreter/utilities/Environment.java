@@ -4,6 +4,7 @@ import interpreter.functions.MathFunction;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.types.Om;
 import interpreter.types.ProcedureDefinition;
+import interpreter.types.Real;
 import interpreter.types.Value;
 
 import java.lang.reflect.Method;
@@ -17,6 +18,12 @@ public class Environment {
 
     // this map stores all global variables
     private static Map<String, Value> sGlobals       = new HashMap<String, Value>();
+
+    // add some often used constants
+    static {
+        sGlobals.put("e",  new Real(Math.E));
+        sGlobals.put("pi", new Real(Math.PI));
+    }
 
     /* This variable stores the initial Environment:
        Predefined functions are dynamically loaded into this Environment,

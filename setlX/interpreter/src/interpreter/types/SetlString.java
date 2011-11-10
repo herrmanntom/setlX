@@ -207,7 +207,7 @@ public class SetlString extends Value {
             }
             return "\"" + sb.toString() + "\"";
         } else {
-            return mString;
+            return "\"" + mString + "\"";
         }
     }
 

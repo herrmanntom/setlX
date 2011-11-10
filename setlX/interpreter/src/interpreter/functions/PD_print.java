@@ -20,7 +20,13 @@ public class PD_print extends PreDefinedFunction {
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         for (Value arg : args) {
-            System.out.print(arg.toString());
+            String text = arg.toString();
+            // Strip out double qoutes when printing strings
+            int length = text.length();
+            if (length >= 2 && text.charAt(0) == '"' && text.charAt(length - 1) == '"') {
+                text = text.substring(1, length - 1);
+            }
+            System.out.print(text);
         }
         System.out.println();
         return Om.OM;

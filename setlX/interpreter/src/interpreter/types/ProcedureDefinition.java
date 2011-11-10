@@ -39,6 +39,8 @@ public class ProcedureDefinition extends Value {
         if (mParameters.size() != args.size()) {
             throw new IncorrectNumberOfParametersException("'" + this + "' is defined with a different number of parameters "
                                                           +"(" + mParameters.size() + ").");
+        } else if (args.contains(RangeDummy.RD)) {
+            throw new IncorrectNumberOfParametersException("Functions can not be called with ranges as parameters.");
         }
 
         // save old environment

@@ -5,6 +5,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.statements.Block;
 import interpreter.types.ProcedureDefinition;
+import interpreter.types.RangeDummy;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 import interpreter.utilities.ParameterDef;
@@ -49,7 +50,9 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     public abstract Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException;
 
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        if (mParameters.size() < args.size()) {
+        if (args.contains(RangeDummy.RD)) {
+            throw new IncorrectNumberOfParametersException("Functions can not be called with ranges as parameters.");
+        } else if (mParameters.size() < args.size()) {
             if (mUnlimitedParameters) {
                 // unlimited means: at least the number of defined parameters or more
                 // no error

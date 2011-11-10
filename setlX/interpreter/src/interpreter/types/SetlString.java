@@ -5,6 +5,7 @@ import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
+import interpreter.utilities.Environment;
 
 import java.util.List;
 
@@ -177,37 +178,37 @@ public class SetlString extends Value {
        before passing to System.out                                     */
 
     public String toString() {
-        int           length = mString.length();
-        StringBuilder sb     = new StringBuilder(length);
-        for (int i = 0; i < length; ++i) {
-            char c = mString.charAt(i);  // current
-            if (c == '\\') {
-                sb.append('\\');
-                sb.append('\\');
-            } else if (c == '\n') {
-                sb.append('\\');
-                sb.append('n');
-            } else if (c == '\r') {
-                sb.append('\\');
-                sb.append('r');
-            } else if (c == '\t') {
-                sb.append('\\');
-                sb.append('t');
-            } else if (c == '"') {
-                sb.append('\\');
-                sb.append('"');
-            } else if (c == '\0') {
-                sb.append('\\');
-                sb.append('0');
-            } else {
-                sb.append(c);
+        if (Environment.isPrintVerbose()) {
+            int           length = mString.length();
+            StringBuilder sb     = new StringBuilder(length);
+            for (int i = 0; i < length; ++i) {
+                char c = mString.charAt(i);  // current
+                if (c == '\\') {
+                    sb.append('\\');
+                    sb.append('\\');
+                } else if (c == '\n') {
+                    sb.append('\\');
+                    sb.append('n');
+                } else if (c == '\r') {
+                    sb.append('\\');
+                    sb.append('r');
+                } else if (c == '\t') {
+                    sb.append('\\');
+                    sb.append('t');
+                } else if (c == '"') {
+                    sb.append('\\');
+                    sb.append('"');
+                } else if (c == '\0') {
+                    sb.append('\\');
+                    sb.append('0');
+                } else {
+                    sb.append(c);
+                }
             }
+            return "\"" + sb.toString() + "\"";
+        } else {
+            return mString;
         }
-        return "\"" + sb.toString() + "\"";
-    }
-
-    public String toStringForPrint() {
-        return mString;
     }
 
     /* Comparisons */

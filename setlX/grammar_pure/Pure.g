@@ -106,7 +106,7 @@ lambdaDefinition
 
 lambdaParameters
     : variable
-    | '[' variable (',' variable)* ']'
+    | '[' (variable (',' variable)*)? ']'
     ;
 
 procedureDefinition
@@ -141,9 +141,7 @@ factor
     ;
 
 prefixOperation
-    : 'min/' factor
-    | 'max/' factor
-    | '+/' factor
+    : '+/' factor
     | '*/' factor
     | '#' factor
     | '-' factor

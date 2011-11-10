@@ -9,6 +9,7 @@ import interpreter.types.Om;
 import interpreter.types.RangeDummy;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class Call extends Expr {
     }
 
     public String toString(int tabs) {
-        if (tabs < _this.length) {
+        if (tabs < _this.length && !Environment.isPrintVerbose()) {
             return _this[tabs];
         } else {
             return _toString(tabs);

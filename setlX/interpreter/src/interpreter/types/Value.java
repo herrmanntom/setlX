@@ -251,10 +251,6 @@ public abstract class Value implements Comparable<Value> {
 
     public abstract String toString();
 
-    public String toStringForPrint() {
-        return toString();
-    }
-
     /* Comparisons */
 
     // Compare two Values.  Returns -1 if this value is less than the value given

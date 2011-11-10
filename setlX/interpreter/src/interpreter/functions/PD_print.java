@@ -20,7 +20,7 @@ public class PD_print extends PreDefinedFunction {
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         for (Value arg : args) {
-            System.out.print(arg.toStringForPrint());
+            System.out.print(arg.toString());
         }
         System.out.println();
         return Om.OM;

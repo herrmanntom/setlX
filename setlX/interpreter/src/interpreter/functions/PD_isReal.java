@@ -1,6 +1,5 @@
 package interpreter.functions;
 
-import interpreter.types.SetlBoolean;
 import interpreter.types.Value;
 import interpreter.utilities.ParameterDef;
 

@@ -39,7 +39,7 @@ echo "=> Rebuilding the documentation ..."
 make
 
 # move the finished PDFs where they belong
-mv *.pdf ../.
+mv -f *.pdf ../.
 
 # clean the documentation source (again)
 echo "=> Cleaning the documentation's source (again) ..."

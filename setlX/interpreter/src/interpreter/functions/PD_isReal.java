@@ -1,7 +1,6 @@
 package interpreter.functions;
 
 import interpreter.types.Value;
-import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ public class PD_isReal extends PreDefinedFunction {
 
     private PD_isReal() {
         super("isReal");
-        addParameter(new ParameterDef("value"));
+        addParameter("value");
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {

@@ -135,7 +135,7 @@ In order to be found by this algorithm, predefined functions have to follow stri
 		E.g. the `\command{isSet()}' function is defined in a class called `\command{PD\_isSet}'.
 	\item The class needs to inherit from `\command{PreDefinedFunction}' in the same package.
 	\item The `\command{super("name");}' constructor must be called, where \command{"name"} is the name of the function.
-	\item The following variable must be present in the class and set with the invocation of the classes constructor (which itself should be private):
+	\item The following variable must be present in the class and set with the invocation of the classes constructor (the constructor itself should be private):
 \begin{lstlisting}[frame=none,numbers=none]
 public final static PreDefinedFunction DEFINITION
                                     = new PD_<name>();
@@ -144,22 +144,22 @@ public final static PreDefinedFunction DEFINITION
 
 \end{itemize}
 
-A simple predefined function with a single parameter is shown in figure \ref{lblPDFunction}.
+A simple predefined function without parameters is shown in figure \ref{lblPDFunction}.
 
-\includeListing[e]{../interpreter/src/interpreter/functions/PD_isMap.java}{language=java}{lblPDFunction}{}{Predefined Function `\command{isMap()}'}
+\includeListing[e]{../interpreter/src/interpreter/functions/PD_now.java}{language=java}{lblPDFunction}{}{Predefined Function `\command{now()}'}
 
 \nonSubsubsection{Using Parameters in Predefined Functions}
 
 If the predefined function uses parameters, they have to be defined in the functions constructor by invoking:
 \begin{lstlisting}[frame=none,numbers=none]
-addParameter(new ParameterDef("value"));
+addParameter("value");
 \end{lstlisting}
 
-Hereby \command{"x"} is the name of the parameter. This parameter name is only shown when the function itself is used as an argument to print() inside a \SetlX{} program.
+Hereby \command{"value"} is the name of the parameter. The name of the parameter is only shown when the function itself is used as an argument to print() inside a \SetlX{} program.
 
 Read-Write parameters (`\command{rw}') can be defined using:
 \begin{lstlisting}[frame=none,numbers=none]
-addParameter(new ParameterDef("x", ParameterDef.READ_WRITE));
+addParameter("value", ParameterDef.READ_WRITE);
 \end{lstlisting}
 
 When `\command{execute(List<Value> args, List<Value> writeBackVars)}' is called, the current values of these parameters are placed inside the `\command{args}' list in \emph{the same order as they are added in the constructor}. When the predefined function is called with a different number of parameters from within \SetlX{}, the user gets an error and the execution is halted. If the predefined function should be allowed to handle more or fewer parameters as defined, the following methods can be called inside the constructor after parameter definitions:
@@ -168,7 +168,7 @@ enableUnlimitedParameters();
 allowFewerParameters();
 \end{lstlisting}
 
-To (re)set the value of read-write parameters, the following function as to be called inside `\command{execute()}':
+To (re)set the value of read-write parameters, the following function has to be called inside `\command{execute()}':
 \begin{lstlisting}[frame=none,numbers=none]
 writeBackVars.add(new SetlReal("1.0"));
 \end{lstlisting}
@@ -179,7 +179,7 @@ These have to occur in \emph{the same order and number} as read-write parameters
 
 \nonSubsubsection{Predefined Math Functions}
 
-When an identifier can not be found after searching for predefined functions, a query for a matching Java Math method with a single double as parameter is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{interpreter/functions/MathFunction.java}). This class behaves as any other predefined function and interfaces the \setlX{} Value types with the ones used by Java.
+When an identifier can not be found after searching for predefined functions, a query for a matching Java Math method with a single double as parameter is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{interpreter/functions/MathFunction.java}). This class behaves as any other predefined function and converts the \setlX{} Value type `Real' into double, which is used by Java's Math functions.
 \subsection{Iterators}
 
 \todo{tbd}

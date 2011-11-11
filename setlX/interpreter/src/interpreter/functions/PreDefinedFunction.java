@@ -31,9 +31,12 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         return mName;
     }
 
-    // add parameters to own definition (especially needed for 'rw' variables)
-    protected void addParameter(ParameterDef param) {
-        mParameters.add(param);
+    // add parameters to own definition
+    protected void addParameter(String param) {
+        mParameters.add(new ParameterDef(param, ParameterDef.READ_ONLY));
+    }
+    protected void addParameter(String param, int type) {
+        mParameters.add(new ParameterDef(param, type));
     }
 
     // allow an unlimited number of parameters

@@ -4,7 +4,6 @@ import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
-import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class PD_print extends PreDefinedFunction {
 
     private PD_print() {
         super("print");
-        addParameter(new ParameterDef("firstValue"));
+        addParameter("value");
         enableUnlimitedParameters();
         allowFewerParameters();
     }

@@ -3,7 +3,6 @@ package interpreter.functions;
 import interpreter.exceptions.AbortException;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
-import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -12,15 +11,20 @@ public class PD_abort extends PreDefinedFunction {
 
     private PD_abort() {
         super("abort");
-        addParameter(new ParameterDef("firstMessage"));
+        addParameter("message");
         enableUnlimitedParameters();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws AbortException {
         String msg = "";
         for (Value arg : args) {
-            // output Strings without double-quotes and escape characters
-            msg += arg;
+            String text = arg.toString();
+            // Strip out double qoutes when printing strings
+            int length = text.length();
+            if (length >= 2 && text.charAt(0) == '"' && text.charAt(length - 1) == '"') {
+                text = text.substring(1, length - 1);
+            }
+            msg += text;
         }
         throw new AbortException("abort: " + msg);
     }

@@ -13,8 +13,7 @@ public class PD_from extends PreDefinedFunction {
 
     private PD_from() {
         super("from");
-        addParameter(new ParameterDef("compoundValue",
-                                      ParameterDef.READ_WRITE));
+        addParameter("compoundValue", ParameterDef.READ_WRITE);
     }
 
     public Value execute(List<Value> args,

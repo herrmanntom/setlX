@@ -12,7 +12,7 @@ public class PD_fromB extends PreDefinedFunction {
 
     private PD_fromB() {
         super("fromB");
-        addParameter(new ParameterDef("compoundValue", ParameterDef.READ_WRITE));
+        addParameter("compoundValue", ParameterDef.READ_WRITE);
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

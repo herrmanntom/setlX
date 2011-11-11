@@ -1,7 +1,6 @@
 package interpreter.functions;
 
 import interpreter.types.Value;
-import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -10,7 +9,7 @@ public class PD_str extends PreDefinedFunction {
 
     private PD_str() {
         super("str");
-        addParameter(new ParameterDef("value"));
+        addParameter("value");
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {

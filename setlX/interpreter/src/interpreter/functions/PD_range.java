@@ -2,7 +2,6 @@ package interpreter.functions;
 
 import interpreter.exceptions.SetlException;
 import interpreter.types.Value;
-import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class PD_range extends PreDefinedFunction {
 
     private PD_range() {
         super("range");
-        addParameter(new ParameterDef("map"));
+        addParameter("map");
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

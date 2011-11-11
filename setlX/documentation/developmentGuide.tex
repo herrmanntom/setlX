@@ -179,7 +179,7 @@ These have to occur in \emph{the same order and number} as read-write parameters
 
 \nonSubsubsection{Predefined Math Functions}
 
-When an identifier can not be found after searching for predefined functions, a query for a matching Java Math method with a single double as parameter is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{interpreter/functions/MathFunction.java}). This class behaves as any other predefined function and converts the \setlX{} Value type `Real' into double, which is used by Java's Math functions.
+When an identifier can not be found, after searching for predefined functions, a query for a matching Java Math method, with a single double as parameter, is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{interpreter/functions/MathFunction.java}). This class behaves as any other predefined function and converts the \setlX{} Value type `Real' into double, which is used by Java's Math functions.
 \subsection{Iterators}
 
 \todo{tbd}
@@ -227,6 +227,10 @@ make dist-clean
 \end{lstlisting}
 
 \end{itemize}
+
+\section{Semi Automatic Testing}
+
+\todo{tbd, see `test\_all' script}
 
 \section{Distribution}
 

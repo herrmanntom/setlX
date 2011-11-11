@@ -253,13 +253,14 @@ public abstract class Value implements Comparable<Value> {
 
     /* Comparisons */
 
-    // Compare two Values.  Returns -1 if this value is less than the value given
-    // as argument, +1 if its greater and 0 if both values contain the same
-    // elements.
-    // Useful output is only possible if both values are of the same type.
-    // "incomparable" values, e.g. of different types are ranked as follows:
-    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
-    // This ranking is necessary to allow sets and lists of different types.
+    /* Compare two Values.  Returns -1 if this value is less than the value given
+     * as argument, +1 if its greater and 0 if both values contain the same
+     * elements.
+     * Useful output is only possible if both values are of the same type.
+     * "incomparable" values, e.g. of different types are ranked as follows:
+     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < ProcedureDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
     public abstract int compareTo(Value v);
 
     public final boolean equals(Value v) {

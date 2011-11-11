@@ -118,24 +118,25 @@ public class Infinity extends NumberValue {
 
     /* Comparisons */
 
-    // Compare two Values.  Returns -1 if this value is less than the value given
-    // as argument, +1 if its greater and 0 if both values contain the same
-    // elements.
-    // Useful output is only possible if both values are of the same type.
-    // "incomparable" values, e.g. of different types are ranked as follows:
-    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
-    // This ranking is necessary to allow sets and lists of different types.
+    /* Compare two Values.  Returns -1 if this value is less than the value given
+     * as argument, +1 if its greater and 0 if both values contain the same
+     * elements.
+     * Useful output is only possible if both values are of the same type.
+     * "incomparable" values, e.g. of different types are ranked as follows:
+     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < ProcedureDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
     public int compareTo(Value v) {
         if (this == v) {
             return 0;
-        } else if (this == POSITIVE && v instanceof NumberValue) {
+        } else if (this == POSITIVE) {
+            // everything else is smaller
             return 1;
-        } else if (this == NEGATIVE && v instanceof NumberValue) {
-            return -1;
-        } else if (v == Om.OM || v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) {
-            // Om and SetlBoolean are smaller
+        } else if (v == Om.OM) { // to get here this must be NEGATIVE
+            // om is the only thing smaller when this is NEGATIVE
             return 1;
         } else {
+            // everything in between is bigger
             return -1;
         }
     }

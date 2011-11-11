@@ -213,19 +213,20 @@ public class SetlString extends Value {
 
     /* Comparisons */
 
-    // Compare two Values.  Returns -1 if this value is less than the value given
-    // as argument, +1 if its greater and 0 if both values contain the same
-    // elements.
-    // Useful output is only possible if both values are of the same type.
-    // "incomparable" values, e.g. of different types are ranked as follows:
-    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
-    // This ranking is necessary to allow sets and lists of different types.
+    /* Compare two Values.  Returns -1 if this value is less than the value given
+     * as argument, +1 if its greater and 0 if both values contain the same
+     * elements.
+     * Useful output is only possible if both values are of the same type.
+     * "incomparable" values, e.g. of different types are ranked as follows:
+     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < ProcedureDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
     public int compareTo(Value v){
         if (v instanceof SetlString) {
             SetlString str = (SetlString) v;
             return mString.compareTo(str.mString);
-        } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof ProcedureDefinition) {
-            // SetlSet, SetlList and ProcedureDefinition are bigger
+        } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
+            // SetlSet, SetlList, ProcedureDefinition and +Infinity are bigger
             return -1;
         } else {
             return 1;

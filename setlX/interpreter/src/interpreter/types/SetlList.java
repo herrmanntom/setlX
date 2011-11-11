@@ -185,10 +185,7 @@ public class SetlList extends CollectionValue {
     }
 
     public Value maximumMember() throws SetlException {
-        if (size() < 1) {
-            return Infinity.NEGATIVE;
-        }
-        Value max = getList().get(0);
+        Value max = Infinity.NEGATIVE;
         for (Value v: getList()) {
             if (v.maximum(max).equals(v)) {
                 max = v;
@@ -198,10 +195,7 @@ public class SetlList extends CollectionValue {
     }
 
     public Value minimumMember() throws SetlException {
-        if (size() < 1) {
-            return Infinity.POSITIVE;
-        }
-        Value min = getList().get(0);
+        Value min = Infinity.POSITIVE;
         for (Value v: getList()) {
             if (v.minimum(min).equals(v)) {
                 min = v;
@@ -297,19 +291,20 @@ public class SetlList extends CollectionValue {
 
     /* Comparisons */
 
-    // Compare two Values.  Returns -1 if this value is less than the value given
-    // as argument, +1 if its greater and 0 if both values contain the same
-    // elements.
-    // Useful output is only possible if both values are of the same type.
-    // "incomparable" values, e.g. of different types are ranked as follows:
-    // Om < SetlBoolean < -Infinity < SetlInt & Real < +Infinity < SetlString < SetlSet < SetlList < ProcedureDefinition
-    // This ranking is necessary to allow sets and lists of different types.
+    /* Compare two Values.  Returns -1 if this value is less than the value given
+     * as argument, +1 if its greater and 0 if both values contain the same
+     * elements.
+     * Useful output is only possible if both values are of the same type.
+     * "incomparable" values, e.g. of different types are ranked as follows:
+     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < ProcedureDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
     public int compareTo(Value v){
         if (v instanceof SetlList) {
             SetlList l = (SetlList) v;
             return getList().compareTo(l.getList());
-        } else if (v instanceof ProcedureDefinition) {
-            // only ProcedureDefinition is bigger
+        } else if (v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
+            // only ProcedureDefinition and +Infinity are bigger
             return -1;
         } else {
             // everything else is smaller

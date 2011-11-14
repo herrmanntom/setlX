@@ -316,15 +316,15 @@ public class SetlSet extends CollectionValue {
      * elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < ProcedureDefinition < +Infinity
+     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(Value v){
         if (v instanceof SetlSet) {
             SetlSet s = (SetlSet) v;
             return getSet().compareTo(s.getSet());
-        } else if (v instanceof SetlList || v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
-            // only SetlList, ProcedureDefinition and +Infinity are bigger
+        } else if (v instanceof SetlList || v instanceof Term || v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
+            // only SetlList, Term, ProcedureDefinition and +Infinity are bigger
             return -1;
         } else {
             return 1;

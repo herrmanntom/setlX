@@ -69,10 +69,14 @@ public abstract class Value implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isTerm() {
+        return SetlBoolean.FALSE;
+    }
+
     /* arithmetic operations */
 
     public NumberValue absoluteValue() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Operand of 'abs(" + this + ")' is not a number or character.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a number or character.");
     }
 
     public Value add(Value summand) throws SetlException {
@@ -87,7 +91,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlInt factorial() throws SetlException {
-        throw new UndefinedOperationException("'fac(" + this + ")', e.g. '" + this + "!' is undefined.");
+        throw new UndefinedOperationException("'" + this + "!' is undefined.");
     }
 
     public void fillCollectionWithinRange(Value step, Value stop, CollectionValue collection) throws SetlException {
@@ -119,7 +123,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public NumberValue negate() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Operand of '- " + this + "' is not a number.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a number.");
     }
 
     public NumberValue power(Value exponent) throws SetlException {
@@ -141,7 +145,11 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public Value arbitraryMember() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Operand of 'arb(" + this + ")' is not a compound value.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a compound value.");
+    }
+
+    public SetlList arguments() throws IncompatibleTypeException {
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a term.");
     }
 
     public final SetlInt cardinality() throws IncompatibleTypeException {
@@ -157,11 +165,15 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlSet domain() throws SetlException {
-        throw new IncompatibleTypeException("Operand of 'domain(" + this + ")' is not a set.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a set.");
     }
 
     public Value firstMember() throws IncompatibleTypeException {
         throw new IncompatibleTypeException("Can not get first member from operand; '" + this + "' is not a compound value.");
+    }
+
+    public SetlString functionalCharacter() throws IncompatibleTypeException {
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a term.");
     }
 
     public Value getMember(Value index) throws SetlException {
@@ -193,15 +205,15 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlSet powerSet() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Operand of 'pow(" + this + ")' is not a set.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a set.");
     }
 
     public Value randomMember() throws SetlException {
-        throw new IncompatibleTypeException("Operand of 'rnd(" + this + ")' is not a compound value.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a compound value.");
     }
 
     public SetlSet range() throws SetlException {
-        throw new IncompatibleTypeException("Operand of 'range(" + this + ")' is not a set.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a set.");
     }
 
     public void removeMember(Value element) throws IncompatibleTypeException {
@@ -238,7 +250,7 @@ public abstract class Value implements Comparable<Value> {
     /* String and Char operations */
 
     public SetlString charConvert() throws SetlException {
-        throw new IncompatibleTypeException("Operand of 'char(" + this + ")' is not a number between 0 and 255.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a number between 0 and 255.");
     }
 
     public SetlString str() {
@@ -258,7 +270,7 @@ public abstract class Value implements Comparable<Value> {
      * elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < ProcedureDefinition < +Infinity
+     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public abstract int compareTo(Value v);

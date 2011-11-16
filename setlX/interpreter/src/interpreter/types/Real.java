@@ -55,6 +55,16 @@ public class Real extends NumberValue {
         return SetlBoolean.TRUE;
     }
 
+    /* type conversions */
+
+    public SetlInt toInteger() {
+        return new SetlInt(mReal.toBigInteger());
+    }
+
+    public Real toReal() {
+        return this;
+    }
+
     /* arithmetic operations */
 
     public Real absoluteValue() {
@@ -63,7 +73,7 @@ public class Real extends NumberValue {
 
     public Value add(Value summand) throws IncompatibleTypeException {
         if (summand instanceof NumberValue) {
-            if (summand.absoluteValue() == Infinity.POSITIVE) {
+            if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
                 return (Infinity) summand;
             }
             BigDecimal right = null;
@@ -109,7 +119,7 @@ public class Real extends NumberValue {
 
     public NumberValue multiply(Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof NumberValue) {
-            if (multiplier.absoluteValue() == Infinity.POSITIVE) {
+            if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
                 return (Infinity) multiplier;
             }
             BigDecimal right = null;
@@ -134,7 +144,7 @@ public class Real extends NumberValue {
 
     public NumberValue subtract(Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof NumberValue) {
-            if (subtrahend.absoluteValue() == Infinity.POSITIVE) {
+            if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
                 return (Infinity) subtrahend.negate();
             }
             BigDecimal right = null;

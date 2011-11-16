@@ -8,6 +8,7 @@ statement
     : 'var' variable ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+    | match
     | 'for' '(' iterator ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'return' anyExpr? ';'
@@ -35,7 +36,7 @@ idList
     ;
 
 explicitIdList
-    : (assignable | '-') (',' (assignable | '-'))*
+    : (assignable | '_') (',' (assignable | '_'))*
     ;
 
 assignable
@@ -154,7 +155,11 @@ simpleFactor
     ;
 
 call
-    : variable ('(' callParameters ')' | '{' anyExpr '}')*
+    : varOrTerm ('(' callParameters ')' | '{' anyExpr '}')*
+    ;
+
+varOrTerm
+    : ID
     ;
 
 callParameters
@@ -221,9 +226,58 @@ real
     : NUMBER? REAL
     ;
 
+match
+    : 'match' '(' expr ')' '{' ('case' (varOrIgnore | varOrIgnore '(' (varOrIgnore (',' varOrIgnore)*)+ ')' | preFixOperator varOrIgnore | varOrIgnore inFixOperator varOrIgnore | varOrIgnore postFixOperator) ':' block)* ('default' ':' block)? '}'
+    ;
+
+varOrIgnore
+    : variable
+    | '_'
+    ;
+
+inFixOperator
+    : ':='
+    | '+='
+    | '-='
+    | '*='
+    | '/='
+    | '%='
+    | '<==>'
+    | '<!=>'
+    | '=>'
+    | '||'
+    | '&&'
+    | '=='
+    | '!='
+    | '<'
+    | '<='
+    | '>'
+    | '>='
+    | 'in'
+    | 'notin'
+    | '|->'
+    | '+'
+    | '-'
+    | '*'
+    | '/'
+    | '%'
+    | '**'
+    ;
+
+preFixOperator
+    : '!'
+    | '+/'
+    | '*/'
+    | '-'
+    ;
+
+postFixOperator
+    : '!'
+    ;
 
 
-ID : ('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+
+ID : 'a'..'z' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 NUMBER : '0' | '1'..'9' ('0'..'9')*;
 REAL : '.' ('0'..'9')+ (('e' | 'E') '-'? ('0'..'9')+)?;
 STRING : '"' ('\\"' | ~('"'))* '"';

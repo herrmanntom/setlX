@@ -1,31 +1,31 @@
 
-verboten := procedure(S) {
-	linksVerboten := ("Papa" in S && ("Cindy" in S || "Doris" in S) && ( ! (("Mama" in S)) )) || ("Mama" in S && ("Anton" in S || "Bruno" in S) && ( ! (("Papa" in S)) )) || ("Osama" in S && (( ! ("George" in S) )) && #S >= 2);
-	rechtsVerboten := ("Papa" notin S && ("Cindy" notin S || "Doris" notin S) && ( ! (("Mama" notin S)) )) || ("Mama" notin S && ("Anton" notin S || "Bruno" notin S) && ( ! (("Papa" notin S)) )) || ("Osama" notin S && (( ! ("George" notin S) )) && (9 - #S) >= 2);
+verboten := procedure(s) {
+	linksVerboten := ("Papa" in s && ("Cindy" in s || "Doris" in s) && ( ! (("Mama" in s)) )) || ("Mama" in s && ("Anton" in s || "Bruno" in s) && ( ! (("Papa" in s)) )) || ("Osama" in s && (( ! ("George" in s) )) && #s >= 2);
+	rechtsVerboten := ("Papa" notin s && ("Cindy" notin s || "Doris" notin s) && ( ! (("Mama" notin s)) )) || ("Mama" notin s && ("Anton" notin s || "Bruno" notin s) && ( ! (("Papa" notin s)) )) || ("Osama" notin s && (( ! ("George" notin s) )) && (9 - #s) >= 2);
 	return linksVerboten || rechtsVerboten;
 };
 
-bootOK := procedure(B) {
-	return ("Boot" in B && #B in {2, 3} && ("Papa" in B || "Mama" in B || "George" in B));
+bootOK := procedure(b) {
+	return ("Boot" in b && #b in {2, 3} && ("Papa" in b || "Mama" in b || "George" in b));
 };
 
-reachable := procedure(x, y, R) {
-	P := {[x]};
+reachable := procedure(x, y, r) {
+	p := {[x]};
 	while (true) {
-		Old_P := P;
-		P := P + path_product(P, R);
-		Found := {p in P | p(#p) == y};
-		if (Found != {}) {
-			return arb(Found);
+		old_P := p;
+		p := p + path_product(p, r);
+		found := {p in p | p(#p) == y};
+		if (found != {}) {
+			return arb(found);
 		}
-		if (P == Old_P) {
+		if (p == old_P) {
 			return;
 		}
 	}
 };
 
-path_product := procedure(P, Q) {
-	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ( ! (cyclic(add(p, q))) )};
+path_product := procedure(p, q) {
+	return {add(p, q): p in p, q in q | p(#p) == q(1) && ( ! (cyclic(add(p, q))) )};
 };
 
 cyclic := procedure(p) {
@@ -36,28 +36,28 @@ add := procedure(p, q) {
 	return p + q(2..);
 };
 
-All := {"George", "Osama", "Mama", "Papa", "Anton", "Bruno", "Cindy", "Doris", "Boot"};
-P := pow(All);
-R1 := {[S, S - B]: S in P, B in pow(S) | ( ! (verboten(S)) ) && ( ! (verboten(S - B)) ) && bootOK(B)};
-R2 := {[S, S + B]: S in P, B in pow((All - S)) | ( ! (verboten(S)) ) && ( ! (verboten(S + B)) ) && bootOK(B)};
-R := R1 + R2;
-start := All;
+all := {"George", "Osama", "Mama", "Papa", "Anton", "Bruno", "Cindy", "Doris", "Boot"};
+p := pow(all);
+r1 := {[s, s - b]: s in p, b in pow(s) | ( ! (verboten(s)) ) && ( ! (verboten(s - b)) ) && bootOK(b)};
+r2 := {[s, s + b]: s in p, b in pow((all - s)) | ( ! (verboten(s)) ) && ( ! (verboten(s + b)) ) && bootOK(b)};
+r := r1 + r2;
+start := all;
 goal := {};
-path := reachable(start, goal, R);
+path := reachable(start, goal, r);
 for (i in [1 .. #path]) {
-	Left := path(i);
-	Right := All - Left;
-	print(Left - {"Boot"}, 20 * " ", Right - {"Boot"});
+	left := path(i);
+	right := all - left;
+	print(left - {"Boot"}, 20 * " ", right - {"Boot"});
 	print();
 	if (i == #path) {
 		break;
 	}
-	if ("Boot" in Left) {
-		M := Left - path(i + 1) - {"Boot"};
-		print("    >>>> ", M, " >>>> ");
+	if ("Boot" in left) {
+		m := left - path(i + 1) - {"Boot"};
+		print("    >>>> ", m, " >>>> ");
 	} else {
-		M := Right - (All - path(i + 1)) - {"Boot"};
-		print("    <<<< ", M, " <<<< ");
+		m := right - (all - path(i + 1)) - {"Boot"};
+		print("    <<<< ", m, " <<<< ");
 	}
 	print();
 }

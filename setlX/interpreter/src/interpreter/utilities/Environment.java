@@ -4,7 +4,6 @@ import interpreter.functions.MathFunction;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.types.Om;
 import interpreter.types.ProcedureDefinition;
-import interpreter.types.Real;
 import interpreter.types.Value;
 
 import java.lang.reflect.Method;
@@ -17,13 +16,7 @@ public class Environment {
     /*============================ static ============================*/
 
     // this map stores all global variables
-    private static Map<String, Value> sGlobals       = new HashMap<String, Value>();
-
-    // add some often used constants
-    static {
-        sGlobals.put("e",  new Real(Math.E));
-        sGlobals.put("pi", new Real(Math.PI));
-    }
+    private static Map<String, Value>   sGlobals        = new HashMap<String, Value>();
 
     /* This variable stores the initial Environment:
        Predefined functions are dynamically loaded into this Environment,
@@ -31,18 +24,18 @@ public class Environment {
        Environment clone.
        Predefined functions should not be put into sGlobals, to allow local
        overrides inside functions.                                            */
-    private static final Environment  sInitial       = new Environment();
+    private static final Environment    sInitial        = new Environment();
 
     // this variable stores the variable assignment that is currently active
-    private static Environment        sEnvironment   = sInitial;
+    private static Environment          sEnvironment    = sInitial;
 
     // random number generator
-    private static Random             randoom        = null;
+    private static Random               randoom         = null;
 
-    private static boolean            sIsInteractive = false;
-    private static boolean            sPrintVerbose  = false;
+    private static boolean              sIsInteractive  = false;
+    private static boolean              sPrintVerbose   = false;
 
-    private static String             sTab           = "\t";
+    private static String               sTab            = "\t";
 
     public static void setEnv(Environment newEnv) {
         sEnvironment = newEnv;
@@ -197,7 +190,7 @@ public class Environment {
 
     public Environment clone() {
         Environment newEnv      = new Environment();
-        newEnv.mOriginalEnv = this;
+        newEnv.mOriginalEnv     = this;
         return newEnv;
     }
 

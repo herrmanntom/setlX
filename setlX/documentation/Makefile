@@ -2,12 +2,12 @@ pdf: developmentGuide.pdf manual.pdf
 
 developmentGuide.pdf: developmentGuide.tex version.tex
 	latex developmentGuide.tex
-	latex developmentGuide.tex 1>/dev/null 2>&1
+	if [ -f developmentGuide.dvi ]; then latex developmentGuide.tex; fi
 	dvipdf developmentGuide.dvi
 
 manual.pdf: manual.tex version.tex
 	latex manual.tex
-	latex manual.tex 1>/dev/null 2>&1
+	if [ -f manual.dvi ]; then latex manual.tex; fi
 	dvipdf manual.dvi
 
 clean:

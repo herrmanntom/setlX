@@ -1,19 +1,19 @@
 
-closure := procedure(A) {
-	Temp := A;
+closure := procedure(a) {
+	temp := a;
 	while (true) {
-		old_Temp := Temp;
-		Temp := A + compose(A, Temp);
-		if (Temp == old_Temp) {
-			return Temp;
+		old_Temp := temp;
+		temp := a + compose(a, temp);
+		if (temp == old_Temp) {
+			return temp;
 		}
 	}
 };
 
-compose := procedure(A1, A2) {
-	return {[[x, z], d1 + d2]: [[x, y1], d1] in A1, [[y2, z], d2] in A2 | y1 == y2};
+compose := procedure(a1, a2) {
+	return {[[x, z], d1 + d2]: [[x, y1], d1] in a1, [[y2, z], d2] in a2 | y1 == y2};
 };
 
-A3 := {[["a", "b"], 1], [["b", "c"], 2], [["c", "d"], 10]};
-print(closure(A3));
+a3 := {[["a", "b"], 1], [["b", "c"], 2], [["c", "d"], 10]};
+print(closure(a3));
 

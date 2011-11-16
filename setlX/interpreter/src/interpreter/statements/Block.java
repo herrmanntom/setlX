@@ -9,11 +9,11 @@ import java.util.List;
 public class Block extends Statement {
     private List<Statement>  mStatements;
 
-    public Block(){
+    public Block() {
         this(new LinkedList<Statement>());
     }
 
-    public Block(List<Statement> statements){
+    public Block(List<Statement> statements) {
         mStatements = statements;
     }
 

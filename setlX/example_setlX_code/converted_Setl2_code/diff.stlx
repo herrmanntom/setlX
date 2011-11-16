@@ -1,72 +1,72 @@
 
-testDiff := procedure(E, V) {
-	mTokenList := scanExpr(E);
+testDiff := procedure(e, v) {
+	mTokenList := scanExpr(e);
 	mIndex := 1;
-	Expr := parseExpr();
-	print("Trying to differentiate ", prettyPrint(Expr));
-	DiffExpr := diff(Expr, V);
-	print("diff(", E, ", ", V, ") = ", prettyPrint(DiffExpr));
-	Simple := simplify(DiffExpr);
-	print("simplified: = ", prettyPrint(Simple));
+	expr := parseExpr();
+	print("Trying to differentiate ", prettyPrint(expr));
+	diffExpr := diff(expr, v);
+	print("diff(", e, ", ", v, ") = ", prettyPrint(diffExpr));
+	simple := simplify(diffExpr);
+	print("simplified: = ", prettyPrint(simple));
 	print("\n");
 };
 
-diff := procedure(Expr, X) {
+diff := procedure(expr, x) {
 	switch {
-		case isInteger((Expr)) :
+		case isInteger((expr)) :
 			return 0;
-		case Expr == X :
+		case expr == x :
 			return 1;
-		case isString((Expr)) :
+		case isString((expr)) :
 			return 0;
-		case Expr(2) == "+" :
-			return [diff(Expr(1), X), "+", diff(Expr(3), X)];
-		case Expr(2) == "-" :
-			return [diff(Expr(1), X), "-", diff(Expr(3), X)];
-		case Expr(2) == "*" :
-			return [[diff(Expr(1), X), "*", Expr(3)], "+", [Expr(1), "*", diff(Expr(3), X)]];
-		case Expr(2) == "/" :
-			return [[[diff(Expr(1), X), "*", Expr(3)], "-", [Expr(1), "*", diff(Expr(3), X)]], "/", [Expr(3), "*", Expr(3)]];
-		case Expr(2) == "**" :
-			return diff(["exp", [Expr(3), "*", ["ln", Expr(1)]]], X);
-		case #Expr == 2 && Expr(1) == "exp" :
-			return [Expr, "*", diff(Expr(2), X)];
-		case #Expr == 2 && Expr(1) == "ln" :
-			return [diff(Expr(2), X), "/", Expr(2)];
-		case #Expr == 2 && Expr(1) == "sin" :
-			return [["cos", Expr(2)], "*", diff(Expr(2), X)];
-		case #Expr == 2 && Expr(1) == "cos" :
-			return [["-", ["sin", Expr(2)]], "*", diff(Expr(2), X)];
-		case #Expr == 2 && Expr(1) == "tan" :
-			return [diff(Expr(2), X), "/", [["cos", Expr(2)], "**", 2]];
-		case #Expr == 2 && Expr(1) == "arctan" :
-			return [diff(Expr(2), X), "/", [1, "+", [Expr(2), "**", 2]]];
-		case #Expr == 2 && Expr(1) == "sqrt" :
-			return [diff(Expr(2), X), "/", [2, "*", Expr]];
+		case expr(2) == "+" :
+			return [diff(expr(1), x), "+", diff(expr(3), x)];
+		case expr(2) == "-" :
+			return [diff(expr(1), x), "-", diff(expr(3), x)];
+		case expr(2) == "*" :
+			return [[diff(expr(1), x), "*", expr(3)], "+", [expr(1), "*", diff(expr(3), x)]];
+		case expr(2) == "/" :
+			return [[[diff(expr(1), x), "*", expr(3)], "-", [expr(1), "*", diff(expr(3), x)]], "/", [expr(3), "*", expr(3)]];
+		case expr(2) == "**" :
+			return diff(["exp", [expr(3), "*", ["ln", expr(1)]]], x);
+		case #expr == 2 && expr(1) == "exp" :
+			return [expr, "*", diff(expr(2), x)];
+		case #expr == 2 && expr(1) == "ln" :
+			return [diff(expr(2), x), "/", expr(2)];
+		case #expr == 2 && expr(1) == "sin" :
+			return [["cos", expr(2)], "*", diff(expr(2), x)];
+		case #expr == 2 && expr(1) == "cos" :
+			return [["-", ["sin", expr(2)]], "*", diff(expr(2), x)];
+		case #expr == 2 && expr(1) == "tan" :
+			return [diff(expr(2), x), "/", [["cos", expr(2)], "**", 2]];
+		case #expr == 2 && expr(1) == "arctan" :
+			return [diff(expr(2), x), "/", [1, "+", [expr(2), "**", 2]]];
+		case #expr == 2 && expr(1) == "sqrt" :
+			return [diff(expr(2), x), "/", [2, "*", expr]];
 		case true :
 			return "unknown";
 	}
 };
 
-simplify := procedure(Expr) {
-	if ((isInteger((Expr)) || isString((Expr)))) {
-		return Expr;
+simplify := procedure(expr) {
+	if ((isInteger((expr)) || isString((expr)))) {
+		return expr;
 	}
-	if ((#Expr == 3)) {
-		simpleExpr1 := simplify(Expr(1));
-		simpleExpr3 := simplify(Expr(3));
+	if ((#expr == 3)) {
+		simpleExpr1 := simplify(expr(1));
+		simpleExpr3 := simplify(expr(3));
 		if ((isInteger((simpleExpr1)) && isInteger((simpleExpr3)))) {
 			switch {
-				case Expr(2) == "+" :
+				case expr(2) == "+" :
 					return simpleExpr1 + simpleExpr3;
-				case Expr(2) == "-" :
+				case expr(2) == "-" :
 					return simpleExpr1 - simpleExpr3;
-				case Expr(2) == "*" :
+				case expr(2) == "*" :
 					return simpleExpr1 * simpleExpr3;
-				case Expr(2) == "**" :
+				case expr(2) == "**" :
 					return simpleExpr1 ** simpleExpr3;
 			}
-		} else if ((Expr(2) == "+")) {
+		} else if ((expr(2) == "+")) {
 			if ((simpleExpr1 == 0)) {
 				return simpleExpr3;
 			} else if ((simpleExpr3 == 0)) {
@@ -74,7 +74,7 @@ simplify := procedure(Expr) {
 			} else if ((simpleExpr1 == simpleExpr3)) {
 				return [2, "*", simpleExpr1];
 			}
-		} else if ((Expr(2) == "-")) {
+		} else if ((expr(2) == "-")) {
 			if ((simpleExpr1 == simpleExpr3)) {
 				return 0;
 			} else if ((simpleExpr1 == 0)) {
@@ -82,7 +82,7 @@ simplify := procedure(Expr) {
 			} else if ((simpleExpr3 == 0)) {
 				return simpleExpr1;
 			}
-		} else if ((Expr(2) == "*")) {
+		} else if ((expr(2) == "*")) {
 			if ((simpleExpr1 == 0 || simpleExpr3 == 0)) {
 				return 0;
 			} else if ((simpleExpr1 == 1)) {
@@ -90,7 +90,7 @@ simplify := procedure(Expr) {
 			} else if ((simpleExpr3 == 1)) {
 				return simpleExpr1;
 			}
-		} else if ((Expr(2) == "/")) {
+		} else if ((expr(2) == "/")) {
 			if ((simpleExpr1 == 0)) {
 				return 0;
 			} else if ((simpleExpr3 == 1)) {
@@ -98,96 +98,96 @@ simplify := procedure(Expr) {
 			} else if ((simpleExpr1 == simpleExpr3)) {
 				return 1;
 			}
-		} else if ((Expr(2) == "**")) {
+		} else if ((expr(2) == "**")) {
 			if ((simpleExpr3 == 0)) {
 				return 1;
 			} else if ((simpleExpr3 == 1)) {
 				return simpleExpr;
 			}
 		}
-		simple := [simpleExpr1, Expr(2), simpleExpr3];
-		if ((simple == Expr)) {
-			return Expr;
+		simple := [simpleExpr1, expr(2), simpleExpr3];
+		if ((simple == expr)) {
+			return expr;
 		} else {
 			return simplify(simple);
 		}
-	} else if ((#Expr == 2)) {
-		simpleExpr2 := simplify(Expr(2));
-		if ((Expr(1) == "exp")) {
+	} else if ((#expr == 2)) {
+		simpleExpr2 := simplify(expr(2));
+		if ((expr(1) == "exp")) {
 			if ((#simpleExpr2 == 2 && simpleExpr2(1) == "ln")) {
 				return simpleExpr2(2);
 			} else if ((#simpleExpr2 == 3 && simpleExpr2(2) == "*" && #simpleExpr2(3) == 2 && simpleExpr2(3)(1) == "ln")) {
 				return [simplify(simpleExpr2(3)(2)), "**", simplify(simpleExpr2(1))];
 			}
 		}
-		return [Expr(1), simpleExpr2];
+		return [expr(1), simpleExpr2];
 	}
 	return "unknown";
 };
 
-prettyPrint := procedure(Expr) {
+prettyPrint := procedure(expr) {
 	switch {
-		case isVariable(Expr) :
-			return Expr;
-		case isInteger((Expr)) :
-			return str((Expr));
-		case isReal((Expr)) :
-			return str((Expr));
-		case Expr(2) == "+" :
-			return prettyPrint(Expr(1)) + " + " + prettyPrint(Expr(3));
-		case Expr(2) == "-" :
-			return prettyPrint(Expr(1)) + " - " + prettyPrintParen(Expr(3));
-		case Expr(2) == "*" :
-			return prettyPrintParen(Expr(1)) + " * " + prettyPrintParen(Expr(3));
-		case Expr(2) == "/" :
-			return prettyPrintParen(Expr(1)) + " / " + prettyPrintParen(Expr(3));
-		case Expr(2) == "**" :
-			return prettyPrintParen(Expr(1)) + " ** " + prettyPrintParen(Expr(3));
-		case #Expr == 2 && Expr(1) == "-" :
-			return "- " + prettyPrintParen(Expr(2));
-		case #Expr == 2 && Expr(1) == "+" :
-			return prettyPrint(Expr(2));
-		case #Expr == 2 && Expr(1) == "sin" :
-			return "sin(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "cos" :
-			return "cos(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "tan" :
-			return "tan(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "sqrt" :
-			return "sqrt(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "arcsin" :
-			return "arcsin(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "arccos" :
-			return "arccos(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "arctan" :
-			return "arctan(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "exp" :
-			return "exp(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "ln" :
-			return "ln(" + prettyPrint(Expr(2)) + ")";
+		case isVariable(expr) :
+			return expr;
+		case isInteger((expr)) :
+			return str((expr));
+		case isReal((expr)) :
+			return str((expr));
+		case expr(2) == "+" :
+			return prettyPrint(expr(1)) + " + " + prettyPrint(expr(3));
+		case expr(2) == "-" :
+			return prettyPrint(expr(1)) + " - " + prettyPrintParen(expr(3));
+		case expr(2) == "*" :
+			return prettyPrintParen(expr(1)) + " * " + prettyPrintParen(expr(3));
+		case expr(2) == "/" :
+			return prettyPrintParen(expr(1)) + " / " + prettyPrintParen(expr(3));
+		case expr(2) == "**" :
+			return prettyPrintParen(expr(1)) + " ** " + prettyPrintParen(expr(3));
+		case #expr == 2 && expr(1) == "-" :
+			return "- " + prettyPrintParen(expr(2));
+		case #expr == 2 && expr(1) == "+" :
+			return prettyPrint(expr(2));
+		case #expr == 2 && expr(1) == "sin" :
+			return "sin(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "cos" :
+			return "cos(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "tan" :
+			return "tan(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "sqrt" :
+			return "sqrt(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "arcsin" :
+			return "arcsin(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "arccos" :
+			return "arccos(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "arctan" :
+			return "arctan(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "exp" :
+			return "exp(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "ln" :
+			return "ln(" + prettyPrint(expr(2)) + ")";
 		default :
-			abort("Error in prettyPrint( " + str((Expr)) + " )");
+			abort("Error in prettyPrint( " + str((expr)) + " )");
 	}
 };
 
-prettyPrintParen := procedure(Expr) {
-	FunctionNames := {"sin", "cos", "tan", "sqrt", "arcsin", "arccos", "arctan", "exp", "ln"};
+prettyPrintParen := procedure(expr) {
+	functionNames := {"sin", "cos", "tan", "sqrt", "arcsin", "arccos", "arctan", "exp", "ln"};
 	switch {
-		case isVariable(Expr) :
-			return Expr;
-		case isInteger((Expr)) :
-			return str((Expr));
-		case isReal((Expr)) :
-			return str((Expr));
-		case #Expr == 2 && Expr(1) in FunctionNames :
-			return prettyPrint(Expr);
+		case isVariable(expr) :
+			return expr;
+		case isInteger((expr)) :
+			return str((expr));
+		case isReal((expr)) :
+			return str((expr));
+		case #expr == 2 && expr(1) in functionNames :
+			return prettyPrint(expr);
 		default :
-			return "(" + prettyPrint(Expr) + ")";
+			return "(" + prettyPrint(expr) + ")";
 	}
 };
 
-isVariable := procedure(Expr) {
-	return isString((Expr));
+isVariable := procedure(expr) {
+	return isString((expr));
 };
 
 parseExpr := procedure() {

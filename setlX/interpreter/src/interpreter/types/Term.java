@@ -44,9 +44,9 @@ public class Term extends CollectionValue {
     public void addMember(Value element) {
         mBody.addMember(element);
     }
-    
+
     public SetlList arguments() {
-    	return mBody.clone();
+        return mBody.clone();
     }
 
     public SetlBoolean containsMember(Value element) {
@@ -88,6 +88,9 @@ public class Term extends CollectionValue {
     /* String and Char operations */
 
     public String toString() {
+        if (mBody.size() <= 0) {
+            return mName;
+        }
         // lists use [] in toString, which have to be removed...
         String s = mBody.toString();
         return mName + "(" + s.substring(1, s.length() - 1) + ")";

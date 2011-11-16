@@ -156,43 +156,43 @@ prettyPrint := procedure(f) {
 	}
 };
 
-DavisPutnam := procedure(Clauses, Literals) {
-	Clauses := saturate(Clauses);
-	if ({} in Clauses) {
+davisPutnam := procedure(clauses, literals) {
+	clauses := saturate(clauses);
+	if ({} in clauses) {
 		return false;
 	}
-	if ({k in Clauses | #k == 1} == Clauses) {
-		return Clauses;
+	if ({k in clauses | #k == 1} == clauses) {
+		return clauses;
 	}
-	literal := selectLiteral(Clauses, Literals);
-	Result := DavisPutnam(Clauses + {{literal}}, Literals + {literal});
-	if ((Result <!=> false)) {
-		return Result;
+	literal := selectLiteral(clauses, literals);
+	result := davisPutnam(clauses + {{literal}}, literals + {literal});
+	if ((result <!=> false)) {
+		return result;
 	}
 	notLiteral := negateLiteral(literal);
-	return DavisPutnam(Clauses + {{notLiteral}}, Literals + {notliteral});
+	return davisPutnam(clauses + {{notLiteral}}, literals + {notliteral});
 };
 
-saturate := procedure(S) {
-	Units := {k in S | #k == 1};
-	Used := {};
-	while (Units != {}) {
-		unit := arb(Units);
-		Used := Used + {unit};
+saturate := procedure(s) {
+	units := {k in s | #k == 1};
+	used := {};
+	while (units != {}) {
+		unit := arb(units);
+		used := used + {unit};
 		literal := arb(unit);
-		S := reduce(S, literal);
-		Units := {k in S | #k == 1} - Used;
+		s := reduce(s, literal);
+		units := {k in s | #k == 1} - used;
 	}
-	return S;
+	return s;
 };
 
-reduce := procedure(S, l) {
+reduce := procedure(s, l) {
 	notL := negateLiteral(l);
-	return {k - {notL}: k in S | notL in k} + {k in S | ( ! (notL in k) ) && ( ! (l in k) )} + {{l}};
+	return {k - {notL}: k in s | notL in k} + {k in s | ( ! (notL in k) ) && ( ! (l in k) )} + {{l}};
 };
 
-selectLiteral := procedure(S, Forbidden) {
-	return arb({l: k in S, l in k | ( ! (l in Forbidden) )});
+selectLiteral := procedure(s, forbidden) {
+	return arb({l: k in s, l in k | ( ! (l in forbidden) )});
 };
 
 negateLiteral := procedure(l) {
@@ -360,17 +360,17 @@ f42 := parse("-p6 * -t6 -> (r6 <-> e)");
 f43 := parse("-p7 * -t7 -> (r7 <-> e)");
 f44 := parse("-p8 * -t8 -> (r8 <-> e)");
 f45 := parse("-p9 * -t9 -> (r9 <-> e)");
-Clauses := +/ {f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34, f35, f36, f37, f38, f39, f40, f41, f42, f43, f44, f45};
+clauses := +/ {f0, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, f13, f14, f15, f16, f17, f18, f19, f20, f21, f22, f23, f24, f25, f26, f27, f28, f29, f30, f31, f32, f33, f34, f35, f36, f37, f38, f39, f40, f41, f42, f43, f44, f45};
 for (x in {"p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9"}) {
-	if ((DavisPutnam(Clauses + {{x}}, {}) <!=> false)) {
+	if ((davisPutnam(clauses + {{x}}, {}) <!=> false)) {
 		print("The princess is in room ", x, ".");
 	}
 }
 for (x in {"t1", "t2", "t3", "t4", "t5", "t6", "t7", "t8", "t9"}) {
-	if ((DavisPutnam(Clauses + {{x}}, {}) <!=> false)) {
+	if ((davisPutnam(clauses + {{x}}, {}) <!=> false)) {
 		print("A tiger might be in room ", x, ".");
 	}
 }
-solution := DavisPutnam(Clauses, {});
+solution := davisPutnam(clauses, {});
 print(solution);
 

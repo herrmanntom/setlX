@@ -8,16 +8,16 @@ REM set javaParameters=%javaParameters% -Xss10m
 IF NOT EXIST setlX.jar (
     IF EXIST src (
         echo "Building the setlX interpreter ..."
-        mkdir bin
-        javac -d bin -sourcepath src src\comparableSet\*.java
-        javac -d bin -sourcepath src src\interpreter\exceptions\*.java
-        javac -d bin -sourcepath src src\interpreter\types\*.java
-        javac -d bin -sourcepath src src\interpreter\utilities\*.java
-        javac -d bin -sourcepath src src\interpreter\functions\*.java
-        javac -d bin -sourcepath src src\interpreter\boolExpressions\*.java
-        javac -d bin -sourcepath src src\interpreter\expressions\*.java
-        javac -d bin -sourcepath src src\interpreter\statements\*.java
         java  -cp antlr\antlr-*.jar org.antlr.Tool -fo src\grammar src\grammar\SetlXgrammar.g
+        mkdir bin
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\comparableSet\*.java
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\interpreter\exceptions\*.java
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\interpreter\types\*.java
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\interpreter\utilities\*.java
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\interpreter\functions\*.java
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\interpreter\boolExpressions\*.java
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\interpreter\expressions\*.java
+        javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\interpreter\statements\*.java
         javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\grammar\SetlXgrammar*.java
         javac -cp antlr\antlr-*.jar -d bin -sourcepath src src\SetlX.java
         cd bin

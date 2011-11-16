@@ -1,10 +1,10 @@
 
-Suits := {"c", "h", "d", "s"};
-Values := {"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"};
-Deck := {[v, s]: v in Values, s in Suits};
-Hole := {["3", "c"], ["3", "s"]};
-Rest := Deck - Hole;
-Flops := {{k1, k2, k3}: k1 in Rest, k2 in Rest, k3 in Rest | #{k1, k2, k3} == 3};
-Trips := {f in Flops | ["3", "d"] in f && ["3", "h"] in f};
-print(1.0 * #Trips / #Flops);
+suits := {"c", "h", "d", "s"};
+values := {"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"};
+deck := {[v, s]: v in values, s in suits};
+hole := {["3", "c"], ["3", "s"]};
+rest := deck - hole;
+flops := {{k1, k2, k3}: k1 in rest, k2 in rest, k3 in rest | #{k1, k2, k3} == 3};
+trips := {f in flops | ["3", "d"] in f && ["3", "h"] in f};
+print(1.0 * #trips / #flops);
 

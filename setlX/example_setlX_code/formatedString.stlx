@@ -1,0 +1,14 @@
+// this program tests the new "{expr}"-syntax of strings
+
+x := 3;
+y := 4;
+print("The evaluation of $ x $ * $ x $ + $ y $ * $ y $ is $ x * x + y * y $");
+
+// and some more demonstrative examples
+print("Lets print some dollars \$\$!");
+
+// even with errors
+print("The next will fail: $om ** om$!");          // error during eval()
+print("This will fail, too: $]$");                 // syntax error
+print("Guess what the last one will do: $99 / 5"); // missing end-$
+

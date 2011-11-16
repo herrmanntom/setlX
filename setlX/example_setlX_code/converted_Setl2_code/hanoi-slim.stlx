@@ -1,21 +1,21 @@
 
-relation := procedure(P, i, j) {
-	return {[A, move(A, i, j)]: A in P | movePossible(A(i), A(j))};
+relation := procedure(p, i, j) {
+	return {[a, move(a, i, j)]: a in p | movePossible(a(i), a(j))};
 };
 
-move := procedure(Triple, i, j) {
-	Result := Triple;
-	Result(i) := Triple(i) - {min(Triple(i))};
-	Result(j) := Triple(j) + {min(Triple(i))};
-	return Result;
+move := procedure(triple, i, j) {
+	result := triple;
+	result(i) := triple(i) - {min(triple(i))};
+	result(j) := triple(j) + {min(triple(i))};
+	return result;
 };
 
-partition := procedure(S1, S2, S3, All) {
-	return S1 + S2 + S3 == All && #S1 + #S2 + #S3 == #All;
+partition := procedure(s1, s2, s3, all) {
+	return s1 + s2 + s3 == all && #s1 + #s2 + #s3 == #all;
 };
 
-movePossible := procedure(Source, Target) {
-	return min(Source + {4}) < min(Target + {4});
+movePossible := procedure(source, target) {
+	return min(source + {4}) < min(target + {4});
 };
 
 printPath := procedure(path) {
@@ -33,44 +33,44 @@ lastChars := procedure(x, n) {
 	return m * " " + s;
 };
 
-oneStep := procedure(PS, R) {
-	return {p + [z]: p in PS, [y, z] in R | p(#p) == y};
+oneStep := procedure(pS, r) {
+	return {p + [z]: p in pS, [y, z] in r | p(#p) == y};
 };
 
-eliminateCycles := procedure(PS) {
-	return {p in PS | ( ! (cyclic(p)) )};
+eliminateCycles := procedure(pS) {
+	return {p in pS | ( ! (cyclic(p)) )};
 };
 
 cyclic := procedure(p) {
 	return #{x: x in p} < #p;
 };
 
-reachable := procedure(x, y, R) {
-	PS := {[x]};
+reachable := procedure(x, y, r) {
+	pS := {[x]};
 	while (true) {
-		old_PS := PS;
-		PS := eliminateCycles(PS + oneStep(PS, R));
-		P := {p in PS | p(#p) == y};
-		if (P != {}) {
-			return arb(P);
+		old_PS := pS;
+		pS := eliminateCycles(pS + oneStep(pS, r));
+		p := {p in pS | p(#p) == y};
+		if (p != {}) {
+			return arb(p);
 		}
-		if (old_PS == PS) {
+		if (old_PS == pS) {
 			return;
 		}
 	}
 };
 
-All := {1, 2, 3};
-P := {[S1, S2, S3]: S1 in pow(All), S2 in pow(All), S3 in pow(All) | partition(S1, S2, S3, All)};
-print("P = ", P);
-R := +/ {relation(P, i, j): i in {1, 2, 3}, j in {1, 2, 3} | i != j};
+all := {1, 2, 3};
+p := {[s1, s2, s3]: s1 in pow(all), s2 in pow(all), s3 in pow(all) | partition(s1, s2, s3, all)};
+print("P = ", p);
+r := +/ {relation(p, i, j): i in {1, 2, 3}, j in {1, 2, 3} | i != j};
 print("R:");
-for ([x, y] in R) {
+for ([x, y] in r) {
 	print(x, "  ->   ", y);
 }
 print();
 start := [{1, 2, 3}, {}, {}];
 goal := [{2}, {1}, {3}];
-path := reachable(start, goal, R);
+path := reachable(start, goal, r);
 printPath(path);
 

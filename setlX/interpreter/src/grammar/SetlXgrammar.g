@@ -48,6 +48,7 @@ statement returns [Statement stmnt]
         'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));          }
       )?
       '}' { stmnt = new Switch(branchList); }
+    | match                                                   { stmnt = $match.m;                                    }
     | 'for'   '(' iterator  ')' '{' block '}'                 { stmnt = new For($iterator.iter, $block.blk);         }
     | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
     | 'return' anyExpr? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
@@ -59,13 +60,11 @@ statement returns [Statement stmnt]
     ;
 
 variable returns [Variable v]
-    :
-      ID    { v = new Variable($ID.text);    }
+    : ID        { v = new Variable($ID.text);         }
     ;
 
 condition returns [Condition cnd]
-    :
-      boolExpr  { cnd = new Condition($boolExpr.bex); }
+    : boolExpr  { cnd = new Condition($boolExpr.bex); }
     ;
 
 assignment returns [Assignment assign]
@@ -74,13 +73,12 @@ assignment returns [Assignment assign]
         List<Expr>    items = new LinkedList<Expr>();
         int           type  = -1;
     }
-    :
-      (
+    : (
          variable
          (
            '(' a1 = anyExpr ')' { items.add($a1.ae);                           }
-         )*             { lhs = new AssignmentLhs($variable.v, items); }
-       | idList         { lhs = new AssignmentLhs($idList.ilc);        }
+         )*                     { lhs = new AssignmentLhs($variable.v, items); }
+       | idList                 { lhs = new AssignmentLhs($idList.ilc);        }
       )
       (
          ':='           { type = Assignment.DIRECT;     }
@@ -108,13 +106,13 @@ explicitIdList returns [ExplicitList eil]
     }
     : (
          a1 = assignable   { exprs.add($a1.a);                  }
-       | '-'               { exprs.add(IdListIgnoreDummy.ILID); }
+       | '_'               { exprs.add(IdListIgnoreDummy.ILID); }
       )
       (
         ','
         (
            a2 = assignable { exprs.add($a2.a);                  }
-         | '-'             { exprs.add(IdListIgnoreDummy.ILID); }
+         | '_'             { exprs.add(IdListIgnoreDummy.ILID); }
         )
       )*                   { eil = new ExplicitList(exprs);     }
     ;
@@ -307,11 +305,16 @@ simpleFactor returns [Expr sf]
 // this could be either 'id' or 'call' or 'element of collection'
 // decide at runtime
 call returns [Expr c]
-    : variable                  { c = $variable.v;                        }
+    : varOrTerm                 { c = $varOrTerm.vot;                     }
       (
          '(' callParameters ')' { c = new Call(c, $callParameters.args);  }
        | '{' anyExpr '}'        { c = new CallCollection(c, $anyExpr.ae); }
       )*
+    ;
+
+varOrTerm returns [Variable vot]
+    : ID    { vot = new Variable($ID.text);   }
+//    | TERM  { vot = new Variable($TERM.text); }
     ;
 
 callParameters returns [List<Expr> args]
@@ -407,10 +410,10 @@ boolValue returns [Value bv]
     ;
 
 atomicValue returns [Value av]
-    : NUMBER        { av = new SetlInt($NUMBER.text);    }
-    | real          { av = $real.r;                      }
-    | STRING        { av = new SetlString($STRING.text); }
-    | 'om'          { av = Om.OM;                        }
+    : NUMBER        { av = new SetlInt($NUMBER.text);                       }
+    | real          { av = $real.r;                                         }
+    | STRING        { av = SetlString.createFromParserString($STRING.text); }
+    | 'om'          { av = Om.OM;                                           }
     ;
 
 // this rule is required, otherwise "aaa"(2..) fails to get parsed
@@ -424,9 +427,76 @@ real returns [Real r]
       )? REAL       { r = new Real(n + $REAL.text); }
     ;
 
-ID              : ('a' .. 'z' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'|'_'|'0' .. '9')* ;
+match returns [Match m]
+    : 'match' '(' expr ')' '{'
+      (
+        'case'
+        (
+           varOrIgnore                                           // variables, values
+         | varOrIgnore '(' (varOrIgnore (',' varOrIgnore)*)+ ')' // terms
+         | preFixOperator varOrIgnore
+         | varOrIgnore inFixOperator varOrIgnore
+         | varOrIgnore postFixOperator
+        ) ':' block
+      )*
+      (
+        'default' ':' block
+      )?
+      '}'
+      { m = new Match(); }
+    ;
+
+varOrIgnore
+    : variable
+    | '_'
+    ;
+
+inFixOperator
+    : ':='
+    | '+='
+    | '-='
+    | '*='
+    | '/='
+    | '%='
+    | '<==>'
+    | '<!=>'
+    | '=>'
+    | '||'
+    | '&&'
+    | '=='
+    | '!='
+    | '<'
+    | '<='
+    | '>'
+    | '>='
+    | 'in'
+    | 'notin'
+    | '|->'
+    | '+'
+    | '-'
+    | '*'
+    | '/'
+    | '%'
+    | '**'
+    ;
+
+preFixOperator
+    : '!'
+    | '+/'
+    | '*/'
+    | '-'
+    ;
+
+postFixOperator
+    : '!'
+    ;
+
+
+
+//TERM            : ('\'' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
+ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
-REAL            : '.'('0' .. '9')+ (('e'|'E') '-'? ('0' .. '9')+)? ;
+REAL            : '.'('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
 STRING          : '"' ('\\"'|~('"'))* '"';
 
 LINE_COMMENT    : '//' ~('\n')*                             { skip(); } ;

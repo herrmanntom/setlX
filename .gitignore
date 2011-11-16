@@ -1,0 +1,12 @@
+accounting/
+setlX/interpreter/bin
+setlX/interpreter/src/grammar/SetlXgrammar.tokens
+setlX/interpreter/src/grammar/SetlXgrammarLexer.java
+setlX/interpreter/src/grammar/SetlXgrammarParser.java
+setlX/interpreter/setlX.jar
+setlX/developmentGuide.pdf
+setlX/manual.pdf
+task/
+test_interpreter/
+setlX_*.zip
+

@@ -73,6 +73,16 @@ public abstract class Value implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    /* type conversions */
+
+    public Value toInteger() {
+        return Om.OM;
+    }
+
+    public Value toReal() {
+        return Om.OM;
+    }
+
     /* arithmetic operations */
 
     public NumberValue absoluteValue() throws IncompatibleTypeException {

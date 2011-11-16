@@ -1,15 +1,14 @@
-import grammar.*;
-
+import interpreter.exceptions.EndOfFileException;
 import interpreter.exceptions.ExitException;
+import interpreter.exceptions.FileNotReadableException;
+import interpreter.exceptions.ParserException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.SyntaxErrorException;
 import interpreter.statements.Block;
 import interpreter.types.Real;
 import interpreter.utilities.Environment;
-import interpreter.utilities.InputReader;
+import interpreter.utilities.ParseSetlX;
 
-import org.antlr.runtime.*;
-
-import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class SetlX {
                 Real.setPrecision256();
             } else if (s.equals("--verbose")) {
                 verbose = true;
-            } else if (s.substring(0,2).equals("--")) { // invalid option
+            } else if (s.length() >= 2 && s.substring(0,2).equals("--")) { // invalid option
                 help    = true;
             } else {
                 files.add(s);
@@ -60,17 +59,17 @@ public class SetlX {
         }
         if (interactive && ! help) {
             printInteractiveBegin();
-            parseInteractive();
+            parseAndExecuteInteractive();
         } else if (! help) {
             for (String file: files) {
-                parseFile(file, verbose);
+                parseAndExecuteFile(file, verbose);
             }
         } else {
             printHelp();
         }
     }
 
-    private static void parseInteractive() throws Exception {
+    private static void parseAndExecuteInteractive() throws Exception {
         Environment.setInteractive(true);
         Block   blk      = null;
         boolean skipTest = false;
@@ -78,72 +77,61 @@ public class SetlX {
             System.out.println(); // newline to visually separate the next input
             System.out.print("=> ");
             try {
-                InputStream         stream = InputReader.getStream();
-                ANTLRInputStream    input  = new ANTLRInputStream(stream);
-                SetlXgrammarLexer   lexer  = new SetlXgrammarLexer(input);
-                CommonTokenStream   ts     = new CommonTokenStream(lexer);
-                SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
-                blk = parser.block();
-                if (parser.getNumberOfSyntaxErrors() > 0) {
-                    System.err.println("\nLast input not executed due to previous errors.");
-                    skipTest = true;
-                    blk      = null;
-                } else {
-                    skipTest = false;
-                }
-            } catch (EOFException eof) {
+                blk         = ParseSetlX.parseInteractive();
+                skipTest    = false;
+            } catch (EndOfFileException eofe) {
+                // user wants to quit
+                System.out.println("\n\nGood Bye! (EOF)");
                 break;
+            } catch (ParserException pe) {
+                System.err.println("\nLast input not executed due to previous errors.");
+                skipTest = true;
+                blk      = null;
             }
         } while (skipTest || (blk != null && execute(blk)));
         printExecutionFinished();
     }
 
-    private static void parseFile(String fileName, boolean verbose) throws Exception {
+    private static void parseAndExecuteFile(String fileName, boolean verbose) throws Exception {
         Environment.setInteractive(false);
+        if (verbose) {
+            System.out.println("-================================Parser=Errors================================-\n");
+        }
+
+        // parse the file contents (Antlr will print its parser errors into stderr ...)
+        Block   blk = null;
         try {
-            ANTLRStringStream   input  = new ANTLRFileStream(fileName);
-            SetlXgrammarLexer   lexer  = new SetlXgrammarLexer(input);
-            CommonTokenStream   ts     = new CommonTokenStream(lexer);
-            SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
-
+            blk = ParseSetlX.parseFile(fileName);
+        } catch (ParserException pe) {
+            if (pe instanceof FileNotReadableException) {
+                System.err.println(pe.getMessage());
+            }
             if (verbose) {
-                System.out.println("-================================Parser=Errors================================-\n");
+                System.out.println("\n-================================Parsing=Failed===============================-\n");
             }
-            // parse the file contents
-            Block               blk    = parser.block();
+            System.err.println("Execution terminated due to previous errors.");
+            return; // terminate execution
+        }
 
-            // now Antlr will print its parser errors into the output ...
+        // no parser errors when we get here
+        if (verbose) {
+            System.out.println("none\n");
+        }
 
-            if (parser.getNumberOfSyntaxErrors() > 0) {
-                if (verbose) {
-                    System.out.println("\n-================================Parsing=Failed===============================-\n");
-                } else {
-                    System.err.println("Execution terminated due to previous errors.");
-                }
+        // in verbose mode the parsed program is echoed
+        if (verbose) {
+            System.out.println("-================================Parsed=Program===============================-\n");
+            Environment.setPrintVerbose(true); // enables correct indentation etc
+            System.out.println(blk + "\n");
+            Environment.setPrintVerbose(false);
+            System.out.println("-===============================Execution=Result==============================-\n");
+        }
 
-                return; // terminate execution
+        // run the parsed code
+        execute(blk);
 
-            } else if (verbose) {
-                System.out.println("none\n"); // no parser errors
-            }
-
-            // in verbose mode the parsed program is echoed
-            if (verbose) {
-                System.out.println("-================================Parsed=Program===============================-\n");
-                Environment.setPrintVerbose(true); // enables correct indentation etc
-                System.out.println(blk + "\n");
-                Environment.setPrintVerbose(false);
-                System.out.println("-===============================Execution=Result==============================-\n");
-            }
-
-            // run the parsed code
-            execute(blk);
-
-            if (verbose) {
-                printExecutionFinished();
-            }
-        } catch (IOException e) {
-            System.err.println("File '" + fileName + "' could not be read.");
+        if (verbose) {
+            printExecutionFinished();
         }
     }
 

@@ -1,109 +1,109 @@
 
-allVars := procedure(E) {
-	Operators := {"+", "-", "*", "/"};
+allVars := procedure(e) {
+	operators := {"+", "-", "*", "/"};
 	switch {
-		case isString((E)) :
-			return {E};
-		case E(2) in Operators :
-			return allVars(E(1)) + allVars(E(3));
+		case isString((e)) :
+			return {e};
+		case e(2) in operators :
+			return allVars(e(1)) + allVars(e(3));
 		default :
-			abort("Error in allVars(" + E + ")");
+			abort("Error in allVars(" + e + ")");
 	}
 };
 
-countVars := procedure(E, x) {
+countVars := procedure(e, x) {
 	count := 0;
-	Operators := {"+", "-", "*", "/"};
+	operators := {"+", "-", "*", "/"};
 	switch {
-		case x == E :
+		case x == e :
 			count := count + 1;
-		case isString((E)) :
+		case isString((e)) :
 			count := count;
-		case E(2) in Operators :
-			return countVars(E(1), x) + countVars(E(3), x);
+		case e(2) in operators :
+			return countVars(e(1), x) + countVars(e(3), x);
 		default :
-			abort("Error in countVars(" + E + ")");
+			abort("Error in countVars(" + e + ")");
 	}
 	return count;
 };
 
-singleVars := procedure(E) {
-	return {x in allVars(E) | countVars(E, x) == 1};
+singleVars := procedure(e) {
+	return {x in allVars(e) | countVars(e, x) == 1};
 };
 
-testVars := procedure(E, x) {
-	mTokenList := scanExpr(E);
+testVars := procedure(e, x) {
+	mTokenList := scanExpr(e);
 	mIndex := 1;
-	Expr := parseExpr();
-	print("   allVars( ", prettyPrint(Expr), ") = ", allVars(Expr));
-	print(" countVars( ", prettyPrint(Expr), ", ", x, ") = ", countVars(Expr, x));
-	print("singleVars( ", prettyPrint(Expr), ") = ", singleVars(Expr));
+	expr := parseExpr();
+	print("   allVars( ", prettyPrint(expr), ") = ", allVars(expr));
+	print(" countVars( ", prettyPrint(expr), ", ", x, ") = ", countVars(expr, x));
+	print("singleVars( ", prettyPrint(expr), ") = ", singleVars(expr));
 	print("\n");
 };
 
-prettyPrint := procedure(Expr) {
+prettyPrint := procedure(expr) {
 	switch {
-		case isVariable(Expr) :
-			return Expr;
-		case isInteger((Expr)) :
-			return str((Expr));
-		case isReal((Expr)) :
-			return str((Expr));
-		case #Expr == 3 && Expr(2) == "+" :
-			return prettyPrint(Expr(1)) + " + " + prettyPrint(Expr(3));
-		case #Expr == 3 && Expr(2) == "-" :
-			return prettyPrint(Expr(1)) + " - " + prettyPrintParen(Expr(3));
-		case #Expr == 3 && Expr(2) == "*" :
-			return prettyPrintParen(Expr(1)) + " * " + prettyPrintParen(Expr(3));
-		case #Expr == 3 && Expr(2) == "/" :
-			return prettyPrintParen(Expr(1)) + " / " + prettyPrintParen(Expr(3));
-		case #Expr == 3 && Expr(2) == "**" :
-			return prettyPrintParen(Expr(1)) + " ** " + prettyPrintParen(Expr(3));
-		case #Expr == 2 && Expr(1) == "-" :
-			return "- " + prettyPrintParen(Expr(2));
-		case #Expr == 2 && Expr(1) == "+" :
-			return prettyPrint(Expr(2));
-		case #Expr == 2 && Expr(1) == "sin" :
-			return "sin(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "cos" :
-			return "cos(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "tan" :
-			return "tan(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "sqrt" :
-			return "sqrt(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "arcsin" :
-			return "arcsin(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "arccos" :
-			return "arccos(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "arctan" :
-			return "arctan(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "exp" :
-			return "exp(" + prettyPrint(Expr(2)) + ")";
-		case #Expr == 2 && Expr(1) == "ln" :
-			return "ln(" + prettyPrint(Expr(2)) + ")";
+		case isVariable(expr) :
+			return expr;
+		case isInteger((expr)) :
+			return str((expr));
+		case isReal((expr)) :
+			return str((expr));
+		case #expr == 3 && expr(2) == "+" :
+			return prettyPrint(expr(1)) + " + " + prettyPrint(expr(3));
+		case #expr == 3 && expr(2) == "-" :
+			return prettyPrint(expr(1)) + " - " + prettyPrintParen(expr(3));
+		case #expr == 3 && expr(2) == "*" :
+			return prettyPrintParen(expr(1)) + " * " + prettyPrintParen(expr(3));
+		case #expr == 3 && expr(2) == "/" :
+			return prettyPrintParen(expr(1)) + " / " + prettyPrintParen(expr(3));
+		case #expr == 3 && expr(2) == "**" :
+			return prettyPrintParen(expr(1)) + " ** " + prettyPrintParen(expr(3));
+		case #expr == 2 && expr(1) == "-" :
+			return "- " + prettyPrintParen(expr(2));
+		case #expr == 2 && expr(1) == "+" :
+			return prettyPrint(expr(2));
+		case #expr == 2 && expr(1) == "sin" :
+			return "sin(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "cos" :
+			return "cos(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "tan" :
+			return "tan(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "sqrt" :
+			return "sqrt(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "arcsin" :
+			return "arcsin(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "arccos" :
+			return "arccos(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "arctan" :
+			return "arctan(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "exp" :
+			return "exp(" + prettyPrint(expr(2)) + ")";
+		case #expr == 2 && expr(1) == "ln" :
+			return "ln(" + prettyPrint(expr(2)) + ")";
 		default :
-			abort("Error in prettyPrint( " + str((Expr)) + " )");
+			abort("Error in prettyPrint( " + str((expr)) + " )");
 	}
 };
 
-prettyPrintParen := procedure(Expr) {
-	FunctionNames := {"sin", "cos", "tan", "sqrt", "arcsin", "arccos", "arctan", "exp", "ln"};
+prettyPrintParen := procedure(expr) {
+	functionNames := {"sin", "cos", "tan", "sqrt", "arcsin", "arccos", "arctan", "exp", "ln"};
 	switch {
-		case isVariable(Expr) :
-			return Expr;
-		case isInteger((Expr)) :
-			return str((Expr));
-		case isReal((Expr)) :
-			return str((Expr));
-		case #Expr == 2 && Expr(1) in FunctionNames :
-			return prettyPrint(Expr);
+		case isVariable(expr) :
+			return expr;
+		case isInteger((expr)) :
+			return str((expr));
+		case isReal((expr)) :
+			return str((expr));
+		case #expr == 2 && expr(1) in functionNames :
+			return prettyPrint(expr);
 		default :
-			return "(" + prettyPrint(Expr) + ")";
+			return "(" + prettyPrint(expr) + ")";
 	}
 };
 
-isVariable := procedure(Expr) {
-	return isString((Expr));
+isVariable := procedure(expr) {
+	return isString((expr));
 };
 
 parseExpr := procedure() {

@@ -1,11 +1,11 @@
 
 tautology := procedure(f) {
-	P := collectVars(f);
-	A := {{[x, x in M]: x in P}: M in pow(P)};
-	if ({eval(f, I): I in A} == {true}) {
+	p := collectVars(f);
+	a := {{[x, x in m]: x in p}: m in pow(p)};
+	if ({eval(f, i): i in a} == {true}) {
 		return true;
 	} else {
-		return arb({I in A | ( ! (eval(f, I)) )});
+		return arb({i in a | ( ! (eval(f, i)) )});
 	}
 };
 
@@ -32,24 +32,24 @@ collectVars := procedure(f) {
 	}
 };
 
-eval := procedure(f, I) {
+eval := procedure(f, i) {
 	switch {
 		case f == 1 :
 			return true;
 		case f == 0 :
 			return false;
 		case isString((f)) :
-			return I(f);
+			return i(f);
 		case f(1) == "-" :
-			return ( ! (eval(f(2), I)) );
+			return ( ! (eval(f(2), i)) );
 		case f(2) == "*" :
-			return eval(f(1), I) && eval(f(3), I);
+			return eval(f(1), i) && eval(f(3), i);
 		case f(2) == "+" :
-			return eval(f(1), I) || eval(f(3), I);
+			return eval(f(1), i) || eval(f(3), i);
 		case f(2) == "->" :
-			return ( ! (eval(f(1), I)) ) || eval(f(3), I);
+			return ( ! (eval(f(1), i)) ) || eval(f(3), i);
 		case f(2) == "<->" :
-			return eval(f(1), I) == eval(f(3), I);
+			return eval(f(1), i) == eval(f(3), i);
 		default :
 			print("eval: Syntax-Fehler: ", f);
 	}
@@ -120,49 +120,49 @@ scanFormula := procedure(s) {
 	print("Error in scanFormula: s = ", s);
 };
 
-parse_formula := procedure(L) {
-	f := parse_parentheses(L);
+parse_formula := procedure(l) {
+	f := parse_parentheses(l);
 	if (f != om) {
 		return f;
 	}
-	f := parse_equivalence(L);
+	f := parse_equivalence(l);
 	if (f != om) {
 		return f;
 	}
-	f := parse_implication(L);
+	f := parse_implication(l);
 	if (f != om) {
 		return f;
 	}
-	f := parse_disjunction(L);
+	f := parse_disjunction(l);
 	if (f != om) {
 		return f;
 	}
-	f := parse_conjunction(L);
+	f := parse_conjunction(l);
 	if (f != om) {
 		return f;
 	}
-	f := parse_negation(L);
+	f := parse_negation(l);
 	if (f != om) {
 		return f;
 	}
-	f := parse_atom(L);
+	f := parse_atom(l);
 	if (f != om) {
 		return f;
 	}
 };
 
-parse_parentheses := procedure(L) {
-	if (L(1) == "(" && L(#L) == ")") {
-		return parse_formula(l(2..#L - 1));
+parse_parentheses := procedure(l) {
+	if (l(1) == "(" && l(#l) == ")") {
+		return parse_formula(l(2..#l - 1));
 	}
 };
 
-parse_equivalence := procedure(L) {
-	for (i in [2 .. #L - 1]) {
-		if (L(i) == "<->") {
-			f1 := parse_formula(L(1..i - 1));
+parse_equivalence := procedure(l) {
+	for (i in [2 .. #l - 1]) {
+		if (l(i) == "<->") {
+			f1 := parse_formula(l(1..i - 1));
 			if (f1 != om) {
-				f2 := parse_formula(L(i + 1..#L));
+				f2 := parse_formula(l(i + 1..#l));
 				if (f2 != om) {
 					return [f1, "<->", f2];
 				}
@@ -171,12 +171,12 @@ parse_equivalence := procedure(L) {
 	}
 };
 
-parse_implication := procedure(L) {
-	for (i in [2 .. #L - 1]) {
-		if (L(i) == "->") {
-			f1 := parse_formula(L(1..i - 1));
+parse_implication := procedure(l) {
+	for (i in [2 .. #l - 1]) {
+		if (l(i) == "->") {
+			f1 := parse_formula(l(1..i - 1));
 			if (f1 != om) {
-				f2 := parse_formula(L(i + 1..#L));
+				f2 := parse_formula(l(i + 1..#l));
 				if (f2 != om) {
 					return [f1, "->", f2];
 				}
@@ -185,12 +185,12 @@ parse_implication := procedure(L) {
 	}
 };
 
-parse_disjunction := procedure(L) {
-	for (i in [2 .. #L - 1]) {
-		if (L(i) == "+") {
-			f1 := parse_formula(L(1..i - 1));
+parse_disjunction := procedure(l) {
+	for (i in [2 .. #l - 1]) {
+		if (l(i) == "+") {
+			f1 := parse_formula(l(1..i - 1));
 			if (f1 != om) {
-				f2 := parse_formula(L(i + 1..#L));
+				f2 := parse_formula(l(i + 1..#l));
 				if (f2 != om) {
 					return [f1, "+", f2];
 				}
@@ -199,12 +199,12 @@ parse_disjunction := procedure(L) {
 	}
 };
 
-parse_conjunction := procedure(L) {
-	for (i in [2 .. #L - 1]) {
-		if (L(i) == "*") {
-			f1 := parse_formula(L(1..i - 1));
+parse_conjunction := procedure(l) {
+	for (i in [2 .. #l - 1]) {
+		if (l(i) == "*") {
+			f1 := parse_formula(l(1..i - 1));
 			if (f1 != om) {
-				f2 := parse_formula(L(i + 1..#L));
+				f2 := parse_formula(l(i + 1..#l));
 				if (f2 != om) {
 					return [f1, "*", f2];
 				}
@@ -213,23 +213,23 @@ parse_conjunction := procedure(L) {
 	}
 };
 
-parse_negation := procedure(L) {
-	if (L(1) == "-") {
-		f := parse_formula(L(2..#L));
+parse_negation := procedure(l) {
+	if (l(1) == "-") {
+		f := parse_formula(l(2..#l));
 		if (f != om) {
 			return ["-", f];
 		}
 	}
 };
 
-parse_atom := procedure(L) {
-	if (#L == 1) {
-		if (L(1) == "1") {
+parse_atom := procedure(l) {
+	if (#l == 1) {
+		if (l(1) == "1") {
 			return 1;
-		} else if (L(1) == "0") {
+		} else if (l(1) == "0") {
 			return 0;
-		} else if (isString((L(1)))) {
-			return L(1);
+		} else if (isString((l(1)))) {
+			return l(1);
 		}
 	}
 };

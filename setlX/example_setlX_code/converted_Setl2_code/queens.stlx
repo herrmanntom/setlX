@@ -1,6 +1,6 @@
 
-atMostOne := procedure(S) {
-	return {{negateLiteral(k), negateLiteral(i)}: k in S, i in S | k != i};
+atMostOne := procedure(s) {
+	return {{negateLiteral(k), negateLiteral(i)}: k in s, i in s | k != i};
 };
 
 atMostOneInColumn := procedure(board, column) {
@@ -34,8 +34,8 @@ createRow := procedure(n, i) {
 	return ["p" + i + j: j in [1 .. n]];
 };
 
-printBoard := procedure(I, board) {
-	if (I == om) {
+printBoard := procedure(i, board) {
+	if (i == om) {
 		return;
 	}
 	n := #board;
@@ -48,7 +48,7 @@ printBoard := procedure(I, board) {
 		print(line);
 		line := "        |";
 		for (col in [1 .. n]) {
-			if ({board(row)(col)} in I) {
+			if ({board(row)(col)} in i) {
 				line := line + "   Q   |";
 			} else {
 				line := line + "       |";
@@ -64,13 +64,13 @@ printBoard := procedure(I, board) {
 	}
 };
 
-printBoardSmall := procedure(I, board) {
+printBoardSmall := procedure(i, board) {
 	n := #board;
 	print("        " + ((2 * n + 1) * "-"));
 	for (row in [1 .. n]) {
 		line := "        |";
 		for (col in [1 .. n]) {
-			if ({board(row)(col)} in I) {
+			if ({board(row)(col)} in i) {
 				line := line + "Q|";
 			} else {
 				line := line + " |";
@@ -81,43 +81,43 @@ printBoardSmall := procedure(I, board) {
 	}
 };
 
-DavisPutnam := procedure(Clauses, Literals) {
-	Clauses := saturate(Clauses);
-	if ({} in Clauses) {
+davisPutnam := procedure(clauses, literals) {
+	clauses := saturate(clauses);
+	if ({} in clauses) {
 		return false;
 	}
-	if ({k in Clauses | #k == 1} == Clauses) {
-		return Clauses;
+	if ({k in clauses | #k == 1} == clauses) {
+		return clauses;
 	}
-	literal := selectLiteral(Clauses, Literals);
-	Result := DavisPutnam(Clauses + {{literal}}, Literals + {literal});
-	if ((Result <!=> false)) {
-		return Result;
+	literal := selectLiteral(clauses, literals);
+	result := davisPutnam(clauses + {{literal}}, literals + {literal});
+	if ((result <!=> false)) {
+		return result;
 	}
 	notLiteral := negateLiteral(literal);
-	return DavisPutnam(Clauses + {{notLiteral}}, Literals + {notliteral});
+	return davisPutnam(clauses + {{notLiteral}}, literals + {notliteral});
 };
 
-saturate := procedure(S) {
-	Units := {k in S | #k == 1};
-	Used := {};
-	while (Units != {}) {
-		unit := arb(Units);
-		Used := Used + {unit};
+saturate := procedure(s) {
+	units := {k in s | #k == 1};
+	used := {};
+	while (units != {}) {
+		unit := arb(units);
+		used := used + {unit};
 		literal := arb(unit);
-		S := reduce(S, literal);
-		Units := {k in S | #k == 1} - Used;
+		s := reduce(s, literal);
+		units := {k in s | #k == 1} - used;
 	}
-	return S;
+	return s;
 };
 
-reduce := procedure(S, l) {
+reduce := procedure(s, l) {
 	notL := negateLiteral(l);
-	return {k - {notL}: k in S | notL in k} + {k: k in S | ( ! (notL in k) ) && (( ! (l in k) ) || k == {l})};
+	return {k - {notL}: k in s | notL in k} + {k: k in s | ( ! (notL in k) ) && (( ! (l in k) ) || k == {l})};
 };
 
-selectLiteral := procedure(S, Forbidden) {
-	return arb({l: k in S, l in k | ( ! (l in Forbidden) )});
+selectLiteral := procedure(s, forbidden) {
+	return arb({l: k in s, l in k | ( ! (l in forbidden) )});
 };
 
 negateLiteral := procedure(l) {
@@ -151,16 +151,16 @@ print("Test: Aufgabe 5");
 print("This should print a formula expressing that there is at least one" + " queen in the first row.");
 print(oneInRow(board, 1));
 print("\n");
-Clauses := allClauses(board);
+clauses := allClauses(board);
 print("Test: Aufgabe 6");
 print("This should print a formula that is equivalent to the " + numberQueens + "-queens-problem.");
-print(Clauses);
+print(clauses);
 print("\n");
-if (Clauses != om) {
-	I := DavisPutnam(Clauses, {});
+if (clauses != om) {
+	i := davisPutnam(clauses, {});
 }
-if ((I <!=> false)) {
-	printBoard(I, board);
+if ((i <!=> false)) {
+	printBoard(i, board);
 } else {
 	print("The problem is not solvable for " + numberQueens + " queens!");
 	print("Try to increase the number of queens.");

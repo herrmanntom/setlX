@@ -1,19 +1,19 @@
 // this program tests the factorial syntax
 
-erlangB := procedure(A, N) {
-	P := (A ** N + 0.0) / N!;
-	P /= +/{(A**i + 0.0) / i!: i in {0 .. N}};
-	return P;
+erlangB := procedure(a, n) {
+	p := (a ** n + 0.0) / n!;
+	p /= +/{(a**i + 0.0) / i!: i in {0 .. n}};
+	return p;
 };
 
-solveA := procedure(N, P, step) {
-	lastA := A := 0;
+solveA := procedure(n, p, step) {
+	lastA := a := 0;
 	while (true) {
-		A += step;
-		B := erlangB(A, N);
-		if (B <= P) {
-			lastA:= A;
-		} else if (B > (P * 1.1)) { // allow to continue while just above the threshold
+		a += step;
+		b := erlangB(a, n);
+		if (b <= p) {
+			lastA:= a;
+		} else if (b > (p * 1.1)) { // allow to continue while just above the threshold
 			break;
 		}
 	}

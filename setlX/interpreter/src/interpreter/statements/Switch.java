@@ -22,11 +22,7 @@ public class Switch extends Statement {
     }
 
     public String toString(int tabs) {
-        String endl = " ";
-        if (Environment.isPrintVerbose()) {
-            endl = "\n";
-        }
-        String result = Environment.getTabs(tabs) + "switch {" + endl;
+        String result = Environment.getTabs(tabs) + "switch {" + Environment.getEndl();
         for (BranchAbstract b : mBranchList) {
             result += b.toString(tabs + 1);
         }

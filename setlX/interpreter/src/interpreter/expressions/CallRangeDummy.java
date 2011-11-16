@@ -1,6 +1,6 @@
 package interpreter.expressions;
 
-import interpreter.exceptions.UndefinedOperationException;
+import interpreter.types.RangeDummy;
 import interpreter.types.Value;
 
 public class CallRangeDummy extends Expr {
@@ -9,8 +9,8 @@ public class CallRangeDummy extends Expr {
 
     private CallRangeDummy(){}
 
-    public Value evaluate() throws UndefinedOperationException {
-        throw new UndefinedOperationException("dummy called");
+    public Value evaluate() {
+        return RangeDummy.RD;
     }
 
     public String toString(int tabs) {

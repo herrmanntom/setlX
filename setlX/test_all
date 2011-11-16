@@ -6,7 +6,7 @@ manualTestFiles=""
 
 # prepare the interpreter
 simpleTest=simpleTest/test.stlx
-cd interpreter; ./setlX "$simpleTest" > $tmpFile; cd ..
+cd interpreter; ./setlX "$simpleTest" > $tmpFile 2>&1; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" $tmpFile)
@@ -38,7 +38,7 @@ while IFS= read path
     echo -n "executing file '$filename' ..."
 
     # execute with setlX
-    cd interpreter; ./setlX --predictableRandom ../$path > $tmpFile; cd ..
+    cd interpreter; ./setlX --predictableRandom ../$path > $tmpFile 2>&1; cd ..
 
     diff $path.reference $tmpFile > diff.result
     if [ $? -eq 1 ]

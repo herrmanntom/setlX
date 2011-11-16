@@ -47,6 +47,16 @@ public class SetlInt extends NumberValue {
         return SetlBoolean.TRUE;
     }
 
+    /* type conversions */
+
+    public SetlInt toInteger() {
+        return this;
+    }
+
+    public Real toReal() {
+        return new Real(mNumber);
+    }
+
     /* arithmetic operations */
 
     public SetlInt absoluteValue() {
@@ -58,7 +68,7 @@ public class SetlInt extends NumberValue {
             return new SetlInt(mNumber.add(((SetlInt) summand).mNumber));
         } else if (summand instanceof Real) {
             return summand.add(this);
-        } else if (summand.absoluteValue() == Infinity.POSITIVE) {
+        } else if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
             return summand;
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).addFlipped(this);
@@ -109,7 +119,7 @@ public class SetlInt extends NumberValue {
 
     public SetlInt factorial() throws SetlException {
         if (mNumber.compareTo(BigInteger.ZERO) < 0) {
-            throw new UndefinedOperationException("'fac(" + this + ")', e.g. '" + this + "!' is undefined.");
+            throw new UndefinedOperationException("'" + this + "!' is undefined.");
         }
         int        n         = intValue(); // will throw exception if this is >= 2^31, but wanting that is crazy talk
         BigInteger result    = BigInteger.ONE;
@@ -182,7 +192,7 @@ public class SetlInt extends NumberValue {
     public Value multiply(Value multiplier) throws SetlException {
         if (multiplier instanceof SetlInt) {
             return new SetlInt(mNumber.multiply(((SetlInt) multiplier).mNumber));
-        } else if (multiplier instanceof Real || multiplier instanceof SetlString || multiplier.absoluteValue() == Infinity.POSITIVE) {
+        } else if (multiplier instanceof Real || multiplier instanceof SetlString || multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
             return multiplier.multiply(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side  of '" + this + " * " + multiplier + "' is not a number or string.");
@@ -202,7 +212,7 @@ public class SetlInt extends NumberValue {
             return new SetlInt(mNumber.subtract(((SetlInt) subtrahend).mNumber));
         } else if (subtrahend instanceof Real) {
             return ((Real) subtrahend).subtractFlipped(this);
-        } else if (subtrahend.absoluteValue() == Infinity.POSITIVE) {
+        } else if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
             return (Infinity) subtrahend.negate();
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");

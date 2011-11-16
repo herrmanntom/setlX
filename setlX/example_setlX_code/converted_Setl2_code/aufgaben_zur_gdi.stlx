@@ -1,35 +1,35 @@
 
-both := procedure(L1, L2) {
-	return {x: x in L1 | x in L2};
+both := procedure(l1, l2) {
+	return {x: x in l1 | x in l2};
 };
 
 pythagoras := procedure(n) {
 	return {[x, y, z]: x in {0 .. n - 1}, y in {0 .. n - 1}, z in {0 .. n - 1} | x * x + y * y == z * z};
 };
 
-compose := procedure(A1, A2) {
-	return {[[x, z], d1 + d2]: [[x, y1], d1] in A1, [[y2, z], d2] in A2 | y1 == y2};
+compose := procedure(a1, a2) {
+	return {[[x, z], d1 + d2]: [[x, y1], d1] in a1, [[y2, z], d2] in a2 | y1 == y2};
 };
 
-closure := procedure(A) {
-	Temp := A;
+closure := procedure(a) {
+	temp := a;
 	while (true) {
-		old_Temp := Temp;
-		Temp := A + compose(A, Temp);
-		if (Temp == old_Temp) {
-			return Temp;
+		old_Temp := temp;
+		temp := a + compose(a, temp);
+		if (temp == old_Temp) {
+			return temp;
 		}
 	}
 };
 
-toLists := procedure(M) {
-	if (#M == 1) {
-		return {[+/ M]};
+toLists := procedure(m) {
+	if (#m == 1) {
+		return {[+/ m]};
 	}
 	r := {};
-	oldM := M;
-	while (#M > 0) {
-		x := from(M);
+	oldM := m;
+	while (#m > 0) {
+		x := from(m);
 		subLists := toLists(oldM - {x});
 		while (#subLists > 0) {
 			y := from(subLists);
@@ -43,10 +43,10 @@ x := [1, 2, 3];
 y := [3, 4, 5, 3];
 print(both(x, y));
 print(pythagoras(6));
-A1 := {[["a", "b"], 1], [["a", "c"], 2]};
-A2 := {[["b", "d"], 2], [["c", "e"], 3]};
-A3 := {[["a", "b"], 1], [["b", "c"], 2], [["c", "d"], 10]};
-print(compose(A1, A2));
-print(closure(A3));
+a1 := {[["a", "b"], 1], [["a", "c"], 2]};
+a2 := {[["b", "d"], 2], [["c", "e"], 3]};
+a3 := {[["a", "b"], 1], [["b", "c"], 2], [["c", "d"], 10]};
+print(compose(a1, a2));
+print(closure(a3));
 print(toLists({1, 2, 3}));
 

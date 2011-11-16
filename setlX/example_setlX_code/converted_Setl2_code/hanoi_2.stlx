@@ -5,56 +5,56 @@ lastChars := procedure(x, n) {
 	return m * " " + s;
 };
 
-partition := procedure(S1, S2, S3, All) {
-	test := {S1, S2, S3} <= pow(All);
-	test2 := forall(x in All | (x in S1 && x notin S2 + S3) || (x in S2 && x notin S1 + S3) || (x in S3 && x notin S1 + S2));
-	test3 := forall(k in {S1, S2, S3}, l in {S1, S2, S3} | k * l == {} || k == l);
+partition := procedure(s1, s2, s3, all) {
+	test := {s1, s2, s3} <= pow(all);
+	test2 := forall(x in all | (x in s1 && x notin s2 + s3) || (x in s2 && x notin s1 + s3) || (x in s3 && x notin s1 + s2));
+	test3 := forall(k in {s1, s2, s3}, l in {s1, s2, s3} | k * l == {} || k == l);
 	return test && test2 && test3;
 };
 
-movePossible := procedure(Source, Target) {
-	return Target == {} || (min(Source) < min(Target));
+movePossible := procedure(source, target) {
+	return target == {} || (min(source) < min(target));
 };
 
-oneStep := procedure(PS, R) {
-	return {p + [z]: p in PS, [y, z] in R | p(#p) == y};
+oneStep := procedure(pS, r) {
+	return {p + [z]: p in pS, [y, z] in r | p(#p) == y};
 };
 
-eliminateCycles := procedure(PS) {
-	return {p in PS | ( ! (cyclic(p)) )};
+eliminateCycles := procedure(pS) {
+	return {p in pS | ( ! (cyclic(p)) )};
 };
 
 cyclic := procedure(p) {
 	return #{x: x in p} < #p;
 };
 
-reachable := procedure(x, y, R) {
-	PS := {[x]};
+reachable := procedure(x, y, r) {
+	pS := {[x]};
 	while (true) {
-		old_PS := PS;
-		PS := PS + eliminateCycles(oneStep(PS, R));
-		P := {p in PS | p(#p) == y};
-		if (P != {}) {
-			return arb(P);
+		old_PS := pS;
+		pS := pS + eliminateCycles(oneStep(pS, r));
+		p := {p in pS | p(#p) == y};
+		if (p != {}) {
+			return arb(p);
 		}
-		if (old_PS == PS) {
+		if (old_PS == pS) {
 			return;
 		}
 	}
 };
 
-All := {1, 2, 3};
-P := {[L1, L2, L3]: L1 in pow(All), L2 in pow(All), L3 in pow(All) | partition(L1, L2, L3, All)};
-R12 := {[[L1, L2, L3], [L1 - {x}, L2 + {x}, L3]]: [L1, L2, L3] in P, x in {min(L1)} | movePossible(L1, L2)};
-R21 := {[[L1, L2, L3], [L1 + {x}, L2 - {x}, L3]]: [L1, L2, L3] in P, x in {min(L2)} | movePossible(L2, L1)};
-R13 := {[[L1, L2, L3], [L1 - {x}, L2, L3 + {x}]]: [L1, L2, L3] in P, x in {min(L1)} | movePossible(L1, L3)};
-R31 := {[[L1, L2, L3], [L1 + {x}, L2, L3 - {x}]]: [L1, L2, L3] in P, x in {min(L3)} | movePossible(L3, L1)};
-R23 := {[[L1, L2, L3], [L1, L2 - {x}, L3 + {x}]]: [L1, L2, L3] in P, x in {min(L2)} | movePossible(L2, L3)};
-R32 := {[[L1, L2, L3], [L1, L2 + {x}, L3 - {x}]]: [L1, L2, L3] in P, x in {min(L3)} | movePossible(L3, L2)};
-R := R12 + R21 + R31 + R13 + R23 + R32;
+all := {1, 2, 3};
+p := {[l1, l2, l3]: l1 in pow(all), l2 in pow(all), l3 in pow(all) | partition(l1, l2, l3, all)};
+r12 := {[[l1, l2, l3], [l1 - {x}, l2 + {x}, l3]]: [l1, l2, l3] in p, x in {min(l1)} | movePossible(l1, l2)};
+r21 := {[[l1, l2, l3], [l1 + {x}, l2 - {x}, l3]]: [l1, l2, l3] in p, x in {min(l2)} | movePossible(l2, l1)};
+r13 := {[[l1, l2, l3], [l1 - {x}, l2, l3 + {x}]]: [l1, l2, l3] in p, x in {min(l1)} | movePossible(l1, l3)};
+r31 := {[[l1, l2, l3], [l1 + {x}, l2, l3 - {x}]]: [l1, l2, l3] in p, x in {min(l3)} | movePossible(l3, l1)};
+r23 := {[[l1, l2, l3], [l1, l2 - {x}, l3 + {x}]]: [l1, l2, l3] in p, x in {min(l2)} | movePossible(l2, l3)};
+r32 := {[[l1, l2, l3], [l1, l2 + {x}, l3 - {x}]]: [l1, l2, l3] in p, x in {min(l3)} | movePossible(l3, l2)};
+r := r12 + r21 + r31 + r13 + r23 + r32;
 start := [{1, 2, 3}, {}, {}];
 goal := [{}, {}, {1, 2, 3}];
-path := reachable(start, goal, R);
+path := reachable(start, goal, r);
 print("\nL�sung:");
 for (i in [1 .. #path]) {
 	t1 := lastChars(path(i)(1), 20);

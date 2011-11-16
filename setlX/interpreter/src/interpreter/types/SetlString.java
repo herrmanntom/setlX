@@ -6,25 +6,21 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.utilities.Environment;
+import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
 public class SetlString extends Value {
 
-    private String mString;
-
-    public SetlString(String s){
+    public static SetlString createFromParserString(String s) {
         // Strip out double qoutes which the parser left in
-        int length = s.length();
-        if (length >= 2 && s.charAt(0) == '"' && s.charAt(length - 1) == '"') {
-            s = s.substring(1, length - 1);
-        }
+        s                       = s.substring(1, s.length() - 1);
         // parse escape sequences
-        length              = s.length();
-        StringBuilder sb    = new StringBuilder(length);
+        int           length    = s.length();
+        StringBuilder sb        = new StringBuilder(length);
         for (int i = 0; i < length; ) {
-            char c = s.charAt(i);                          // current
-            char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next
+            char c = s.charAt(i);                          // current char
+            char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
             if (c == '\\') {
                 if (n == '\\') {
                     sb.append('\\');
@@ -49,7 +45,13 @@ public class SetlString extends Value {
                 i += 1;
             }
         }
-        mString = sb.toString();
+        return new SetlString(sb.toString());
+    }
+
+    private String mString;
+
+    public SetlString(String s){
+        mString = s;
     }
 
     public SetlString clone() {
@@ -61,6 +63,24 @@ public class SetlString extends Value {
 
     public SetlBoolean isString() {
         return SetlBoolean.TRUE;
+    }
+
+    /* type conversions */
+
+    public Value toInteger() {
+        try {
+            return new SetlInt(mString);
+        } catch (NumberFormatException nfe) {
+            return Om.OM;
+        }
+    }
+
+    public Value toReal() {
+        try {
+            return new Real(mString);
+        } catch (NumberFormatException nfe) {
+            return Om.OM;
+        }
     }
 
     /* arithmetic operations */
@@ -109,7 +129,7 @@ public class SetlString extends Value {
             throw new IncompatibleTypeException("Index '" + vIndex + "' is not an integer.");
         }
         if (index > mString.length()) {
-            throw new NumberToLargeException("Index '" + index + "' is larger as string size '" + mString.length() + "'.");
+            throw new NumberToLargeException("Index '" + index + "' is larger as size '" + mString.length() + "' of string '" + mString + "'.");
         }
         return new SetlString(mString.substring(index - 1, index));
     }
@@ -127,7 +147,7 @@ public class SetlString extends Value {
             throw new IncompatibleTypeException("Upper bound '" + vHigh + "' is not an integer.");
         }
         if (high > mString.length()) {
-            throw new NumberToLargeException("Upper bound '" + high + "' is larger as string size '" + mString.length() + "'.");
+            throw new NumberToLargeException("Upper bound '" + high + "' is larger as size '" + mString.length() + "' of string '" + mString + "'.");
         }
         String result = mString.substring(low - 1, high);
         return new SetlString(result);
@@ -169,7 +189,7 @@ public class SetlString extends Value {
         return this;
     }
 
-    /*  When string is printed 'inside' some compound value (Lists etc),
+    /* When string is printed 'inside' some SetlX code block (verbose printing),
        all non-printable characters should be replaced with their
        escape sequences using this function.
 
@@ -178,36 +198,74 @@ public class SetlString extends Value {
        before passing to System.out                                     */
 
     public String toString() {
+        int           length = mString.length();
+        StringBuilder result = new StringBuilder(length);
         if (Environment.isPrintVerbose()) {
-            int           length = mString.length();
-            StringBuilder sb     = new StringBuilder(length);
             for (int i = 0; i < length; ++i) {
-                char c = mString.charAt(i);  // current
+                char c = mString.charAt(i);
                 if (c == '\\') {
-                    sb.append('\\');
-                    sb.append('\\');
+                    result.append('\\');
+                    result.append('\\');
                 } else if (c == '\n') {
-                    sb.append('\\');
-                    sb.append('n');
+                    result.append('\\');
+                    result.append('n');
                 } else if (c == '\r') {
-                    sb.append('\\');
-                    sb.append('r');
+                    result.append('\\');
+                    result.append('r');
                 } else if (c == '\t') {
-                    sb.append('\\');
-                    sb.append('t');
+                    result.append('\\');
+                    result.append('t');
                 } else if (c == '"') {
-                    sb.append('\\');
-                    sb.append('"');
+                    result.append('\\');
+                    result.append('"');
                 } else if (c == '\0') {
-                    sb.append('\\');
-                    sb.append('0');
+                    result.append('\\');
+                    result.append('0');
                 } else {
-                    sb.append(c);
+                    result.append(c);
                 }
             }
-            return "\"" + sb.toString() + "\"";
+            return "\"" + result.toString() + "\"";
         } else {
-            return "\"" + mString + "\"";
+            StringBuilder expr      = null;  // buffer for inner expr string
+            boolean       innerExpr = false; // currently reading inner expr
+            for (int i = 0; i < length; ++i) {
+                char c = mString.charAt(i);  // current char
+                char n = (i+1 < length)? mString.charAt(i+1) : '\0';  // next char
+                if (innerExpr) {
+                    if (c == '$') {
+                        // end of inner expr
+                        innerExpr = false;
+                        // eval inner expression and add to resulting string
+                        try {
+                            Expr exp = ParseSetlX.parseStringToExpr(expr.toString());
+                            // add inner expr to result
+                            result.append(exp.eval());
+                        } catch (SetlException se) {
+                            result.append("$Error: " + se.getMessage() + "$");
+                        }
+                    } else {
+                        expr.append(c);
+                    }
+                } else {
+                    if (c == '\\' && n == '$') {
+                        // escaped dollar
+                        result.append('$');
+                        i++; // jump over next char
+                    } else if (c == '$') {
+                        // start inner expression
+                        innerExpr = true;
+                        expr      = new StringBuilder();
+                    } else {
+                        // continue outer string
+                        result.append(c);
+                    }
+                }
+            }
+            if (innerExpr) { // inner expr not complete
+                result.append("$Error: closing '$' missing.$");
+            }
+            return "\"" + result.toString() + "\"";
         }
     }
 

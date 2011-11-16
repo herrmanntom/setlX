@@ -1,21 +1,21 @@
 
-reachable := procedure(x, y, R) {
-	P := {[x]};
+reachable := procedure(x, y, r) {
+	p := {[x]};
 	while (true) {
-		Old_P := P;
-		P := P + path_product(P, R);
-		Found := {p in P | p(#p) == y};
-		if (Found != {}) {
-			return arb(Found);
+		old_P := p;
+		p := p + path_product(p, r);
+		found := {p in p | p(#p) == y};
+		if (found != {}) {
+			return arb(found);
 		}
-		if (P == Old_P) {
+		if (p == old_P) {
 			return;
 		}
 	}
 };
 
-path_product := procedure(P, Q) {
-	return {add(p, q): p in P, q in Q | p(#p) == q(1) && not_cyclic(add(p, q))};
+path_product := procedure(p, q) {
+	return {add(p, q): p in p, q in q | p(#p) == q(1) && not_cyclic(add(p, q))};
 };
 
 not_cyclic := procedure(p) {
@@ -26,17 +26,17 @@ add := procedure(p, q) {
 	return p + q(2..);
 };
 
-P := {[drei, fuenf]: drei in {0 .. 3}, fuenf in {0 .. 5}};
-R35 := {[[drei, fuenf], [drei - x, fuenf + x]]: [drei, fuenf] in P, x in {1 .. drei} | (fuenf + x == 5) || (x == drei && fuenf + x < 5)};
-R53 := {[[drei, fuenf], [drei + x, fuenf - x]]: [drei, fuenf] in P, x in {1 .. fuenf} | (drei + x == 3) || (x == fuenf && drei + x < 3)};
-R3F := {[[drei, fuenf], [3, fuenf]]: [drei, fuenf] in P};
-R5F := {[[drei, fuenf], [drei, 5]]: [drei, fuenf] in P};
-R3L := {[[drei, fuenf], [0, fuenf]]: [drei, fuenf] in P};
-R5L := {[[drei, fuenf], [drei, 0]]: [drei, fuenf] in P};
-R := R35 + R53 + R3F + R5F + R3L + R5L;
+p := {[drei, fuenf]: drei in {0 .. 3}, fuenf in {0 .. 5}};
+r35 := {[[drei, fuenf], [drei - x, fuenf + x]]: [drei, fuenf] in p, x in {1 .. drei} | (fuenf + x == 5) || (x == drei && fuenf + x < 5)};
+r53 := {[[drei, fuenf], [drei + x, fuenf - x]]: [drei, fuenf] in p, x in {1 .. fuenf} | (drei + x == 3) || (x == fuenf && drei + x < 3)};
+r3F := {[[drei, fuenf], [3, fuenf]]: [drei, fuenf] in p};
+r5F := {[[drei, fuenf], [drei, 5]]: [drei, fuenf] in p};
+r3L := {[[drei, fuenf], [0, fuenf]]: [drei, fuenf] in p};
+r5L := {[[drei, fuenf], [drei, 0]]: [drei, fuenf] in p};
+r := r35 + r53 + r3F + r5F + r3L + r5L;
 start := [0, 0];
 goal := [0, 4];
-path := reachable(start, goal, R);
+path := reachable(start, goal, r);
 print("Path:");
 print(path);
 print("\n");

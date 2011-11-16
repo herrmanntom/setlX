@@ -23,6 +23,7 @@ jar:                                                         \
 
 bin/.buildSuccessful:                                        \
         setlX                                                        \
+        src/grammar/SetlXgrammar*.java                               \
         bin/comparableSet/*.class                                    \
         bin/interpreter/exceptions/*.class                           \
         bin/interpreter/types/*.class                                \
@@ -41,23 +42,18 @@ bin/SetlX.class :                                            \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
         src/interpreter/utilities/*.java                             \
-        src/interpreter/statements/Block.java                        \
-        src/grammar/SetlXgrammar*.java
+        src/interpreter/statements/Block.java
 	javac -cp $(CLASSPATH) -d bin -sourcepath src src/SetlX.java
 
 bin/grammar/SetlXgrammar*.class :                            \
         src/grammar/SetlXgrammar*.java                               \
+        src/grammar/SetlXgrammar.g                                   \
         src/interpreter/types/*.java                                 \
         src/interpreter/utilities/*.java                             \
         src/interpreter/boolExpressions/*.java                       \
         src/interpreter/expressions/*.java                           \
         src/interpreter/statements/*.java
 	javac -cp $(CLASSPATH) -d bin -sourcepath src src/grammar/SetlXgrammar*.java
-
-src/grammar/SetlXgrammar*.java :                             \
-        src/grammar/SetlXgrammar.g
-	java  -cp $(CLASSPATH) org.antlr.Tool -fo src/grammar src/grammar/SetlXgrammar.g
-	rm -rf bin/grammar/SetlXgrammar*.class
 
 bin/interpreter/statements/*.class :                         \
         src/interpreter/statements/*.java                            \
@@ -66,7 +62,7 @@ bin/interpreter/statements/*.class :                         \
         src/interpreter/expressions/*.java                           \
         src/interpreter/utilities/*.java                             \
         src/interpreter/boolExpressions/*.java
-	javac -d bin -sourcepath src src/interpreter/statements/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/interpreter/statements/*.java
 
 bin/interpreter/expressions/*.class :                        \
         src/interpreter/expressions/*.java                           \
@@ -75,7 +71,7 @@ bin/interpreter/expressions/*.class :                        \
         src/interpreter/types/*.java                                 \
         src/interpreter/utilities/*.java                             \
         src/interpreter/boolExpressions/*.java
-	javac -d bin -sourcepath src src/interpreter/expressions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/interpreter/expressions/*.java
 
 bin/interpreter/boolExpressions/*.class :                    \
         src/interpreter/boolExpressions/*.java                       \
@@ -83,7 +79,7 @@ bin/interpreter/boolExpressions/*.class :                    \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
         src/interpreter/utilities/*.java
-	javac -d bin -sourcepath src src/interpreter/boolExpressions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/interpreter/boolExpressions/*.java
 
 bin/interpreter/functions/*.class :                          \
         src/interpreter/functions/*.java                             \
@@ -92,7 +88,7 @@ bin/interpreter/functions/*.class :                          \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java                                 \
         src/interpreter/utilities/*.java
-	javac -d bin -sourcepath src src/interpreter/functions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/interpreter/functions/*.java
 
 bin/interpreter/utilities/*.class :                          \
         src/interpreter/utilities/*.java                             \
@@ -101,9 +97,10 @@ bin/interpreter/utilities/*.class :                          \
         src/interpreter/expressions/Variable.java                    \
         src/interpreter/functions/MathFunction.java                  \
         src/interpreter/functions/PreDefinedFunction.java            \
+        src/grammar/SetlXgrammar*.java                               \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/*.java
-	javac -d bin -sourcepath src src/interpreter/utilities/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/interpreter/utilities/*.java
 
 bin/interpreter/types/*.class :                              \
         src/interpreter/types/*.java                                 \
@@ -113,21 +110,26 @@ bin/interpreter/types/*.class :                              \
         src/interpreter/statements/Return.java                       \
         src/interpreter/utilities/Environment.java                   \
         src/interpreter/utilities/ParameterDef.java                  \
+        src/interpreter/utilities/ParseSetlX.java                    \
         src/interpreter/utilities/WriteBackAgent.java                \
         src/comparableSet/*.java                                     \
         src/interpreter/exceptions/*.java
-	javac -d bin -sourcepath src src/interpreter/types/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/interpreter/types/*.java
 
 bin/interpreter/exceptions/*.class :                         \
         src/interpreter/exceptions/*.java                            \
         src/interpreter/types/Value.java
 	mkdir -p bin/
-	javac -d bin -sourcepath src src/interpreter/exceptions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/interpreter/exceptions/*.java
 
 bin/comparableSet/*.class :                                  \
         src/comparableSet/*.java
 	mkdir -p bin/
-	javac -d bin -sourcepath src src/comparableSet/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath src src/comparableSet/*.java
+
+src/grammar/SetlXgrammar*.java :                             \
+        src/grammar/SetlXgrammar.g
+	java  -cp $(CLASSPATH) org.antlr.Tool -fo src/grammar src/grammar/SetlXgrammar.g
 
 clean:
 	rm -rf bin/

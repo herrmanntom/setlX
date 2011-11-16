@@ -16,9 +16,9 @@ teile := procedure(n) {
 	return r;
 };
 
-S := {n in {1 .. 99} | teile_4_mal(n)};
-print(S);
-n := arb((S));
+s := {n in {1 .. 99} | teile_4_mal(n)};
+print(s);
+n := arb((s));
 print("Am Anfang sind es ", n, " Kokosn�sse");
 print("Nach dem ersten Teilen bleiben noch ", teile_k_mal(n, 1), " Kokosn�sse.");
 print("Nach dem zweiten Teilen bleiben noch ", teile_k_mal(n, 2), " Kokosn�sse.");

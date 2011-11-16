@@ -5,66 +5,66 @@ lastChars := procedure(x, n) {
 	return m * " " + s;
 };
 
-sort := procedure(S) {
-	return [n in [1 .. max(S + {0})] | n in S];
+sort := procedure(s) {
+	return [n in [1 .. max(s + {0})] | n in s];
 };
 
-partition := procedure(S1, S2, S3, All) {
-	return S1 + S2 + S3 == All && S1 * S2 == {} && S1 * S3 == {} && S2 * S3 == {};
+partition := procedure(s1, s2, s3, all) {
+	return s1 + s2 + s3 == all && s1 * s2 == {} && s1 * s3 == {} && s2 * s3 == {};
 };
 
-movePossible := procedure(Source, Target) {
-	return Source != [] && (Target == [] || Source(1) < Target(1));
+movePossible := procedure(source, target) {
+	return source != [] && (target == [] || source(1) < target(1));
 };
 
-oneStep := procedure(PS, R) {
-	return {p + [z]: p in PS, [y, z] in R | p(#p) == y};
+oneStep := procedure(pS, r) {
+	return {p + [z]: p in pS, [y, z] in r | p(#p) == y};
 };
 
-eliminateCycles := procedure(PS) {
-	return {p in PS | ( ! (cyclic(p)) )};
+eliminateCycles := procedure(pS) {
+	return {p in pS | ( ! (cyclic(p)) )};
 };
 
 cyclic := procedure(p) {
 	return #{x: x in p} < #p;
 };
 
-reachable := procedure(x, y, R) {
-	PS := {[x]};
+reachable := procedure(x, y, r) {
+	pS := {[x]};
 	while (true) {
-		old_PS := PS;
-		PS := eliminateCycles(PS + oneStep(PS, R));
-		P := {p in PS | p(#p) == y};
-		if (P != {}) {
-			return arb(P);
+		old_PS := pS;
+		pS := eliminateCycles(pS + oneStep(pS, r));
+		p := {p in pS | p(#p) == y};
+		if (p != {}) {
+			return arb(p);
 		}
-		if (old_PS == PS) {
+		if (old_PS == pS) {
 			return;
 		}
 	}
 };
 
-All := {1, 2, 3};
-P := {[sort(S1), sort(S2), sort(S3)]: S1 in pow(All), S2 in pow(All), S3 in pow(All) | partition(S1, S2, S3, All)};
-print("P = ", P);
-R12 := {[[L1, L2, L3], [L1(2..), [L1(1)] + L2, L3]]: [L1, L2, L3] in P | movePossible(L1, L2)};
-R21 := {[[L1, L2, L3], [[L2(1)] + L1, L2(2..), L3]]: [L1, L2, L3] in P | movePossible(L2, L1)};
-R13 := {[[L1, L2, L3], [L1(2..), L2, [L1(1)] + L3]]: [L1, L2, L3] in P | movePossible(L1, L3)};
-R31 := {[[L1, L2, L3], [[L3(1)] + L1, L2, L3(2..)]]: [L1, L2, L3] in P | movePossible(L3, L1)};
-R23 := {[[L1, L2, L3], [L1, L2(2..), [L2(1)] + L3]]: [L1, L2, L3] in P | movePossible(L2, L3)};
-R32 := {[[L1, L2, L3], [L1, [L3(1)] + L2, L3(2..)]]: [L1, L2, L3] in P | movePossible(L3, L2)};
-for ([x, y] in R12) {
+all := {1, 2, 3};
+p := {[sort(s1), sort(s2), sort(s3)]: s1 in pow(all), s2 in pow(all), s3 in pow(all) | partition(s1, s2, s3, all)};
+print("P = ", p);
+r12 := {[[l1, l2, l3], [l1(2..), [l1(1)] + l2, l3]]: [l1, l2, l3] in p | movePossible(l1, l2)};
+r21 := {[[l1, l2, l3], [[l2(1)] + l1, l2(2..), l3]]: [l1, l2, l3] in p | movePossible(l2, l1)};
+r13 := {[[l1, l2, l3], [l1(2..), l2, [l1(1)] + l3]]: [l1, l2, l3] in p | movePossible(l1, l3)};
+r31 := {[[l1, l2, l3], [[l3(1)] + l1, l2, l3(2..)]]: [l1, l2, l3] in p | movePossible(l3, l1)};
+r23 := {[[l1, l2, l3], [l1, l2(2..), [l2(1)] + l3]]: [l1, l2, l3] in p | movePossible(l2, l3)};
+r32 := {[[l1, l2, l3], [l1, [l3(1)] + l2, l3(2..)]]: [l1, l2, l3] in p | movePossible(l3, l2)};
+for ([x, y] in r12) {
 	print(x, "  ->   ", y);
 }
-R := R12 + R21 + R31 + R13 + R23 + R32;
+r := r12 + r21 + r31 + r13 + r23 + r32;
 print("R:");
-for ([x, y] in R) {
+for ([x, y] in r) {
 	print(x, "  ->   ", y);
 }
 print();
 start := [[1, 2, 3], [], []];
 goal := [[], [1, 2, 3], []];
-path := reachable(start, goal, R);
+path := reachable(start, goal, r);
 for (i in [1 .. #path]) {
 	t1 := lastChars(path(i)(1), 20);
 	t2 := lastChars(path(i)(2), 20);

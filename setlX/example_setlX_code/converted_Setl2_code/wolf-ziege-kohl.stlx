@@ -1,25 +1,25 @@
 
-problem := procedure(S) {
-	return ("Ziege" in S && "Kohl" in S) || ("Wolf" in S && "Ziege" in S);
+problem := procedure(s) {
+	return ("Ziege" in s && "Kohl" in s) || ("Wolf" in s && "Ziege" in s);
 };
 
-reachable := procedure(x, y, R) {
-	P := {[x]};
+reachable := procedure(x, y, r) {
+	p := {[x]};
 	while (true) {
-		Old_P := P;
-		P := P + path_product(P, R);
-		Found := {p in P | p(#p) == y};
-		if (Found != {}) {
-			return arb(Found);
+		old_P := p;
+		p := p + path_product(p, r);
+		found := {p in p | p(#p) == y};
+		if (found != {}) {
+			return arb(found);
 		}
-		if (P == Old_P) {
+		if (p == old_P) {
 			return;
 		}
 	}
 };
 
-path_product := procedure(P, Q) {
-	return {add(p, q): p in P, q in Q | p(#p) == q(1) && ( ! (cyclic(add(p, q))) )};
+path_product := procedure(p, q) {
+	return {add(p, q): p in p, q in q | p(#p) == q(1) && ( ! (cyclic(add(p, q))) )};
 };
 
 cyclic := procedure(p) {
@@ -30,27 +30,27 @@ add := procedure(p, q) {
 	return p + q(2..);
 };
 
-All := {"Bauer", "Wolf", "Ziege", "Kohl"};
-P := {[S1, All - S1]: S1 in pow(All)};
-R1 := {[[S1, S2], [S1 - B, S2 + B]]: [S1, S2] in P, B in pow(S1) | "Bauer" in B && #B <= 2 && ( ! (problem(S1 - B)) )};
-R2 := {[[S1, S2], [S1 + B, S2 - B]]: [S1, S2] in P, B in pow(S2) | "Bauer" in B && #B <= 2 && ( ! (problem(S2 - B)) )};
-R := R1 + R2;
-start := [All, {}];
-goal := [{}, All];
-path := reachable(start, goal, R);
+all := {"Bauer", "Wolf", "Ziege", "Kohl"};
+p := {[s1, all - s1]: s1 in pow(all)};
+r1 := {[[s1, s2], [s1 - b, s2 + b]]: [s1, s2] in p, b in pow(s1) | "Bauer" in b && #b <= 2 && ( ! (problem(s1 - b)) )};
+r2 := {[[s1, s2], [s1 + b, s2 - b]]: [s1, s2] in p, b in pow(s2) | "Bauer" in b && #b <= 2 && ( ! (problem(s2 - b)) )};
+r := r1 + r2;
+start := [all, {}];
+goal := [{}, all];
+path := reachable(start, goal, r);
 for (i in [1 .. #path]) {
-	S1 := path(i)(1);
-	S2 := path(i)(2);
-	print(S1, 65 * " ", S2);
+	s1 := path(i)(1);
+	s2 := path(i)(2);
+	print(s1, 65 * " ", s2);
 	if (i == #path) {
 		break;
 	}
-	if ("Bauer" in S1) {
-		M := S1 - path(i + 1)(1);
-		print("                                     >>>> ", M, " >>>> ");
+	if ("Bauer" in s1) {
+		m := s1 - path(i + 1)(1);
+		print("                                     >>>> ", m, " >>>> ");
 	} else {
-		M := S2 - path(i + 1)(2);
-		print("                                     <<<< ", M, " <<<< ");
+		m := s2 - path(i + 1)(2);
+		print("                                     <<<< ", m, " <<<< ");
 	}
 }
 

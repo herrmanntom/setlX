@@ -25,9 +25,12 @@ public class Call extends Expr {
         mArgs             = args;
         isRange           = mArgs.contains(CallRangeDummy.CRD);
         _this             = new String[4];
+        boolean verbose   = Environment.isPrintVerbose();
+        Environment.setPrintVerbose(true);
         for (int i = 0; i < _this.length; ++i) {
             _this[i] = _toString(i);
         }
+        Environment.setPrintVerbose(verbose);
     }
 
     public Value evaluate() throws SetlException {

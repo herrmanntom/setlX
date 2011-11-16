@@ -19,12 +19,14 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     private String  mName;
     private boolean mUnlimitedParameters;
     private boolean mAllowFewerParameters;
+    private boolean mDoNotChangeEnvironment;
 
     protected PreDefinedFunction(String name) {
         super(new LinkedList<ParameterDef>(), new Block());
-        mName                 = name;
-        mUnlimitedParameters  = false;
-        mAllowFewerParameters = false;
+        mName                   = name;
+        mUnlimitedParameters    = false;
+        mAllowFewerParameters   = false;
+        mDoNotChangeEnvironment = false;
     }
 
     public final String getName() {
@@ -41,12 +43,17 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     // allow an unlimited number of parameters
     protected void enableUnlimitedParameters() {
-        mUnlimitedParameters = true;
+        mUnlimitedParameters    = true;
     }
 
     // allow an calling with fewer number of parameters then specified
     protected void allowFewerParameters() {
-        mAllowFewerParameters = true;
+        mAllowFewerParameters   = true;
+    }
+
+    // do not create a new env during execution
+    protected void doNotChangeEnvironment() {
+        mDoNotChangeEnvironment = true;
     }
 
     // this call is to be implemented by all predefined functions
@@ -88,11 +95,21 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         // create new environment used for the function call (not really used)
         Environment.setEnv(oldEnv.cloneFunctions());
 
+        if (mDoNotChangeEnvironment) {
+            //we just changed our mind
+            Environment.setEnv(oldEnv);
+        }
+
         // List of writeBack-values, which should be stored into the outer environment
         LinkedList<Value> writeBackVars = new LinkedList<Value>();
 
         // call predefined function (which may add writeBack-values to List)
         Value             result        = this.execute(args, writeBackVars);
+
+        if (mDoNotChangeEnvironment) {
+            // we do not need to restore anything
+            return result;
+        }
 
         // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
         WriteBackAgent    wba           = new WriteBackAgent();

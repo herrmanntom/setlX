@@ -1,44 +1,44 @@
 
-onePerHouse := procedure(M) {
-	return {somewhere(x): x in M} + {something(M, i): i in {1 .. 5}} + +/ {atMostOneAt(M, i): i in {1 .. 5}};
+onePerHouse := procedure(m) {
+	return {somewhere(x): x in m} + {something(m, i): i in {1 .. 5}} + +/ {atMostOneAt(m, i): i in {1 .. 5}};
 };
 
 somewhere := procedure(x) {
 	return {x + i: i in {1 .. 5}};
 };
 
-something := procedure(M, i) {
-	return {x + i: x in M};
+something := procedure(m, i) {
+	return {x + i: x in m};
 };
 
-atMostOneAt := procedure(M, i) {
-	return atMostOne({x + i: x in M});
+atMostOneAt := procedure(m, i) {
+	return atMostOne({x + i: x in m});
 };
 
-atMostOne := procedure(S) {
-	return {{["-", p], ["-", q]}: p in S, q in S | p != q};
+atMostOne := procedure(s) {
+	return {{["-", p], ["-", q]}: p in s, q in s | p != q};
 };
 
 nextTo := procedure(a, b) {
-	F := parse(a + "1 -> " + b + "2");
+	f := parse(a + "1 -> " + b + "2");
 	for (i in {2 .. 4}) {
-		F := F + parse(a + i + " -> " + b + (i - 1) + " + " + b + (i + 1));
+		f := f + parse(a + i + " -> " + b + (i - 1) + " + " + b + (i + 1));
 	}
-	F := F + parse(a + "5 -> " + b + "4");
-	return F;
+	f := f + parse(a + "5 -> " + b + "4");
+	return f;
 };
 
 leftTo := procedure(x, y) {
-	F := {};
+	f := {};
 	for (i in {1 .. 4}) {
-		F := F + parse(x + i + " -> " + y + (i + 1));
+		f := f + parse(x + i + " -> " + y + (i + 1));
 	}
-	F := F + parse("-" + x + "5");
-	return F;
+	f := f + parse("-" + x + "5");
+	return f;
 };
 
-printSolution := procedure(S) {
-	for (c in S) {
+printSolution := procedure(s) {
+	for (c in s) {
 		l := arb(c);
 		if (l(1) != "-") {
 			print(l);
@@ -207,43 +207,43 @@ prettyPrint := procedure(f) {
 	}
 };
 
-DavisPutnam := procedure(Clauses, Literals) {
-	Clauses := saturate(Clauses);
-	if ({} in Clauses) {
+davisPutnam := procedure(clauses, literals) {
+	clauses := saturate(clauses);
+	if ({} in clauses) {
 		return false;
 	}
-	if ({k in Clauses | #k == 1} == Clauses) {
-		return Clauses;
+	if ({k in clauses | #k == 1} == clauses) {
+		return clauses;
 	}
-	literal := selectLiteral(Clauses, Literals);
-	Result := DavisPutnam(Clauses + {{literal}}, Literals + {literal});
-	if ((Result <!=> false)) {
-		return Result;
+	literal := selectLiteral(clauses, literals);
+	result := davisPutnam(clauses + {{literal}}, literals + {literal});
+	if ((result <!=> false)) {
+		return result;
 	}
 	notLiteral := negateLiteral(literal);
-	return DavisPutnam(Clauses + {{notLiteral}}, Literals + {notliteral});
+	return davisPutnam(clauses + {{notLiteral}}, literals + {notliteral});
 };
 
-saturate := procedure(S) {
-	Units := {k in S | #k == 1};
-	Used := {};
-	while (Units != {}) {
-		unit := arb(Units);
-		Used := Used + {unit};
+saturate := procedure(s) {
+	units := {k in s | #k == 1};
+	used := {};
+	while (units != {}) {
+		unit := arb(units);
+		used := used + {unit};
 		literal := arb(unit);
-		S := reduce(S, literal);
-		Units := {k in S | #k == 1} - Used;
+		s := reduce(s, literal);
+		units := {k in s | #k == 1} - used;
 	}
-	return S;
+	return s;
 };
 
-reduce := procedure(S, l) {
+reduce := procedure(s, l) {
 	notL := negateLiteral(l);
-	return {k - {notL}: k in S | notL in k} + {k in S | ( ! (notL in k) ) && ( ! (l in k) )} + {{l}};
+	return {k - {notL}: k in s | notL in k} + {k in s | ( ! (notL in k) ) && ( ! (l in k) )} + {{l}};
 };
 
-selectLiteral := procedure(S, Forbidden) {
-	return arb({l: k in S, l in k | ( ! (l in Forbidden) )});
+selectLiteral := procedure(s, forbidden) {
+	return arb({l: k in s, l in k | ( ! (l in forbidden) )});
 };
 
 negateLiteral := procedure(l) {
@@ -365,65 +365,65 @@ knf := procedure(f) {
 
 var mTokenList;
 var mIndex;
-German := "German";
-Briton := "Briton";
-Swede := "Swede";
-American := "American";
-Norwegian := "Norwegian";
-Red := "red";
-Green := "green";
-White := "white";
-Blue := "blue";
-Yellow := "yellow";
-PallMall := "PallMall";
-Dunhill := "Dunhill";
-Marlboro := "Marlboro";
-Winfield := "Winfield";
-Rothmanns := "Rothmanns";
-Dog := "dog";
-Bird := "bird";
-Cat := "cat";
-Pig := "pig";
-Zebra := "zebra";
-Whiskey := "whiskey";
-Coffee := "coffee";
-Beer := "beer";
-Milk := "milk";
-Water := "water";
-F := {};
-F := F + onePerHouse({German, Briton, Swede, American, Norwegian});
-F := F + onePerHouse({Red, Green, White, Blue, Yellow});
-F := F + onePerHouse({PallMall, Dunhill, Marlboro, Winfield, Rothmanns});
-F := F + onePerHouse({Dog, Bird, Cat, Pig, Zebra});
-F := F + onePerHouse({Whiskey, Coffee, Beer, Milk, Water});
+german := "German";
+briton := "Briton";
+swede := "Swede";
+american := "American";
+norwegian := "Norwegian";
+red := "red";
+green := "green";
+white := "white";
+blue := "blue";
+yellow := "yellow";
+pallMall := "PallMall";
+dunhill := "Dunhill";
+marlboro := "Marlboro";
+winfield := "Winfield";
+rothmanns := "Rothmanns";
+dog := "dog";
+bird := "bird";
+cat := "cat";
+pig := "pig";
+zebra := "zebra";
+whiskey := "whiskey";
+coffee := "coffee";
+beer := "beer";
+milk := "milk";
+water := "water";
+f := {};
+f := f + onePerHouse({german, briton, swede, american, norwegian});
+f := f + onePerHouse({red, green, white, blue, yellow});
+f := f + onePerHouse({pallMall, dunhill, marlboro, winfield, rothmanns});
+f := f + onePerHouse({dog, bird, cat, pig, zebra});
+f := f + onePerHouse({whiskey, coffee, beer, milk, water});
 for (i in {1 .. 5}) {
-	F := F + parse(Briton + i + " -> " + Red + i);
-	F := F + parse(Swede + i + " -> " + Dog + i);
-	F := F + parse(American + i + " -> " + Whiskey + i);
-	F := F + parse(Green + i + " -> " + Coffee + i);
-	F := F + parse(PallMall + i + " -> " + Bird + i);
-	F := F + parse(Yellow + i + " -> " + Dunhill + i);
-	F := F + parse(Winfield + i + " -> " + Beer + i);
-	F := F + parse(German + i + " -> " + Rothmanns + i);
+	f := f + parse(briton + i + " -> " + red + i);
+	f := f + parse(swede + i + " -> " + dog + i);
+	f := f + parse(american + i + " -> " + whiskey + i);
+	f := f + parse(green + i + " -> " + coffee + i);
+	f := f + parse(pallMall + i + " -> " + bird + i);
+	f := f + parse(yellow + i + " -> " + dunhill + i);
+	f := f + parse(winfield + i + " -> " + beer + i);
+	f := f + parse(german + i + " -> " + rothmanns + i);
 }
-print(F);
-F := F + leftTo(Green, White);
-F := F + parse(Milk + 3);
-F := F + parse(Norwegian + 1);
-F := F + nextTo(Marlboro, Cat);
-F := F + nextTo(Pig, Dunhill);
-F := F + nextTo(Norwegian, Blue);
-F := F + nextTo(Marlboro, Water);
-S := DavisPutnam(F, {});
-printSolution(S);
+print(f);
+f := f + leftTo(green, white);
+f := f + parse(milk + 3);
+f := f + parse(norwegian + 1);
+f := f + nextTo(marlboro, cat);
+f := f + nextTo(pig, dunhill);
+f := f + nextTo(norwegian, blue);
+f := f + nextTo(marlboro, water);
+s := davisPutnam(f, {});
+printSolution(s);
 print("checking uniqueness ...");
 for (i in {1 .. 5}) {
-	S := DavisPutnam(F + parse(Zebra + i), {});
-	if ((S <==> false)) {
+	s := davisPutnam(f + parse(zebra + i), {});
+	if ((s <==> false)) {
 		print("The zebra cannot be in house number " + i + ".");
 	} else {
 		print("The zebra might be in house number " + i + ".");
-		printSolution(S);
+		printSolution(s);
 	}
 }
 

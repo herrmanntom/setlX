@@ -24,7 +24,7 @@ public class BranchCase extends BranchAbstract {
     public String toString(int tabs) {
         String result = Environment.getTabs(tabs);
         result += "case " + mCondition.toString(tabs) + ":" + Environment.getEndl();
-        result += mStatements.toString(tabs + 1);
+        result += mStatements.toString(tabs + 1) + Environment.getEndl();
         return result;
     }
 }

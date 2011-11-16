@@ -1,30 +1,30 @@
 
-createBelegung := procedure(M, A) {
-	return {[x, x in M]: x in A};
+createBelegung := procedure(m, a) {
+	return {[x, x in m]: x in a};
 };
 
-evalSet := procedure(FS, I) {
-	return {eval(f, I): f in FS} == {true};
+evalSet := procedure(fS, i) {
+	return {eval(f, i): f in fS} == {true};
 };
 
-eval := procedure(f, I) {
+eval := procedure(f, i) {
 	switch {
 		case f == 1 :
 			return true;
 		case f == 0 :
 			return false;
 		case isString((f)) :
-			return I(f);
+			return i(f);
 		case f(1) == "-" :
-			return ( ! (eval(f(2), I)) );
+			return ( ! (eval(f(2), i)) );
 		case f(2) == "*" :
-			return eval(f(1), I) && eval(f(3), I);
+			return eval(f(1), i) && eval(f(3), i);
 		case f(2) == "+" :
-			return eval(f(1), I) || eval(f(3), I);
+			return eval(f(1), i) || eval(f(3), i);
 		case f(2) == "->" :
-			return ( ! (eval(f(1), I)) ) || eval(f(3), I);
+			return ( ! (eval(f(1), i)) ) || eval(f(3), i);
 		case f(2) == "<->" :
-			return eval(f(1), I) == eval(f(3), I);
+			return eval(f(1), i) == eval(f(3), i);
 		default :
 			print("eval: Syntax-Fehler: ", f);
 	}
@@ -35,15 +35,15 @@ f2 := ["W", "+", "K"];
 f3 := [["fM", "+", "F"], "*", ["-", ["fM", "*", "F"]]];
 f4 := ["F", "<->", "K"];
 f5 := ["W", "->", ["K", "*", "hM"]];
-FS := {f1, f2, f3, f4, f5};
-A := {"hM", "fM", "W", "K", "F"};
-P := pow(A);
-B := {createBelegung(M, A): M in P};
-S := {I in B | (evalSet(FS, I) <==> true)};
+fS := {f1, f2, f3, f4, f5};
+a := {"hM", "fM", "W", "K", "F"};
+p := pow(a);
+b := {createBelegung(m, a): m in p};
+s := {i in b | (evalSet(fS, i) <==> true)};
 print("\nMenge der Belegungen, die FS erf�llen:");
-if (#S == 1) {
-	I := arb(S);
-	Besucher := {x in A | I(x)};
-	print("\nFolgende Personen kommen: ", Besucher);
+if (#s == 1) {
+	i := arb(s);
+	besucher := {x in a | i(x)};
+	print("\nFolgende Personen kommen: ", besucher);
 }
 

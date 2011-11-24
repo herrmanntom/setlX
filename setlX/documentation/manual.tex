@@ -76,45 +76,103 @@ In addition to file-paths a number of options can be used when running \setlX{}:
            {displays the interpreter version and terminates}
 \end{itemize}
 
-\section{Launching}
+\section{Installing}
 
-When the start script finds the self-contained `.jar' file of the interpreter, it is directly run. If this file is not present, it will try to automatically build the `.jar' on first launch.
+To comfortably use \setlX{} it may be installed into once search-path. After this is done, it may be just like any other program on your system.
 
 \subsection{Unix-like OS (Linux, MacOS X, etc.)}
 
-The \setlX{} interpreter can be launched by opening a terminal, changing into the `\command{interpreter}' sub-directory
+\begin{enumerate}
+	\item copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/share/setlX/}')
+	\item open the `\command{setlX}'-script in your favorite editor (like `\command{vi}' or `\command{emacs}')
+	\item change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
+\begin{lstlisting}[frame=none,numbers=none]
+setlXJarLocation="/usr/share/setlX/setlX.jar"
+\end{lstlisting}
+	\item save and close the file
+	\item copy the modified `\command{setlX}'-script into some folder, which is in the search path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/bin}')
+	\item make the script executable, e.g.
+\begin{lstlisting}[frame=none,numbers=none]
+chmod +x /usr/bin/setlX
+\end{lstlisting}
+\end{enumerate}
+
+\subsection{Microsoft Windows}
+
+\begin{enumerate}
+	\item copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}')
+	\item open the `\command{win-setlX.cmd}'-script in your favorite editor
+	\item change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
+\begin{lstlisting}[frame=none,numbers=none]
+set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
+\end{lstlisting}
+	\item save and close the file
+	\item copy the modified `\command{win-setlX.cmd}'-script into the folder, where you want to work with \setlX{} programs
+\end{enumerate}
+
+\section{Launching}
+
+\subsection{Unix-like OS (Linux, MacOS X, etc.)}
+
+After installation, the \setlX{} interpreter can be launched by opening a terminal and executing a SetlX program
 
 \begin{lstlisting}[frame=none,numbers=none]
-cd interpreter
+setlX <path>/<name>.stlx
+\end{lstlisting}
+
+or launching the interactive mode:
+
+\begin{lstlisting}[frame=none,numbers=none]
+setlX
+\end{lstlisting}
+
+\subsection{Microsoft Windows}
+
+\begin{center}
+\large
+``Here's a nickel kid. Go buy yourself a real computer.''\footnote{In reference to \url{http://dilbert.com/1995-06-24}}
+\end{center}
+
+After installation, the \setlX{} interpreter can be launched by opening Microsoft's sort-of-terminal (`Command Prompt'), changing into the directory where you placed the `\command{win-setlX.cmd}'-script, e.g.
+
+\begin{lstlisting}[frame=none,numbers=none]
+cd /d C:\Users\DemoUser\education\setlX
 \end{lstlisting}
 
 and executing a SetlX program
 
 \begin{lstlisting}[frame=none,numbers=none]
-./setlX <path>/<name>.stlx
+win-setlX.cmd <path>\<name>.stlx
 \end{lstlisting}
 
-or launching the interactive mode.
+or launching the interactive mode:
 
 \begin{lstlisting}[frame=none,numbers=none]
-./setlX
+win-setlX.cmd
 \end{lstlisting}
 
-\vspace{1em}
+It might be possible to execute a \SetlX{} file by dragging it onto the `\command{win-setlX.cmd}' script or to launch the interpreter mode by simply double clicking this script.
 
-Optionally, when the interpreter source is available, the interpreter can be intelligently (re)build by executing
+\section{Building from source}
+
+Optionally, when the interpreter source is available, the interpreter can be (re)build.
+
+On Unix, the interpreter can be intelligently (re)build by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
 make
 \end{lstlisting}
 
-and/or
+in the `\command{src}' folder.
 
+On Windows the interpreter can be rebuild from scratch by executing
 \begin{lstlisting}[frame=none,numbers=none]
-make jar
+win-make.cmd
 \end{lstlisting}
 
-The second one will create a self-contained `.jar' file. This file can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
+in the `\command{src}' folder.
+
+On both platforms a self-contained `.jar' file will be created. This file can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
 java -jar setlX.jar <path>/<name>.stlx
@@ -126,38 +184,13 @@ or
 java -jar setlX.jar
 \end{lstlisting}
 
-\subsection{Microsoft Windows}
-
-\begin{center}
-\large
-``Here's a nickel kid. Go buy yourself a real computer.''\footnote{In reference to \url{http://dilbert.com/1995-06-24}}
-\end{center}
-
-The \setlX{} interpreter can be launched by opening Microsoft's sort-of-terminal (`Command Prompt'), changing into the `\command{interpreter}' sub-directory
-
-\begin{lstlisting}[frame=none,numbers=none]
-cd interpreter
-\end{lstlisting}
-
-and executing a SetlX program
-
-\begin{lstlisting}[frame=none,numbers=none]
-win-setlX.cmd <path>\<name>.stlx
-\end{lstlisting}
-
-or launching the interactive mode.
-
-\begin{lstlisting}[frame=none,numbers=none]
-win-setlX.cmd
-\end{lstlisting}
-
-It might be possible to execute a \SetlX{} file by dragging it onto the `\command{win-setlX.cmd}' script or to launch the interpreter mode by simply double clicking this script.
+However, the \command{setlX} and \command{win-setlX.cmd} scripts can also be used to launch the jar build by this process.
 
 \section{System Requirements}
 
-To run \setlX{} a Java runtime is required, which is compatible to Java version 1.5 (aka version 5) or higher.
+To run \setlX{} a Java runtime is required, which is compatible to Java version 1.6 (aka version 6) or higher.
 
-When building from source, the corresponding Java development kit (JDK) has to be present as well.
+When building from source, the corresponding Java Development Kit (JDK) has to be present as well.
 
 The hardware requirements are highly dependent on the executed \SetlX{} program. For optimal performance in most situations at least 512 MB of free main-memory should be available.
 
@@ -195,6 +228,9 @@ Apart from using a different syntax, the following limitation apply compared to 
 \section{Disclaimer}
 You may distribute \setlX{}, to anyone and for any purpose, and make changed to it, even without permission from the author or notice to the author, as long as you do not remove any copyright information, and also comply with the antlr license.
 
-This program uses the antlr parser generator in version 3.3. As per its license (which is shipped with the interpreter in \command{interpreter/antlr/antlr\_LICENSE.txt}) antlr is not guaranteed to work and might even destroy all life on this planet.
+This program uses the antlr parser generator in version 3.3. As per its license antlr is not guaranteed to work and might even destroy all life on this planet. The full text of this license is shown in figure \ref{lblAntlr}. Note however, that it only applies to the antlr components and NOT to the rest of the interpreter.
+
+\includeListing[e]{../src/antlr/antlr_LICENSE.txt}{}{lblAntlr}{}{License used by antlr v3.3}
+
 
 \end{document}

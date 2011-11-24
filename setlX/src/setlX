@@ -1,0 +1,30 @@
+#!/bin/sh
+
+# insert full path to the setlX.jar file here
+setlXJarLocation="setlX.jar"
+
+############################## additional options ##############################
+javaParameters=""
+
+# uncomment to execute with increased stack size
+#javaParameters="$javaParameters -Xss10m"
+
+# uncomment to execute with increased maximum memory size (6GB) (>2GB needs 64 Bit mode!)
+#javaParameters="$javaParameters -Xmx6g"
+
+# uncomment to force execution in 64 bit mode
+#javaParameters="$javaParameters -d64"
+
+# parameters for developing the interpreter
+#javaParameters="$javaParameters -Xfuture"
+#javaParameters="$javaParameters -Xprof"
+
+################################################################################
+
+if [ -f "$setlXJarLocation" ]
+  then
+    java -cp "$setlXJarLocation:$CLASSPATH" $javaParameters SetlX "$@"
+else
+    echo "The setlX.jar file can not be found!"
+fi
+

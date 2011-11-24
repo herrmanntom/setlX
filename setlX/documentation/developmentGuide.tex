@@ -34,8 +34,11 @@ Scott Adams
 \end{center}
 
 \vfill
-\tableofcontents
 \end{titlepage}
+
+\tableofcontents
+
+\newpage
 
 \section{Overview}
 
@@ -65,15 +68,15 @@ The following folders are used to structure the interpreter and its surrounding 
 			 (Also includes some programs, which where automatically converted from \SetlTwo{} sources.)}
 	\folder{grammar\_pure}
 			{\SetlX{} grammar in antlr syntax as used by the interpreter, but without any Java statements. This `pure' version can be automatically created from the interpreter syntax with the included `EBNF\_extractor' by executing \command{make update}. Also includes a simple program to parse \SetlX{} code without interpretation.}
-	\folder{interpreter}
+	\folder{src}
 			{Launching script and source code of the interpreter itself.}
 	\begin{itemize}
 		\folder{antlr}
 				{Antlr `jar' file and license.}
+		\folder{java-src}
+				{Java code of the interpreter (see section \ref{srcStructure}).}
 		\folder{simpleTest}
 				{Some very simple \SetlX{} code examples to test specific features for regressions, which are otherwise hard to detect. This test can be run by executing `\command{make test}'.}
-		\folder{src}
-				{Java code of the interpreter (see section \ref{srcStructure}).}
 	\end{itemize}
 \end{itemize}
 
@@ -146,7 +149,7 @@ public final static PreDefinedFunction DEFINITION
 
 A simple predefined function without parameters is shown in figure \ref{lblPDFunction}.
 
-\includeListing[e]{../interpreter/src/interpreter/functions/PD_now.java}{language=java}{lblPDFunction}{}{Predefined Function `\command{now()}'}
+\includeListing[e]{../src/java-src/interpreter/functions/PD_now.java}{language=java}{lblPDFunction}{}{Predefined Function `\command{now()}'}
 
 \nonSubsubsection{Using Parameters in Predefined Functions}
 
@@ -175,7 +178,7 @@ writeBackVars.add(new SetlReal("1.0"));
 
 These have to occur in \emph{the same order and number} as read-write parameters are defined in the constructor. A predefined function using a single read-write parameter is shown in figure \ref{lblPDFunctionRW}.
 
-\includeListing[e]{../interpreter/src/interpreter/functions/PD_from.java}{language=java}{lblPDFunctionRW}{}{Predefined Function `\command{from()}' using a read-write parameter}
+\includeListing[e]{../src/java-src/interpreter/functions/PD_from.java}{language=java}{lblPDFunctionRW}{}{Predefined Function `\command{from()}' using a read-write parameter}
 
 \nonSubsubsection{Prevent Introduction of new Scope}
 
@@ -199,15 +202,15 @@ The interpreter can be intelligently (re)build using make. Even though the stand
 Make targets:
 
 \begin{itemize}
-	\item Standard build of the interpreter:
+	\item Standard build of the interpreter, which creates a self-contained `.jar' file:
 \begin{lstlisting}[frame=none,numbers=none]
 make
 \end{lstlisting}
 
-	\item Create a self-contained `.jar' file (also see manual):
+	\item Build a version without creating a jar file:
 
 \begin{lstlisting}[frame=none,numbers=none]
-make jar
+make build
 \end{lstlisting}
 
 	\item Build a current version and execute the interactive mode:
@@ -247,7 +250,7 @@ Three different `distributions' can be automatically created (on an Unix-like OS
 \begin{enumerate}
 	\item A binary only distribution, which should work on all Unix-like OS and Windows \emph{without} the need of the full Java JDK. Any Java Runtime (JRE) installation which is newer or the same major version as the JDK which created the distribution should work. This distribution does \emph{not} include any \SetlX{} code.
 
-	\item A source distribution, which must be rebuild by the user, which is automatically attempted on first launch. A Java JDK has to be installed for this to work. The version of the users JDK can be lower or even incompatible to the JDK which created the distribution. This distribution also does \emph{not} include \SetlX{} code, except a simple program to test the interpreter (see `\command{make test}').
+	\item A source distribution, which must be rebuild by the user, which is automatically attempted on first launch. A full Java Development Kit (JDK) has to be installed for this to work. The version of the users JDK can be lower or even incompatible to the JDK which created the distribution. This distribution also does \emph{not} include \SetlX{} code, except a simple program to test the interpreter (see `\command{make test}').
 
 	\item The development kit, which includes everything used in the development of the interpreter itself: the full interpreter source, various \SetlX{} example programs, the grammar of the interpreter in `pure' form and the \LaTeX{} sources of the documentation.
 \end{enumerate}

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-cd interpreter
+cd src
 
 # clean the interpreter source
 echo "=> Cleaning the setlX interpreter's source ..."
@@ -8,7 +8,7 @@ make dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
-make jar
+make
 if [ -f setlX.jar ]
   then
     # clean it up again (does not remove the jar)
@@ -21,7 +21,7 @@ else
 fi
 
 # get version from executable (jar)
-version=$(java -jar setlX.jar --version)
+version=$(./setlX --version)
 versionForFileNames=$(echo $version | tr "." "-")
 
 # goto documentation source
@@ -77,15 +77,22 @@ rm -f "diff.result"
 
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "
-zip -q "$binOnly.zip" manual.pdf interpreter/antlr/antlr_LICENSE.txt interpreter/setlX interpreter/setlX.jar interpreter/win-setlX.cmd
+mkdir -p zipContents
+cp manual.pdf src/setlX src/win-setlX.cmd src/setlX.jar zipContents/.
+cd zipContents; zip -qr "../$binOnly.zip" . ; cd ..
+rm -rf zipContents
 echo "done"
 
 # remove the jar
-cd interpreter;make dist-clean;cd ..
+cd src;make dist-clean;cd ..
 
 # create source zip
 echo -n "=> Creating source distribution ... "
-zip -qr "$source.zip" manual.pdf interpreter
+mkdir -p zipContents
+cp -l manual.pdf src/setlX src/win-setlX.cmd zipContents/.
+cp -lr src zipContents/.
+cd zipContents; zip -qr "../$source.zip" . ; cd ..
+rm -rf zipContents
 echo "done"
 
 # create development zip

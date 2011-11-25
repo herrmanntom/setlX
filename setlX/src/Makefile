@@ -1,7 +1,12 @@
 CLASSPATH=antlr/antlr-*.jar
 
-jar:                                                         \
-        setlX.jar
+setlX.jar:                                                   \
+        antlr/antlr-*.jar                                            \
+        build
+	rm -f setlX.jar
+	cd bin; jar xf ../antlr/antlr-*.jar org/antlr/runtime
+	jar cfe setlX.jar SetlX -C bin/ .
+	rm -rf bin/org
 
 interactive:                                                 \
         build
@@ -10,14 +15,6 @@ interactive:                                                 \
 test:                                                        \
         build
 	./setlX simpleTest/test.stlx --verbose
-
-setlX.jar:                                                   \
-        antlr/antlr-*.jar                                            \
-        build
-	rm -f setlX.jar
-	cd bin; jar xf ../antlr/antlr-*.jar org/antlr/runtime
-	jar cfe setlX.jar SetlX -C bin/ .
-	rm -rf bin/org
 
 build:                                                      \
         setlX                                                        \

@@ -101,8 +101,8 @@ cd src;make dist-clean;cd ..
 # create source zip
 echo -n "=> Creating source distribution ... "
 mkdir -p zipContents
-cp -l manual.pdf src/setlX src/win-setlX.cmd zipContents/.
-cp -lr src zipContents/.
+cp manual.pdf src/setlX src/win-setlX.cmd zipContents/.
+cp -r src zipContents/.
 cd zipContents; zip -qr "../$source.zip" . ; cd ..
 rm -rf zipContents
 echo "done"

@@ -15,7 +15,7 @@ if [ -f setlX.jar ]
     make clean
     echo "=> The setlX interpreter was build correctly."
 else
-    echo "=> Building failed ..."
+    echo "=> Building the setlX interpreter failed ..."
     # break
     exit 1
 fi
@@ -37,13 +37,18 @@ echo "$version" > version.tex
 # make documentation
 echo "=> Rebuilding the documentation ..."
 make
-
-# move the finished PDFs where they belong
-mv -f *.pdf ../.
-
-# clean the documentation source (again)
-echo "=> Cleaning the documentation's source (again) ..."
-make dist-clean
+if [ -f developmentGuide.pdf -a -f manual.pdf ]
+  then
+    # move the finished PDFs where they belong
+    mv -f *.pdf ../.
+    # clean it up again
+    make dist-clean
+    echo "=> The documentation was build correctly."
+else
+    echo "=> Building the documentation failed ..."
+    # break
+    exit 1
+fi
 
 # goto pure grammar
 cd ../grammar_pure
@@ -51,14 +56,21 @@ cd ../grammar_pure
 # clean the pure grammar source
 echo "=> Cleaning the pure grammar source ..."
 make clean
+rm -rf Pure.g
 
 # update the Pure.g grammar
 echo "=> Updating the pure grammar"
 make update
-
-# clean the pure grammar source (again)
-echo "=> Cleaning the pure grammar source (again) ..."
-make clean
+if [ -f Pure.g ]
+  then
+    # clean the pure grammar source (again)
+    make clean
+    echo "=> The pure grammar was updated correctly."
+else
+    echo "=> Update the pure grammar failed ..."
+    # break
+    exit 1
+fi
 
 # go to project root
 cd ..

@@ -1,4 +1,4 @@
-grammar pure;
+grammar Pure;
 
 block
     : statement*

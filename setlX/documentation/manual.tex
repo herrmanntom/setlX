@@ -83,17 +83,17 @@ To comfortably use \setlX{} it may be installed into once search-path. After thi
 \subsection{Unix-like OS (Linux, MacOS X, etc.)}
 
 \begin{enumerate}
-	\item copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/share/setlX/}')
+	\item copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}')
 	\item open the `\command{setlX}'-script in your favorite editor (like `\command{vi}' or `\command{emacs}')
 	\item change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
-setlXJarLocation="/usr/share/setlX/setlX.jar"
+setlXJarLocation="/usr/local/setlX/setlX.jar"
 \end{lstlisting}
 	\item save and close the file
-	\item copy the modified `\command{setlX}'-script into some folder, which is in the search path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/bin}')
+	\item copy the modified `\command{setlX}'-script into some folder, which is in the search path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/local/bin}')
 	\item make the script executable, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
-chmod +x /usr/bin/setlX
+chmod +x /usr/local/bin/setlX
 \end{lstlisting}
 \end{enumerate}
 

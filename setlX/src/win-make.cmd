@@ -27,7 +27,7 @@ IF EXIST java-src (
     cd bin
     jar xf ..\antlr\antlr-*.jar org/antlr/runtime
     cd ..
-    jar cfe setlX.jar SetlX -C bin\ .
+    jar cmf java-src\MANIFEST.MF setlX.jar -C bin\ .
     rmdir /S /Q bin
     del /F /Q java-src\grammar\*.java
     del /F /Q java-src\grammar\*.tokens

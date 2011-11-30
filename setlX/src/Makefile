@@ -2,10 +2,11 @@ CLASSPATH=antlr/antlr-*.jar
 
 setlX.jar:                                                   \
         antlr/antlr-*.jar                                            \
+        java-src/MANIFEST.MF                                         \
         build
 	rm -f setlX.jar
 	cd bin; jar xf ../antlr/antlr-*.jar org/antlr/runtime
-	jar cfe setlX.jar SetlX -C bin/ .
+	jar cmf java-src/MANIFEST.MF setlX.jar -C bin/ .
 	rm -rf bin/org
 
 interactive:                                                 \

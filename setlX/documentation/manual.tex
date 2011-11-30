@@ -83,15 +83,17 @@ To comfortably use \setlX{} it may be installed into once search-path. After thi
 \subsection{Unix-like OS (Linux, MacOS X, etc.)}
 
 \begin{enumerate}
-	\item copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}')
-	\item open the `\command{setlX}'-script in your favorite editor (like `\command{vi}' or `\command{emacs}')
-	\item change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
+	\item Copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}').\\
+	You may also copy it into the home directory of some user, when he is the only \setlX-user on the system (e.g. `\command{/home/<user>/programs/setlX/}').
+	\item Open the `\command{setlX}'-script in your favorite editor (like `\command{vi}' or `\command{emacs}').
+	\item Change the contents of the `\command{setlXJarLocation}'-variable to the full path of the copied jar-file, including the filename itself, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 setlXJarLocation="/usr/local/setlX/setlX.jar"
 \end{lstlisting}
-	\item save and close the file
-	\item copy the modified `\command{setlX}'-script into some folder, which is in the search path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/local/bin}')
-	\item make the script executable, e.g.
+	\item Save and close the file.
+	\item Copy the modified `\command{setlX}'-script into some folder, which is in the search path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/local/bin}').\\
+	When only used by one user, you may copy it into the `bin' directory in his home instead (e.g. `\command{/home/<user>/bin}').
+	\item Make the copied script executable, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 chmod +x /usr/local/bin/setlX
 \end{lstlisting}
@@ -100,14 +102,14 @@ chmod +x /usr/local/bin/setlX
 \subsection{Microsoft Windows}
 
 \begin{enumerate}
-	\item copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}')
-	\item open the `\command{win-setlX.cmd}'-script in your favorite editor
-	\item change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
+	\item Copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}').
+	\item Open the `\command{win-setlX.cmd}'-script in your favorite editor.
+	\item Change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
 \end{lstlisting}
-	\item save and close the file
-	\item copy the modified `\command{win-setlX.cmd}'-script into the folder, where you want to work with \setlX{} programs
+	\item Save and close the file.
+	\item Copy the modified `\command{win-setlX.cmd}'-script into the folder, where you want to work with \setlX{} programs.
 \end{enumerate}
 
 \section{Launching}

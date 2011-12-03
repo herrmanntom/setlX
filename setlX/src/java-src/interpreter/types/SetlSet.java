@@ -259,17 +259,25 @@ public class SetlSet extends CollectionValue {
                     if (list.getMember(new SetlInt(1)).equals(index)) {
                         try {
                             list.setMember(new SetlInt(2), v);
+                            // break loop and finish up
+                            return;
                         } catch (NumberToLargeException ne) {
                             // the index can not be out of range when size() == 2
                         }
                     }
                 } else {
-                    throw new IncompatibleTypeException("'" + this + "' is not a relation.");
+                    throw new IncompatibleTypeException("'" + this + "' is not a map.");
                 }
             } else {
-                throw new IncompatibleTypeException("'" + this + "' is not a relation.");
+                throw new IncompatibleTypeException("'" + this + "' is not a map.");
             }
         }
+        /* to get here this set must be empty or a map */
+        // add [index, value] pair to this set
+        SetlList pair = new SetlList();
+        pair.addMember(index);
+        pair.addMember(v);
+        mSet.add(pair);
     }
 
     public void removeMember(Value element) {

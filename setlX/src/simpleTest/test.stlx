@@ -226,3 +226,28 @@ lazyChecking := procedure() {
 };
 lazyChecking();
 
+relationExtension := procedure() {
+    correct := false;
+
+    r := { [n, n*n] : n in {1..3} };
+
+    correct := r == {[1, 1], [2, 4], [3, 9]};
+
+    // change value of pair [2, 4] to [2, 3]
+    r(2) := 3;
+
+    correct := correct && r == {[1, 1], [2, 3], [3, 9]};
+
+    // add pair [4, 5]
+    r(4) := 5;
+
+    correct := correct && r == {[1, 1], [2, 3], [3, 9], [4, 5]};
+
+    if (correct) {
+        print("test 15 successful (relationExtension)");
+    } else {
+        print("test 15 failed (relationExtension)");
+    }
+};
+relationExtension();
+

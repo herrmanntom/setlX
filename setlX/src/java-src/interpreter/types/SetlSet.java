@@ -261,20 +261,12 @@ public class SetlSet extends CollectionValue {
                 if (list.size() == 2) {
                     if (list.getMember(new SetlInt(1)).equals(index)) {
                         if (found || v == Om.OM) {
-                            /* Remove all other matching pairs after at least
-                               one was found. Also remove pair if set to om   */
+                            // Remove all matching pairs
                             delete.add(element);
-                        } else {
-                            try {
-                                list.setMember(new SetlInt(2), v);
-                                found = true;
-                            } catch (NumberToLargeException ne) {
-                                // the index can not be out of range when size() == 2
-                            }
                         }
-                    } else if (found) {
+                    } else if (delete.size() > 0) {
                          /*  This pair does not match after at least one
-                             matching one was found.
+                             matching one was marked for deletion.
                              Because this set is ordered there can't be any
                              more maching pairs left in this map.             */
                         break;
@@ -291,8 +283,8 @@ public class SetlSet extends CollectionValue {
         for (Value element: delete) {
             mSet.getSet().remove(element);
         }
-        /* to get here this set must be empty or a map without pair matching index */
-        if ( ! found && v != Om.OM) {
+        /* to get here this set must be empty or a map without a pair matching the index */
+        if (v != Om.OM) {
             // add new pair [index, value] to this set
             SetlList pair = new SetlList();
             pair.addMember(index);

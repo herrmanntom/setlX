@@ -8,6 +8,7 @@ import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class SetlSet extends CollectionValue {
@@ -251,19 +252,32 @@ public class SetlSet extends CollectionValue {
     }
 
     public void setMember(Value index, Value v) throws SetlException {
+        boolean     found  = false;
+        List<Value> delete = new LinkedList<Value>();
         separateFromOriginal();
         for (Value element: mSet) {
             if (element instanceof SetlList) {
                 SetlList list  = (SetlList) element;
                 if (list.size() == 2) {
                     if (list.getMember(new SetlInt(1)).equals(index)) {
-                        try {
-                            list.setMember(new SetlInt(2), v);
-                            // break loop and finish up
-                            return;
-                        } catch (NumberToLargeException ne) {
-                            // the index can not be out of range when size() == 2
+                        if (found || v == Om.OM) {
+                            /* Remove all other matching pairs after at least
+                               one was found. Also remove pair if set to om   */
+                            delete.add(element);
+                        } else {
+                            try {
+                                list.setMember(new SetlInt(2), v);
+                                found = true;
+                            } catch (NumberToLargeException ne) {
+                                // the index can not be out of range when size() == 2
+                            }
                         }
+                    } else if (found) {
+                         /*  This pair does not match after at least one
+                             matching one was found.
+                             Because this set is ordered there can't be any
+                             more maching pairs left in this map.             */
+                        break;
                     }
                 } else {
                     throw new IncompatibleTypeException("'" + this + "' is not a map.");
@@ -272,12 +286,19 @@ public class SetlSet extends CollectionValue {
                 throw new IncompatibleTypeException("'" + this + "' is not a map.");
             }
         }
-        /* to get here this set must be empty or a map */
-        // add [index, value] pair to this set
-        SetlList pair = new SetlList();
-        pair.addMember(index);
-        pair.addMember(v);
-        mSet.add(pair);
+        /* remove all elements in delete list after loop over this set
+           (prevents concurent modification of set while looping over it)     */
+        for (Value element: delete) {
+            mSet.getSet().remove(element);
+        }
+        /* to get here this set must be empty or a map without pair matching index */
+        if ( ! found && v != Om.OM) {
+            // add new pair [index, value] to this set
+            SetlList pair = new SetlList();
+            pair.addMember(index);
+            pair.addMember(v);
+            mSet.add(pair);
+        }
     }
 
     public void removeMember(Value element) {

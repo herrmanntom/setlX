@@ -190,7 +190,7 @@ However, the \command{setlX} and \command{win-setlX.cmd} scripts can also be use
 
 \section{System Requirements}
 
-To run \setlX{} a Java runtime is required, which is compatible to Java version 1.6 (aka version 6) or higher.
+To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher. Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source might be required.
 
 When building from source, the corresponding Java Development Kit (JDK) has to be present as well.
 
@@ -205,19 +205,6 @@ Due to its implementation and execution by the Java Virtual Machine (JVM), a `st
 The JVM is unable to dynamically increase its internal stack size at all and the heap space only in very limited bounds, no matter how much free memory is available.
 
 To work around these problems, edit the used launching script (`\command{setlX}' or `\command{win-setlX.cmd}') with a text editor and follow the directions given at the top of the script.
-
-\subsection{Limitation Compared to other Setl Versions}
-
-Apart from using a different syntax, the following limitation apply compared to other Setl versions:
-
-\begin{itemize}
-	\item All variables and functions are case sensitive.\\
-        Predefined functions and keywords use camel case and begin with a lower case letter.
-    \item Most explicit type conversions are unsupported.
-    \item Explicit constants (`\command{const}') are unsupported.
-    \item There are no `\command{until}' and `pure' loops.
-    \item Object oriented features are not supported.
-\end{itemize}
 
 %\section{Known Bugs}
 %The following bugs are known to be present in this version of the interpreter:

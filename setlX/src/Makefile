@@ -10,11 +10,11 @@ setlX.jar:                                                   \
 	rm -rf bin/org
 
 interactive:                                                 \
-        build
+        setlX.jar
 	./setlX
 
 test:                                                        \
-        build
+        setlX.jar
 	./setlX simpleTest/test.stlx --verbose
 
 build:                                                      \

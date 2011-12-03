@@ -252,7 +252,6 @@ public class SetlSet extends CollectionValue {
     }
 
     public void setMember(Value index, Value v) throws SetlException {
-        boolean     found  = false;
         List<Value> delete = new LinkedList<Value>();
         separateFromOriginal();
         for (Value element: mSet) {
@@ -260,10 +259,8 @@ public class SetlSet extends CollectionValue {
                 SetlList list  = (SetlList) element;
                 if (list.size() == 2) {
                     if (list.getMember(new SetlInt(1)).equals(index)) {
-                        if (found || v == Om.OM) {
-                            // Remove all matching pairs
-                            delete.add(element);
-                        }
+                        // Mark all matching pairs for deletion
+                        delete.add(element);
                     } else if (delete.size() > 0) {
                          /*  This pair does not match after at least one
                              matching one was marked for deletion.

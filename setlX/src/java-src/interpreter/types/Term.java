@@ -16,6 +16,10 @@ public class Term extends CollectionValue {
     private String      mName;  // functional character of the term;    e.g. f
     private SetlList    mBody;  // arguments in inner body of the term; e.g. e1, e2, ..., en
 
+    public Term(String name) {
+        this(name, new SetlList());
+    }
+
     public Term(String name, SetlList body) {
         mName = name;
         mBody = body;

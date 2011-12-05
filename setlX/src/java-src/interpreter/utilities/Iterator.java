@@ -8,15 +8,26 @@ import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
 import interpreter.types.Value;
 
-public class Iterator {
-    private Expr                mLhs;    // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
-    private Expr                mRhs;    // Rhs (should be Set/List)
-    private Iterator            mNext;   // next iterator
+/*
+grammar rule:
+iterator
+    : assignable 'in' expr (',' assignable 'in' expr)*
+    ;
 
-    public Iterator(Expr lhs, Expr rhs) {
-        mLhs  = lhs;
-        mRhs  = rhs;
-        mNext = null;
+implemented here as:
+      ==========      ====      ====================
+      mAssignable  mCollection         mNext
+*/
+
+public class Iterator {
+    private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
+    private Expr        mCollection; // Rhs (should be Set/List)
+    private Iterator    mNext;       // next iterator
+
+    public Iterator(Expr assignable, Expr collection) {
+        mAssignable = assignable;
+        mCollection = collection;
+        mNext       = null;
     }
 
     // adds next iterator to end of current iterator chain
@@ -28,12 +39,15 @@ public class Iterator {
         }
     }
 
-    /* executes container in environment created by this iteration
-       note: resets to outer environment after its finished!
-       note: each iterator introduces a new environment to allow local variables */
+    /* executes container in scope created by this iteration
+       note: resets to outer scope after iteration is finished!
+       note: each iterator introduces a new scope to allow its iteration
+             variable to be local
+       note: variables inside the whole iteration are not _not_ local
+             all will be written `through' these inner scopes                 */
     public void eval(IteratorExecutionContainer exec) throws SetlException {
-        SetlException ex       = null;
-        Environment   outerEnv = Environment.getEnv();
+        SetlException   ex          = null;
+        VariableScope   outerScope  = VariableScope.getScope();
         try {
             evaluate(exec);
         } catch (BreakException ee) {
@@ -42,14 +56,14 @@ public class Iterator {
         } catch (SetlException e) {
             ex = e;
         }
-        Environment.setEnv(outerEnv); // make sure env is always reset
+        VariableScope.setScope(outerScope); // make sure scope is always reset
         if (ex != null) {
             throw ex;
         }
     }
 
     public String toString(int tabs) {
-        String result = mLhs.toString(tabs) + " in " + mRhs.toString(tabs);
+        String result = mAssignable.toString(tabs) + " in " + mCollection.toString(tabs);
         if (mNext != null) {
             result += ", " + mNext.toString(tabs);
         }
@@ -61,20 +75,20 @@ public class Iterator {
     }
 
     private void evaluate(IteratorExecutionContainer exec) throws SetlException {
-        Value iterationValue = mRhs.eval(); // trying to iterate over this value
+        Value iterationValue = mCollection.eval(); // trying to iterate over this value
         if (iterationValue instanceof CollectionValue) {
-            CollectionValue coll     = (CollectionValue) iterationValue;
-            // environment for inner execution/next iterator
-            Environment     innerEnv = Environment.getEnv().createInteratorBlock();
+            CollectionValue coll        = (CollectionValue) iterationValue;
+            // scope for inner execution/next iterator
+            VariableScope   innerScope  = VariableScope.getScope().createInteratorBlock();
             // iterate over items
             for (Value v: coll) {
-                // restore inner environment
-                Environment.setEnv(innerEnv);
-                innerEnv.setWriteThrough(false); // force iteration variables to be local to this block
+                // restore inner scope
+                VariableScope.setScope(innerScope);
+                innerScope.setWriteThrough(false); // force iteration variables to be local to this block
                 // assign value from collection
-                mLhs.assign(v);
+                mAssignable.assign(v);
                 // reset WriteThrough, because changes during execution are not strictly local
-                innerEnv.setWriteThrough(true);
+                innerScope.setWriteThrough(true);
                 /* Starts iteration of next iterator or execution if this is the
                    last iterator.
                    Stops iteration if requested by execution.

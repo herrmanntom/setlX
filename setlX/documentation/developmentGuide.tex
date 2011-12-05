@@ -114,10 +114,6 @@ The code is structured into multiple packages. The interpreter packages are some
 
 This section describes specific implementations, which are scattered into multiple classes and therefore lack a dedicated place to describe their interactions.
 
-\subsection{Environment (Stores Variables in Current and Global Scope)}
-
-\todo{tbd}
-
 \subsection{Exception Handling}
 
 \todo{tbd}
@@ -185,7 +181,7 @@ These have to occur in \emph{the same order and number} as read-write parameters
 For some functions it is desirable to execute then without introducing a new scope.
 To this effect, the following method can be inside the constructor after parameter definitions:
 \begin{lstlisting}[frame=none,numbers=none]
-doNotChangeEnvironment();
+doNotChangeScope();
 \end{lstlisting}
 
 \nonSubsubsection{Predefined Math Functions}

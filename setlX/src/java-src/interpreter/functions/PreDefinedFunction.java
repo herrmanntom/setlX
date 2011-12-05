@@ -9,6 +9,7 @@ import interpreter.types.RangeDummy;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 import interpreter.utilities.ParameterDef;
+import interpreter.utilities.VariableScope;
 import interpreter.utilities.WriteBackAgent;
 
 import java.util.LinkedList;
@@ -19,14 +20,14 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     private String  mName;
     private boolean mUnlimitedParameters;
     private boolean mAllowFewerParameters;
-    private boolean mDoNotChangeEnvironment;
+    private boolean mDoNotChangeScope;
 
     protected PreDefinedFunction(String name) {
         super(new LinkedList<ParameterDef>(), new Block());
         mName                   = name;
         mUnlimitedParameters    = false;
         mAllowFewerParameters   = false;
-        mDoNotChangeEnvironment = false;
+        mDoNotChangeScope       = false;
     }
 
     public final String getName() {
@@ -51,9 +52,9 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         mAllowFewerParameters   = true;
     }
 
-    // do not create a new env during execution
-    protected void doNotChangeEnvironment() {
-        mDoNotChangeEnvironment = true;
+    // do not create a new scope during execution
+    protected void doNotChangeScope() {
+        mDoNotChangeScope       = true;
     }
 
     // this call is to be implemented by all predefined functions
@@ -90,23 +91,23 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
             }
         }
 
-        // save old environment
-        Environment oldEnv = Environment.getEnv();
-        // create new environment used for the function call (not really used)
-        Environment.setEnv(oldEnv.cloneFunctions());
+        // save old scope
+        VariableScope oldScope = VariableScope.getScope();
+        // create new scope used for the function call
+        VariableScope.setScope(oldScope.cloneFunctions());
 
-        if (mDoNotChangeEnvironment) {
+        if (mDoNotChangeScope) {
             //we just changed our mind
-            Environment.setEnv(oldEnv);
+            VariableScope.setScope(oldScope);
         }
 
-        // List of writeBack-values, which should be stored into the outer environment
+        // List of writeBack-values, which should be stored into the outer scope
         LinkedList<Value> writeBackVars = new LinkedList<Value>();
 
         // call predefined function (which may add writeBack-values to List)
         Value             result        = this.execute(args, writeBackVars);
 
-        if (mDoNotChangeEnvironment) {
+        if (mDoNotChangeScope) {
             // we do not need to restore anything
             return result;
         }
@@ -120,16 +121,16 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
                 Value postValue = writeBackVars.removeFirst();
                 // expression used to fill parameter before execution
                 Expr  preExpr   = exprs.get(i);
-                /* if possible the WriteBackAgent will set the variable used in this
-                   expression to its postExecution state in the outer environment    */
+                /* if possible the WriteBackAgent will set the variable used in
+                   this expression to its postExecution state in the outer scope */
                 wba.add(preExpr, postValue);
             }
         }
 
-        // restore old environment
-        Environment.setEnv(oldEnv);
+        // restore old scope
+        VariableScope.setScope(oldScope);
 
-        // write values in WriteBackAgent into restored environment
+        // write values in WriteBackAgent into restored scope
         wba.writeBack();
 
         return result;

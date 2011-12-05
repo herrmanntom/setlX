@@ -17,7 +17,7 @@ public class PD_execute extends PreDefinedFunction {
     private PD_execute() {
         super("execute");
         addParameter("setlX_statements");
-        doNotChangeEnvironment();
+        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

@@ -106,6 +106,7 @@ bin/interpreter/types/*.class :                              \
         java-src/interpreter/utilities/Environment.java              \
         java-src/interpreter/utilities/ParameterDef.java             \
         java-src/interpreter/utilities/ParseSetlX.java               \
+        java-src/interpreter/utilities/VariableScope.java            \
         java-src/interpreter/utilities/WriteBackAgent.java           \
         java-src/comparableSet/*.java                                \
         java-src/interpreter/exceptions/*.java

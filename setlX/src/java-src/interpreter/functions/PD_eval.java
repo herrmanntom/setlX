@@ -15,7 +15,7 @@ public class PD_eval extends PreDefinedFunction {
     private PD_eval() {
         super("eval");
         addParameter("setlX_expr");
-        doNotChangeEnvironment();
+        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

@@ -1,11 +1,11 @@
 accounting/
 older_versions/
 setlX/documentation/version.tex
-setlX/interpreter/bin
-setlX/interpreter/src/grammar/SetlXgrammar.tokens
-setlX/interpreter/src/grammar/SetlXgrammarLexer.java
-setlX/interpreter/src/grammar/SetlXgrammarParser.java
-setlX/interpreter/setlX.jar
+setlX/src/bin
+setlX/src/java-src/grammar/SetlXgrammar.tokens
+setlX/src/java-src/grammar/SetlXgrammarLexer.java
+setlX/src/java-src/grammar/SetlXgrammarParser.java
+setlX/src/setlX.jar
 setlX/developmentGuide.pdf
 setlX/manual.pdf
 task/

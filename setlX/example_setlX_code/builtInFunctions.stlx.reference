@@ -1,7 +1,17 @@
 The circumference of a circle with radius 10 is: 62.83185307179586.
 100 is approximately 99.99999999999999.
 
-When this was written, 15295 days had gone by since 1970-01-01.
+variables in outer scope: scope([binding("mathConst", procedure (name_of_mathematical_constant) { /* predefined procedure `mathConst' */ }), binding("log", procedure (x) { /* predefined procedure `log' */ }), binding("getScope", procedure () { /* predefined procedure `getScope' */ }), binding("print", procedure (value, ...) { /* predefined procedure `print' */ }), binding("circumference", r |-> 2 * mathConst("pi") * r)])
+variables in outer scope: scope([binding("mathConst", procedure (name_of_mathematical_constant) { /* predefined procedure `mathConst' */ }), binding("log", procedure (x) { /* predefined procedure `log' */ }), binding("getScope", procedure () { /* predefined procedure `getScope' */ }), binding("print", procedure (value, ...) { /* predefined procedure `print' */ }), binding("circumference", r |-> 2 * mathConst("pi") * r), binding("printInnerScope", procedure () { secretVariable := 42; print("variables in inner scope: ", getScope()); })])
+variables in inner scope: scope([binding("secretVariable", 42), binding("mathConst", procedure (name_of_mathematical_constant) { /* predefined procedure `mathConst' */ }), binding("log", procedure (x) { /* predefined procedure `log' */ }), binding("getScope", procedure () { /* predefined procedure `getScope' */ }), binding("print", procedure (value, ...) { /* predefined procedure `print' */ }), binding("circumference", r |-> 2 * mathConst("pi") * r), binding("printInnerScope", procedure () { secretVariable := 42; print("variables in inner scope: ", getScope()); })])
+variables in outer scope: scope([binding("mathConst", procedure (name_of_mathematical_constant) { /* predefined procedure `mathConst' */ }), binding("log", procedure (x) { /* predefined procedure `log' */ }), binding("getScope", procedure () { /* predefined procedure `getScope' */ }), binding("print", procedure (value, ...) { /* predefined procedure `print' */ }), binding("circumference", r |-> 2 * mathConst("pi") * r), binding("printInnerScope", procedure () { secretVariable := 42; print("variables in inner scope: ", getScope()); })])
+
+Arrr("said", "the", "pirate")
+Arrr("said", "the", "pirate")
+
+46656 == 46656
+
+maximum A (for N = 5, P <= 5%) is 2.2184.
 
 direct:    string : "99"
 converted: int    : 99
@@ -22,11 +32,5 @@ converted: string : "procedure (value) { /* predefined procedure `abs' */ }"
 
 ["tails", "tails", "heads", "tails", "tails", "heads", "tails", "heads", "tails", "tails", "heads", "heads", "heads", "tails", "tails", "tails", "tails", "heads", "tails", "heads", "heads", "heads", "heads", "heads", "heads", "tails", "heads", "heads", "tails", "heads", "tails", "tails", "heads", "heads", "tails", "heads", "heads", "heads", "tails", "tails", "tails", "tails", "heads", "tails", "tails", "tails", "tails", "tails", "tails", "heads", "tails", "heads", "tails", "tails", "tails", "tails", "heads", "tails", "heads", "heads", "tails", "heads", "tails", "tails", "tails", "heads", "heads", "heads", "heads", "heads", "heads", "tails", "heads", "tails", "heads", "tails", "heads", "tails", "tails", "tails", "tails", "tails", "tails", "tails", "tails", "heads", "heads", "heads", "heads", "heads", "tails", "heads", "heads", "heads", "tails", "heads", "tails", "tails", "tails", "tails"]
 
-Arrr("said", "the", "pirate")
-Arrr("said", "the", "pirate")
-
-
-46656 == 46656
-
-maximum A (for N = 5, P <= 5%) is 2.2184.
+When this was written, 15313 days had gone by since 1970-01-01.
 

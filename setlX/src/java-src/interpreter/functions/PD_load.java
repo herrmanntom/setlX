@@ -39,7 +39,9 @@ public class PD_load extends PreDefinedFunction {
         Environment.setInteractive(interactive);
 
         // newline to visually separate result
-        System.out.println();
+        if (Environment.isInteractive()) {
+            System.out.println();
+        }
 
         // everything is good
         return SetlBoolean.TRUE;

@@ -6,8 +6,8 @@ import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.statements.Block;
-import interpreter.utilities.Environment;
 import interpreter.utilities.ParameterDef;
+import interpreter.utilities.VariableScope;
 import interpreter.utilities.WriteBackAgent;
 
 import java.util.List;
@@ -43,12 +43,12 @@ public class ProcedureDefinition extends Value {
             throw new IncorrectNumberOfParametersException("Functions can not be called with ranges as parameters.");
         }
 
-        // save old environment
-        Environment oldEnv = Environment.getEnv();
-        // create new environment used for the function call
-        Environment.setEnv(oldEnv.cloneFunctions());
+        // save old scope
+        VariableScope oldScope = VariableScope.getScope();
+        // create new scope used for the function call
+        VariableScope.setScope(oldScope.cloneFunctions());
 
-        // put arguments into environment
+        // put arguments into inner scope
         for (int i = 0; i < mParameters.size(); ++i) {
             mParameters.get(i).assign(args.get(i));
         }
@@ -75,10 +75,10 @@ public class ProcedureDefinition extends Value {
             }
         }
 
-        // restore old environment
-        Environment.setEnv(oldEnv);
+        // restore old scope
+        VariableScope.setScope(oldScope);
 
-        // write values in WriteBackAgent into restored environment
+        // write values in WriteBackAgent into restored scope
         wba.writeBack();
 
         return result;

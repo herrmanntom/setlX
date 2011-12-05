@@ -21,7 +21,7 @@ public class PD_print extends PreDefinedFunction {
         addParameter("value");
         enableUnlimitedParameters();
         allowFewerParameters();
-        doNotChangeEnvironment();
+        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {

@@ -298,6 +298,12 @@ public abstract class Value implements Comparable<Value> {
     public SetlBoolean isLessThan(Value other) throws SetlException {
         throw new UndefinedOperationException("'" + this + " < " + other + "' is undefined.");
     }
+
+    /* term operations */
+
+    public final Value toTerm() {
+        return this.clone();
+    }
 }
 
 

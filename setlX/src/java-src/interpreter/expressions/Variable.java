@@ -3,7 +3,7 @@ package interpreter.expressions;
 import interpreter.exceptions.SetlException;
 import interpreter.types.Om;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
+import interpreter.utilities.VariableScope;
 
 public class Variable extends Expr {
     private String mId;
@@ -13,7 +13,7 @@ public class Variable extends Expr {
     }
 
     public Value evaluate() throws SetlException {
-        Value v = Environment.findValue(mId);
+        Value v = VariableScope.findValue(mId);
         if (v == null){
             return Om.OM;
         }else{
@@ -23,12 +23,12 @@ public class Variable extends Expr {
 
     // sets this expression to the given value
     public void assign(Value v) {
-        Environment.putValue(mId, v.clone());
+        VariableScope.putValue(mId, v.clone());
     }
 
     // sets this expression to the given value
     public void makeGlobal() {
-        Environment.makeGlobal(mId);
+        VariableScope.makeGlobal(mId);
     }
 
     public String toString(int tabs) {

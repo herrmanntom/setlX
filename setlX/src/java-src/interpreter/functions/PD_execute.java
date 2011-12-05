@@ -28,7 +28,7 @@ public class PD_execute extends PreDefinedFunction {
         String  stmntStr = stmntArg.toString();
         // strip out double quotes
         stmntStr         = stmntStr.substring(1, stmntStr.length() - 1);
-        
+
         // parse statements
         Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
 
@@ -39,8 +39,10 @@ public class PD_execute extends PreDefinedFunction {
         Environment.setInteractive(interactive);
 
         // newline to visually separate result
-        System.out.println();
-        
+        if (Environment.isInteractive()) {
+            System.out.println();
+        }
+
         // everything seems fine
         return SetlBoolean.TRUE;
     }

@@ -4,6 +4,9 @@ import interpreter.functions.MathFunction;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.types.Om;
 import interpreter.types.ProcedureDefinition;
+import interpreter.types.SetlList;
+import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.types.Value;
 
 import java.lang.reflect.Method;
@@ -14,8 +17,8 @@ import java.util.Map;
 public class VariableScope {
     /*============================ static ============================*/
 
-    // this map stores all global variables
-    private static Map<String, Value>   sGlobals        = new HashMap<String, Value>();
+    // this scope stores all global variables
+    private static final VariableScope  sGlobals        = new VariableScope();
 
     /* This variable stores the initial VariableScope:
        Predefined functions are dynamically loaded into this VariableScope,
@@ -28,16 +31,16 @@ public class VariableScope {
     // this variable stores the variable assignment that is currently active
     private static VariableScope        sVariableScope  = sInitial;
 
-    public static void setScope(VariableScope newEnv) {
-        sVariableScope = newEnv;
-    }
-
     public static VariableScope getScope() {
         return sVariableScope;
     }
 
+    public static void setScope(VariableScope newEnv) {
+        sVariableScope = newEnv;
+    }
+
     public static Value findValue(String var) {
-        Value      v = sGlobals.get(var);
+        Value      v = sGlobals.locateValue(var).mV;
         if (v != null) {
             return v;
         }
@@ -78,22 +81,22 @@ public class VariableScope {
     }
 
     public static void putValue(String var, Value value) {
-        if (sGlobals.get(var) != null) {
-            sGlobals.put(var, value);
+        if (sGlobals.locateValue(var).mV != null) {
+            sGlobals.storeValue(var, value);
         } else {
             sVariableScope.storeValue(var, value);
         }
     }
 
     public static void makeGlobal(String var) {
-        if (sGlobals.get(var) == null) {
+        if (sGlobals.locateValue(var).mV == null) {
             Value v = findValue(var);
             if (v != null) {
-                sGlobals.put(var, v);
+                sGlobals.storeValue(var, v);
                 // remove local variable (will survive if nested somewhere in mOriginalScope)
                 sVariableScope.mVarBindings.remove(v);
             } else {
-                sGlobals.put(var, Om.OM);
+                sGlobals.storeValue(var, Om.OM);
             }
         }
     }
@@ -180,6 +183,21 @@ public class VariableScope {
         return new SearchItem(v, false);
     }
 
+    // collect all bindings reachable from current scope (except global variables!)
+    private void collectBindings(Map<String, Value> result, boolean restrictToFunctions) {
+        // add add bindings from inner scopes
+        if (mOriginalScope != null) {
+            mOriginalScope.collectBindings(result, mRestrictToFunctions);
+        }
+        // add own bindings (possibly overwriting values from inner bindings
+        for (Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
+            Value   val = entry.getValue();
+            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
+                result.put(entry.getKey(), val);
+            }
+        }
+    }
+
     private void storeValue(String var, Value value) {
         if (!mWriteThrough || mVarBindings.get(var) != null) {
             // this scope does not allow write through or variable is stored here
@@ -190,5 +208,30 @@ public class VariableScope {
         ) {
             mOriginalScope.storeValue(var, value);
         }
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Map<String, Value>  allVars = new HashMap<String, Value>();
+        // collect all bindings reachable from current scope
+        this.collectBindings(allVars, false);
+        sGlobals.collectBindings(allVars, false);
+
+        // term which represents the scope
+        Term        result      = new Term("scope");
+        // list of bindings in scope
+        SetlList    bindings    = new SetlList();
+
+        for (Map.Entry<String, Value> entry : allVars.entrySet()) {
+            Term    binding = new Term("binding");
+            binding.addMember(new SetlString(entry.getKey()));
+            binding.addMember(entry.getValue().toTerm());
+
+            bindings.addMember(binding);
+        }
+        result.addMember(bindings);
+
+        return result;
     }
 }

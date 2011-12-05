@@ -10,17 +10,46 @@ print("100 is approximately " + log(mathConst("e") ** 100) + ".");
 print();
 
 /*******************************************************************************
-now()                   // get current time since epoch in ms
+getScope()              // get a term representing all variables set in current scope
 */
 
-daysSinceEpoch := procedure(ms) {
-    aDayInMs := 1000 * 60 ** 2 * 24;
-    return ms / aDayInMs;
+print("variables in outer scope: ", getScope());
+printInnerScope := procedure() {
+    secretVariable := 42;
+    print("variables in inner scope: ", getScope());
 };
+print("variables in outer scope: ", getScope());
+printInnerScope();
+print("variables in outer scope: ", getScope());
+print();
 
-// print(daysSinceEpoch(now()) + " days have gone by since 1970-01-01.");
-// now make it testable...
-print("When this was written, " + daysSinceEpoch(1321521122168) + " days had gone by since 1970-01-01.\n");
+/*******************************************************************************
+makeTerm(fnc, argList)  // create a term with the form: fnc(argList)
+fct(term)               // get functional char of a term
+args(term)              // get arguments of term
+*/
+
+t := makeTerm("Arrr",["said","the","pirate"]);
+a := str(args(t));
+print(t);
+print(fct(t), "(", a(2 .. #a-1), ")");
+print();
+
+/*******************************************************************************
+eval(expr)              // evaluate a String of a SetlX expression to a variable
+execute(stmnts)         // execute a String of SetlX statements
+*/
+
+execute("x := y := 6;");
+print(eval("x ** y"), " == ", x ** y);
+print();
+
+/*******************************************************************************
+load(path)              // loads SetlX source code file and executes it
+*/
+
+load("../example_setlX_code/erlang.stlx"); // will fail if relative path is wrong...
+print();
 
 /*******************************************************************************
 int(stringOrNumber)     // convert string or number into an integer, returns om on failure
@@ -69,37 +98,23 @@ print(l); // will only be the same when interpreter is started with --predictabl
 print();
 
 /*******************************************************************************
-makeTerm(fnc, argList)  // create a term with the form: fnc(argList)
-fct(term)               // get functional char of a term
-args(term)              // get arguments of term
+now()                   // get current time since epoch in ms
 */
 
-t := makeTerm("Arrr",["said","the","pirate"]);
-a := str(args(t));
-print(t);
-print(fct(t), "(", a(2 .. #a-1), ")");
+daysSinceEpoch := procedure(ms) {
+    aDayInMs := 1000 * 60 ** 2 * 24;
+    return ms / aDayInMs;
+};
+
+// print(daysSinceEpoch(now()) + " days have gone by since 1970-01-01.");
+// now make it testable...
+print("When this was written, " + daysSinceEpoch(1323062948018) + " days had gone by since 1970-01-01.");
 print();
-
-/*******************************************************************************
-eval(expr)              // evaluate a String of a SetlX expression to a variable
-execute(stmnts)         // execute a String of SetlX statements
-*/
-
-execute("x := y := 6;");
-print(eval("x ** y"), " == ", x ** y);
-print();
-
-/*******************************************************************************
-load(path)				// loads SetlX source code file and executes it
-*/
-
-load("../example_setlX_code/erlang.stlx"); // will fail if relative path is wrong...
 
 /*******************************************************************************
 ToDo/Not jet implemented:
 
 evalTerm(term)          // execute terms which represent SetlX statements and expessions
-getEnv()                // get a term representing all variables set in current scope
 getTerm(expr)           // convert the value of an expression into a term
 parse(stmnts)           // parse SetlX statements into a term
 parseExpr(expr)         // parse SetlX expression into a term

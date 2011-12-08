@@ -13,20 +13,20 @@ import java.util.Iterator;
 
 public class Term extends CollectionValue {
 
-    private String      mName;  // functional character of the term;    e.g. f
-    private SetlList    mBody;  // arguments in inner body of the term; e.g. e1, e2, ..., en
+    private String      mFunctionalCharacter; // functional character of the term;    e.g. f
+    private SetlList    mBody;                // arguments in inner body of the term; e.g. e1, e2, ..., en
 
-    public Term(String name) {
-        this(name, new SetlList());
+    public Term(String functionalCharacter) {
+        this(functionalCharacter, new SetlList());
     }
 
-    public Term(String name, SetlList body) {
-        mName = name;
-        mBody = body;
+    public Term(String functionalCharacter, SetlList body) {
+        mFunctionalCharacter = functionalCharacter;
+        mBody                = body;
     }
 
     public Term clone() {
-        return new Term(mName, mBody.clone());
+        return new Term(mFunctionalCharacter, mBody.clone());
     }
 
     public Iterator<Value> iterator() {
@@ -62,7 +62,7 @@ public class Term extends CollectionValue {
     }
 
     public SetlString functionalCharacter() {
-        return new SetlString(mName);
+        return new SetlString(mFunctionalCharacter);
     }
 
     public Value lastMember() {
@@ -93,11 +93,11 @@ public class Term extends CollectionValue {
 
     public String toString() {
         if (mBody.size() <= 0) {
-            return mName;
+            return mFunctionalCharacter;
         }
         // lists use [] in toString, which have to be removed...
         String s = mBody.toString();
-        return mName + "(" + s.substring(1, s.length() - 1) + ")";
+        return mFunctionalCharacter + "(" + s.substring(1, s.length() - 1) + ")";
     }
 
     /* Comparisons */
@@ -113,7 +113,7 @@ public class Term extends CollectionValue {
     public int compareTo(Value v){
         if (v instanceof Term) {
             Term other = (Term) v;
-            int cmp = mName.compareTo(other.mName);
+            int cmp = mFunctionalCharacter.compareTo(other.mFunctionalCharacter);
             if (cmp != 0) {
                 return cmp;
             }

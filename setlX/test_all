@@ -6,7 +6,7 @@ manualTestFiles=""
 
 # prepare the interpreter
 simpleTest=simpleTest/test.stlx
-cd src; ./setlX "$simpleTest" > $tmpFile 2>&1; cd ..
+cd src; make test >/dev/null 2>$tmpFile; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" $tmpFile)
@@ -16,6 +16,7 @@ okCount=$(grep -c "successful" $tmpFile)
 if [ $failedCount -gt 0 -o $okCount -lt 15 ]
   then
     echo "the initial testfile '$simpleTest' failed!"
+    rm -f $tmpFile
     exit 1
 else
     echo -e "executing file '$simpleTest' successful!\n"
@@ -55,6 +56,8 @@ if [ ! -s diff.result ]
   then
     rm -f diff.result
 fi
+
+rm -f $tmpFile
 
 manualTestFiles="${manualTestFiles%, }"
 echo "The following files need user input and must be tested manually: $manualTestFiles"

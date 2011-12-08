@@ -14,8 +14,11 @@ interactive:                                                 \
 	./setlX
 
 test:                                                        \
-        setlX.jar
-	./setlX simpleTest/test.stlx --verbose
+        setlX.jar                                                    \
+        simpleTest/test.stlx
+	unix2dos -n simpleTest/test.stlx simpleTest/test.windows.stlx 2>&1
+	./setlX simpleTest/test.windows.stlx --verbose
+	rm -f simpleTest/test.windows.stlx
 
 build:                                                      \
         setlX                                                        \

@@ -9,9 +9,15 @@ import java.util.List;
 
 public class PD_print extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_print();
+    private             boolean            interprete;
 
     private PD_print() {
-        super("print");
+        this("print");
+    }
+
+    protected PD_print(String fName) {
+        super(fName);
+        interprete = true;
         addParameter("value");
         enableUnlimitedParameters();
         allowFewerParameters();
@@ -19,6 +25,7 @@ public class PD_print extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
+        prePrint();
         for (Value arg : args) {
             String text = arg.toString();
             // Strip out double quotes when printing strings
@@ -26,10 +33,24 @@ public class PD_print extends PreDefinedFunction {
             if (length >= 2 && text.charAt(0) == '"' && text.charAt(length - 1) == '"') {
                 text = text.substring(1, length - 1);
             }
-            System.out.print(text);
+            print(text);
         }
-        System.out.println();
+        print("\n");
+        postPrint();
         return Om.OM;
+    }
+
+    protected void prePrint() {
+        interprete = Environment.isInterpreteStrings();
+        Environment.setInterpreteStrings(true);
+    }
+
+    protected void print(String txt) {
+        System.out.print(txt);
+    }
+
+    protected void postPrint() {
+        Environment.setInterpreteStrings(interprete);
     }
 }
 

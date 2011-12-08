@@ -13,7 +13,7 @@ public class PD_makeTerm extends PreDefinedFunction {
 
     private PD_makeTerm() {
         super("makeTerm");
-        addParameter("name");
+        addParameter("functionalCharacter");
         addParameter("body");
     }
 
@@ -21,16 +21,22 @@ public class PD_makeTerm extends PreDefinedFunction {
         Value arg0 = args.get(0);
         Value arg1 = args.get(1);
         if ( ! (arg0 instanceof SetlString)) {
-            throw new IncompatibleTypeException("Name '" + arg0 + "' is not a string.");
+            throw new IncompatibleTypeException("functionalCharacter '" + arg0 + "' is not a string.");
         }
         if ( ! (arg1 instanceof SetlList)) {
             throw new IncompatibleTypeException("Argument '" + arg1 + "' is not a list.");
         }
-        String name = arg0.toString();
+        String fct = arg0.toString();
         // Strip out double quotes from string
-        name = name.substring(1, name.length() - 1);
-        // make the new Term
-        return new Term(name, (SetlList) arg1);
+        fct = fct.substring(1, fct.length() - 1);
+
+        // check if name is usable as term (fist char is upper case or single qoute ( ' ))
+        if (fct.length() > 0 && (fct.charAt(0) == '\'' || Character.isUpperCase(fct.charAt(0)))) {
+            // make the new Term
+            return new Term(fct, (SetlList) arg1);
+        } else {
+            throw new IncompatibleTypeException("functionalCharacter '" + fct + "' must start with an upper case letter or a single qoute.");
+        }
     }
 }
 

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PD_print extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_print();
-    private             boolean            interprete;
+//    private             boolean            interprete;
 
     private PD_print() {
         this("print");
@@ -17,7 +17,7 @@ public class PD_print extends PreDefinedFunction {
 
     protected PD_print(String fName) {
         super(fName);
-        interprete = true;
+//        interprete = true;
         addParameter("value");
         enableUnlimitedParameters();
         allowFewerParameters();
@@ -41,8 +41,8 @@ public class PD_print extends PreDefinedFunction {
     }
 
     protected void prePrint() {
-        interprete = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(true);
+//        interprete = Environment.isInterpreteStrings();
+//        Environment.setInterpreteStrings(true);
     }
 
     protected void print(String txt) {
@@ -50,7 +50,7 @@ public class PD_print extends PreDefinedFunction {
     }
 
     protected void postPrint() {
-        Environment.setInterpreteStrings(interprete);
+//        Environment.setInterpreteStrings(interprete);
     }
 }
 

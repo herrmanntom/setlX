@@ -169,14 +169,30 @@ public class SetlInt extends NumberValue {
 
         // collect all elements in range
         try { // maybe we can get away with using integers
-            int stopI = stop.intValue(), stepI = step.intValue();
-            for (int i = this.intValue(); i <= stopI; i = i + stepI) {
-                collection.addMember(new SetlInt(BigInteger.valueOf(i)));
+            int stopI = stop.intValue(), stepI = step.intValue(), i = this.intValue();
+            if (stepI > 0) {
+                for (; i <= stopI; i = i + stepI) {
+                    collection.addMember(new SetlInt(BigInteger.valueOf(i)));
+                }
+            } else if (stepI < 0) {
+                for (; i >= stopI; i = i + stepI) {
+                    collection.addMember(new SetlInt(BigInteger.valueOf(i)));
+                }
+            } else { // stepI == 0!
+                throw new UndefinedOperationException("Step size '" + stepI + "' is illogical.");
             }
         } catch (NumberToLargeException ntle) { // maybe not
-            BigInteger stopBI = stop.mNumber, stepBI = step.mNumber;
-            for (BigInteger i = this.mNumber; i.compareTo(stopBI) <= 0; i = i.add(stepBI)) {
-                collection.addMember(new SetlInt(i));
+            BigInteger stopBI = stop.mNumber, stepBI = step.mNumber, i = this.mNumber;
+            if (stepBI.compareTo(BigInteger.ZERO) > 0) {
+                for (; i.compareTo(stopBI) <= 0; i = i.add(stepBI)) {
+                    collection.addMember(new SetlInt(i));
+                }
+            } else if (stepBI.compareTo(BigInteger.ZERO) < 0) {
+                for (; i.compareTo(stopBI) >= 0; i = i.add(stepBI)) {
+                    collection.addMember(new SetlInt(i));
+                }
+            } else { // stepBI == 0!
+                throw new UndefinedOperationException("Step size '" + stepBI + "' is illogical.");
             }
         }
     }

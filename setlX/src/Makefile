@@ -126,7 +126,7 @@ bin/comparableSet/*.class :                                  \
 	mkdir -p bin/
 	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/comparableSet/*.java
 
-java-src/grammar/SetlXgrammar*.java :                             \
+java-src/grammar/SetlXgrammar*.java :                        \
         java-src/grammar/SetlXgrammar.g
 	java  -cp $(CLASSPATH) org.antlr.Tool -fo java-src/grammar java-src/grammar/SetlXgrammar.g
 

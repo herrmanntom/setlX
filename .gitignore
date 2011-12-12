@@ -1,6 +1,7 @@
 accounting/
 older_versions/
 setlX/documentation/version.tex
+setlX/src/antlr/antlr-*-complete.jar
 setlX/src/bin
 setlX/src/java-src/grammar/SetlXgrammar.tokens
 setlX/src/java-src/grammar/SetlXgrammarLexer.java

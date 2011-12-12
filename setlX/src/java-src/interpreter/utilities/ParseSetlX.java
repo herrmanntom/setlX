@@ -65,31 +65,40 @@ public class ParseSetlX {
     }
 
     private static Block parseBlock(ANTLRStringStream input) throws SyntaxErrorException, IOException {
+        SetlXgrammarParser  parser  = null;
         try {
             SetlXgrammarLexer   lexer  = new SetlXgrammarLexer(input);
             CommonTokenStream   ts     = new CommonTokenStream(lexer);
-            SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
+                                parser = new SetlXgrammarParser(ts);
 
             // parse the input
-            Block               blk    = parser.block();
+            Block               blk    = parser.initBlock();
 
             // now Antlr will print its parser errors into stderr ...
 
             if (parser.getNumberOfSyntaxErrors() > 0) {
-                throw new SyntaxErrorException("" + parser.getNumberOfSyntaxErrors() + " syntax errors encountered.");
+                throw new NullPointerException(); // different problem, but same handling as NullPointerException
             }
 
             return blk;
         } catch (RecognitionException re) {
             throw new SyntaxErrorException(re.getMessage());
+        } catch (NullPointerException npe) {
+            if (parser != null && parser.getNumberOfSyntaxErrors() > 0) {
+                // NullPointerException caused by syntax error (or thrown because of errors)
+                throw new SyntaxErrorException("" + parser.getNumberOfSyntaxErrors() + " syntax errors encountered.");
+            } else { // NullPointer in parse tree itself
+                throw new SyntaxErrorException("Parsed tree contains nullpointer.");
+            }
         }
     }
 
     private static Expr parseExpr(ANTLRStringStream input) throws SyntaxErrorException, IOException {
+        SetlXgrammarParser  parser  = null;
         try {
             SetlXgrammarLexer   lexer  = new SetlXgrammarLexer(input);
             CommonTokenStream   ts     = new CommonTokenStream(lexer);
-            SetlXgrammarParser  parser = new SetlXgrammarParser(ts);
+                                parser = new SetlXgrammarParser(ts);
 
             // parse the input
             Expr                exp    = parser.anyExpr();
@@ -97,12 +106,19 @@ public class ParseSetlX {
             // now Antlr will print its parser errors into stderr ...
 
             if (parser.getNumberOfSyntaxErrors() > 0) {
-                throw new SyntaxErrorException("" + parser.getNumberOfSyntaxErrors() + " syntax errors encountered.");
+                throw new NullPointerException(); // different problem, but same handling as NullPointerException
             }
 
             return exp;
         } catch (RecognitionException re) {
             throw new SyntaxErrorException(re.getMessage());
+        } catch (NullPointerException npe) {
+            if (parser != null && parser.getNumberOfSyntaxErrors() > 0) {
+                // NullPointerException caused by syntax error (or thrown because of errors)
+                throw new SyntaxErrorException("" + parser.getNumberOfSyntaxErrors() + " syntax errors encountered.");
+            } else { // NullPointer in parse tree itself
+                throw new SyntaxErrorException("Parsed tree contains nullpointer.");
+            }
         }
     }
 

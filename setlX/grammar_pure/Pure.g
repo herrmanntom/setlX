@@ -1,5 +1,9 @@
 grammar Pure;
 
+initBlock
+    : statement+
+    ;
+
 block
     : statement+
     ;

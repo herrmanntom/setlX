@@ -17,6 +17,18 @@ grammar SetlXgrammar;
     package grammar;
 }
 
+/* Require at least one statement to begin parsing.
+   Otherwhise antlr runs into strange parser behavior ... */
+initBlock returns [Block blk]
+    @init{
+        List<Statement> stmnts = new LinkedList<Statement>();
+    }
+    : (
+        statement  { stmnts.add($statement.stmnt); }
+      )+
+      { blk = new Block(stmnts); }
+    ;
+
 block returns [Block blk]
     @init{
         List<Statement> stmnts = new LinkedList<Statement>();
@@ -96,8 +108,7 @@ assignment returns [Assignment assign]
     ;
 
 idList returns [SetListConstructor ilc]
-    :
-      '[' explicitIdList ']' { ilc = new SetListConstructor(SetListConstructor.LIST, $explicitIdList.eil); }
+    : '[' explicitIdList ']' { ilc = new SetListConstructor(SetListConstructor.LIST, $explicitIdList.eil); }
     ;
 
 explicitIdList returns [ExplicitList eil]
@@ -290,10 +301,10 @@ factor returns [Expr f]
     ;
 
 prefixOperation returns [Expr po]
-    : '+/'   factor { po = new SumMembers($factor.f);      }
+    : '+/'   factor { po = new AddMembers($factor.f);      }
     | '*/'   factor { po = new MultiplyMembers($factor.f); }
     | '#'    factor { po = new Cardinality($factor.f);     }
-    | '-'    factor { po = new Negative($factor.f);        }
+    | '-'    factor { po = new Negate($factor.f);          }
     ;
 
 simpleFactor returns [Expr sf]
@@ -314,7 +325,7 @@ call returns [Expr c]
 
 varOrTerm returns [Variable vot]
     : ID    { vot = new Variable($ID.text);   }
-//    | TERM  { vot = new Variable($TERM.text); }
+    | TERM  { vot = new Variable($TERM.text); }
     ;
 
 callParameters returns [List<Expr> args]
@@ -493,7 +504,7 @@ postFixOperator
 
 
 
-//TERM            : ('\'' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
+TERM            : ('\'' | 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
 ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : '.'('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;

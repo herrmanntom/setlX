@@ -7,7 +7,7 @@ public class ParsePure {
         PureLexer           lexer   = new PureLexer(input);
         CommonTokenStream   ts      = new CommonTokenStream(lexer);
         PureParser          parser  = new PureParser(ts);
-        parser.block();
+        parser.initBlock();
     }
 }
 

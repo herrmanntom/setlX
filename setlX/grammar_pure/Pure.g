@@ -1,7 +1,7 @@
 grammar Pure;
 
 block
-    : statement*
+    : statement+
     ;
 
 statement
@@ -160,6 +160,7 @@ call
 
 varOrTerm
     : ID
+    | TERM
     ;
 
 callParameters
@@ -277,11 +278,13 @@ postFixOperator
 
 
 
+TERM : ('\'' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 ID : 'a'..'z' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 NUMBER : '0' | '1'..'9' ('0'..'9')*;
 REAL : '.' ('0'..'9')+ (('e' | 'E') '-'? ('0'..'9')+)?;
 STRING : '"' ('\\"' | ~('"'))* '"';
 LINE_COMMENT : '//' (~('\r\n' | '\n' | '\r'))*;
 MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';
-WS : ' ' | '\t' | '\n' | '\r';
+
+WS : (' ' | '\t' | '\n' | '\r') { skip(); };
 

@@ -1,7 +1,11 @@
 grammar Pure;
 
-block
+initBlock
     : statement+
+    ;
+
+block
+    : statement*
     ;
 
 statement

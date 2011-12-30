@@ -1,21 +1,42 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.types.Term;
 import interpreter.types.Value;
 
-public class MultiplyMembers extends Expr {
-    private Expr mRhs;
+//  grammar rule:
+//  prefixOperation
+//      : '*/' factor
+//      | [...]
+//      ;
+//
+//  implemented here as:
+//             ======
+//             mExpr
 
-    public MultiplyMembers(Expr rhs) {
-        mRhs = rhs;
+public class MultiplyMembers extends Expr {
+    private Expr mExpr;
+
+    public MultiplyMembers(Expr expr) {
+        mExpr = expr;
     }
 
     public Value evaluate() throws SetlException {
-        return mRhs.eval().multiplyMembers();
+        return mExpr.eval().multiplyMembers();
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
-        return "*/" + mRhs.toString(tabs);
+        return "*/" + mExpr.toString(tabs);
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'multiplyMembers");
+        result.addMember(mExpr.toTerm());
+        return result;
     }
 }
 

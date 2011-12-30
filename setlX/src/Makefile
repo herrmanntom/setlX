@@ -91,8 +91,8 @@ bin/interpreter/functions/*.class :                          \
 bin/interpreter/utilities/*.class :                          \
         java-src/interpreter/utilities/*.java                        \
         java-src/interpreter/expressions/Expr.java                   \
-        java-src/interpreter/expressions/IdListIgnoreDummy.java      \
         java-src/interpreter/expressions/Variable.java               \
+        java-src/interpreter/expressions/VariableIgnore.java         \
         java-src/interpreter/functions/MathFunction.java             \
         java-src/interpreter/functions/PreDefinedFunction.java       \
         java-src/grammar/SetlXgrammar*.java                          \

@@ -4,6 +4,7 @@ import interpreter.exceptions.BreakException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
+import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Condition;
 import interpreter.utilities.Iterator;
@@ -63,8 +64,19 @@ public class Forall extends Expr {
         return e.mResult;
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return "forall (" + mIterator.toString(tabs) + " | " + mCondition.toString(tabs) + ")";
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'forall");
+        result.addMember(mIterator.toTerm());
+        result.addMember(mCondition.toTerm());
+        return result;
     }
 }
 

@@ -6,23 +6,29 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
+import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.types.Value;
 
 /*
 grammar rule:
+iteratorChain
+    : iterator                       (',' iterator)*
+    ;
+
 iterator
-    : assignable 'in' expr (',' assignable 'in' expr)*
+    : assignable 'in' expr
     ;
 
 implemented here as:
-      ==========      ====      ====================
-      mAssignable  mCollection         mNext
+      ==========      ====        ||      ========
+      mAssignable  mCollection    ||       mNext
 */
 
 public class Iterator {
     private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private Expr        mCollection; // Rhs (should be Set/List)
-    private Iterator    mNext;       // next iterator
+    private Iterator    mNext;       // next iterator in iteratorChain
 
     public Iterator(Expr assignable, Expr collection) {
         mAssignable = assignable;
@@ -62,6 +68,8 @@ public class Iterator {
         }
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         String result = mAssignable.toString(tabs) + " in " + mCollection.toString(tabs);
         if (mNext != null) {
@@ -73,6 +81,22 @@ public class Iterator {
     public String toString() {
         return toString(0);
     }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'iterator");
+        result.addMember(mAssignable.toTerm());
+        result.addMember(mCollection.toTerm());
+        if (mNext != null) {
+            result.addMember(mNext.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
+        return result;
+    }
+
+    /* private functions */
 
     private void evaluate(IteratorExecutionContainer exec) throws SetlException {
         Value iterationValue = mCollection.eval(); // trying to iterate over this value

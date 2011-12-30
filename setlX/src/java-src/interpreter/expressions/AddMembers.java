@@ -27,7 +27,7 @@ public class AddMembers extends Expr {
         return mExpr.eval().addMembers();
     }
 
-    /* String operations */
+    /* string operations */
 
     public String toString(int tabs) {
         return "+/" + mExpr.toString(tabs);
@@ -41,3 +41,4 @@ public class AddMembers extends Expr {
         return result;
     }
 }
+

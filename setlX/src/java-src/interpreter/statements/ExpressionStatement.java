@@ -15,7 +15,10 @@ public class ExpressionStatement extends Statement {
     public void execute() throws SetlException {
         Value v = mExpr.eval();
         if (Environment.isInteractive()) {
+            boolean interprete  = Environment.isInterpreteStrings();
+            Environment.setInterpreteStrings(true);
             System.out.println("Result: " + v);
+            Environment.setInterpreteStrings(interprete);
         }
     }
 

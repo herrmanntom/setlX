@@ -1,23 +1,46 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
-import interpreter.types.NumberValue;
+import interpreter.types.Term;
+import interpreter.types.Value;
+
+/*
+grammar rule:
+power
+    : factor ('**' power)?
+    ;
+
+implemented here as:
+      ======       =====
+       mLhs        mExponent
+*/
 
 public class Power extends Expr {
     private Expr mLhs;
-    private Expr mRhs;
+    private Expr mExponent;
 
-    public Power(Expr lhs, Expr rhs) {
-        mLhs = lhs;
-        mRhs = rhs;
+    public Power(Expr lhs, Expr exponent) {
+        mLhs        = lhs;
+        mExponent   = exponent;
     }
 
-    public NumberValue evaluate() throws SetlException {
-        return mLhs.eval().power(mRhs.eval());
+    public Value evaluate() throws SetlException {
+        return mLhs.eval().power(mExponent.eval());
     }
+
+    /* string operations */
 
     public String toString(int tabs) {
-        return mLhs.toString(tabs) + " ** " + mRhs.toString(tabs);
+        return mLhs.toString(tabs) + " ** " + mExponent.toString(tabs);
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'power");
+        result.addMember(mLhs.toTerm());
+        result.addMember(mExponent.toTerm());
+        return result;
     }
 }
 

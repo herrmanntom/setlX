@@ -3,11 +3,28 @@ package interpreter.utilities;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
+import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Iterator;
 import interpreter.utilities.IteratorExecutionContainer;
 
 import java.util.List;
+
+/*
+grammar rules:
+shortIterate
+    :             iterator       '|' condition
+    ;
+
+iterate
+    : anyExpr ':' iteratorChain ('|' condition)?
+    ;
+
+implemented here as:
+      =======     ========-----      =========
+       mExpr        mIterator        mCondition
+*/
 
 public class Iteration extends Constructor {
     private Expr      mExpr;
@@ -47,6 +64,8 @@ public class Iteration extends Constructor {
         mIterator.eval(e);
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         String r;
         if (mExpr != null) {
@@ -59,6 +78,24 @@ public class Iteration extends Constructor {
             r += " | " + mCondition.toString(tabs);
         }
         return r;
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'iteration");
+        if (mExpr != null) {
+            result.addMember(mExpr.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
+        result.addMember(mIterator.toTerm());
+        if (mCondition != null) {
+            result.addMember(mCondition.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
+        return result;
     }
 }
 

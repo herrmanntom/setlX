@@ -6,6 +6,7 @@ import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
+import interpreter.utilities.Environment;
 
 import java.util.Iterator;
 import java.util.List;
@@ -286,7 +287,14 @@ public class SetlList extends CollectionValue {
     /* String and Char operations */
 
     public String toString() {
-        return getList().toString();
+        boolean interprete  = Environment.isInterpreteStrings();
+        Environment.setInterpreteStrings(false);
+
+        String result = getList().toString();
+
+        Environment.setInterpreteStrings(interprete);
+
+        return result;
     }
 
     /* Comparisons */

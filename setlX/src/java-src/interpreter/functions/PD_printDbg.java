@@ -12,9 +12,16 @@ public class PD_printDbg extends PD_print {
 
     private PD_printDbg() {
         super("printDbg");
+        interprete = false;
+    }
+
+    protected PD_printDbg(String fName) {
+        super(fName);
     }
 
     protected void prePrint() {
+        interprete = Environment.isInterpreteStrings();
+        Environment.setInterpreteStrings(false);
     }
 
     protected void print(String txt) {
@@ -22,6 +29,7 @@ public class PD_printDbg extends PD_print {
     }
 
     protected void postPrint() {
+        Environment.setInterpreteStrings(interprete);
     }
 }
 

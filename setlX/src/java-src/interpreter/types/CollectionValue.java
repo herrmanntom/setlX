@@ -71,7 +71,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 }
                 pos++;
             }
-            // this sould never be reached
+            // this should never be reached
             throw new NumberToLargeException("Collection index '" + pos + "' into '" + this + "' is out of bounds.");
         }
     }

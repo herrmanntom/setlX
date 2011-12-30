@@ -1,9 +1,19 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
-import interpreter.expressions.Expr;
-import interpreter.types.SetlInt;
+import interpreter.types.Term;
 import interpreter.types.Value;
+
+/*
+grammar rule:
+product
+    : power ([...] | '%' power)*
+    ;
+
+implemented here as:
+      =====              =====
+      mLhs               mRhs
+*/
 
 public class Modulo extends Expr {
     private Expr mLhs;
@@ -18,8 +28,19 @@ public class Modulo extends Expr {
         return mLhs.eval().mod(mRhs.eval());
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return mLhs.toString(tabs) + " % " + mRhs.toString(tabs);
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'modulo");
+        result.addMember(mLhs.toTerm());
+        result.addMember(mRhs.toTerm());
+        return result;
     }
 }
 

@@ -4,7 +4,20 @@ import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
+import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.types.Value;
+
+/*
+grammar rule:
+range
+    : expr (',' expr)? '..' expr
+    ;
+
+implemented here as:
+      ====      ====        ====
+     mStart    mSecond      mStop
+*/
 
 public class Range extends Constructor {
     private Expr mStart;
@@ -29,12 +42,28 @@ public class Range extends Constructor {
         start.fillCollectionWithinRange(step, mStop.eval(), collection);
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         String r = mStart.toString(tabs);
         if (mSecond != null) {
             r += ", " + mSecond.toString(tabs);
         }
         return r + " .. " + mStop.toString(tabs);
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'range");
+        result.addMember(mStart.toTerm());
+        if (mSecond != null) {
+            result.addMember(mSecond.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
+        result.addMember(mStop.toTerm());
+        return result;
     }
 }
 

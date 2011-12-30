@@ -233,12 +233,12 @@ relationExtension := procedure() {
 
     correct := r == {[1, 1], [2, 4], [3, 9]};
 
-    // change value of pair [2, 4] to [2, 3]
+    /* change value of pair [2, 4] to [2, 3] */
     r(2) := 3;
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9]};
 
-    // add pair [4, 5]
+    /* add pair [4, 5] */
     r(4) := 5;
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9], [4, 5]};

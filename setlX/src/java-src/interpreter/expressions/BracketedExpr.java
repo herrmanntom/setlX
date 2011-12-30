@@ -1,7 +1,20 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.types.Term;
 import interpreter.types.Value;
+
+/*
+grammar rule:
+simpleFactor
+    : '(' expr ')'
+    | [...]
+    ;
+
+implemented here as:
+          ====
+          mExpr
+*/
 
 public class BracketedExpr extends Expr {
     private Expr mExpr;
@@ -14,8 +27,18 @@ public class BracketedExpr extends Expr {
         return mExpr.eval();
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return "(" + mExpr.toString(tabs) + ")";
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'brackets");
+        result.addMember(mExpr.toTerm());
+        return result;
     }
 }
 

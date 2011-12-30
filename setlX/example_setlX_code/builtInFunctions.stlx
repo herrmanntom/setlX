@@ -112,6 +112,18 @@ print("When this was written, " + daysSinceEpoch(1323062948018) + " days had gon
 print();
 
 /*******************************************************************************
+printDbg(value, ...)    // same as print, but does not interprete the string ($)
+printErr(value, ...)    // same as print, but prints into stderr
+printDbgErr(value, ...) // same as print, but does not interprete the string ($) and prints into stderr
+*/
+test := "test";
+print("This is a $test$");
+printDbg("This is a $test$");
+printErr("This is a $test$");
+printDbgErr("This is a $test$");
+print();
+
+/*******************************************************************************
 ToDo/Not jet implemented:
 
 evalTerm(term)          // execute terms which represent SetlX statements and expessions

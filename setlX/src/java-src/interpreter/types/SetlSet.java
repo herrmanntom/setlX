@@ -6,6 +6,7 @@ import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
+import interpreter.utilities.Environment;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -322,9 +323,16 @@ public class SetlSet extends CollectionValue {
     /* String and Char operations */
 
     public String toString() {
+        boolean interprete  = Environment.isInterpreteStrings();
+        Environment.setInterpreteStrings(false);
+
         // unfortunately sets in java use [] in toString...
-        String s = getSet().toString();
-        return "{" + s.substring(1, s.length() - 1) + "}";
+        String result = getSet().toString();
+        result = "{" + result.substring(1, result.length() - 1) + "}";
+
+        Environment.setInterpreteStrings(interprete);
+
+        return result;
     }
 
     /* Comparisons */

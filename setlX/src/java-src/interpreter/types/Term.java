@@ -1,8 +1,15 @@
 package interpreter.types;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.UndefinedOperationException;
+import interpreter.expressions.Expr;
+import interpreter.expressions.Negate;
+import interpreter.expressions.Power;
+import interpreter.expressions.ValueExpr;
+import interpreter.utilities.Environment;
 
 import java.util.Iterator;
+import java.util.List;
 
 /*
     This class implements terms in the form of
@@ -37,10 +44,22 @@ public class Term extends CollectionValue {
         return mBody.size();
     }
 
+    /* Boolean operations */
+
     /* type checks (sort of Boolean operation) */
 
     public SetlBoolean isTerm() {
         return SetlBoolean.TRUE;
+    }
+
+    /* arithmetic operations */
+
+    public Term negate() {
+        return (new Negate(new ValueExpr(this.clone()))).toTerm();
+    }
+
+    public Term power(Value exponent) {
+        return (new Power(new ValueExpr(this.clone()), new ValueExpr(exponent.clone()))).toTerm();
     }
 
     /* operations on compound values (Lists, Sets [, Strings]) */
@@ -89,15 +108,40 @@ public class Term extends CollectionValue {
         mBody.removeLastMember();
     }
 
+    /* calls (function calls) */
+
+    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
+        if (mBody.size() > 0) {
+            throw new UndefinedOperationException("You may not use more than one set of brackets when creating terms.");
+        } else if (args.contains(RangeDummy.RD)) {
+            throw new UndefinedOperationException("Terms can not be created with ranges as parameters.");
+        }
+
+        Term result = new Term(mFunctionalCharacter);
+
+        for (Value arg: args) {
+            result.addMember(arg);
+        }
+
+        return result;
+    }
+
     /* String and Char operations */
 
     public String toString() {
+        boolean interprete  = Environment.isInterpreteStrings();
+        Environment.setInterpreteStrings(false);
+
         if (mBody.size() <= 0) {
             return mFunctionalCharacter;
         }
         // lists use [] in toString, which have to be removed...
-        String s = mBody.toString();
-        return mFunctionalCharacter + "(" + s.substring(1, s.length() - 1) + ")";
+        String result = mBody.toString();
+        result = mFunctionalCharacter + "(" + result.substring(1, result.length() - 1) + ")";
+
+        Environment.setInterpreteStrings(interprete);
+
+        return result;
     }
 
     /* Comparisons */

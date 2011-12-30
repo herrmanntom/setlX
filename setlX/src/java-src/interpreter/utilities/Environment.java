@@ -5,15 +5,27 @@ import java.util.Random;
 // This class provides environment variables
 
 public class Environment {
-    /*============================ static ============================*/
+
+    // number of CPUs (cores) in the executing system
+    private final   static  int     CORES               = Runtime.getRuntime().availableProcessors();
 
     // random number generator
-    private static Random               randoom         = null;
+    private         static  Random  randoom             = null;
 
-    private static boolean              sIsInteractive  = false;
-    private static boolean              sPrintVerbose   = false;
+    private         static  boolean sIsInteractive      = false;
+    private         static  boolean sPrintVerbose       = false;
+    private         static  boolean sInterpreteStrings  = false;
 
-    private static String               sTab            = "\t";
+    private final   static  String  TAB                 = "\t";
+    private final   static  String  ENDL                = "\n";
+
+    public static int getNumberOfCores() {
+        if (CORES >= 2) {
+            return CORES;
+        } else {
+            return 1;
+        }
+    }
 
     public static void setPredictableRandoom() {
         randoom = new Random(0);
@@ -36,30 +48,38 @@ public class Environment {
     }
 
     public static void setPrintVerbose(boolean printVerbose) {
-        sPrintVerbose = printVerbose;
+        sPrintVerbose       = printVerbose;
     }
 
     public static boolean isPrintVerbose() {
         return sPrintVerbose;
     }
 
+    public static void setInterpreteStrings(boolean interpreteStrings) {
+        sInterpreteStrings = interpreteStrings;
+    }
+
+    public static boolean isInterpreteStrings() {
+        return sInterpreteStrings;
+    }
+
     public static String getTabs(int tabs) {
         if (tabs <= 0 || !sPrintVerbose) {
             return "";
         }
-        String r = sTab;
+        String r = TAB;
         for (int i = 1; i < tabs; i++) {
-            r += sTab;
+            r += TAB;
         }
         return r;
     }
 
     public static String getEndl() {
         if (sPrintVerbose) {
-            return "\n";
+            return ENDL;
         } else {
             return " ";
         }
     }
-
 }
+

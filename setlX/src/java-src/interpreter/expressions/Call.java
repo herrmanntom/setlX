@@ -7,30 +7,37 @@ import interpreter.exceptions.UnknownFunctionException;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.types.Om;
 import interpreter.types.RangeDummy;
+import interpreter.types.SetlList;
 import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+grammar rule:
+call
+    : varOrTerm ('(' callParameters ')' | '{' anyExpr '}')*
+    ;
+
+implemented here as:
+      =========      ==============
+         mLhs            mArgs
+*/
+
 public class Call extends Expr {
     private Expr       mLhs;       // left hand side (function name, other call, variable, etc)
     private List<Expr> mArgs;      // list of arguments
     private boolean    isRange;    // true if mArgs contains 'CallRangeDummy.CRD', which represents '..'
-    private String[]   _this;      // pre-computed toString() with various tab-sizes which has less stack penalty in case of stack overflow error...
+    private String     _this;      // pre-computed toString(), which has less stack penalty in case of stack overflow error...
 
     public Call(Expr lhs, List<Expr> args) {
-        mLhs              = lhs;
-        mArgs             = args;
-        isRange           = mArgs.contains(CallRangeDummy.CRD);
-        _this             = new String[4];
-        boolean verbose   = Environment.isPrintVerbose();
-        Environment.setPrintVerbose(true);
-        for (int i = 0; i < _this.length; ++i) {
-            _this[i] = _toString(i);
-        }
-        Environment.setPrintVerbose(verbose);
+        mLhs            = lhs;
+        mArgs           = args;
+        isRange         = mArgs.contains(CallRangeDummy.CRD);
+        _this           = _toString(0);
     }
 
     public Value evaluate() throws SetlException {
@@ -57,9 +64,11 @@ public class Call extends Expr {
         }
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
-        if (tabs < _this.length && !Environment.isPrintVerbose()) {
-            return _this[tabs];
+        if (tabs == 0 && ! Environment.isPrintVerbose()) {
+            return _this;
         } else {
             return _toString(tabs);
         }
@@ -74,6 +83,19 @@ public class Call extends Expr {
             result += mArgs.get(i).toString(tabs);
         }
         result += ")";
+        return result;
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term        result      = new Term("'call");
+        SetlList    arguments   = new SetlList();
+        result.addMember(mLhs.toTerm());
+        result.addMember(arguments);
+        for (Expr arg: mArgs) {
+            arguments.addMember(arg.toTerm());
+        }
         return result;
     }
 }

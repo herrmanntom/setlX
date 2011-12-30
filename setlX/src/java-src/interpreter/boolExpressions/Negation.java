@@ -3,6 +3,19 @@ package interpreter.boolExpressions;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
+import interpreter.types.Term;
+
+/*
+grammar rule:
+boolFactor
+    : [...]
+    | '!' boolFactor
+    ;
+
+implemented here as:
+          ==========
+            mExpr
+*/
 
 public class Negation extends Expr {
     private Expr mExpr;
@@ -15,8 +28,18 @@ public class Negation extends Expr {
         return mExpr.eval().not();
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return "!" + mExpr.toString(tabs);
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'negation");
+        result.addMember(mExpr.toTerm());
+        return result;
     }
 }
 

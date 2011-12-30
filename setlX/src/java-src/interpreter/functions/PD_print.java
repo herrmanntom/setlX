@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PD_print extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_print();
-    private             boolean            interprete;
+    protected           boolean            interprete;
 
     private PD_print() {
         this("print");

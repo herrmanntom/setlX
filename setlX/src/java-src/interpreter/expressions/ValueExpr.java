@@ -1,6 +1,9 @@
 package interpreter.expressions;
 
+import interpreter.types.Term;
 import interpreter.types.Value;
+
+// this class wraps values into an expression
 
 public class ValueExpr extends Expr {
     private Value mValue;
@@ -17,9 +20,16 @@ public class ValueExpr extends Expr {
         return eval();
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return mValue.toString(tabs);
     }
-}
 
+    /* term operations */
+
+    public Value toTerm() {
+        return mValue.toTerm();
+    }
+}
 

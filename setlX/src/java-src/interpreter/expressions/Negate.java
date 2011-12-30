@@ -27,7 +27,7 @@ public class Negate extends Expr {
         return mExpr.eval().negate();
     }
 
-    /* String operations */
+    /* string operations */
 
     public String toString(int tabs) {
         return "-" + mExpr.toString(tabs);

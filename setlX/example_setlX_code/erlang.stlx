@@ -20,4 +20,27 @@ solveA := procedure(n, p, step) {
 	return lastA;
 };
 
-print("maximum A (for N = 5, P <= 5%) is ", solveA(5, 0.05, 0.0001), ".");
+solveN := procedure(a, p) {
+	n := 0;
+	while (true) {
+		n += 1;
+		b := erlangB(a, n);
+		if (b <= p) {
+			return n;
+		}
+	}
+};
+
+erlangC := procedure(a, n) {
+	p := ((a ** n) * n + 0.0) / (n! * (n - a));
+	p /= (+/{(a**i + 0.0) / i!: i in {0 .. n - 1}}) + p;
+	return p;
+};
+
+print("maximum A (for N = 5,      P <= 5%) is ", solveA(5, 0.05, 0.0001), ".");
+
+print("minimum N (for A = 1.75,   P <= 7%) is ", solveN(1.75, 0.07), ".");
+
+print("Erlang B  (for A = 0.2*48, N = 20 ) is ", erlangB(0.2*48, 20), ".");
+
+print("Erlang C  (for A = 0.2*48, N = 20 ) is ", erlangC(0.2*48, 20), ".");

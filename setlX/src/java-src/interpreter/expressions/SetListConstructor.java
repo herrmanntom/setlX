@@ -3,13 +3,29 @@ package interpreter.expressions;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
-import interpreter.types.Om;
 import interpreter.types.SetlList;
 import interpreter.types.SetlSet;
+import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Constructor;
 
 import java.util.List;
+
+/*
+grammar rules:
+list
+    : '[' constructor? ']'
+    ;
+
+set
+    : '{' constructor? '}'
+    ;
+
+implemented here as:
+====      ============
+mType     mConstructor
+*/
 
 public class SetListConstructor extends Expr {
     public final static int LIST  = 23;
@@ -39,7 +55,7 @@ public class SetListConstructor extends Expr {
             list.compress();
             result = list;
         } else {
-            result = Om.OM;
+            throw new UndefinedOperationException("This set/list constructor type is undefined.");
         }
         return result;
     }
@@ -56,6 +72,8 @@ public class SetListConstructor extends Expr {
             throw new IncompatibleTypeException("The value '" + v + "' is unusable for assignment to \"" + this + "\".");
         }
     }
+
+    /* string operations */
 
     public String toString(int tabs) {
         String r;
@@ -75,6 +93,25 @@ public class SetListConstructor extends Expr {
             r += "]";
         }
         return r;
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result;
+        if (mType == SET) {
+            result = new Term("'set");
+        } else if (mType == LIST) {
+            result = new Term("'list");
+        } else {
+            result = new Term("'undefindedSetListConstructor");
+        }
+        if (mConstructor != null) {
+            result.addMember(mConstructor.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
+        return result;
     }
 }
 

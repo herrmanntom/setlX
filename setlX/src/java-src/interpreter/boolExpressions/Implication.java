@@ -3,6 +3,18 @@ package interpreter.boolExpressions;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
+import interpreter.types.Term;
+
+/*
+grammar rule:
+implication
+    : disjunction ('=>' implication)?
+    ;
+
+implemented here as:
+      ===========       ===========
+         mLhs              mRhs
+*/
 
 public class Implication extends Expr {
     private Expr mLhs;
@@ -17,8 +29,19 @@ public class Implication extends Expr {
         return mLhs.eval().implies(mRhs);
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return mLhs.toString(tabs) + " => " + mRhs.toString(tabs);
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'implication");
+        result.addMember(mLhs.toTerm());
+        result.addMember(mRhs.toTerm());
+        return result;
     }
 }
 

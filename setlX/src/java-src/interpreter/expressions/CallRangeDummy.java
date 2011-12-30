@@ -1,20 +1,40 @@
 package interpreter.expressions;
 
 import interpreter.types.RangeDummy;
+import interpreter.types.Term;
 import interpreter.types.Value;
+
+/*
+grammar rule:
+callParameters
+    : (expr '..')=> expr '..' expr?
+    | [...]
+    ;
+
+this class implements a range token inside the parameters of a call:
+                         ====
+*/
 
 public class CallRangeDummy extends Expr {
 
     public final static CallRangeDummy CRD = new CallRangeDummy();
 
-    private CallRangeDummy(){}
+    private CallRangeDummy() { }
 
     public Value evaluate() {
         return RangeDummy.RD;
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return "..";
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        return new Term("'callRangeDummy");
     }
 }
 

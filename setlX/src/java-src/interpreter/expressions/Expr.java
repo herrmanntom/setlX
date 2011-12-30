@@ -28,7 +28,7 @@ public abstract class Expr {
                                         +     "This expression can not be used as target for assignments.");
     }
 
-    /* String operations */
+    /* string operations */
 
     public abstract String toString(int tabs);
 
@@ -38,8 +38,6 @@ public abstract class Expr {
 
     /* term operations */
 
-//    public abstract Value toTerm();
-
-    public Value toTerm() {return null;}
+    public abstract Value toTerm();
 }
 

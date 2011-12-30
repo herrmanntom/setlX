@@ -33,10 +33,11 @@ public class PD_read extends PreDefinedFunction {
         }
 
         if (input != null) {
-            if (input.matches("^\\d+$")) {
-                inputValue = new SetlInt(input);
-            } else {
-                inputValue = new SetlString(input);
+            inputValue = new SetlString(input);
+            if (inputValue.toInteger() != Om.OM) {
+                inputValue = inputValue.toInteger();
+            } else if (inputValue.toReal() != Om.OM) {
+                inputValue = inputValue.toReal();
             }
         } else {
             inputValue = Om.OM;

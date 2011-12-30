@@ -132,11 +132,11 @@ public abstract class Value implements Comparable<Value> {
         throw new UndefinedOperationException("'" + this + " * " + multiplier + "' is undefined.");
     }
 
-    public NumberValue negate() throws IncompatibleTypeException {
+    public Value negate() throws IncompatibleTypeException {
         throw new IncompatibleTypeException("Operand '" + this + "' is not a number.");
     }
 
-    public NumberValue power(Value exponent) throws SetlException {
+    public Value power(Value exponent) throws SetlException {
         throw new IncompatibleTypeException("Left-hand-side of '" + this + " ** " + exponent + "' is not a number.");
     }
 
@@ -257,7 +257,7 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Can not perform call with argument '{" + arg + "}' on this operand-type; '" + this + "' is not a map.");
     }
 
-    /* String and Char operations */
+    /* string and char operations */
 
     public SetlString charConvert() throws SetlException {
         throw new IncompatibleTypeException("Operand '" + this + "' is not a number between 0 and 255.");
@@ -272,6 +272,12 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public abstract String toString();
+
+    /* term operations */
+
+    public final Value toTerm() {
+        return this.clone();
+    }
 
     /* Comparisons */
 
@@ -297,12 +303,6 @@ public abstract class Value implements Comparable<Value> {
        throw errors on seemingly incomparable types like `5 < TRUE'            */
     public SetlBoolean isLessThan(Value other) throws SetlException {
         throw new UndefinedOperationException("'" + this + " < " + other + "' is undefined.");
-    }
-
-    /* term operations */
-
-    public final Value toTerm() {
-        return this.clone();
     }
 }
 

@@ -3,13 +3,25 @@ package interpreter.utilities;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
-import interpreter.expressions.IdListIgnoreDummy;
+import interpreter.expressions.VariableIgnore;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlList;
+import interpreter.types.Term;
 import interpreter.types.Value;
 
 import java.util.List;
+
+/*
+grammar rule:
+explicitList
+    : anyExpr (',' anyExpr)*
+    ;
+
+implemented here as:
+      =======......=======
+             mList
+*/
 
 public class ExplicitList extends Constructor {
     private List<Expr> mList;
@@ -31,8 +43,8 @@ public class ExplicitList extends Constructor {
         }
         for (int i = 0; i < mList.size(); ++i) {
             Expr  e = mList.get(i);
-            if (e == IdListIgnoreDummy.ILID) {
-                continue; // ignore this position `[x,-,y]'
+            if (e == VariableIgnore.VI) {
+                continue; // ignore this position e.g. 2nd position in `[x, _, y]'
             }
             Value v = null;
             try {
@@ -47,6 +59,8 @@ public class ExplicitList extends Constructor {
         return mList.size();
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         String r = "";
         for (Expr e: mList) {
@@ -56,6 +70,18 @@ public class ExplicitList extends Constructor {
             r += e.toString(tabs);
         }
         return r;
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term        result  = new Term("'explicitList");
+        SetlList    members = new SetlList();
+        for (Expr member: mList) {
+            members.addMember(member.toTerm());
+        }
+        result.addMember(members);
+        return result;
     }
 }
 

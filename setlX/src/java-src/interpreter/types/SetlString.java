@@ -189,46 +189,20 @@ public class SetlString extends Value {
         return this;
     }
 
-    /* When string is printed 'inside' some SetlX code block (verbose printing),
-       all non-printable characters should be replaced with their
-       escape sequences using this function.
+    /* When string should be interpreted (e.g. is argument to print function) all
+       non-printable characters escape sequence should be left alone and
+       expressions inside $ $ should be evaluated before passing to System.out
 
-       However, when using a string as argument for print all
-       non-printable characters escape sequence should be left alone
-       before passing to System.out                                     */
+       Otherwise (when printed 'inside' some SetlX code block),
+       all non-printable characters should be replaced with their
+       escape sequences using this function and expressions in $ $ are not evaluated */
 
     public String toString() {
         int           length = mString.length();
         StringBuilder result = new StringBuilder(length);
-        if (Environment.isPrintVerbose()) {
-            for (int i = 0; i < length; ++i) {
-                char c = mString.charAt(i);
-                if (c == '\\') {
-                    result.append('\\');
-                    result.append('\\');
-                } else if (c == '\n') {
-                    result.append('\\');
-                    result.append('n');
-                } else if (c == '\r') {
-                    result.append('\\');
-                    result.append('r');
-                } else if (c == '\t') {
-                    result.append('\\');
-                    result.append('t');
-                } else if (c == '"') {
-                    result.append('\\');
-                    result.append('"');
-                } else if (c == '\0') {
-                    result.append('\\');
-                    result.append('0');
-                } else {
-                    result.append(c);
-                }
-            }
-            return "\"" + result.toString() + "\"";
-        } else {
+        if (Environment.isInterpreteStrings()) {
             StringBuilder expr      = null;  // buffer for inner expr string
-            boolean       innerExpr = false; // currently reading inner expr
+            boolean       innerExpr = false; // currently reading inner expr ?
             for (int i = 0; i < length; ++i) {
                 char c = mString.charAt(i);  // current char
                 char n = (i+1 < length)? mString.charAt(i+1) : '\0';  // next char
@@ -264,6 +238,32 @@ public class SetlString extends Value {
             }
             if (innerExpr) { // inner expr not complete
                 result.append("$Error: closing '$' missing.$");
+            }
+            return "\"" + result.toString() + "\"";
+        } else {
+            for (int i = 0; i < length; ++i) {
+                char c = mString.charAt(i);
+                if (c == '\\') {
+                    result.append('\\');
+                    result.append('\\');
+                } else if (c == '\n') {
+                    result.append('\\');
+                    result.append('n');
+                } else if (c == '\r') {
+                    result.append('\\');
+                    result.append('r');
+                } else if (c == '\t') {
+                    result.append('\\');
+                    result.append('t');
+                } else if (c == '"') {
+                    result.append('\\');
+                    result.append('"');
+                } else if (c == '\0') {
+                    result.append('\\');
+                    result.append('0');
+                } else {
+                    result.append(c);
+                }
             }
             return "\"" + result.toString() + "\"";
         }

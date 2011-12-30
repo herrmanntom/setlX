@@ -5,7 +5,7 @@ initBlock
     ;
 
 block
-    : statement+
+    : statement*
     ;
 
 statement
@@ -40,12 +40,13 @@ idList
     ;
 
 explicitIdList
-    : (assignable | '_') (',' (assignable | '_'))*
+    : assignable (',' assignable)*
     ;
 
 assignable
     : variable
     | idList
+    | '_'
     ;
 
 anyExpr
@@ -163,7 +164,7 @@ call
     ;
 
 varOrTerm
-    : ID
+    : variable
     | TERM
     ;
 
@@ -178,6 +179,7 @@ value
     : list
     | set
     | atomicValue
+    | '_'
     ;
 
 list
@@ -200,15 +202,19 @@ range
     ;
 
 shortIterate
-    : assignable 'in' expr '|' condition
-    ;
-
-iterate
-    : anyExpr ':' iterator ('|' condition)?
+    : iterator '|' condition
     ;
 
 iterator
-    : assignable 'in' expr (',' assignable 'in' expr)*
+    : assignable 'in' expr
+    ;
+
+iterate
+    : anyExpr ':' iteratorChain ('|' condition)?
+    ;
+
+iteratorChain
+    : iterator (',' iterator)*
     ;
 
 explicitList
@@ -232,52 +238,7 @@ real
     ;
 
 match
-    : 'match' '(' expr ')' '{' ('case' (varOrIgnore | varOrIgnore '(' (varOrIgnore (',' varOrIgnore)*)+ ')' | preFixOperator varOrIgnore | varOrIgnore inFixOperator varOrIgnore | varOrIgnore postFixOperator) ':' block)* ('default' ':' block)? '}'
-    ;
-
-varOrIgnore
-    : variable
-    | '_'
-    ;
-
-inFixOperator
-    : ':='
-    | '+='
-    | '-='
-    | '*='
-    | '/='
-    | '%='
-    | '<==>'
-    | '<!=>'
-    | '=>'
-    | '||'
-    | '&&'
-    | '=='
-    | '!='
-    | '<'
-    | '<='
-    | '>'
-    | '>='
-    | 'in'
-    | 'notin'
-    | '|->'
-    | '+'
-    | '-'
-    | '*'
-    | '/'
-    | '%'
-    | '**'
-    ;
-
-preFixOperator
-    : '!'
-    | '+/'
-    | '*/'
-    | '-'
-    ;
-
-postFixOperator
-    : '!'
+    : 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
     ;
 
 

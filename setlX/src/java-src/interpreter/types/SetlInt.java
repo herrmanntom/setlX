@@ -4,6 +4,7 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.utilities.Environment;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -114,15 +115,13 @@ public class SetlInt extends NumberValue {
         }
     }
 
-    // number of CPU cores
-    private static final int CORES = Runtime.getRuntime().availableProcessors();
-
     public SetlInt factorial() throws SetlException {
         if (mNumber.compareTo(BigInteger.ZERO) < 0) {
             throw new UndefinedOperationException("'" + this + "!' is undefined.");
         }
-        int        n         = intValue(); // will throw exception if this is >= 2^31, but wanting that is crazy talk
-        BigInteger result    = BigInteger.ONE;
+        int        n        = intValue(); // will throw exception if mNumber > 2^31, but wanting that is crazy talk
+        BigInteger result	= BigInteger.ONE;
+        final int  CORES	= Environment.getNumberOfCores();
         if (n <= 512 || CORES <= 1) { // use simple implementation when computing small factorials or having only one CPU (less overhead)
             for (int i = 2; i <= n; ++i) {
                 result = result.multiply(BigInteger.valueOf(i));

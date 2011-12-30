@@ -4,7 +4,19 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
+import interpreter.types.Term;
 import interpreter.types.Value;
+
+/*
+grammar rule:
+condition
+    : boolExpr
+    ;
+
+implemented here as:
+      ========
+       mExpr
+*/
 
 public class Condition {
     private Expr mExpr;
@@ -26,8 +38,16 @@ public class Condition {
         return eval() == SetlBoolean.TRUE;
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return mExpr.toString(tabs);
+    }
+
+    /* term operations */
+
+    public Value toTerm() {
+        return mExpr.toTerm();
     }
 }
 

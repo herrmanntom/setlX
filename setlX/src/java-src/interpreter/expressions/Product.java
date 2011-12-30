@@ -1,7 +1,19 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.types.Term;
 import interpreter.types.Value;
+
+/*
+grammar rule:
+product
+    : power ('*' power | [...])*
+    ;
+
+implemented here as:
+      =====      =====
+      mLhs       mRhs
+*/
 
 public class Product extends Expr {
     private Expr mLhs;
@@ -16,7 +28,19 @@ public class Product extends Expr {
         return mLhs.eval().multiply(mRhs.eval());
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return mLhs.toString(tabs) + " * " + mRhs.toString(tabs);
     }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'product");
+        result.addMember(mLhs.toTerm());
+        result.addMember(mRhs.toTerm());
+        return result;
+    }
 }
+

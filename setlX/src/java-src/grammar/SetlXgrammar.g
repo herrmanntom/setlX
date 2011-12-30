@@ -61,7 +61,7 @@ statement returns [Statement stmnt]
       )?
       '}' { stmnt = new Switch(branchList); }
     | match                                                   { stmnt = $match.m;                                    }
-    | 'for'   '(' iterator  ')' '{' block '}'                 { stmnt = new For($iterator.iter, $block.blk);         }
+    | 'for'   '(' iteratorChain  ')' '{' block '}'            { stmnt = new For($iteratorChain.ic, $block.blk);      }
     | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
     | 'return' anyExpr? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
     | 'continue' ';'                                          { stmnt = new Continue();                              }
@@ -115,22 +115,16 @@ explicitIdList returns [ExplicitList eil]
     @init {
         List<Expr> exprs = new LinkedList<Expr>();
     }
-    : (
-         a1 = assignable   { exprs.add($a1.a);                  }
-       | '_'               { exprs.add(IdListIgnoreDummy.ILID); }
-      )
+    : a1 = assignable       { exprs.add($a1.a);              }
       (
-        ','
-        (
-           a2 = assignable { exprs.add($a2.a);                  }
-         | '_'             { exprs.add(IdListIgnoreDummy.ILID); }
-        )
-      )*                   { eil = new ExplicitList(exprs);     }
+        ',' a2 = assignable { exprs.add($a2.a);              }
+      )*                    { eil = new ExplicitList(exprs); }
     ;
 
 assignable returns [Expr a]
-    : variable { a = $variable.v; }
-    | idList   { a = $idList.ilc; }
+    : variable { a = $variable.v;       }
+    | idList   { a = $idList.ilc;       }
+    | '_'      { a = VariableIgnore.VI; }
     ;
 
 anyExpr returns [Expr ae]
@@ -148,9 +142,9 @@ boolFollowToken
     ;
 
 boolExpr returns [Expr bex]
-    : 'forall' '(' iterator '|' condition ')' { bex = new Forall($iterator.iter, $condition.cnd); }
-    | 'exists' '(' iterator '|' condition ')' { bex = new Exists($iterator.iter, $condition.cnd); }
-    | equivalence                             { bex = $equivalence.eq;                            }
+    : 'forall' '(' iteratorChain '|' condition ')' { bex = new Forall($iteratorChain.ic, $condition.cnd); }
+    | 'exists' '(' iteratorChain '|' condition ')' { bex = new Exists($iteratorChain.ic, $condition.cnd); }
+    | equivalence                                  { bex = $equivalence.eq;                               }
     ;
 
 equivalence returns [Expr eq]
@@ -207,10 +201,10 @@ comparison returns [Expr comp]
       (
           '=='    { type = Comparison.EQUAL;                      }
         | '!='    { type = Comparison.UNEQUAL;                    }
-        | '<'     { type = Comparison.LESSTHAN;                   }
-        | '<='    { type = Comparison.EQUALORLESS;                }
-        | '>'     { type = Comparison.MORETHAN;                   }
-        | '>='    { type = Comparison.EQUALORMORE;                }
+        | '<'     { type = Comparison.LESS;                       }
+        | '<='    { type = Comparison.LESSorEQUAL;                }
+        | '>'     { type = Comparison.MORE;                       }
+        | '>='    { type = Comparison.MOREorEQUAL;                }
         | 'in'    { type = Comparison.IN;                         }
         | 'notin' { type = Comparison.NOTIN;                      }
       )
@@ -313,8 +307,6 @@ simpleFactor returns [Expr sf]
     | value        { sf = $value.v;                       }
     ;
 
-// this could be either 'id' or 'call' or 'element of collection'
-// decide at runtime
 call returns [Expr c]
     : varOrTerm                 { c = $varOrTerm.vot;                     }
       (
@@ -324,8 +316,8 @@ call returns [Expr c]
     ;
 
 varOrTerm returns [Variable vot]
-    : ID    { vot = new Variable($ID.text);   }
-    | TERM  { vot = new Variable($TERM.text); }
+    : variable { vot = $variable.v;              }
+    | TERM     { vot = new Variable($TERM.text); }
     ;
 
 callParameters returns [List<Expr> args]
@@ -351,6 +343,7 @@ value returns [Expr v]
     : list         { v = $list.lc;                       }
     | set          { v = $set.sc;                        }
     | atomicValue  { v = new ValueExpr($atomicValue.av); }
+    | '_'          { v = VariableIgnore.VI;              }
     ;
 
 list returns [SetListConstructor lc]
@@ -383,25 +376,30 @@ range returns [Range r]
     ;
 
 shortIterate returns [Iteration si]
-    : assignable 'in' expr '|' condition  { si = new Iteration(null, new Iterator($assignable.a, $expr.ex), $condition.cnd); }
+    : iterator '|' condition  { si = new Iteration(null, $iterator.iter, $condition.cnd); }
+    ;
+
+iterator returns [Iterator iter]
+    :
+      assignable 'in' expr   { iter = new Iterator($assignable.a, $expr.ex); }
     ;
 
 iterate returns [Iteration i]
     @init {
         Condition cnd = null;
     }
-    : anyExpr ':' iterator
+    : anyExpr ':' iteratorChain
       (
-        '|' condition               { cnd = $condition.cnd;                                }
-      )?                            { i = new Iteration($anyExpr.ae, $iterator.iter, cnd); }
+        '|' condition               { cnd = $condition.cnd;                                   }
+      )?                            { i = new Iteration($anyExpr.ae, $iteratorChain.ic, cnd); }
     ;
 
-iterator returns [Iterator iter]
+iteratorChain returns [Iterator ic]
     :
-      a1 = assignable 'in' e1 = expr   { iter = new Iterator($a1.a, $e1.ex);    }
+      i1 = iterator   { ic = $i1.iter;    }
       (
         ','
-        a2 = assignable 'in' e2 = expr { iter.add(new Iterator($a2.a, $e2.ex)); }
+        i2 = iterator { ic.add($i2.iter); }
       )*
     ;
 
@@ -441,65 +439,13 @@ real returns [Real r]
 match returns [Match m]
     : 'match' '(' expr ')' '{'
       (
-        'case'
-        (
-           varOrIgnore                                           // variables, values
-         | varOrIgnore '(' (varOrIgnore (',' varOrIgnore)*)+ ')' // terms
-         | preFixOperator varOrIgnore
-         | varOrIgnore inFixOperator varOrIgnore
-         | varOrIgnore postFixOperator
-        ) ':' block
+        'case' expr ':' block
       )*
       (
         'default' ':' block
       )?
       '}'
       { m = new Match(); }
-    ;
-
-varOrIgnore
-    : variable
-    | '_'
-    ;
-
-inFixOperator
-    : ':='
-    | '+='
-    | '-='
-    | '*='
-    | '/='
-    | '%='
-    | '<==>'
-    | '<!=>'
-    | '=>'
-    | '||'
-    | '&&'
-    | '=='
-    | '!='
-    | '<'
-    | '<='
-    | '>'
-    | '>='
-    | 'in'
-    | 'notin'
-    | '|->'
-    | '+'
-    | '-'
-    | '*'
-    | '/'
-    | '%'
-    | '**'
-    ;
-
-preFixOperator
-    : '!'
-    | '+/'
-    | '*/'
-    | '-'
-    ;
-
-postFixOperator
-    : '!'
     ;
 
 

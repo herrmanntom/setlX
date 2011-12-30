@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// domain(map)             : get domain of map
+
 public class PD_domain extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_domain();
 

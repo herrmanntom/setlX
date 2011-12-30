@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isMap(value)            : test if value-type is map
+
 public class PD_isMap extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isMap();
 

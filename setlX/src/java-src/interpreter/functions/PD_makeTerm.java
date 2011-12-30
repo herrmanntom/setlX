@@ -8,6 +8,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// makeTerm(fnc, body)  : create a term with the form: fnc(body)
+
 public class PD_makeTerm extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_makeTerm();
 

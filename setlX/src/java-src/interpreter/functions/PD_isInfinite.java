@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isInfinite(value)       : test if value-type is infinity
+
 public class PD_isInfinite extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isInfinite();
 

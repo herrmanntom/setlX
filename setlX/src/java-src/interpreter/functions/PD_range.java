@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// range(map)              : get range of map
+
 public class PD_range extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_range();
 

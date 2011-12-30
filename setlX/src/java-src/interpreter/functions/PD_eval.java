@@ -9,6 +9,8 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
+// eval(expr)              : evaluate a String of a SetlX expression to a variable
+
 public class PD_eval extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_eval();
 

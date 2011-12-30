@@ -11,6 +11,8 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
+// load(path)              : loads SetlX source code file and executes it
+
 public class PD_load extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_load();
 
@@ -21,7 +23,7 @@ public class PD_load extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value 	filePath = args.get(0);
+        Value   filePath = args.get(0);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException("Path-argument '" + filePath + "' is not a string.");
         }

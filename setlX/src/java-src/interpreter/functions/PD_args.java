@@ -6,6 +6,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// args(term)              : get arguments of term
+
 public class PD_args extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_args();
 

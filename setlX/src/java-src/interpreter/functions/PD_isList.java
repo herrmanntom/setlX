@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isList(value)           : test if value-type is list
+
 public class PD_isList extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isList();
 

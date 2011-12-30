@@ -8,6 +8,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// mathConst(name)         : get the value of a mathematical constant (currently only pi and e)
+
 public class PD_mathConst extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_mathConst();
 

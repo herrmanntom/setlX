@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isString(value)         : test if value-type is string
+
 public class PD_isString extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isString();
 

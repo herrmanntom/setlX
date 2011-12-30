@@ -11,6 +11,8 @@ import interpreter.types.Value;
 import java.lang.reflect.Method;
 import java.util.List;
 
+// this class encapsulates functions from java.Math
+
 public class MathFunction extends PreDefinedFunction {
     private Method mFunction;
 

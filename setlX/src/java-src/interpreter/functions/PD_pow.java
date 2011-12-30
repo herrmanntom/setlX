@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// pow(set)                : computes the power-set
+
 public class PD_pow extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_pow();
 

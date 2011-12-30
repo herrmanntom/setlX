@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// min(compoundValue)   : select minumum member from compound value
+
 public class PD_min extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_min();
 

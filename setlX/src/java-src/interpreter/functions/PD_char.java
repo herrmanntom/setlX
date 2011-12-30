@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// char(value)             : converts value into a single ascii character
+
 public class PD_char extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_char();
 

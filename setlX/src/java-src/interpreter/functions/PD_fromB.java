@@ -7,6 +7,8 @@ import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
+// fromB(compoundValue)    : select and removes the first member from compound value
+
 public class PD_fromB extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fromB();
 

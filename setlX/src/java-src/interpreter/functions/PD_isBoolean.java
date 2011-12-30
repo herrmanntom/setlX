@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isBoolean(value)        : test if value-type is boolean
+
 public class PD_isBoolean extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isBoolean();
 

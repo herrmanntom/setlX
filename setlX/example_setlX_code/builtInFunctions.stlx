@@ -24,7 +24,7 @@ print("variables in outer scope: ", getScope());
 print();
 
 /*******************************************************************************
-makeTerm(fnc, argList)  // create a term with the form: fnc(argList)
+makeTerm(fnc, body)     // create a term with the form: fnc(body)
 fct(term)               // get functional char of a term
 args(term)              // get arguments of term
 */
@@ -86,7 +86,7 @@ for (i in userinput) {
 print();
 
 /*******************************************************************************
-rnd(listOrSet);         // randomly select element from list or set; different from arb, as arb is deterministic
+rnd(listOrSet);         // randomly select member from compound value; different from arb, as arb is deterministic and rnd is not
 */
 
 throwACoin := [] |-> rnd({"heads", "tails"});
@@ -112,22 +112,22 @@ print("When this was written, " + daysSinceEpoch(1323062948018) + " days had gon
 print();
 
 /*******************************************************************************
-printDbg(value, ...)    // same as print, but does not interprete the string ($)
+printDbg(value, ...)    // same as print, but does not interprete the string ($-signs)
 printErr(value, ...)    // same as print, but prints into stderr
-printDbgErr(value, ...) // same as print, but does not interprete the string ($) and prints into stderr
+printDbgErr(value, ...) // same as print, but does not interprete the string ($-signs) and prints into stderr
 */
 test := "test";
-print("This is a $test$");
-printDbg("This is a $test$");
-printErr("This is a $test$");
+print      ("This is a $test$");
+printDbg   ("This is a $test$");
+printErr   ("This is a $test$");
 printDbgErr("This is a $test$");
 print();
 
 /*******************************************************************************
 ToDo/Not jet implemented:
 
-evalTerm(term)          // execute terms which represent SetlX statements and expessions
-getTerm(expr)           // convert the value of an expression into a term
+evalTerm(term)          // execute a term which represents SetlX statements and expessions
+getTerm(value)          // convert a value into a term
 parse(stmnts)           // parse SetlX statements into a term
 parseExpr(expr)         // parse SetlX expression into a term
 

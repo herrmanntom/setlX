@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isReal(value)           : test if value-type is real
+
 public class PD_isReal extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isReal();
 

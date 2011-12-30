@@ -7,6 +7,8 @@ import interpreter.utilities.Environment;
 
 import java.util.List;
 
+// printDbg(value, ...)    : same as print, but does not interprete the string ($-signs)
+
 public class PD_printDbg extends PD_print {
     public final static PreDefinedFunction DEFINITION = new PD_printDbg();
 

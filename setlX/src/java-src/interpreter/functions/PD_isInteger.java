@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isInteger(value)        : test if value-type is integer
+
 public class PD_isInteger extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isInteger();
 

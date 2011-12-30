@@ -11,6 +11,8 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
+// execute(stmnts)         : execute a String of SetlX statements
+
 public class PD_execute extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_execute();
 

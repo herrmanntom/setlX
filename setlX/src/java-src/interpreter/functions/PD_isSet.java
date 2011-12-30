@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isSet(value)            : test if value-type is set
+
 public class PD_isSet extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isSet();
 

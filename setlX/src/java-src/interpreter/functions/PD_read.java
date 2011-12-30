@@ -11,6 +11,8 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 
+// read()                  : reads from stdin until user enters at least one character, converts input into integer or real if possible
+
 public class PD_read extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_read();
 

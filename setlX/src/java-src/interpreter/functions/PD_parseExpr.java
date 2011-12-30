@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// parseExpr(expr)         : parse SetlX expression into a term
+
 public class PD_parseExpr extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_parseExpr();
 

@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// arb(compoundValue)      : select arbitrary member from compound value
+
 public class PD_arb extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_arb();
 

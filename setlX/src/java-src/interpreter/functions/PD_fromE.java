@@ -7,6 +7,8 @@ import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
+// fromE(compoundValue)    : select and removes the last member from compound value
+
 public class PD_fromE extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fromE();
 

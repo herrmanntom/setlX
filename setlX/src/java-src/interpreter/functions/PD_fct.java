@@ -6,6 +6,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// fct(term)               : get functional char of a term
+
 public class PD_fct extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fct();
 

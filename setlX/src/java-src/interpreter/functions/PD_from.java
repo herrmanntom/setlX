@@ -7,6 +7,8 @@ import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
+// from(compoundValue)     : select and removes an arbitrary member from compound value
+
 public class PD_from extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION
                                             = new PD_from();

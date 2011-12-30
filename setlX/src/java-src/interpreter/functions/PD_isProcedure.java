@@ -4,6 +4,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// isProcedure(value)      : test if value-type is procedure
+
 public class PD_isProcedure extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isProcedure();
 

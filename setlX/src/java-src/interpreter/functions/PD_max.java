@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// max(compoundValue)   : select maximum member from compound value
+
 public class PD_max extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_max();
 

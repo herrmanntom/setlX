@@ -7,6 +7,8 @@ import interpreter.utilities.Environment;
 
 import java.util.List;
 
+// print(value)            : prints string representation of provided value into stdout
+
 public class PD_print extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_print();
     protected           boolean            interprete;

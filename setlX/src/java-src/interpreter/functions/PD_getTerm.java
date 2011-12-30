@@ -5,6 +5,8 @@ import interpreter.types.Value;
 
 import java.util.List;
 
+// getTerm(value)          : convert a value into a term
+
 public class PD_getTerm extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_getTerm();
 

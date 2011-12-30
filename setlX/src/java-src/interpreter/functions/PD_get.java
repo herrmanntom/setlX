@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 
+// get()                   : reads a single line from stdin
+
 public class PD_get extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_get();
 

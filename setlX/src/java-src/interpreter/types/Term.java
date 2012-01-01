@@ -52,16 +52,6 @@ public class Term extends CollectionValue {
         return SetlBoolean.TRUE;
     }
 
-    /* arithmetic operations */
-
-    public Term negate() {
-        return (new Negate(new ValueExpr(this.clone()))).toTerm();
-    }
-
-    public Term power(Value exponent) {
-        return (new Power(new ValueExpr(this.clone()), new ValueExpr(exponent.clone()))).toTerm();
-    }
-
     /* operations on compound values (Lists, Sets [, Strings]) */
 
     public void addMember(Value element) {

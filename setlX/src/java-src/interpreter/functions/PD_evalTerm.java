@@ -5,7 +5,7 @@ import interpreter.types.Value;
 
 import java.util.List;
 
-// evalTerm(term)          : execute a term which represents SetlX statements and expessions
+// evalTerm(term)          : execute a term which represents SetlX statements and/or expessions
 
 public class PD_evalTerm extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_evalTerm();

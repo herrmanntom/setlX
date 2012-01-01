@@ -1,7 +1,7 @@
 // this program demonstrates some of the new and possibly interesting built-in functions
 
 /*******************************************************************************
-mathConst(name)         // get the value of a mathematical constant (currently only pi and e)
+  mathConst(name)         // get the value of a mathematical constant (currently only pi and e)
 */
 
 circumference := [r] |-> 2 * mathConst("pi") * r;
@@ -10,7 +10,7 @@ print("100 is approximately " + log(mathConst("e") ** 100) + ".");
 print();
 
 /*******************************************************************************
-getScope()              // get a term representing all variables set in current scope
+  getScope()              // get a term representing all variables set in current scope
 */
 
 print("variables in outer scope: ", getScope());
@@ -24,9 +24,9 @@ print("variables in outer scope: ", getScope());
 print();
 
 /*******************************************************************************
-makeTerm(fnc, body)     // create a term with the form: fnc(body)
-fct(term)               // get functional char of a term
-args(term)              // get arguments of term
+  makeTerm(fnc, body)     // create a term with the form: fnc(body)
+  fct(term)               // get functional char of a term
+  args(term)              // get arguments of term
 */
 
 t := makeTerm("Arrr",["said","the","pirate"]);
@@ -36,8 +36,8 @@ print(fct(t), "(", a(2 .. #a-1), ")");
 print();
 
 /*******************************************************************************
-eval(expr)              // evaluate a String of a SetlX expression to a variable
-execute(stmnts)         // execute a String of SetlX statements
+  eval(expr)              // evaluate a String of a SetlX expression to a variable
+  execute(stmnts)         // execute a String of SetlX statements
 */
 
 execute("x := y := 6;");
@@ -45,16 +45,16 @@ print(eval("x ** y"), " == ", x ** y);
 print();
 
 /*******************************************************************************
-load(path)              // loads SetlX source code file and executes it
+  load(path)              // loads SetlX source code file and executes it
 */
 
 load("../example_setlX_code/erlang.stlx"); // will fail if relative path is wrong...
 print();
 
 /*******************************************************************************
-int(stringOrNumber)     // convert string or number into an integer, returns om on failure
-real(stringOrNumber)    // convert string or number into a real, returns om on failure
-str(value)              // converts any value into a string, can not fail
+  int(stringOrNumber)     // convert string or number into an integer, returns om on failure
+  real(stringOrNumber)    // convert string or number into a real, returns om on failure
+  str(value)              // converts any value into a string, can not fail
 */
 
 getIntRealOrStringFromInput := procedure(input) {
@@ -86,7 +86,7 @@ for (i in userinput) {
 print();
 
 /*******************************************************************************
-rnd(listOrSet);         // randomly select member from compound value; different from arb, as arb is deterministic and rnd is not
+  rnd(listOrSet);         // randomly select member from compound value; different from arb, as arb is deterministic and rnd is not
 */
 
 throwACoin := [] |-> rnd({"heads", "tails"});
@@ -98,7 +98,7 @@ print(l); // will only be the same when interpreter is started with --predictabl
 print();
 
 /*******************************************************************************
-now()                   // get current time since epoch in ms
+  now()                   // get current time since epoch in ms
 */
 
 daysSinceEpoch := procedure(ms) {
@@ -112,9 +112,9 @@ print("When this was written, " + daysSinceEpoch(1323062948018) + " days had gon
 print();
 
 /*******************************************************************************
-printDbg(value, ...)    // same as print, but does not interprete the string ($-signs)
-printErr(value, ...)    // same as print, but prints into stderr
-printDbgErr(value, ...) // same as print, but does not interprete the string ($-signs) and prints into stderr
+  printDbg(value, ...)    // same as print, but does not interprete the string ($-signs)
+  printErr(value, ...)    // same as print, but prints into stderr
+  printDbgErr(value, ...) // same as print, but does not interprete the string ($-signs) and prints into stderr
 */
 test := "test";
 print      ("This is a $test$");
@@ -126,9 +126,9 @@ print();
 /*******************************************************************************
 ToDo/Not jet implemented:
 
-evalTerm(term)          // execute a term which represents SetlX statements and expessions
-getTerm(value)          // convert a value into a term
-parse(stmnts)           // parse SetlX statements into a term
-parseExpr(expr)         // parse SetlX expression into a term
+  evalTerm(term)          // execute a term which represents SetlX statements and/or expessions
+  getTerm(value)          // convert a value into a term
+  parse(expr)             // parse SetlX expression into a term
+  parseStatements(stmnts) // parse SetlX statements into a term
 
 */

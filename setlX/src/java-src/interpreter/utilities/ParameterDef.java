@@ -2,9 +2,23 @@ package interpreter.utilities;
 
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Variable;
+import interpreter.types.Term;
 import interpreter.types.Value;
 
 // This class represents a single parameter of a function definition
+
+/*
+grammar rule:
+procedureParameter
+    : 'rw' variable
+    |      variable
+    ;
+
+implemented here as:
+      ==== ========
+      mType  mVar
+*/
+
 public class ParameterDef {
     public final static int READ_ONLY   = 0;
     public final static int READ_WRITE  = 1;
@@ -41,12 +55,27 @@ public class ParameterDef {
         return mType;
     }
 
+    /* string operations */
+
     public String toString() {
         String result = "";
         if (mType == READ_WRITE) {
             result += "rw ";
         }
         result += mVar;
+        return result;
+    }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result;
+        if (mType == READ_WRITE) {
+            result = new Term("'rwParameter");
+        } else {
+            result = new Term("'parameter");
+        }
+        result.addMember(mVar.toTerm());
         return result;
     }
 }

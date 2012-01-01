@@ -335,6 +335,17 @@ public class SetlSet extends CollectionValue {
         return result;
     }
 
+    /* term operations */
+
+    public Value toTerm() {
+        SetlSet termSet = new SetlSet();
+        for (Value v: getSet()) {
+            termSet.addMember(v.toTerm());
+        }
+        return termSet;
+    }
+
+
     /* Comparisons */
 
     /* Compare two Values.  Returns -1 if this value is less than the value given

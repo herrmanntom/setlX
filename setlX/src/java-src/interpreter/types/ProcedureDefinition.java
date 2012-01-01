@@ -109,6 +109,22 @@ public class ProcedureDefinition extends Value {
         return toString(0);
     }
 
+    /* term operations */
+
+    public Value toTerm() {
+        Term result = new Term("'procedure");
+
+        SetlList paramList = new SetlList();
+        for (ParameterDef param: mParameters) {
+            paramList.addMember(param.toTerm());
+        }
+        result.addMember(paramList);
+
+        result.addMember(mStatements.toTerm());
+
+        return result;
+    }
+
     /* Comparisons */
 
     /* Compare two Values.  Returns -1 if this value is less than the value given

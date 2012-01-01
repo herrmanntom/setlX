@@ -4,7 +4,21 @@ import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.Om;
+import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.utilities.Environment;
+
+/*
+grammar rule:
+statement
+    : [...]
+    | 'return' anyExpr? ';'
+    ;
+
+implemented here as:
+               =======
+               mResult
+*/
 
 public class Return extends Statement {
     private Expr mResult;
@@ -21,6 +35,8 @@ public class Return extends Statement {
         }
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         String result = Environment.getTabs(tabs) + "return";
         if (mResult != null){
@@ -29,4 +45,17 @@ public class Return extends Statement {
         result += ";";
         return result;
     }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'return");
+        if (mResult != null) {
+            result.addMember(mResult.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
+        return result;
+    }
 }
+

@@ -275,7 +275,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* term operations */
 
-    public final Value toTerm() {
+    public Value toTerm() {
         return this.clone();
     }
 

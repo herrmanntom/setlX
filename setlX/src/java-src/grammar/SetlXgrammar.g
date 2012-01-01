@@ -60,7 +60,14 @@ statement returns [Statement stmnt]
         'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));          }
       )?
       '}' { stmnt = new Switch(branchList); }
-    | match                                                   { stmnt = $match.m;                                    }
+    | 'match' '(' e1 = expr ')' '{'
+      (
+        'case' e2 = expr ':' b1 = block
+      )*
+      (
+        'default'        ':' b2 = block
+      )?
+      '}' { stmnt = new Match(); }
     | 'for'   '(' iteratorChain  ')' '{' block '}'            { stmnt = new For($iteratorChain.ic, $block.blk);      }
     | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
     | 'return' anyExpr? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
@@ -434,18 +441,6 @@ real returns [Real r]
       (
         NUMBER      { n = $NUMBER.text;             }
       )? REAL       { r = new Real(n + $REAL.text); }
-    ;
-
-match returns [Match m]
-    : 'match' '(' expr ')' '{'
-      (
-        'case' expr ':' block
-      )*
-      (
-        'default' ':' block
-      )?
-      '}'
-      { m = new Match(); }
     ;
 
 

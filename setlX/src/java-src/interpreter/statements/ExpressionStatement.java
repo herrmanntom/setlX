@@ -2,8 +2,21 @@ package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
+import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
+
+/*
+grammar rule:
+statement
+    : [...]
+    | anyExpr ';'
+    ;
+
+implemented here as:
+      =======
+       mExpr
+*/
 
 public class ExpressionStatement extends Statement {
     private Expr   mExpr;
@@ -22,7 +35,18 @@ public class ExpressionStatement extends Statement {
         }
     }
 
+    /* string operations */
+
     public String toString(int tabs) {
         return Environment.getTabs(tabs) + mExpr.toString(tabs) + ";";
     }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'expression");
+        result.addMember(mExpr.toTerm());
+        return result;
+    }
 }
+

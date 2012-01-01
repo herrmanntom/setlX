@@ -1,10 +1,27 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.types.SetlList;
+import interpreter.types.Term;
 import interpreter.utilities.Environment;
 
 import java.util.LinkedList;
 import java.util.List;
+
+/*
+grammar rules:
+initBlock
+    : statement+
+    ;
+
+block
+    : statement*
+    ;
+
+implemented here as:
+      =========
+     mStatements
+*/
 
 public class Block extends Statement {
     private List<Statement>  mStatements;
@@ -26,6 +43,8 @@ public class Block extends Statement {
             stmnt.execute();
         }
     }
+
+    /* string operations */
 
     public String toString(int tabs) {
         return toString(tabs, false);
@@ -54,4 +73,19 @@ public class Block extends Statement {
         }
         return result;
     }
+
+    /* term operations */
+
+    public Term toTerm() {
+        Term result = new Term("'block");
+
+        SetlList stmntList = new SetlList();
+        for (Statement s: mStatements) {
+            stmntList.addMember(s.toTerm());
+        }
+        result.addMember(stmntList);
+
+        return result;
+    }
 }
+

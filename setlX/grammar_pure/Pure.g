@@ -12,8 +12,8 @@ statement
     : 'var' variable ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
-    | match
-    | 'for' '(' iterator ')' '{' block '}'
+    | 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
+    | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'return' anyExpr? ';'
     | 'continue' ';'
@@ -63,8 +63,8 @@ boolFollowToken
     ;
 
 boolExpr
-    : 'forall' '(' iterator '|' condition ')'
-    | 'exists' '(' iterator '|' condition ')'
+    : 'forall' '(' iteratorChain '|' condition ')'
+    | 'exists' '(' iteratorChain '|' condition ')'
     | equivalence
     ;
 
@@ -235,10 +235,6 @@ atomicValue
 
 real
     : NUMBER? REAL
-    ;
-
-match
-    : 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
     ;
 
 

@@ -7,3 +7,4 @@ public abstract class BranchAbstract extends Statement {
     public abstract boolean evalConditionToBool() throws SetlException;
 
 }
+

@@ -297,6 +297,16 @@ public class SetlList extends CollectionValue {
         return result;
     }
 
+    /* term operations */
+
+    public Value toTerm() {
+        SetlList termList = new SetlList();
+        for (Value v: getList()) {
+            termList.addMember(v.toTerm());
+        }
+        return termList;
+    }
+
     /* Comparisons */
 
     /* Compare two Values.  Returns -1 if this value is less than the value given

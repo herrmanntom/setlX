@@ -16,13 +16,13 @@ import java.util.List;
 /*
 grammar rule:
 boolExpr
-    : 'forall' '(' iterator '|' condition ')'
+    : 'forall' '(' iteratorChain '|' condition ')'
     | [...]
     ;
 
 implemented here as:
-                   ========     =========
-                   mIterator    mCondition
+                   ========-----     =========
+                     mIterator       mCondition
 */
 
 public class Forall extends Expr {

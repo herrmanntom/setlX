@@ -16,13 +16,13 @@ import java.util.List;
 /*
 grammar rule:
 boolExpr
-    : 'exists' '(' iterator '|' condition ')'
+    : 'exists' '(' iteratorChain '|' condition ')'
     | [...]
     ;
 
 implemented here as:
-                   ========     =========
-                   mIterator    mCondition
+                   ========-----     =========
+                     mIterator       mCondition
 */
 
 public class Exists extends Expr {

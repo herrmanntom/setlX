@@ -120,8 +120,8 @@ public class SetlInt extends NumberValue {
             throw new UndefinedOperationException("'" + this + "!' is undefined.");
         }
         int        n        = intValue(); // will throw exception if mNumber > 2^31, but wanting that is crazy talk
-        BigInteger result	= BigInteger.ONE;
-        final int  CORES	= Environment.getNumberOfCores();
+        BigInteger result   = BigInteger.ONE;
+        final int  CORES    = Environment.getNumberOfCores();
         if (n <= 512 || CORES <= 1) { // use simple implementation when computing small factorials or having only one CPU (less overhead)
             for (int i = 2; i <= n; ++i) {
                 result = result.multiply(BigInteger.valueOf(i));
@@ -234,7 +234,7 @@ public class SetlInt extends NumberValue {
         }
     }
 
-    /* String and Char operations */
+    /* string and char operations */
 
     public SetlString charConvert() throws NumberToLargeException {
         if (mNumber.compareTo(BigInteger.valueOf(127)) <= 0 &&
@@ -250,7 +250,7 @@ public class SetlInt extends NumberValue {
         return mNumber.toString();
     }
 
-    /* Comparisons */
+    /* comparisons */
 
     /* Compare two Values.  Returns -1 if this value is less than the value given
      * as argument, +1 if its greater and 0 if both values contain the same

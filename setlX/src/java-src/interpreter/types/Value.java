@@ -279,7 +279,7 @@ public abstract class Value implements Comparable<Value> {
         return this.clone();
     }
 
-    /* Comparisons */
+    /* comparisons */
 
     /* Compare two Values.  Returns -1 if this value is less than the value given
      * as argument, +1 if its greater and 0 if both values contain the same

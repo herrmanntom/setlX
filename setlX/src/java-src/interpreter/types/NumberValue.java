@@ -33,7 +33,7 @@ public abstract class NumberValue extends Value {
 
     public abstract NumberValue subtract(Value subtrahend) throws SetlException;
 
-    /* Comparisons */
+    /* comparisons */
 
     public final SetlBoolean isLessThan(Value other) throws IncompatibleTypeException {
         if (other instanceof NumberValue) {

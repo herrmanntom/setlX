@@ -183,7 +183,7 @@ public class SetlString extends Value {
         }
     }
 
-    /* String and Char operations */
+    /* string and char operations */
 
     public SetlString str() {
         return this;
@@ -269,7 +269,7 @@ public class SetlString extends Value {
         }
     }
 
-    /* Comparisons */
+    /* comparisons */
 
     /* Compare two Values.  Returns -1 if this value is less than the value given
      * as argument, +1 if its greater and 0 if both values contain the same

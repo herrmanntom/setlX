@@ -1,6 +1,5 @@
 package interpreter.functions;
 
-import interpreter.types.Om;
 import interpreter.types.Value;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public class PD_getTerm extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        return Om.OM;
+        return args.get(0).toTerm();
     }
 }
 

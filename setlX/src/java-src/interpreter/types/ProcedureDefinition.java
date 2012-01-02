@@ -14,6 +14,18 @@ import interpreter.utilities.WriteBackAgent;
 import java.util.List;
 
 // This class represents a function definition
+
+/*
+grammar rule:
+procedureDefinition
+    : 'procedure' '(' procedureParameters ')' '{' block '}'
+    ;
+
+implemented here as:
+                      ===================         =====
+                          mParameters          mStatements
+*/
+
 public class ProcedureDefinition extends Value {
     protected List<ParameterDef> mParameters;  // parameter list
     protected Block              mStatements;  // statements in the body of the definition
@@ -85,7 +97,7 @@ public class ProcedureDefinition extends Value {
         return result;
     }
 
-    /* String and Char operations */
+    /* string and char operations */
 
     public String toString(int tabs) {
         boolean interprete  = Environment.isInterpreteStrings();
@@ -125,7 +137,7 @@ public class ProcedureDefinition extends Value {
         return result;
     }
 
-    /* Comparisons */
+    /* comparisons */
 
     /* Compare two Values.  Returns -1 if this value is less than the value given
      * as argument, +1 if its greater and 0 if both values contain the same

@@ -124,11 +124,16 @@ printDbgErr("This is a $test$");
 print();
 
 /*******************************************************************************
+  getTerm(value)          // convert a value into a term
+*/
+print(getTerm({throwACoin, print}));
+print();
+
+/*******************************************************************************
 ToDo/Not jet implemented:
 
   evalTerm(term)          // execute a term which represents SetlX statements and/or expessions
-  getTerm(value)          // convert a value into a term
-  parse(expr)             // parse SetlX expression into a term
-  parseStatements(stmnts) // parse SetlX statements into a term
+  parse(expr)             // parse string of a SetlX expression into a term
+  parseStatements(stmnts) // parse string of SetlX statements into a term
 
 */

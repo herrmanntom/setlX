@@ -5,9 +5,10 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.CodeFragment;
 import interpreter.utilities.Environment;
 
-public abstract class Expr {
+public abstract class Expr extends CodeFragment {
     public Value eval() throws SetlException {
         try {
             return this.evaluate();

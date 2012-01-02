@@ -3,8 +3,9 @@ package interpreter.statements;
 import interpreter.exceptions.SetlException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.CodeFragment;
 
-public abstract class Statement {
+public abstract class Statement extends CodeFragment {
     public abstract void execute() throws SetlException;
 
     /* string operations */

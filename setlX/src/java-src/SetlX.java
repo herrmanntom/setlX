@@ -84,7 +84,7 @@ public class SetlX {
                 System.out.println("\n\nGood Bye! (EOF)");
                 break;
             } catch (ParserException pe) {
-                System.err.println("\nLast input not executed due to previous errors.");
+                System.err.println("\nLast input not executed due to errors in it.");
                 skipTest = true;
                 blk      = null;
             }
@@ -109,7 +109,7 @@ public class SetlX {
             if (verbose) {
                 System.out.println("\n-================================Parsing=Failed===============================-\n");
             }
-            System.err.println("Execution terminated due to previous errors.");
+            System.err.println("Execution terminated due to errors in the input.");
             return; // terminate execution
         }
 

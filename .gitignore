@@ -1,6 +1,10 @@
 accounting/
 older_versions/
 setlX/documentation/version.tex
+setlX/grammar_pure/EBNF_extractor/*.class
+setlX/grammar_pure/EBNF_extractor/EBNF_Grammar.tokens
+setlX/grammar_pure/EBNF_extractor/EBNF_GrammarLexer.java
+setlX/grammar_pure/EBNF_extractor/EBNF_GrammarParser.java
 setlX/src/antlr/antlr-*-complete.jar
 setlX/src/bin
 setlX/src/java-src/grammar/SetlXgrammar.tokens

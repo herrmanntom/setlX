@@ -70,6 +70,8 @@ statement returns [Statement stmnt]
       '}' { stmnt = new Match(); }
     | 'for'   '(' iteratorChain  ')' '{' block '}'            { stmnt = new For($iteratorChain.ic, $block.blk);      }
     | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
+    | 'try'                    '{' b1 = block '}'
+      'catch' '(' variable ')' '{' b2 = block '}'             { stmnt = new TryCatch($b1.blk, $variable.v, $b2.blk); }
     | 'return' anyExpr? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
     | 'continue' ';'                                          { stmnt = new Continue();                              }
     | 'break' ';'                                             { stmnt = new Break();                                 }

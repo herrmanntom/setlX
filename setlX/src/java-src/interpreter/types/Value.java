@@ -20,7 +20,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlBoolean implies(Expr other) throws SetlException {
-        throw new IncompatibleTypeException("Left-hand-side of '" + this + "-> " + other + "' is not a Boolean value.");
+        throw new IncompatibleTypeException("Left-hand-side of '" + this + " => " + other + "' is not a Boolean value.");
     }
 
     public SetlBoolean not() throws SetlException {
@@ -34,6 +34,10 @@ public abstract class Value implements Comparable<Value> {
     /* type checks (sort of Boolean operation) */
 
     public SetlBoolean isBoolean() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isError() {
         return SetlBoolean.FALSE;
     }
 
@@ -281,12 +285,12 @@ public abstract class Value implements Comparable<Value> {
 
     /* comparisons */
 
-    /* Compare two Values.  Returns -1 if this value is less than the value given
-     * as argument, +1 if its greater and 0 if both values contain the same
-     * elements.
+    /* Compare two Values.  Return value is < 0 if this value is less than the
+     * value given as argument, > 0 if its greater and == 0 if both values
+     * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public abstract int compareTo(Value v);

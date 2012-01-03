@@ -1,0 +1,3 @@
+Some error occurred!:
+Error: Left-hand-side of '42 => someOtherThing' is not a Boolean value.
+However, using the try catch block we can still get here in spite of the error!

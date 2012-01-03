@@ -118,12 +118,12 @@ public class Infinity extends NumberValue {
 
     /* comparisons */
 
-    /* Compare two Values.  Returns -1 if this value is less than the value given
-     * as argument, +1 if its greater and 0 if both values contain the same
-     * elements.
+    /* Compare two Values.  Return value is < 0 if this value is less than the
+     * value given as argument, > 0 if its greater and == 0 if both values
+     * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(Value v) {
@@ -132,8 +132,8 @@ public class Infinity extends NumberValue {
         } else if (this == POSITIVE) {
             // everything else is smaller
             return 1;
-        } else if (v == Om.OM) { // to get here this must be NEGATIVE
-            // om is the only thing smaller when this is NEGATIVE
+        } else if (v instanceof SetlError || v == Om.OM) { // to get here this must be NEGATIVE
+            // SetlError and Om are the only things smaller when this is NEGATIVE
             return 1;
         } else {
             // everything in between is bigger

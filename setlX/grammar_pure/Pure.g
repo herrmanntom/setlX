@@ -15,6 +15,7 @@ statement
     | 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
+    | 'try' '{' block '}' 'catch' '(' variable ')' '{' block '}'
     | 'return' anyExpr? ';'
     | 'continue' ';'
     | 'break' ';'

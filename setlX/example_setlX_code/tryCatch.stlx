@@ -1,0 +1,13 @@
+// this program demonstrates the try catch block and functionality
+
+something      := 42;
+someOtherThing := 23;
+try {
+    something => someOtherThing; // this will fail and the program would be terminated
+    print("... and this will never be executed.");
+} catch (e) {
+    printErr("Some error occurred!:");
+    printErr(e);
+}
+print("However, using the try catch block we can still get here in spite of the error!");
+

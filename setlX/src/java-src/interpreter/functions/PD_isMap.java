@@ -14,7 +14,7 @@ public class PD_isMap extends PreDefinedFunction {
         addParameter("value");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars ) {
+    public Value execute(List<Value> args, List<Value> writeBackVars) {
         return args.get(0).isMap();
     }
 }

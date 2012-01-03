@@ -1,2 +1,2 @@
-../example_setlX_code/crazyParserSyntaxErrorCheck.stlx line 2:0 required (...)+ loop did not match anything at input '%'
+../example_setlX_code/crazyParserSyntaxErrorCheck.stlx line 4:0 required (...)+ loop did not match anything at input '%'
 Execution terminated due to errors in the input.

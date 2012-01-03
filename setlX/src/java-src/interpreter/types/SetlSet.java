@@ -348,12 +348,12 @@ public class SetlSet extends CollectionValue {
 
     /* comparisons */
 
-    /* Compare two Values.  Returns -1 if this value is less than the value given
-     * as argument, +1 if its greater and 0 if both values contain the same
-     * elements.
+    /* Compare two Values.  Return value is < 0 if this value is less than the
+     * value given as argument, > 0 if its greater and == 0 if both values
+     * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(Value v){

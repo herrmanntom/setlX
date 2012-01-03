@@ -1,0 +1,57 @@
+// this program demonstrates the parser and eval functionality, and is rigged to not require user input
+
+var inputA;
+var inputB;
+
+inputA := ["%x","x","5"];
+inputB := ["%x","value + value","value ** value"];
+
+getInput := procedure() {
+    getValue := procedure() {
+        print("Please enter some SetlX value");
+        valueStr    := /*get()*/ fromB(inputA);
+        return eval(valueStr);
+    };
+
+    value := getValue();
+    while (isError(value)) {
+        print();
+        print("Oh... you did that wrong... try again!");
+        value := getValue();
+    }
+    print("value\t:= $value$");
+    print();
+
+
+    getExpr := procedure() {
+        print("Please enter some SetlX expression using the 'value' variable");
+        expr     := /*get()*/ fromB(inputB);
+        exprTerm := parse(expr);
+        return [expr, exprTerm];
+    };
+
+    [expr, exprTerm] := getExpr();
+    while (isError(exprTerm) || !isTerm(exprTerm) || 'variable("value") notin exprTerm) {
+        print();
+        print("Oh... you did that wrong... try again!");
+        [expr, exprTerm] := getExpr();
+    }
+    print("expr\t:= " + expr);
+    print("Syntax-Tree:\nexpr\t:= $exprTerm$");
+    print();
+
+    return eval(expr);
+};
+
+result := getInput();
+while (isError(result)) {
+    print();
+    print("No, No, No... that did not work out!");
+    print("Try again from the beginning, but don't make this error again:\n$result$");
+    result := getInput();
+}
+print("result\t:= $result$");
+print();
+
+print("Great result!");
+

@@ -36,8 +36,8 @@ print(fct(t), "(", a(2 .. #a-1), ")");
 print();
 
 /*******************************************************************************
-  eval(expr)              // evaluate a String of a SetlX expression to a variable
-  execute(stmnts)         // execute a String of SetlX statements
+  eval(expr)              // evaluate a string of a SetlX expression, returns value of Error-type on parser or evaluation failure
+  execute(stmnts)         // execute a string of SetlX statements, returns value of Error-type on parser or execution failure
 */
 
 execute("x := y := 6;");
@@ -108,7 +108,7 @@ daysSinceEpoch := procedure(ms) {
 
 // print(daysSinceEpoch(now()) + " days have gone by since 1970-01-01.");
 // now make it testable...
-print("When this was written, " + daysSinceEpoch(1323062948018) + " days had gone by since 1970-01-01.");
+print("When this was written, " + daysSinceEpoch(1325618124960) + " days had gone by since 1970-01-01.");
 print();
 
 /*******************************************************************************
@@ -125,15 +125,17 @@ print();
 
 /*******************************************************************************
   getTerm(value)          // convert a value into a term
+  parse(expr)             // parse string of a SetlX expression into a term, returns value of Error-type on parser failure
+  parseStatements(stmnts) // parse string of SetlX statements into a term, returns value of Error-type on parser failure
 */
-print(getTerm({throwACoin, print}));
+print("{throwACoin, print} = " + getTerm({throwACoin, print}));
+print("a + 10 * b % 4 = " + parse("a + 10 * b % 4"));
+print("\"print(parseStatements(\\\"print(\\\\\"that is crazy!\\\\\");\\\"));\" = " + parseStatements("print(parseStatements(\"print(\\\"that is crazy!\\\");\"));"));
 print();
 
 /*******************************************************************************
 ToDo/Not jet implemented:
 
   evalTerm(term)          // execute a term which represents SetlX statements and/or expessions
-  parse(expr)             // parse string of a SetlX expression into a term
-  parseStatements(stmnts) // parse string of SetlX statements into a term
 
 */

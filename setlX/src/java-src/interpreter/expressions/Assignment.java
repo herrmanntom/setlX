@@ -4,7 +4,6 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 
 /*
 grammar rule:
@@ -70,7 +69,7 @@ public class Assignment extends Expr {
     /* string operations */
 
     public String toString(int tabs) {
-        String result   = Environment.getTabs(tabs) + mLhs.toString(tabs) + " ";
+        String result   = mLhs.toString(tabs) + " ";
         switch (mType) {
             case DIRECT:
                 result += ":=";

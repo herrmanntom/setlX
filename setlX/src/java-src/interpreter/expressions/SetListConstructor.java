@@ -63,7 +63,7 @@ public class SetListConstructor extends Expr {
     // sets this expression to the given value
     public void assign(Value v) throws SetlException {
         if (v instanceof SetlList) {
-            if (mType == LIST) {
+            if (mType == LIST && mConstructor != null) {
                 mConstructor.setIds((SetlList) v);
             } else {
                 throw new UndefinedOperationException("Only explicit lists of variables can be used as targets for list assignments.");

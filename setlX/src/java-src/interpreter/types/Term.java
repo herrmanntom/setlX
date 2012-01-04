@@ -61,17 +61,8 @@ public class Term extends CollectionValue {
     }
 
     public SetlBoolean containsMember(Value element) {
-        for (Value v: mBody) {
-            if (v.equals(element)) {
-                return SetlBoolean.TRUE;
-            } else if (v instanceof CollectionValue) {
-                CollectionValue innerValue = (CollectionValue) v;
-                if (innerValue.containsMember(element) == SetlBoolean.TRUE) {
-                    return SetlBoolean.TRUE;
-                }
-            }
-        }
-        return SetlBoolean.FALSE;
+        // Terms are inherently recursive, so search recursively
+        return containsMemberRecursive(element);
     }
 
     public Value firstMember() {

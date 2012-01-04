@@ -39,6 +39,21 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract SetlBoolean     containsMember(Value element);
 
+    // compare not only own members, but also all members contained in own members
+    public SetlBoolean containsMemberRecursive(Value element) {
+        for (Value v: this) {
+            if (v.equals(element)) {
+                return SetlBoolean.TRUE;
+            } else if (v instanceof CollectionValue) {
+                CollectionValue innerValue = (CollectionValue) v;
+                if (innerValue.containsMemberRecursive(element) == SetlBoolean.TRUE) {
+                    return SetlBoolean.TRUE;
+                }
+            }
+        }
+        return SetlBoolean.FALSE;
+    }
+
     public abstract Value           firstMember();
 
     public abstract Value           lastMember();

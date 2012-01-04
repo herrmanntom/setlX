@@ -257,5 +257,7 @@ STRING : '"' ('\\"' | ~('"'))* '"';
 LINE_COMMENT : '//' (~('\r\n' | '\n' | '\r'))*;
 MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';
 
-WS : (' ' | '\t' | '\n' | '\r') { skip(); };
+WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
+// see SetlXgrammar.g for explanation of the following rule
+REMAINDER       : .                                         { state.syntaxErrors++; System.err.println(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
 

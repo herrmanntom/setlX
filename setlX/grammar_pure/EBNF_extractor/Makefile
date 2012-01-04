@@ -9,10 +9,13 @@ EBNF.class: Alternative.java MyToken.java Concatenation.java Postfix.java \
 updatePure: EBNF.class ../../src/java-src/grammar/SetlXgrammar.g
 	echo -e "grammar Pure;\n" > ../Pure.g
 	java EBNF < ../../src/java-src/grammar/SetlXgrammar.g >> ../Pure.g
-	grep -v "^WS :" ../Pure.g > ../Pure.g.2
-	grep "^WS :" ../Pure.g | sed 's/: /: (/' | sed 's/;/) { skip(); };/' >> ../Pure.g.2
-	echo "" >> ../Pure.g.2
-	mv ../Pure.g.2 ../Pure.g
+	grep -v "^WS :"        ../Pure.g   > ../Pure.g.2
+	grep -v "^REMAINDER :" ../Pure.g.2 > ../Pure.g
+	rm ../Pure.g.2
+	grep "^WS        " ../../src/java-src/grammar/SetlXgrammar.g       >> ../Pure.g
+	echo "// see SetlXgrammar.g for explanation of the following rule" >> ../Pure.g
+	grep "^REMAINDER " ../../src/java-src/grammar/SetlXgrammar.g       >> ../Pure.g
+	echo "" >> ../Pure.g
 
 EBNF_GrammarParser.java EBNF_GrammarLexer.java: EBNF_Grammar.g
 	java org.antlr.Tool EBNF_Grammar.g

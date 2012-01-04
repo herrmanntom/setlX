@@ -1,4 +1,5 @@
-// this "program" make sure the parser finds this "hidden" syntax error
+// this "program" make sure the parser finds these "hidden" syntax errors
 
 exit;
 %%%;
+@@;

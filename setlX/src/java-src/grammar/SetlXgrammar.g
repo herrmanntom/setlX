@@ -474,3 +474,17 @@ LINE_COMMENT    : '//' ~('\r\n' | '\n' | '\r')*             { skip(); } ;
 MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
 WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
 
+/*
+ * This is the desperate attempt at counting mismatched characters as errors
+ * instead of the lexers default behavior of emitting an error message,
+ * consuming the character and continuing without counting it as an error.
+ * Without correct error counting the program using this grammar must rely on
+ * the user to spot the error message.
+ * However, with correct counting the program can just refuse to execute, when
+ * the error count is > 0, which the user will always notice right away.
+ *
+ * Matching any character here works, because the lexer matches rules in order.
+ */
+
+REMAINDER       : .                                         { state.syntaxErrors++; System.err.println(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
+

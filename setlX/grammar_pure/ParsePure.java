@@ -41,7 +41,7 @@ public class ParsePure {
 
         errors += parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors();
         if (errors > 0) {
-            System.err.println("ParsePure: At least " + errors + " syntax error(s) were encountered in the input!");
+            System.err.println("ParsePure: " + errors + " syntax error(s) were encountered in the input!");
         }
     }
 }

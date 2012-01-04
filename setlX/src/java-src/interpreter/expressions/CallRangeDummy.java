@@ -2,7 +2,6 @@ package interpreter.expressions;
 
 import interpreter.types.RangeDummy;
 import interpreter.types.Term;
-import interpreter.types.Value;
 
 /*
 grammar rule:
@@ -21,7 +20,7 @@ public class CallRangeDummy extends Expr {
 
     private CallRangeDummy() { }
 
-    public Value evaluate() {
+    public RangeDummy evaluate() {
         return RangeDummy.RD;
     }
 

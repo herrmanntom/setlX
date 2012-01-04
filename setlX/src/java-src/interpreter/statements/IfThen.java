@@ -46,7 +46,7 @@ public class IfThen extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'ifBlock");
 
         SetlList branchList = new SetlList();

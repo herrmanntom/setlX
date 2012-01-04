@@ -84,7 +84,7 @@ public class Iterator {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'iterator");
         result.addMember(mAssignable.toTerm());
         result.addMember(mCollection.toTerm());

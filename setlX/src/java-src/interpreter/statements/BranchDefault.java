@@ -42,7 +42,7 @@ public class BranchDefault extends BranchAbstract {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'default");
         result.addMember(mStatements.toTerm());
         return result;

@@ -45,7 +45,7 @@ public class BranchCase extends BranchAbstract {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'case");
         result.addMember(mCondition.toTerm());
         result.addMember(mStatements.toTerm());

@@ -109,19 +109,7 @@ public class Term extends CollectionValue {
     /* calls (function calls) */
 
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        if (mBody.size() > 0) {
-            throw new UndefinedOperationException("You may not use more than one set of brackets when creating terms.");
-        } else if (args.contains(RangeDummy.RD)) {
-            throw new UndefinedOperationException("Terms can not be created with ranges as parameters.");
-        }
-
-        Term result = new Term(mFunctionalCharacter);
-
-        for (Value arg: args) {
-            result.addMember(arg);
-        }
-
-        return result;
+        return mBody.call(exprs, args);
     }
 
     /* string and char operations */
@@ -130,9 +118,6 @@ public class Term extends CollectionValue {
         boolean interprete  = Environment.isInterpreteStrings();
         Environment.setInterpreteStrings(false);
 
-        if (mBody.size() <= 0) {
-            return mFunctionalCharacter;
-        }
         // lists use [] in toString, which have to be removed...
         String result = mBody.toString();
         result = mFunctionalCharacter + "(" + result.substring(1, result.length() - 1) + ")";

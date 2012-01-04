@@ -36,7 +36,7 @@ public class Product extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'product");
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());

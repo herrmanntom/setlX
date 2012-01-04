@@ -54,7 +54,7 @@ public class CallCollection extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term        result      = new Term("'collectionCall");
         SetlList    arguments   = new SetlList();
         result.addMember(mLhs.toTerm());

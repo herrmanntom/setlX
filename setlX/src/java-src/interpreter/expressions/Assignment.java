@@ -98,7 +98,7 @@ public class Assignment extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = null;
         switch (mType) {
             case DIRECT:

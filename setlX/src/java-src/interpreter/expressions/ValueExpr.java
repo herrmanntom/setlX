@@ -1,5 +1,6 @@
 package interpreter.expressions;
 
+import interpreter.exceptions.SetlException;
 import interpreter.types.Term;
 import interpreter.types.Value;
 
@@ -28,7 +29,7 @@ public class ValueExpr extends Expr {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm() throws SetlException {
         return mValue.toTerm();
     }
 }

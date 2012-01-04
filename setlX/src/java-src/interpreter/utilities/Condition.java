@@ -46,7 +46,7 @@ public class Condition {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm() throws SetlException {
         return mExpr.toTerm();
     }
 }

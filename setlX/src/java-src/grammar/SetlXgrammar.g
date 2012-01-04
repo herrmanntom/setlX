@@ -17,7 +17,7 @@ grammar SetlXgrammar;
     package grammar;
 }
 
-/* Require at least one statement to begin parsing.
+/* Require at least one statement to begin parsing and terminate only with EOF.
    Otherwhise antlr runs into strange parser behavior ... */
 initBlock returns [Block blk]
     @init{
@@ -26,6 +26,7 @@ initBlock returns [Block blk]
     : (
         statement  { stmnts.add($statement.stmnt); }
       )+
+      EOF
       { blk = new Block(stmnts); }
     ;
 
@@ -312,38 +313,55 @@ prefixOperation returns [Expr po]
 
 simpleFactor returns [Expr sf]
     : '(' expr ')' { sf = new BracketedExpr($expr.ex);    }
+    | term         { sf = $term.t;                        }
     | call         { sf = $call.c;                        }
     | value        { sf = $value.v;                       }
     ;
 
-call returns [Expr c]
-    : varOrTerm                 { c = $varOrTerm.vot;                     }
-      (
-         '(' callParameters ')' { c = new Call(c, $callParameters.args);  }
-       | '{' anyExpr '}'        { c = new CallCollection(c, $anyExpr.ae); }
-      )*
+term returns [Expr t]
+    : TERM '(' termArguments ')'
+      { t = new TermConstructor(new Variable($TERM.text), $termArguments.args); }
     ;
 
-varOrTerm returns [Variable vot]
-    : variable { vot = $variable.v;              }
-    | TERM     { vot = new Variable($TERM.text); }
-    ;
-
-callParameters returns [List<Expr> args]
+termArguments returns [List<Expr> args]
     @init {
         args = new LinkedList<Expr>();
     }
+    : t1 = termArgument       { args.add($t1.arg);             }
+      (
+        ',' t2 = termArgument { args.add($t2.arg);             }
+      )*
+    |  /* epsilon */
+    ;
+
+termArgument returns [Expr arg]
+    : anyExpr       { arg = $anyExpr.ae;       }
+    | '_'           { arg = VariableIgnore.VI; }
+    ;
+
+call returns [Expr c]
+    : variable                  { c = $variable.v;                          }
+      (
+         '(' callParameters ')' { c = new Call(c, $callParameters.params);  }
+       | '{' anyExpr '}'        { c = new CallCollection(c, $anyExpr.ae);   }
+      )*
+    ;
+
+callParameters returns [List<Expr> params]
+    @init {
+        params = new LinkedList<Expr>();
+    }
     : ( expr '..' )=>
-      e1 = expr          { args.add($e1.ex);             }
-      '..'               { args.add(CallRangeDummy.CRD); }
+      e1 = expr          { params.add($e1.ex);             }
+      '..'               { params.add(CallRangeDummy.CRD); }
       (
-        e2 = expr        { args.add($e2.ex);             }
+        e2 = expr        { params.add($e2.ex);             }
       )?
-    | '..'               { args.add(CallRangeDummy.CRD); }
-      expr               { args.add($expr.ex);           }
-    | a1 = anyExpr       { args.add($a1.ae);             }
+    | '..'               { params.add(CallRangeDummy.CRD); }
+      expr               { params.add($expr.ex);           }
+    | a1 = anyExpr       { params.add($a1.ae);             }
       (
-        ',' a2 = anyExpr { args.add($a2.ae);             }
+        ',' a2 = anyExpr { params.add($a2.ae);             }
       )*
     |  /* epsilon */
     ;
@@ -352,7 +370,6 @@ value returns [Expr v]
     : list         { v = $list.lc;                       }
     | set          { v = $set.sc;                        }
     | atomicValue  { v = new ValueExpr($atomicValue.av); }
-    | '_'          { v = VariableIgnore.VI;              }
     ;
 
 list returns [SetListConstructor lc]

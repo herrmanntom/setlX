@@ -76,7 +76,7 @@ public class Block extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'block");
 
         SetlList stmntList = new SetlList();

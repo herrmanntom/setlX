@@ -48,7 +48,7 @@ public class Return extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'return");
         if (mResult != null) {
             result.addMember(mResult.toTerm());

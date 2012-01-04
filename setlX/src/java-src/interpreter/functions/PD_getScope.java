@@ -1,5 +1,6 @@
 package interpreter.functions;
 
+import interpreter.exceptions.SetlException;
 import interpreter.types.Om;
 import interpreter.types.Value;
 import interpreter.utilities.VariableScope;
@@ -16,7 +17,7 @@ public class PD_getScope extends PreDefinedFunction {
         doNotChangeScope();
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) {
+    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
         return VariableScope.getScope().toTerm();
     }
 }

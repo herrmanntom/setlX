@@ -57,7 +57,7 @@ public class For extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'for");
         result.addMember(mIterator.toTerm());
         result.addMember(mStatements.toTerm());

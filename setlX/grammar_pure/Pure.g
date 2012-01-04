@@ -1,7 +1,7 @@
 grammar Pure;
 
 initBlock
-    : statement+
+    : statement+ EOF
     ;
 
 block
@@ -156,17 +156,27 @@ prefixOperation
 
 simpleFactor
     : '(' expr ')'
+    | term
     | call
     | value
     ;
 
-call
-    : varOrTerm ('(' callParameters ')' | '{' anyExpr '}')*
+term
+    : TERM '(' termArguments ')'
     ;
 
-varOrTerm
-    : variable
-    | TERM
+termArguments
+    : termArgument (',' termArgument)*
+    | /* epsilon */
+    ;
+
+termArgument
+    : anyExpr
+    | '_'
+    ;
+
+call
+    : variable ('(' callParameters ')' | '{' anyExpr '}')*
     ;
 
 callParameters
@@ -180,7 +190,6 @@ value
     : list
     | set
     | atomicValue
-    | '_'
     ;
 
 list

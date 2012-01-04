@@ -37,7 +37,7 @@ public class Implication extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'implication");
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());

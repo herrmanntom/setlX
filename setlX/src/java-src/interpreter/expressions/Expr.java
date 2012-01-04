@@ -39,6 +39,6 @@ public abstract class Expr extends CodeFragment {
 
     /* term operations */
 
-    public abstract Value toTerm();
+    public abstract Value toTerm() throws SetlException;
 }
 

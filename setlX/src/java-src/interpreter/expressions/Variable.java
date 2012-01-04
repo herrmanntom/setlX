@@ -1,6 +1,5 @@
 package interpreter.expressions;
 
-import interpreter.exceptions.SetlException;
 import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
@@ -25,7 +24,7 @@ public class Variable extends Expr {
         mId = id;
     }
 
-    public Value evaluate() throws SetlException {
+    public Value evaluate() {
         // user wants a term when fist char is upper case or single qoute ( ' )
         if (mId.length() > 0 && (mId.charAt(0) == '\'' || Character.isUpperCase(mId.charAt(0)))) {
             return new Term(mId);

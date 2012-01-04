@@ -54,7 +54,7 @@ public class Range extends Constructor {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'range");
         result.addMember(mStart.toTerm());
         if (mSecond != null) {

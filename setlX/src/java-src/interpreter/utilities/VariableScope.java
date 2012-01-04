@@ -1,5 +1,6 @@
 package interpreter.utilities;
 
+import interpreter.exceptions.SetlException;
 import interpreter.functions.MathFunction;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.types.Om;
@@ -212,7 +213,7 @@ public class VariableScope {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Map<String, Value>  allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);

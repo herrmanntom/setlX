@@ -33,7 +33,7 @@ public class MultiplyMembers extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'multiplyMembers");
         result.addMember(mExpr.toTerm());
         return result;

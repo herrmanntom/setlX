@@ -72,7 +72,7 @@ public class Forall extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'forall");
         result.addMember(mIterator.toTerm());
         result.addMember(mCondition.toTerm());

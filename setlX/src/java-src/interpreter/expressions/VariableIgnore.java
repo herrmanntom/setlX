@@ -2,7 +2,7 @@ package interpreter.expressions;
 
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Term;
-import interpreter.types.Value;
+import interpreter.types.IgnoreDummy;
 
 /*
 grammar rules:
@@ -24,8 +24,8 @@ public class VariableIgnore extends Expr {
 
     private VariableIgnore() {}
 
-    public Value evaluate() throws UndefinedOperationException {
-        throw new UndefinedOperationException("dummy called");
+    public IgnoreDummy evaluate() throws UndefinedOperationException {
+        return IgnoreDummy.ID;
     }
 
     /* string operations */

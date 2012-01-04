@@ -1,14 +1,11 @@
 package interpreter.expressions;
 
-import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.JVMException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UnknownFunctionException;
-import interpreter.functions.PreDefinedFunction;
 import interpreter.types.Om;
 import interpreter.types.RangeDummy;
 import interpreter.types.SetlList;
-import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
@@ -19,7 +16,7 @@ import java.util.List;
 /*
 grammar rule:
 call
-    : varOrTerm ('(' callParameters ')' | '{' anyExpr '}')*
+    : variable ('(' callParameters ')' | '{' anyExpr '}')*
     ;
 
 implemented here as:
@@ -88,7 +85,7 @@ public class Call extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term        result      = new Term("'call");
         SetlList    arguments   = new SetlList();
         result.addMember(mLhs.toTerm());

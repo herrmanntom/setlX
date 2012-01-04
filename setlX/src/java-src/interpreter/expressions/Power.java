@@ -36,7 +36,7 @@ public class Power extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'power");
         result.addMember(mLhs.toTerm());
         result.addMember(mExponent.toTerm());

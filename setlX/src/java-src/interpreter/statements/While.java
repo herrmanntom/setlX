@@ -51,7 +51,7 @@ public class While extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'while");
         result.addMember(mCondition.toTerm());
         result.addMember(mStatements.toTerm());

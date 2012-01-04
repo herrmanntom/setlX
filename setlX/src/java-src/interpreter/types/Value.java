@@ -279,7 +279,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm() throws SetlException {
         return this.clone();
     }
 

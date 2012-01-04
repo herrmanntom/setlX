@@ -299,7 +299,7 @@ public class SetlList extends CollectionValue {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm() throws SetlException {
         SetlList termList = new SetlList();
         for (Value v: getList()) {
             termList.addMember(v.toTerm());

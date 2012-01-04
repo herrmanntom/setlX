@@ -40,7 +40,7 @@ public class BranchElse extends BranchAbstract {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm() throws SetlException {
         Term result = new Term("'else");
         result.addMember(mStatements.toTerm());
         return result;

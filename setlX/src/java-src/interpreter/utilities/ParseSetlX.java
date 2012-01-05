@@ -80,7 +80,7 @@ public class ParseSetlX {
     private static CodeFragment parseFragment(SetlXgrammarParser parser, int type) throws RecognitionException {
         switch (type) {
             case EXPR:
-                return parser.anyExpr();
+                return parser.initAnyExpr();
             case BLOCK:
                 return parser.initBlock();
             default:

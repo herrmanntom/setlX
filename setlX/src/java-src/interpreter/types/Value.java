@@ -6,6 +6,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.utilities.Environment;
+import interpreter.utilities.MatchResult;
 
 import java.util.List;
 
@@ -278,6 +279,14 @@ public abstract class Value implements Comparable<Value> {
     public abstract String toString();
 
     /* term operations */
+
+    public MatchResult matchesTerm(Value other) {
+        if (other == IgnoreDummy.ID || this.equals(other)) {
+            return new MatchResult(true);
+        } else {
+            return new MatchResult(false);
+        }
+    }
 
     public Value toTerm() {
         return this.clone();

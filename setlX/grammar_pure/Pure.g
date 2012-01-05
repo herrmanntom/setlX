@@ -4,6 +4,10 @@ initBlock
     : statement+ EOF
     ;
 
+initAnyExpr
+    : anyExpr EOF
+    ;
+
 block
     : statement*
     ;
@@ -12,7 +16,7 @@ statement
     : 'var' variable ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
-    | 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' anyExpr ')' '{' ('case' anyExpr ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'try' '{' block '}' 'catch' '(' variable ')' '{' block '}'
@@ -60,7 +64,9 @@ boolFollowToken
     | '}'
     | ']'
     | ';'
+    | ':'
     | ','
+    | EOF
     ;
 
 boolExpr
@@ -259,5 +265,5 @@ MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';
 
 WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
 // see SetlXgrammar.g for explanation of the following rule
-REMAINDER       : .                                         { state.syntaxErrors++; System.err.println(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
+REMAINDER       : . { state.syntaxErrors++; System.err.println(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
 

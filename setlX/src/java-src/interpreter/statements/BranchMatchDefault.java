@@ -4,6 +4,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.MatchResult;
 
 /*
 grammar rule:
@@ -24,8 +25,8 @@ public class BranchMatchDefault extends BranchMatchAbstract {
         mStatements = statements;
     }
 
-    public boolean matches(Value term) {
-        return true;
+    public MatchResult matches(Value term) {
+        return new MatchResult(true);
     }
 
     public void execute() throws SetlException {

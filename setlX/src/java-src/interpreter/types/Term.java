@@ -3,10 +3,8 @@ package interpreter.types;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
-import interpreter.expressions.Negate;
-import interpreter.expressions.Power;
-import interpreter.expressions.ValueExpr;
 import interpreter.utilities.Environment;
+import interpreter.utilities.MatchResult;
 
 import java.util.Iterator;
 import java.util.List;
@@ -115,6 +113,63 @@ public class Term extends CollectionValue {
 
         Environment.setInterpreteStrings(interprete);
 
+        return result;
+    }
+
+    /* term operations */
+
+    public MatchResult matchesTerm(Value other) {
+        if (other == IgnoreDummy.ID) {
+            return new MatchResult(true);
+        } else if (mFunctionalCharacter.equals("'variable") && mBody.size() == 1) {
+            // 'this' is a variable, which match anything (except ignore of course)
+            MatchResult result  = new MatchResult(true);
+            // get name of variable
+            Value       idStr   = mBody.iterator().next();
+            if ( ! (idStr instanceof SetlString)) { // wrong 'variable term
+                return new MatchResult(false);
+            }
+            String      id      = idStr.toString();
+            if (id.length() <= 2) { // wrong 'variable term (name is to short)
+                return new MatchResult(false);
+            }
+            // remove quotes
+            id = id.substring(1, id.length() - 1);
+            //store other to be stored into this variable upon complete match
+            result.addBinding(id, other);
+            return result;
+        } else if ( ! (other instanceof Term)) {
+            return new MatchResult(false);
+        }
+        // 'other' is a term
+        Term otherTerm = (Term) other;
+
+        if ( ! mFunctionalCharacter.equals(otherTerm.mFunctionalCharacter)) {
+            return new MatchResult(false);
+        } else if (mBody.size() != otherTerm.mBody.size()) {
+            return new MatchResult(false);
+        }
+
+        // same functional character & same number of arguments
+        MatchResult     result      = new MatchResult(true);
+        Iterator<Value> thisIter    = iterator();
+        Iterator<Value> otherIter   = otherTerm.iterator();
+        while (thisIter.hasNext() && otherIter.hasNext()) {
+            Value       thisMember  = thisIter .next();
+            Value       otherMember = otherIter.next();
+            MatchResult subResult   = thisMember.matchesTerm(otherMember);
+            if (subResult.isMatch()) {
+                result.addBindings(subResult);
+            } else {
+                return new MatchResult(false);
+            }
+        }
+        if (thisIter.hasNext() || otherIter.hasNext()) {
+            // this should not happen, as sizes are the same
+            return new MatchResult(false);
+        }
+
+        // all members match
         return result;
     }
 

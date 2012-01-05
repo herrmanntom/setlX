@@ -1,3 +1,4 @@
+import interpreter.exceptions.AbortException;
 import interpreter.exceptions.EndOfFileException;
 import interpreter.exceptions.ExitException;
 import interpreter.exceptions.FileNotReadableException;
@@ -140,8 +141,12 @@ public class SetlX {
 
             b.execute();
 
-        } catch (ExitException ee) { // user/code wants to quit
-            System.out.println(ee.getMessage());
+        } catch (AbortException ae) { // code detected user did something wrong
+            System.err.println(ae.getMessage());
+        } catch (ExitException ee) {  // user/code wants to quit
+            if (Environment.isInteractive()) {
+                System.out.println(ee.getMessage());
+            }
 
             return false; // breaks loop while parsing interactively
 

@@ -1,0 +1,72 @@
+// this program implements a tester for tautologies using the match statement
+getFormular := procedure() {
+    getInput := procedure() {
+        print("Please enter a formula to be checked if it is tautology");
+        formulaStr  := get();
+        formulaTerm := parse(formulaStr);
+        return [formulaStr, formulaTerm];
+    };
+    [formulaStr, formulaTerm] := getInput();
+    while (isError(formulaTerm)) {
+        print();
+        print("That did not work out!");
+        print("Try again, but don't make this error again:\n$formulaTerm$");
+        [formulaStr, formulaTerm] := getInput();
+        print();
+    }
+    return [formulaStr, formulaTerm];
+};
+
+collectVars := procedure(term) {
+    if (isTerm(term) && fct(term) == "'variable") {
+        return {term(1)};
+    }
+    match (term) {
+        case a <==> b :
+            return collectVars(a) + collectVars(b);
+        case a => b :
+            return collectVars(a) + collectVars(b);
+        case a && b :
+            return collectVars(a) + collectVars(b);
+        case a || b :
+            return collectVars(a) + collectVars(b);
+        case (a)    :
+            return collectVars(a);
+        case !a     :
+            return collectVars(a);
+        default :
+            abort("Input is not a purely logical formula!");
+    }
+};
+
+[formulaStr, formulaTerm] := getFormular();
+
+vars := collectVars(formulaTerm);
+if (#vars < 1) {
+    abort("No variables could be found!");
+}
+
+print("Included Variables are: " + vars);
+
+for (trueVars in pow(vars)) {
+    for (variable in trueVars) {
+        execute(variable + " := true;");
+    }
+    for (variable in (vars - trueVars)) {
+        execute(variable + " := false;");
+    }
+    if (eval(formulaStr) <==> false) {
+        print("Formula is not a tautology.");
+        example := "Counter-Example: ";
+        for (variable in trueVars) {
+            example += variable + " := true; ";
+        }
+        for (variable in (vars - trueVars)) {
+            example += variable + " := false; ";
+        }
+        print(example);
+        exit;
+    }
+}
+print("Formula is a tautology.");
+

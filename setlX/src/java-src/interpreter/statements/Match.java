@@ -6,6 +6,7 @@ import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.MatchResult;
 
 import java.util.List;
 
@@ -32,9 +33,13 @@ public class Match extends Statement {
 
     public void execute() throws SetlException {
         Value term = mExpr.eval().toTerm();
-        for (BranchMatchAbstract b : mBranchList) {
-            if (b.matches(term)) {
-                b.execute();
+        for (BranchMatchAbstract branch : mBranchList) {
+            MatchResult result = branch.matches(term);
+            if (result.isMatch()) {
+                // put all matching variables into current scope
+                result.setAllBindings();
+                // execute statements
+                branch.execute();
                 break;
             }
         }

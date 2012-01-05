@@ -11,6 +11,7 @@ getInput := procedure() {
     while (isError(value)) {
         print();
         print("Oh... you did that wrong... try again!");
+        print();
         value := getValue();
     }
     print("value\t:= $value$");
@@ -28,6 +29,7 @@ getInput := procedure() {
     while (isError(exprTerm) || !isTerm(exprTerm) || 'variable("value") notin exprTerm) {
         print();
         print("Oh... you did that wrong... try again!");
+        print();
         [expr, exprTerm] := getExpr();
     }
     print("expr\t:= " + expr);
@@ -42,6 +44,7 @@ while (isError(result)) {
     print();
     print("No, No, No... that did not work out!");
     print("Try again from the beginning, but don't make this error again:\n$result$");
+    print();
     result := getInput();
 }
 print("result\t:= $result$");

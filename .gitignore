@@ -17,7 +17,7 @@ setlX/src/java-src/grammar/SetlXgrammarParser.java
 setlX/src/setlX.jar
 setlX/developmentGuide.pdf
 setlX/manual.pdf
-task/
+task/*.pdf
 test_interpreter/
 setlX_*.zip
 

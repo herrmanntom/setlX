@@ -6,6 +6,7 @@ import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Condition;
 import interpreter.utilities.Environment;
+import interpreter.utilities.MatchResult;
 
 /*
 grammar rule:
@@ -30,9 +31,8 @@ public class BranchMatch extends BranchMatchAbstract {
         mStatements = statements;
     }
 
-    public boolean matches(Value term) {
-        // ToDo
-        return false;
+    public MatchResult matches(Value term) {
+        return mTerm.matchesTerm(term);
     }
 
     public void execute() throws SetlException {

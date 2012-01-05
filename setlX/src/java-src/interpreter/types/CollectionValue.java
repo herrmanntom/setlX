@@ -3,6 +3,7 @@ package interpreter.types;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.utilities.Environment;
+import interpreter.utilities.MatchResult;
 
 import java.util.Iterator;
 
@@ -99,5 +100,9 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract void            removeLastMember();
 
     public abstract int             size();
+
+    /* term operations */
+
+    public abstract MatchResult     matchesTerm(Value other);
 }
 

@@ -1,0 +1,28 @@
+// this program demonstrates the match statement
+
+exprString := "55 * 99 - 123 ** (14 - 2)";
+exprTerm   := parse(exprString);
+
+print(exprTerm);
+
+match (exprTerm) {
+    case a - b ** (c) :
+        print("match: a = $a$, b = $b$, c = $c$");
+    default :
+        print("failed to match");
+}
+
+print();
+
+exprString := "[1, 99, 7]";
+exprTerm   := parse(exprString);
+
+print(exprTerm);
+
+match (exprTerm) {
+    case [a, b, c] :
+        print("match: a = $a$, b = $b$, c = $c$");
+    default :
+        print("failed to match");
+}
+

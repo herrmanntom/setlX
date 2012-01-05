@@ -107,6 +107,7 @@ bin/interpreter/types/*.class :                              \
         java-src/interpreter/statements/Block.java                   \
         java-src/interpreter/statements/Return.java                  \
         java-src/interpreter/utilities/Environment.java              \
+        java-src/interpreter/utilities/MatchResult.java              \
         java-src/interpreter/utilities/ParameterDef.java             \
         java-src/interpreter/utilities/ParseSetlX.java               \
         java-src/interpreter/utilities/VariableScope.java            \

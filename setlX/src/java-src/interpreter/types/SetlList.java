@@ -7,6 +7,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.utilities.Environment;
+import interpreter.utilities.MatchResult;
 
 import java.util.Iterator;
 import java.util.List;
@@ -298,6 +299,42 @@ public class SetlList extends CollectionValue {
     }
 
     /* term operations */
+
+    public MatchResult matchesTerm(Value other) {
+        if (other == IgnoreDummy.ID) {
+            return new MatchResult(true);
+        } else if ( ! (other instanceof SetlList)) {
+            return new MatchResult(false);
+        }
+        // 'other' is a list
+        SetlList otherList = (SetlList) other;
+
+        if (getList().size() != otherList.getList().size()) {
+            return new MatchResult(false);
+        }
+
+        // same number of members
+        MatchResult     result      = new MatchResult(true);
+        Iterator<Value> thisIter    = iterator();
+        Iterator<Value> otherIter   = otherList.iterator();
+        while (thisIter.hasNext() && otherIter.hasNext()) {
+            Value       thisMember  = thisIter .next();
+            Value       otherMember = otherIter.next();
+            MatchResult subResult   = thisMember.matchesTerm(otherMember);
+            if (subResult.isMatch()) {
+                result.addBindings(subResult);
+            } else {
+                return new MatchResult(false);
+            }
+        }
+        if (thisIter.hasNext() || otherIter.hasNext()) {
+            // this should not happen, as sizes are the same
+            return new MatchResult(false);
+        }
+
+        // all members match
+        return result;
+    }
 
     public Value toTerm() {
         SetlList termList = new SetlList();

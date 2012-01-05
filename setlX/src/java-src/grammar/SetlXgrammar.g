@@ -30,6 +30,13 @@ initBlock returns [Block blk]
       { blk = new Block(stmnts); }
     ;
 
+/* Require at termination with EOF.
+   Otherwhise antlr runs into strange parser behavior ... */
+initAnyExpr returns [Expr ae]
+    : anyExpr EOF
+      { ae = $anyExpr.ae; }
+    ;
+
 block returns [Block blk]
     @init{
         List<Statement> stmnts = new LinkedList<Statement>();
@@ -62,14 +69,14 @@ statement returns [Statement stmnt]
         'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));          }
       )?
       '}' { stmnt = new Switch(branchList); }
-    | 'match' '(' e1 = expr ')' '{'
+    | 'match' '(' a1 = anyExpr ')' '{'
       (
-        'case' e2 = expr ':' b1 = block                       { matchList.add(new BranchMatch($e2.ex, $b1.blk));     }
+        'case' a2 = anyExpr ':' b1 = block                    { matchList.add(new BranchMatch($a2.ae, $b1.blk));     }
       )*
       (
         'default'        ':' b2 = block                       { matchList.add(new BranchMatchDefault($b2.blk));      }
       )?
-      '}' { stmnt = new Match($e1.ex, matchList); }
+      '}' { stmnt = new Match($a1.ae, matchList); }
     | 'for'   '(' iteratorChain  ')' '{' block '}'            { stmnt = new For($iteratorChain.ic, $block.blk);      }
     | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
     | 'try'                    '{' b1 = block '}'
@@ -149,7 +156,9 @@ boolFollowToken
     | '}'
     | ']'
     | ';'
+    | ':'
     | ','
+    | EOF
     ;
 
 boolExpr returns [Expr bex]

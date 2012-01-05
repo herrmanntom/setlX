@@ -74,7 +74,7 @@ public class ExplicitList extends Constructor {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term        result  = new Term("'explicitList");
         SetlList    members = new SetlList();
         for (Expr member: mList) {

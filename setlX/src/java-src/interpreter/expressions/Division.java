@@ -36,7 +36,7 @@ public class Division extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'division");
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());

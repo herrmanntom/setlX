@@ -35,7 +35,7 @@ public class Factorial extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'factorial");
         result.addMember(mExpr.toTerm());
         return result;

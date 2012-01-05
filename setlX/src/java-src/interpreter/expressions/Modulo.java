@@ -36,7 +36,7 @@ public class Modulo extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'modulo");
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());

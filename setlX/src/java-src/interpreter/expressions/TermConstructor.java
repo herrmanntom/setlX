@@ -38,7 +38,7 @@ public class TermConstructor extends Expr {
         }
 
         for (Expr arg: mArgs) {
-            result.addMember(arg.eval());
+            result.addMember(arg.eval().toTerm()); // evaluate arguments at runtime
         }
 
         return result;
@@ -60,8 +60,14 @@ public class TermConstructor extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
-        return evaluate();
+    public Term toTerm() {
+        Term result = mId.toTerm();
+
+        for (Expr arg: mArgs) {
+            result.addMember(arg.toTerm()); // do not evaluate here
+        }
+
+        return result;
     }
 }
 

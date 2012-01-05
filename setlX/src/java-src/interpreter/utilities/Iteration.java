@@ -82,7 +82,7 @@ public class Iteration extends Constructor {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'iteration");
         if (mExpr != null) {
             result.addMember(mExpr.toTerm());

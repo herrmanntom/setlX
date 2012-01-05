@@ -12,8 +12,8 @@ statement
     ;
 
 implemented here as:
-                                                                 =====
-                                                              mStatements
+                                                                =====
+                                                             mStatements
 */
 
 public class BranchDefault extends BranchAbstract {
@@ -42,7 +42,7 @@ public class BranchDefault extends BranchAbstract {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'default");
         result.addMember(mStatements.toTerm());
         return result;

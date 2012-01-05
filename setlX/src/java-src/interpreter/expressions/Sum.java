@@ -36,7 +36,7 @@ public class Sum extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'sum");
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());

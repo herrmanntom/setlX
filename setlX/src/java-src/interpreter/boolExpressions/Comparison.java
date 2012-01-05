@@ -131,7 +131,7 @@ public class Comparison extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = null;
         switch (mType) {
             case EQUAL:

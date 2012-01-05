@@ -85,7 +85,7 @@ public class Call extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term        result      = new Term("'call");
         SetlList    arguments   = new SetlList();
         result.addMember(mLhs.toTerm());

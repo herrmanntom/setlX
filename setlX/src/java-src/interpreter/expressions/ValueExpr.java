@@ -29,7 +29,7 @@ public class ValueExpr extends Expr {
 
     /* term operations */
 
-    public Value toTerm() throws SetlException {
+    public Value toTerm() {
         return mValue.toTerm();
     }
 }

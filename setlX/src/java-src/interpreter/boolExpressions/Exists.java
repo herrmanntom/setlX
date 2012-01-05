@@ -72,7 +72,7 @@ public class Exists extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'exists");
         result.addMember(mIterator.toTerm());
         result.addMember(mCondition.toTerm());

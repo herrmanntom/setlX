@@ -123,7 +123,7 @@ public class ProcedureDefinition extends Value {
 
     /* term operations */
 
-    public Value toTerm() throws SetlException {
+    public Value toTerm() {
         Term result = new Term("'procedure");
 
         SetlList paramList = new SetlList();

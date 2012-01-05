@@ -48,7 +48,7 @@ public class Switch extends Statement {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'switchBlock");
 
         SetlList branchList = new SetlList();

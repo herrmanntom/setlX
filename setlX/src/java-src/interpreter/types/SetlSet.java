@@ -337,7 +337,7 @@ public class SetlSet extends CollectionValue {
 
     /* term operations */
 
-    public Value toTerm() throws SetlException {
+    public Value toTerm() {
         SetlSet termSet = new SetlSet();
         for (Value v: getSet()) {
             termSet.addMember(v.toTerm());

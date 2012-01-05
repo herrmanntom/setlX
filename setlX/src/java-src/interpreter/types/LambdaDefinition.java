@@ -1,6 +1,5 @@
 package interpreter.types;
 
-import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.statements.Block;
 import interpreter.statements.Return;
@@ -45,7 +44,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     /* term operations */
 
-    public Value toTerm() throws SetlException {
+    public Value toTerm() {
         Term result = new Term("'lambdaProcedure");
 
         SetlList paramList = new SetlList();

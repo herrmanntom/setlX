@@ -97,7 +97,7 @@ public class SetListConstructor extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result;
         if (mType == SET) {
             result = new Term("'set");

@@ -22,6 +22,6 @@ public abstract class Constructor {
 
     /* term operations */
 
-    public abstract Term        toTerm() throws SetlException;
+    public abstract Term        toTerm();
 }
 

@@ -36,7 +36,7 @@ public class Negation extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'negation");
         result.addMember(mExpr.toTerm());
         return result;

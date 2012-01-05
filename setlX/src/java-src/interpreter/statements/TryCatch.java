@@ -51,7 +51,7 @@ public class TryCatch extends Statement {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'tryCatch");
         result.addMember(mBlockToTry.toTerm());
         result.addMember(mErrorVar.toTerm());

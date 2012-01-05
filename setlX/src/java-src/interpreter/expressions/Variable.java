@@ -18,15 +18,16 @@ implemented here as:
 */
 
 public class Variable extends Expr {
-    private String mId;
+    private	String	mId;
+    private	boolean	isTerm;
 
     public Variable(String id) {
-        mId = id;
+        mId		= id;
+        isTerm	= (id.length() > 0 && (id.charAt(0) == '\'' || Character.isUpperCase(id.charAt(0))));
     }
 
     public Value evaluate() {
-        // user wants a term when fist char is upper case or single qoute ( ' )
-        if (mId.length() > 0 && (mId.charAt(0) == '\'' || Character.isUpperCase(mId.charAt(0)))) {
+        if (isTerm) {
             return new Term(mId);
         }
 
@@ -57,6 +58,10 @@ public class Variable extends Expr {
     /* term operations */
 
     public Term toTerm() {
+        if (isTerm) {
+            return new Term(mId);
+        }
+
         Term result = new Term("'variable");
         result.addMember(new SetlString(mId));
         return result;

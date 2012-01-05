@@ -35,7 +35,7 @@ public class BracketedExpr extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'brackets");
         result.addMember(mExpr.toTerm());
         return result;

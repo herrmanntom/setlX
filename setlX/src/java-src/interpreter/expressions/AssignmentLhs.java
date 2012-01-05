@@ -69,7 +69,7 @@ public class AssignmentLhs {
 
     /* term operations */
 
-    public Value toTerm() throws SetlException {
+    public Value toTerm() {
         Value result = mLhs.toTerm();
         if (mItems != null && mItems.size() > 0) {
             for (Expr arg: mItems) {

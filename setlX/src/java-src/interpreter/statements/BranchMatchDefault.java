@@ -2,32 +2,30 @@ package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
 import interpreter.types.Term;
-import interpreter.utilities.Condition;
+import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
 /*
 grammar rule:
 statement
     : [...]
-    | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
     ;
 
 implemented here as:
-                           =========     =====
-                           mCondition mStatements
+                                                                       =====
+                                                                    mStatements
 */
 
-public class BranchCase extends BranchAbstract {
-    private Condition mCondition;
-    private Block     mStatements;
+public class BranchMatchDefault extends BranchMatchAbstract {
+    private Block       mStatements;
 
-    public BranchCase(Condition condition, Block statements){
-        mCondition  = condition;
+    public BranchMatchDefault(Block statements) {
         mStatements = statements;
     }
 
-    public boolean evalConditionToBool() throws SetlException {
-        return mCondition.evalToBool();
+    public boolean matches(Value term) {
+        return true;
     }
 
     public void execute() throws SetlException {
@@ -38,7 +36,7 @@ public class BranchCase extends BranchAbstract {
 
     public String toString(int tabs) {
         String result = Environment.getTabs(tabs);
-        result += "case " + mCondition.toString(tabs) + ":" + Environment.getEndl();
+        result += "default:" + Environment.getEndl();
         result += mStatements.toString(tabs + 1) + Environment.getEndl();
         return result;
     }
@@ -46,8 +44,7 @@ public class BranchCase extends BranchAbstract {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'case");
-        result.addMember(mCondition.toTerm());
+        Term result = new Term("'matchDefault");
         result.addMember(mStatements.toTerm());
         return result;
     }

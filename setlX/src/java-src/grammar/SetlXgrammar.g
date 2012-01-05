@@ -42,7 +42,8 @@ block returns [Block blk]
 
 statement returns [Statement stmnt]
     @init{
-        List<BranchAbstract> branchList = new LinkedList<BranchAbstract>();
+        List<BranchAbstract>      branchList = new LinkedList<BranchAbstract>();
+        List<BranchMatchAbstract> matchList  = new LinkedList<BranchMatchAbstract>();
     }
     : 'var' variable ';'                                      { stmnt = new GlobalDefinition($variable.v);           }
     | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));      }
@@ -63,12 +64,12 @@ statement returns [Statement stmnt]
       '}' { stmnt = new Switch(branchList); }
     | 'match' '(' e1 = expr ')' '{'
       (
-        'case' e2 = expr ':' b1 = block
+        'case' e2 = expr ':' b1 = block                       { matchList.add(new BranchMatch($e2.ex, $b1.blk));     }
       )*
       (
-        'default'        ':' b2 = block
+        'default'        ':' b2 = block                       { matchList.add(new BranchMatchDefault($b2.blk));      }
       )?
-      '}' { stmnt = new Match(); }
+      '}' { stmnt = new Match($e1.ex, matchList); }
     | 'for'   '(' iteratorChain  ')' '{' block '}'            { stmnt = new For($iteratorChain.ic, $block.blk);      }
     | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
     | 'try'                    '{' b1 = block '}'
@@ -486,5 +487,5 @@ WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
  * Matching any character here works, because the lexer matches rules in order.
  */
 
-REMAINDER       : .                                         { state.syntaxErrors++; System.err.println(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
+REMAINDER       : . { state.syntaxErrors++; System.err.println(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
 

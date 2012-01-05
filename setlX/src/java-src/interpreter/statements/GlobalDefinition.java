@@ -1,6 +1,5 @@
 package interpreter.statements;
 
-import interpreter.exceptions.SetlException;
 import interpreter.expressions.Variable;
 import interpreter.types.Term;
 import interpreter.utilities.Environment;
@@ -24,7 +23,7 @@ public class GlobalDefinition extends Statement {
         mVar = var;
     }
 
-    public void execute() throws SetlException {
+    public void execute() {
         mVar.makeGlobal();
     }
 

@@ -3,10 +3,8 @@ package interpreter.expressions;
 import interpreter.exceptions.AbortException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
-import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.CodeFragment;
-import interpreter.utilities.Environment;
 
 public abstract class Expr extends CodeFragment {
     public Value eval() throws SetlException {
@@ -26,7 +24,7 @@ public abstract class Expr extends CodeFragment {
        (only makes sense for variables and id-lists) */
     public void assign(Value v) throws SetlException {
         throw new UndefinedOperationException("Error in \"" + this + "\":\n"
-                                        +     "This expression can not be used as target for assignments.");
+                                            + "This expression can not be used as target for assignments.");
     }
 
     /* string operations */
@@ -39,6 +37,6 @@ public abstract class Expr extends CodeFragment {
 
     /* term operations */
 
-    public abstract Value toTerm() throws SetlException;
+    public abstract Value toTerm();
 }
 

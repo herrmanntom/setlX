@@ -35,7 +35,7 @@ public class AddMembers extends Expr {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'addMembers");
         result.addMember(mExpr.toTerm());
         return result;

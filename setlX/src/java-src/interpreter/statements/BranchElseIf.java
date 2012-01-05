@@ -45,7 +45,7 @@ public class BranchElseIf extends BranchAbstract {
 
     /* term operations */
 
-    public Term toTerm() throws SetlException {
+    public Term toTerm() {
         Term result = new Term("'if");
         result.addMember(mCondition.toTerm());
         result.addMember(mStatements.toTerm());

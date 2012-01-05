@@ -1,6 +1,5 @@
 package interpreter.utilities;
 
-import interpreter.exceptions.SetlException;
 import interpreter.types.Term;
 import interpreter.types.Value;
 
@@ -12,6 +11,6 @@ public abstract class CodeFragment {
 
     /* term operations */
 
-    public abstract Value toTerm() throws SetlException;
+    public abstract Value toTerm();
 }
 

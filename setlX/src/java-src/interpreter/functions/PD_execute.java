@@ -1,6 +1,7 @@
 package interpreter.functions;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.exceptions.NonCatchableInSetlXException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
 import interpreter.types.SetlBoolean;
@@ -23,7 +24,7 @@ public class PD_execute extends PreDefinedFunction {
         doNotChangeScope();
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value   stmntArg = args.get(0);
         if ( ! (stmntArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Statement-argument '" + stmntArg + "' is not a string.");
@@ -58,6 +59,9 @@ public class PD_execute extends PreDefinedFunction {
 
             // everything seems fine
             return SetlBoolean.TRUE;
+        } catch (NonCatchableInSetlXException ncisxe) {
+            // rethrow these exceptions to 'ignore' them here
+            throw ncisxe;
         } catch (SetlException se) {
             return new SetlError(se);
         }

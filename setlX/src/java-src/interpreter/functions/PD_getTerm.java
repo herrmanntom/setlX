@@ -15,7 +15,7 @@ public class PD_getTerm extends PreDefinedFunction {
         addParameter("value");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(List<Value> args, List<Value> writeBackVars) {
         return args.get(0).toTerm();
     }
 }

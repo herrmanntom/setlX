@@ -2,7 +2,7 @@ package interpreter.exceptions;
 
 import interpreter.types.Value;
 
-public class ReturnException extends SetlException {
+public class ReturnException extends NonCatchableInSetlXException {
     private Value mResult;
 
     public ReturnException(Value result) {
@@ -14,3 +14,4 @@ public class ReturnException extends SetlException {
         return mResult;
     }
 }
+

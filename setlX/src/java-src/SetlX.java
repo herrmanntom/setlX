@@ -15,7 +15,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String VERSION         = "0.3.0";
+    private final static String VERSION         = "0.3.1";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "-====================================setlX====================================-";
 
@@ -152,8 +152,8 @@ public class SetlX {
 
         } catch (SetlException se) { // user/code did something wrong
             printExceptionsTrace(se.getTrace());
-        } catch (NullPointerException e) { // code syntax was not parsed correctly
-            System.err.println("Syntax Error.");
+        } catch (NullPointerException e) { // this should never happen...
+            System.err.println("Internal Error. Please report this error including the code you executed.");
         } catch (OutOfMemoryError oome) {
             System.err.println("Out of memory error.\n"
                              + "Try improving the SetlX program and/or execute with larger maximum memory size.\n"

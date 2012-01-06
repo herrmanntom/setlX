@@ -1,6 +1,7 @@
 package interpreter.functions;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.exceptions.NonCatchableInSetlXException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlError;
@@ -22,7 +23,7 @@ public class PD_eval extends PreDefinedFunction {
         doNotChangeScope();
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value   exprArg = args.get(0);
         if ( ! (exprArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Expression-argument '" + exprArg + "' is not a string.");
@@ -46,6 +47,9 @@ public class PD_eval extends PreDefinedFunction {
 
             // eval and return result
             return expr.eval();
+        } catch (NonCatchableInSetlXException ncisxe) {
+            // rethrow these exceptions to 'ignore' them here
+            throw ncisxe;
         } catch (SetlException se) {
             return new SetlError(se);
         }

@@ -1,5 +1,6 @@
 package interpreter.statements;
 
+import interpreter.exceptions.NonCatchableInSetlXException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Variable;
 import interpreter.types.SetlError;
@@ -32,6 +33,9 @@ public class TryCatch extends Statement {
     public void execute() throws SetlException {
         try{
             mBlockToTry.execute();
+        } catch (NonCatchableInSetlXException ncisxe) {
+            // rethrow these exceptions to 'ignore' them here
+            throw ncisxe;
         } catch (SetlException se) {
             mErrorVar.assign(new SetlError(se));
             mBlockToRecover.execute();

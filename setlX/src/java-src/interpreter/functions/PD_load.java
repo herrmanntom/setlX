@@ -1,8 +1,10 @@
 package interpreter.functions;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.exceptions.NonCatchableInSetlXException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.SetlBoolean;
+import interpreter.types.SetlError;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 import interpreter.statements.Block;
@@ -27,26 +29,42 @@ public class PD_load extends PreDefinedFunction {
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException("Path-argument '" + filePath + "' is not a string.");
         }
+        // enable string interpretation ($-signs, escaped quotes etc)
+        boolean interprete = Environment.isInterpreteStrings();
+        Environment.setInterpreteStrings(true);
+
+        // get string of file path to be parsed
         String  file    = filePath.toString();
+
+        // reset string interpretation
+        Environment.setInterpreteStrings(interprete);
+
         // strip out double quotes
         file            = file.substring(1, file.length() - 1);
 
-        // parse the file
-        Block   blk     = ParseSetlX.parseFile(file);
+        try {
+            // parse the file
+            Block   blk     = ParseSetlX.parseFile(file);
 
-        // execute the contents
-        boolean interactive = Environment.isInteractive();
-        Environment.setInteractive(false);
-        blk.execute();
-        Environment.setInteractive(interactive);
+            // execute the contents
+            boolean interactive = Environment.isInteractive();
+            Environment.setInteractive(false);
+            blk.execute();
+            Environment.setInteractive(interactive);
 
-        // newline to visually separate result
-        if (Environment.isInteractive()) {
-            System.out.println();
+            // newline to visually separate result
+            if (interactive) {
+                System.out.println();
+            }
+
+            // everything is good
+            return SetlBoolean.TRUE;
+        } catch (NonCatchableInSetlXException ncisxe) {
+            // rethrow these exceptions to 'ignore' them here
+            throw ncisxe;
+        } catch (SetlException se) {
+            return new SetlError(se);
         }
-
-        // everything is good
-        return SetlBoolean.TRUE;
     }
 }
 

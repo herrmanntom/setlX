@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class SetlException extends Exception {
-
     private LinkedList<String> trace;
 
     public SetlException(String msg) {
@@ -21,3 +20,4 @@ public abstract class SetlException extends Exception {
         return trace;
     }
 }
+

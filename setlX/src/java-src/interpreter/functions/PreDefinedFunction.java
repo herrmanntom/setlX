@@ -6,6 +6,8 @@ import interpreter.expressions.Expr;
 import interpreter.statements.Block;
 import interpreter.types.ProcedureDefinition;
 import interpreter.types.RangeDummy;
+import interpreter.types.SetlString;
+import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 import interpreter.utilities.ParameterDef;
@@ -57,9 +59,10 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         mDoNotChangeScope       = true;
     }
 
-    // this call is to be implemented by all predefined functions
+    // this function is to be implemented by all predefined functions
     public abstract Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException;
 
+    // this function is called from within SetlX
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new IncorrectNumberOfParametersException("Functions can not be called with ranges as parameters.");
@@ -136,6 +139,8 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         return result;
     }
 
+    /* string and char operations */
+
     public final String toString(int tabs) {
         String endl = Environment.getEndl();
         String result = "procedure (";
@@ -157,5 +162,14 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         return result;
     }
 
+    /* term operations */
+
+    public Value toTerm() {
+        Term result = new Term("'preDefinedProcedure");
+
+        result.addMember(new SetlString(mName));
+
+        return result;
+    }
 }
 

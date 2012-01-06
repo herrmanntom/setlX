@@ -120,7 +120,7 @@ This section describes specific implementations, which are scattered into multip
 
 \subsection{Predefined Functions}
 
-All predefined functions in \setlX{}, like `\command{read()}' and `\command{isSet(x)}', are dynamically loaded at runtime on their first invocation using Java's reflection API. This makes it relatively easy to create new functionality without the need of changing (or even understanding) the rest of the interpreter.
+All predefined functions in \setlX{}, like `\command{read()}' and `\command{isSet(x)}', are dynamically loaded at runtime on their first invocation using Java's reflection API. This makes it relatively easy to create new functionality without the need of changing (or even completely understanding) the rest of the interpreter.
 
 These functions are dynamically loaded by the `VariableScope' class\\ (\command{interpreter/utilities/VariableScope.java}):
 

@@ -4,7 +4,6 @@ import interpreter.exceptions.ExitException;
 import interpreter.exceptions.FileNotReadableException;
 import interpreter.exceptions.ParserException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.SyntaxErrorException;
 import interpreter.statements.Block;
 import interpreter.types.Real;
 import interpreter.utilities.Environment;

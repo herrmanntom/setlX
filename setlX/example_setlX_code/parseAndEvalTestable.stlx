@@ -9,7 +9,7 @@ inputB := ["%x","value + value","value ** value"];
 getInput := procedure() {
     getValue := procedure() {
         print("Please enter some SetlX value");
-        valueStr    := fromB(inputA);
+        valueStr    := /*get()*/ fromB(inputA);
         return eval(valueStr);
     };
 
@@ -26,7 +26,7 @@ getInput := procedure() {
 
     getExpr := procedure() {
         print("Please enter some SetlX expression using the 'value' variable");
-        expr     := fromB(inputB);
+        expr     := /*get()*/ fromB(inputB);
         exprTerm := parse(expr);
         return [expr, exprTerm];
     };

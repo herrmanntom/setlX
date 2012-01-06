@@ -7,7 +7,7 @@ input := ["%x","!(a && b) <==> (!a || !b)"];
 getFormular := procedure() {
     getInput := procedure() {
         print("Please enter a formula to be checked if it is tautology");
-        formulaStr  := from(input);
+        formulaStr  := /*get()*/ from(input);
         formulaTerm := parse(formulaStr);
         return [formulaStr, formulaTerm];
     };

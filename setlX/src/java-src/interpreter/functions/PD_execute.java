@@ -1,7 +1,7 @@
 package interpreter.functions;
 
+import interpreter.exceptions.CatchableInSetlXException;
 import interpreter.exceptions.IncompatibleTypeException;
-import interpreter.exceptions.NonCatchableInSetlXException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
 import interpreter.types.SetlBoolean;
@@ -59,11 +59,8 @@ public class PD_execute extends PreDefinedFunction {
 
             // everything seems fine
             return SetlBoolean.TRUE;
-        } catch (NonCatchableInSetlXException ncisxe) {
-            // rethrow these exceptions to 'ignore' them here
-            throw ncisxe;
-        } catch (SetlException se) {
-            return new SetlError(se);
+        } catch (CatchableInSetlXException cisxe) {
+            return new SetlError(cisxe);
         }
     }
 }

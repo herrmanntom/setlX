@@ -18,24 +18,25 @@ getFormular := procedure() {
 };
 
 collectVars := procedure(term) {
-    if (isTerm(term) && fct(term) == "'variable") {
-        return {term(1)};
-    }
     match (term) {
         case a <==> b :
             return collectVars(a) + collectVars(b);
-        case a => b :
+        case a => b   :
             return collectVars(a) + collectVars(b);
-        case a && b :
+        case a && b   :
             return collectVars(a) + collectVars(b);
-        case a || b :
+        case a || b   :
             return collectVars(a) + collectVars(b);
-        case (a)    :
+        case ( a )    :
             return collectVars(a);
-        case !a     :
+        case ! a      :
             return collectVars(a);
-        default :
-            abort("Input is not a purely logical formula!");
+        default       :
+            if (isTerm(term) && fct(term) == "'variable" && #term == 1) {
+                return {term(1)};
+            } else {
+                abort("Input is not a purely logical formula!");
+            }
     }
 };
 
@@ -68,5 +69,6 @@ for (trueVars in pow(vars)) {
         exit;
     }
 }
+
 print("Formula is a tautology.");
 

@@ -1,6 +1,6 @@
 package interpreter.exceptions;
 
-public abstract class ParserException extends SetlException {
+public abstract class ParserException extends CatchableInSetlXException {
     public ParserException(String msg) {
         super(msg);
     }

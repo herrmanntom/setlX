@@ -2,7 +2,7 @@ package interpreter.exceptions;
 
 import interpreter.types.Value;
 
-public class ReturnException extends NonCatchableInSetlXException {
+public class ReturnException extends SetlException {
     private Value mResult;
 
     public ReturnException(Value result) {

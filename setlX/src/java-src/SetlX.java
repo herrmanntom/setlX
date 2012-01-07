@@ -1,8 +1,11 @@
 import interpreter.exceptions.AbortException;
+import interpreter.exceptions.BreakException;
+import interpreter.exceptions.ContinueException;
 import interpreter.exceptions.EndOfFileException;
 import interpreter.exceptions.ExitException;
 import interpreter.exceptions.FileNotReadableException;
 import interpreter.exceptions.ParserException;
+import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
 import interpreter.types.Real;
@@ -14,7 +17,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String VERSION         = "0.3.1";
+    private final static String VERSION         = "0.3.2";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "-====================================setlX====================================-";
 
@@ -142,13 +145,25 @@ public class SetlX {
 
         } catch (AbortException ae) { // code detected user did something wrong
             System.err.println(ae.getMessage());
-        } catch (ExitException ee) {  // user/code wants to quit
+        } catch (BreakException be) { // break outside of procedure
+            if (Environment.isInteractive()) {
+                System.out.println(be.getMessage());
+            }
+        } catch (ContinueException ce) { // continue outside of procedure
+            if (Environment.isInteractive()) {
+                System.out.println(ce.getMessage());
+            }
+        } catch (ExitException ee) { // user/code wants to quit
             if (Environment.isInteractive()) {
                 System.out.println(ee.getMessage());
             }
 
             return false; // breaks loop while parsing interactively
 
+        } catch (ReturnException re) { // return outside of procedure
+            if (Environment.isInteractive()) {
+                System.out.println(re.getMessage());
+            }
         } catch (SetlException se) { // user/code did something wrong
             printExceptionsTrace(se.getTrace());
         } catch (NullPointerException e) { // this should never happen...

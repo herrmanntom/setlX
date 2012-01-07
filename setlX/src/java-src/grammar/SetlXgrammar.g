@@ -17,6 +17,27 @@ grammar SetlXgrammar;
     package grammar;
 }
 
+@members {
+
+    private final static String IGNORE_TOKEN_ERROR = "ignore character ('_') is only valid inside match statements 'case' conditions";
+
+    private void customErrorHandling(String tokenTextToMatch, String message) {
+        state.syntaxErrors++;
+        // sometimes antr get ahead of itself and index is not on currently matched or next token
+        for (int i = input.index(); i >= 0; --i) {
+            Token t = input.get(i);
+            if (t.getText().equals(tokenTextToMatch)) {
+                String sourceName = getSourceName();
+                if (sourceName != null) {
+                    System.err.print(sourceName + " ");
+                }
+                System.err.println("line " + t.getLine() + ":" + (t.getCharPositionInLine() + 1) + " " + message);
+                break;
+            }
+        }
+    }
+}
+
 /* Require at least one statement to begin parsing and terminate only with EOF.
    Otherwhise antlr runs into strange parser behavior ... */
 initBlock returns [Block blk]
@@ -33,7 +54,7 @@ initBlock returns [Block blk]
 /* Require at termination with EOF.
    Otherwhise antlr runs into strange parser behavior ... */
 initAnyExpr returns [Expr ae]
-    : anyExpr EOF
+    : anyExpr[false] EOF
       { ae = $anyExpr.ae; }
     ;
 
@@ -52,49 +73,49 @@ statement returns [Statement stmnt]
         List<BranchAbstract>      branchList = new LinkedList<BranchAbstract>();
         List<BranchMatchAbstract> matchList  = new LinkedList<BranchMatchAbstract>();
     }
-    : 'var' variable ';'                                      { stmnt = new GlobalDefinition($variable.v);           }
-    | 'if'          '(' c1 = condition ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));      }
+    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);           }
+    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));      }
       (
-        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk));  }
+        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk));  }
       )*
       (
-        'else'                             '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));             }
+        'else'                                    '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));             }
       )?
       { stmnt = new IfThen(branchList); }
     | 'switch' '{'
       (
-        'case' c1 = condition ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));    }
+        'case' c1 = condition[false] ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));    }
       )*
       (
-        'default'             ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));          }
+        'default'                    ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));          }
       )?
       '}' { stmnt = new Switch(branchList); }
-    | 'match' '(' a1 = anyExpr ')' '{'
+    | 'match' '(' a1 = anyExpr[false] ')' '{'
       (
-        'case' a2 = anyExpr ':' b1 = block                    { matchList.add(new BranchMatch($a2.ae, $b1.blk));     }
+        'case' a2 = anyExpr[true] ':' b1 = block                     { matchList.add(new BranchMatch($a2.ae, $b1.blk));     }
       )*
       (
-        'default'        ':' b2 = block                       { matchList.add(new BranchMatchDefault($b2.blk));      }
+        'default'                 ':' b2 = block                     { matchList.add(new BranchMatchDefault($b2.blk));      }
       )?
       '}' { stmnt = new Match($a1.ae, matchList); }
-    | 'for'   '(' iteratorChain  ')' '{' block '}'            { stmnt = new For($iteratorChain.ic, $block.blk);      }
-    | 'while' '(' condition ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
+    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);      }
+    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
     | 'try'                    '{' b1 = block '}'
-      'catch' '(' variable ')' '{' b2 = block '}'             { stmnt = new TryCatch($b1.blk, $variable.v, $b2.blk); }
-    | 'return' anyExpr? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
-    | 'continue' ';'                                          { stmnt = new Continue();                              }
-    | 'break' ';'                                             { stmnt = new Break();                                 }
-    | 'exit' ';'                                              { stmnt = new Exit();                                  }
-    | ( assignment )=> assignment ';'                         { stmnt = new ExpressionStatement($assignment.assign); }
-    | anyExpr ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);        }
+      'catch' '(' variable ')' '{' b2 = block '}'                    { stmnt = new TryCatch($b1.blk, $variable.v, $b2.blk); }
+    | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
+    | 'continue' ';'                                                 { stmnt = new Continue();                              }
+    | 'break' ';'                                                    { stmnt = new Break();                                 }
+    | 'exit' ';'                                                     { stmnt = new Exit();                                  }
+    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign); }
+    | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);        }
     ;
 
 variable returns [Variable v]
     : ID        { v = new Variable($ID.text);         }
     ;
 
-condition returns [Condition cnd]
-    : boolExpr  { cnd = new Condition($boolExpr.bex); }
+condition [boolean enableIgnore] returns [Condition cnd]
+    : boolExpr[$enableIgnore]  { cnd = new Condition($boolExpr.bex); }
     ;
 
 assignment returns [Assignment assign]
@@ -106,9 +127,9 @@ assignment returns [Assignment assign]
     : (
          variable
          (
-           '(' a1 = anyExpr ')' { items.add($a1.ae);                           }
-         )*                     { lhs = new AssignmentLhs($variable.v, items); }
-       | idList                 { lhs = new AssignmentLhs($idList.ilc);        }
+           '(' a1 = anyExpr[false] ')' { items.add($a1.ae);                           }
+         )*                            { lhs = new AssignmentLhs($variable.v, items); }
+       | idList                        { lhs = new AssignmentLhs($idList.ilc);        }
       )
       (
          ':='           { type = Assignment.DIRECT;     }
@@ -120,8 +141,8 @@ assignment returns [Assignment assign]
       )
       (
          ( assignment )=>
-         as = assignment { $assign = new Assignment(lhs, type, $as.assign); }
-       | a2 = anyExpr    { $assign = new Assignment(lhs, type, $a2.ae);     }
+         as = assignment     { $assign = new Assignment(lhs, type, $as.assign); }
+       | a2 = anyExpr[false] { $assign = new Assignment(lhs, type, $a2.ae);     }
       )
     ;
 
@@ -145,10 +166,10 @@ assignable returns [Expr a]
     | '_'      { a = VariableIgnore.VI; }
     ;
 
-anyExpr returns [Expr ae]
-    : (boolExpr boolFollowToken)=>
-      boolExpr    { ae = $boolExpr.bex; }
-    | expr        { ae = $expr.ex;      }
+anyExpr [boolean enableIgnore] returns [Expr ae]
+    : (boolExpr[true] boolFollowToken)=>
+      boolExpr[$enableIgnore] { ae = $boolExpr.bex; }
+    | expr[$enableIgnore]     { ae = $expr.ex;      }
     ;
 
 boolFollowToken
@@ -161,63 +182,72 @@ boolFollowToken
     | EOF
     ;
 
-boolExpr returns [Expr bex]
-    : 'forall' '(' iteratorChain '|' condition ')' { bex = new Forall($iteratorChain.ic, $condition.cnd); }
-    | 'exists' '(' iteratorChain '|' condition ')' { bex = new Exists($iteratorChain.ic, $condition.cnd); }
-    | equivalence                                  { bex = $equivalence.eq;                               }
+boolExpr [boolean enableIgnore] returns [Expr bex]
+    : 'forall' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
+      { bex = new Forall($iteratorChain.ic, $condition.cnd); }
+    | 'exists' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
+      { bex = new Exists($iteratorChain.ic, $condition.cnd); }
+    | equivalence[$enableIgnore]    { bex = $equivalence.eq; }
     ;
 
-equivalence returns [Expr eq]
+equivalence [boolean enableIgnore] returns [Expr eq]
     @init{
         int type = -1;
     }
-    : i1 = implication   { eq = $i1.i;                            }
+    : i1 = implication[$enableIgnore]   { eq = $i1.i;                            }
       (
         (
-            '<==>'       { type = Comparison.EQUAL;               }
-          | '<!=>'       { type = Comparison.UNEQUAL;             }
+            '<==>'                      { type = Comparison.EQUAL;               }
+          | '<!=>'                      { type = Comparison.UNEQUAL;             }
         )
-        i2 = implication { eq = new Comparison (eq, type, $i2.i); }
+        i2 = implication[$enableIgnore] { eq = new Comparison (eq, type, $i2.i); }
       )?
     ;
 
-implication returns [Expr i]
+implication [boolean enableIgnore] returns [Expr i]
     :
-      disjunction             { i = $disjunction.d;            }
+      disjunction[$enableIgnore]             { i = $disjunction.d;            }
       (
-        '=>' im = implication { i = new Implication(i, $im.i); }
+        '=>' im = implication[$enableIgnore] { i = new Implication(i, $im.i); }
       )?
     ;
 
-disjunction returns [Expr d]
+disjunction [boolean enableIgnore] returns [Expr d]
     :
-      c1 = conjunction        { d = $c1.c;                     }
+      c1 = conjunction[$enableIgnore]        { d = $c1.c;                     }
       (
-        '||' c2 = conjunction { d = new Disjunction(d, $c2.c); }
+        '||' c2 = conjunction[$enableIgnore] { d = new Disjunction(d, $c2.c); }
       )*
     ;
 
-conjunction returns [Expr c]
-    : b1 = boolFactor         { c = $b1.bf;                     }
+conjunction [boolean enableIgnore] returns [Expr c]
+    : b1 = boolFactor[$enableIgnore]         { c = $b1.bf;                     }
       (
-        '&&' b2 = boolFactor  { c = new Conjunction(c, $b2.bf); }
+        '&&' b2 = boolFactor[$enableIgnore]  { c = new Conjunction(c, $b2.bf); }
       )*
     ;
 
-boolFactor returns [Expr bf]
-    : ( comparison )=>
-      comparison         { bf = $comparison.comp;                 }
-    | '(' boolExpr ')'   { bf = new BracketedExpr($boolExpr.bex); }
-    | '!' b = boolFactor { bf = new Negation($b.bf);              }
-    | call               { bf = $call.c;                          }
-    | boolValue          { bf = new ValueExpr($boolValue.bv);     }
+boolFactor [boolean enableIgnore] returns [Expr bf]
+    : ( comparison[true] )=>
+      comparison[$enableIgnore]         { bf = $comparison.comp;                 }
+    | '(' boolExpr[$enableIgnore] ')'   { bf = new BracketedExpr($boolExpr.bex); }
+    | '!' b = boolFactor[$enableIgnore] { bf = new Negation($b.bf);              }
+    | call[$enableIgnore]               { bf = $call.c;                          }
+    | boolValue                         { bf = new ValueExpr($boolValue.bv);     }
+    | '_'                               { if ($enableIgnore){
+                                              bf = VariableIgnore.VI;
+                                          } else {
+                                              customErrorHandling("_", IGNORE_TOKEN_ERROR);
+                                              bf = null;
+                                          }
+                                        }
     ;
 
-comparison returns [Expr comp]
+comparison [boolean enableIgnore] returns [Expr comp]
     @init{
         int type = -1;
     }
-    : e1 = expr
+    : e1 = expr[$enableIgnore]
       (
           '=='    { type = Comparison.EQUAL;                      }
         | '!='    { type = Comparison.UNEQUAL;                    }
@@ -228,12 +258,13 @@ comparison returns [Expr comp]
         | 'in'    { type = Comparison.IN;                         }
         | 'notin' { type = Comparison.NOTIN;                      }
       )
-      e2 = expr   { comp = new Comparison ($e1.ex, type, $e2.ex); }
+      e2 = expr[$enableIgnore]
+      { comp = new Comparison ($e1.ex, type, $e2.ex); }
     ;
 
-expr returns [Expr ex]
-    : definition  { ex = new ValueExpr($definition.d); }
-    | sum         { ex = $sum.s;                       }
+expr [boolean enableIgnore] returns [Expr ex]
+    : definition         { ex = new ValueExpr($definition.d); }
+    | sum[$enableIgnore] { ex = $sum.s;                       }
     ;
 
 definition returns [Value d]
@@ -242,7 +273,7 @@ definition returns [Value d]
     ;
 
 lambdaDefinition returns [LambdaDefinition ld]
-    : lambdaParameters '|->' sum { ld = new LambdaDefinition($lambdaParameters.paramList, $sum.s); }
+    : lambdaParameters '|->' sum[false] { ld = new LambdaDefinition($lambdaParameters.paramList, $sum.s); }
     ;
 
 lambdaParameters returns [List<ParameterDef> paramList]
@@ -281,51 +312,51 @@ procedureParameter returns [ParameterDef param]
     | variable       { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
-sum returns [Expr s]
+sum [boolean enableIgnore] returns [Expr s]
     :
-      p1 = product          { s = $p1.p;                    }
+      p1 = product[$enableIgnore]          { s = $p1.p;                    }
       (
-          '+'  p2 = product { s = new Sum(s, $p2.p);        }
-        | '-'  p2 = product { s = new Difference(s, $p2.p); }
+          '+'  p2 = product[$enableIgnore] { s = new Sum(s, $p2.p);        }
+        | '-'  p2 = product[$enableIgnore] { s = new Difference(s, $p2.p); }
       )*
     ;
 
-product returns [Expr p]
-    : p1 = power         { p = $p1.pow;                  }
+product [boolean enableIgnore] returns [Expr p]
+    : p1 = power[$enableIgnore]         { p = $p1.pow;                  }
       (
-          '*' p2 = power { p = new Product(p, $p2.pow);  }
-        | '/' p2 = power { p = new Division(p, $p2.pow); }
-        | '%' p2 = power { p = new Modulo(p, $p2.pow);   }
+          '*' p2 = power[$enableIgnore] { p = new Product(p, $p2.pow);  }
+        | '/' p2 = power[$enableIgnore] { p = new Division(p, $p2.pow); }
+        | '%' p2 = power[$enableIgnore] { p = new Modulo(p, $p2.pow);   }
       )*
     ;
 
-power returns [Expr pow]
-    : factor           { pow = $factor.f;               }
+power [boolean enableIgnore] returns [Expr pow]
+    : factor[$enableIgnore]           { pow = $factor.f;               }
       (
-        '**' p = power { pow = new Power (pow, $p.pow); }
+        '**' p = power[$enableIgnore] { pow = new Power (pow, $p.pow); }
       )?
     ;
 
-factor returns [Expr f]
-    : prefixOperation  { f = $prefixOperation.po; }
-    | simpleFactor     { f = $simpleFactor.sf;    }
+factor [boolean enableIgnore] returns [Expr f]
+    : prefixOperation[$enableIgnore]  { f = $prefixOperation.po; }
+    | simpleFactor[$enableIgnore]     { f = $simpleFactor.sf;    }
       (
-        '!'            { f = new Factorial(f);    }
+        '!'                           { f = new Factorial(f);    }
       )?
     ;
 
-prefixOperation returns [Expr po]
-    : '+/'   factor { po = new AddMembers($factor.f);      }
-    | '*/'   factor { po = new MultiplyMembers($factor.f); }
-    | '#'    factor { po = new Cardinality($factor.f);     }
-    | '-'    factor { po = new Negate($factor.f);          }
+prefixOperation [boolean enableIgnore] returns [Expr po]
+    : '+/'   factor[$enableIgnore] { po = new AddMembers($factor.f);      }
+    | '*/'   factor[$enableIgnore] { po = new MultiplyMembers($factor.f); }
+    | '#'    factor[$enableIgnore] { po = new Cardinality($factor.f);     }
+    | '-'    factor[$enableIgnore] { po = new Negate($factor.f);          }
     ;
 
-simpleFactor returns [Expr sf]
-    : '(' expr ')' { sf = new BracketedExpr($expr.ex);    }
-    | term         { sf = $term.t;                        }
-    | call         { sf = $call.c;                        }
-    | value        { sf = $value.v;                       }
+simpleFactor [boolean enableIgnore] returns [Expr sf]
+    : '(' expr[$enableIgnore] ')' { sf = new BracketedExpr($expr.ex); }
+    | term                        { sf = $term.t;                     }
+    | call[$enableIgnore]         { sf = $call.c;                     }
+    | value[$enableIgnore]        { sf = $value.v;                    }
     ;
 
 term returns [Expr t]
@@ -337,116 +368,118 @@ termArguments returns [List<Expr> args]
     @init {
         args = new LinkedList<Expr>();
     }
-    : t1 = termArgument       { args.add($t1.arg);             }
+    : a1 = anyExpr[true]       { args.add($a1.ae); }
       (
-        ',' t2 = termArgument { args.add($t2.arg);             }
+        ',' a2 = anyExpr[true] { args.add($a2.ae); }
       )*
     |  /* epsilon */
     ;
 
-termArgument returns [Expr arg]
-    : anyExpr       { arg = $anyExpr.ae;       }
-    | '_'           { arg = VariableIgnore.VI; }
-    ;
-
-call returns [Expr c]
-    : variable                  { c = $variable.v;                          }
+call [boolean enableIgnore] returns [Expr c]
+    : variable                  { c = $variable.v;                         }
       (
-         '(' callParameters ')' { c = new Call(c, $callParameters.params);  }
-       | '{' anyExpr '}'        { c = new CallCollection(c, $anyExpr.ae);   }
+         '(' callParameters[$enableIgnore] ')' { c = new Call(c, $callParameters.params); }
+       | '{' anyExpr[$enableIgnore] '}'        { c = new CallCollection(c, $anyExpr.ae);  }
       )*
     ;
 
-callParameters returns [List<Expr> params]
+callParameters [boolean enableIgnore] returns [List<Expr> params]
     @init {
         params = new LinkedList<Expr>();
     }
-    : ( expr '..' )=>
-      e1 = expr          { params.add($e1.ex);             }
-      '..'               { params.add(CallRangeDummy.CRD); }
+    : ( expr[true] '..' )=>
+      e1 = expr[$enableIgnore]          { params.add($e1.ex);             }
+      '..'                              { params.add(CallRangeDummy.CRD); }
       (
-        e2 = expr        { params.add($e2.ex);             }
+        e2 = expr[$enableIgnore]        { params.add($e2.ex);             }
       )?
-    | '..'               { params.add(CallRangeDummy.CRD); }
-      expr               { params.add($expr.ex);           }
-    | a1 = anyExpr       { params.add($a1.ae);             }
+    | '..'                              { params.add(CallRangeDummy.CRD); }
+      expr[$enableIgnore]               { params.add($expr.ex);           }
+    | a1 = anyExpr[$enableIgnore]       { params.add($a1.ae);             }
       (
-        ',' a2 = anyExpr { params.add($a2.ae);             }
+        ',' a2 = anyExpr[$enableIgnore] { params.add($a2.ae);             }
       )*
     |  /* epsilon */
     ;
 
-value returns [Expr v]
-    : list         { v = $list.lc;                       }
-    | set          { v = $set.sc;                        }
-    | atomicValue  { v = new ValueExpr($atomicValue.av); }
+value [boolean enableIgnore] returns [Expr v]
+    : list[$enableIgnore] { v = $list.lc;                       }
+    | set[$enableIgnore]  { v = $set.sc;                        }
+    | atomicValue         { v = new ValueExpr($atomicValue.av); }
+    | '_'                 { if ($enableIgnore){
+                                v = VariableIgnore.VI;
+                            } else {
+                                customErrorHandling("_", IGNORE_TOKEN_ERROR);
+                                v = null;
+                            }
+                          }
     ;
 
-list returns [SetListConstructor lc]
+list [boolean enableIgnore] returns [SetListConstructor lc]
     :
-      '[' constructor? ']' { lc = new SetListConstructor(SetListConstructor.LIST, $constructor.c); }
+      '[' constructor[$enableIgnore]? ']' { lc = new SetListConstructor(SetListConstructor.LIST, $constructor.c); }
     ;
 
-set returns [SetListConstructor sc]
+set [boolean enableIgnore] returns [SetListConstructor sc]
     :
-      '{' constructor? '}' { sc = new SetListConstructor(SetListConstructor.SET, $constructor.c); }
+      '{' constructor[$enableIgnore]? '}' { sc = new SetListConstructor(SetListConstructor.SET, $constructor.c); }
     ;
 
-constructor returns [Constructor c]
-    : ( range        )=> range        { c = $range.r;         }
-    | ( shortIterate )=> shortIterate { c = $shortIterate.si; }
-    | ( iterate      )=> iterate      { c = $iterate.i;       }
-    | explicitList                    { c = $explicitList.el; }
+constructor [boolean enableIgnore] returns [Constructor c]
+    : ( range[true]        )=> range[$enableIgnore]        { c = $range.r;         }
+    | ( shortIterate[true] )=> shortIterate[$enableIgnore] { c = $shortIterate.si; }
+    | ( iterate[true]      )=> iterate[$enableIgnore]      { c = $iterate.i;       }
+    | explicitList[$enableIgnore]                          { c = $explicitList.el; }
     ;
 
-range returns [Range r]
+range [boolean enableIgnore] returns [Range r]
     @init {
         Expr e = null;
     }
-    : e1 = expr
+    : e1 = expr[$enableIgnore]
       (
-        ',' e2 = expr { e = $e2.ex; }
+        ',' e2 = expr[$enableIgnore] { e = $e2.ex; }
       )?
-      '..'  e3 = expr
+      '..'  e3 = expr[$enableIgnore]
       { r = new Range($e1.ex, e, $e3.ex); }
     ;
 
-shortIterate returns [Iteration si]
-    : iterator '|' condition  { si = new Iteration(null, $iterator.iter, $condition.cnd); }
+shortIterate [boolean enableIgnore] returns [Iteration si]
+    : iterator[$enableIgnore] '|' condition[$enableIgnore]  { si = new Iteration(null, $iterator.iter, $condition.cnd); }
     ;
 
-iterator returns [Iterator iter]
+iterator [boolean enableIgnore] returns [Iterator iter]
     :
-      assignable 'in' expr   { iter = new Iterator($assignable.a, $expr.ex); }
+      assignable 'in' expr[$enableIgnore] { iter = new Iterator($assignable.a, $expr.ex); }
     ;
 
-iterate returns [Iteration i]
+iterate [boolean enableIgnore] returns [Iteration i]
     @init {
         Condition cnd = null;
     }
-    : anyExpr ':' iteratorChain
+    : anyExpr[$enableIgnore] ':' iteratorChain[$enableIgnore]
       (
-        '|' condition               { cnd = $condition.cnd;                                   }
-      )?                            { i = new Iteration($anyExpr.ae, $iteratorChain.ic, cnd); }
+        '|' condition[$enableIgnore] { cnd = $condition.cnd;                                   }
+      )?                             { i = new Iteration($anyExpr.ae, $iteratorChain.ic, cnd); }
     ;
 
-iteratorChain returns [Iterator ic]
+iteratorChain [boolean enableIgnore] returns [Iterator ic]
     :
-      i1 = iterator   { ic = $i1.iter;    }
+      i1 = iterator[$enableIgnore]   { ic = $i1.iter;    }
       (
         ','
-        i2 = iterator { ic.add($i2.iter); }
+        i2 = iterator[$enableIgnore] { ic.add($i2.iter); }
       )*
     ;
 
-explicitList returns [ExplicitList el]
+explicitList [boolean enableIgnore] returns [ExplicitList el]
     @init {
         List<Expr> exprs = new LinkedList<Expr>();
     }
-    : a1 = anyExpr       { exprs.add($a1.ae);            }
+    : a1 = anyExpr[$enableIgnore]       { exprs.add($a1.ae);            }
       (
-        ',' a2 = anyExpr { exprs.add($a2.ae);            }
-      )*                 { el = new ExplicitList(exprs); }
+        ',' a2 = anyExpr[$enableIgnore] { exprs.add($a2.ae);            }
+      )*                                { el = new ExplicitList(exprs); }
     ;
 
 boolValue returns [Value bv]

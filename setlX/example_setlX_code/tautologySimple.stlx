@@ -11,8 +11,8 @@ getFormular := procedure() {
         print();
         print("That did not work out!");
         print("Try again, but don't make this error again:\n$formulaTerm$");
-        [formulaStr, formulaTerm] := getInput();
         print();
+        [formulaStr, formulaTerm] := getInput();
     }
     return [formulaStr, formulaTerm];
 };
@@ -32,7 +32,7 @@ collectVars := procedure(term) {
         case ! a      :
             return collectVars(a);
         default       :
-            if (isTerm(term) && fct(term) == "'variable" && #term == 1) {
+            if (isTermVariable(term)) {
                 return {term(1)};
             } else {
                 abort("Input is not a purely logical formula!");

@@ -26,3 +26,19 @@ match (exprTerm) {
         print("failed to match");
 }
 
+print();
+
+exprString := "sqrt(a**2 + b**2) == c";
+exprTerm   := parse(exprString);
+
+print(exprTerm);
+
+match (exprTerm) {
+    case fnc(x + _ ** y) == _ :
+        print("match: fnc = $fnc$, x = $x$, y = $y$");
+    default :
+        print("failed to match");
+}
+
+print();
+

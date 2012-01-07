@@ -18,12 +18,14 @@ implemented here as:
 */
 
 public class Variable extends Expr {
-    private	String	mId;
-    private	boolean	isTerm;
+    private String  mId;
+    private boolean isTerm;
+
+    public  final static String FUNCTIONAL_CHARACTER = "'variable";
 
     public Variable(String id) {
-        mId		= id;
-        isTerm	= (id.length() > 0 && (id.charAt(0) == '\'' || Character.isUpperCase(id.charAt(0))));
+        mId     = id;
+        isTerm  = (id.length() > 0 && (id.charAt(0) == '\'' || Character.isUpperCase(id.charAt(0))));
     }
 
     public Value evaluate() {
@@ -62,7 +64,7 @@ public class Variable extends Expr {
             return new Term(mId);
         }
 
-        Term result = new Term("'variable");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(new SetlString(mId));
         return result;
     }

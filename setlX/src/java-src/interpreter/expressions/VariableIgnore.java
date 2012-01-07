@@ -36,8 +36,8 @@ public class VariableIgnore extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
-        return new Term("'variableIgnore");
+    public IgnoreDummy toTerm() {
+        return IgnoreDummy.ID;
     }
 }
 

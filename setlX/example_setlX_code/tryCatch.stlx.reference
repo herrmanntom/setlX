@@ -1,3 +1,7 @@
 Some error occurred!:
 Error: Left-hand-side of '42 => someOtherThing' is not a Boolean value.
 However, using the try catch block we can still get here in spite of the error!
+Something else happened:
+[{"why use return, when we can throw things around"}, "??"]
+Error in "throw("the end is near")":
+Error: "the end is near"

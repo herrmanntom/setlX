@@ -1,6 +1,6 @@
 package interpreter.functions;
 
-import interpreter.exceptions.CatchableInSetlXException;
+import interpreter.exceptions.CatchDuringParsingException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.SetlBoolean;
@@ -13,7 +13,7 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
-// load(path)              : loads SetlX source code file and executes it
+// load(path)              : loads SetlX source code file and executes it, returns value of Error-type on parser or execution failure
 
 public class PD_load extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_load();
@@ -59,8 +59,8 @@ public class PD_load extends PreDefinedFunction {
 
             // everything is good
             return SetlBoolean.TRUE;
-        } catch (CatchableInSetlXException cisxe) {
-            return new SetlError(cisxe);
+        } catch (CatchDuringParsingException cdpe) {
+            return new SetlError(cdpe);
         }
     }
 }

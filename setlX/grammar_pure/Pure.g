@@ -97,6 +97,7 @@ boolFactor
     | '!' boolFactor
     | call
     | boolValue
+    | '_'
     ;
 
 comparison
@@ -172,13 +173,8 @@ term
     ;
 
 termArguments
-    : termArgument (',' termArgument)*
+    : anyExpr (',' anyExpr)*
     | /* epsilon */
-    ;
-
-termArgument
-    : anyExpr
-    | '_'
     ;
 
 call
@@ -196,6 +192,7 @@ value
     : list
     | set
     | atomicValue
+    | '_'
     ;
 
 list

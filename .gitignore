@@ -1,5 +1,11 @@
 accounting/
 older_versions/
+setlX/documentation/*.aux
+setlX/documentation/*.dvi
+setlX/documentation/*.log
+setlX/documentation/*.out
+setlX/documentation/*.pdf
+setlX/documentation/*.toc
 setlX/documentation/version.tex
 setlX/grammar_pure/EBNF_extractor/*.class
 setlX/grammar_pure/EBNF_extractor/EBNF_Grammar.tokens

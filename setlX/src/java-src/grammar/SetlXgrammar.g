@@ -18,7 +18,6 @@ grammar SetlXgrammar;
 }
 
 @members {
-
     private final static String IGNORE_TOKEN_ERROR = "ignore character ('_') is only valid inside match statements 'case' conditions";
 
     private void customErrorHandling(String tokenTextToMatch, String message) {

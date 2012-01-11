@@ -23,6 +23,7 @@ prolog
       'options'?
       '@header'?
       '@lexer::header'?
+      '@members'?
     ;
 
 rule returns [Rule rule]
@@ -73,9 +74,12 @@ element returns [Expr expr]
     | (name '=')? ( VAR     { $expr = new Variable($VAR.text  );   } 
                   | TOKEN   { $expr = new MyToken( $TOKEN.text);   }
                   | LITERAL { $expr = new MyToken( $LITERAL.text); }
-                  )
+                  ) parameter?
     ;
 
+parameter
+    : '[' '$'? name (',' '$'? name)* ']'
+    ;
 
 // regular expressions
 regexpDef returns [Rule rule]

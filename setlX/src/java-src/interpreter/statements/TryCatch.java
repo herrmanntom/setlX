@@ -2,6 +2,7 @@ package interpreter.statements;
 
 import interpreter.exceptions.CatchableInSetlXException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.ThrownInSetlXException;
 import interpreter.expressions.Variable;
 import interpreter.types.SetlError;
 import interpreter.types.Term;
@@ -33,8 +34,11 @@ public class TryCatch extends Statement {
     public void execute() throws SetlException {
         try{
             mBlockToTry.execute();
+        } catch (ThrownInSetlXException tisxe) {
+            mErrorVar.assign(tisxe.getValue()); // assign directly
+            mBlockToRecover.execute();
         } catch (CatchableInSetlXException cisxe) {
-            mErrorVar.assign(new SetlError(cisxe));
+            mErrorVar.assign(new SetlError(cisxe)); // wrap into error
             mBlockToRecover.execute();
         }
     }

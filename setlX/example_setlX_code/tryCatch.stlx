@@ -11,3 +11,20 @@ try {
 }
 print("However, using the try catch block we can still get here in spite of the error!");
 
+
+// throw(value)            : stops execution and throws value to be catched by try-catch block
+try {
+    x := [{"why use return, when we can throw things around"}, "??"];
+    throw(x);
+    print("this will also never be executed.");
+} catch (e) {
+    if (isError(e)) {
+        printErr("Some error occurred!:");
+        printErr(e);
+    } else {
+        print("Something else happened:");
+        print(e);
+    }
+}
+
+throw("the end is near");

@@ -1,6 +1,6 @@
 package interpreter.functions;
 
-import interpreter.exceptions.CatchableInSetlXException;
+import interpreter.exceptions.CatchDuringParsingException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
@@ -47,8 +47,8 @@ public class PD_eval extends PreDefinedFunction {
 
             // eval and return result
             return expr.eval();
-        } catch (CatchableInSetlXException cisxe) {
-            return new SetlError(cisxe);
+        } catch (CatchDuringParsingException cdpe) {
+            return new SetlError(cdpe);
         }
     }
 }

@@ -1,0 +1,39 @@
+// Solutions to the n-queens problem are represented as lists of the form
+//    [x_1,x_2, ..., x_n]
+// where x_i in {1, ..., n} and x_i specifies, that
+// in the ith column the queen is positioned in row x_i.
+// Parameters:
+//      l: list of those queens, that have already been placed
+//      n: size of the board
+solve := procedure(l, n) { 
+    if (#l == n) {
+        return l;
+    }
+    for (x in [1 .. n ]) {
+        try {
+            check(l, x);
+            // if thix works, try to add more queens
+            return solve(l + [x], n);
+        } catch (e) {
+            // do nothing, next value of x is tried automatically
+        }
+    }
+    // if we haven't found a solution so far, there is none
+    throw("no solution");
+};
+
+// Check whether it is safe to add a queen in row x to the list l of
+// queens already placed.  It is assumed that the queens already 
+// placed cannot attack each other.
+check := procedure(l, x) {
+    if (x in l) {
+        throw("same row");
+    }
+    m := #l;
+    if (exists (i in {1 .. m} | i-l(i) == m+1-x || i+l(i) == m+1+x)) {
+        throw("same diagonal");
+    }
+};
+
+print(solve([], 8));
+

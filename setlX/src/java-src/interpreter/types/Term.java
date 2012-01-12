@@ -3,6 +3,7 @@ package interpreter.types;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
+import interpreter.expressions.Variable;
 import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
 
@@ -97,9 +98,11 @@ public class Term extends CollectionValue {
 
     /* calls (function calls) */
 
-    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        return mBody.call(exprs, args);
-    }
+
+    // someday return new Term 'call(...) here
+//    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
+//        return mBody.call(exprs, args);
+//    }
 
     /* string and char operations */
 
@@ -109,7 +112,13 @@ public class Term extends CollectionValue {
 
         // lists use [] in toString, which have to be removed...
         String result = mBody.toString();
-        result = mFunctionalCharacter + "(" + result.substring(1, result.length() - 1) + ")";
+        result = "(" + result.substring(1, result.length() - 1) + ")";
+
+        if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
+            result = Variable.FUNCTIONAL_CHARACTER_EXTERNAL + result;
+        } else {
+            result = mFunctionalCharacter + result;
+        }
 
         Environment.setInterpreteStrings(interprete);
 
@@ -121,7 +130,7 @@ public class Term extends CollectionValue {
     public MatchResult matchesTerm(Value other) {
         if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
-        } else if (mFunctionalCharacter.equals("'variable") && mBody.size() == 1) {
+        } else if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) && mBody.size() == 1) {
             // 'this' is a variable, which match anything (except ignore of course)
             MatchResult result  = new MatchResult(true);
             // get name of variable
@@ -145,7 +154,14 @@ public class Term extends CollectionValue {
         Term otherTerm = (Term) other;
 
         if ( ! mFunctionalCharacter.equals(otherTerm.mFunctionalCharacter)) {
-            return new MatchResult(false);
+            // functional characters do not match
+            if ( ! (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
+                    otherTerm.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)   )
+               ) {
+                // however this only unacceptable when ! (this == 'Variable AND other == 'variable)
+                // e.g 'Variable must match 'variable
+                return new MatchResult(false);
+            }
         } else if (mBody.size() != otherTerm.mBody.size()) {
             return new MatchResult(false);
         }
@@ -187,6 +203,19 @@ public class Term extends CollectionValue {
         if (v instanceof Term) {
             Term other = (Term) v;
             int cmp = mFunctionalCharacter.compareTo(other.mFunctionalCharacter);
+            if (cmp != 0 && (
+                    (
+                        mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
+                        other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
+                    ) || (
+                        mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
+                        other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
+                    )
+                )
+            ) {
+                // these are regarded as one and the same
+                cmp = 0;
+            }
             if (cmp != 0) {
                 return cmp;
             }

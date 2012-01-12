@@ -1,6 +1,7 @@
 package interpreter.functions;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.expressions.Variable;
 import interpreter.types.SetlList;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
@@ -34,6 +35,10 @@ public class PD_makeTerm extends PreDefinedFunction {
 
         // check if name is usable as term (fist char is upper case or single qoute ( ' ))
         if (fct.length() > 0 && (fct.charAt(0) == '\'' || Character.isUpperCase(fct.charAt(0)))) {
+            // use correct internal representation when user wants to create a variable
+            if (fct.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)) {
+                fct = Variable.FUNCTIONAL_CHARACTER;
+            }
             // make the new Term
             return new Term(fct, (SetlList) arg1);
         } else {

@@ -21,7 +21,20 @@ public class Variable extends Expr {
     private String  mId;
     private boolean isTerm;
 
-    public  final static String FUNCTIONAL_CHARACTER = "'variable";
+    // This functional character is used internally
+    public  final static String FUNCTIONAL_CHARACTER          = "'Variable";
+    // this one is used externally (e.g. during toString)
+    public  final static String FUNCTIONAL_CHARACTER_EXTERNAL = "'variable";
+    /* both are equal during matching and compare. However while terms with the
+     * internal one always bind anything, terms with the external one only match
+     * and do not bind.
+     *
+     * This is done to create a difference between the cases used in
+     *      match(term) {
+     *          case 'variable(x): foo2(); // matches only variables
+     *          case x           : foo1(); // matches everything and binds it to x
+     *      }
+     */
 
     public Variable(String id) {
         mId     = id;

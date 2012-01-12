@@ -25,24 +25,22 @@ getFormular := procedure() {
 
 collectVars := procedure(term) {
     match (term) {
-        case a <==> b :
+        case 'variable(a) :
+            return {a};
+        case a <==> b     :
             return collectVars(a) + collectVars(b);
-        case a => b   :
+        case a => b       :
             return collectVars(a) + collectVars(b);
-        case a && b   :
+        case a && b       :
             return collectVars(a) + collectVars(b);
-        case a || b   :
+        case a || b       :
             return collectVars(a) + collectVars(b);
-        case ( a )    :
+        case ( a )        :
             return collectVars(a);
-        case ! a      :
+        case ! a          :
             return collectVars(a);
-        default       :
-            if (isTermVariable(term)) {
-                return {term(1)};
-            } else {
-                abort("Input is not a purely logical formula!");
-            }
+        default           :
+            abort("Input is not a purely logical formula!");
     }
 };
 

@@ -72,41 +72,41 @@ statement returns [Statement stmnt]
         List<BranchAbstract>      branchList = new LinkedList<BranchAbstract>();
         List<BranchMatchAbstract> matchList  = new LinkedList<BranchMatchAbstract>();
     }
-    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);           }
-    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));      }
+    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                }
+    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));           }
       (
-        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk));  }
+        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk));       }
       )*
       (
-        'else'                                    '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));             }
+        'else'                                    '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));                  }
       )?
       { stmnt = new IfThen(branchList); }
     | 'switch' '{'
       (
-        'case' c1 = condition[false] ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));    }
+        'case' c1 = condition[false] ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));         }
       )*
       (
-        'default'                    ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));          }
+        'default'                    ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));               }
       )?
       '}' { stmnt = new Switch(branchList); }
-    | 'match' '(' a1 = anyExpr[false] ')' '{'
+    | 'match' '(' anyExpr[false] ')' '{'
       (
-        'case' a2 = anyExpr[true] ':' b1 = block                     { matchList.add(new BranchMatch($a2.ae, $b1.blk));     }
+        'case' exprList[true] ':' b1 = block                         { matchList.add(new BranchMatch($exprList.exprs, $b1.blk)); }
       )*
       (
-        'default'                 ':' b2 = block                     { matchList.add(new BranchMatchDefault($b2.blk));      }
+        'default'             ':' b2 = block                         { matchList.add(new BranchMatchDefault($b2.blk));           }
       )?
-      '}' { stmnt = new Match($a1.ae, matchList); }
-    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);      }
-    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);       }
+      '}' { stmnt = new Match($anyExpr.ae, matchList); }
+    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);           }
+    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);            }
     | 'try'                    '{' b1 = block '}'
-      'catch' '(' variable ')' '{' b2 = block '}'                    { stmnt = new TryCatch($b1.blk, $variable.v, $b2.blk); }
-    | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                     }
-    | 'continue' ';'                                                 { stmnt = new Continue();                              }
-    | 'break' ';'                                                    { stmnt = new Break();                                 }
-    | 'exit' ';'                                                     { stmnt = new Exit();                                  }
-    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign); }
-    | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);        }
+      'catch' '(' variable ')' '{' b2 = block '}'                    { stmnt = new TryCatch($b1.blk, $variable.v, $b2.blk);      }
+    | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                          }
+    | 'continue' ';'                                                 { stmnt = new Continue();                                   }
+    | 'break' ';'                                                    { stmnt = new Break();                                      }
+    | 'exit' ';'                                                     { stmnt = new Exit();                                       }
+    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);      }
+    | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);             }
     ;
 
 variable returns [Variable v]
@@ -115,6 +115,16 @@ variable returns [Variable v]
 
 condition [boolean enableIgnore] returns [Condition cnd]
     : boolExpr[$enableIgnore]  { cnd = new Condition($boolExpr.bex); }
+    ;
+
+exprList [boolean enableIgnore] returns [List<Expr> exprs]
+    @init {
+        exprs = new LinkedList<Expr>();
+    }
+    : a1 = anyExpr[$enableIgnore]       { exprs.add($a1.ae);             }
+      (
+        ',' a2 = anyExpr[$enableIgnore] { exprs.add($a2.ae);             }
+      )*
     ;
 
 assignment returns [Assignment assign]
@@ -364,14 +374,8 @@ term returns [Expr t]
     ;
 
 termArguments returns [List<Expr> args]
-    @init {
-        args = new LinkedList<Expr>();
-    }
-    : a1 = anyExpr[true]       { args.add($a1.ae); }
-      (
-        ',' a2 = anyExpr[true] { args.add($a2.ae); }
-      )*
-    |  /* epsilon */
+    : exprList[true] { args = $exprList.exprs;        }
+    |  /* epsilon */ { args = new LinkedList<Expr>(); }
     ;
 
 call [boolean enableIgnore] returns [Expr c]
@@ -394,10 +398,7 @@ callParameters [boolean enableIgnore] returns [List<Expr> params]
       )?
     | '..'                              { params.add(CallRangeDummy.CRD); }
       expr[$enableIgnore]               { params.add($expr.ex);           }
-    | a1 = anyExpr[$enableIgnore]       { params.add($a1.ae);             }
-      (
-        ',' a2 = anyExpr[$enableIgnore] { params.add($a2.ae);             }
-      )*
+    | exprList[$enableIgnore]			{ params = $exprList.exprs;       }
     |  /* epsilon */
     ;
 
@@ -472,13 +473,7 @@ iteratorChain [boolean enableIgnore] returns [Iterator ic]
     ;
 
 explicitList [boolean enableIgnore] returns [ExplicitList el]
-    @init {
-        List<Expr> exprs = new LinkedList<Expr>();
-    }
-    : a1 = anyExpr[$enableIgnore]       { exprs.add($a1.ae);            }
-      (
-        ',' a2 = anyExpr[$enableIgnore] { exprs.add($a2.ae);            }
-      )*                                { el = new ExplicitList(exprs); }
+    : exprList[$enableIgnore]  { el = new ExplicitList($exprList.exprs); }
     ;
 
 boolValue returns [Value bv]

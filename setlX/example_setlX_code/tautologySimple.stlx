@@ -21,19 +21,11 @@ collectVars := procedure(term) {
     match (term) {
         case 'variable(a) :
             return {a};
-        case a <==> b     :
+        case a <==> b, a => b, a && b, a || b :
             return collectVars(a) + collectVars(b);
-        case a => b       :
-            return collectVars(a) + collectVars(b);
-        case a && b       :
-            return collectVars(a) + collectVars(b);
-        case a || b       :
-            return collectVars(a) + collectVars(b);
-        case ( a )        :
+        case ( a ), ! a :
             return collectVars(a);
-        case ! a          :
-            return collectVars(a);
-        default           :
+        default :
             abort("Input is not a purely logical formula!");
     }
 };

@@ -264,6 +264,10 @@ public abstract class Value implements Comparable<Value> {
 
     /* string and char operations */
 
+    public String canonical() {
+        return toString();
+    }
+
     public SetlString charConvert() throws SetlException {
         throw new IncompatibleTypeException("Operand '" + this + "' is not a number between 0 and 255.");
     }

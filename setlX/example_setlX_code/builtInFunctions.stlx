@@ -13,25 +13,26 @@ print();
   getScope()              // get a term representing all variables set in current scope
 */
 
-print("variables in outer scope: ", getScope());
+print("variables in outer scope: ", canonical(getScope()));
 printInnerScope := procedure() {
     secretVariable := 42;
-    print("variables in inner scope: ", getScope());
+    print("variables in inner scope: ", canonical(getScope()));
 };
-print("variables in outer scope: ", getScope());
+print("variables in outer scope: ", canonical(getScope()));
 printInnerScope();
-print("variables in outer scope: ", getScope());
+print("variables in outer scope: ", canonical(getScope()));
 print();
 
 /*******************************************************************************
   makeTerm(fnc, body)     // create a term with the form: fnc(body)
   fct(term)               // get functional char of a term
   args(term)              // get arguments of term
+  canonical(term)         // returns a string of a term in its true form
 */
 
 t := makeTerm("Arrr",["said","the","pirate"]);
 a := str(args(t));
-print(t);
+print(canonical(t));
 print(fct(t), "(", a(2 .. #a-1), ")");
 print();
 
@@ -128,9 +129,9 @@ print();
   parse(expr)             // parse string of a SetlX expression into a term, returns value of Error-type on parser failure
   parseStatements(stmnts) // parse string of SetlX statements into a term, returns value of Error-type on parser failure
 */
-print("{throwACoin, print} = " + getTerm({throwACoin, print}));
-print("a + 10 * b % 4 = " + parse("a + 10 * b % 4"));
-print("\"print(parseStatements(\\\"print(\\\\\"that is crazy!\\\\\");\\\"));\" = " + parseStatements("print(parseStatements(\"print(\\\"that is crazy!\\\");\"));"));
+print("{throwACoin, print} = " + canonical(getTerm({throwACoin, print})));
+print("a + 10 * b % 4 = " + canonical(parse("a + 10 * b % 4")));
+print("\"print(parseStatements(\\\"print(\\\\\"that is crazy!\\\\\");\\\"));\" = " + canonical(parseStatements("print(parseStatements(\"print(\\\"that is crazy!\\\");\"));")));
 print();
 
 /*******************************************************************************

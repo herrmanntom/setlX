@@ -42,20 +42,17 @@ while IFS= read path
     if [ $? -eq 1 ]
       then
         echo " failed ... (see diff.result)"
-        break
+        exit 0
     else
         echo -e " successful!\n"
     fi
 
 done < <( find -L example_setlX_code -name "*.stlx" )
 
-if [ ! -s diff.result ]
-  then
-    rm -f diff.result
-fi
+rm -f diff.result
 
 rm -f $tmpFile
 
 manualTestFiles="${manualTestFiles%, }"
-echo "The following files need user input and must be tested manually: $manualTestFiles"
+echo "The following files need user input and can only be tested manually: $manualTestFiles"
 

@@ -16,7 +16,7 @@ statement
     : 'var' variable ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
-    | 'match' '(' anyExpr ')' '{' ('case' anyExpr ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'try' '{' block '}' 'catch' '(' variable ')' '{' block '}'
@@ -34,6 +34,10 @@ variable
 
 condition
     : boolExpr
+    ;
+
+exprList
+    : anyExpr (',' anyExpr)*
     ;
 
 assignment
@@ -173,7 +177,7 @@ term
     ;
 
 termArguments
-    : anyExpr (',' anyExpr)*
+    : exprList
     | /* epsilon */
     ;
 
@@ -184,7 +188,7 @@ call
 callParameters
     : (expr '..')=> expr '..' expr?
     | '..' expr
-    | anyExpr (',' anyExpr)*
+    | exprList
     | /* epsilon */
     ;
 
@@ -231,7 +235,7 @@ iteratorChain
     ;
 
 explicitList
-    : anyExpr (',' anyExpr)*
+    : exprList
     ;
 
 boolValue

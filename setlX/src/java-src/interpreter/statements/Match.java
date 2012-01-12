@@ -14,12 +14,12 @@ import java.util.List;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
     ;
 
 implemented with different classes which inherit from BranchMatchAbstract:
-                  ====          =====================    ===================
-                  mExpr              BranchMatch            BranchDefault
+                  ====          =========================    ===================
+                  mExpr                BranchMatch              BranchDefault
 */
 
 public class Match extends Statement {

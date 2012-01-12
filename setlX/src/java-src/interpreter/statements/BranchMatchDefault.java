@@ -10,12 +10,12 @@ import interpreter.utilities.MatchResult;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' expr ')' '{' ('case' expr ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
     ;
 
 implemented here as:
-                                                                       =====
-                                                                    mStatements
+                                                                           =====
+                                                                        mStatements
 */
 
 public class BranchMatchDefault extends BranchMatchAbstract {

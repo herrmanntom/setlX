@@ -3,11 +3,11 @@
 exprString := "55 * 99 - 123 ** (14 - 2)";
 exprTerm   := parse(exprString);
 
-print(exprTerm);
+print(canonical(exprTerm));
 
 match (exprTerm) {
     case a - b ** (c) :
-        print("match: a = $a$, b = $b$, c = $c$");
+        print("match: a = $canonical(a)$, b = $canonical(b)$, c = $canonical(c)$");
     default :
         print("failed to match");
 }
@@ -17,11 +17,11 @@ print();
 exprString := "[1, 99, 7]";
 exprTerm   := parse(exprString);
 
-print(exprTerm);
+print(canonical(exprTerm));
 
 match (exprTerm) {
     case [a, b, c] :
-        print("match: a = $a$, b = $b$, c = $c$");
+        print("match: a = $canonical(a)$, b = $canonical(b)$, c = $canonical(c)$");
     default :
         print("failed to match");
 }
@@ -31,11 +31,11 @@ print();
 exprString := "sqrt(a**2 + b**2) == c";
 exprTerm   := parse(exprString);
 
-print(exprTerm);
+print(canonical(exprTerm));
 
 match (exprTerm) {
     case fnc(x + _ ** y) == _ :
-        print("match: fnc = $fnc$, x = $x$, y = $y$");
+        print("match: fnc = $canonical(fnc)$, x = $canonical(x)$, c = $canonical(y)$");
     default :
         print("failed to match");
 }
@@ -45,11 +45,11 @@ print();
 exprString := "u";
 exprTerm   := parse(exprString);
 
-print(exprTerm);
+print(canonical(exprTerm));
 
 match (exprTerm) {
     case 'variable(x) :
-        print("match: x = $x$");
+        print("match: x = $canonical(x)$");
     default :
         print("failed to match");
 }

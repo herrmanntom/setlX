@@ -287,6 +287,26 @@ public class SetlList extends CollectionValue {
 
     /* string and char operations */
 
+    public String canonical() {
+        boolean interprete  = Environment.isInterpreteStrings();
+        Environment.setInterpreteStrings(false);
+
+        String result = "[";
+
+        Iterator<Value> iter    = iterator();
+        while (iter.hasNext()) {
+            Value   member  = iter.next();
+            result += member.canonical();
+            if (iter.hasNext()) {
+                result += ", ";
+            }
+        }
+
+        Environment.setInterpreteStrings(interprete);
+
+        return result + "]";
+    }
+
     public String toString() {
         boolean interprete  = Environment.isInterpreteStrings();
         Environment.setInterpreteStrings(false);

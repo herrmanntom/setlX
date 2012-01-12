@@ -101,6 +101,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract int             size();
 
+    /* string and char operations */
+
+    public abstract String			canonical();
+
     /* term operations */
 
     public abstract MatchResult     matchesTerm(Value other);

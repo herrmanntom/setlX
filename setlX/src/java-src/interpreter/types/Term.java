@@ -106,12 +106,11 @@ public class Term extends CollectionValue {
 
     /* string and char operations */
 
-    public String toString() {
+    public String canonical() {
         boolean interprete  = Environment.isInterpreteStrings();
         Environment.setInterpreteStrings(false);
 
-        // lists use [] in toString, which have to be removed...
-        String result = mBody.toString();
+        String result = mBody.canonical();
         result = "(" + result.substring(1, result.length() - 1) + ")";
 
         if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
@@ -123,6 +122,10 @@ public class Term extends CollectionValue {
         Environment.setInterpreteStrings(interprete);
 
         return result;
+    }
+
+    public String toString() {
+        return "_not_implemented_-_use_canonical_function_";
     }
 
     /* term operations */

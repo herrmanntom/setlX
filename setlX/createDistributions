@@ -77,12 +77,10 @@ cd ..
 
 # create distribution names
 binOnly="setlX_v$versionForFileNames.binary_only"
-source="setlX_v$versionForFileNames.source"
 devel="setlX_v$versionForFileNames.devel"
 
 # remove distribution zips if present
 rm -f "$binOnly.zip"
-rm -f "$source.zip"
 rm -f "$devel.zip"
 # remove other stuff
 rm -f "diff.result"

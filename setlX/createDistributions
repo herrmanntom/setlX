@@ -98,15 +98,6 @@ echo "done"
 # remove the jar
 cd src;make dist-clean;cd ..
 
-# create source zip
-echo -n "=> Creating source distribution ... "
-mkdir -p zipContents
-cp manual.pdf src/setlX src/win-setlX.cmd zipContents/.
-cp -r src zipContents/.
-cd zipContents; zip -qr "../$source.zip" . ; cd ..
-rm -rf zipContents
-echo "done"
-
 # create development zip
 echo -n "=> Creating development kit ... "
 zip -qr "$devel.zip" . -x \*.zip

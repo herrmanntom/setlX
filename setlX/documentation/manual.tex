@@ -80,7 +80,7 @@ In addition to file-paths a number of options can be used when running \setlX{}:
 
 To comfortably use \setlX{} it may be installed into once search-path. After this is done, it may be just like any other program on your system.
 
-\subsection{Unix-like OS (Linux, MacOS X, etc.)}
+\subsection{Unix-like OS (Linux, MacOS X, etc.)}\label{Unix}
 
 \begin{enumerate}
 	\item Copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}').\\
@@ -188,9 +188,39 @@ java -jar setlX.jar
 
 However, the \command{setlX} and \command{win-setlX.cmd} scripts can also be used to launch the jar build by this process.
 
+\subsection{Building for Java 1.5 (esp. a 1st Generation Intel Macintosh)}\label{MACj5}
+
+To create \setlX{} for a Machine, which is limited to Java 1.5, you need another machine running both Java 1.5 and Java 1.6.
+
+The main example for such situation is a Apple Macintosh, which uses the 1st generation of Intel CPUs selected by Apple. These Machines are artificially limited by Apple to Java 1.5 only.
+
+On the second machine running Java 1.5 and 1.6, do the following:
+
+\begin{enumerate}
+	\item Activate Java 1.6.\\
+		On a Mac this can be done using:
+\begin{lstlisting}[frame=none,numbers=none]
+/Applications/Utilities/Java Preferences
+\end{lstlisting}
+	\item Switch to the subdirectory src and execute the following command:
+\begin{lstlisting}[frame=none,numbers=none]
+make java-src/grammar/SetlXgrammar*.java
+\end{lstlisting}
+	\item Activate Java 1.5.\\
+		On a Mac this can again be done using:
+\begin{lstlisting}[frame=none,numbers=none]
+/Applications/Utilities/Java Preferences
+\end{lstlisting}
+	\item Switch to the subdirectory src again and execute the following command:
+\begin{lstlisting}[frame=none,numbers=none]
+make
+\end{lstlisting}
+\end{enumerate}
+This will create the file `\command{setlX.jar}', which can be installed on the machine running Java 1.5 as stated in section \ref{Unix}.
+
 \section{System Requirements}
 
-To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher. Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source might be required.
+To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher. Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source is required and somewhat problematic (see section \ref{MACj5}).
 
 When building from source, the corresponding Java Development Kit (JDK) has to be present as well.
 

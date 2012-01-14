@@ -241,12 +241,10 @@ make dist-clean
 
 \section{Distribution}
 
-Three different `distributions' can be automatically created (on an Unix-like OS):
+Two different `distributions' can be automatically created (on an Unix-like OS):
 
 \begin{enumerate}
 	\item A binary only distribution, which should work on all Unix-like OS and Windows \emph{without} the need of the full Java JDK. Any Java Runtime (JRE) installation which is newer or the same major version as the JDK which created the distribution should work. This distribution does \emph{not} include any \SetlX{} code.
-
-	\item A source distribution, which must be rebuild by the user, which is automatically attempted on first launch. A full Java Development Kit (JDK) has to be installed for this to work. The version of the users JDK can be lower or even incompatible to the JDK which created the distribution. This distribution also does \emph{not} include \SetlX{} code, except a simple program to test the interpreter (see `\command{make test}').
 
 	\item The development kit, which includes everything used in the development of the interpreter itself: the full interpreter source, various \SetlX{} example programs, the grammar of the interpreter in `pure' form and the \LaTeX{} sources of the documentation.
 \end{enumerate}

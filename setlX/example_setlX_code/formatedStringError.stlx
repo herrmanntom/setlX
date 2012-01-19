@@ -1,0 +1,6 @@
+// this program tests the new "$expr$"-syntax of strings
+
+print("This will never be executed!");     // as setlX detects the following syntax errord before execution:
+print("This will fail: $]$");              // syntax error
+print("Guess what this will do: $99 / 5"); // missing end-$
+

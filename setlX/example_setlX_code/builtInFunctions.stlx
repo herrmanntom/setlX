@@ -113,15 +113,13 @@ print("When this was written, " + daysSinceEpoch(1325618124960) + " days had gon
 print();
 
 /*******************************************************************************
-  printDbg(value, ...)    // same as print, but does not interprete the string ($-signs)
   printErr(value, ...)    // same as print, but prints into stderr
-  printDbgErr(value, ...) // same as print, but does not interprete the string ($-signs) and prints into stderr
 */
 test := "test";
-print      ("This is a $test$");
-printDbg   ("This is a $test$");
-printErr   ("This is a $test$");
-printDbgErr("This is a $test$");
+print   ( "This is a $test$");
+print   (@"This is a $test$");
+printErr( "This is a $test$");
+printErr(@"This is a $test$");
 print();
 
 /*******************************************************************************

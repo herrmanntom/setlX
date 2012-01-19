@@ -7,7 +7,6 @@ import interpreter.expressions.Expr;
 import interpreter.types.SetlError;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
@@ -27,21 +26,12 @@ public class PD_parse extends PreDefinedFunction {
         if ( ! (exprArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Expression-argument '" + exprArg + "' is not a string.");
         }
-        // enable string interpretation ($-signs, escaped quotes etc)
-        boolean interprete = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(true);
-
         // get expression string to be parsed
-        String  exprStr = exprArg.toString();
-
-        // reset string interpretation
-        Environment.setInterpreteStrings(interprete);
-
-        // strip out double quotes
-        exprStr         = exprStr.substring(1, exprStr.length() - 1);
+        String  exprStr = ((SetlString) exprArg).getString();
 
         try {
             // parse expr
+            ParseSetlX.resetErrorCount();
             Expr expr = ParseSetlX.parseStringToExpr(exprStr);
 
             // return term of result

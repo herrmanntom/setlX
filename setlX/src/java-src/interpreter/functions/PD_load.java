@@ -29,21 +29,12 @@ public class PD_load extends PreDefinedFunction {
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException("Path-argument '" + filePath + "' is not a string.");
         }
-        // enable string interpretation ($-signs, escaped quotes etc)
-        boolean interprete = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(true);
-
         // get string of file path to be parsed
-        String  file    = filePath.toString();
-
-        // reset string interpretation
-        Environment.setInterpreteStrings(interprete);
-
-        // strip out double quotes
-        file            = file.substring(1, file.length() - 1);
+        String  file    = ((SetlString) filePath).getString();
 
         try {
             // parse the file
+            ParseSetlX.resetErrorCount();
             Block   blk     = ParseSetlX.parseFile(file);
 
             // execute the contents

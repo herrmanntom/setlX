@@ -1,6 +1,3 @@
 The evaluation of 3 * 3 + 4 * 4 is 25
 Lets print some dollars $$!
 The next will fail: $Error: Left-hand-side of 'om ** om' is not a number.$!
-line 1:0 no viable alternative at input ']'
-This will fail, too: $Error: 1 syntax error(s) encountered.$
-Guess what the last one will do: $Error: closing '$' missing.$

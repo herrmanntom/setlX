@@ -6,7 +6,6 @@ import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.statements.Block;
-import interpreter.utilities.Environment;
 import interpreter.utilities.ParameterDef;
 import interpreter.utilities.VariableScope;
 import interpreter.utilities.WriteBackAgent;
@@ -100,9 +99,6 @@ public class ProcedureDefinition extends Value {
     /* string and char operations */
 
     public String toString(int tabs) {
-        boolean interprete  = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(false);
-
         String result = "procedure (";
         for (int i = 0; i < mParameters.size(); ++i) {
             if (i > 0) {
@@ -112,8 +108,6 @@ public class ProcedureDefinition extends Value {
         }
         result += ") ";
         result += mStatements.toString(tabs, true);
-
-        Environment.setInterpreteStrings(interprete);
         return result;
     }
 

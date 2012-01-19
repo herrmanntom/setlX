@@ -14,7 +14,6 @@ public class Environment {
 
     private         static  boolean sIsInteractive      = false;
     private         static  boolean sPrintVerbose       = false;
-    private         static  boolean sInterpreteStrings  = false;
 
     private final   static  String  TAB                 = "\t";
     private final   static  String  ENDL                = "\n";
@@ -53,14 +52,6 @@ public class Environment {
 
     public static boolean isPrintVerbose() {
         return sPrintVerbose;
-    }
-
-    public static void setInterpreteStrings(boolean interpreteStrings) {
-        sInterpreteStrings = interpreteStrings;
-    }
-
-    public static boolean isInterpreteStrings() {
-        return sInterpreteStrings;
     }
 
     public static String getTabs(int tabs) {

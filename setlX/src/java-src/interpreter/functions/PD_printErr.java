@@ -1,12 +1,5 @@
 package interpreter.functions;
 
-import interpreter.types.Om;
-import interpreter.types.SetlString;
-import interpreter.types.Value;
-import interpreter.utilities.Environment;
-
-import java.util.List;
-
 // printErr(value, ...)    : same as print, but prints into stderr
 
 public class PD_printErr extends PD_print {

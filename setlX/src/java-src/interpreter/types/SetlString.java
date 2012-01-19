@@ -5,16 +5,12 @@ import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
-import interpreter.utilities.Environment;
-import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
 public class SetlString extends Value {
 
-    public static SetlString createFromParserString(String s) {
-        // Strip out double qoutes which the parser left in
-        s                       = s.substring(1, s.length() - 1);
+    public static SetlString createFromConstructor(String s) {
         // parse escape sequences
         int           length    = s.length();
         StringBuilder sb        = new StringBuilder(length);
@@ -189,84 +185,12 @@ public class SetlString extends Value {
         return this;
     }
 
-    /* When string should be interpreted (e.g. is argument to print function) all
-       non-printable characters escape sequence should be left alone and
-       expressions inside $ $ should be evaluated before passing to System.out
-
-       Otherwise (when printed 'inside' some SetlX code block),
-       all non-printable characters should be replaced with their
-       escape sequences using this function and expressions in $ $ are not evaluated */
-
     public String toString() {
-        int           length = mString.length();
-        StringBuilder result = new StringBuilder(length);
-        if (Environment.isInterpreteStrings()) {
-            StringBuilder expr      = null;  // buffer for inner expr string
-            boolean       innerExpr = false; // currently reading inner expr ?
-            for (int i = 0; i < length; ++i) {
-                char c = mString.charAt(i);  // current char
-                char n = (i+1 < length)? mString.charAt(i+1) : '\0';  // next char
-                if (innerExpr) {
-                    if (c == '$') {
-                        // end of inner expr
-                        innerExpr = false;
-                        // eval inner expression and add to resulting string
-                        try {
-                            Expr exp = ParseSetlX.parseStringToExpr(expr.toString());
-                            // add inner expr to result
-                            result.append(exp.eval());
-                        } catch (SetlException se) {
-                            result.append("$Error: " + se.getMessage() + "$");
-                        }
-                    } else {
-                        expr.append(c);
-                    }
-                } else {
-                    if (c == '\\' && n == '$') {
-                        // escaped dollar
-                        result.append('$');
-                        i++; // jump over next char
-                    } else if (c == '$') {
-                        // start inner expression
-                        innerExpr = true;
-                        expr      = new StringBuilder();
-                    } else {
-                        // continue outer string
-                        result.append(c);
-                    }
-                }
-            }
-            if (innerExpr) { // inner expr not complete
-                result.append("$Error: closing '$' missing.$");
-            }
-            return "\"" + result.toString() + "\"";
-        } else {
-            for (int i = 0; i < length; ++i) {
-                char c = mString.charAt(i);
-                if (c == '\\') {
-                    result.append('\\');
-                    result.append('\\');
-                } else if (c == '\n') {
-                    result.append('\\');
-                    result.append('n');
-                } else if (c == '\r') {
-                    result.append('\\');
-                    result.append('r');
-                } else if (c == '\t') {
-                    result.append('\\');
-                    result.append('t');
-                } else if (c == '"') {
-                    result.append('\\');
-                    result.append('"');
-                } else if (c == '\0') {
-                    result.append('\\');
-                    result.append('0');
-                } else {
-                    result.append(c);
-                }
-            }
-            return "\"" + result.toString() + "\"";
-        }
+        return "\"" + mString + "\"";
+    }
+
+    public String getString() {
+        return mString;
     }
 
     /* comparisons */

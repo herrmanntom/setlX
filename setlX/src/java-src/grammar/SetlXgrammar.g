@@ -405,6 +405,7 @@ callParameters [boolean enableIgnore] returns [List<Expr> params]
 value [boolean enableIgnore] returns [Expr v]
     : list[$enableIgnore] { v = $list.lc;                       }
     | set[$enableIgnore]  { v = $set.sc;                        }
+    | string              { v = $string.str;                    }
     | atomicValue         { v = new ValueExpr($atomicValue.av); }
     | '_'                 { if ($enableIgnore){
                                 v = VariableIgnore.VI;
@@ -476,16 +477,24 @@ explicitList [boolean enableIgnore] returns [ExplicitList el]
     : exprList[$enableIgnore]  { el = new ExplicitList($exprList.exprs); }
     ;
 
+string returns [Expr str]
+    @init {
+        boolean evaluate = true;
+    }
+    : (
+        '@'     { evaluate = false;                                    }
+      )? STRING { str = new StringConstructor(evaluate, $STRING.text); }
+    ;
+
 boolValue returns [Value bv]
-    : 'true'  { bv = SetlBoolean.TRUE;  }
-    | 'false' { bv = SetlBoolean.FALSE; }
+    : 'true'     { bv = SetlBoolean.TRUE;          }
+    | 'false'    { bv = SetlBoolean.FALSE;         }
     ;
 
 atomicValue returns [Value av]
-    : NUMBER        { av = new SetlInt($NUMBER.text);                       }
-    | real          { av = $real.r;                                         }
-    | STRING        { av = SetlString.createFromParserString($STRING.text); }
-    | 'om'          { av = Om.OM;                                           }
+    : NUMBER     { av = new SetlInt($NUMBER.text); }
+    | real       { av = $real.r;                   }
+    | 'om'       { av = Om.OM;                     }
     ;
 
 // this rule is required, otherwise "aaa"(2..) fails to get parsed
@@ -493,8 +502,7 @@ real returns [Real r]
     @init {
         String n = "";
     }
-    :
-      (
+    : (
         NUMBER      { n = $NUMBER.text;             }
       )? REAL       { r = new Real(n + $REAL.text); }
     ;

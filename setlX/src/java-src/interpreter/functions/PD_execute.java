@@ -29,21 +29,13 @@ public class PD_execute extends PreDefinedFunction {
         if ( ! (stmntArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Statement-argument '" + stmntArg + "' is not a string.");
         }
-        // enable string interpretation ($-signs, escaped quotes etc)
-        boolean interprete = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(true);
 
         // get statement string to be parsed
-        String  stmntStr = stmntArg.toString();
-
-        // reset string interpretation
-        Environment.setInterpreteStrings(interprete);
-
-        // strip out double quotes
-        stmntStr         = stmntStr.substring(1, stmntStr.length() - 1);
+        String  stmntStr = ((SetlString) stmntArg).getString();
 
         try {
             // parse statements
+            ParseSetlX.resetErrorCount();
             Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
 
             // execute the contents

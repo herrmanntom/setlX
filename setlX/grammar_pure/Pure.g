@@ -195,6 +195,7 @@ callParameters
 value
     : list
     | set
+    | string
     | atomicValue
     | '_'
     ;
@@ -238,6 +239,10 @@ explicitList
     : exprList
     ;
 
+string
+    : '@'? STRING
+    ;
+
 boolValue
     : 'true'
     | 'false'
@@ -246,7 +251,6 @@ boolValue
 atomicValue
     : NUMBER
     | real
-    | STRING
     | 'om'
     ;
 

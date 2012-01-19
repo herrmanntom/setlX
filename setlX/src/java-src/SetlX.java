@@ -80,6 +80,7 @@ public class SetlX {
             System.out.println(); // newline to visually separate the next input
             System.out.print("=> ");
             try {
+                ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();
                 skipTest    = false;
             } catch (EndOfFileException eofe) {

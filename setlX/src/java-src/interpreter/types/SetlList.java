@@ -6,7 +6,6 @@ import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
-import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
 
 import java.util.Iterator;
@@ -288,9 +287,6 @@ public class SetlList extends CollectionValue {
     /* string and char operations */
 
     public String canonical() {
-        boolean interprete  = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(false);
-
         String result = "[";
 
         Iterator<Value> iter    = iterator();
@@ -302,18 +298,11 @@ public class SetlList extends CollectionValue {
             }
         }
 
-        Environment.setInterpreteStrings(interprete);
-
         return result + "]";
     }
 
     public String toString() {
-        boolean interprete  = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(false);
-
         String result = getList().toString();
-
-        Environment.setInterpreteStrings(interprete);
 
         return result;
     }

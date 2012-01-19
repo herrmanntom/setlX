@@ -1,4 +1,4 @@
-// this program tests the new "{expr}"-syntax of strings
+// this program tests the new "$expr$"-syntax of strings
 
 x := 3;
 y := 4;
@@ -9,6 +9,4 @@ print("Lets print some dollars \$\$!");
 
 // even with errors
 print("The next will fail: $om ** om$!");          // error during eval()
-print("This will fail, too: $]$");                 // syntax error
-print("Guess what the last one will do: $99 / 5"); // missing end-$
 

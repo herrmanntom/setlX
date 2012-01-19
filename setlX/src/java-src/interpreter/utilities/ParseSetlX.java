@@ -18,6 +18,10 @@ import java.io.IOException;
 
 public class ParseSetlX {
 
+    private final   static  int EXPR    =  1337;
+    private final   static  int BLOCK   = 31337;
+    private         static  int errors  =     0; // our own error accounting, which survives nested parsing
+
     public static Block parseFile(String fileName) throws ParserException {
         try {
             // parse the file contents (Antlr will print its parser errors into stderr ...)
@@ -64,10 +68,15 @@ public class ParseSetlX {
         }
     }
 
-    /* private methods */
+    public static void resetErrorCount() {
+        errors = 0;
+    }
 
-    private final   static  int EXPR    =  1337;
-    private final   static  int BLOCK   = 31337;
+    public static void addReportedError() {
+        errors++;
+    }
+
+    /* private methods */
 
     private static Block parseBlock(ANTLRStringStream input) throws SyntaxErrorException {
         return (Block) handleFragmentParsing(input, BLOCK);
@@ -141,7 +150,7 @@ public class ParseSetlX {
                 }
             }
 
-            int errors  = parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors();
+            errors += parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors();
             if (errors > 0) {
                 throw new SyntaxErrorException("" + errors + " syntax error(s) encountered.");
             }
@@ -150,7 +159,6 @@ public class ParseSetlX {
         } catch (RecognitionException re) {
             throw new SyntaxErrorException(re.getMessage());
         } catch (NullPointerException npe) {
-            int errors  = 0;
             if (lexer != null) {
                 errors += lexer.getNumberOfSyntaxErrors();
             }

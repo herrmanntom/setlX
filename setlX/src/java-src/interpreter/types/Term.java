@@ -107,9 +107,6 @@ public class Term extends CollectionValue {
     /* string and char operations */
 
     public String canonical() {
-        boolean interprete  = Environment.isInterpreteStrings();
-        Environment.setInterpreteStrings(false);
-
         String result = mBody.canonical();
         result = "(" + result.substring(1, result.length() - 1) + ")";
 
@@ -118,8 +115,6 @@ public class Term extends CollectionValue {
         } else {
             result = mFunctionalCharacter + result;
         }
-
-        Environment.setInterpreteStrings(interprete);
 
         return result;
     }

@@ -6,6 +6,7 @@ print("The evaluation of $ x $ * $ x $ + $ y $ * $ y $ is $ x * x + y * y $");
 
 // and some more demonstrative examples
 print("Lets print some dollars \$\$!");
+print(@"Lets print them differently $$!");
 
 // even with errors
 print("The next will fail: $om ** om$!");          // error during eval()

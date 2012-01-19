@@ -1,3 +1,4 @@
 The evaluation of 3 * 3 + 4 * 4 is 25
 Lets print some dollars $$!
+Lets print them differently $$!
 The next will fail: $Error: Left-hand-side of 'om ** om' is not a number.$!

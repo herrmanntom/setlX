@@ -251,3 +251,22 @@ relationExtension := procedure() {
 };
 relationExtension();
 
+formatedString := procedure() {
+    correct := false;
+
+	s := "";
+	for (i in [1 .. 9]) {
+		  s += "p$i$ || ";
+	}
+	s := s + "false";
+
+	correct := s == "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false";
+
+    if (correct) {
+        printErr("test 16 successful (formatedString)");
+    } else {
+        printErr("test 16 failed (formatedString)");
+    }
+};
+formatedString();
+

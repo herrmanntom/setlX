@@ -1,6 +1,7 @@
 package interpreter.functions;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.exceptions.IncorrectNumberOfParametersException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.SetlBoolean;
 import interpreter.types.SetlError;
@@ -12,7 +13,7 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
-// load(path)              : loads SetlX source code file and executes it
+// load(path [, output])   : loads SetlX source code file and executes it
 
 public class PD_load extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_load();
@@ -20,16 +21,29 @@ public class PD_load extends PreDefinedFunction {
     private PD_load() {
         super("load");
         addParameter("path_to_setlX_file");
+        addParameter("do_not_disable_output"); // optional parameter
+        allowFewerParameters();
         doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value   filePath = args.get(0);
+        if (args.size() < 1) {
+            throw new IncorrectNumberOfParametersException("Procedure 'load' is defined with either one or two parameters.");
+        }
+        Value   filePath            = args.get(0);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException("Path-argument '" + filePath + "' is not a string.");
         }
+        // check and get optional 2nd parameter
+        Value   doNotDisableOutput  = SetlBoolean.FALSE;
+        if (args.size() == 2) {
+            doNotDisableOutput  = args.get(1);
+            if ( ! (doNotDisableOutput instanceof SetlBoolean)) {
+                throw new IncompatibleTypeException("do-not-disable-output-argument '" + doNotDisableOutput + "' is not a Boolean value.");
+            }
+        }
         // get string of file path to be parsed
-        String  file    = ((SetlString) filePath).getString();
+        String  file    = filePath.getUnquotedString();
 
         // parse the file
         ParseSetlX.resetErrorCount();
@@ -38,7 +52,9 @@ public class PD_load extends PreDefinedFunction {
         // execute the contents
         boolean interactive = Environment.isInteractive();
         try {
-            Environment.setInteractive(false);
+            if (doNotDisableOutput == SetlBoolean.FALSE) {
+                Environment.setInteractive(false);
+            }
             blk.execute();
         } finally {
             Environment.setInteractive(interactive);

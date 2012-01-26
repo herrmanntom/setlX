@@ -26,7 +26,7 @@ public class PD_parseStatements extends PreDefinedFunction {
             throw new IncompatibleTypeException("Statement-argument '" + stmntArg + "' is not a string.");
         }
         // get statement string to be parsed
-        String  stmntStr = ((SetlString) stmntArg).getString();
+        String  stmntStr = stmntArg.getUnquotedString();
 
         // parse statements
         ParseSetlX.resetErrorCount();

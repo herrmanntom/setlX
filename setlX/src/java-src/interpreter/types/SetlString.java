@@ -185,12 +185,12 @@ public class SetlString extends Value {
         return this;
     }
 
-    public String toString() {
-        return "\"" + mString + "\"";
+    public String getUnquotedString() {
+        return mString;
     }
 
-    public String getString() {
-        return mString;
+    public String toString() {
+        return "\"" + mString + "\"";
     }
 
     /* comparisons */

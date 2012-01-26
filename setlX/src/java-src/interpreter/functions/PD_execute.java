@@ -30,7 +30,7 @@ public class PD_execute extends PreDefinedFunction {
         }
 
         // get statement string to be parsed
-        String  stmntStr = ((SetlString) stmntArg).getString();
+        String  stmntStr = stmntArg.getUnquotedString();
 
         // parse statements
         ParseSetlX.resetErrorCount();

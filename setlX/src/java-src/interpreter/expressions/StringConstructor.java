@@ -57,7 +57,7 @@ public class StringConstructor extends Expr {
                         // parse inner expr
                         try {
                             SetlString eStr = SetlString.createFromConstructor(expr.toString()); // parses escape characters properly
-                            Expr exp = ParseSetlX.parseStringToExpr(eStr.getString());
+                            Expr exp = ParseSetlX.parseStringToExpr(eStr.getUnquotedString());
                             // add inner expr to mExprs
                             mExprs.add(exp);
                         } catch (SetlException se) {

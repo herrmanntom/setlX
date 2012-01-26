@@ -37,8 +37,8 @@ print(fct(t), "(", a(2 .. #a-1), ")");
 print();
 
 /*******************************************************************************
-  eval(expr)              // evaluate a string of a SetlX expression, returns value of Error-type on parser or evaluation failure
-  execute(stmnts)         // execute a string of SetlX statements, returns value of Error-type on parser or execution failure
+  eval(expr)              // evaluate a string of a SetlX expression
+  execute(stmnts)         // execute a string of SetlX statements
 */
 
 execute("x := y := 6;");
@@ -46,7 +46,7 @@ print(eval("x ** y"), " == ", x ** y);
 print();
 
 /*******************************************************************************
-  load(path)              // loads SetlX source code file and executes it, returns value of Error-type on parser or execution failure
+  load(path)              // loads SetlX source code file and executes it
 */
 
 load("../example_setlX_code/erlang.stlx"); // will fail if relative path is wrong...
@@ -124,8 +124,8 @@ print();
 
 /*******************************************************************************
   getTerm(value)          // convert a value into a term
-  parse(expr)             // parse string of a SetlX expression into a term, returns value of Error-type on parser failure
-  parseStatements(stmnts) // parse string of SetlX statements into a term, returns value of Error-type on parser failure
+  parse(expr)             // parse string of a SetlX expression into a term
+  parseStatements(stmnts) // parse string of SetlX statements into a term
 */
 print("{throwACoin, print} = " + canonical(getTerm({throwACoin, print})));
 print("a + 10 * b % 4 = " + canonical(parse("a + 10 * b % 4")));

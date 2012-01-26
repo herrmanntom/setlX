@@ -1,6 +1,5 @@
 package interpreter.functions;
 
-import interpreter.exceptions.CatchDuringParsingException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
@@ -13,7 +12,7 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
-// execute(stmnts)         : execute a String of SetlX statements, returns value of Error-type on parser or execution failure
+// execute(stmnts)         : execute a String of SetlX statements
 
 public class PD_execute extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_execute();
@@ -33,27 +32,26 @@ public class PD_execute extends PreDefinedFunction {
         // get statement string to be parsed
         String  stmntStr = ((SetlString) stmntArg).getString();
 
-        try {
-            // parse statements
-            ParseSetlX.resetErrorCount();
-            Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
+        // parse statements
+        ParseSetlX.resetErrorCount();
+        Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
 
-            // execute the contents
-            boolean interactive = Environment.isInteractive();
+        // execute the contents
+        boolean interactive = Environment.isInteractive();
+        try {
             Environment.setInteractive(false);
             blk.execute();
+        } finally {
             Environment.setInteractive(interactive);
-
-            // newline to visually separate result
-            if (interactive) {
-                System.out.println();
-            }
-
-            // everything seems fine
-            return SetlBoolean.TRUE;
-        } catch (CatchDuringParsingException cdpe) {
-            return new SetlError(cdpe);
         }
+
+        // newline to visually separate result
+        if (interactive) {
+            System.out.println();
+        }
+
+        // everything seems fine
+        return SetlBoolean.TRUE;
     }
 }
 

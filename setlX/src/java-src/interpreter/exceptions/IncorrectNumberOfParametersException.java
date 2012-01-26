@@ -1,6 +1,6 @@
 package interpreter.exceptions;
 
-public class IncorrectNumberOfParametersException extends CatchDuringParsingException {
+public class IncorrectNumberOfParametersException extends CatchableInSetlXException {
     public IncorrectNumberOfParametersException(String msg) {
         super(msg);
     }

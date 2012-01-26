@@ -4,7 +4,11 @@ getInput := procedure() {
     getValue := procedure() {
         print("Please enter some SetlX value");
         valueStr    := get();
-        return eval(valueStr);
+        try {
+            return eval(valueStr);
+        } catch (error) {
+            return error;
+        }
     };
 
     value := getValue();
@@ -21,7 +25,11 @@ getInput := procedure() {
     getExpr := procedure() {
         print("Please enter some SetlX expression using the 'value' variable");
         expr     := get();
-        exprTerm := parse(expr);
+        try {
+            exprTerm := parse(expr);
+        } catch (error) {
+            exprTerm := error;
+        }
         return [expr, exprTerm];
     };
 
@@ -36,7 +44,11 @@ getInput := procedure() {
     print("Syntax-Tree:\nexpr\t:= " + canonical(exprTerm));
     print();
 
-    return eval(expr);
+    try {
+        return eval(expr);
+    } catch (error) {
+        return error;
+    }
 };
 
 result := getInput();

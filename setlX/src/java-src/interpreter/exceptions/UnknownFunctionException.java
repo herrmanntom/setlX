@@ -1,6 +1,6 @@
 package interpreter.exceptions;
 
-public class UnknownFunctionException extends CatchDuringParsingException {
+public class UnknownFunctionException extends CatchableInSetlXException {
     public UnknownFunctionException(String msg) {
         super(msg);
     }

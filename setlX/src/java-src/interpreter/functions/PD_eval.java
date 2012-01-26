@@ -1,6 +1,5 @@
 package interpreter.functions;
 
-import interpreter.exceptions.CatchDuringParsingException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
@@ -11,7 +10,7 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
-// eval(expr)              : evaluate a String of a SetlX expression, returns value of Error-type on parser or evaluation failure
+// eval(expr)              : evaluate a String of a SetlX expression
 
 public class PD_eval extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_eval();
@@ -30,16 +29,11 @@ public class PD_eval extends PreDefinedFunction {
         // get expression string to be parsed
         String  exprStr = ((SetlString) exprArg).getString();
 
-        try {
-            // parse expr
-            ParseSetlX.resetErrorCount();
-            Expr expr = ParseSetlX.parseStringToExpr(exprStr);
+        ParseSetlX.resetErrorCount();
+        Expr expr = ParseSetlX.parseStringToExpr(exprStr);
 
-            // eval and return result
-            return expr.eval();
-        } catch (CatchDuringParsingException cdpe) {
-            return new SetlError(cdpe);
-        }
+        // eval and return result
+        return expr.eval();
     }
 }
 

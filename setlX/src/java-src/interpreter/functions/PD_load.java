@@ -1,6 +1,5 @@
 package interpreter.functions;
 
-import interpreter.exceptions.CatchDuringParsingException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.SetlBoolean;
@@ -13,7 +12,7 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
-// load(path)              : loads SetlX source code file and executes it, returns value of Error-type on parser or execution failure
+// load(path)              : loads SetlX source code file and executes it
 
 public class PD_load extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_load();
@@ -32,27 +31,26 @@ public class PD_load extends PreDefinedFunction {
         // get string of file path to be parsed
         String  file    = ((SetlString) filePath).getString();
 
-        try {
-            // parse the file
-            ParseSetlX.resetErrorCount();
-            Block   blk     = ParseSetlX.parseFile(file);
+        // parse the file
+        ParseSetlX.resetErrorCount();
+        Block   blk     = ParseSetlX.parseFile(file);
 
-            // execute the contents
-            boolean interactive = Environment.isInteractive();
+        // execute the contents
+        boolean interactive = Environment.isInteractive();
+        try {
             Environment.setInteractive(false);
             blk.execute();
+        } finally {
             Environment.setInteractive(interactive);
-
-            // newline to visually separate result
-            if (interactive) {
-                System.out.println();
-            }
-
-            // everything is good
-            return SetlBoolean.TRUE;
-        } catch (CatchDuringParsingException cdpe) {
-            return new SetlError(cdpe);
         }
+
+        // newline to visually separate result
+        if (interactive) {
+            System.out.println();
+        }
+
+        // everything is good
+        return SetlBoolean.TRUE;
     }
 }
 

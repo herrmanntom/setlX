@@ -9,7 +9,11 @@ getFormular := procedure() {
     getInput := procedure() {
         print("Please enter a formula to be checked if it is tautology");
         formulaStr  := /*get()*/ from(input);
-        formulaTerm := parse(formulaStr);
+        try {
+            formulaTerm := parse(formulaStr);
+        } catch (error) {
+            formulaTerm := error;
+        }
         return [formulaStr, formulaTerm];
     };
     [formulaStr, formulaTerm] := getInput();

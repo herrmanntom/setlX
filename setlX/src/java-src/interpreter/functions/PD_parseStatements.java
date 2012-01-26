@@ -1,6 +1,5 @@
 package interpreter.functions;
 
-import interpreter.exceptions.CatchDuringParsingException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
@@ -11,7 +10,7 @@ import interpreter.utilities.ParseSetlX;
 
 import java.util.List;
 
-// parseStatements(stmnts) : parse SetlX statements into a term, returns value of Error-type on parser failure
+// parseStatements(stmnts) : parse SetlX statements into a term
 
 public class PD_parseStatements extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_parseStatements();
@@ -29,16 +28,12 @@ public class PD_parseStatements extends PreDefinedFunction {
         // get statement string to be parsed
         String  stmntStr = ((SetlString) stmntArg).getString();
 
-        try {
-            // parse statements
-            ParseSetlX.resetErrorCount();
-            Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
+        // parse statements
+        ParseSetlX.resetErrorCount();
+        Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
 
-            // return term of result
-            return blk.toTerm();
-        } catch (CatchDuringParsingException cdpe) {
-            return new SetlError(cdpe);
-        }
+        // return term of result
+        return blk.toTerm();
     }
 }
 

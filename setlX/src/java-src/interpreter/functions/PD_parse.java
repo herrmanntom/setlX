@@ -25,7 +25,7 @@ public class PD_parse extends PreDefinedFunction {
             throw new IncompatibleTypeException("Expression-argument '" + exprArg + "' is not a string.");
         }
         // get expression string to be parsed
-        String  exprStr = ((SetlString) exprArg).getString();
+        String  exprStr = exprArg.getUnquotedString();
 
         // parse expr
         ParseSetlX.resetErrorCount();

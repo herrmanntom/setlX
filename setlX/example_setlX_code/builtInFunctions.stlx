@@ -46,7 +46,7 @@ print(eval("x ** y"), " == ", x ** y);
 print();
 
 /*******************************************************************************
-  load(path)              // loads SetlX source code file and executes it
+  load(path [, output])   // loads SetlX source code file and executes it
 */
 
 load("../example_setlX_code/erlang.stlx"); // will fail if relative path is wrong...

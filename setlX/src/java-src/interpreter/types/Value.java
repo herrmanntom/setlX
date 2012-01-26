@@ -272,6 +272,10 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Operand '" + this + "' is not a number between 0 and 255.");
     }
 
+    public String getUnquotedString() {
+        return toString();
+    }
+
     public SetlString str() {
         return new SetlString(this.toString());
     }

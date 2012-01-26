@@ -29,9 +29,7 @@ public class PD_makeTerm extends PreDefinedFunction {
         if ( ! (arg1 instanceof SetlList)) {
             throw new IncompatibleTypeException("Argument '" + arg1 + "' is not a list.");
         }
-        String fct = arg0.toString();
-        // Strip out double quotes from string
-        fct = fct.substring(1, fct.length() - 1);
+        String fct = arg0.getUnquotedString();
 
         // check if name is usable as term (fist char is upper case or single qoute ( ' ))
         if (fct.length() > 0 && (fct.charAt(0) == '\'' || Character.isUpperCase(fct.charAt(0)))) {

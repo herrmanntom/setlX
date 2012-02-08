@@ -1,5 +1,11 @@
 accounting/
 older_versions/
+dhbw_documentation/*.aux
+dhbw_documentation/*.dvi
+dhbw_documentation/*.log
+dhbw_documentation/*.out
+dhbw_documentation/*.pdf
+dhbw_documentation/*.toc
 setlX/documentation/*.aux
 setlX/documentation/*.dvi
 setlX/documentation/*.log

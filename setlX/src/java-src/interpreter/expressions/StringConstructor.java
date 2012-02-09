@@ -143,20 +143,28 @@ public class StringConstructor extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
-        Term     result  = new Term("'string");
+    public Value toTerm() {
+        Value   result;
+        if (mFragments.size() == 1 && mExprs.size() == 0) {
+            // simple string without $-expression
+            result  = new SetlString(mFragments.get(0));
+        } else {
+            Term t  = new Term("'string");
 
-        SetlList strList = new SetlList();
-        for (String str: mFragments) {
-            strList.addMember(new SetlString(str));
-        }
-        result.addMember(strList);
+            SetlList strList = new SetlList();
+            for (String str: mFragments) {
+                strList.addMember(new SetlString(str));
+            }
+            t.addMember(strList);
 
-        SetlList expList = new SetlList();
-        for (Expr expr: mExprs) {
-            expList.addMember(expr.toTerm());
+            SetlList expList = new SetlList();
+            for (Expr expr: mExprs) {
+                expList.addMember(expr.toTerm());
+            }
+            t.addMember(expList);
+
+            result = t;
         }
-        result.addMember(expList);
 
         return result;
     }

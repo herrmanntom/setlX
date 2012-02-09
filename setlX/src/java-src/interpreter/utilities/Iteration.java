@@ -82,7 +82,7 @@ public class Iteration extends Constructor {
 
     /* term operations */
 
-    public Term toTerm() {
+    public void addToTerm(CollectionValue collection) {
         Term result = new Term("'iteration");
         if (mExpr != null) {
             result.addMember(mExpr.toTerm());
@@ -95,7 +95,7 @@ public class Iteration extends Constructor {
         } else {
             result.addMember(new SetlString("nil"));
         }
-        return result;
+        collection.addMember(result);
     }
 }
 

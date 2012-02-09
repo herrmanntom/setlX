@@ -7,7 +7,6 @@ import interpreter.expressions.VariableIgnore;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlList;
-import interpreter.types.Term;
 import interpreter.types.Value;
 
 import java.util.List;
@@ -74,14 +73,10 @@ public class ExplicitList extends Constructor {
 
     /* term operations */
 
-    public Term toTerm() {
-        Term        result  = new Term("'explicitList");
-        SetlList    members = new SetlList();
+    public void addToTerm(CollectionValue collection) {
         for (Expr member: mList) {
-            members.addMember(member.toTerm());
+            collection.addMember(member.toTerm());
         }
-        result.addMember(members);
-        return result;
     }
 }
 

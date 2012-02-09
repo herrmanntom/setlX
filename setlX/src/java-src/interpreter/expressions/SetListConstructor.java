@@ -3,6 +3,7 @@ package interpreter.expressions;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
+import interpreter.types.CollectionValue;
 import interpreter.types.SetlList;
 import interpreter.types.SetlSet;
 import interpreter.types.SetlString;
@@ -97,19 +98,17 @@ public class SetListConstructor extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
-        Term result;
+    public Value toTerm() {
+        CollectionValue result;
         if (mType == SET) {
-            result = new Term("'set");
+            result = new SetlSet();
         } else if (mType == LIST) {
-            result = new Term("'list");
+            result = new SetlList();
         } else {
             result = new Term("'undefindedSetListConstructor");
         }
         if (mConstructor != null) {
-            result.addMember(mConstructor.toTerm());
-        } else {
-            result.addMember(new SetlString("nil"));
+            mConstructor.addToTerm(result);
         }
         return result;
     }

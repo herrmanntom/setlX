@@ -54,7 +54,7 @@ public class Range extends Constructor {
 
     /* term operations */
 
-    public Term toTerm() {
+    public void addToTerm(CollectionValue collection) {
         Term result = new Term("'range");
         result.addMember(mStart.toTerm());
         if (mSecond != null) {
@@ -63,7 +63,7 @@ public class Range extends Constructor {
             result.addMember(new SetlString("nil"));
         }
         result.addMember(mStop.toTerm());
-        return result;
+        collection.addMember(result);
     }
 }
 

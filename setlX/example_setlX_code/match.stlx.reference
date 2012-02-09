@@ -1,8 +1,14 @@
 'difference('product(55, 99), 'power(123, 'brackets('difference(14, 2))))
 match: a = 'product(55, 99), b = 123, c = 'difference(14, 2)
 
-'list('explicitList([1, 99, 7]))
+[1, 99, 7]
 match: a = 1, b = 99, c = 7
+
+[1, "foo", 7]
+match: a = 1, b = 7
+
+[1, "foo", 7]
+failed to match
 
 'equal('call('variable("sqrt"), ['sum('power('variable("a"), 2), 'power('variable("b"), 2))]), 'variable("c"))
 match: fnc = 'variable("sqrt"), x = 'power('variable("a"), 2), c = 2

@@ -49,7 +49,7 @@ public class Term extends CollectionValue {
         return SetlBoolean.TRUE;
     }
 
-    /* operations on compound values (Lists, Sets [, Strings]) */
+    /* operations on collection values (Lists, Sets [, Strings]) */
 
     public void addMember(Value element) {
         mBody.addMember(element);

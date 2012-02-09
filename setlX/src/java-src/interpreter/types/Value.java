@@ -149,18 +149,18 @@ public abstract class Value implements Comparable<Value> {
         throw new UndefinedOperationException("'" + this + " - " + subtrahend + "' is undefined.");
     }
 
-    /* operations on compound values (Lists/Tuples, Sets [, Strings]) */
+    /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 
     public void addMember(Value element) throws SetlException {
-        throw new IncompatibleTypeException("Can not add '" + element + "' into operand; '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Can not add '" + element + "' into operand; '" + this + "' is not a collection value.");
     }
 
     public Value addMembers() throws SetlException {
-        throw new IncompatibleTypeException("Right-hand-side of '+/ " + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Right-hand-side of '+/ " + this + "' is not a collection value.");
     }
 
     public Value arbitraryMember() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Operand '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a collection value.");
     }
 
     public SetlList arguments() throws IncompatibleTypeException {
@@ -176,7 +176,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlBoolean containsMember(Value element) throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Right-hand-side of '" + element  + " in " + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Right-hand-side of '" + element  + " in " + this + "' is not a collection value.");
     }
 
     public SetlSet domain() throws SetlException {
@@ -184,7 +184,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public Value firstMember() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Can not get first member from operand; '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Can not get first member from operand; '" + this + "' is not a collection value.");
     }
 
     public SetlString functionalCharacter() throws IncompatibleTypeException {
@@ -192,31 +192,31 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public Value getMember(Value index) throws SetlException {
-        throw new IncompatibleTypeException("Can not get member with index '" + index + "' from operand; '" + this + "' is not a compound value or direct access is unsupported for this type.");
+        throw new IncompatibleTypeException("Can not get member with index '" + index + "' from operand; '" + this + "' is not a collection value or direct access is unsupported for this type.");
     }
 
     public Value getMemberUnCloned(Value index) throws SetlException {
-        throw new IncompatibleTypeException("Can not get member with index '" + index + "' from operand; '" + this + "' is not a compound value or direct access is unsupported for this type.");
+        throw new IncompatibleTypeException("Can not get member with index '" + index + "' from operand; '" + this + "' is not a collection value or direct access is unsupported for this type.");
     }
 
     public Value getMembers(Value low, Value high) throws SetlException {
-        throw new IncompatibleTypeException("Can not get member between index '" + low + "' and '" + high + "' from operand; '" + this + "' is not a compound value or ranges are unsupported for this type.");
+        throw new IncompatibleTypeException("Can not get member between index '" + low + "' and '" + high + "' from operand; '" + this + "' is not a collection value or ranges are unsupported for this type.");
     }
 
     public Value lastMember() throws SetlException {
-        throw new IncompatibleTypeException("Can not get last member from operand; '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Can not get last member from operand; '" + this + "' is not a collection value.");
     }
 
     public Value maximumMember() throws SetlException {
-        throw new IncompatibleTypeException("Right-hand-side of 'max/ " + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Right-hand-side of 'max/ " + this + "' is not a collection value.");
     }
 
     public Value minimumMember() throws SetlException {
-        throw new IncompatibleTypeException("Right-hand-side of 'min/ " + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Right-hand-side of 'min/ " + this + "' is not a collection value.");
     }
 
     public Value multiplyMembers() throws SetlException {
-        throw new IncompatibleTypeException("Right-hand-side of '*/ " + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Right-hand-side of '*/ " + this + "' is not a collection value.");
     }
 
     public SetlSet powerSet() throws IncompatibleTypeException {
@@ -224,7 +224,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public Value randomMember() throws SetlException {
-        throw new IncompatibleTypeException("Operand '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Operand '" + this + "' is not a collection value.");
     }
 
     public SetlSet range() throws SetlException {
@@ -232,29 +232,29 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public void removeMember(Value element) throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Can not remove '" + element + "' from operand; '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Can not remove '" + element + "' from operand; '" + this + "' is not a collection value.");
     }
 
     public void removeFirstMember() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Can not remove first member from operand; '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Can not remove first member from operand; '" + this + "' is not a collection value.");
     }
 
     public void removeLastMember() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Can not remove last member from operand; '" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Can not remove last member from operand; '" + this + "' is not a collection value.");
     }
 
     public void setMember(Value index, Value v) throws SetlException {
-        throw new IncompatibleTypeException("Can not set member with index '" + index + "' from operand; '" + this + "' is not a compound value or direct access is unsupported for this type.");
+        throw new IncompatibleTypeException("Can not set member with index '" + index + "' from operand; '" + this + "' is not a collection value or direct access is unsupported for this type.");
     }
 
     public int size() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException("Operand of '#" + this + "' is not a compound value.");
+        throw new IncompatibleTypeException("Operand of '#" + this + "' is not a collection value.");
     }
 
     /* calls (element access or function call) */
 
     public Value call(List<Expr> exprs,List<Value> args) throws SetlException {
-        throw new IncompatibleTypeException("Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure or compound value.");
+        throw new IncompatibleTypeException("Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure or collection value.");
     }
 
     // this call returns a set, not a single value

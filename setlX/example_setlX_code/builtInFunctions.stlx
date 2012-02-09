@@ -87,7 +87,7 @@ for (i in userinput) {
 print();
 
 /*******************************************************************************
-  rnd(listOrSet);         // randomly select member from compound value; different from arb, as arb is deterministic and rnd is not
+  rnd(collectionValue);   // randomly select member from collection value; different from arb, as arb is deterministic and rnd is not
 */
 
 throwACoin := [] |-> rnd({"heads", "tails"});

@@ -98,7 +98,7 @@ public class SetlList extends CollectionValue {
         }
     }
 
-    /* operations on compound values (Lists, Sets [, Strings]) */
+    /* operations on collection values (Lists, Sets [, Strings]) */
 
     public void addMember(Value element) {
         separateFromOriginal();

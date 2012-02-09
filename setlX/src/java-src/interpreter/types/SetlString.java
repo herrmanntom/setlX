@@ -115,7 +115,7 @@ public class SetlString extends Value {
         }
     }
 
-    /* operations on compound values (Lists, Sets [, Strings]) */
+    /* operations on collection values (Lists, Sets [, Strings]) */
 
     public SetlString getMember(Value vIndex) throws SetlException {
         int index = 0;

@@ -8,8 +8,8 @@ import interpreter.utilities.ParameterDef;
 import java.util.List;
 
 /*
- * from(compoundValue)     : select and removes an arbitrary
- *                           member from compound value
+ * from(collectionValue)   : select and removes an arbitrary
+ *                           member from collection value
  */
 
 public class PD_from extends PreDefinedFunction {
@@ -18,7 +18,7 @@ public class PD_from extends PreDefinedFunction {
 
     private PD_from() {
         super("from");
-        addParameter("compoundValue", ParameterDef.READ_WRITE);
+        addParameter("collectionValue", ParameterDef.READ_WRITE);
     }
 
     public Value execute(List<Value> args,

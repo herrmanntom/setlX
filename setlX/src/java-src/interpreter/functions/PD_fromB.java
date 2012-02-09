@@ -7,14 +7,14 @@ import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
-// fromB(compoundValue)    : select and removes the first member from compound value
+// fromB(collectionValue)  : select and removes the first member from collection value
 
 public class PD_fromB extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fromB();
 
     private PD_fromB() {
         super("fromB");
-        addParameter("compoundValue", ParameterDef.READ_WRITE);
+        addParameter("collectionValue", ParameterDef.READ_WRITE);
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

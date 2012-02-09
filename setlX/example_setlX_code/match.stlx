@@ -28,6 +28,32 @@ match (exprTerm) {
 
 print();
 
+list	:= [1, "foo", 7];
+
+print(canonical(list));
+
+match (list) {
+    case [a, "foo", b] :
+        print("match: a = $canonical(a)$, b = $canonical(b)$");
+    default :
+        print("failed to match");
+}
+
+print();
+
+list	:= [1, "foo", 7];
+
+print(canonical(list));
+
+match (list) {
+    case [a, "bar", b] : // MUST NOT match
+        print("match: a = $canonical(a)$, b = $canonical(b)$");
+    default :
+        print("failed to match");
+}
+
+print();
+
 exprString := "sqrt(a**2 + b**2) == c";
 exprTerm   := parse(exprString);
 

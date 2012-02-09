@@ -4,7 +4,6 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlList;
-import interpreter.types.Term;
 import interpreter.types.Value;
 
 public abstract class Constructor {
@@ -22,6 +21,6 @@ public abstract class Constructor {
 
     /* term operations */
 
-    public abstract Term        toTerm();
+    public abstract void        addToTerm(CollectionValue collection);
 }
 

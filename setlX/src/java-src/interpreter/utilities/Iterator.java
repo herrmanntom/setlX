@@ -52,19 +52,14 @@ public class Iterator {
        note: variables inside the whole iteration are not _not_ local
              all will be written `through' these inner scopes                 */
     public void eval(IteratorExecutionContainer exec) throws SetlException {
-        SetlException   ex          = null;
         VariableScope   outerScope  = VariableScope.getScope();
         try {
             evaluate(exec);
         } catch (BreakException ee) {
             // throwing the exception already broke the loop
             // nothing to be done, not a real error
-        } catch (SetlException e) {
-            ex = e;
-        }
-        VariableScope.setScope(outerScope); // make sure scope is always reset
-        if (ex != null) {
-            throw ex;
+        } finally { // make sure scope is always reset
+            VariableScope.setScope(outerScope);
         }
     }
 

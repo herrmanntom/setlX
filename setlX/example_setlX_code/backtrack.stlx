@@ -1,0 +1,35 @@
+// this program demonstrates using the try catch block for backtracking
+
+test := procedure(n) {
+    print("n = $n$");
+    try {
+        // we do something here
+
+            /* but not in this simple example */
+
+        // and then check if the result is correct
+        check(n == 5);
+        print("done!");
+
+    } catch (e) {
+        // Check whether e is the thrown "backtrack" and re-throw if e is a
+        // real and unexpected error. If we don't do this, debugging will
+        // be a nightmare, because errors are hidden!
+        if (e != "backtrack") {
+            throw(e);
+        }
+
+        // try next one
+        test(n + 1);
+    }
+};
+
+// throw an exception if condition is false
+check := procedure(condition) {
+    if (!condition) {
+        throw("backtrack");
+    }
+};
+
+test(1);
+

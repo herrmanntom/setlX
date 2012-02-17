@@ -107,34 +107,38 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         // List of writeBack-values, which should be stored into the outer scope
         LinkedList<Value> writeBackVars = new LinkedList<Value>();
 
-        // call predefined function (which may add writeBack-values to List)
-        Value             result        = this.execute(args, writeBackVars);
-
-        if (mDoNotChangeScope) {
-            // we do not need to restore anything
-            return result;
-        }
-
-        // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
+        // results of call to predefined function
+        Value             result        = null;
         WriteBackAgent    wba           = new WriteBackAgent();
-        for (int i = 0; i < mParameters.size(); ++i) {
-            ParameterDef param = mParameters.get(i);
-            if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
-                // value of parameter after execution
-                Value postValue = writeBackVars.removeFirst();
-                // expression used to fill parameter before execution
-                Expr  preExpr   = exprs.get(i);
-                /* if possible the WriteBackAgent will set the variable used in
-                   this expression to its postExecution state in the outer scope */
-                wba.add(preExpr, postValue);
+
+        try {
+            // call predefined function (which may add writeBack-values to List)
+            result  = this.execute(args, writeBackVars);
+
+            // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
+            if (( ! mDoNotChangeScope) && writeBackVars.size() > 0) {
+                for (int i = 0; i < mParameters.size(); ++i) {
+                    ParameterDef param = mParameters.get(i);
+                    if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
+                        // value of parameter after execution
+                        Value postValue = writeBackVars.removeFirst();
+                        // expression used to fill parameter before execution
+                        Expr  preExpr   = exprs.get(i);
+                        /* if possible the WriteBackAgent will set the variable used in
+                           this expression to its postExecution state in the outer scope */
+                        wba.add(preExpr, postValue);
+                    }
+                }
+            }
+
+        } finally {  // make sure scope is always reset
+            if ( ! mDoNotChangeScope) {
+                // restore old scope
+                VariableScope.setScope(oldScope);
+                // write values in WriteBackAgent into restored scope
+                wba.writeBack();
             }
         }
-
-        // restore old scope
-        VariableScope.setScope(oldScope);
-
-        // write values in WriteBackAgent into restored scope
-        wba.writeBack();
 
         return result;
     }

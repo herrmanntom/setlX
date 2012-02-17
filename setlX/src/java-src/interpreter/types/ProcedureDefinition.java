@@ -65,33 +65,40 @@ public class ProcedureDefinition extends Value {
             mParameters.get(i).assign(args.get(i));
         }
 
-        Value result = Om.OM;
+        // results of call to procedure
+        Value           result  = Om.OM;
+        WriteBackAgent  wba     = new WriteBackAgent();
+
         try {
-            mStatements.execute();
-        } catch (ReturnException re) {
-            result = re.getValue();
-        }
+            try {
+                // execute, e.g. perform real procedure call
+                mStatements.execute();
+            } catch (ReturnException re) {
+                // get result
+                result = re.getValue();
+            } // let all other exceptions through
 
-        // extract 'rw' arguments from environment and store them into WriteBackAgent
-        WriteBackAgent wba = new WriteBackAgent();
-        for (int i = 0; i < mParameters.size(); ++i) {
-            ParameterDef param = mParameters.get(i);
-            if (param.getType() == ParameterDef.READ_WRITE) {
-                // value of parameter after execution
-                Value postValue = param.getValue();
-                // expression used to fill parameter before execution
-                Expr  preExpr   = exprs.get(i);
-                /* if possible the WriteBackAgent will set the variable used in this
-                   expression to its postExecution state in the outer environment    */
-                wba.add(preExpr, postValue);
+            // extract 'rw' arguments from environment and store them into WriteBackAgent
+            for (int i = 0; i < mParameters.size(); ++i) {
+                ParameterDef param = mParameters.get(i);
+                if (param.getType() == ParameterDef.READ_WRITE) {
+                    // value of parameter after execution
+                    Value postValue = param.getValue();
+                    // expression used to fill parameter before execution
+                    Expr  preExpr   = exprs.get(i);
+                    /* if possible the WriteBackAgent will set the variable used in this
+                       expression to its postExecution state in the outer environment    */
+                    wba.add(preExpr, postValue);
+                }
             }
+
+        } finally { // make sure scope is always reset
+            // restore old scope
+            VariableScope.setScope(oldScope);
+
+            // write values in WriteBackAgent into restored scope
+            wba.writeBack();
         }
-
-        // restore old scope
-        VariableScope.setScope(oldScope);
-
-        // write values in WriteBackAgent into restored scope
-        wba.writeBack();
 
         return result;
     }

@@ -19,7 +19,7 @@ statement
     | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
-    | 'try' '{' block '}' 'catch' '(' variable ')' '{' block '}'
+    | 'try' '{' block '}' ('catch' '(' variable ')' '{' block '}' | 'catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')+
     | 'return' anyExpr? ';'
     | 'continue' ';'
     | 'break' ';'

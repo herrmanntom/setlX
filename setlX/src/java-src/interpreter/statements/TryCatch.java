@@ -2,44 +2,51 @@ package interpreter.statements;
 
 import interpreter.exceptions.CatchableInSetlXException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.ThrownInSetlXException;
-import interpreter.expressions.Variable;
-import interpreter.types.SetlError;
+import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.utilities.Environment;
+
+import java.util.List;
 
 /*
 grammar rule:
 statement
     : [...]
-    | 'try' '{' block '}' 'catch' '(' variable ')' '{' block '}'
+    | 'try' '{' block '}' ('catch' '(' variable ')' '{' block '}' | 'catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')+
     ;
 
 implemented here as:
-                =====                 ========         =====
-             mBlockToTry              mErrorVar   mBlockToRecover
+                =====      ==============================================================================================================================
+             mBlockToTry                                                              mTryList
+
+implemented with different classes which inherit from BranchTryAbstract:
+                           ======================================   =========================================   =========================================
+                                       BranchTryCatch                           BranchTryCatchLng                           BranchTryCatchUsr
 */
 
 public class TryCatch extends Statement {
-    private Block       mBlockToTry;
-    private Variable    mErrorVar;
-    private Block       mBlockToRecover;
+    private Block                   mBlockToTry;
+    private List<BranchTryAbstract> mTryList;
 
-    public TryCatch(Block blockToTry, Variable errorVar, Block blockToRecover) {
+    public TryCatch(Block blockToTry, List<BranchTryAbstract> tryList) {
         mBlockToTry     = blockToTry;
-        mErrorVar       = errorVar;
-        mBlockToRecover = blockToRecover;
+        mTryList        = tryList;
     }
 
     public void execute() throws SetlException {
         try{
             mBlockToTry.execute();
-        } catch (ThrownInSetlXException tisxe) {
-            mErrorVar.assign(tisxe.getValue()); // assign directly
-            mBlockToRecover.execute();
-        } catch (CatchableInSetlXException cisxe) {
-            mErrorVar.assign(new SetlError(cisxe)); // wrap into error
-            mBlockToRecover.execute();
+        } catch (CatchableInSetlXException cise) {
+            for (BranchTryAbstract br : mTryList) {
+                if (br.catches(cise)) {
+                    br.execute();
+
+                    return;
+
+                }
+            }
+            // If we get here nothing matched. Throw as if nothing happened
+            throw cise;
         }
     }
 
@@ -49,8 +56,9 @@ public class TryCatch extends Statement {
         String result = Environment.getTabs(tabs);
         result += "try ";
         result += mBlockToTry.toString(tabs, true);
-        result += " catch (" + mErrorVar + ") ";
-        result += mBlockToRecover.toString(tabs, true);
+        for (BranchTryAbstract br : mTryList) {
+            result += br.toString(tabs);
+        }
         return result;
     }
 
@@ -59,8 +67,13 @@ public class TryCatch extends Statement {
     public Term toTerm() {
         Term result = new Term("'tryCatch");
         result.addMember(mBlockToTry.toTerm());
-        result.addMember(mErrorVar.toTerm());
-        result.addMember(mBlockToRecover.toTerm());
+
+        SetlList branchList = new SetlList();
+        for (BranchTryAbstract br: mTryList) {
+            branchList.addMember(br.toTerm());
+        }
+        result.addMember(branchList);
+
         return result;
     }
 }

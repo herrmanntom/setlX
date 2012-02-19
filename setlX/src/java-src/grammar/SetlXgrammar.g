@@ -71,6 +71,8 @@ statement returns [Statement stmnt]
     @init{
         List<BranchAbstract>      branchList = new LinkedList<BranchAbstract>();
         List<BranchMatchAbstract> matchList  = new LinkedList<BranchMatchAbstract>();
+        List<BranchTryAbstract>   tryList    = new LinkedList<BranchTryAbstract>();
+        BranchTryAbstract         tryCatch   = null;
     }
     : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                }
     | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));           }
@@ -99,8 +101,13 @@ statement returns [Statement stmnt]
       '}' { stmnt = new Match($anyExpr.ae, matchList); }
     | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);           }
     | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);            }
-    | 'try'                    '{' b1 = block '}'
-      'catch' '(' variable ')' '{' b2 = block '}'                    { stmnt = new TryCatch($b1.blk, $variable.v, $b2.blk);      }
+    | 'try'                           '{' b1 = block '}'
+      (
+         'catch'     '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new BranchTryCatch   ($v1.v, $b2.blk));       }
+       | 'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new BranchTryCatchLng($v1.v, $b2.blk));       }
+       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new BranchTryCatchUsr($v1.v, $b2.blk));       }
+      )+
+      { stmnt = new TryCatch($b1.blk, tryList); }
     | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                          }
     | 'continue' ';'                                                 { stmnt = new Continue();                                   }
     | 'break' ';'                                                    { stmnt = new Break();                                      }
@@ -398,7 +405,7 @@ callParameters [boolean enableIgnore] returns [List<Expr> params]
       )?
     | '..'                              { params.add(CallRangeDummy.CRD); }
       expr[$enableIgnore]               { params.add($expr.ex);           }
-    | exprList[$enableIgnore]			{ params = $exprList.exprs;       }
+    | exprList[$enableIgnore]           { params = $exprList.exprs;       }
     |  /* epsilon */
     ;
 

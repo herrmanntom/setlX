@@ -1,4 +1,4 @@
-// this program demonstrates the try catch block and functionality
+// this program demonstrates the try catch block and its functionality
 
 something      := 42;
 someOtherThing := 23;
@@ -11,6 +11,7 @@ try {
 }
 print("However, using the try catch block we can still get here in spite of the error!");
 
+print();
 
 // throw(value)            : stops execution and throws value to be catched by try-catch block
 try {
@@ -18,7 +19,7 @@ try {
     throw(x);
     print("this will also never be executed.");
 } catch (e) {
-    if (isError(e)) {
+    if (isError(e)) { // this identifies real errors, e.g. NOT created using throw() function
         printErr("Some error occurred!:");
         printErr(e);
     } else {
@@ -26,6 +27,25 @@ try {
         print(e);
     }
 }
+
+print();
+
+// selective catching ins also possible
+try {
+    if (rnd({1, 2}) == 1) {
+        throw("user error");
+    } else {
+        om + om; // language error
+    }
+} catchUsr (e) { // this will only catch `errors' thrown by the user using throw() function
+    print("User error: " + e );
+} catchLng (error) { // this will catch real errors, e.g. NOT created using throw() function
+    print("Language error: " + error );
+} catch (foo) { // this will catch everything
+    print("unreachable"); // but is unreachable, because catchUsr and catchLng cover all errors
+}
+
+print();
 
 throw("the end is near");
 

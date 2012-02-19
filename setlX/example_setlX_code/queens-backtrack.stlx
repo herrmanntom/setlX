@@ -1,9 +1,9 @@
 // Solutions to the n-queens problem are represented as lists of the form
 //    [x_1,x_2, ..., x_n]
-// where x_i in {1, ..., n} and x_i specifies, that in the ith column the 
+// where x_i in {1, ..., n} and x_i specifies, that in the ith column the
 // queen is positioned in row x_i.  This representation automatically ensures
 // that there is exactly one queen per column.
-// 
+//
 // For example, the list [1, 5, 8, 6, 3, 7, 2, 4] represents the following
 // solution to the 8-queens problem.  In the diagramm below, the rows are
 // numbered form top to button, so the topmost row is numbered 1, while the
@@ -46,7 +46,7 @@
 // The interpretation of the parameters is as follows:
 //      l: list of those queens, that have already been placed
 //      n: size of the board
-solve := procedure(l, n) { 
+solve := procedure(l, n) {
     if (#l == n) {
         return l;
     }
@@ -55,7 +55,7 @@ solve := procedure(l, n) {
             check(l, x);
             // if this works, try to add more queens
             return solve(l + [x], n);
-        } catch (e) {
+        } catchUsr (e) {
             // do nothing, next value of x is tried automatically
         }
     }
@@ -65,7 +65,7 @@ solve := procedure(l, n) {
 
 // Check whether it is safe to add a queen in row x in the column that
 // follows those columns that are already specified in the list l of
-// queens already placed.  It is assumed that the queens already 
+// queens already placed.  It is assumed that the queens already
 // placed cannot attack each other.
 check := procedure(l, x) {
     if (x in l) {
@@ -112,9 +112,10 @@ solveAndPrint := procedure(n) {
         l := solve([], n);
         print(l);
         printBoard(l);
-    } catch (e) {
+    } catchUsr (e) {
         print("There is no solution for n = $n$.");
     }
 };
 
-solveAndPrint(8);    
+solveAndPrint(8);
+

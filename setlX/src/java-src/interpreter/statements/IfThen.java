@@ -26,9 +26,9 @@ public class IfThen extends Statement {
     }
 
     public void execute() throws SetlException {
-        for (BranchAbstract b : mBranchList) {
-            if (b.evalConditionToBool()) {
-                b.execute();
+        for (BranchAbstract br : mBranchList) {
+            if (br.evalConditionToBool()) {
+                br.execute();
                 break;
             }
         }
@@ -38,8 +38,8 @@ public class IfThen extends Statement {
 
     public String toString(int tabs) {
         String result = "";
-        for (BranchAbstract b : mBranchList) {
-            result += b.toString(tabs);
+        for (BranchAbstract br : mBranchList) {
+            result += br.toString(tabs);
         }
         return result;
     }

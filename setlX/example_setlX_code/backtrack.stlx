@@ -11,13 +11,10 @@ test := procedure(n) {
         check(n == 5);
         print("done!");
 
-    } catch (e) {
-        // Check whether e is the thrown "backtrack" and re-throw if e is a
-        // real and unexpected error. If we don't do this, debugging will
-        // be a nightmare, because errors are hidden!
-        if (e != "backtrack") {
-            throw(e);
-        }
+    } catchUsr (e) {
+        // Only catch e here when it was thrown using throw() and not when
+        // it was thrown by different semantic or syntactic error .
+        // If we don't do this, debugging will be a nightmare, because errors are hidden!
 
         // try next one
         test(n + 1);

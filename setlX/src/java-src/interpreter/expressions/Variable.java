@@ -1,5 +1,6 @@
 package interpreter.expressions;
 
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
@@ -80,6 +81,15 @@ public class Variable extends Expr {
         Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(new SetlString(mId));
         return result;
+    }
+
+    public static Variable termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 1 || (! (term.firstMember() instanceof SetlString))) {
+            throw new TermConversionException("malformed variable");
+        } else {
+            String id = ((SetlString) term.firstMember()).getUnquotedString();
+            return new Variable(id);
+        }
     }
 }
 

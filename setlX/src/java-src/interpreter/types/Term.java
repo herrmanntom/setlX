@@ -1,11 +1,13 @@
 package interpreter.types;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.expressions.Variable;
 import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
+import interpreter.utilities.TermConverter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -120,7 +122,11 @@ public class Term extends CollectionValue {
     }
 
     public String toString() {
-        return "_not_implemented_-_use_canonical_function_";
+        try {
+            return TermConverter.termToCodeFragment(this).toString();
+        } catch (TermConversionException tce) {
+            return canonical();
+        }
     }
 
     /* term operations */

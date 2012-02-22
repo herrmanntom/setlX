@@ -1,0 +1,206 @@
+var data;
+
+omega := procedure() {
+    all := {};
+    for (dataRow in data) {
+        all += {dataRow(1)};
+    }
+    return all;
+};
+
+selectEq := procedure(index, needle) {
+    selection := {};
+    for (dataRow in data) {
+        if (dataRow(index) == needle) {
+            selection += {dataRow(1)};
+        }
+    }
+    return selection;
+};
+
+selectIn := procedure(index, needle) {
+    selection := {};
+    for (dataRow in data) {
+        if (dataRow(index) in needle) {
+            selection += {dataRow(1)};
+        }
+    }
+    return selection;
+};
+
+unify := procedure(evidenceSet) {
+    unifiedSet := {};
+    while (#evidenceSet >= 1) {
+        evidence := from(evidenceSet);
+        if (unifiedSet(evidence(1)) != om) { // evidence already in result
+            unifiedSet(evidence(1)) += evidence(2); // increase its m
+        } else {                      // evidence not in result
+            unifiedSet += {evidence}; // add to result
+        }
+    }
+    return unifiedSet;
+};
+
+removeConflict := procedure(evidenceSet) {
+    result      := {};
+    conflict    := evidenceSet({}); // conflict is evidence of nobody
+    if (conflict == om) { // no conflict found
+        conflict := 0;
+    }
+    evidenceSet -= {[{}, conflict]}; // remove conflict from evidenceSet
+    for (evidence in evidenceSet) {
+        result += {[evidence(1), evidence(2) * (1 / (1 - conflict)) ]};
+    }
+    return result;
+};
+
+accumulate := procedure(x, y) {
+    result := {};
+    for (u in x, v in y) {
+        result += {[u(1) * v(1), u(2) * v(2)]};
+    }
+    return removeConflict(unify(result));
+};
+
+accumulateAll := procedure(x) {
+    result := {[omega(), 1]}; // Sgt. Schultz: I know nothing, nothing!
+    for (y in x) {
+        result := accumulate(result, y);
+    }
+    return result;
+};
+
+plausibility := procedure(evidenceSet, needle) {
+    pl := 0;
+    for (evidence in evidenceSet) {
+        if (needle in evidence(1) || (isSet(needle) && needle >= evidence(1))) {
+            pl += evidence(2);
+        }
+    }
+    return pl;
+};
+
+believe := procedure(evidenceSet, needle) {
+    b := 0;
+    for (evidence in evidenceSet) {
+        if ({needle} == evidence(1) || needle == evidence(1)) {
+            b += evidence(2);
+        }
+    }
+    return b;
+};
+
+// stuff for printing
+
+prettyPrint := procedure(evidenceSet) {
+    es := evidenceSet;
+    print();
+    if (#evidenceSet > 0) {
+        while (#evidenceSet > 0) {
+            mMax    := max(range(evidenceSet));
+            for (e in evidenceSet) {
+                if (e(2) == mMax) {
+                    evidence    := e;
+                    evidenceSet -= {e};
+                    break;
+                }
+            }
+            m := evidence(2);
+            if (evidence(1) == omega()) {
+                print("$nbrFormat(m)$ == m( Omega )");
+            } else {
+                print("$nbrFormat(m)$ == m( $evidence(1)$ )");
+            }
+        }
+        print();
+        print("Subject | Plausibility | Believe | Disbelieve");
+        print("---------------------------------------------");
+        for (subject in omega()) {
+            pl := plausibility(es, subject);
+            b  := believe(es, subject);
+            print("$subject$\t|    $nbrFormat(pl)$     |  $nbrFormat(b)$  |   $nbrFormat(1 - pl)$");
+        }
+    } else {
+        print("Evidence set is empty!");
+    }
+    print();
+};
+
+nbrFormat := procedure(value) {
+    roundValue := 1000;
+    rVal    := round(value * roundValue) / roundValue;
+    result  := str(rVal);
+    if (floor(rVal) == rVal) {
+        result += ".";
+    }
+    while (#result <= #str(roundValue)) {
+        result += "0";
+    }
+    return result;
+};
+
+/******************************************************************************/
+/**                                                                          **/
+/******************************************************************************/
+
+data := {
+ ["Tobias", 182, 30, "braun"  ],
+ ["Ralf",   169, 55, "schwarz"],
+ ["Sabine", 195, 17, "braun"  ],
+ ["Ulrike", 166, 61, "grau"   ],
+ ["Erna",   176, 41, "blond"  ],
+ ["Frank",  181, 34, "blond"  ]
+};
+
+one := {[selectIn(4, {"braun", "schwarz"}), 0.88], [omega(), 0.12]};
+
+prettyPrint(one);
+
+two := {[selectIn(2, {180 .. 200}), 0.45], [selectIn(2, {0 .. 170}), 0.45], [omega(), 0.1]};
+
+prettyPrint(two);
+
+three := {[selectIn(3, {40 .. 100}), 0.65], [omega(), 0.35]};
+
+prettyPrint(three);
+
+oneTwoThree := accumulateAll({one, two, three});
+
+prettyPrint(oneTwoThree);
+
+/******************************************************************************/
+/**                                                                          **/
+/******************************************************************************/
+
+data := {
+ ["Alfons", "Braun",   "M", 37],
+ ["Klaus",  "Schwarz", "M", 55],
+ ["John",   "Blond",   "M", 35],
+ ["Ludger", "Rot",     "M", 29],
+ ["Eva",    "Blond",   "W", 41],
+ ["Helge",  "Blond",   "M", 25],
+ ["Martin", "Schwarz", "M", 31],
+ ["Petra",  "Rot",     "W", 19],
+ ["Franka", "Braun",   "W", 51]
+};
+
+one := {[selectIn(4, {25 .. 30}), 0.4], [omega(), 0.6]};
+
+prettyPrint(one);
+
+two := {[selectEq(3, "W"), 0.8], [omega(), 0.2]};
+
+prettyPrint(two);
+
+three := {[selectEq(2, "Schwarz"), 0.8], [omega(), 0.2]};
+
+prettyPrint(three);
+
+oneTwo := accumulate(one, two);
+
+prettyPrint(oneTwo);
+
+oneTwoThree := accumulate(oneTwo, three);
+
+prettyPrint(oneTwoThree);
+

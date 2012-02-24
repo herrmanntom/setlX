@@ -4,8 +4,10 @@ import interpreter.exceptions.ContinueException;
 import interpreter.exceptions.BreakException;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
+import interpreter.types.SetlInt;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
@@ -26,6 +28,9 @@ implemented here as:
 */
 
 public class Iterator {
+    // functional character used in terms
+    public  final static String FUNCTIONAL_CHARACTER = "'iterator";
+
     private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private Expr        mCollection; // Rhs (should be Set/List)
     private Iterator    mNext;       // next iterator in iteratorChain
@@ -34,6 +39,12 @@ public class Iterator {
         mAssignable = assignable;
         mCollection = collection;
         mNext       = null;
+    }
+
+    private Iterator(Expr assignable, Expr collection, Iterator next) {
+        mAssignable = assignable;
+        mCollection = collection;
+        mNext       = next;
     }
 
     // adds next iterator to end of current iterator chain
@@ -80,7 +91,7 @@ public class Iterator {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'iterator");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mAssignable.toTerm());
         result.addMember(mCollection.toTerm());
         if (mNext != null) {
@@ -89,6 +100,32 @@ public class Iterator {
             result.addMember(new SetlString("nil"));
         }
         return result;
+    }
+
+    public static Iterator valueToIterator(Value value) throws TermConversionException {
+        if ( ! (value instanceof Term)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            try {
+                Term    term    = (Term) value;
+                String  fc      = term.functionalCharacter().getUnquotedString();
+                if (fc != FUNCTIONAL_CHARACTER || term.size() != 3) {
+                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                }
+
+                Expr        assignable  = TermConverter.valueToExpr(term.getMember(new SetlInt(1)));
+
+                Expr        collection  = TermConverter.valueToExpr(term.getMember(new SetlInt(2)));
+
+                Iterator    iterator    = null;
+                if (! term.getMember(new SetlInt(3)).equals(new SetlString("nil"))) {
+                    iterator    = Iterator.valueToIterator(term.getMember(new SetlInt(3)));
+                }
+                return new Iterator(assignable, collection, iterator);
+            } catch (SetlException se) {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+            }
+        }
     }
 
     /* private functions */

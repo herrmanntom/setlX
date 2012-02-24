@@ -19,9 +19,6 @@ implemented here as:
 */
 
 public class Variable extends Expr {
-    private String  mId;
-    private boolean isTerm;
-
     // This functional character is used internally
     public  final static String FUNCTIONAL_CHARACTER          = "'Variable";
     // this one is used externally (e.g. during toString)
@@ -36,6 +33,9 @@ public class Variable extends Expr {
      *          case x           : foo1(); // matches everything and binds it to x
      *      }
      */
+
+    private String  mId;
+    private boolean isTerm;
 
     public Variable(String id) {
         mId     = id;
@@ -85,7 +85,7 @@ public class Variable extends Expr {
 
     public static Variable termToExpr(Term term) throws TermConversionException {
         if (term.size() != 1 || (! (term.firstMember() instanceof SetlString))) {
-            throw new TermConversionException("malformed variable");
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             String id = ((SetlString) term.firstMember()).getUnquotedString();
             return new Variable(id);

@@ -7,6 +7,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.utilities.MatchResult;
+import interpreter.utilities.TermConverter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -302,9 +303,7 @@ public class SetlList extends CollectionValue {
     }
 
     public String toString() {
-        String result = getList().toString();
-
-        return result;
+        return TermConverter.valueToCodeFragment(this, false).toString();
     }
 
     /* term operations */

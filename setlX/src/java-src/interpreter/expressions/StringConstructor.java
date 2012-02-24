@@ -2,6 +2,7 @@ package interpreter.expressions;
 
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.IgnoreDummy;
 import interpreter.types.SetlBoolean;
@@ -11,6 +12,7 @@ import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 import interpreter.utilities.ParseSetlX;
+import interpreter.utilities.TermConverter;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -28,6 +30,9 @@ implemented here as:
 */
 
 public class StringConstructor extends Expr {
+    // functional character used in terms
+    public  final static String FUNCTIONAL_CHARACTER = "'string";
+
     private boolean      mEvaluate;    // should this string be evaluated ('@' -> false)
     private String       mOriginalStr; // original String
     private List<String> mFragments;   // list of string fragments for after and between expressions
@@ -102,6 +107,13 @@ public class StringConstructor extends Expr {
         }
     }
 
+    private StringConstructor(boolean evaluate, String originalStr, List<String> fragments, List<Expr> exprs) {
+        mEvaluate       = evaluate;
+        mOriginalStr    = originalStr;
+        mFragments      = fragments;
+        mExprs          = exprs;
+    }
+
     public SetlString evaluate() throws SetlException {
         Iterator<String>    fIter   = mFragments.iterator();
         Iterator<Expr>      eIter   = mExprs.iterator();
@@ -149,7 +161,7 @@ public class StringConstructor extends Expr {
             // simple string without $-expression
             result  = new SetlString(mFragments.get(0));
         } else {
-            Term t  = new Term("'string");
+            Term t  = new Term(FUNCTIONAL_CHARACTER);
 
             SetlList strList = new SetlList();
             for (String str: mFragments) {
@@ -167,6 +179,55 @@ public class StringConstructor extends Expr {
         }
 
         return result;
+    }
+
+    public static StringConstructor termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.firstMember() instanceof SetlList)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            boolean         evaluate    = true;
+            String          originalStr = "\"";
+            List<String>    fragments   = new LinkedList<String>();
+            List<Expr>      exprs       = new LinkedList<Expr>();
+
+            Iterator<Value> fIter       = ((SetlList) term.firstMember()).iterator();
+            Iterator<Value> eIter       = ((SetlList) term.lastMember()).iterator();
+
+            while (fIter.hasNext()) {
+                SetlString  sstring = (SetlString) fIter.next();
+                String      string  = sstring.getUnquotedString();
+                if (evaluate && string.contains("$")) {
+                    evaluate = false;
+                }
+                originalStr += sstring.getEscapedString();
+                fragments.add(string);
+
+                if (eIter.hasNext()) {
+                    Expr expr = TermConverter.valueToExpr(eIter.next());
+                    exprs.add(expr);
+                    originalStr += "$" + expr.toString() + "$";
+                }
+            }
+            if (eIter.hasNext()) {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+            }
+            originalStr += "\"";
+            return new StringConstructor(evaluate, originalStr, fragments, exprs);
+        }
+    }
+
+    public static StringConstructor valueToExpr(Value value) throws TermConversionException {
+        if ( ! (value instanceof SetlString)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        }
+        SetlString      sstring     = (SetlString) value;
+        String          string      = sstring.getUnquotedString();
+        boolean         evaluate    = ! string.contains("$"); // string was not evaluated when it contains a $, otherwise it would be split
+        String          originalStr = "\"" + sstring.getEscapedString() + "\"";
+        List<String>    fragments   = new LinkedList<String>();
+        fragments.add(string);
+        List<Expr>      exprs       = new LinkedList<Expr>();
+        return new StringConstructor(evaluate, originalStr, fragments, exprs);
     }
 }
 

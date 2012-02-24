@@ -189,6 +189,31 @@ public class SetlString extends Value {
         return mString;
     }
 
+    public String getEscapedString() {
+        // parse escape sequences
+        int           length    = mString.length();
+        StringBuilder sb        = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char c = mString.charAt(i);  // current char
+            if (c == '\\') {
+                sb.append("\\\\");
+            } else if (c == '\n') {
+                sb.append("\\n");
+            } else if (c == '\r') {
+                sb.append("\\r");
+            } else if (c == '\t') {
+                sb.append("\\t");
+            } else if (c == '"') {
+                sb.append("\\\"");
+            } else if (c == '\0') {
+                sb.append("\\0");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
     public String toString() {
         return "\"" + mString + "\"";
     }

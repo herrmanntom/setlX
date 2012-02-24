@@ -1,7 +1,6 @@
 package interpreter.types;
 
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.expressions.Variable;
@@ -74,6 +73,10 @@ public class Term extends CollectionValue {
         return new SetlString(mFunctionalCharacter);
     }
 
+    public Value getMember(Value index) throws SetlException {
+        return mBody.getMember(index);
+    }
+
     public Value lastMember() {
         return mBody.lastMember();
     }
@@ -122,11 +125,7 @@ public class Term extends CollectionValue {
     }
 
     public String toString() {
-        try {
-            return TermConverter.termToCodeFragment(this).toString();
-        } catch (TermConversionException tce) {
-            return canonical();
-        }
+        return TermConverter.valueToCodeFragment(this, false).toString();
     }
 
     /* term operations */

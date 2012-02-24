@@ -2,6 +2,7 @@ package interpreter.utilities;
 
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.expressions.VariableIgnore;
 import interpreter.types.CollectionValue;
@@ -9,6 +10,7 @@ import interpreter.types.SetlInt;
 import interpreter.types.SetlList;
 import interpreter.types.Value;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -77,6 +79,14 @@ public class ExplicitList extends Constructor {
         for (Expr member: mList) {
             collection.addMember(member.toTerm());
         }
+    }
+
+    public static ExplicitList CollectionValueToExplicitList(CollectionValue value) throws TermConversionException {
+        List<Expr> exprList = new ArrayList<Expr>(value.size());
+        for (Value v : value) {
+            exprList.add(TermConverter.valueToExpr(v));
+        }
+        return new ExplicitList(exprList);
     }
 }
 

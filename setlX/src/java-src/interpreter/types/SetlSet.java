@@ -7,6 +7,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.utilities.MatchResult;
+import interpreter.utilities.TermConverter;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -338,11 +339,7 @@ public class SetlSet extends CollectionValue {
     }
 
     public String toString() {
-        // unfortunately sets in java use [] in toString...
-        String result = getSet().toString();
-        result = "{" + result.substring(1, result.length() - 1) + "}";
-
-        return result;
+        return TermConverter.valueToCodeFragment(this, false).toString();
     }
 
     /* term operations */

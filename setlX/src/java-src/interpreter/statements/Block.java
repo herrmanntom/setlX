@@ -1,9 +1,12 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
+import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.TermConverter;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +27,9 @@ implemented here as:
 */
 
 public class Block extends Statement {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'block";
+
     private List<Statement>  mStatements;
 
     public Block() {
@@ -77,7 +83,7 @@ public class Block extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'block");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
 
         SetlList stmntList = new SetlList();
         for (Statement s: mStatements) {
@@ -86,6 +92,19 @@ public class Block extends Statement {
         result.addMember(stmntList);
 
         return result;
+    }
+
+    public static Block termToStatement(Term term) throws TermConversionException {
+        if (term.size() != 1 && term.firstMember() instanceof SetlList) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            SetlList    stmnts  = (SetlList) term.lastMember();
+            Block       block   = new Block();
+            for (Value v : stmnts) {
+                block.add(TermConverter.valueToStatement(v));
+            }
+            return block;
+        }
     }
 }
 

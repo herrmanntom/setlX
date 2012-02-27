@@ -207,16 +207,10 @@ boolExpr [boolean enableIgnore] returns [Expr bex]
     ;
 
 equivalence [boolean enableIgnore] returns [Expr eq]
-    @init{
-        int type = -1;
-    }
-    : i1 = implication[$enableIgnore]   { eq = $i1.i;                            }
+    : i1 = implication[$enableIgnore]              { eq = $i1.i;              }
       (
-        (
-            '<==>'                      { type = Comparison.EQUAL;               }
-          | '<!=>'                      { type = Comparison.UNEQUAL;             }
-        )
-        i2 = implication[$enableIgnore] { eq = new Comparison (eq, type, $i2.i); }
+         '<==>' i2 = implication[$enableIgnore] { eq = new BoolEqual  (eq, $i2.i); }
+       | '<!=>' i2 = implication[$enableIgnore] { eq = new BoolUnEqual(eq, $i2.i); }
       )?
     ;
 
@@ -260,22 +254,17 @@ boolFactor [boolean enableIgnore] returns [Expr bf]
     ;
 
 comparison [boolean enableIgnore] returns [Expr comp]
-    @init{
-        int type = -1;
-    }
     : e1 = expr[$enableIgnore]
       (
-          '=='    { type = Comparison.EQUAL;                      }
-        | '!='    { type = Comparison.UNEQUAL;                    }
-        | '<'     { type = Comparison.LESS;                       }
-        | '<='    { type = Comparison.LESSorEQUAL;                }
-        | '>'     { type = Comparison.MORE;                       }
-        | '>='    { type = Comparison.MOREorEQUAL;                }
-        | 'in'    { type = Comparison.IN;                         }
-        | 'notin' { type = Comparison.NOTIN;                      }
+         '=='    e2 = expr[$enableIgnore] { comp = new Equal      ($e1.ex, $e2.ex); }
+       | '!='    e2 = expr[$enableIgnore] { comp = new UnEqual    ($e1.ex, $e2.ex); }
+       | '<'     e2 = expr[$enableIgnore] { comp = new Less       ($e1.ex, $e2.ex); }
+       | '<='    e2 = expr[$enableIgnore] { comp = new LessOrEqual($e1.ex, $e2.ex); }
+       | '>'     e2 = expr[$enableIgnore] { comp = new More       ($e1.ex, $e2.ex); }
+       | '>='    e2 = expr[$enableIgnore] { comp = new MoreOrEqual($e1.ex, $e2.ex); }
+       | 'in'    e2 = expr[$enableIgnore] { comp = new In         ($e1.ex, $e2.ex); }
+       | 'notin' e2 = expr[$enableIgnore] { comp = new NotIn      ($e1.ex, $e2.ex); }
       )
-      e2 = expr[$enableIgnore]
-      { comp = new Comparison ($e1.ex, type, $e2.ex); }
     ;
 
 expr [boolean enableIgnore] returns [Expr ex]

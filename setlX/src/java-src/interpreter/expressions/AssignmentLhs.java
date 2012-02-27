@@ -2,12 +2,14 @@ package interpreter.expressions;
 
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.TermConverter;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -22,6 +24,9 @@ implemented here as:
 */
 
 public class AssignmentLhs {
+    // functional character used in terms (only used when assigning into collection (e.g. `a(1) := 5')
+    private final static String FUNCTIONAL_CHARACTER_CALL = "'assignmentCall";
+
     private Expr        mLhs;   // lhs (should be either a Variable or ListConstructor)
     private List<Expr>  mItems; // subsequent calls upon the mLhs Expr
 
@@ -38,7 +43,7 @@ public class AssignmentLhs {
         Expr result = mLhs;
         if (mItems != null && mItems.size() > 0) {
             for (Expr e : mItems) {
-                List<Expr> args = new LinkedList<Expr>();
+                List<Expr> args = new ArrayList<Expr>(1);
                 args.add(e);
                 result = new Call(result, args);
             }
@@ -72,16 +77,42 @@ public class AssignmentLhs {
     public Value toTerm() {
         Value result = mLhs.toTerm();
         if (mItems != null && mItems.size() > 0) {
-            for (Expr arg: mItems) {
-                Term        call        = new Term("'call");
-                SetlList    arguments   = new SetlList();
-                call.addMember(result);
-                call.addMember(arguments);
-                arguments.addMember(arg.toTerm());
-                result = call;
+            Term        call    = new Term(FUNCTIONAL_CHARACTER_CALL);
+            SetlList    args    = new SetlList();
+            call.addMember(result);
+            call.addMember(args);
+            for (Expr e: mItems) {
+                args.addMember(e.toTerm());
             }
+            result  = call;
         }
         return result;
+    }
+
+    public static AssignmentLhs valueToAssignmentLhs(Value value) throws TermConversionException {
+        if (value instanceof Term) {
+            Term    term    = (Term) value;
+            String  fc      = term.functionalCharacter().getUnquotedString();
+            if (fc == Variable.FUNCTIONAL_CHARACTER) {
+                Variable    var = Variable.termToExpr(term);
+                return new AssignmentLhs(var);
+            } else if (fc == FUNCTIONAL_CHARACTER_CALL && term.size() == 2 && term.lastMember() instanceof SetlList) {
+                Expr        expr    = TermConverter.valueToExpr(term.firstMember());
+                SetlList    argsLst = (SetlList) term.lastMember();
+                List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
+                for (Value v : argsLst) {
+                    args.add(TermConverter.valueToExpr(v));
+                }
+                return new AssignmentLhs(expr, args);
+            } else {
+                throw new TermConversionException("malformed AssignmentLhs");
+            }
+        } else if (value instanceof SetlList) {
+            Expr    lhs = TermConverter.valueToExpr(value);
+            return new AssignmentLhs(lhs);
+        } else {
+            throw new TermConversionException("malformed AssignmentLhs");
+        }
     }
 
     /* private methods */

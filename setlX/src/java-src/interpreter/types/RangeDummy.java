@@ -12,7 +12,7 @@ public class RangeDummy extends Value {
     }
 
     public String toString() {
-        return "..";
+        return " .. ";
     }
 
     public int compareTo(Value v) {

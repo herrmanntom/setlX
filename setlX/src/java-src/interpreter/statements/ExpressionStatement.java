@@ -40,10 +40,8 @@ public class ExpressionStatement extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
-        Term result = new Term("'expression");
-        result.addMember(mExpr.toTerm());
-        return result;
+    public Value toTerm() {
+        return mExpr.toTerm();
     }
 }
 

@@ -1,9 +1,17 @@
 package interpreter.utilities;
 
 import interpreter.exceptions.TermConversionException;
-import interpreter.boolExpressions.*;
-import interpreter.expressions.*;
-import interpreter.statements.*;
+import interpreter.boolExpressions.Equal;
+import interpreter.expressions.Assignment;
+import interpreter.expressions.CallRangeDummy;
+import interpreter.expressions.Expr;
+import interpreter.expressions.SetListConstructor;
+import interpreter.expressions.StringConstructor;
+import interpreter.expressions.TermConstructor;
+import interpreter.expressions.VariableIgnore;
+import interpreter.expressions.ValueExpr;
+import interpreter.statements.ExpressionStatement;
+import interpreter.statements.Statement;
 import interpreter.types.IgnoreDummy;
 import interpreter.types.RangeDummy;
 import interpreter.types.SetlList;
@@ -31,14 +39,14 @@ public class TermConverter {
                 if (fc.charAt(0) == '\'' && fc.length() >= 3) { // all internally used terms start with single straight quote
                     // search in map
                     Method  converter   = sConverters.get(fc);
-                    // search via reflection if method was not found in map
+                    // search via reflection, if method was not found in map
                     if (converter == null) {
                         // string used for method look-up
                         String      needle              = fc.substring(1, 2).toUpperCase() + fc.substring(2);
                         // look it up in [bool]expression and statement packages
-                        String      packageNameBExpr    = Comparison.class.getPackage().getName();
-                        String      packageNameExpr     = Expr      .class.getPackage().getName();
-                        String      packageNameStmnt    = Statement .class.getPackage().getName();
+                        String      packageNameBExpr    = Equal    .class.getPackage().getName();
+                        String      packageNameExpr     = Expr     .class.getPackage().getName();
+                        String      packageNameStmnt    = Statement.class.getPackage().getName();
                         // class which is searched
                         Class<?>    clAss               = null;
                         try {
@@ -55,7 +63,7 @@ public class TermConverter {
                                     converter   = null;
                                 } else {
                                     try {
-                                        clAss       = Class.forName(packageNameExpr + '.' + needle);
+                                        clAss       = Class.forName(packageNameStmnt + '.' + needle);
                                         converter   = clAss.getMethod("termToStatement", Term.class);
                                     } catch (Exception e3) {
                                         // look-up failed, nothing more to try
@@ -72,15 +80,23 @@ public class TermConverter {
                     // invoke method found
                     if (converter != null) {
                         try {
+                            if (false) { throw new TermConversionException(""); } // FIX: compiler is unable to determine that invoked method may throw this exception
                             return (CodeFragment) converter.invoke(null, term);
+                        } catch (TermConversionException tce) {
+                            throw tce;
                         } catch (Exception iae) { // this will never happen ;-)
-                            throw new TermConversionException("Functional character does not represent an CodeFragment.");
+                            throw new TermConversionException("Impossible error...");
                         }
                     }
                     // special cases
-                    // non-generic expressions TODO
-                    else if (false) {
-                        return null;
+                    // non-generic expressions
+                    else if (fc == Assignment.FUNCTIONAL_CHARACTER_SUM        ||
+                             fc == Assignment.FUNCTIONAL_CHARACTER_DIFFERENCE ||
+                             fc == Assignment.FUNCTIONAL_CHARACTER_PRODUCT    ||
+                             fc == Assignment.FUNCTIONAL_CHARACTER_DIVISION   ||
+                             fc == Assignment.FUNCTIONAL_CHARACTER_MODULO
+                    ) {
+                        return Assignment.termToExpr(term);
                     }
                     // end of non-generic expressions
                     else if (restrictToExpr) {

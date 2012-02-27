@@ -1,42 +1,44 @@
-package interpreter.expressions;
+package interpreter.boolExpressions;
 
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
+import interpreter.expressions.Expr;
+import interpreter.types.SetlBoolean;
 import interpreter.types.Term;
-import interpreter.types.Value;
 import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
-product
-    : power ('*' power | [...])*
+comparison
+    : expr 'in' expr
     ;
 
 implemented here as:
-      =====      =====
-      mLhs       mRhs
+      ====      ====
+      mLhs      mRhs
 */
 
-public class Product extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'product";
+public class In extends Expr {
+    // functional character used in terms
+    public  final static String FUNCTIONAL_CHARACTER = "'in";
 
     private Expr mLhs;
     private Expr mRhs;
 
-    public Product(Expr lhs, Expr rhs) {
-        mLhs = lhs;
-        mRhs = rhs;
+    public In(Expr lhs, Expr rhs) {
+        mLhs  = lhs;
+        mRhs  = rhs;
     }
 
-    public Value evaluate() throws SetlException {
-        return mLhs.eval().multiply(mRhs.eval());
+    public SetlBoolean evaluate() throws SetlException {
+        // note: rhs and lhs swapped!
+        return mRhs.eval().containsMember(mLhs.eval());
     }
 
     /* string operations */
 
     public String toString(int tabs) {
-        return mLhs.toString(tabs) + " * " + mRhs.toString(tabs);
+        return mLhs.toString(tabs) + " in " + mRhs.toString(tabs);
     }
 
     /* term operations */
@@ -48,13 +50,13 @@ public class Product extends Expr {
         return result;
     }
 
-    public static Product termToExpr(Term term) throws TermConversionException {
+    public static In termToExpr(Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Expr lhs = TermConverter.valueToExpr(term.firstMember());
             Expr rhs = TermConverter.valueToExpr(term.lastMember());
-            return new Product(lhs, rhs);
+            return new In(lhs, rhs);
         }
     }
 }

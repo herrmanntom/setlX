@@ -1,8 +1,10 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.SetlInt;
 import interpreter.types.Term;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -17,6 +19,9 @@ implemented here as:
 */
 
 public class Cardinality extends Expr {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'cardinality";
+    
     private Expr mExpr;
 
     public Cardinality(Expr expr) {
@@ -36,9 +41,18 @@ public class Cardinality extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'cardinality");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mExpr.toTerm());
         return result;
+    }
+
+    public static Cardinality termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 1) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Expr expr = TermConverter.valueToExpr(term.firstMember());
+            return new Cardinality(expr);
+        }
     }
 }
 

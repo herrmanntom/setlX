@@ -1,8 +1,10 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -16,6 +18,9 @@ implemented here as:
 */
 
 public class Difference extends Expr {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'difference";
+
     private Expr mLhs;
     private Expr mRhs;
 
@@ -37,10 +42,20 @@ public class Difference extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'difference");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());
         return result;
+    }
+
+    public static Difference termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            return new Difference(lhs, rhs);
+        }
     }
 }
 

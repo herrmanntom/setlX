@@ -2,7 +2,6 @@ package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
-import interpreter.expressions.Expr;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.TermConverter;
@@ -19,7 +18,7 @@ implemented here as:
 */
 
 public class Sum extends Expr {
-    // functional character used in terms (MUST be classname starting with lower case letter!)
+    // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'sum";
 
     private Expr mLhs;

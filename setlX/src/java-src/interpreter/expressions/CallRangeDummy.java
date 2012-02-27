@@ -29,7 +29,7 @@ public class CallRangeDummy extends Expr {
     /* string operations */
 
     public String toString(int tabs) {
-        return "..";
+        return " .. ";
     }
 
     /* term operations */

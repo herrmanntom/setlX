@@ -1,8 +1,10 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -17,6 +19,9 @@ implemented here as:
 */
 
 public class Negate extends Expr {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'negate";
+
     private Expr mExpr;
 
     public Negate(Expr expr) {
@@ -36,9 +41,18 @@ public class Negate extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'negate");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mExpr.toTerm());
         return result;
+    }
+
+    public static Negate termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 1) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Expr expr = TermConverter.valueToExpr(term.firstMember());
+            return new Negate(expr);
+        }
     }
 }
 

@@ -19,8 +19,8 @@ this class implements an ignored variable inside an idList or expression:
 */
 
 public class VariableIgnore extends Expr {
-    // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'variableIgnore";
+    // functional character used in terms (MUST be classname starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'variableIgnore";
 
     public final static VariableIgnore VI = new VariableIgnore();
 
@@ -40,6 +40,10 @@ public class VariableIgnore extends Expr {
 
     public Term toTerm() {
         return new Term(FUNCTIONAL_CHARACTER);
+    }
+
+    public static VariableIgnore termToExpr(Term term) {
+        return VI;
     }
 }
 

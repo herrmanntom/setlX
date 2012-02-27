@@ -15,8 +15,8 @@ this class implements a range token inside the parameters of a call:
 */
 
 public class CallRangeDummy extends Expr {
-    // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'callRangeDummy";
+    // functional character used in terms (MUST be classname starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'callRangeDummy";
 
     public final static CallRangeDummy CRD = new CallRangeDummy();
 
@@ -36,6 +36,10 @@ public class CallRangeDummy extends Expr {
 
     public Term toTerm() {
         return new Term(FUNCTIONAL_CHARACTER);
+    }
+
+    public static CallRangeDummy termToExpr(Term term) {
+        return CRD;
     }
 }
 

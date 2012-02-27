@@ -30,7 +30,7 @@ public class Variable extends Expr {
      * This is done to create a difference between the cases used in
      *      match(term) {
      *          case 'variable(x): foo2(); // matches only variables
-     *          case x           : foo1(); // matches everything and binds it to x
+     *          case x           : foo1(); // `x'.toTerm() results in 'Variable("x"); matches everything and binds it to x
      *      }
      */
 

@@ -30,8 +30,8 @@ implemented here as:
 */
 
 public class StringConstructor extends Expr {
-    // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'string";
+    // functional character used in terms (MUST be classname starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'stringConstructor";
 
     private boolean      mEvaluate;    // should this string be evaluated ('@' -> false)
     private String       mOriginalStr; // original String
@@ -205,7 +205,7 @@ public class StringConstructor extends Expr {
                 if (eIter.hasNext()) {
                     Expr expr = TermConverter.valueToExpr(eIter.next());
                     exprs.add(expr);
-                    originalStr += "$" + expr.toString() + "$";
+                    originalStr += "$" + expr.toString().replace("$", "\\$") + "$";
                 }
             }
             if (eIter.hasNext()) {
@@ -222,7 +222,7 @@ public class StringConstructor extends Expr {
         }
         SetlString      sstring     = (SetlString) value;
         String          string      = sstring.getUnquotedString();
-        boolean         evaluate    = ! string.contains("$"); // string was not evaluated when it contains a $, otherwise it would be split
+        boolean         evaluate    = ! string.contains("$"); // string was not evaluated when it contains a $, otherwise it would have been split
         String          originalStr = "\"" + sstring.getEscapedString() + "\"";
         List<String>    fragments   = new LinkedList<String>();
         fragments.add(string);

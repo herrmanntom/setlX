@@ -52,8 +52,8 @@ public class VariableScope {
             String packageName = PreDefinedFunction.class.getPackage().getName();
             String className   = "PD_" + var;
             try {
-                Class c = Class.forName(packageName + '.' + className);
-                i.mV    = (PreDefinedFunction) c.getField("DEFINITION").get(null);
+                Class<?> c = Class.forName(packageName + '.' + className);
+                i.mV       = (PreDefinedFunction) c.getField("DEFINITION").get(null);
             } catch (Exception e) {
                 /* Name does not match predefined function.
                    But return value already is null, no change necessary.     */

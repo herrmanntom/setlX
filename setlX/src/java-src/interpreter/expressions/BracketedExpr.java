@@ -19,8 +19,8 @@ implemented here as:
 */
 
 public class BracketedExpr extends Expr {
-    // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'brackets";
+    // functional character used in terms (MUST be classname starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'bracketedExpr";
 
     private Expr mExpr;
 

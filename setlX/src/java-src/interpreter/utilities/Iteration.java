@@ -74,7 +74,7 @@ public class Iteration extends Constructor {
     public String toString(int tabs) {
         String r;
         if (mExpr != null) {
-            r = mExpr.toString(tabs) + ": ";
+            r = mExpr.toString(tabs) + " : ";
         } else {
             r = "";
         }

@@ -19,8 +19,8 @@ implemented here as:
 */
 
 public class Sum extends Expr {
-    // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'sum";
+    // functional character used in terms (MUST be classname starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'sum";
 
     private Expr mLhs;
     private Expr mRhs;

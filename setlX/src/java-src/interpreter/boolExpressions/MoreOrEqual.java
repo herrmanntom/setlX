@@ -21,7 +21,7 @@ implemented here as:
 
 public class MoreOrEqual extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'moreOrEqual";
+    private final static String FUNCTIONAL_CHARACTER = "'moreOrEqual";
 
     private Expr mLhs;
     private Expr mRhs;

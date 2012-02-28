@@ -20,7 +20,7 @@ implemented here as:
 
 public class UnEqual extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'unEqual";
+    private final static String FUNCTIONAL_CHARACTER = "'unEqual";
 
     private Expr mLhs;
     private Expr mRhs;

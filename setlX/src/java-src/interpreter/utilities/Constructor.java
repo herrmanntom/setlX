@@ -29,17 +29,17 @@ public abstract class Constructor {
         if (value.size() == 1 && value.firstMember() instanceof Term) {
             Term    term    = (Term) value.firstMember();
             String  fc      = term.functionalCharacter().getUnquotedString();
-            if (fc == Iteration.FUNCTIONAL_CHARACTER) {
-                return Iteration.TermToIteration(term);
-            } else if (fc == Range.FUNCTIONAL_CHARACTER) {
-                return Range.TermToRange(term);
+            if (fc.equals(Iteration.FUNCTIONAL_CHARACTER)) {
+                return Iteration.termToIteration(term);
+            } else if (fc.equals(Range.FUNCTIONAL_CHARACTER)) {
+                return Range.termToRange(term);
             } else {
                 // assume explicit list of a single term
-                return ExplicitList.CollectionValueToExplicitList(value);
+                return ExplicitList.collectionValueToExplicitList(value);
             }
         } else {
             // assume explicit list;
-            return ExplicitList.CollectionValueToExplicitList(value);
+            return ExplicitList.collectionValueToExplicitList(value);
         }
     }
 }

@@ -1,9 +1,12 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
+import interpreter.types.Value;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -15,18 +18,21 @@ statement
 
 implemented with different classes which inherit from BranchAbstract:
       ====================================  ===========================================    ====================
-                    BranchIf                               BranchElseIf                         BranchElse
+                  IfThenBranch                          IfThenElseIfBranch                   IfThenElseBranch
 */
 
 public class IfThen extends Statement {
-    private List<BranchAbstract> mBranchList;
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'ifThen";
 
-    public IfThen(List<BranchAbstract> branchList) {
+    private List<IfThenAbstractBranch> mBranchList;
+
+    public IfThen(List<IfThenAbstractBranch> branchList) {
         mBranchList = branchList;
     }
 
     public void execute() throws SetlException {
-        for (BranchAbstract br : mBranchList) {
+        for (IfThenAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
                 br.execute();
                 break;
@@ -38,7 +44,7 @@ public class IfThen extends Statement {
 
     public String toString(int tabs) {
         String result = "";
-        for (BranchAbstract br : mBranchList) {
+        for (IfThenAbstractBranch br : mBranchList) {
             result += br.toString(tabs);
         }
         return result;
@@ -47,15 +53,28 @@ public class IfThen extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'ifBlock");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
 
         SetlList branchList = new SetlList();
-        for (BranchAbstract br: mBranchList) {
+        for (IfThenAbstractBranch br: mBranchList) {
             branchList.addMember(br.toTerm());
         }
         result.addMember(branchList);
 
         return result;
+    }
+
+    public static IfThen termToStatement(Term term) throws TermConversionException {
+        if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            SetlList                    branches    = (SetlList) term.firstMember();
+            List<IfThenAbstractBranch>  branchList  = new ArrayList<IfThenAbstractBranch>(branches.size());
+            for (Value v : branches) {
+                branchList.add(IfThenAbstractBranch.valueToIfThenAbstractBranch(v));
+            }
+            return new IfThen(branchList);
+        }
     }
 }
 

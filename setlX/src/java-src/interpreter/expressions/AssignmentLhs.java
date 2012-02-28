@@ -93,10 +93,10 @@ public class AssignmentLhs {
         if (value instanceof Term) {
             Term    term    = (Term) value;
             String  fc      = term.functionalCharacter().getUnquotedString();
-            if (fc == Variable.FUNCTIONAL_CHARACTER) {
+            if (fc.equals(Variable.FUNCTIONAL_CHARACTER)) {
                 Variable    var = Variable.termToExpr(term);
                 return new AssignmentLhs(var);
-            } else if (fc == FUNCTIONAL_CHARACTER_CALL && term.size() == 2 && term.lastMember() instanceof SetlList) {
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_CALL) && term.size() == 2 && term.lastMember() instanceof SetlList) {
                 Expr        expr    = TermConverter.valueToExpr(term.firstMember());
                 SetlList    argsLst = (SetlList) term.lastMember();
                 List<Expr>  args    = new ArrayList<Expr>(argsLst.size());

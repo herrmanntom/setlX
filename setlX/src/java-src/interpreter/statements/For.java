@@ -1,11 +1,13 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 import interpreter.utilities.Iterator;
 import interpreter.utilities.IteratorExecutionContainer;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -20,6 +22,9 @@ implemented here as:
 */
 
 public class For extends Statement {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'for";
+
     private Iterator    mIterator;
     private Block       mStatements;
 
@@ -58,10 +63,20 @@ public class For extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'for");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mIterator.toTerm());
         result.addMember(mStatements.toTerm());
         return result;
+    }
+
+    public static For termToStatement(Term term) throws TermConversionException {
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Iterator    iterator    = Iterator.valueToIterator(term.firstMember());
+            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            return new For(iterator, block);
+        }
     }
 }
 

@@ -13,14 +13,14 @@ print();
   getScope()              // get a term representing all variables set in current scope
 */
 
-print("variables in outer scope: ", canonical(getScope()));
+print("variables in outer scope: ", getScope());
 printInnerScope := procedure() {
     secretVariable := 42;
-    print("variables in inner scope: ", canonical(getScope()));
+    print("variables in inner scope: ", getScope());
 };
-print("variables in outer scope: ", canonical(getScope()));
+print("variables in outer scope: ", getScope());
 printInnerScope();
-print("variables in outer scope: ", canonical(getScope()));
+print("variables in outer scope: ", getScope());
 print();
 
 /*******************************************************************************
@@ -133,8 +133,11 @@ print("\"print(parseStatements(\\\"print(\\\\\"that is crazy!\\\\\");\\\"));\" =
 print();
 
 /*******************************************************************************
-ToDo/Not jet implemented:
-
-  evalTerm(term)          // execute a term which represents SetlX statements and/or expessions
-
+  evalTerm(term)          // execute a term which represents SetlX statements and/or expressions
 */
+print( evalTerm(parse("1 + 5")) ); // 6
+evalTerm(parseStatements("print(\"foo\");a := 99 * 2;b:= sin(1);")); // prints foo and sets a, b
+print(a); // 198
+print(b); // ~0.84
+print();
+

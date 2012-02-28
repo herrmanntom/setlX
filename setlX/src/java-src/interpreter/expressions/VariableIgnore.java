@@ -20,7 +20,7 @@ this class implements an ignored variable inside an idList or expression:
 
 public class VariableIgnore extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'variableIgnore";
+    public final static String FUNCTIONAL_CHARACTER = "'variableIgnore";
 
     public final static VariableIgnore VI = new VariableIgnore();
 

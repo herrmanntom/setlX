@@ -20,7 +20,7 @@ implemented here as:
 
 public class Equal extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'equal";
+    private final static String FUNCTIONAL_CHARACTER = "'equal";
 
     private Expr mLhs;
     private Expr mRhs;

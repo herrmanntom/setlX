@@ -20,7 +20,7 @@ implemented here as:
 
 public class More extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'more";
+    private final static String FUNCTIONAL_CHARACTER = "'more";
 
     private Expr mLhs;
     private Expr mRhs;

@@ -95,7 +95,7 @@ public class Block extends Statement {
     }
 
     public static Block termToStatement(Term term) throws TermConversionException {
-        if (term.size() != 1 && term.firstMember() instanceof SetlList) {
+        if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             SetlList    stmnts  = (SetlList) term.lastMember();

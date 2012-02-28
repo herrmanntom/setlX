@@ -1,10 +1,12 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -18,10 +20,13 @@ implemented here as:
                                                                         mStatements
 */
 
-public class BranchMatchDefault extends BranchMatchAbstract {
+public class MatchDefaultBranch extends MatchAbstractBranch {
+    // functional character used in terms
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'matchDefaultBranch";
+
     private Block       mStatements;
 
-    public BranchMatchDefault(Block statements) {
+    public MatchDefaultBranch(Block statements) {
         mStatements = statements;
     }
 
@@ -45,9 +50,18 @@ public class BranchMatchDefault extends BranchMatchAbstract {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'matchDefault");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mStatements.toTerm());
         return result;
+    }
+
+    public static MatchDefaultBranch termToBranch(Term term) throws TermConversionException {
+        if (term.size() != 1) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Block block = TermConverter.valueToBlock(term.firstMember());
+            return new MatchDefaultBranch(block);
+        }
     }
 }
 

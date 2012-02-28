@@ -22,7 +22,7 @@ implemented here as:
 
 public class Range extends Constructor {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'range";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'range";
 
     private Expr mStart;
     private Expr mSecond;
@@ -70,7 +70,7 @@ public class Range extends Constructor {
         collection.addMember(result);
     }
 
-    public static Range TermToRange(Term term) throws TermConversionException {
+    /*package*/ static Range termToRange(Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

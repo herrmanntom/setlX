@@ -156,10 +156,9 @@ public class StringConstructor extends Expr {
     /* term operations */
 
     public Value toTerm() {
-        Value   result;
         if (mFragments.size() == 1 && mExprs.size() == 0) {
             // simple string without $-expression
-            result  = new SetlString(mFragments.get(0));
+            return new SetlString(mFragments.get(0));
         } else {
             Term t  = new Term(FUNCTIONAL_CHARACTER);
 
@@ -175,14 +174,12 @@ public class StringConstructor extends Expr {
             }
             t.addMember(expList);
 
-            result = t;
+            return t;
         }
-
-        return result;
     }
 
     public static StringConstructor termToExpr(Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.firstMember() instanceof SetlList)) {
+        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             boolean         evaluate    = true;

@@ -2,10 +2,12 @@ package interpreter.statements;
 
 import interpreter.exceptions.CatchableInSetlXException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.ThrownInSetlXException;
 import interpreter.expressions.Variable;
 import interpreter.types.SetlError;
 import interpreter.types.Term;
+import interpreter.utilities.TermConverter;
 
 /*
 
@@ -22,12 +24,15 @@ implemented here as:
                                        mErrorVar   mBlockToRecover
 */
 
-public class BranchTryCatch extends BranchTryAbstract {
+public class TryCatchBranch extends TryCatchAbstractBranch {
+    // functional character used in terms
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'tryCatchBranch";
+
     private Variable                    mErrorVar;
     private Block                       mBlockToRecover;
     private CatchableInSetlXException   mException;      // last catched exception
 
-    public BranchTryCatch(Variable errorVar, Block blockToRecover){
+    public TryCatchBranch(Variable errorVar, Block blockToRecover){
         mErrorVar       = errorVar;
         mBlockToRecover = blockToRecover;
     }
@@ -63,10 +68,20 @@ public class BranchTryCatch extends BranchTryAbstract {
     /* term operations */
 
     public Term toTerm() {
-        Term    result  = new Term("'catch");
+        Term    result  = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mErrorVar.toTerm());
         result.addMember(mBlockToRecover.toTerm());
         return result;
+    }
+
+    public static TryCatchBranch termToBranch(Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Variable    var     = Variable.termToExpr((Term) term.firstMember());
+            Block       block   = TermConverter.valueToBlock(term.lastMember());
+            return new TryCatchBranch(var, block);
+        }
     }
 }
 

@@ -20,7 +20,7 @@ implemented here as:
 
 public class NotIn extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'notIn";
+    private final static String FUNCTIONAL_CHARACTER = "'notIn";
 
     private Expr mLhs;
     private Expr mRhs;

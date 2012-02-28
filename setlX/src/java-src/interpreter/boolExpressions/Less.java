@@ -20,7 +20,7 @@ implemented here as:
 
 public class Less extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'less";
+    private final static String FUNCTIONAL_CHARACTER = "'less";
 
     private Expr mLhs;
     private Expr mRhs;

@@ -1,6 +1,7 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
@@ -8,6 +9,7 @@ import interpreter.types.Value;
 import interpreter.utilities.Condition;
 import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
+import interpreter.utilities.TermConverter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,17 +27,26 @@ implemented here as:
                                         mTerms   mStatements
 */
 
-public class BranchMatch extends BranchMatchAbstract {
+public class MatchCaseBranch extends MatchAbstractBranch {
+    // functional character used in terms
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'matchCaseBranch";
+
     private List<Expr>  mExprs;      // expressions which creates terms to match
     private List<Value> mTerms;      // terms to match
     private Block       mStatements; // block to execute after match
 
-    public BranchMatch(List<Expr> exprs, Block statements){
+    public MatchCaseBranch(List<Expr> exprs, Block statements){
         mExprs      = exprs;
         mTerms      = new ArrayList<Value>(exprs.size());
         for (Expr expr: exprs) {
             mTerms.add(expr.toTerm());
         }
+        mStatements = statements;
+    }
+
+    private MatchCaseBranch(List<Expr> exprs, List<Value> terms, Block statements){
+        mExprs      = exprs;
+        mTerms      = terms;
         mStatements = statements;
     }
 
@@ -77,7 +88,7 @@ public class BranchMatch extends BranchMatchAbstract {
     /* term operations */
 
     public Term toTerm() {
-        Term     result   = new Term("'match");
+        Term     result   = new Term(FUNCTIONAL_CHARACTER);
 
         SetlList termList = new SetlList();
         for (Value v: mTerms) {
@@ -86,6 +97,22 @@ public class BranchMatch extends BranchMatchAbstract {
         result.addMember(termList);
         result.addMember(mStatements.toTerm());
         return result;
+    }
+
+    public static MatchCaseBranch termToBranch(Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            SetlList    termList    = (SetlList) term.firstMember();
+            List<Expr>  exprs       = new ArrayList<Expr>();
+            List<Value> terms       = new ArrayList<Value>();
+            for (Value v : termList) {
+                exprs.add(TermConverter.valueToExpr(v));
+                terms.add(v);
+            }
+            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            return new MatchCaseBranch(exprs, terms, block);
+        }
     }
 }
 

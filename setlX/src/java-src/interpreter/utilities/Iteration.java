@@ -30,7 +30,7 @@ implemented here as:
 
 public class Iteration extends Constructor {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'iteration";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'iteration";
 
     private Expr      mExpr;
     private Iterator  mIterator;
@@ -103,7 +103,7 @@ public class Iteration extends Constructor {
         collection.addMember(result);
     }
 
-    public static Iteration TermToIteration(Term term) throws TermConversionException {
+    /*package*/ static Iteration termToIteration(Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -117,7 +117,7 @@ public class Iteration extends Constructor {
 
                 Condition   cond        = null;
                 if (! term.getMember(new SetlInt(3)).equals(new SetlString("nil"))) {
-                    cond    = new Condition(TermConverter.valueToExpr(term.getMember(new SetlInt(3))));
+                    cond    = TermConverter.valueToCondition(term.getMember(new SetlInt(3)));
                 }
                 return new Iteration(expr, iterator, cond);
             } catch (SetlException se) {

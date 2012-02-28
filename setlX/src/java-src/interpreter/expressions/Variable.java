@@ -84,7 +84,7 @@ public class Variable extends Expr {
     }
 
     public static Variable termToExpr(Term term) throws TermConversionException {
-        if (term.size() != 1 || (! (term.firstMember() instanceof SetlString))) {
+        if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             String id = ((SetlString) term.firstMember()).getUnquotedString();

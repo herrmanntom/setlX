@@ -29,7 +29,7 @@ implemented here as:
 
 public class Iterator {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'iterator";
+    private final static String FUNCTIONAL_CHARACTER = "'iterator";
 
     private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private Expr        mCollection; // Rhs (should be Set/List)
@@ -109,7 +109,7 @@ public class Iterator {
             try {
                 Term    term    = (Term) value;
                 String  fc      = term.functionalCharacter().getUnquotedString();
-                if (fc != FUNCTIONAL_CHARACTER || term.size() != 3) {
+                if (! fc.equals(FUNCTIONAL_CHARACTER) || term.size() != 3) {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
 

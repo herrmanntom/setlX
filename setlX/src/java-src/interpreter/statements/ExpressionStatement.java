@@ -2,7 +2,6 @@ package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
-import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 

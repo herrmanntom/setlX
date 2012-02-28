@@ -1,7 +1,9 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -15,10 +17,13 @@ implemented here as:
                                                                                                    mStatements
 */
 
-public class BranchElse extends BranchAbstract {
+public class IfThenElseBranch extends IfThenAbstractBranch {
+    // functional character used in terms
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'ifThenElseBranch";
+
     private Block       mStatements;
 
-    public BranchElse(Block statements){
+    public IfThenElseBranch(Block statements){
         mStatements = statements;
     }
 
@@ -41,9 +46,18 @@ public class BranchElse extends BranchAbstract {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'else");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mStatements.toTerm());
         return result;
+    }
+
+    public static IfThenElseBranch termToBranch(Term term) throws TermConversionException {
+        if (term.size() != 1) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Block block = TermConverter.valueToBlock(term.firstMember());
+            return new IfThenElseBranch(block);
+        }
     }
 }
 

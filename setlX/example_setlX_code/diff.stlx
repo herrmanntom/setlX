@@ -32,8 +32,8 @@ diff := procedure(t, x) {
 
 test := procedure(s) {
     t := parse(s);
-    print("testing $canonical(t)$");
-    d := canonical(diff(t, "x"));
+    print("testing $t$");
+    d := diff(t, "x");
     print(d);
 };
 

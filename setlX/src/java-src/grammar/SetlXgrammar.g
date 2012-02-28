@@ -69,51 +69,53 @@ block returns [Block blk]
 
 statement returns [Statement stmnt]
     @init{
-        List<BranchAbstract>      branchList = new LinkedList<BranchAbstract>();
-        List<BranchMatchAbstract> matchList  = new LinkedList<BranchMatchAbstract>();
-        List<BranchTryAbstract>   tryList    = new LinkedList<BranchTryAbstract>();
-        BranchTryAbstract         tryCatch   = null;
+        List<IfThenAbstractBranch>      ifList     = new LinkedList<IfThenAbstractBranch>();
+        List<SwitchAbstractBranch>      caseList   = new LinkedList<SwitchAbstractBranch>();
+        List<MatchAbstractBranch>       matchList  = new LinkedList<MatchAbstractBranch>();
+        List<TryCatchAbstractBranch>    tryList    = new LinkedList<TryCatchAbstractBranch>();
     }
-    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                }
-    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));           }
+    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                    }
+    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));               }
       (
-        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk));       }
+        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));         }
       )*
       (
-        'else'                                    '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));                  }
+        'else'                                    '{' b3 = block '}' { ifList.add(new IfThenElseBranch($b3.blk));                    }
       )?
-      { stmnt = new IfThen(branchList); }
+      { stmnt = new IfThen(ifList); }
     | 'switch' '{'
       (
-        'case' c1 = condition[false] ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));         }
+        'case' c1 = condition[false] ':' b1 = block                  { caseList.add(new SwitchCaseBranch($c1.cnd, $b1.blk));         }
       )*
       (
-        'default'                    ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));               }
+        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));               }
       )?
-      '}' { stmnt = new Switch(branchList); }
+      '}' { stmnt = new Switch(caseList); }
     | 'match' '(' anyExpr[false] ')' '{'
       (
-        'case' exprList[true] ':' b1 = block                         { matchList.add(new BranchMatch($exprList.exprs, $b1.blk)); }
+        'case' exprList[true] ':' b1 = block                         { matchList.add(new MatchCaseBranch($exprList.exprs, $b1.blk)); }
       )*
       (
-        'default'             ':' b2 = block                         { matchList.add(new BranchMatchDefault($b2.blk));           }
+        'default'             ':' b2 = block                         { matchList.add(new MatchDefaultBranch($b2.blk));               }
       )?
       '}' { stmnt = new Match($anyExpr.ae, matchList); }
-    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);           }
-    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);            }
-    | 'try'                           '{' b1 = block '}'
+    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);               }
+    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);                }
+    | 'try'                                '{' b1 = block '}'
       (
-         'catch'     '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new BranchTryCatch   ($v1.v, $b2.blk));       }
-       | 'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new BranchTryCatchLng($v1.v, $b2.blk));       }
-       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new BranchTryCatchUsr($v1.v, $b2.blk));       }
-      )+
+         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));           }
+       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));           }
+      )*
+      (
+         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));           }
+      )?
       { stmnt = new TryCatch($b1.blk, tryList); }
-    | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                          }
-    | 'continue' ';'                                                 { stmnt = new Continue();                                   }
-    | 'break' ';'                                                    { stmnt = new Break();                                      }
-    | 'exit' ';'                                                     { stmnt = new Exit();                                       }
-    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);      }
-    | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);             }
+    | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                              }
+    | 'continue' ';'                                                 { stmnt = Continue.C;                                           }
+    | 'break' ';'                                                    { stmnt = Break.B;                                              }
+    | 'exit' ';'                                                     { stmnt = Exit.E;                                               }
+    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);          }
+    | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);                 }
     ;
 
 variable returns [Variable v]

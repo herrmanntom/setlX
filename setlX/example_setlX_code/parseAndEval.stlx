@@ -3,62 +3,53 @@
 getInput := procedure() {
     getValue := procedure() {
         print("Please enter some SetlX value");
-        valueStr    := get();
         try {
-            return eval(valueStr);
+            return eval(get());
         } catch (error) {
-            return error;
+            print();
+            print("Oh... you did that wrong... try again!");
+            print();
+            return getValue();
         }
     };
 
     value := getValue();
-    while (isError(value)) {
-        print();
-        print("Oh... you did that wrong... try again!");
-        print();
-        value := getValue();
-    }
     print("value\t:= $value$");
     print();
 
-
     getExpr := procedure() {
         print("Please enter some SetlX expression using the 'value' variable");
-        expr     := get();
         try {
-            exprTerm := parse(expr);
+            expr:= parse(get());
+            if (! isTerm(expr) || 'variable("value") notin expr) {
+                throw("wrong!");
+            }
+            return expr;
         } catch (error) {
-            exprTerm := error;
+            print();
+            print("Oh... you did that wrong... try again!");
+            print();
+            return getExpr();
         }
-        return [expr, exprTerm];
     };
 
-    [expr, exprTerm] := getExpr();
-    while (isError(exprTerm) || !isTerm(exprTerm) || 'variable("value") notin exprTerm) {
-        print();
-        print("Oh... you did that wrong... try again!");
-        print();
-        [expr, exprTerm] := getExpr();
-    }
+    expr := getExpr();
     print("expr\t:= " + expr);
-    print("Syntax-Tree:\nexpr\t:= " + canonical(exprTerm));
+    print("Syntax-Tree:\nexpr\t:= " + canonical(expr));
     print();
 
     try {
-        return eval(expr);
+        return evalTerm(expr);
     } catch (error) {
-        return error;
+        print();
+        print("No, No, No... that did not work out!");
+        print("Try again from the beginning, but don't make this error again:\n$error$");
+        print();
+        return getInput();
     }
 };
 
 result := getInput();
-while (isError(result)) {
-    print();
-    print("No, No, No... that did not work out!");
-    print("Try again from the beginning, but don't make this error again:\n$result$");
-    print();
-    result := getInput();
-}
 print("result\t:= $result$");
 print();
 

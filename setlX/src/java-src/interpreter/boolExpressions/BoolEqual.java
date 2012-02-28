@@ -20,7 +20,7 @@ implemented here as:
 
 public class BoolEqual extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'boolEqual";
+    private final static String FUNCTIONAL_CHARACTER = "'boolEqual";
 
     private Expr mLhs;
     private Expr mRhs;

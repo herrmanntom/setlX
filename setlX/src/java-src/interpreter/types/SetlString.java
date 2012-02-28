@@ -117,6 +117,17 @@ public class SetlString extends Value {
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
+    public SetlBoolean containsMember(Value element) throws IncompatibleTypeException {
+        if ( ! (element instanceof SetlString)) {
+            throw new IncompatibleTypeException("Left-hand-side of '" + element  + " in " + this + "' is not a string.");
+        }
+        if (mString.contains(((SetlString) element).mString)) {
+            return SetlBoolean.TRUE;
+        } else {
+            return SetlBoolean.FALSE;
+        }
+    }
+
     public SetlString getMember(Value vIndex) throws SetlException {
         int index = 0;
         if (vIndex instanceof SetlInt) {

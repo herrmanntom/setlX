@@ -89,7 +89,7 @@ public class Forall extends Expr {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Iterator    iterator    = Iterator.valueToIterator(term.firstMember());
-            Condition   condition   = new Condition(TermConverter.valueToExpr(term.lastMember()));
+            Condition   condition   = TermConverter.valueToCondition(term.lastMember());
             return new Forall(iterator, condition);
         }
     }

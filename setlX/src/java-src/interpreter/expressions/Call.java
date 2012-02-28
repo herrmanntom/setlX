@@ -102,7 +102,7 @@ public class Call extends Expr {
     }
 
     public static Call termToExpr(Term term) throws TermConversionException {
-        if (term.size() != 2 && ! (term.lastMember() instanceof SetlList)) {
+        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Expr        lhs     = TermConverter.valueToExpr(term.firstMember());

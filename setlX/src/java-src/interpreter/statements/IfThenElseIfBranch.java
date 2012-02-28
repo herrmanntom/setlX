@@ -1,8 +1,10 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.utilities.Condition;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -16,11 +18,14 @@ implemented here as:
                                                             mCondition     mStatements
 */
 
-public class BranchElseIf extends BranchAbstract {
+public class IfThenElseIfBranch extends IfThenAbstractBranch {
+    // functional character used in terms
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'ifThenElseIfBranch";
+
     private Condition mCondition;
     private Block     mStatements;
 
-    public BranchElseIf(Condition condition, Block statements){
+    public IfThenElseIfBranch(Condition condition, Block statements){
         mCondition  = condition;
         mStatements = statements;
     }
@@ -46,10 +51,20 @@ public class BranchElseIf extends BranchAbstract {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'if");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mCondition.toTerm());
         result.addMember(mStatements.toTerm());
         return result;
+    }
+
+    public static IfThenElseIfBranch termToBranch(Term term) throws TermConversionException {
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Condition   condition   = TermConverter.valueToCondition(term.firstMember());
+            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            return new IfThenElseIfBranch(condition, block);
+        }
     }
 }
 

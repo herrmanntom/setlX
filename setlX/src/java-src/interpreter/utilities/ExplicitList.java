@@ -81,7 +81,7 @@ public class ExplicitList extends Constructor {
         }
     }
 
-    public static ExplicitList CollectionValueToExplicitList(CollectionValue value) throws TermConversionException {
+    /*package*/ static ExplicitList collectionValueToExplicitList(CollectionValue value) throws TermConversionException {
         List<Expr> exprList = new ArrayList<Expr>(value.size());
         for (Value v : value) {
             exprList.add(TermConverter.valueToExpr(v));

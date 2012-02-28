@@ -7,7 +7,7 @@ print(canonical(exprTerm));
 
 match (exprTerm) {
     case a - b ** (c) :
-        print("match: a = $canonical(a)$, b = $canonical(b)$, c = $canonical(c)$");
+        print("match: a = $a$, b = $b$, c = $c$");
     default :
         print("failed to match");
 }
@@ -21,7 +21,7 @@ print(canonical(exprTerm));
 
 match (exprTerm) {
     case [a, b, c] :
-        print("match: a = $canonical(a)$, b = $canonical(b)$, c = $canonical(c)$");
+        print("match: a = $a$, b = $b$, c = $c$");
     default :
         print("failed to match");
 }
@@ -34,7 +34,7 @@ print(canonical(list));
 
 match (list) {
     case [a, "foo", b] :
-        print("match: a = $canonical(a)$, b = $canonical(b)$");
+        print("match: a = $a$, b = $b$");
     default :
         print("failed to match");
 }
@@ -47,7 +47,7 @@ print(canonical(list));
 
 match (list) {
     case [a, "bar", b] : // MUST NOT match
-        print("match: a = $canonical(a)$, b = $canonical(b)$");
+        print("match: a = $a$, b = $b$");
     default :
         print("failed to match");
 }
@@ -61,7 +61,7 @@ print(canonical(exprTerm));
 
 match (exprTerm) {
     case fnc(x + _ ** y) == _ :
-        print("match: fnc = $canonical(fnc)$, x = $canonical(x)$, c = $canonical(y)$");
+        print("match: fnc = $fnc$, x = $x$, y = $y$");
     default :
         print("failed to match");
 }
@@ -75,7 +75,7 @@ print(canonical(exprTerm));
 
 match (exprTerm) {
     case 'variable(x) :
-        print("match: x = $canonical(x)$");
+        print("match: x = $x$");
     default :
         print("failed to match");
 }

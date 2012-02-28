@@ -144,17 +144,17 @@ public class Assignment extends Expr {
             throw new TermConversionException("malformed " + fc);
         } else {
             int type = -1;
-            if        (fc == FUNCTIONAL_CHARACTER_DIRECT    ) {
+            if        (fc.equals(FUNCTIONAL_CHARACTER_DIRECT)    ) {
                 type = DIRECT;
-            } else if (fc == FUNCTIONAL_CHARACTER_SUM       ) {
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_SUM)       ) {
                 type = SUM;
-            } else if (fc == FUNCTIONAL_CHARACTER_DIFFERENCE) {
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_DIFFERENCE)) {
                 type = DIFFERENCE;
-            } else if (fc == FUNCTIONAL_CHARACTER_PRODUCT   ) {
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_PRODUCT)   ) {
                 type = PRODUCT;
-            } else if (fc == FUNCTIONAL_CHARACTER_DIVISION  ) {
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_DIVISION)  ) {
                 type = DIVISION;
-            } else if (fc == FUNCTIONAL_CHARACTER_MODULO    ) {
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_MODULO)    ) {
                 type = MODULO;
             } else {
                 throw new TermConversionException("malformed " + fc);

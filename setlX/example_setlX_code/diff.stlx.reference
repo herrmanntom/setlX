@@ -1,16 +1,16 @@
-testing 'variable("x")
+testing x
 1
-testing 'variable("y")
+testing y
 0
 testing 1
 0
-testing 'sum('variable("x"), 'variable("x"))
-'sum(1, 1)
-testing 'sum('sum('variable("x"), 'variable("x")), 'variable("y"))
-'sum('sum(1, 1), 0)
-testing 'product('variable("x"), 'variable("x"))
-'sum('product(1, 'variable("x")), 'product('variable("x"), 1))
-testing 'division('variable("x"), 'variable("x"))
-'division('difference('product(1, 'variable("x")), 'product('variable("x"), 1)), 'product('variable("x"), 'variable("x")))
-testing 'division(1, 'variable("x"))
-'division('difference('product(0, 'variable("x")), 'product(1, 1)), 'product('variable("x"), 'variable("x")))
+testing x + x
+1 + 1
+testing x + x + y
+1 + 1 + 0
+testing x * x
+1 * x + x * 1
+testing x / x
+1 * x - x * 1 / x * x
+testing 1 / x
+0 * x - 1 * 1 / x * x

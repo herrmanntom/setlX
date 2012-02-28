@@ -4,6 +4,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
 import interpreter.expressions.Variable;
+import interpreter.expressions.VariableIgnore;
 import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
 import interpreter.utilities.TermConverter;
@@ -131,8 +132,8 @@ public class Term extends CollectionValue {
     /* term operations */
 
     public MatchResult matchesTerm(Value other) {
-        if (other == IgnoreDummy.ID) {
-            return new MatchResult(true);
+        if (mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) || (other instanceof Term && ((Term) other).mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER))) {
+            return new MatchResult(true); // one of the terms is `ignore'
         } else if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) && mBody.size() == 1) {
             // 'this' is a variable, which match anything (except ignore of course)
             MatchResult result  = new MatchResult(true);

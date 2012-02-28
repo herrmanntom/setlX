@@ -2,10 +2,14 @@ package interpreter.statements;
 
 import interpreter.exceptions.CatchableInSetlXException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
+import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.TermConverter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -21,14 +25,17 @@ implemented here as:
 
 implemented with different classes which inherit from BranchTryAbstract:
                            ======================================   =========================================   =========================================
-                                       BranchTryCatch                           BranchTryCatchLng                           BranchTryCatchUsr
+                                       TryCatchBranch                           TryCatchLngBranch                           TryCatchUsrBranch
 */
 
 public class TryCatch extends Statement {
-    private Block                   mBlockToTry;
-    private List<BranchTryAbstract> mTryList;
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'tryCatch";
 
-    public TryCatch(Block blockToTry, List<BranchTryAbstract> tryList) {
+    private Block                        mBlockToTry;
+    private List<TryCatchAbstractBranch> mTryList;
+
+    public TryCatch(Block blockToTry, List<TryCatchAbstractBranch> tryList) {
         mBlockToTry     = blockToTry;
         mTryList        = tryList;
     }
@@ -37,7 +44,7 @@ public class TryCatch extends Statement {
         try{
             mBlockToTry.execute();
         } catch (CatchableInSetlXException cise) {
-            for (BranchTryAbstract br : mTryList) {
+            for (TryCatchAbstractBranch br : mTryList) {
                 if (br.catches(cise)) {
                     br.execute();
 
@@ -56,7 +63,7 @@ public class TryCatch extends Statement {
         String result = Environment.getTabs(tabs);
         result += "try ";
         result += mBlockToTry.toString(tabs, true);
-        for (BranchTryAbstract br : mTryList) {
+        for (TryCatchAbstractBranch br : mTryList) {
             result += br.toString(tabs);
         }
         return result;
@@ -65,16 +72,31 @@ public class TryCatch extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'tryCatch");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
+
         result.addMember(mBlockToTry.toTerm());
 
         SetlList branchList = new SetlList();
-        for (BranchTryAbstract br: mTryList) {
+        for (TryCatchAbstractBranch br: mTryList) {
             branchList.addMember(br.toTerm());
         }
         result.addMember(branchList);
 
         return result;
+    }
+
+    public static TryCatch termToStatement(Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Block                           block       = TermConverter.valueToBlock(term.firstMember());
+            SetlList                        branches    = (SetlList) term.lastMember();
+            List<TryCatchAbstractBranch>    branchList  = new ArrayList<TryCatchAbstractBranch>(branches.size());
+            for (Value v : branches) {
+                branchList.add(TryCatchAbstractBranch.valueToTryCatchAbstractBranch(v));
+            }
+            return new TryCatch(block, branchList);
+        }
     }
 }
 

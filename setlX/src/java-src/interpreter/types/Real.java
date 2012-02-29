@@ -71,26 +71,31 @@ public class Real extends NumberValue {
         return new Real(mReal.abs());
     }
 
-    public Value add(Value summand) throws IncompatibleTypeException {
-        if (summand instanceof NumberValue) {
-            if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
-                return (Infinity) summand;
+    public Value difference(Value subtrahend) throws IncompatibleTypeException {
+        if (subtrahend instanceof NumberValue) {
+            if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
+                return (Infinity) subtrahend.negate();
             }
             BigDecimal right = null;
-            if (summand instanceof Real) {
-                right = ((Real) summand).mReal;
+            if (subtrahend instanceof Real) {
+                right = ((Real) subtrahend).mReal;
             } else {
-                right = new BigDecimal(((SetlInt) summand).getNumber());
+                right = new BigDecimal(((SetlInt) subtrahend).getNumber());
             }
-            return new Real(mReal.add(right, mathContext));
-        } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).addFlipped(this);
+            return new Real(mReal.subtract(right, mathContext));
+        } else if (subtrahend instanceof Term) {
+            return ((Term) subtrahend).differenceFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
         }
     }
 
-    public Real divide(Value divisor) throws SetlException {
+    public Value differenceFlipped(SetlInt minuend) throws SetlException {
+        Real left = new Real(minuend.getNumber());
+        return left.difference(this);
+    }
+
+    public Value divide(Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
             BigDecimal right = null;
             if (divisor instanceof Real) {
@@ -107,17 +112,19 @@ public class Real extends NumberValue {
             } catch (ArithmeticException ae) {
                 throw new UndefinedOperationException("'" + this + " / " + divisor + "' is undefined.");
             }
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).divideFlipped(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " / " + divisor + "' is not a number.");
         }
     }
 
-    public Real divideFlipped(SetlInt dividend) throws SetlException {
+    public Value divideFlipped(SetlInt dividend) throws SetlException {
         Real left = new Real(dividend.getNumber());
         return left.divide(this);
     }
 
-    public NumberValue multiply(Value multiplier) throws IncompatibleTypeException {
+    public Value multiply(Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof NumberValue) {
             if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
                 return (Infinity) multiplier;
@@ -129,6 +136,8 @@ public class Real extends NumberValue {
                 right = new BigDecimal(((SetlInt) multiplier).getNumber());
             }
             return new Real(mReal.multiply(right, mathContext));
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " * " + multiplier + "' is not a number.");
         }
@@ -142,26 +151,25 @@ public class Real extends NumberValue {
         return new Real(mReal.pow(exponent, mathContext));
     }
 
-    public NumberValue subtract(Value subtrahend) throws IncompatibleTypeException {
-        if (subtrahend instanceof NumberValue) {
-            if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
-                return (Infinity) subtrahend.negate();
+    public Value sum(Value summand) throws IncompatibleTypeException {
+        if (summand instanceof NumberValue) {
+            if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
+                return (Infinity) summand;
             }
             BigDecimal right = null;
-            if (subtrahend instanceof Real) {
-                right = ((Real) subtrahend).mReal;
+            if (summand instanceof Real) {
+                right = ((Real) summand).mReal;
             } else {
-                right = new BigDecimal(((SetlInt) subtrahend).getNumber());
+                right = new BigDecimal(((SetlInt) summand).getNumber());
             }
-            return new Real(mReal.subtract(right, mathContext));
+            return new Real(mReal.add(right, mathContext));
+        } else if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else if (summand instanceof SetlString) {
+            return ((SetlString)summand).sumFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
         }
-    }
-
-    public NumberValue subtractFlipped(SetlInt minuend) throws SetlException {
-        Real left = new Real(minuend.getNumber());
-        return left.subtract(this);
     }
 
     /* string and char operations */

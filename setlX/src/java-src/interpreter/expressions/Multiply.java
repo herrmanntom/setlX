@@ -9,34 +9,34 @@ import interpreter.utilities.TermConverter;
 /*
 grammar rule:
 product
-    : power ([...] | '/' power)*
+    : power ('*' power | [...])*
     ;
 
 implemented here as:
-      =====              =====
-      mLhs               mRhs
+      =====      =====
+      mLhs       mRhs
 */
 
-public class Division extends Expr {
+public class Multiply extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'division";
+    private final static String FUNCTIONAL_CHARACTER = "'multiply";
 
     private Expr mLhs;
     private Expr mRhs;
 
-    public Division(Expr lhs, Expr rhs) {
+    public Multiply(Expr lhs, Expr rhs) {
         mLhs = lhs;
         mRhs = rhs;
     }
 
     public Value evaluate() throws SetlException {
-        return mLhs.eval().divide(mRhs.eval());
+        return mLhs.eval().multiply(mRhs.eval());
     }
 
     /* string operations */
 
     public String toString(int tabs) {
-        return mLhs.toString(tabs) + " / " + mRhs.toString(tabs);
+        return mLhs.toString(tabs) + " * " + mRhs.toString(tabs);
     }
 
     /* term operations */
@@ -48,13 +48,13 @@ public class Division extends Expr {
         return result;
     }
 
-    public static Division termToExpr(Term term) throws TermConversionException {
+    public static Multiply termToExpr(Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Expr lhs = TermConverter.valueToExpr(term.firstMember());
             Expr rhs = TermConverter.valueToExpr(term.lastMember());
-            return new Division(lhs, rhs);
+            return new Multiply(lhs, rhs);
         }
     }
 }

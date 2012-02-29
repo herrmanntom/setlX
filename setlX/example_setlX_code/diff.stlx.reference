@@ -5,12 +5,12 @@ testing y
 testing 1
 0
 testing x + x
-1 + 1
+2
 testing x + x + y
-1 + 1 + 0
+2
 testing x * x
 1 * x + x * 1
 testing x / x
 1 * x - x * 1 / x * x
 testing 1 / x
-0 * x - 1 * 1 / x * x
+0 * x - 1 / x * x

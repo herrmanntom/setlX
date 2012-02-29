@@ -30,7 +30,7 @@ public class Difference extends Expr {
     }
 
     public Value evaluate() throws SetlException {
-        return mLhs.eval().subtract(mRhs.eval());
+        return mLhs.eval().difference(mRhs.eval());
     }
 
     /* string operations */

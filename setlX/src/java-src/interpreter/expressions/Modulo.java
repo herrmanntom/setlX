@@ -30,7 +30,7 @@ public class Modulo extends Expr {
     }
 
     public Value evaluate() throws SetlException {
-        return mLhs.eval().mod(mRhs.eval());
+        return mLhs.eval().modulo(mRhs.eval());
     }
 
     /* string operations */

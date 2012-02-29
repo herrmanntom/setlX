@@ -1,14 +1,14 @@
 package interpreter.types;
 
+import interpreter.boolExpressions.*;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
-import interpreter.expressions.Expr;
-import interpreter.expressions.Variable;
-import interpreter.expressions.VariableIgnore;
+import interpreter.expressions.*;
 import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
 import interpreter.utilities.TermConverter;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,14 +41,101 @@ public class Term extends CollectionValue {
         return mBody.iterator();
     }
 
-    public int size() {
-        return mBody.size();
+    /* Boolean operations */
+
+    // viral operation
+    public Term and(Expr other) throws SetlException {
+        return (new Conjunction(TermConverter.valueToExpr(this), TermConverter.valueToExpr(other.eval()))).toTerm();
+    }
+    public Term andFlipped(Value other) {
+        return (new Conjunction(TermConverter.valueToExpr(other), TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term implies(Expr other) throws SetlException {
+        return (new Implication(TermConverter.valueToExpr(this), TermConverter.valueToExpr(other.eval()))).toTerm();
+    }
+    public Term impliesFlipped(Value other) {
+        return (new Implication(TermConverter.valueToExpr(other), TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term not() {
+        return (new Negation(TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term or(Expr other) throws SetlException {
+        return (new Disjunction(TermConverter.valueToExpr(this), TermConverter.valueToExpr(other.eval()))).toTerm();
+    }
+    public Term orFlipped(Value other) {
+        return (new Disjunction(TermConverter.valueToExpr(other), TermConverter.valueToExpr(this))).toTerm();
     }
 
     /* type checks (sort of Boolean operation) */
 
     public SetlBoolean isTerm() {
         return SetlBoolean.TRUE;
+    }
+
+    /* arithmetic operations */
+
+    // viral operation
+    public Term difference(Value subtrahend) {
+        return (new Difference(TermConverter.valueToExpr(this), TermConverter.valueToExpr(subtrahend))).toTerm();
+    }
+    public Term differenceFlipped(Value subtrahend) {
+        return (new Difference(TermConverter.valueToExpr(subtrahend), TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term divide(Value divisor) {
+        return (new Divide(TermConverter.valueToExpr(this), TermConverter.valueToExpr(divisor))).toTerm();
+    }
+    public Term divideFlipped(Value divisor) {
+        return (new Divide(TermConverter.valueToExpr(divisor), TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Value factorial() {
+        return (new Factorial(TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term modulo(Value modulo) {
+        return (new Modulo(TermConverter.valueToExpr(this), TermConverter.valueToExpr(modulo))).toTerm();
+    }
+    public Term moduloFlipped(Value modulo) {
+        return (new Modulo(TermConverter.valueToExpr(modulo), TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term multiply(Value multiplier) {
+        return (new Multiply(TermConverter.valueToExpr(this), TermConverter.valueToExpr(multiplier))).toTerm();
+    }
+    public Term multiplyFlipped(Value multiplier) {
+        return (new Multiply(TermConverter.valueToExpr(multiplier), TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term negate() {
+        return (new Negate(TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term power(Value exponent) {
+        return (new Power(TermConverter.valueToExpr(this), TermConverter.valueToExpr(exponent))).toTerm();
+    }
+    public Term powerFlipped(Value exponent) {
+        return (new Power(TermConverter.valueToExpr(exponent), TermConverter.valueToExpr(this))).toTerm();
+    }
+
+    // viral operation
+    public Term sum(Value summand) {
+        return (new Sum(TermConverter.valueToExpr(this), TermConverter.valueToExpr(summand))).toTerm();
+    }
+    public Term sumFlipped(Value summand) {
+        return (new Sum(TermConverter.valueToExpr(summand), TermConverter.valueToExpr(this))).toTerm();
     }
 
     /* operations on collection values (Lists, Sets [, Strings]) */
@@ -61,9 +148,14 @@ public class Term extends CollectionValue {
         return mBody.clone();
     }
 
+    // viral operation
+    public Term cardinality() {
+        return (new Cardinality(TermConverter.valueToExpr(this))).toTerm();
+    }
+
     public SetlBoolean containsMember(Value element) {
         // Terms are inherently recursive, so search recursively
-        return containsMemberRecursive(element);
+        return containsMemberRecursive(element); // this is implemented in CollectionValue.java
     }
 
     public Value firstMember() {
@@ -78,8 +170,21 @@ public class Term extends CollectionValue {
         return mBody.getMember(index);
     }
 
+    public Value getMemberUnCloned(Value index) throws SetlException {
+        return mBody.getMemberUnCloned(index);
+    }
+
+    public Value getMembers(Value low, Value high) throws SetlException {
+        return mBody.getMembers(low, high);
+    }
+
     public Value lastMember() {
         return mBody.lastMember();
+    }
+
+    // viral operation
+    public Term multiplyMembers() throws SetlException {
+        return (new MultiplyMembers(TermConverter.valueToExpr(this))).toTerm();
     }
 
     public Value maximumMember() throws SetlException {
@@ -102,13 +207,34 @@ public class Term extends CollectionValue {
         mBody.removeLastMember();
     }
 
+    public void setMember(Value index, Value v) throws SetlException {
+        mBody.setMember(index, v);
+    }
+
+    public int size() {
+        return mBody.size();
+    }
+
+    // viral operation
+    public Term sumMembers() {
+        return (new SumMembers(TermConverter.valueToExpr(this))).toTerm();
+    }
+
     /* calls (function calls) */
 
+    // viral operation
+    public Term call(List<Expr> exprs, List<Value> args) {
+        List<Expr> argExprs = new ArrayList<Expr>(args.size());
+        for (Value v : args) {
+            argExprs.add(TermConverter.valueToExpr(v));
+        }
+        return (new Call(TermConverter.valueToExpr(this), argExprs)).toTerm();
+    }
 
-    // someday return new Term 'call(...) here
-//    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-//        return mBody.call(exprs, args);
-//    }
+    // viral operation
+    public Term callCollection(Value arg) {
+        return (new CallCollection(TermConverter.valueToExpr(this), TermConverter.valueToExpr(arg))).toTerm();
+    }
 
     /* string and char operations */
 

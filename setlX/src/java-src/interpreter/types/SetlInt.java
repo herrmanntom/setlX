@@ -64,21 +64,21 @@ public class SetlInt extends NumberValue {
         return new SetlInt(mNumber.abs());
     }
 
-    public Value add(Value summand) throws SetlException {
-        if (summand instanceof SetlInt) {
-            return new SetlInt(mNumber.add(((SetlInt) summand).mNumber));
-        } else if (summand instanceof Real) {
-            return summand.add(this);
-        } else if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
-            return summand;
-        } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).addFlipped(this);
+    public Value difference(Value subtrahend) throws SetlException {
+        if (subtrahend instanceof SetlInt) {
+            return new SetlInt(mNumber.subtract(((SetlInt) subtrahend).mNumber));
+        } else if (subtrahend instanceof Real) {
+            return ((Real) subtrahend).differenceFlipped(this);
+        } else if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
+            return (Infinity) subtrahend.negate();
+        } else if (subtrahend instanceof Term) {
+            return ((Term) subtrahend).differenceFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
         }
     }
 
-    public NumberValue divide(Value divisor) throws SetlException {
+    public Value divide(Value divisor) throws SetlException {
         if (divisor instanceof SetlInt) {
             try {
                 return new SetlInt(mNumber.divide(((SetlInt) divisor).mNumber));
@@ -91,7 +91,9 @@ public class SetlInt extends NumberValue {
             return new SetlInt(0);
         } else if (divisor == Infinity.NEGATIVE) {
             return new SetlInt(-0);
-        }  else {
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).divideFlipped(this);
+        } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " / " + divisor + "' is not a number.");
         }
     }
@@ -196,9 +198,11 @@ public class SetlInt extends NumberValue {
         }
     }
 
-    public SetlInt mod(Value modulo) throws IncompatibleTypeException {
+    public Value modulo(Value modulo) throws IncompatibleTypeException {
         if (modulo instanceof SetlInt) {
             return new SetlInt(mNumber.mod(((SetlInt) modulo).mNumber));
+        } else if (modulo instanceof Term) {
+            return ((Term) modulo).moduloFlipped(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " % " + modulo + "' is not an integer.");
         }
@@ -209,6 +213,8 @@ public class SetlInt extends NumberValue {
             return new SetlInt(mNumber.multiply(((SetlInt) multiplier).mNumber));
         } else if (multiplier instanceof Real || multiplier instanceof SetlString || multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
             return multiplier.multiply(this);
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side  of '" + this + " * " + multiplier + "' is not a number or string.");
         }
@@ -222,15 +228,19 @@ public class SetlInt extends NumberValue {
         return new SetlInt(mNumber.pow(exponent));
     }
 
-    public NumberValue subtract(Value subtrahend) throws SetlException {
-        if (subtrahend instanceof SetlInt) {
-            return new SetlInt(mNumber.subtract(((SetlInt) subtrahend).mNumber));
-        } else if (subtrahend instanceof Real) {
-            return ((Real) subtrahend).subtractFlipped(this);
-        } else if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
-            return (Infinity) subtrahend.negate();
+    public Value sum(Value summand) throws SetlException {
+        if (summand instanceof SetlInt) {
+            return new SetlInt(mNumber.add(((SetlInt) summand).mNumber));
+        } else if (summand instanceof Real) {
+            return summand.sum(this);
+        } else if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
+            return summand;
+        } else if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else if (summand instanceof SetlString) {
+            return ((SetlString)summand).sumFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
         }
     }
 

@@ -3,8 +3,8 @@ package interpreter.boolExpressions;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
-import interpreter.types.SetlBoolean;
 import interpreter.types.Term;
+import interpreter.types.Value;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -30,7 +30,7 @@ public class Implication extends Expr {
         mRhs = rhs;
     }
 
-    public SetlBoolean evaluate() throws SetlException {
+    public Value evaluate() throws SetlException {
         return mLhs.eval().implies(mRhs);
     }
 

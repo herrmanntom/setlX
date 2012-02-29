@@ -89,20 +89,7 @@ public class SetlString extends Value {
         }
     }
 
-    public SetlString add(Value summand) throws IncompatibleTypeException {
-        if (summand instanceof SetlString) {
-            SetlString s      = (SetlString) summand;
-            return new SetlString(mString.concat(s.mString));
-        } else {
-            return new SetlString(mString.concat(summand.toString()));
-        }
-    }
-
-    public SetlString addFlipped(Value summand) throws IncompatibleTypeException {
-        return new SetlString(summand.toString().concat(mString));
-    }
-
-    public SetlString multiply(Value multiplier) throws SetlException {
+    public Value multiply(Value multiplier) throws SetlException {
         if (multiplier instanceof SetlInt) {
             int    m      = ((SetlInt) multiplier).intValue();
             String result = "";
@@ -110,9 +97,26 @@ public class SetlString extends Value {
                 result += mString;
             }
             return new SetlString(result);
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
         } else {
             throw new IncompatibleTypeException("String multiplier '" + multiplier + "' is not an integer.");
         }
+    }
+
+    public Value sum(Value summand) throws IncompatibleTypeException {
+        if (summand instanceof SetlString) {
+            SetlString s      = (SetlString) summand;
+            return new SetlString(mString.concat(s.mString));
+        } else if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else {
+            return new SetlString(mString.concat(summand.toString()));
+        }
+    }
+
+    public SetlString sumFlipped(Value summand) throws IncompatibleTypeException {
+        return new SetlString(summand.toString().concat(mString));
     }
 
     /* operations on collection values (Lists, Sets [, Strings]) */

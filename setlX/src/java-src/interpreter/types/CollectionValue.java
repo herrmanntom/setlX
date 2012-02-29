@@ -15,18 +15,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract void            addMember(Value element);
 
-    public final    Value           addMembers() throws SetlException {
-        Value sum = null;
-        for (Value v: this) {
-            if (sum == null) {
-                sum = v.clone();
-            } else {
-                sum = sum.add(v);
-            }
-        }
-        return (sum != null)? sum : new SetlInt(0);
-    }
-
     public final    Value           arbitraryMember() {
         if (this.size() < 1) {
             return Om.OM;
@@ -41,7 +29,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract SetlBoolean     containsMember(Value element);
 
     // compare not only own members, but also all members contained in own members
-    public SetlBoolean containsMemberRecursive(Value element) {
+    public          SetlBoolean     containsMemberRecursive(Value element) {
         for (Value v: this) {
             if (v.equals(element)) {
                 return SetlBoolean.TRUE;
@@ -63,7 +51,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Value           minimumMember() throws SetlException;
 
-    public final    Value           multiplyMembers() throws SetlException {
+    public          Value           multiplyMembers() throws SetlException {
         Value product = null;
         for (Value v: this) {
             if (product == null) {
@@ -100,6 +88,18 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract void            removeLastMember();
 
     public abstract int             size();
+
+    public          Value           sumMembers() throws SetlException {
+        Value sum = null;
+        for (Value v: this) {
+            if (sum == null) {
+                sum = v.clone();
+            } else {
+                sum = sum.sum(v);
+            }
+        }
+        return (sum != null)? sum : new SetlInt(0);
+    }
 
     /* string and char operations */
 

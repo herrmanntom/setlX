@@ -2,8 +2,8 @@ package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
-import interpreter.types.SetlInt;
 import interpreter.types.Term;
+import interpreter.types.Value;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -28,7 +28,7 @@ public class Factorial extends Expr {
         mExpr = expr;
     }
 
-    public SetlInt evaluate() throws SetlException {
+    public Value evaluate() throws SetlException {
         return mExpr.eval().factorial();
     }
 

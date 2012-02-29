@@ -18,18 +18,18 @@ implemented here as:
            mExpr
 */
 
-public class AddMembers extends Expr {
+public class SumMembers extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'addMembers";
+    private final static String FUNCTIONAL_CHARACTER = "'sumMembers";
 
     private Expr mExpr;
 
-    public AddMembers(Expr expr) {
+    public SumMembers(Expr expr) {
         mExpr = expr;
     }
 
     public Value evaluate() throws SetlException {
-        return mExpr.eval().addMembers();
+        return mExpr.eval().sumMembers();
     }
 
     /* string operations */
@@ -46,12 +46,12 @@ public class AddMembers extends Expr {
         return result;
     }
 
-    public static AddMembers termToExpr(Term term) throws TermConversionException {
+    public static SumMembers termToExpr(Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Expr expr = TermConverter.valueToExpr(term.firstMember());
-            return new AddMembers(expr);
+            return new SumMembers(expr);
         }
     }
 }

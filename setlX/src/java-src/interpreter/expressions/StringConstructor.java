@@ -129,10 +129,10 @@ public class StringConstructor extends Expr {
             } catch (SetlException se) {
                 v   = new SetlString("$Error: " + se.getMessage() + "$");
             }
-            // add both values, which concatenates them if at least one is a string, and str is indeed
-            str = v.add(str);
+            // add both values, which concatenates them
+            str = (SetlString) v.str().sum(str);
             // concatenate (again)
-            result = result.add(str);
+            result = (SetlString) result.sum(str);
         }
         // now expr-list should be empty in all cases
         if (eIter.hasNext()) {
@@ -142,7 +142,7 @@ public class StringConstructor extends Expr {
         while (fIter.hasNext()) {
             Value   str = SetlString.createFromConstructor(fIter.next());
             // concatenate (again)
-            result = result.add(str);
+            result = (SetlString) result.sum(str);
         }
         return result;
     }

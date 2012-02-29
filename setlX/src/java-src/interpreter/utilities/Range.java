@@ -39,7 +39,7 @@ public class Range extends Constructor {
         Value step  = null;
         // compute step
         if (mSecond != null) {
-            step = mSecond.eval().subtract(start);
+            step = mSecond.eval().difference(start);
         } else {
             step = new SetlInt(1);
         }

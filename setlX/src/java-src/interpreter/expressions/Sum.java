@@ -30,7 +30,7 @@ public class Sum extends Expr {
     }
 
     public Value evaluate() throws SetlException {
-        return mLhs.eval().add(mRhs.eval());
+        return mLhs.eval().sum(mRhs.eval());
     }
 
     /* string operations */

@@ -55,10 +55,10 @@ public class Assignment extends Expr {
                 mExecutionRhs = new Difference(lhs.getExpr(), rhs);
                 break;
             case PRODUCT:
-                mExecutionRhs = new Product   (lhs.getExpr(), rhs);
+                mExecutionRhs = new Multiply  (lhs.getExpr(), rhs);
                 break;
             case DIVISION:
-                mExecutionRhs = new Division  (lhs.getExpr(), rhs);
+                mExecutionRhs = new Divide    (lhs.getExpr(), rhs);
                 break;
             case MODULO:
                 mExecutionRhs = new Modulo    (lhs.getExpr(), rhs);

@@ -56,10 +56,6 @@ public class SetlSet extends CollectionValue {
         return getSet().iterator();
     }
 
-    public int size() {
-        return getSet().size();
-    }
-
     public SetlBoolean isLessThan(Value other) throws IncompatibleTypeException {
         if (other instanceof SetlSet) {
             SetlSet otr = (SetlSet) other;
@@ -90,10 +86,34 @@ public class SetlSet extends CollectionValue {
 
     /* arithmetic operations */
 
-    public Value add(Value summand) throws IncompatibleTypeException {
+    public Value difference(Value subtrahend) throws IncompatibleTypeException {
+        if (subtrahend instanceof SetlSet) {
+            SetlSet s = (SetlSet) subtrahend;
+            return new SetlSet(getSet().difference(s.getSet()));
+        } else if (subtrahend instanceof Term) {
+            return ((Term) subtrahend).differenceFlipped(this);
+        } else {
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a set.");
+        }
+    }
+
+    public Value multiply(Value multiplier) throws IncompatibleTypeException {
+        if (multiplier instanceof SetlSet) {
+            SetlSet m = (SetlSet) multiplier;
+            return new SetlSet(getSet().intersection(m.getSet()));
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
+        } else {
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " * " + multiplier + "' is not a set.");
+        }
+    }
+
+    public Value sum(Value summand) throws IncompatibleTypeException {
         if (summand instanceof SetlSet) {
             SetlSet s = (SetlSet) summand;
             return new SetlSet(getSet().union(s.getSet()));
+        } else if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
         } else if(summand instanceof CollectionValue) {
             SetlSet result = this.clone();
             result.separateFromOriginal();
@@ -102,27 +122,9 @@ public class SetlSet extends CollectionValue {
             }
             return result;
         } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).addFlipped(this);
+            return ((SetlString)summand).sumFlipped(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a set or string.");
-        }
-    }
-
-    public SetlSet multiply(Value multiplier) throws IncompatibleTypeException {
-        if (multiplier instanceof SetlSet) {
-            SetlSet m = (SetlSet) multiplier;
-            return new SetlSet(getSet().intersection(m.getSet()));
-        } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " * " + multiplier + "' is not a set.");
-        }
-    }
-
-    public SetlSet subtract(Value subtrahend) throws IncompatibleTypeException {
-        if (subtrahend instanceof SetlSet) {
-            SetlSet s = (SetlSet) subtrahend;
-            return new SetlSet(getSet().difference(s.getSet()));
-        } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a set.");
         }
     }
 
@@ -290,6 +292,10 @@ public class SetlSet extends CollectionValue {
             pair.addMember(v);
             mSet.add(pair);
         }
+    }
+
+    public int size() {
+        return getSet().size();
     }
 
     public void removeMember(Value element) {

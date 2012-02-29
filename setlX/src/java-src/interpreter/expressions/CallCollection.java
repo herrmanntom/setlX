@@ -39,8 +39,6 @@ public class CallCollection extends Expr {
             throw new UnknownFunctionException("\"" + mLhs + "\" is undefined.");
         } else if (lhs instanceof ProcedureDefinition) {
             throw new UndefinedOperationException("Incorrect set of brackets for function call.");
-        } else if (lhs instanceof Term) {
-            throw new UndefinedOperationException("Incorrect set of brackets for term.");
         }
         return lhs.callCollection(mArg.eval().clone());
     }

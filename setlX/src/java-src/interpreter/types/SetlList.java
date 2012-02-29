@@ -55,10 +55,6 @@ public class SetlList extends CollectionValue {
         return getList().iterator();
     }
 
-    public int size() {
-        return getList().size();
-    }
-
     public void compress() {
         while (true) {
             if (getList().size() > 0 && getList().getLast() == Om.OM) {
@@ -77,7 +73,7 @@ public class SetlList extends CollectionValue {
 
     /* arithmetic operations */
 
-    public Value add(Value summand) throws IncompatibleTypeException {
+    public Value sum(Value summand) throws IncompatibleTypeException {
         if (summand instanceof SetlList) {
             SetlList s      = ((SetlList) summand).clone();
             s.separateFromOriginal();
@@ -85,7 +81,9 @@ public class SetlList extends CollectionValue {
             result.separateFromOriginal();
             result.mList.addAll(s.mList);
             return result;
-        } else if(summand instanceof CollectionValue) {
+        } else if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else if (summand instanceof CollectionValue) {
             SetlList result = this.clone();
             result.separateFromOriginal();
             for (Value v: (CollectionValue) summand) {
@@ -93,7 +91,7 @@ public class SetlList extends CollectionValue {
             }
             return result;
         } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).addFlipped(this);
+            return ((SetlString)summand).sumFlipped(this);
         }  else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a list or string.");
         }
@@ -239,6 +237,10 @@ public class SetlList extends CollectionValue {
             }
             mList.set(index - 1, v.clone());
         }
+    }
+
+    public int size() {
+        return getList().size();
     }
 
     /* calls (element access) */

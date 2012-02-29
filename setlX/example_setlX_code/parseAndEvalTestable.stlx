@@ -40,7 +40,7 @@ getInput := procedure() {
     };
 
     expr := getExpr();
-    print("expr\t:= " + expr);
+    print("expr\t:= $expr$");
     print("Syntax-Tree:\nexpr\t:= " + canonical(expr));
     print();
 

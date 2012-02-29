@@ -1,4 +1,4 @@
-'difference('product(55, 99), 'power(123, 'bracketedExpr('difference(14, 2))))
+'difference('multiply(55, 99), 'power(123, 'bracketedExpr('difference(14, 2))))
 match: a = 55 * 99, b = 123, c = 14 - 2
 
 [1, 99, 7]

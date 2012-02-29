@@ -112,7 +112,8 @@ bin/interpreter/utilities/*.class :                          \
 
 bin/interpreter/types/*.class :                              \
         java-src/interpreter/types/*.java                            \
-        java-src/interpreter/expressions/Expr.java                   \
+        java-src/interpreter/boolExpressions/*.java                  \
+        java-src/interpreter/expressions/*.java                      \
         java-src/interpreter/functions/PreDefinedFunction.java       \
         java-src/interpreter/statements/Block.java                   \
         java-src/interpreter/statements/Return.java                  \

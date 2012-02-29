@@ -331,8 +331,8 @@ sum [boolean enableIgnore] returns [Expr s]
 product [boolean enableIgnore] returns [Expr p]
     : p1 = power[$enableIgnore]         { p = $p1.pow;                  }
       (
-          '*' p2 = power[$enableIgnore] { p = new Product(p, $p2.pow);  }
-        | '/' p2 = power[$enableIgnore] { p = new Division(p, $p2.pow); }
+          '*' p2 = power[$enableIgnore] { p = new Multiply(p, $p2.pow); }
+        | '/' p2 = power[$enableIgnore] { p = new Divide(p, $p2.pow);   }
         | '%' p2 = power[$enableIgnore] { p = new Modulo(p, $p2.pow);   }
       )*
     ;
@@ -353,7 +353,7 @@ factor [boolean enableIgnore] returns [Expr f]
     ;
 
 prefixOperation [boolean enableIgnore] returns [Expr po]
-    : '+/'   factor[$enableIgnore] { po = new AddMembers($factor.f);      }
+    : '+/'   factor[$enableIgnore] { po = new SumMembers($factor.f);      }
     | '*/'   factor[$enableIgnore] { po = new MultiplyMembers($factor.f); }
     | '#'    factor[$enableIgnore] { po = new Cardinality($factor.f);     }
     | '-'    factor[$enableIgnore] { po = new Negate($factor.f);          }

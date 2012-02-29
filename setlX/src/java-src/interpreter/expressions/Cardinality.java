@@ -2,8 +2,8 @@ package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
-import interpreter.types.SetlInt;
 import interpreter.types.Term;
+import interpreter.types.Value;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -21,14 +21,14 @@ implemented here as:
 public class Cardinality extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'cardinality";
-    
+
     private Expr mExpr;
 
     public Cardinality(Expr expr) {
         mExpr = expr;
     }
 
-    public SetlInt evaluate() throws SetlException {
+    public Value evaluate() throws SetlException {
         return mExpr.eval().cardinality();
     }
 

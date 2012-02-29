@@ -1,8 +1,10 @@
 package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.utilities.Environment;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -16,10 +18,13 @@ implemented here as:
                                                              mStatements
 */
 
-public class BranchDefault extends BranchAbstract {
+public class SwitchDefaultBranch extends SwitchAbstractBranch {
+    // functional character used in terms
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'switchDefaultBranch";
+
     private Block       mStatements;
 
-    public BranchDefault(Block statements) {
+    public SwitchDefaultBranch(Block statements) {
         mStatements = statements;
     }
 
@@ -43,9 +48,18 @@ public class BranchDefault extends BranchAbstract {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'default");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mStatements.toTerm());
         return result;
+    }
+
+    public static SwitchDefaultBranch termToBranch(Term term) throws TermConversionException {
+        if (term.size() != 1) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Block block = TermConverter.valueToBlock(term.firstMember());
+            return new SwitchDefaultBranch(block);
+        }
     }
 }
 

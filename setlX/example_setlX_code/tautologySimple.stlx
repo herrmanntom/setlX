@@ -1,24 +1,15 @@
 // this program implements a tester for tautologies using the match statement
 getFormular := procedure() {
-    getInput := procedure() {
-        print("Please enter a formula to be checked if it is tautology");
-        formulaStr  := get();
-        try {
-            formulaTerm := parse(formulaStr);
-        } catch (error) {
-            formulaTerm := error;
-        }
-        return [formulaStr, formulaTerm];
-    };
-    [formulaStr, formulaTerm] := getInput();
-    while (isError(formulaTerm)) {
+    print("Please enter a formula to be checked if it is tautology");
+    try {
+        return parse(get());
+    } catch (error) {
         print();
         print("That did not work out!");
-        print("Try again, but don't make this error again:\n$formulaTerm$");
+        print("Try again, but don't make this error again:\n$error$");
         print();
-        [formulaStr, formulaTerm] := getInput();
+        return getFormular();
     }
-    return [formulaStr, formulaTerm];
 };
 
 collectVars := procedure(term) {
@@ -34,9 +25,9 @@ collectVars := procedure(term) {
     }
 };
 
-[formulaStr, formulaTerm] := getFormular();
+formula := getFormular();
 
-vars := collectVars(formulaTerm);
+vars := collectVars(formula);
 if (#vars < 1) {
     abort("No variables could be found!");
 }
@@ -50,7 +41,7 @@ for (trueVars in pow(vars)) {
     for (variable in (vars - trueVars)) {
         execute(variable + " := false;");
     }
-    if (eval(formulaStr) <==> false) {
+    if (evalTerm(formula) <==> false) {
         print("Formula is not a tautology.");
         example := "Counter-Example: ";
         for (variable in trueVars) {

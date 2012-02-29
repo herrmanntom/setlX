@@ -89,20 +89,7 @@ public class SetlString extends Value {
         }
     }
 
-    public SetlString add(Value summand) throws IncompatibleTypeException {
-        if (summand instanceof SetlString) {
-            SetlString s      = (SetlString) summand;
-            return new SetlString(mString.concat(s.mString));
-        } else {
-            return new SetlString(mString.concat(summand.toString()));
-        }
-    }
-
-    public SetlString addFlipped(Value summand) throws IncompatibleTypeException {
-        return new SetlString(summand.toString().concat(mString));
-    }
-
-    public SetlString multiply(Value multiplier) throws SetlException {
+    public Value multiply(Value multiplier) throws SetlException {
         if (multiplier instanceof SetlInt) {
             int    m      = ((SetlInt) multiplier).intValue();
             String result = "";
@@ -110,12 +97,40 @@ public class SetlString extends Value {
                 result += mString;
             }
             return new SetlString(result);
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
         } else {
             throw new IncompatibleTypeException("String multiplier '" + multiplier + "' is not an integer.");
         }
     }
 
-    /* operations on compound values (Lists, Sets [, Strings]) */
+    public Value sum(Value summand) throws IncompatibleTypeException {
+        if (summand instanceof SetlString) {
+            SetlString s      = (SetlString) summand;
+            return new SetlString(mString.concat(s.mString));
+        } else if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else {
+            return new SetlString(mString.concat(summand.toString()));
+        }
+    }
+
+    public SetlString sumFlipped(Value summand) throws IncompatibleTypeException {
+        return new SetlString(summand.toString().concat(mString));
+    }
+
+    /* operations on collection values (Lists, Sets [, Strings]) */
+
+    public SetlBoolean containsMember(Value element) throws IncompatibleTypeException {
+        if ( ! (element instanceof SetlString)) {
+            throw new IncompatibleTypeException("Left-hand-side of '" + element  + " in " + this + "' is not a string.");
+        }
+        if (mString.contains(((SetlString) element).mString)) {
+            return SetlBoolean.TRUE;
+        } else {
+            return SetlBoolean.FALSE;
+        }
+    }
 
     public SetlString getMember(Value vIndex) throws SetlException {
         int index = 0;
@@ -187,6 +202,31 @@ public class SetlString extends Value {
 
     public String getUnquotedString() {
         return mString;
+    }
+
+    public String getEscapedString() {
+        // parse escape sequences
+        int           length    = mString.length();
+        StringBuilder sb        = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            char c = mString.charAt(i);  // current char
+            if (c == '\\') {
+                sb.append("\\\\");
+            } else if (c == '\n') {
+                sb.append("\\n");
+            } else if (c == '\r') {
+                sb.append("\\r");
+            } else if (c == '\t') {
+                sb.append("\\t");
+            } else if (c == '"') {
+                sb.append("\\\"");
+            } else if (c == '\0') {
+                sb.append("\\0");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
     }
 
     public String toString() {

@@ -3,9 +3,11 @@ package interpreter.statements;
 import interpreter.exceptions.BreakException;
 import interpreter.exceptions.ContinueException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.utilities.Condition;
 import interpreter.utilities.Environment;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -20,6 +22,9 @@ implemented here as:
 */
 
 public class While extends Statement {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'while";
+
     private Condition mCondition;
     private Block     mStatements;
 
@@ -52,10 +57,20 @@ public class While extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'while");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mCondition.toTerm());
         result.addMember(mStatements.toTerm());
         return result;
+    }
+
+    public static While termToStatement(Term term) throws TermConversionException {
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Condition   condition   = TermConverter.valueToCondition(term.firstMember());
+            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            return new While(condition, block);
+        }
     }
 }
 

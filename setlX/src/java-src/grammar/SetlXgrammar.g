@@ -69,44 +69,53 @@ block returns [Block blk]
 
 statement returns [Statement stmnt]
     @init{
-        List<BranchAbstract>      branchList = new LinkedList<BranchAbstract>();
-        List<BranchMatchAbstract> matchList  = new LinkedList<BranchMatchAbstract>();
+        List<IfThenAbstractBranch>      ifList     = new LinkedList<IfThenAbstractBranch>();
+        List<SwitchAbstractBranch>      caseList   = new LinkedList<SwitchAbstractBranch>();
+        List<MatchAbstractBranch>       matchList  = new LinkedList<MatchAbstractBranch>();
+        List<TryCatchAbstractBranch>    tryList    = new LinkedList<TryCatchAbstractBranch>();
     }
-    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                }
-    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { branchList.add(new BranchIf($c1.cnd, $b1.blk));           }
+    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                    }
+    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));               }
       (
-        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { branchList.add(new BranchElseIf($c2.cnd, $b2.blk));       }
+        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));         }
       )*
       (
-        'else'                                    '{' b3 = block '}' { branchList.add(new BranchElse($b3.blk));                  }
+        'else'                                    '{' b3 = block '}' { ifList.add(new IfThenElseBranch($b3.blk));                    }
       )?
-      { stmnt = new IfThen(branchList); }
+      { stmnt = new IfThen(ifList); }
     | 'switch' '{'
       (
-        'case' c1 = condition[false] ':' b1 = block                  { branchList.add(new BranchCase($c1.cnd, $b1.blk));         }
+        'case' c1 = condition[false] ':' b1 = block                  { caseList.add(new SwitchCaseBranch($c1.cnd, $b1.blk));         }
       )*
       (
-        'default'                    ':' b2 = block                  { branchList.add(new BranchDefault($b2.blk));               }
+        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));               }
       )?
-      '}' { stmnt = new Switch(branchList); }
+      '}' { stmnt = new Switch(caseList); }
     | 'match' '(' anyExpr[false] ')' '{'
       (
-        'case' exprList[true] ':' b1 = block                         { matchList.add(new BranchMatch($exprList.exprs, $b1.blk)); }
+        'case' exprList[true] ':' b1 = block                         { matchList.add(new MatchCaseBranch($exprList.exprs, $b1.blk)); }
       )*
       (
-        'default'             ':' b2 = block                         { matchList.add(new BranchMatchDefault($b2.blk));           }
+        'default'             ':' b2 = block                         { matchList.add(new MatchDefaultBranch($b2.blk));               }
       )?
       '}' { stmnt = new Match($anyExpr.ae, matchList); }
-    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);           }
-    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);            }
-    | 'try'                    '{' b1 = block '}'
-      'catch' '(' variable ')' '{' b2 = block '}'                    { stmnt = new TryCatch($b1.blk, $variable.v, $b2.blk);      }
-    | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                          }
-    | 'continue' ';'                                                 { stmnt = new Continue();                                   }
-    | 'break' ';'                                                    { stmnt = new Break();                                      }
-    | 'exit' ';'                                                     { stmnt = new Exit();                                       }
-    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);      }
-    | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);             }
+    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);               }
+    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);                }
+    | 'try'                                '{' b1 = block '}'
+      (
+         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));           }
+       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));           }
+      )*
+      (
+         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));           }
+      )?
+      { stmnt = new TryCatch($b1.blk, tryList); }
+    | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                              }
+    | 'continue' ';'                                                 { stmnt = Continue.C;                                           }
+    | 'break' ';'                                                    { stmnt = Break.B;                                              }
+    | 'exit' ';'                                                     { stmnt = Exit.E;                                               }
+    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);          }
+    | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);                 }
     ;
 
 variable returns [Variable v]
@@ -200,16 +209,10 @@ boolExpr [boolean enableIgnore] returns [Expr bex]
     ;
 
 equivalence [boolean enableIgnore] returns [Expr eq]
-    @init{
-        int type = -1;
-    }
-    : i1 = implication[$enableIgnore]   { eq = $i1.i;                            }
+    : i1 = implication[$enableIgnore]              { eq = $i1.i;              }
       (
-        (
-            '<==>'                      { type = Comparison.EQUAL;               }
-          | '<!=>'                      { type = Comparison.UNEQUAL;             }
-        )
-        i2 = implication[$enableIgnore] { eq = new Comparison (eq, type, $i2.i); }
+         '<==>' i2 = implication[$enableIgnore] { eq = new BoolEqual  (eq, $i2.i); }
+       | '<!=>' i2 = implication[$enableIgnore] { eq = new BoolUnEqual(eq, $i2.i); }
       )?
     ;
 
@@ -253,22 +256,17 @@ boolFactor [boolean enableIgnore] returns [Expr bf]
     ;
 
 comparison [boolean enableIgnore] returns [Expr comp]
-    @init{
-        int type = -1;
-    }
     : e1 = expr[$enableIgnore]
       (
-          '=='    { type = Comparison.EQUAL;                      }
-        | '!='    { type = Comparison.UNEQUAL;                    }
-        | '<'     { type = Comparison.LESS;                       }
-        | '<='    { type = Comparison.LESSorEQUAL;                }
-        | '>'     { type = Comparison.MORE;                       }
-        | '>='    { type = Comparison.MOREorEQUAL;                }
-        | 'in'    { type = Comparison.IN;                         }
-        | 'notin' { type = Comparison.NOTIN;                      }
+         '=='    e2 = expr[$enableIgnore] { comp = new Equal      ($e1.ex, $e2.ex); }
+       | '!='    e2 = expr[$enableIgnore] { comp = new UnEqual    ($e1.ex, $e2.ex); }
+       | '<'     e2 = expr[$enableIgnore] { comp = new Less       ($e1.ex, $e2.ex); }
+       | '<='    e2 = expr[$enableIgnore] { comp = new LessOrEqual($e1.ex, $e2.ex); }
+       | '>'     e2 = expr[$enableIgnore] { comp = new More       ($e1.ex, $e2.ex); }
+       | '>='    e2 = expr[$enableIgnore] { comp = new MoreOrEqual($e1.ex, $e2.ex); }
+       | 'in'    e2 = expr[$enableIgnore] { comp = new In         ($e1.ex, $e2.ex); }
+       | 'notin' e2 = expr[$enableIgnore] { comp = new NotIn      ($e1.ex, $e2.ex); }
       )
-      e2 = expr[$enableIgnore]
-      { comp = new Comparison ($e1.ex, type, $e2.ex); }
     ;
 
 expr [boolean enableIgnore] returns [Expr ex]
@@ -333,8 +331,8 @@ sum [boolean enableIgnore] returns [Expr s]
 product [boolean enableIgnore] returns [Expr p]
     : p1 = power[$enableIgnore]         { p = $p1.pow;                  }
       (
-          '*' p2 = power[$enableIgnore] { p = new Product(p, $p2.pow);  }
-        | '/' p2 = power[$enableIgnore] { p = new Division(p, $p2.pow); }
+          '*' p2 = power[$enableIgnore] { p = new Multiply(p, $p2.pow); }
+        | '/' p2 = power[$enableIgnore] { p = new Divide(p, $p2.pow);   }
         | '%' p2 = power[$enableIgnore] { p = new Modulo(p, $p2.pow);   }
       )*
     ;
@@ -355,7 +353,7 @@ factor [boolean enableIgnore] returns [Expr f]
     ;
 
 prefixOperation [boolean enableIgnore] returns [Expr po]
-    : '+/'   factor[$enableIgnore] { po = new AddMembers($factor.f);      }
+    : '+/'   factor[$enableIgnore] { po = new SumMembers($factor.f);      }
     | '*/'   factor[$enableIgnore] { po = new MultiplyMembers($factor.f); }
     | '#'    factor[$enableIgnore] { po = new Cardinality($factor.f);     }
     | '-'    factor[$enableIgnore] { po = new Negate($factor.f);          }
@@ -398,7 +396,7 @@ callParameters [boolean enableIgnore] returns [List<Expr> params]
       )?
     | '..'                              { params.add(CallRangeDummy.CRD); }
       expr[$enableIgnore]               { params.add($expr.ex);           }
-    | exprList[$enableIgnore]			{ params = $exprList.exprs;       }
+    | exprList[$enableIgnore]           { params = $exprList.exprs;       }
     |  /* epsilon */
     ;
 

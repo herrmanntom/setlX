@@ -2,6 +2,7 @@ package interpreter.boolExpressions;
 
 import interpreter.exceptions.BreakException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.SetlBoolean;
 import interpreter.types.Term;
@@ -9,6 +10,7 @@ import interpreter.types.Value;
 import interpreter.utilities.Condition;
 import interpreter.utilities.Iterator;
 import interpreter.utilities.IteratorExecutionContainer;
+import interpreter.utilities.TermConverter;
 import interpreter.utilities.VariableScope;
 
 import java.util.List;
@@ -26,6 +28,9 @@ implemented here as:
 */
 
 public class Forall extends Expr {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'forall";
+
     private Iterator  mIterator;
     private Condition mCondition;
 
@@ -73,10 +78,20 @@ public class Forall extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'forall");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mIterator.toTerm());
         result.addMember(mCondition.toTerm());
         return result;
+    }
+
+    public static Forall termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Iterator    iterator    = Iterator.valueToIterator(term.firstMember());
+            Condition   condition   = TermConverter.valueToCondition(term.lastMember());
+            return new Forall(iterator, condition);
+        }
     }
 }
 

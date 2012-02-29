@@ -1,0 +1,141 @@
+
+0.880 == m( {"Ralf", "Sabine", "Tobias"} )
+0.120 == m( Omega )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Erna	|    0.120     |  0.000  |   0.880
+Frank	|    0.120     |  0.000  |   0.880
+Ralf	|    1.000     |  0.000  |   0.000
+Sabine	|    1.000     |  0.000  |   0.000
+Tobias	|    1.000     |  0.000  |   0.000
+Ulrike	|    0.120     |  0.000  |   0.880
+
+
+0.450 == m( {"Frank", "Sabine", "Tobias"} )
+0.450 == m( {"Ralf", "Ulrike"} )
+0.100 == m( Omega )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Erna	|    0.100     |  0.000  |   0.900
+Frank	|    0.550     |  0.000  |   0.450
+Ralf	|    0.550     |  0.000  |   0.450
+Sabine	|    0.550     |  0.000  |   0.450
+Tobias	|    0.550     |  0.000  |   0.450
+Ulrike	|    0.550     |  0.000  |   0.450
+
+
+0.650 == m( {"Erna", "Ralf", "Ulrike"} )
+0.350 == m( Omega )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Erna	|    1.000     |  0.000  |   0.000
+Frank	|    0.350     |  0.000  |   0.650
+Ralf	|    1.000     |  0.000  |   0.000
+Sabine	|    0.350     |  0.000  |   0.650
+Tobias	|    0.350     |  0.000  |   0.650
+Ulrike	|    1.000     |  0.000  |   0.000
+
+
+0.641 == m( {"Ralf"} )
+0.196 == m( {"Sabine", "Tobias"} )
+0.076 == m( {"Ralf", "Ulrike"} )
+0.044 == m( {"Ralf", "Sabine", "Tobias"} )
+0.027 == m( {"Frank", "Sabine", "Tobias"} )
+0.011 == m( {"Erna", "Ralf", "Ulrike"} )
+0.006 == m( Omega )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Erna	|    0.017     |  0.000  |   0.983
+Frank	|    0.033     |  0.000  |   0.967
+Ralf	|    0.777     |  0.641  |   0.223
+Sabine	|    0.272     |  0.000  |   0.728
+Tobias	|    0.272     |  0.000  |   0.728
+Ulrike	|    0.093     |  0.000  |   0.907
+
+
+0.600 == m( Omega )
+0.400 == m( {"Helge", "Ludger"} )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Alfons	|    0.600     |  0.000  |   0.400
+Eva	|    0.600     |  0.000  |   0.400
+Franka	|    0.600     |  0.000  |   0.400
+Helge	|    1.000     |  0.000  |   0.000
+John	|    0.600     |  0.000  |   0.400
+Klaus	|    0.600     |  0.000  |   0.400
+Ludger	|    1.000     |  0.000  |   0.000
+Martin	|    0.600     |  0.000  |   0.400
+Petra	|    0.600     |  0.000  |   0.400
+
+
+0.800 == m( {"Eva", "Franka", "Petra"} )
+0.200 == m( Omega )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Alfons	|    0.200     |  0.000  |   0.800
+Eva	|    1.000     |  0.000  |   0.000
+Franka	|    1.000     |  0.000  |   0.000
+Helge	|    0.200     |  0.000  |   0.800
+John	|    0.200     |  0.000  |   0.800
+Klaus	|    0.200     |  0.000  |   0.800
+Ludger	|    0.200     |  0.000  |   0.800
+Martin	|    0.200     |  0.000  |   0.800
+Petra	|    1.000     |  0.000  |   0.000
+
+
+0.800 == m( {"Klaus", "Martin"} )
+0.200 == m( Omega )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Alfons	|    0.200     |  0.000  |   0.800
+Eva	|    0.200     |  0.000  |   0.800
+Franka	|    0.200     |  0.000  |   0.800
+Helge	|    0.200     |  0.000  |   0.800
+John	|    0.200     |  0.000  |   0.800
+Klaus	|    1.000     |  0.000  |   0.000
+Ludger	|    0.200     |  0.000  |   0.800
+Martin	|    1.000     |  0.000  |   0.000
+Petra	|    0.200     |  0.000  |   0.800
+
+
+0.706 == m( {"Eva", "Franka", "Petra"} )
+0.176 == m( Omega )
+0.118 == m( {"Helge", "Ludger"} )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Alfons	|    0.176     |  0.000  |   0.824
+Eva	|    0.882     |  0.000  |   0.118
+Franka	|    0.882     |  0.000  |   0.118
+Helge	|    0.294     |  0.000  |   0.706
+John	|    0.176     |  0.000  |   0.824
+Klaus	|    0.176     |  0.000  |   0.824
+Ludger	|    0.294     |  0.000  |   0.706
+Martin	|    0.176     |  0.000  |   0.824
+Petra	|    0.882     |  0.000  |   0.118
+
+
+0.414 == m( {"Klaus", "Martin"} )
+0.414 == m( {"Eva", "Franka", "Petra"} )
+0.103 == m( Omega )
+0.069 == m( {"Helge", "Ludger"} )
+
+Subject | Plausibility | Believe | Disbelieve
+---------------------------------------------
+Alfons	|    0.103     |  0.000  |   0.897
+Eva	|    0.517     |  0.000  |   0.483
+Franka	|    0.517     |  0.000  |   0.483
+Helge	|    0.172     |  0.000  |   0.828
+John	|    0.103     |  0.000  |   0.897
+Klaus	|    0.517     |  0.000  |   0.483
+Ludger	|    0.172     |  0.000  |   0.828
+Martin	|    0.517     |  0.000  |   0.483
+Petra	|    0.517     |  0.000  |   0.483
+

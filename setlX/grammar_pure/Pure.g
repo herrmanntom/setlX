@@ -19,7 +19,7 @@ statement
     | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
-    | 'try' '{' block '}' 'catch' '(' variable ')' '{' block '}'
+    | 'try' '{' block '}' ('catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')* ('catch' '(' variable ')' '{' block '}')?
     | 'return' anyExpr? ';'
     | 'continue' ';'
     | 'break' ';'
@@ -80,7 +80,7 @@ boolExpr
     ;
 
 equivalence
-    : implication (('<==>' | '<!=>') implication)?
+    : implication ('<==>' implication | '<!=>' implication)?
     ;
 
 implication
@@ -105,7 +105,7 @@ boolFactor
     ;
 
 comparison
-    : expr ('==' | '!=' | '<' | '<=' | '>' | '>=' | 'in' | 'notin') expr
+    : expr ('==' expr | '!=' expr | '<' expr | '<=' expr | '>' expr | '>=' expr | 'in' expr | 'notin' expr)
     ;
 
 expr

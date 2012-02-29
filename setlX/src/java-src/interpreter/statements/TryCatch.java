@@ -2,44 +2,58 @@ package interpreter.statements;
 
 import interpreter.exceptions.CatchableInSetlXException;
 import interpreter.exceptions.SetlException;
-import interpreter.exceptions.ThrownInSetlXException;
-import interpreter.expressions.Variable;
-import interpreter.types.SetlError;
+import interpreter.exceptions.TermConversionException;
+import interpreter.types.SetlList;
 import interpreter.types.Term;
+import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.TermConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 grammar rule:
 statement
     : [...]
-    | 'try' '{' block '}' 'catch' '(' variable ')' '{' block '}'
+    | 'try' '{' block '}' ('catch' '(' variable ')' '{' block '}' | 'catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')+
     ;
 
 implemented here as:
-                =====                 ========         =====
-             mBlockToTry              mErrorVar   mBlockToRecover
+                =====      ==============================================================================================================================
+             mBlockToTry                                                              mTryList
+
+implemented with different classes which inherit from BranchTryAbstract:
+                           ======================================   =========================================   =========================================
+                                       TryCatchBranch                           TryCatchLngBranch                           TryCatchUsrBranch
 */
 
 public class TryCatch extends Statement {
-    private Block       mBlockToTry;
-    private Variable    mErrorVar;
-    private Block       mBlockToRecover;
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'tryCatch";
 
-    public TryCatch(Block blockToTry, Variable errorVar, Block blockToRecover) {
+    private Block                        mBlockToTry;
+    private List<TryCatchAbstractBranch> mTryList;
+
+    public TryCatch(Block blockToTry, List<TryCatchAbstractBranch> tryList) {
         mBlockToTry     = blockToTry;
-        mErrorVar       = errorVar;
-        mBlockToRecover = blockToRecover;
+        mTryList        = tryList;
     }
 
     public void execute() throws SetlException {
         try{
             mBlockToTry.execute();
-        } catch (ThrownInSetlXException tisxe) {
-            mErrorVar.assign(tisxe.getValue()); // assign directly
-            mBlockToRecover.execute();
-        } catch (CatchableInSetlXException cisxe) {
-            mErrorVar.assign(new SetlError(cisxe)); // wrap into error
-            mBlockToRecover.execute();
+        } catch (CatchableInSetlXException cise) {
+            for (TryCatchAbstractBranch br : mTryList) {
+                if (br.catches(cise)) {
+                    br.execute();
+
+                    return;
+
+                }
+            }
+            // If we get here nothing matched. Throw as if nothing happened
+            throw cise;
         }
     }
 
@@ -49,19 +63,40 @@ public class TryCatch extends Statement {
         String result = Environment.getTabs(tabs);
         result += "try ";
         result += mBlockToTry.toString(tabs, true);
-        result += " catch (" + mErrorVar + ") ";
-        result += mBlockToRecover.toString(tabs, true);
+        for (TryCatchAbstractBranch br : mTryList) {
+            result += br.toString(tabs);
+        }
         return result;
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term("'tryCatch");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
+
         result.addMember(mBlockToTry.toTerm());
-        result.addMember(mErrorVar.toTerm());
-        result.addMember(mBlockToRecover.toTerm());
+
+        SetlList branchList = new SetlList();
+        for (TryCatchAbstractBranch br: mTryList) {
+            branchList.addMember(br.toTerm());
+        }
+        result.addMember(branchList);
+
         return result;
+    }
+
+    public static TryCatch termToStatement(Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Block                           block       = TermConverter.valueToBlock(term.firstMember());
+            SetlList                        branches    = (SetlList) term.lastMember();
+            List<TryCatchAbstractBranch>    branchList  = new ArrayList<TryCatchAbstractBranch>(branches.size());
+            for (Value v : branches) {
+                branchList.add(TryCatchAbstractBranch.valueToTryCatchAbstractBranch(v));
+            }
+            return new TryCatch(block, branchList);
+        }
     }
 }
 

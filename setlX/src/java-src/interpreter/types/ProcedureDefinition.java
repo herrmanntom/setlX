@@ -3,13 +3,16 @@ package interpreter.types;
 import interpreter.exceptions.IncorrectNumberOfParametersException;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.statements.Block;
 import interpreter.utilities.ParameterDef;
+import interpreter.utilities.TermConverter;
 import interpreter.utilities.VariableScope;
 import interpreter.utilities.WriteBackAgent;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // This class represents a function definition
@@ -26,6 +29,9 @@ implemented here as:
 */
 
 public class ProcedureDefinition extends Value {
+    // functional character used in terms
+    public  final static String FUNCTIONAL_CHARACTER = "'procedure";
+
     protected List<ParameterDef> mParameters;  // parameter list
     protected Block              mStatements;  // statements in the body of the definition
 
@@ -125,7 +131,7 @@ public class ProcedureDefinition extends Value {
     /* term operations */
 
     public Value toTerm() {
-        Term result = new Term("'procedure");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
 
         SetlList paramList = new SetlList();
         for (ParameterDef param: mParameters) {
@@ -136,6 +142,20 @@ public class ProcedureDefinition extends Value {
         result.addMember(mStatements.toTerm());
 
         return result;
+    }
+
+    public static ProcedureDefinition termToValue(Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            SetlList            paramList   = (SetlList) term.firstMember();
+            List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            for (Value v : paramList) {
+                parameters.add(ParameterDef.valueToParameterDef(v));
+            }
+            Block               block       = TermConverter.valueToBlock(term.lastMember());
+            return new ProcedureDefinition(parameters, block);
+        }
     }
 
     /* comparisons */

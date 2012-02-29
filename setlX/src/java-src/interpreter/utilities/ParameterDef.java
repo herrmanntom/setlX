@@ -1,6 +1,7 @@
 package interpreter.utilities;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Variable;
 import interpreter.types.Term;
 import interpreter.types.Value;
@@ -20,6 +21,10 @@ implemented here as:
 */
 
 public class ParameterDef {
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER    = "'parameter";
+    private final static String FUNCTIONAL_CHARACTER_RW = "'rwParameter";
+
     public final static int READ_ONLY   = 0;
     public final static int READ_WRITE  = 1;
 
@@ -71,12 +76,29 @@ public class ParameterDef {
     public Term toTerm() {
         Term result;
         if (mType == READ_WRITE) {
-            result = new Term("'rwParameter");
+            result = new Term(FUNCTIONAL_CHARACTER_RW);
         } else {
-            result = new Term("'parameter");
+            result = new Term(FUNCTIONAL_CHARACTER);
         }
         result.addMember(mVar.toTerm());
         return result;
+    }
+
+    public static ParameterDef valueToParameterDef(Value value) throws TermConversionException {
+        if ( ! (value instanceof Term)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        }
+        Term    term    = (Term) value;
+        String  fc      = term.functionalCharacter().getUnquotedString();
+        if (fc.equals(FUNCTIONAL_CHARACTER) && term.size() == 1 && term.firstMember() instanceof Term) {
+            Variable var = Variable.termToExpr((Term) term.firstMember());
+            return new ParameterDef(var, READ_ONLY);
+        } else if (fc.equals(FUNCTIONAL_CHARACTER_RW) && term.size() == 1 && term.firstMember() instanceof Term) {
+            Variable var = Variable.termToExpr((Term) term.firstMember());
+            return new ParameterDef(var, READ_WRITE);
+        } else {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        }
     }
 }
 

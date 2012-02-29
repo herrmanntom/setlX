@@ -26,7 +26,7 @@ public class SetlBoolean extends Value {
 
     /* Boolean operations */
 
-    public SetlBoolean and(Expr other) throws SetlException {
+    public Value and(Expr other) throws SetlException {
         if (this == FALSE) {
             return FALSE;
         } else { // this == TRUE
@@ -35,13 +35,15 @@ public class SetlBoolean extends Value {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
+            } else if (otr instanceof Term) {
+                return ((Term) otr).andFlipped(this);
             } else {
                 throw new IncompatibleTypeException("Right-hand-side of '" + this + " && " + otr + "' is not a Boolean value.");
             }
         }
     }
 
-    public SetlBoolean implies(Expr other) throws SetlException {
+    public Value implies(Expr other) throws SetlException {
         if (this == FALSE) {
             return TRUE;
         } else { // this == TRUE
@@ -50,6 +52,8 @@ public class SetlBoolean extends Value {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
+            } else if (otr instanceof Term) {
+                return ((Term) otr).impliesFlipped(this);
             } else {
                 throw new IncompatibleTypeException("Right-hand-side of '" + this + " => " + otr + "' is not a Boolean value.");
             }
@@ -64,7 +68,7 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public SetlBoolean or(Expr other) throws SetlException {
+    public Value or(Expr other) throws SetlException {
         if (this == TRUE) {
             return TRUE;
         } else { // this == FALSE
@@ -73,6 +77,8 @@ public class SetlBoolean extends Value {
                 return TRUE;
             } else if (otr == FALSE) {
                 return FALSE;
+            } else if (otr instanceof Term) {
+                return ((Term) otr).orFlipped(this);
             } else {
                 throw new IncompatibleTypeException("Right-hand-side of '" + this + " || " + otr + "' is not a Boolean value.");
             }

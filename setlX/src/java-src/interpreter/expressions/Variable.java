@@ -1,5 +1,6 @@
 package interpreter.expressions;
 
+import interpreter.exceptions.TermConversionException;
 import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
@@ -18,9 +19,6 @@ implemented here as:
 */
 
 public class Variable extends Expr {
-    private String  mId;
-    private boolean isTerm;
-
     // This functional character is used internally
     public  final static String FUNCTIONAL_CHARACTER          = "'Variable";
     // this one is used externally (e.g. during toString)
@@ -32,9 +30,12 @@ public class Variable extends Expr {
      * This is done to create a difference between the cases used in
      *      match(term) {
      *          case 'variable(x): foo2(); // matches only variables
-     *          case x           : foo1(); // matches everything and binds it to x
+     *          case x           : foo1(); // `x'.toTerm() results in 'Variable("x"); matches everything and binds it to x
      *      }
      */
+
+    private String  mId;
+    private boolean isTerm;
 
     public Variable(String id) {
         mId     = id;
@@ -80,6 +81,15 @@ public class Variable extends Expr {
         Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(new SetlString(mId));
         return result;
+    }
+
+    public static Variable termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            String id = ((SetlString) term.firstMember()).getUnquotedString();
+            return new Variable(id);
+        }
     }
 }
 

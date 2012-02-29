@@ -5,14 +5,14 @@ import interpreter.types.Value;
 
 import java.util.List;
 
-// arb(compoundValue)      : select arbitrary member from compound value
+// arb(collectionValue)    : select arbitrary member from collection value
 
 public class PD_arb extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_arb();
 
     private PD_arb() {
         super("arb");
-        addParameter("compoundValue");
+        addParameter("collectionValue");
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

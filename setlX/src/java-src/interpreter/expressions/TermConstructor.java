@@ -4,6 +4,7 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.TermConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +69,15 @@ public class TermConstructor extends Expr {
         }
 
         return result;
+    }
+
+    public static TermConstructor termToExpr(Term term) {
+        String      functionalCharacter = term.functionalCharacter().getUnquotedString();
+        List<Expr>  args                = new ArrayList<Expr>(term.size());
+        for (Value v : term) {
+            args.add(TermConverter.valueToExpr(v));
+        }
+        return new TermConstructor(new Variable(functionalCharacter), args);
     }
 }
 

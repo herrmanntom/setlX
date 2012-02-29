@@ -36,20 +36,20 @@ public class Infinity extends NumberValue {
         return POSITIVE;
     }
 
-    public Value add(Value summand) throws SetlException {
-        if (summand instanceof NumberValue) {
-            if (this == summand.negate()) {
-                throw new UndefinedOperationException("'" + this + " + " + summand + "' is undefined.");
+    public Value difference(Value subtrahend) throws SetlException {
+        if (subtrahend instanceof NumberValue) {
+            if (this == subtrahend) {
+                throw new UndefinedOperationException("'" + this + " + " + subtrahend + "' is undefined.");
             }
             return this;
-        } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).addFlipped(this);
+        } else if (subtrahend instanceof Term) {
+            return ((Term) subtrahend).differenceFlipped(this);
         } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
         }
     }
 
-    public NumberValue divide(Value divisor) throws SetlException {
+    public Value divide(Value divisor) throws SetlException {
         if (divisor == POSITIVE || divisor == NEGATIVE) {
             throw new UndefinedOperationException("'" + this + " / " + divisor + "' is undefined.");
         } else if (divisor instanceof NumberValue) {
@@ -60,12 +60,14 @@ public class Infinity extends NumberValue {
             } else {
                 return this;
             }
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).divideFlipped(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " / " + divisor + "' is not a number.");
         }
     }
 
-    public NumberValue multiply(Value multiplier) throws SetlException {
+    public Value multiply(Value multiplier) throws SetlException {
         if (multiplier instanceof NumberValue) {
             if (this == multiplier) {
                 return POSITIVE;
@@ -78,6 +80,8 @@ public class Infinity extends NumberValue {
             } else {
                 return this;
             }
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
         } else {
             throw new IncompatibleTypeException("Right-hand-side of '" + this + " * " + multiplier + "' is not a number.");
         }
@@ -91,19 +95,23 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public NumberValue subtract(Value subtrahend) throws SetlException {
-        if (subtrahend instanceof NumberValue) {
-            if (this == subtrahend) {
-                throw new UndefinedOperationException("'" + this + " + " + subtrahend + "' is undefined.");
-            }
-            return this;
-        } else {
-            throw new IncompatibleTypeException("Right-hand-side of '" + this + " - " + subtrahend + "' is not a number.");
-        }
+    public NumberValue power(int exponent) throws UndefinedOperationException{
+        throw new UndefinedOperationException("'" + this + " ** " + exponent + "' is undefined.");
     }
 
-    public Infinity power(int exponent) throws UndefinedOperationException{
-        throw new UndefinedOperationException("'" + this + " ** " + exponent + "' is undefined.");
+    public Value sum(Value summand) throws SetlException {
+        if (summand instanceof NumberValue) {
+            if (this == summand.negate()) {
+                throw new UndefinedOperationException("'" + this + " + " + summand + "' is undefined.");
+            }
+            return this;
+        } else if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else if (summand instanceof SetlString) {
+            return ((SetlString)summand).sumFlipped(this);
+        } else {
+            throw new IncompatibleTypeException("Right-hand-side of '" + this + " + " + summand + "' is not a number or string.");
+        }
     }
 
     /* string and char operations */

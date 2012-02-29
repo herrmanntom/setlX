@@ -1,39 +1,35 @@
-
 // differentiate the term t with respect to the variable x
 diff := procedure(t, x) {
     match (t) {
-        case t1 + t2 : return 'sum(diff(t1, x), diff(t2, x));
-        case t1 - t2 : return 'difference(diff(t1, x), diff(t2, x));
-        case t1 * t2 : return 'sum( 
-                                   'product(diff(t1, x), t2),
-                                   'product(t1, diff(t2, x))
-                                   );
-        case t1 / t2 : return 'division(
-                                    'difference(
-                                            'product(diff(t1, x), t2),
-                                            'product(t1, diff(t2, x))
-                                                ),
-                                    'product(t2, t2)
-                                       );
-        case (t) : diff(t, x);
+        case t1 + t2 :
+            return diff(t1, x) + diff(t2, x);
+        case t1 - t2 :
+            return diff(t1, x) - diff(t2, x);
+        case t1 * t2 :
+            return diff(t1, x) * t2 + t1 * diff(t2, x);
+        case t1 / t2 :
+            return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / t2 * t2;
+        case (t) :
+            diff(t, x);
         case 'variable(t) :
-                    if (t == x) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
-        default: if (isInteger(t) || isReal(t)) {
-                    return 0;
-                 } else {
-                    abort("error");
-                 }
+            if (t == x) {
+                return 1;
+            } else {
+                return 0;
+            }
+        default:
+            if (isInteger(t) || isReal(t)) {
+                return 0;
+            } else {
+                abort("error");
+            }
     }
 };
 
 test := procedure(s) {
     t := parse(s);
-    print("testing $canonical(t)$");
-    d := canonical(diff(t, "x"));
+    print("testing $t$");
+    d := diff(t, "x");
     print(d);
 };
 

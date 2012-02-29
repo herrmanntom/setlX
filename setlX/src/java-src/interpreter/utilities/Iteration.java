@@ -1,8 +1,10 @@
 package interpreter.utilities;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
+import interpreter.types.SetlInt;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
@@ -27,6 +29,9 @@ implemented here as:
 */
 
 public class Iteration extends Constructor {
+    // functional character used in terms
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "'iteration";
+
     private Expr      mExpr;
     private Iterator  mIterator;
     private Condition mCondition;
@@ -69,7 +74,7 @@ public class Iteration extends Constructor {
     public String toString(int tabs) {
         String r;
         if (mExpr != null) {
-            r = mExpr.toString(tabs) + ": ";
+            r = mExpr.toString(tabs) + " : ";
         } else {
             r = "";
         }
@@ -83,7 +88,7 @@ public class Iteration extends Constructor {
     /* term operations */
 
     public void addToTerm(CollectionValue collection) {
-        Term result = new Term("'iteration");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         if (mExpr != null) {
             result.addMember(mExpr.toTerm());
         } else {
@@ -96,6 +101,29 @@ public class Iteration extends Constructor {
             result.addMember(new SetlString("nil"));
         }
         collection.addMember(result);
+    }
+
+    /*package*/ static Iteration termToIteration(Term term) throws TermConversionException {
+        if (term.size() != 3) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            try {
+                Expr        expr        = TermConverter.valueToExpr(term.getMember(new SetlInt(1)));
+
+                Iterator    iterator    = null;
+                if (! term.getMember(new SetlInt(2)).equals(new SetlString("nil"))) {
+                    iterator  = Iterator.valueToIterator(term.getMember(new SetlInt(2)));
+                }
+
+                Condition   cond        = null;
+                if (! term.getMember(new SetlInt(3)).equals(new SetlString("nil"))) {
+                    cond    = TermConverter.valueToCondition(term.getMember(new SetlInt(3)));
+                }
+                return new Iteration(expr, iterator, cond);
+            } catch (SetlException se) {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+            }
+        }
     }
 }
 

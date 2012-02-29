@@ -1,9 +1,11 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -17,12 +19,20 @@ implemented here as:
 */
 
 public class Assignment extends Expr {
-    public final static int DIRECT      = 0; // ':='
-    public final static int SUM         = 1; // '+='
-    public final static int DIFFERENCE  = 2; // '-='
-    public final static int PRODUCT     = 3; // '*='
-    public final static int DIVISION    = 4; // '/='
-    public final static int MODULO      = 5; // '%='
+    // functional character used in terms
+    public  final static String FUNCTIONAL_CHARACTER_DIRECT     = "'assignment";           // ':='
+    public  final static String FUNCTIONAL_CHARACTER_SUM        = "'sumAssignment";        // '+='
+    public  final static String FUNCTIONAL_CHARACTER_DIFFERENCE = "'differenceAssignment"; // '-='
+    public  final static String FUNCTIONAL_CHARACTER_PRODUCT    = "'productAssignment";    // '*='
+    public  final static String FUNCTIONAL_CHARACTER_DIVISION   = "'divisionAssignment";   // '/='
+    public  final static String FUNCTIONAL_CHARACTER_MODULO     = "'moduloAssignment";     // '%='
+
+    public  final static int    DIRECT                          = 0; // ':='
+    public  final static int    SUM                             = 1; // '+='
+    public  final static int    DIFFERENCE                      = 2; // '-='
+    public  final static int    PRODUCT                         = 3; // '*='
+    public  final static int    DIVISION                        = 4; // '/='
+    public  final static int    MODULO                          = 5; // '%='
 
     private AssignmentLhs mLhs;
     private int           mType;
@@ -45,10 +55,10 @@ public class Assignment extends Expr {
                 mExecutionRhs = new Difference(lhs.getExpr(), rhs);
                 break;
             case PRODUCT:
-                mExecutionRhs = new Product   (lhs.getExpr(), rhs);
+                mExecutionRhs = new Multiply  (lhs.getExpr(), rhs);
                 break;
             case DIVISION:
-                mExecutionRhs = new Division  (lhs.getExpr(), rhs);
+                mExecutionRhs = new Divide    (lhs.getExpr(), rhs);
                 break;
             case MODULO:
                 mExecutionRhs = new Modulo    (lhs.getExpr(), rhs);
@@ -102,22 +112,22 @@ public class Assignment extends Expr {
         Term result = null;
         switch (mType) {
             case DIRECT:
-                result = new Term("'assignment");
+                result = new Term(FUNCTIONAL_CHARACTER_DIRECT);
                 break;
             case SUM:
-                result = new Term("'sumAssignment");
+                result = new Term(FUNCTIONAL_CHARACTER_SUM);
                 break;
             case DIFFERENCE:
-                result = new Term("'differenceAssignment");
+                result = new Term(FUNCTIONAL_CHARACTER_DIFFERENCE);
                 break;
             case PRODUCT:
-                result = new Term("'productAssignment");
+                result = new Term(FUNCTIONAL_CHARACTER_PRODUCT);
                 break;
             case DIVISION:
-                result = new Term("'divisionAssignment");
+                result = new Term(FUNCTIONAL_CHARACTER_DIVISION);
                 break;
             case MODULO:
-                result = new Term("'moduloAssignment");
+                result = new Term(FUNCTIONAL_CHARACTER_MODULO);
                 break;
             default:
                 result = new Term("'undefinedAssignment");
@@ -126,6 +136,33 @@ public class Assignment extends Expr {
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());
         return result;
+    }
+
+    public static Assignment termToExpr(Term term) throws TermConversionException {
+        String  fc  = term.functionalCharacter().getUnquotedString();
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + fc);
+        } else {
+            int type = -1;
+            if        (fc.equals(FUNCTIONAL_CHARACTER_DIRECT)    ) {
+                type = DIRECT;
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_SUM)       ) {
+                type = SUM;
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_DIFFERENCE)) {
+                type = DIFFERENCE;
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_PRODUCT)   ) {
+                type = PRODUCT;
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_DIVISION)  ) {
+                type = DIVISION;
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_MODULO)    ) {
+                type = MODULO;
+            } else {
+                throw new TermConversionException("malformed " + fc);
+            }
+            AssignmentLhs   lhs = AssignmentLhs.valueToAssignmentLhs(term.firstMember());
+            Expr            rhs = TermConverter.valueToExpr(term.lastMember());
+            return new Assignment(lhs, type, rhs);
+        }
     }
 }
 

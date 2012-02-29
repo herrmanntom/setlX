@@ -1,15 +1,14 @@
 package interpreter.expressions;
 
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.exceptions.UnknownFunctionException;
 import interpreter.types.Om;
 import interpreter.types.ProcedureDefinition;
-import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
-
-import java.util.List;
+import interpreter.utilities.TermConverter;
 
 /*
 grammar rule:
@@ -23,6 +22,9 @@ implemented here as:
 */
 
 public class CallCollection extends Expr {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'callCollection";
+
     private Expr    mLhs;      // left hand side (function name, variable, other call, etc)
     private Expr    mArg;      // argument
 
@@ -37,8 +39,6 @@ public class CallCollection extends Expr {
             throw new UnknownFunctionException("\"" + mLhs + "\" is undefined.");
         } else if (lhs instanceof ProcedureDefinition) {
             throw new UndefinedOperationException("Incorrect set of brackets for function call.");
-        } else if (lhs instanceof Term) {
-            throw new UndefinedOperationException("Incorrect set of brackets for term.");
         }
         return lhs.callCollection(mArg.eval().clone());
     }
@@ -55,12 +55,20 @@ public class CallCollection extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term        result      = new Term("'collectionCall");
-        SetlList    arguments   = new SetlList();
+        Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mLhs.toTerm());
-        result.addMember(arguments);
-        arguments.addMember(mArg.toTerm());
+        result.addMember(mArg.toTerm());
         return result;
+    }
+
+    public static CallCollection termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            Expr arg = TermConverter.valueToExpr(term.lastMember());
+            return new CallCollection(lhs, arg);
+        }
     }
 }
 

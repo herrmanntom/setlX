@@ -2,6 +2,7 @@ package interpreter.expressions;
 
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.CollectionValue;
 import interpreter.types.SetlList;
@@ -10,6 +11,7 @@ import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Constructor;
+import interpreter.utilities.VariableScope;
 
 import java.util.List;
 
@@ -111,6 +113,28 @@ public class SetListConstructor extends Expr {
             mConstructor.addToTerm(result);
         }
         return result;
+    }
+
+    public static SetListConstructor valueToExpr(Value value) throws TermConversionException {
+        if ( ! (value instanceof SetlList || value instanceof SetlSet)) {
+            throw new TermConversionException("not a collectionValue");
+        } else {
+            CollectionValue cv = (CollectionValue) value;
+            if (cv.size() == 0) { // empty
+                if (cv instanceof SetlList) {
+                    return new SetListConstructor(LIST, null);
+                } else /* if (cv instanceof SetlSet) */ {
+                    return new SetListConstructor(SET,  null);
+                }
+            } else { // not empty
+                Constructor c = Constructor.CollectionValueToConstructor(cv);
+                if (cv instanceof SetlList) {
+                    return new SetListConstructor(LIST, c);
+                } else /* if (cv instanceof SetlSet) */ {
+                    return new SetListConstructor(SET,  c);
+                }
+            }
+        }
     }
 }
 

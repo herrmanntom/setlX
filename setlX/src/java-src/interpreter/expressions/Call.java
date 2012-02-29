@@ -2,6 +2,7 @@ package interpreter.expressions;
 
 import interpreter.exceptions.JVMException;
 import interpreter.exceptions.SetlException;
+import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UnknownFunctionException;
 import interpreter.types.Om;
 import interpreter.types.RangeDummy;
@@ -9,6 +10,7 @@ import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
+import interpreter.utilities.TermConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,9 @@ implemented here as:
 */
 
 public class Call extends Expr {
+    // functional character used in terms (MUST be class name starting with lower case letter!)
+    private final static String FUNCTIONAL_CHARACTER = "'call";
+
     private Expr       mLhs;       // left hand side (function name, other call, variable, etc)
     private List<Expr> mArgs;      // list of arguments
     private boolean    isRange;    // true if mArgs contains 'CallRangeDummy.CRD', which represents '..'
@@ -86,7 +91,7 @@ public class Call extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term        result      = new Term("'call");
+        Term        result      = new Term(FUNCTIONAL_CHARACTER);
         SetlList    arguments   = new SetlList();
         result.addMember(mLhs.toTerm());
         result.addMember(arguments);
@@ -94,6 +99,20 @@ public class Call extends Expr {
             arguments.addMember(arg.toTerm());
         }
         return result;
+    }
+
+    public static Call termToExpr(Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Expr        lhs     = TermConverter.valueToExpr(term.firstMember());
+            SetlList    argsLst = (SetlList) term.lastMember();
+            List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
+            for (Value v : argsLst) {
+                args.add(TermConverter.valueToExpr(v));
+            }
+            return new Call(lhs, args);
+        }
     }
 }
 

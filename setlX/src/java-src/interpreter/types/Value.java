@@ -312,8 +312,12 @@ public abstract class Value implements Comparable<Value> {
      */
     public abstract int compareTo(Value v);
 
-    public final boolean equals(Value v) {
-        return this.compareTo(v) == 0;
+    public final boolean equals(Object o) {
+        if (o instanceof Value) {
+            return this.compareTo((Value) o) == 0;
+        } else {
+            return false;
+        }
     }
 
     public final SetlBoolean isEqual(Value other) {

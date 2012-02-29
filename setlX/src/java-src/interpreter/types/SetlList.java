@@ -107,14 +107,7 @@ public class SetlList extends CollectionValue {
     }
 
     public SetlBoolean containsMember(Value element) {
-        // sadly the build in function seems to compare based on reference only...
-        //return SetlBoolean.get(getList().contains(element));
-        for (Value v: getList()) {
-            if (v.equals(element)) {
-                return SetlBoolean.TRUE;
-            }
-        }
-        return SetlBoolean.FALSE;
+        return SetlBoolean.get(getList().contains(element));
     }
 
     public Value firstMember() {
@@ -208,18 +201,7 @@ public class SetlList extends CollectionValue {
 
     public void removeMember(Value element) {
         separateFromOriginal();
-        // sadly the build in function seems to compare based on reference only
-        //mList.remove(element);
-        int elm = -1;
-        for (int i = 0; i < mList.size(); i++) {
-            if (mList.get(i).equals(element)) {
-                elm = i;
-                break;
-            }
-        }
-        if (elm != -1) {
-            mList.remove(elm);
-        }
+        mList.remove(element);
         compress();
     }
 

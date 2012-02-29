@@ -16,6 +16,10 @@ public class RangeDummy extends Value {
     }
 
     public int compareTo(Value v) {
-        return -1; // dummy is uncomparable, but throwable interface does not handle exceptions...
+        if (v == RD) {
+            return 0;
+        } else {
+            return -1; // dummy is uncomparable to anything else
+        }
     }
 }

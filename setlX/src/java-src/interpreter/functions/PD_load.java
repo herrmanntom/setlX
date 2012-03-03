@@ -21,7 +21,7 @@ public class PD_load extends PreDefinedFunction {
     private PD_load() {
         super("load");
         addParameter("path_to_setlX_file");
-        addParameter("do_not_disable_output"); // optional parameter
+        addParameter("output");             // optional parameter
         allowFewerParameters();
         doNotChangeScope();
     }
@@ -34,6 +34,7 @@ public class PD_load extends PreDefinedFunction {
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException("Path-argument '" + filePath + "' is not a string.");
         }
+
         // check and get optional 2nd parameter
         Value   doNotDisableOutput  = SetlBoolean.FALSE;
         if (args.size() == 2) {
@@ -42,6 +43,7 @@ public class PD_load extends PreDefinedFunction {
                 throw new IncompatibleTypeException("do-not-disable-output-argument '" + doNotDisableOutput + "' is not a Boolean value.");
             }
         }
+
         // get string of file path to be parsed
         String  file    = filePath.getUnquotedString();
 
@@ -61,7 +63,7 @@ public class PD_load extends PreDefinedFunction {
         }
 
         // newline to visually separate result
-        if (interactive) {
+        if (interactive && doNotDisableOutput == SetlBoolean.TRUE) {
             System.out.println();
         }
 

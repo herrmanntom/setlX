@@ -39,46 +39,14 @@
 
 This is the manual of \setlX, an interpreter for the \SetlX{} (\underline{set} \underline{l}anguage e\underline{x}tended) programming-language.
 
-The \SetlX{} language was mostly designed by Prof. Dr. Karl Stroetmann and is an evolution of \SetlTwo{} by Kirk Snyder and especially the original \Setl{} by Jack Schwartz. It was specifically conceived to make the features of \Setl{} more accessible to today's students of set theories.
+The \SetlX{} language was mostly designed by Prof. Dr. Karl Stroetmann and is an evolution of \Setl{} by Jack Schwartz. It was specifically conceived to make the features of \Setl{} more accessible to today's students of set theories.
 
 The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann. You may send bug-reports and\slash{}or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}.
 
-\section{Usage}
-
-The \setlX{} interpreter has two basic modes of operation:
-\begin{itemize}
-	\item file execution mode
-	\item interactive mode
-\end{itemize}
-
-The `file execution mode' will be started if one or more paths to code files are supplied as parameters for this program. These files will then be parsed and executed in the order in which they are listed as parameters. When executing multiple files, they share the outermost scope.
-
-When no paths are supplied, the `interactive mode' will be started.\\
-Note that input will be executed after entering an additional empty line. Hereby multiple lines of input can be parsed and evaluated. Executing the `\command{exit;}' statement will terminate the interpreter.
-
-\nonSubsection{Additional parameters}
-
-In addition to file-paths a number of options can be used when running \setlX{}:
-
-\begin{itemize}
-	\param{--help}
-	      {displays some helpful information}
-	\param{--predictableRandom}
-	      {always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging)}
-	\param{--real32\\
-	       --real64\\
-	       --real128\\
-	       --real256}
-           {sets the width of the real-type in bits (64 is the sane default)}
-	\param{--verbose}
-           {display the parsed program before executing it (has no effect in interactive mode)}
-	\param{--version}
-           {displays the interpreter version and terminates}
-\end{itemize}
 
 \section{Installing}
 
-To comfortably use \setlX{} it may be installed into once search-path. After this is done, it may be just like any other program on your system.
+To comfortably use \setlX{} it may be installed into the search-path. After this is done, it may be launched just like any other command-line program on your system.
 
 \subsection{Unix-like OS (Linux, MacOS X, etc.)}\label{Unix}
 
@@ -117,7 +85,19 @@ set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
 	\item Copy the modified `\command{win-setlX.cmd}'-script into the folder, where you want to work with \setlX{} programs (e.g. `\command{C:\textbackslash{}Users\textbackslash{}<user>\textbackslash{}education\textbackslash{}setlX\textbackslash{}}').
 \end{enumerate}
 
-\section{Launching}
+\section{Usage}
+
+The \setlX{} interpreter has two basic modes of operation:
+
+\begin{itemize}
+	\item file execution mode
+	\item interactive mode
+\end{itemize}
+
+The `file execution mode' will be started if one or more paths to code files are supplied as parameters for this program. These files will then be parsed and executed in the order in which they are listed as parameters. When executing multiple files, they share the outermost scope.
+
+When no paths are supplied, the `interactive mode' will be started.\\
+Note that input will be executed after entering an additional empty line. Hereby multiple lines of input can be parsed and evaluated. Executing the `\command{exit;}' statement will terminate the interpreter.
 
 \subsection{Unix-like OS (Linux, MacOS X, etc.)}
 
@@ -155,6 +135,26 @@ win-setlX.cmd
 
 It might be possible to execute a \SetlX{} file by dragging it onto the `\command{win-setlX.cmd}' script or to launch the interpreter mode by simply double clicking this script.
 
+\nonSubsection{Additional parameters}
+
+In addition to file-paths a number of options can be used when running \setlX{}:
+
+\begin{itemize}
+	\param{--help}
+	      {displays some helpful information}
+	\param{--predictableRandom}
+	      {always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging)}
+	\param{--real32\\
+	       --real64\\
+	       --real128\\
+	       --real256}
+           {sets the width of the real-type in bits (64 is the sane default)}
+	\param{--verbose}
+           {display the parsed program before executing it (has no effect in interactive mode)}
+	\param{--version}
+           {displays the interpreter version and terminates}
+\end{itemize}
+
 \section{Building from source}
 
 Optionally, when the interpreter source is available, the interpreter can be (re)build.
@@ -190,9 +190,9 @@ However, the \command{setlX} and \command{win-setlX.cmd} scripts can also be use
 
 \subsection{Building for Java 1.5 (esp. a 1st Generation Intel Macintosh)}\label{MACj5}
 
-To create \setlX{} for a Machine, which is limited to Java 1.5, you need another machine running both Java 1.5 and Java 1.6.
+To create \setlX{} for a machine, which is limited to Java 1.5, you need another machine running both Java 1.5 and Java 1.6.
 
-The main example for such situation is a 1st generation Apple Macintosh with Intel CPU. These Machines are artificially limited by Apple to Java 1.5 only. It is recommended that you try installing an unofficial ``Soylatte'' port of Java 1.6 for these machines, which can be found at \url{http://landonf.bikemonkey.org/static/soylatte/}. You should only attempt to rebuild \setlX{} for Java 1.5 if you can not, or do not want to install this port.
+The main example for such situation is a 1st generation Apple Macintosh with Intel CPU running Mac OS X 10.5 or earlier. These machines are artificially limited by Apple to Java 1.5 only. It is recommended that you try installing an unofficial ``Soylatte''\footnote{\url{http://landonf.bikemonkey.org/static/soylatte/}} port of Java 1.6 for these machines, or upgrade to Mac OS X 10.6 or higher. You should only attempt to rebuild \setlX{} for Java 1.5 if you can not, or do not want to install this port.
 
 On the second machine running Java 1.5 and 1.6, do the following:
 
@@ -245,7 +245,7 @@ To work around these problems, edit the used launching script (`\command{setlX}'
 
 
 \section{Disclaimer}
-You may distribute \setlX{}, to anyone and for any purpose, and make changed to it, even without permission from the author or notice to the author, as long as you do not remove any copyright information, and also comply with the antlr license.
+You may distribute \setlX{}, to anyone and for any purpose, and make changes to it, even without permission from the author or notice to the author, as long as you do not remove any copyright information, and also comply with the antlr license.
 
 This program uses the antlr parser generator in version 3.4. As per its license antlr is not guaranteed to work and might even destroy all life on this planet. The full text of this license is shown in figure \ref{lblAntlr}. Note however, that it only applies to the antlr components and NOT to the rest of the interpreter.
 

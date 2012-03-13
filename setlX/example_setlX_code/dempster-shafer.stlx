@@ -1,5 +1,9 @@
+// This program computes evidences using Dempster-Shafer theory
+
+// stores everything known about the possible offenders (see examples below)
 var data;
 
+// selects (names of) all offenders
 omega := procedure() {
     all := {};
     for (dataRow in data) {
@@ -8,6 +12,7 @@ omega := procedure() {
     return all;
 };
 
+// select all offenders whos data in row `index' equals `needle'
 selectEq := procedure(index, needle) {
     selection := {};
     for (dataRow in data) {
@@ -18,16 +23,18 @@ selectEq := procedure(index, needle) {
     return selection;
 };
 
-selectIn := procedure(index, needle) {
+// select all offenders whos data in row `index' is in `needles' set/list
+selectIn := procedure(index, needles) {
     selection := {};
     for (dataRow in data) {
-        if (dataRow(index) in needle) {
+        if (dataRow(index) in needles) {
             selection += {dataRow(1)};
         }
     }
     return selection;
 };
 
+// adds evidences which are for the same set of offenders, but occur multiple times in `evidenceSet'
 unify := procedure(evidenceSet) {
     unifiedSet := {};
     while (#evidenceSet >= 1) {
@@ -41,6 +48,7 @@ unify := procedure(evidenceSet) {
     return unifiedSet;
 };
 
+// removes conflicts from `evidenceSet' (evidences for empty set of offenders)
 removeConflict := procedure(evidenceSet) {
     result      := {};
     conflict    := evidenceSet({}); // conflict is evidence of nobody
@@ -54,6 +62,7 @@ removeConflict := procedure(evidenceSet) {
     return result;
 };
 
+// accumulation after Dempster-Shafer for two evidenceSets `x' and `y'
 accumulate := procedure(x, y) {
     result := {};
     for (u in x, v in y) {
@@ -62,6 +71,7 @@ accumulate := procedure(x, y) {
     return removeConflict(unify(result));
 };
 
+// Dempster-Shafer for all evidenceSets in `x'
 accumulateAll := procedure(x) {
     result := {[omega(), 1]}; // Sgt. Schultz: I know nothing, nothing!
     for (y in x) {
@@ -140,67 +150,81 @@ nbrFormat := procedure(value) {
 };
 
 /******************************************************************************/
-/**                                                                          **/
+/**                               first example                              **/
 /******************************************************************************/
 
+// all possible offenders
 data := {
- ["Tobias", 182, 30, "braun"  ],
- ["Ralf",   169, 55, "schwarz"],
- ["Sabine", 195, 17, "braun"  ],
- ["Ulrike", 166, 61, "grau"   ],
- ["Erna",   176, 41, "blond"  ],
- ["Frank",  181, 34, "blond"  ]
+// name,    hight, age, hair color
+ ["Tobias", 182,   30,  "brown" ],
+ ["Ralf",   169,   55,  "black" ],
+ ["Sabine", 195,   17,  "brown" ],
+ ["Ulrike", 166,   61,  "gray"  ],
+ ["Erna",   176,   41,  "blond" ],
+ ["Frank",  181,   34,  "blond" ]
 };
 
-one := {[selectIn(4, {"braun", "schwarz"}), 0.88], [omega(), 0.12]};
+// first witness testifies offenders hair was "brown" or "black" and is 88% sure
+one := {[selectIn(4, {"brown", "black"}), 0.88], [omega(), 0.12]};
 
 prettyPrint(one);
 
-two := {[selectIn(2, {180 .. 200}), 0.45], [selectIn(2, {0 .. 170}), 0.45], [omega(), 0.1]};
+// second witness testifies one offender was between 180 and 200cm high (45% sure), the other one was shorter as 170cm (45% sure)
+two := {[selectIn(2, {180 .. 200}), 0.45], [selectIn(2, {0 .. 170}), 0.45], [omega(), 0.10]};
 
 prettyPrint(two);
 
+// third witness testifies offender was 40 years or older (65% sure)
 three := {[selectIn(3, {40 .. 100}), 0.65], [omega(), 0.35]};
 
 prettyPrint(three);
 
+// who was the offender?
 oneTwoThree := accumulateAll({one, two, three});
 
 prettyPrint(oneTwoThree);
 
 /******************************************************************************/
-/**                                                                          **/
+/**                              second example                              **/
 /******************************************************************************/
 
+print("-------------------------------------------------------------------------------");
+
+// all possible offenders
 data := {
- ["Alfons", "Braun",   "M", 37],
- ["Klaus",  "Schwarz", "M", 55],
- ["John",   "Blond",   "M", 35],
- ["Ludger", "Rot",     "M", 29],
- ["Eva",    "Blond",   "W", 41],
- ["Helge",  "Blond",   "M", 25],
- ["Martin", "Schwarz", "M", 31],
- ["Petra",  "Rot",     "W", 19],
- ["Franka", "Braun",   "W", 51]
+// name,    hair color, sex, age
+ ["Alfons", "brown",    "m", 37],
+ ["Klaus",  "black",    "m", 55],
+ ["John",   "blond",    "m", 35],
+ ["Ludger", "red",      "m", 29],
+ ["Eva",    "blond",    "f", 41],
+ ["Helge",  "blond",    "m", 25],
+ ["Martin", "black",    "m", 31],
+ ["Petra",  "red",      "f", 19],
+ ["Franka", "brown",    "f", 51]
 };
 
-one := {[selectIn(4, {25 .. 30}), 0.4], [omega(), 0.6]};
+// first witness testifies offenders age was between 25 and 30 (40% sure)
+one := {[selectIn(4, {25 .. 30}), 0.40], [omega(), 0.60]};
 
 prettyPrint(one);
 
-two := {[selectEq(3, "W"), 0.8], [omega(), 0.2]};
+// second witness testifies offenders sex was female (80% sure)
+two := {[selectEq(3, "f"), 0.80], [omega(), 0.20]};
 
 prettyPrint(two);
 
-three := {[selectEq(2, "Schwarz"), 0.8], [omega(), 0.2]};
+// third witness testifies offenders hair was "black" (80% sure)
+three := {[selectEq(2, "black"), 0.80], [omega(), 0.20]};
 
 prettyPrint(three);
 
+// accumulate first and second evidences
 oneTwo := accumulate(one, two);
 
 prettyPrint(oneTwo);
 
+// accumulate first+second and third evidences
 oneTwoThree := accumulate(oneTwo, three);
 
 prettyPrint(oneTwoThree);
-

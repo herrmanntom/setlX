@@ -189,7 +189,7 @@ public class VariableScope {
         if (mOriginalScope != null) {
             mOriginalScope.collectBindings(result, mRestrictToFunctions);
         }
-        // add own bindings (possibly overwriting values from inner bindings
+        // add own bindings (possibly overwriting values from inner bindings)
         for (Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
             Value   val = entry.getValue();
             if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {

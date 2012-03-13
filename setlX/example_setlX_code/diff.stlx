@@ -10,7 +10,7 @@ diff := procedure(t, x) {
         case t1 / t2 :
             return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / t2 * t2;
         case (t) :
-            diff(t, x);
+            return diff(t, x);
         case 'variable(t) :
             if (t == x) {
                 return 1;

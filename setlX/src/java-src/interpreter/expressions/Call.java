@@ -62,7 +62,7 @@ public class Call extends Expr {
         } catch (StackOverflowError e) {
             throw new JVMException("Stack overflow.\n"
                                  + "Try preventing recursion and/or execute with larger stack size.\n"
-                                 + "(use '-Xss<size>' parameter for java loader, where <size> is like '10m')");
+                                 + "(use '-Xss<size>' parameter for java loader, where <size> is like '32m')");
         }
     }
 

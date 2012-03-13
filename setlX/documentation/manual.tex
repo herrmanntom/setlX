@@ -39,12 +39,12 @@
 
 This is the manual of \setlX, an interpreter for the \SetlX{} (\underline{set} \underline{l}anguage e\underline{x}tended) programming-language.
 
-The \SetlX{} language was mostly designed by Prof. Dr. Karl Stroetmann and is an evolution of \Setl{} by Jack Schwartz. It was specifically conceived to make the features of \Setl{} more accessible to today's students of set theories.
+The \SetlX{} language was mostly designed by Prof. Dr. Karl Stroetmann and is an evolution of \Setl{} by Jack Schwartz. It was specifically conceived to make the unique features of \Setl{} more accessible to today's students of set theories.
 
 The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann. You may send bug-reports and\slash{}or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}.
 
 
-\section{Installing}
+\section{Installation}
 
 To comfortably use \setlX{} it may be installed into the search-path. After this is done, it may be launched just like any other command-line program on your system.
 
@@ -53,13 +53,13 @@ To comfortably use \setlX{} it may be installed into the search-path. After this
 \begin{enumerate}
 	\item Copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}').\\
 	You may also copy it into the home directory of some user, when he is the only \setlX-user on the system (e.g. `\command{/home/<user>/programs/setlX/}').
-	\item Open the `\command{setlX}'-script in your favorite editor (like `\command{vi}' or `\command{emacs}').
+	\item Open the `\command{setlX}'-script in your favorite editor (either `\command{vi}' or `\command{emacs}' of course).
 	\item Change the contents of the `\command{setlXJarLocation}'-variable to the full path of the copied jar-file, including the filename itself, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 setlXJarLocation="/usr/local/setlX/setlX.jar"
 \end{lstlisting}
 	\item Save and close the file.
-	\item Copy the modified `\command{setlX}'-script into some folder, which is in the search path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/local/bin}').\\
+	\item Copy the modified `\command{setlX}'-script into some folder, which is in the search-path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/local/bin}').\\
 	When only used by one user, you may copy it into the `bin' directory in his home instead (e.g. `\command{/home/<user>/bin}').
 	\item Make the copied script executable, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
@@ -75,65 +75,53 @@ chmod +x /usr/local/bin/setlX
 \end{center}
 
 \begin{enumerate}
-	\item Copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}').
-	\item Open the `\command{win-setlX.cmd}'-script in your favorite editor.
+	\item Copy the `\command{setlX.jar}' and `\command{setlX.cmd}' files into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}').
+	\item Open the copied `\command{setlX.cmd}'-script in your favorite text editor.
 	\item Change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
 \end{lstlisting}
 	\item Save and close the file.
-	\item Copy the modified `\command{win-setlX.cmd}'-script into the folder, where you want to work with \setlX{} programs (e.g. `\command{C:\textbackslash{}Users\textbackslash{}<user>\textbackslash{}education\textbackslash{}setlX\textbackslash{}}').
+	\item Add the folder you placed both files into to the search-path (requires Administrator privileges):
+	\begin{enumerate}
+		\item Press \command{[Win]+[Pause]} key combination to open system preferences.
+		\item 
+		\begin{itemize}
+			\item On Windows Vista or newer:\\Click on `\command{Advanced system settings}' on the left pane, which opens a new window.
+			\item On Windows XP or older:\\Click the `\command{Advanced}' tab in the current window.
+		\end{itemize}
+		\item Click on `\command{Environment Variables}' on the bottom, which opens another window.
+		\item Select the `\command{Path}' variable in the `\command{System variables}' section and click on `\command{Edit...}', which opens jet another window.
+		\item Add a semicolon (`\command{;}') followed by the full path to the folder where you installed \setlX{} to the very end of the string in the `\command{Variable value}' field. The new value should look like:
+\begin{lstlisting}[frame=none,numbers=none]
+<previous value>;C:\Progam Files\setlX
+\end{lstlisting}
+		\item Accept all changes by clicking `\command{OK}' in all windows you opened before.
+		\item End you current session and login into Windows again.
+	\end{enumerate}
 \end{enumerate}
+
+\newpage
 
 \section{Usage}
 
 The \setlX{} interpreter has two basic modes of operation:
 
 \begin{itemize}
-	\item file execution mode
-	\item interactive mode
+	\item file execution mode, which can be launched with
+\begin{lstlisting}[frame=none,numbers=none]
+setlX <path>/<name>.stlx
+\end{lstlisting}
+	\item interactive mode, which can be launched with
+\begin{lstlisting}[frame=none,numbers=none]
+setlX
+\end{lstlisting}
 \end{itemize}
 
 The `file execution mode' will be started if one or more paths to code files are supplied as parameters for this program. These files will then be parsed and executed in the order in which they are listed as parameters. When executing multiple files, they share the outermost scope.
 
 When no paths are supplied, the `interactive mode' will be started.\\
 Note that input will be executed after entering an additional empty line. Hereby multiple lines of input can be parsed and evaluated. Executing the `\command{exit;}' statement will terminate the interpreter.
-
-\subsection{Unix-like OS (Linux, MacOS X, etc.)}
-
-After installation, the \setlX{} interpreter can be launched by opening a terminal and executing a SetlX program
-
-\begin{lstlisting}[frame=none,numbers=none]
-setlX <path>/<name>.stlx
-\end{lstlisting}
-
-or launching the interactive mode:
-
-\begin{lstlisting}[frame=none,numbers=none]
-setlX
-\end{lstlisting}
-
-\subsection{Microsoft Windows}
-
-After installation, the \setlX{} interpreter can be launched by opening Microsoft's sort-of-terminal (`Command Prompt'), changing into the directory where you placed the `\command{win-setlX.cmd}'-script, e.g.
-
-\begin{lstlisting}[frame=none,numbers=none]
-cd /d C:\Users\<user>\education\setlX
-\end{lstlisting}
-
-and executing a SetlX program
-
-\begin{lstlisting}[frame=none,numbers=none]
-win-setlX.cmd <path>\<name>.stlx
-\end{lstlisting}
-
-or launching the interactive mode:
-
-\begin{lstlisting}[frame=none,numbers=none]
-win-setlX.cmd
-\end{lstlisting}
-
-It might be possible to execute a \SetlX{} file by dragging it onto the `\command{win-setlX.cmd}' script or to launch the interpreter mode by simply double clicking this script.
 
 \nonSubsection{Additional parameters}
 
@@ -157,9 +145,7 @@ In addition to file-paths a number of options can be used when running \setlX{}:
 
 \section{Building from source}
 
-Optionally, when the interpreter source is available, the interpreter can be (re)build.
-
-On Unix, the interpreter can be intelligently (re)build by executing
+Optionally, when the interpreter source is available, the interpreter can be (re)build by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
 make
@@ -167,14 +153,7 @@ make
 
 in the `\command{src}' folder.
 
-On Windows the interpreter can be rebuild from scratch by executing
-\begin{lstlisting}[frame=none,numbers=none]
-win-make.cmd
-\end{lstlisting}
-
-in the `\command{src}' folder.
-
-On both platforms a self-contained `.jar' file will be created. This file can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
+A self-contained `.jar' file will be created, which can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
 java -jar setlX.jar <path>/<name>.stlx
@@ -186,7 +165,7 @@ or
 java -jar setlX.jar
 \end{lstlisting}
 
-However, the \command{setlX} and \command{win-setlX.cmd} scripts can also be used to launch the jar build by this process.
+However, the \command{setlX} and \command{setlX.cmd} scripts can also be used to launch the jar file created by this process.
 
 \subsection{Building for Java 1.5 (esp. a 1st Generation Intel Macintosh)}\label{MACj5}
 

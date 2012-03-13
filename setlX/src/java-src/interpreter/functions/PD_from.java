@@ -8,8 +8,8 @@ import interpreter.utilities.ParameterDef;
 import java.util.List;
 
 /*
- * from(collectionValue)   : select and removes an arbitrary
- *                           member from collection value
+ * from(collectionValue)   : selects and removes an arbitrary
+ *                           member from `collectionValue'
  */
 
 public class PD_from extends PreDefinedFunction {

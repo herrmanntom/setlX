@@ -123,8 +123,8 @@ Martin	|    0.176     |  0.000  |   0.824
 Petra	|    0.882     |  0.000  |   0.118
 
 
-0.414 == m( {"Klaus", "Martin"} )
 0.414 == m( {"Eva", "Franka", "Petra"} )
+0.414 == m( {"Klaus", "Martin"} )
 0.103 == m( Omega )
 0.069 == m( {"Helge", "Ludger"} )
 

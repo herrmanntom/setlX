@@ -5,7 +5,7 @@ import interpreter.types.Value;
 
 import java.util.List;
 
-// arb(collectionValue)    : select arbitrary member from collection value
+// arb(collectionValue)    : selects an arbitrary member from `collectionValue'
 
 public class PD_arb extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_arb();

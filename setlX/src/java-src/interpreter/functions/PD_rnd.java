@@ -5,7 +5,7 @@ import interpreter.types.Value;
 
 import java.util.List;
 
-// rnd(collectionValue)    : randomly select member from collection value; different from arb, as arb is deterministic and rnd is not
+// rnd(collectionValue)    : randomly selects a member from `collectionValue'; different from arb, as arb is deterministic and rnd is not
 
 public class PD_rnd extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_rnd();

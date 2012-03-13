@@ -1,4 +1,9 @@
 #!/bin/sh
+#
+#
+# launcher script for the setlX interpreter on Unix-like systems
+#
+#
 
 # insert full path to the setlX.jar file here
 setlXJarLocation="setlX.jar"

@@ -5,70 +5,38 @@ var data;
 
 // selects (names of) all offenders
 omega := procedure() {
-    all := {};
-    for (dataRow in data) {
-        all += {dataRow(1)};
-    }
-    return all;
+    return { row(1) : row in data };
 };
 
-// select all offenders whos data in row `index' equals `needle'
-selectEq := procedure(index, needle) {
-    selection := {};
-    for (dataRow in data) {
-        if (dataRow(index) == needle) {
-            selection += {dataRow(1)};
-        }
-    }
-    return selection;
+// select all offenders whose data in row i equals n
+selectEq := procedure(i, n) {
+    return { row(1) : row in data | row(i) == n };
 };
 
-// select all offenders whos data in row `index' is in `needles' set/list
-selectIn := procedure(index, needles) {
-    selection := {};
-    for (dataRow in data) {
-        if (dataRow(index) in needles) {
-            selection += {dataRow(1)};
-        }
-    }
-    return selection;
+// select all offenders whose data in row i is in the set/list n
+selectIn := procedure(i, n) {
+    return { row(1) : row in data | row(i) in n };
 };
 
-// adds evidences which are for the same set of offenders, but occur multiple times in `evidenceSet'
-unify := procedure(evidenceSet) {
-    unifiedSet := {};
-    while (#evidenceSet >= 1) {
-        evidence := from(evidenceSet);
-        if (unifiedSet(evidence(1)) != om) { // evidence already in result
-            unifiedSet(evidence(1)) += evidence(2); // increase its m
-        } else {                      // evidence not in result
-            unifiedSet += {evidence}; // add to result
-        }
-    }
-    return unifiedSet;
+// adds evidences which are for the same set of offenders, but occur multiple times 
+// in the evidenceList l
+unify := procedure(l) {
+    return { [ x1, +/ [ y2 : [x2, y2] in l | x2 == x1 ] ]: [ x1, y1 ] in l };
 };
 
-// removes conflicts from `evidenceSet' (evidences for empty set of offenders)
-removeConflict := procedure(evidenceSet) {
-    result      := {};
-    conflict    := evidenceSet({}); // conflict is evidence of nobody
-    if (conflict == om) { // no conflict found
-        conflict := 0;
+// removes conflicts from the evidenceSet s (evidences for empty set of offenders)
+removeConflict := procedure(s) {
+    c := s({}); // c is evidence of conflict 
+    if (c == om) { // no conflict found
+        return s;
     }
-    evidenceSet -= {[{}, conflict]}; // remove conflict from evidenceSet
-    for (evidence in evidenceSet) {
-        result += {[evidence(1), evidence(2) * (1 / (1 - conflict)) ]};
-    }
-    return result;
+    s -= { [{}, c] }; // remove conflict from evidenceSet
+    return { [ e(1), e(2) / (1 - c) ] : e in s };
 };
 
 // accumulation after Dempster-Shafer for two evidenceSets `x' and `y'
 accumulate := procedure(x, y) {
-    result := {};
-    for (u in x, v in y) {
-        result += {[u(1) * v(1), u(2) * v(2)]};
-    }
-    return removeConflict(unify(result));
+    return removeConflict(unify([ [u(1)*v(1), u(2)*v(2)] : u in x, v in y ]));
 };
 
 // Dempster-Shafer for all evidenceSets in `x'
@@ -80,28 +48,15 @@ accumulateAll := procedure(x) {
     return result;
 };
 
-plausibility := procedure(evidenceSet, needle) {
-    pl := 0;
-    for (evidence in evidenceSet) {
-        if (needle in evidence(1) || (isSet(needle) && needle >= evidence(1))) {
-            pl += evidence(2);
-        }
-    }
-    return pl;
+plausibility := procedure(s, n) {
+    return +/ [ e(2) : e in s | n in e(1) || (isSet(n) && n >= e(1)) ];
 };
 
-believe := procedure(evidenceSet, needle) {
-    b := 0;
-    for (evidence in evidenceSet) {
-        if ({needle} == evidence(1) || needle == evidence(1)) {
-            b += evidence(2);
-        }
-    }
-    return b;
+believe := procedure(s, n) {
+    return +/ [ e(2) : e in s | { n } == e(1) || n == e(1) ];
 };
 
 // stuff for printing
-
 prettyPrint := procedure(evidenceSet) {
     es := evidenceSet;
     print();

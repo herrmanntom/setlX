@@ -13,6 +13,7 @@ public class Environment {
     private         static  Random  randoom             = null;
 
     private         static  boolean sIsInteractive      = false;
+    private         static  boolean sPrintAfterEval     = false;
     private         static  boolean sPrintVerbose       = false;
 
     private final   static  String  TAB                 = "\t";
@@ -44,6 +45,14 @@ public class Environment {
 
     public static boolean isInteractive() {
         return sIsInteractive;
+    }
+
+    public static void setPrintAfterEval(boolean isPrintAfterEval) {
+        sPrintAfterEval = isPrintAfterEval;
+    }
+
+    public static boolean isPrintAfterEval() {
+        return sPrintAfterEval;
     }
 
     public static void setPrintVerbose(boolean printVerbose) {

@@ -26,7 +26,7 @@ public class ExpressionStatement extends Statement {
 
     public void execute() throws SetlException {
         Value v = mExpr.eval();
-        if (Environment.isInteractive()) {
+        if (Environment.isPrintAfterEval()) {
             System.out.println("Result: " + v);
         }
     }

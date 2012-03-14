@@ -141,3 +141,9 @@ print(a); // 198
 print(b); // ~0.84
 print();
 
+/*******************************************************************************
+  The following function can only be demonstrated in interactive mode:
+  printAfterEval(toggle)        // configures output of results after each evaluation of an statement containing an expression
+*/
+ 
+

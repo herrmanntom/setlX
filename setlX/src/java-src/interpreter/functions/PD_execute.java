@@ -52,18 +52,18 @@ public class PD_execute extends PreDefinedFunction {
         Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
 
         // execute the contents
-        boolean interactive = Environment.isInteractive();
+        boolean printAfterEval = Environment.isPrintAfterEval();
         try {
             if (doNotDisableOutput == SetlBoolean.FALSE) {
-                Environment.setInteractive(false);
+                Environment.setPrintAfterEval(false);
             }
             blk.execute();
         } finally {
-            Environment.setInteractive(interactive);
+            Environment.setPrintAfterEval(printAfterEval);
         }
 
         // newline to visually separate result
-        if (interactive && doNotDisableOutput == SetlBoolean.TRUE) {
+        if (printAfterEval && doNotDisableOutput == SetlBoolean.TRUE) {
             System.out.println();
         }
 

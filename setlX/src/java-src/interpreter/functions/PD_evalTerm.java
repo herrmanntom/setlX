@@ -49,10 +49,10 @@ public class PD_evalTerm extends PreDefinedFunction {
         Value           result      = Om.OM;
 
         // execute the contents
-        boolean interactive = Environment.isInteractive();
+        boolean printAfterEval = Environment.isPrintAfterEval();
         try {
             if (doNotDisableOutput == SetlBoolean.FALSE) {
-                Environment.setInteractive(false);
+                Environment.setPrintAfterEval(false);
             }
 
             if (fragment instanceof Expr) {
@@ -61,12 +61,12 @@ public class PD_evalTerm extends PreDefinedFunction {
                 ((Statement) fragment).execute();
 
                 // newline to visually separate result
-                if (interactive && doNotDisableOutput == SetlBoolean.TRUE) {
+                if (printAfterEval && doNotDisableOutput == SetlBoolean.TRUE) {
                     System.out.println();
                 }
             }
         } finally {
-            Environment.setInteractive(interactive);
+            Environment.setPrintAfterEval(printAfterEval);
         }
 
         // everything seems fine

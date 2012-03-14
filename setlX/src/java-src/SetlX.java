@@ -74,6 +74,7 @@ public class SetlX {
 
     private static void parseAndExecuteInteractive() throws Exception {
         Environment.setInteractive(true);
+        Environment.setPrintAfterEval(true);
         Block   blk      = null;
         boolean skipTest = false;
         do {
@@ -98,6 +99,7 @@ public class SetlX {
 
     private static void parseAndExecuteFile(String fileName, boolean verbose) throws Exception {
         Environment.setInteractive(false);
+        Environment.setPrintAfterEval(false);
         if (verbose) {
             System.out.println("-================================Parser=Errors================================-\n");
         }

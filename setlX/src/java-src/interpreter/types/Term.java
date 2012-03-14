@@ -163,7 +163,11 @@ public class Term extends CollectionValue {
     }
 
     public SetlString functionalCharacter() {
-        return new SetlString(mFunctionalCharacter);
+        if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
+            return new SetlString(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
+        } else {
+            return new SetlString(mFunctionalCharacter);
+        }
     }
 
     public Value getMember(Value index) throws SetlException {

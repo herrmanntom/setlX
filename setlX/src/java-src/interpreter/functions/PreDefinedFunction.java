@@ -64,9 +64,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     // this function is called from within SetlX
     public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        if (args.contains(RangeDummy.RD)) {
-            throw new IncorrectNumberOfParametersException("Functions can not be called with ranges as parameters.");
-        } else if (mParameters.size() < args.size()) {
+        if (mParameters.size() < args.size()) {
             if (mUnlimitedParameters) {
                 // unlimited means: at least the number of defined parameters or more
                 // no error

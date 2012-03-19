@@ -41,7 +41,7 @@ exprList
     ;
 
 assignment
-    : (variable ('(' anyExpr ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
+    : (variable ('[' anyExpr ']')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
     ;
 
 idList
@@ -182,14 +182,18 @@ termArguments
     ;
 
 call
-    : variable ('(' callParameters ')' | '{' anyExpr '}')*
+    : variable ('(' callParameters ')' | ('[' collectionAccessParams ']' | '{' anyExpr '}')*)
     ;
 
 callParameters
+    : exprList
+    | /* epsilon */
+    ;
+
+collectionAccessParams
     : (expr '..')=> expr '..' expr?
     | '..' expr
-    | exprList
-    | /* epsilon */
+    | expr
     ;
 
 value

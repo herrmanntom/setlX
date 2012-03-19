@@ -1,6 +1,5 @@
 package interpreter.expressions;
 
-import interpreter.exceptions.JVMException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UnknownFunctionException;
@@ -8,7 +7,6 @@ import interpreter.types.Om;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -21,22 +19,20 @@ call
     ;
 
 implemented here as:
-      ========      ==============
-        mLhs             mArgs
+      =========                               =======================
+         mLhs                                           mArgs
 */
 
-public class Call extends Expr {
+public class CollectionAccess extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'call";
+    private final static String FUNCTIONAL_CHARACTER = "'collectionAccess";
 
-    private Expr       mLhs;       // left hand side (only variable is allowed here!)
+    private Expr       mLhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
     private List<Expr> mArgs;      // list of arguments
-    private String     _this;      // pre-computed toString(), which has less stack penalty in case of stack overflow error...
 
-    public Call(Expr lhs, List<Expr> args) {
-        mLhs            = lhs;
-        mArgs           = args;
-        _this           = _toString(0);
+    public CollectionAccess(Expr lhs, List<Expr> args) {
+        mLhs    = lhs;
+        mArgs   = args;
     }
 
     public Value evaluate() throws SetlException {
@@ -51,35 +47,21 @@ public class Call extends Expr {
                 args.add(arg.eval().clone());
             }
         }
-        try {
-            // also supply the original expressions (mArgs), which are needed for 'rw' parameters
-            return lhs.call(mArgs, args);
-        } catch (StackOverflowError e) {
-            throw new JVMException("Stack overflow.\n"
-                                 + "Try preventing recursion and/or execute with larger stack size.\n"
-                                 + "(use '-Xss<size>' parameter for java loader, where <size> is like '32m')");
-        }
+        // execute
+        return lhs.collectionAccess(args);
     }
 
     /* string operations */
 
     public String toString(int tabs) {
-        if (tabs == 0 && ! Environment.isPrintVerbose()) {
-            return _this;
-        } else {
-            return _toString(tabs);
-        }
-    }
-
-    public String _toString(int tabs) {
-        String result = mLhs.toString(tabs) + "(";
+        String result = mLhs.toString(tabs) + "[";
         for (int i = 0; i < mArgs.size(); ++i) {
             if (i > 0) {
-                result += ", ";
+                result += " ";
             }
             result += mArgs.get(i).toString(tabs);
         }
-        result += ")";
+        result += "]";
         return result;
     }
 
@@ -96,7 +78,7 @@ public class Call extends Expr {
         return result;
     }
 
-    public static Call termToExpr(Term term) throws TermConversionException {
+    public static CollectionAccess termToExpr(Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -106,7 +88,7 @@ public class Call extends Expr {
             for (Value v : argsLst) {
                 args.add(TermConverter.valueToExpr(v));
             }
-            return new Call(lhs, args);
+            return new CollectionAccess(lhs, args);
         }
     }
 }

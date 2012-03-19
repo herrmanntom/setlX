@@ -92,7 +92,7 @@ bin/interpreter/utilities/*.class :                          \
         java-src/interpreter/utilities/*.java                        \
         java-src/interpreter/boolExpressions/Equal.java              \
         java-src/interpreter/expressions/Assignment.java             \
-        java-src/interpreter/expressions/CallRangeDummy.java         \
+        java-src/interpreter/expressions/CollectionAccessRangeDummy.java \
         java-src/interpreter/expressions/Expr.java                   \
         java-src/interpreter/expressions/SetListConstructor.java     \
         java-src/interpreter/expressions/StringConstructor.java      \

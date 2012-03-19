@@ -10,7 +10,7 @@ import interpreter.utilities.TermConverter;
 /*
 grammar rule:
 assignment
-    : (variable ('(' anyExpr ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
+    : (variable ('[' anyExpr ']')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
     ;
 
 implemented here as:

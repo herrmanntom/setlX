@@ -14,8 +14,8 @@ plot2 := procedure(f, l) {
 
 prettyPlot := procedure(f, l) {
     function := str(f);
-    if (#function <= 9 || function(.. 9) != "procedure") { // is lambda function
-        function := function(7 .. ); // remove beginning of lambda function string
+    if (#function <= 9 || function[.. 9] != "procedure") { // is lambda function
+        function := function[7 .. ]; // remove beginning of lambda function string
     }
     print("f(x)\t:= " + function);
     print();
@@ -25,8 +25,8 @@ prettyPlot := procedure(f, l) {
 
 prettyPlot2 := procedure(f, l) {
     function := str(f);
-    if (#function <= 9 || function(.. 9) != "procedure") { // is lambda function
-        function := function(12 .. ); // remove beginning of lambda function string
+    if (#function <= 9 || function[.. 9] != "procedure") { // is lambda function
+        function := function[12 .. ]; // remove beginning of lambda function string
     }
     print("f(x, y)\t:= " + function);
     print();

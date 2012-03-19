@@ -8,7 +8,7 @@ reachable := procedure(x, y, r) {
 	while (true) {
 		old_P := p;
 		p := p + path_product(p, r);
-		found := {p in p | p(#p) == y};
+		found := {p in p | p[#p] == y};
 		if (found != {}) {
 			return arb(found);
 		}
@@ -19,7 +19,7 @@ reachable := procedure(x, y, r) {
 };
 
 path_product := procedure(p, q) {
-	return {add(p, q): p in p, q in q | p(#p) == q(1) && ( ! (cyclic(add(p, q))) )};
+	return {add(p, q): p in p, q in q | p[#p] == q[1] && ( ! (cyclic(add(p, q))) )};
 };
 
 cyclic := procedure(p) {
@@ -27,7 +27,7 @@ cyclic := procedure(p) {
 };
 
 add := procedure(p, q) {
-	return p + q(2..);
+	return p + q[2..];
 };
 
 all := {"Bauer", "Wolf", "Ziege", "Kohl"};
@@ -39,17 +39,17 @@ start := [all, {}];
 goal := [{}, all];
 path := reachable(start, goal, r);
 for (i in [1 .. #path]) {
-	s1 := path(i)(1);
-	s2 := path(i)(2);
+	s1 := path[i][1];
+	s2 := path[i][2];
 	print(s1, 65 * " ", s2);
 	if (i == #path) {
 		break;
 	}
 	if ("Bauer" in s1) {
-		m := s1 - path(i + 1)(1);
+		m := s1 - path[i + 1][1];
 		print("                                     >>>> ", m, " >>>> ");
 	} else {
-		m := s2 - path(i + 1)(2);
+		m := s2 - path[i + 1][2];
 		print("                                     <<<< ", m, " <<<< ");
 	}
 }

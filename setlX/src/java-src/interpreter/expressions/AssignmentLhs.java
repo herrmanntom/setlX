@@ -15,7 +15,7 @@ import java.util.List;
 /*
 grammar rule:
 assignment
-    : (variable ('(' anyExpr ')')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
+    : (variable ('[' anyExpr ']')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
     ;
 
 implemented here as:
@@ -24,11 +24,11 @@ implemented here as:
 */
 
 public class AssignmentLhs {
-    // functional character used in terms (only used when assigning into collection (e.g. `a(1) := 5')
-    private final static String FUNCTIONAL_CHARACTER_CALL = "'assignmentCall";
+    // functional character used in terms (only used when assigning into collection (e.g. `a[1] := 5')
+    private final static String FUNCTIONAL_CHARACTER_COLLECTION = "'assignmentIntoCollection";
 
     private Expr        mLhs;   // lhs (should be either a Variable or ListConstructor)
-    private List<Expr>  mItems; // subsequent calls upon the mLhs Expr
+    private List<Expr>  mItems; // subsequent CollectionAccess's upon the mLhs Expr
 
     public AssignmentLhs(Expr lhs, List<Expr> items) {
         mLhs   = lhs;
@@ -53,7 +53,7 @@ public class AssignmentLhs {
 
     public Value setValue(Value v) throws SetlException {
         if (mItems != null && mItems.size() > 0) {
-            setVariableAfterCallsToValue(v);
+            setVariableAfterCollectionAccess(v);
         } else {
             mLhs.assign(v);
         }
@@ -66,7 +66,7 @@ public class AssignmentLhs {
         String result = mLhs.toString(tabs);
         if (mItems != null && mItems.size() > 0) {
             for (Expr e: mItems) {
-                result += "(" + e.toString(tabs) + ")";
+                result += "[" + e.toString(tabs) + "]";
             }
         }
         return result;
@@ -77,14 +77,14 @@ public class AssignmentLhs {
     public Value toTerm() {
         Value result = mLhs.toTerm();
         if (mItems != null && mItems.size() > 0) {
-            Term        call    = new Term(FUNCTIONAL_CHARACTER_CALL);
+            Term        coll    = new Term(FUNCTIONAL_CHARACTER_COLLECTION);
             SetlList    args    = new SetlList();
-            call.addMember(result);
-            call.addMember(args);
+            coll.addMember(result);
+            coll.addMember(args);
             for (Expr e: mItems) {
                 args.addMember(e.toTerm());
             }
-            result  = call;
+            result  = coll;
         }
         return result;
     }
@@ -93,10 +93,10 @@ public class AssignmentLhs {
         if (value instanceof Term) {
             Term    term    = (Term) value;
             String  fc      = term.functionalCharacter().getUnquotedString();
-            if (fc.equals(Variable.FUNCTIONAL_CHARACTER)) {
+            if (fc.equalsIgnoreCase(Variable.FUNCTIONAL_CHARACTER)) {
                 Variable    var = Variable.termToExpr(term);
                 return new AssignmentLhs(var);
-            } else if (fc.equals(FUNCTIONAL_CHARACTER_CALL) && term.size() == 2 && term.lastMember() instanceof SetlList) {
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_COLLECTION) && term.size() == 2 && term.lastMember() instanceof SetlList) {
                 Expr        expr    = TermConverter.valueToExpr(term.firstMember());
                 SetlList    argsLst = (SetlList) term.lastMember();
                 List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
@@ -117,8 +117,8 @@ public class AssignmentLhs {
 
     /* private methods */
 
-    // first evaluate the variable, then subsequently perform all calls and assign value to last result
-    private void setVariableAfterCallsToValue(Value newValue) throws SetlException {
+    // first evaluate the variable, then subsequently perform all CollectionAccess's and assign value to last result
+    private void setVariableAfterCollectionAccess(Value newValue) throws SetlException {
         Value current = mLhs.eval();
         for (int i = 0; i < mItems.size(); ++i) {
             if (current instanceof CollectionValue) {

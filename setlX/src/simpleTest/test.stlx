@@ -39,10 +39,10 @@ fromVariable();
 
 listIndex := procedure() {
     a := [1];
-    b := a(2..);
+    b := a[2..];
     c := [1, 2, 4];
-    d := c(10);
-    e := c(2..3)(1);
+    d := c[10];
+    e := c[2..3][1];
     if (b == [] && d == om && e == 2) {
         printErr("test 04 successful (list index)");
     } else {
@@ -77,13 +77,13 @@ listAssignments();
 
 innerListAssignments := procedure() {
     a := [1, 2, 3];
-    a(2) := 6;
+    a[2] := 6;
     b := [[[1, 2, 3]], [[4, 5, 6]], [[7, 8, 9]]];
-    b(3)(1)(2) := "t";
+    b[3][1][2] := "t";
     c := [1, 2, 3];
-    c(6) := 10;
+    c[6] := 10;
     d := c;
-    d(6) := om;
+    d[6] := om;
     if (a == [1, 6, 3] && b == [[[1, 2, 3]], [[4, 5, 6]], [[7, "t", 9]]] && c == [1, 2, 3, om, om, 10] && d == [1, 2, 3]) {
         printErr("test 07 successful (assignments to list content)");
     } else {
@@ -156,7 +156,7 @@ scopeTests := procedure() {
         p := "test";
     }
     while (p == "test") {
-        p := p(2..);
+        p := p[2..];
     }
     v := "test";
     w := {v: w in q, v in w};
@@ -234,12 +234,12 @@ relationExtension := procedure() {
     correct := r == {[1, 1], [2, 4], [3, 9]};
 
     /* change value of pair [2, 4] to [2, 3] */
-    r(2) := 3;
+    r[2] := 3;
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9]};
 
     /* add pair [4, 5] */
-    r(4) := 5;
+    r[4] := 5;
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9], [4, 5]};
 
@@ -254,13 +254,13 @@ relationExtension();
 formatedString := procedure() {
     correct := false;
 
-	s := "";
-	for (i in [1 .. 9]) {
-		  s += "p$i$ || ";
-	}
-	s := s + "false";
+    s := "";
+    for (i in [1 .. 9]) {
+          s += "p$i$ || ";
+    }
+    s := s + "false";
 
-	correct := s == "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false";
+    correct := s == "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false";
 
     if (correct) {
         printErr("test 16 successful (formatedString)");

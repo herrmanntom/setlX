@@ -4,7 +4,7 @@ reachable := procedure(x, y, r) {
 	while (true) {
 		old_P := p;
 		p := p + path_product(p, r);
-		found := {p in p | p(#p) == y};
+		found := {p in p | p[#p] == y};
 		if (found != {}) {
 			return arb(found);
 		}
@@ -15,7 +15,7 @@ reachable := procedure(x, y, r) {
 };
 
 path_product := procedure(p, q) {
-	return {add(p, q): p in p, q in q | p(#p) == q(1) && not_cyclic(add(p, q))};
+	return {add(p, q): p in p, q in q | p[#p] == q[1] && not_cyclic(add(p, q))};
 };
 
 not_cyclic := procedure(p) {
@@ -23,7 +23,7 @@ not_cyclic := procedure(p) {
 };
 
 add := procedure(p, q) {
-	return p + q(2..);
+	return p + q[2..];
 };
 
 p := {[drei, fuenf]: drei in {0 .. 3}, fuenf in {0 .. 5}};

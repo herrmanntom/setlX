@@ -3,7 +3,7 @@ package interpreter.utilities;
 import interpreter.exceptions.TermConversionException;
 import interpreter.boolExpressions.Equal;
 import interpreter.expressions.Assignment;
-import interpreter.expressions.CallRangeDummy;
+import interpreter.expressions.CollectionAccessRangeDummy;
 import interpreter.expressions.Expr;
 import interpreter.expressions.SetListConstructor;
 import interpreter.expressions.StringConstructor;
@@ -128,7 +128,7 @@ public class TermConverter {
                 if (value == IgnoreDummy.ID) {
                     return VariableIgnore.VI;
                 } else if (value == RangeDummy.RD) {
-                    return CallRangeDummy.CRD;
+                    return CollectionAccessRangeDummy.CARD;
                 } else if (value instanceof SetlList || value instanceof SetlSet) {
                     return SetListConstructor.valueToExpr(value);
                 } else if (value instanceof SetlString) {

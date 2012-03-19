@@ -184,8 +184,13 @@ public abstract class Value implements Comparable<Value> {
         return new SetlInt(this.size());
     }
 
-    public SetlSet collectMembers(Value index) throws SetlException {
-        throw new IncompatibleTypeException("Can not get member with index '" + index + "' from operand; '" + this + "' is not a map.");
+    public Value collectionAccess(List<Value> args) throws SetlException {
+        throw new IncompatibleTypeException("Can not access elements using the arguments '" + args + "' on this operand-type; '" + this + "' is not a collection value.");
+    }
+
+    // returns a set of all pairs which first element matches arg
+    public Value collectMap(Value arg) throws SetlException {
+        throw new IncompatibleTypeException("Can not collect values of members matching the key '" + arg + "' on this operand-type; '" + this + "' is not a map.");
     }
 
     public SetlBoolean containsMember(Value element) throws IncompatibleTypeException {
@@ -268,15 +273,10 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Right-hand-side of '+/ " + this + "' is not a collection value.");
     }
 
-    /* calls (element access or function call) */
+    /* function call */
 
-    public Value call(List<Expr> exprs,List<Value> args) throws SetlException {
-        throw new IncompatibleTypeException("Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure or collection value.");
-    }
-
-    // this call returns a set, not a single value
-    public Value callCollection(Value arg) throws SetlException {
-        throw new IncompatibleTypeException("Can not perform call with argument '{" + arg + "}' on this operand-type; '" + this + "' is not a map.");
+    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
+        throw new IncompatibleTypeException("Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure.");
     }
 
     /* string and char operations */

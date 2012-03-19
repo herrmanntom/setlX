@@ -5,8 +5,8 @@ deck := {[v, s]: v in values, s in suits};
 hole := {["8", "s"], ["9", "s"]};
 rest := deck - hole;
 flops := {{k1, k2, k3}: k1 in rest, k2 in rest, k3 in rest | #{k1, k2, k3} == 3};
-twoSpades := {f in flops | #{k in f | k(2) == "s"} >= 2};
+twoSpades := {f in flops | #{k in f | k[2] == "s"} >= 2};
 print(1.0 * #twoSpades / #flops);
-threeSpades := {f in flops | #{k in f | k(2) == "s"} == 3};
+threeSpades := {f in flops | #{k in f | k[2] == "s"} == 3};
 print(1.0 * #threeSpades / #flops);
 

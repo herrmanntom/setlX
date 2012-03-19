@@ -14,17 +14,17 @@ eval := procedure(f, i) {
 		case f == 0 :
 			return false;
 		case isString((f)) :
-			return i(f);
-		case f(1) == "-" :
-			return ( ! (eval(f(2), i)) );
-		case f(2) == "*" :
-			return eval(f(1), i) && eval(f(3), i);
-		case f(2) == "+" :
-			return eval(f(1), i) || eval(f(3), i);
-		case f(2) == "->" :
-			return ( ! (eval(f(1), i)) ) || eval(f(3), i);
-		case f(2) == "<->" :
-			return eval(f(1), i) == eval(f(3), i);
+			return i[f];
+		case f[1] == "-" :
+			return ( ! (eval(f[2], i)) );
+		case f[2] == "*" :
+			return eval(f[1], i) && eval(f[3], i);
+		case f[2] == "+" :
+			return eval(f[1], i) || eval(f[3], i);
+		case f[2] == "->" :
+			return ( ! (eval(f[1], i)) ) || eval(f[3], i);
+		case f[2] == "<->" :
+			return eval(f[1], i) == eval(f[3], i);
 		default :
 			print("eval: Syntax-Fehler: ", f);
 	}
@@ -40,10 +40,10 @@ a := {"hM", "fM", "W", "K", "F"};
 p := pow(a);
 b := {createBelegung(m, a): m in p};
 s := {i in b | (evalSet(fS, i) <==> true)};
-print("\nMenge der Belegungen, die FS erf�llen:");
+print("\nMenge der Belegungen, die FS erfuellen:");
 if (#s == 1) {
 	i := arb(s);
-	besucher := {x in a | i(x)};
+	besucher := {x in a | i[x]};
 	print("\nFolgende Personen kommen: ", besucher);
 }
 

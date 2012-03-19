@@ -139,12 +139,22 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public SetlSet collectMembers(Value element) throws SetlException {
+    public Value collectionAccess(List<Value> args) throws SetlException {
+        if (args.contains(RangeDummy.RD)) {
+            throw new UndefinedOperationException("Range operations are unsupported on '" + this + "'.");
+        } else if (args.size() != 1) {
+            throw new UndefinedOperationException("Can not access elements using arguments '" + args + "' on '" + this + "'; Exactly one argument is required.");
+        }
+        return getMember(args.get(0));
+    }
+
+    // returns a set of all pairs which first element matches arg
+    public Value collectMap(Value arg) throws SetlException {
         SetlSet result = new SetlSet();
         for (Value v: getSet()) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
-                    if (v.getMember(new SetlInt(1)).equals(element)) {
+                    if (v.getMember(new SetlInt(1)).equals(arg)) {
                         result.addMember(v.getMember(new SetlInt(2)));
                     }
                 } else {
@@ -309,22 +319,6 @@ public class SetlSet extends CollectionValue {
 
     public void removeLastMember() {
         removeMember(lastMember());
-    }
-
-    /* calls (element access) */
-
-    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        if (args.contains(RangeDummy.RD)) {
-            throw new UndefinedOperationException("Range operations are unsupported on '" + this + "'.");
-        } else if (args.size() != 1) {
-            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
-        }
-        return getMember(args.get(0));
-    }
-
-    // this call returns a set, not a single value
-    public Value callCollection(Value arg) throws SetlException {
-        return collectMembers(arg);
     }
 
     /* string and char operations */

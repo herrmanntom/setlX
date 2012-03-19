@@ -72,7 +72,7 @@ check := procedure(l, x) {
         throw("same row");
     }
     m := #l;
-    if (exists (i in {1 .. m} | i-l(i) == m+1-x || i+l(i) == m+1+x)) {
+    if (exists (i in {1 .. m} | i-l[i] == m+1-x || i+l[i] == m+1+x)) {
         throw("same diagonal");
     }
 };
@@ -90,7 +90,7 @@ printBoard := procedure(l) {
         print(line);
         line := "        |";
         for (col in [1..n]) {
-            if (l(col) == row) {
+            if (l[col] == row) {
                 line += "   Q   |";
             } else {
                 line += "       |";

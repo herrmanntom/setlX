@@ -5,22 +5,22 @@ import interpreter.types.Term;
 
 /*
 grammar rule:
-callParameters
+collectionAccessParams
     : (expr '..')=> expr '..' expr?
     | [...]
     ;
 
-this class implements a range token inside the parameters of a call:
+this class implements a range token inside the parameters of a CollectionAccess:
                          ====
 */
 
-public class CallRangeDummy extends Expr {
+public class CollectionAccessRangeDummy extends Expr {
     // functional character used in terms (MUST be classname starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'callRangeDummy";
+    private final static String                     FUNCTIONAL_CHARACTER = "'collectionAccessRangeDummy";
 
-    public final static CallRangeDummy CRD = new CallRangeDummy();
+    public  final static CollectionAccessRangeDummy CARD                 = new CollectionAccessRangeDummy();
 
-    private CallRangeDummy() { }
+    private CollectionAccessRangeDummy() { }
 
     public RangeDummy evaluate() {
         return RangeDummy.RD;
@@ -38,8 +38,8 @@ public class CallRangeDummy extends Expr {
         return new Term(FUNCTIONAL_CHARACTER);
     }
 
-    public static CallRangeDummy termToExpr(Term term) {
-        return CRD;
+    public static CollectionAccessRangeDummy termToExpr(Term term) {
+        return CARD;
     }
 }
 

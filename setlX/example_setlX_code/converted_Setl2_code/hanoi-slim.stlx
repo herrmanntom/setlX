@@ -1,12 +1,12 @@
 
 relation := procedure(p, i, j) {
-	return {[a, move(a, i, j)]: a in p | movePossible(a(i), a(j))};
+	return {[a, move(a, i, j)]: a in p | movePossible(a[i], a[j])};
 };
 
 move := procedure(triple, i, j) {
 	result := triple;
-	result(i) := triple(i) - {min(triple(i))};
-	result(j) := triple(j) + {min(triple(i))};
+	result[i] := triple[i] - {min(triple[i])};
+	result[j] := triple[j] + {min(triple[i])};
 	return result;
 };
 
@@ -20,21 +20,21 @@ movePossible := procedure(source, target) {
 
 printPath := procedure(path) {
 	for (i in [1 .. #path]) {
-		t1 := lastChars(path(i)(1), 20);
-		t2 := lastChars(path(i)(2), 20);
-		t3 := lastChars(path(i)(3), 20);
+		t1 := lastChars(path[i][1], 20);
+		t2 := lastChars(path[i][2], 20);
+		t3 := lastChars(path[i][3], 20);
 		print(t1, t2, t3);
 	}
 };
 
 lastChars := procedure(x, n) {
-	s := str((x));
+	s := str(x);
 	m := n - #s;
 	return m * " " + s;
 };
 
 oneStep := procedure(pS, r) {
-	return {p + [z]: p in pS, [y, z] in r | p(#p) == y};
+	return {p + [z]: p in pS, [y, z] in r | p[#p] == y};
 };
 
 eliminateCycles := procedure(pS) {
@@ -50,7 +50,7 @@ reachable := procedure(x, y, r) {
 	while (true) {
 		old_PS := pS;
 		pS := eliminateCycles(pS + oneStep(pS, r));
-		p := {p in pS | p(#p) == y};
+		p := {p in pS | p[#p] == y};
 		if (p != {}) {
 			return arb(p);
 		}

@@ -145,7 +145,7 @@ assignment returns [Assignment assign]
     : (
          variable
          (
-           '(' a1 = anyExpr[false] ')' { items.add($a1.ae);                           }
+           '[' a1 = anyExpr[false] ']' { items.add($a1.ae);                           }
          )*                            { lhs = new AssignmentLhs($variable.v, items); }
        | idList                        { lhs = new AssignmentLhs($idList.ilc);        }
       )
@@ -360,10 +360,10 @@ prefixOperation [boolean enableIgnore] returns [Expr po]
     ;
 
 simpleFactor [boolean enableIgnore] returns [Expr sf]
-    : '(' expr[$enableIgnore] ')' { sf = new BracketedExpr($expr.ex); }
-    | term                        { sf = $term.t;                     }
-    | call[$enableIgnore]         { sf = $call.c;                     }
-    | value[$enableIgnore]        { sf = $value.v;                    }
+    : '(' expr[$enableIgnore] ')'  { sf = new BracketedExpr($expr.ex); }
+    | term                         { sf = $term.t;                     }
+    | call[$enableIgnore]          { sf = $call.c;                     }
+    | value[$enableIgnore]         { sf = $value.v;                    }
     ;
 
 term returns [Expr t]
@@ -377,27 +377,37 @@ termArguments returns [List<Expr> args]
     ;
 
 call [boolean enableIgnore] returns [Expr c]
-    : variable                  { c = $variable.v;                         }
+    : variable                                             { c = $variable.v;                                             }
       (
-         '(' callParameters[$enableIgnore] ')' { c = new Call(c, $callParameters.params); }
-       | '{' anyExpr[$enableIgnore] '}'        { c = new CallCollection(c, $anyExpr.ae);  }
-      )*
+         '(' callParameters[$enableIgnore] ')'             { c = new Call(c, $callParameters.params);                     }
+       | (
+            '[' collectionAccessParams[$enableIgnore] ']'  { c = new CollectionAccess(c, $collectionAccessParams.params); }
+          | '{' anyExpr[$enableIgnore]                 '}' { c = new CollectMap(c, $anyExpr.ae);                          }
+         )*
+      )
     ;
 
 callParameters [boolean enableIgnore] returns [List<Expr> params]
     @init {
         params = new LinkedList<Expr>();
     }
-    : ( expr[true] '..' )=>
-      e1 = expr[$enableIgnore]          { params.add($e1.ex);             }
-      '..'                              { params.add(CallRangeDummy.CRD); }
-      (
-        e2 = expr[$enableIgnore]        { params.add($e2.ex);             }
-      )?
-    | '..'                              { params.add(CallRangeDummy.CRD); }
-      expr[$enableIgnore]               { params.add($expr.ex);           }
-    | exprList[$enableIgnore]           { params = $exprList.exprs;       }
+    : exprList[$enableIgnore] { params = $exprList.exprs; }
     |  /* epsilon */
+    ;
+
+collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
+    @init {
+        params = new LinkedList<Expr>();
+    }
+    : ( expr[true] '..' )=>
+      e1 = expr[$enableIgnore]   { params.add($e1.ex);                          }
+      '..'                       { params.add(CollectionAccessRangeDummy.CARD); }
+      (
+        e2 = expr[$enableIgnore] { params.add($e2.ex);                          }
+      )?
+    | '..'                       { params.add(CollectionAccessRangeDummy.CARD); }
+      expr[$enableIgnore]        { params.add($expr.ex);                        }
+    | expr[$enableIgnore]        { params.add($expr.ex);                        }
     ;
 
 value [boolean enableIgnore] returns [Expr v]

@@ -1,6 +1,6 @@
 
 lastChars := procedure(x, n) {
-	s := str((x));
+	s := str(x);
 	m := n - #s;
 	return m * " " + s;
 };
@@ -17,7 +17,7 @@ movePossible := procedure(source, target) {
 };
 
 oneStep := procedure(pS, r) {
-	return {p + [z]: p in pS, [y, z] in r | p(#p) == y};
+	return {p + [z]: p in pS, [y, z] in r | p[#p] == y};
 };
 
 eliminateCycles := procedure(pS) {
@@ -33,7 +33,7 @@ reachable := procedure(x, y, r) {
 	while (true) {
 		old_PS := pS;
 		pS := pS + eliminateCycles(oneStep(pS, r));
-		p := {p in pS | p(#p) == y};
+		p := {p in pS | p[#p] == y};
 		if (p != {}) {
 			return arb(p);
 		}
@@ -55,11 +55,11 @@ r := r12 + r21 + r31 + r13 + r23 + r32;
 start := [{1, 2, 3}, {}, {}];
 goal := [{}, {}, {1, 2, 3}];
 path := reachable(start, goal, r);
-print("\nL�sung:");
+print("\nLoesung:");
 for (i in [1 .. #path]) {
-	t1 := lastChars(path(i)(1), 20);
-	t2 := lastChars(path(i)(2), 20);
-	t3 := lastChars(path(i)(3), 20);
+	t1 := lastChars(path[i][1], 20);
+	t2 := lastChars(path[i][2], 20);
+	t3 := lastChars(path[i][3], 20);
 	print(t1, t2, t3);
 }
 

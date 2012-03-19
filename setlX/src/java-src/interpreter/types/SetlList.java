@@ -104,6 +104,30 @@ public class SetlList extends CollectionValue {
         mList.add(element);
     }
 
+    public Value collectionAccess(List<Value> args) throws SetlException {
+        int   aSize  = args.size();
+        Value vFirst = (aSize >= 1)? args.get(0) : null;
+        if (args.contains(RangeDummy.RD)) {
+            if (aSize == 2 && vFirst == RangeDummy.RD) {
+                // everything up to high boundary: this(  .. y);
+                return getMembers(new SetlInt(1), args.get(1));
+
+            } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
+                // everything from low boundary:   this(x ..  );
+                return getMembers(vFirst, new SetlInt(size()));
+
+            } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
+                // full range spec:                this(x .. y);
+                return getMembers(vFirst, args.get(2));
+            }
+            throw new UndefinedOperationException("Can not access elements using the arguments '" + args + "' on '" + this + "'; arguments are malformed.");
+        } else if (aSize == 1) {
+            return getMember(vFirst);
+        } else {
+            throw new UndefinedOperationException("Can not access elements using the arguments '" + args + "' on '" + this + "'; arguments are malformed.");
+        }
+    }
+
     public SetlBoolean containsMember(Value element) {
         return SetlBoolean.get(getList().contains(element));
     }
@@ -241,32 +265,6 @@ public class SetlList extends CollectionValue {
 
     public int size() {
         return getList().size();
-    }
-
-    /* calls (element access) */
-
-    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        int   aSize  = args.size();
-        Value vFirst = (aSize >= 1)? args.get(0) : null;
-        if (args.contains(RangeDummy.RD)) {
-            if (aSize == 2 && vFirst == RangeDummy.RD) {
-                // everything up to high boundary: this(  .. y);
-                return getMembers(new SetlInt(1), args.get(1));
-
-            } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
-                // everything from low boundary:   this(x ..  );
-                return getMembers(vFirst, new SetlInt(size()));
-
-            } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
-                // full range spec:                this(x .. y);
-                return getMembers(vFirst, args.get(2));
-            }
-            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
-        } else if (aSize == 1) {
-            return getMember(vFirst);
-        } else {
-            throw new UndefinedOperationException("Can not perform call with arguments '" + args + "' on '" + this + "'; arguments are malformed.");
-        }
     }
 
     /* string and char operations */

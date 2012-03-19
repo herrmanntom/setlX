@@ -40,7 +40,7 @@ leftTo := procedure(x, y) {
 printSolution := procedure(s) {
 	for (c in s) {
 		l := arb(c);
-		if (l(1) != "-") {
+		if (l[1] != "-") {
 			print(l);
 		}
 	}
@@ -55,7 +55,7 @@ parse := procedure(s) {
 
 parseFormula := procedure() {
 	implicationLhs := parseImplication();
-	if (mIndex <= #mTokenList && mTokenList(mIndex) != ")") {
+	if (mIndex <= #mTokenList && mTokenList[mIndex] != ")") {
 		check("<->");
 		implicationRhs := parseImplication();
 		return [implicationLhs, "<->", implicationRhs];
@@ -66,7 +66,7 @@ parseFormula := procedure() {
 
 parseImplication := procedure() {
 	conjunction := parseConjunction();
-	if (mIndex <= #mTokenList && mTokenList(mIndex) notin {"<->", ")"}) {
+	if (mIndex <= #mTokenList && mTokenList[mIndex] notin {"<->", ")"}) {
 		check("->");
 		implication := parseImplication();
 		return [conjunction, "->", implication];
@@ -117,8 +117,8 @@ parseAtomic := procedure() {
 		}
 		return formula;
 	}
-	if (isString((mTokenList(mIndex)))) {
-		result := mTokenList(mIndex);
+	if (isString((mTokenList[mIndex]))) {
+		result := mTokenList[mIndex];
 		mIndex := mIndex + 1;
 		return result;
 	}
@@ -131,7 +131,7 @@ check := procedure(token) {
 	if (mIndex > #mTokenList) {
 		return false;
 	}
-	if (mTokenList(mIndex) == token) {
+	if (mTokenList[mIndex] == token) {
 		mIndex := mIndex + 1;
 		return true;
 	}
@@ -146,37 +146,37 @@ scanFormula := procedure(s) {
 	switch {
 		case s == "" :
 			return [];
-		case s(1) == "0" :
-			return ["0"] + scanFormula(s(2..));
-		case s(1) == "1" :
-			return ["1"] + scanFormula(s(2..));
-		case s(1) == "(" :
-			return ["("] + scanFormula(s(2..));
-		case s(1) == ")" :
-			return [")"] + scanFormula(s(2..));
-		case s(1) == "+" :
-			return ["+"] + scanFormula(s(2..));
-		case s(1) == "*" :
-			return ["*"] + scanFormula(s(2..));
-		case #s >= 2 && s(1..2) == "->" :
-			return ["->"] + scanFormula(s(3..));
-		case #s >= 3 && s(1..3) == "<->" :
-			return ["<->"] + scanFormula(s(4..));
-		case s(1) == "-" :
-			return ["-"] + scanFormula(s(2..));
-		case s(1) == " " || s(1) == "    " :
-			return scanFormula(s(2..));
+		case s[1] == "0" :
+			return ["0"] + scanFormula(s[2..]);
+		case s[1] == "1" :
+			return ["1"] + scanFormula(s[2..]);
+		case s[1] == "(" :
+			return ["("] + scanFormula(s[2..]);
+		case s[1] == ")" :
+			return [")"] + scanFormula(s[2..]);
+		case s[1] == "+" :
+			return ["+"] + scanFormula(s[2..]);
+		case s[1] == "*" :
+			return ["*"] + scanFormula(s[2..]);
+		case #s >= 2 && s[1..2] == "->" :
+			return ["->"] + scanFormula(s[3..]);
+		case #s >= 3 && s[1..3] == "<->" :
+			return ["<->"] + scanFormula(s[4..]);
+		case s[1] == "-" :
+			return ["-"] + scanFormula(s[2..]);
+		case s[1] == " " || s[1] == "    " :
+			return scanFormula(s[2..]);
 	}
 	index := 1;
 	word := "";
-	if (s(index) notin letters) {
+	if (s[index] notin letters) {
 		abort("Error in scanFormula(" + s + ")");
 	}
-	while (s(index) in letters && index < #s) {
+	while (s[index] in letters && index < #s) {
 		index := index + 1;
 	}
-	if (( ! (s(index) in letters) )) {
-		return [s(1..index - 1)] + scanFormula(s(index..));
+	if (( ! (s[index] in letters) )) {
+		return [s[1 .. index - 1]] + scanFormula(s[index..]);
 	}
 	if (index == #s) {
 		return [s];
@@ -190,20 +190,20 @@ prettyPrint := procedure(f) {
 			return "1";
 		case f == 0 :
 			return "0";
-		case isString((f)) :
+		case isString(f) :
 			return f;
-		case f(1) == "-" :
-			return "-" + prettyPrint(f(2));
-		case f(2) == "*" :
-			return "(" + prettyPrint(f(1)) + " * " + prettyPrint(f(3)) + ")";
-		case f(2) == "+" :
-			return "(" + prettyPrint(f(1)) + " + " + prettyPrint(f(3)) + ")";
-		case f(2) == "->" :
-			return "(" + prettyPrint(f(1)) + " -> " + prettyPrint(f(3)) + ")";
-		case f(2) == "<->" :
-			return "(" + prettyPrint(f(1)) + " <-> " + prettyPrint(f(3)) + ")";
+		case f[1] == "-" :
+			return "-" + prettyPrint(f[2]);
+		case f[2] == "*" :
+			return "(" + prettyPrint(f[1]) + " * " + prettyPrint(f[3]) + ")";
+		case f[2] == "+" :
+			return "(" + prettyPrint(f[1]) + " + " + prettyPrint(f[3]) + ")";
+		case f[2] == "->" :
+			return "(" + prettyPrint(f[1]) + " -> " + prettyPrint(f[3]) + ")";
+		case f[2] == "<->" :
+			return "(" + prettyPrint(f[1]) + " <-> " + prettyPrint(f[3]) + ")";
 		default :
-			abort("Error in prettyPrint: " + str((f)));
+			abort("Error in prettyPrint: " + str(f));
 	}
 };
 
@@ -247,8 +247,8 @@ selectLiteral := procedure(s, forbidden) {
 };
 
 negateLiteral := procedure(l) {
-	if (l(1) == "-") {
-		return l(2);
+	if (l[1] == "-") {
+		return l[2];
 	} else {
 		return ["-", l];
 	}
@@ -270,16 +270,16 @@ elimGdw := procedure(f) {
 			return "0";
 		case isString((f)) :
 			return f;
-		case f(1) == "-" :
-			return ["-", elimGdw(f(2))];
-		case f(2) == "*" :
-			return [elimGdw(f(1)), "*", elimGdw(f(3))];
-		case f(2) == "+" :
-			return [elimGdw(f(1)), "+", elimGdw(f(3))];
-		case f(2) == "->" :
-			return [elimGdw(f(1)), "->", elimGdw(f(3))];
-		case f(2) == "<->" :
-			return elimGdw([[f(1), "->", f(3)], "*", [f(3), "->", f(1)]]);
+		case f[1] == "-" :
+			return ["-", elimGdw(f[2])];
+		case f[2] == "*" :
+			return [elimGdw(f[1]), "*", elimGdw(f[3])];
+		case f[2] == "+" :
+			return [elimGdw(f[1]), "+", elimGdw(f[3])];
+		case f[2] == "->" :
+			return [elimGdw(f[1]), "->", elimGdw(f[3])];
+		case f[2] == "<->" :
+			return elimGdw([[f[1], "->", f[3]], "*", [f[3], "->", f[1]]]);
 		default :
 			print("Fehler in elimGdw( ", f, ")");
 	}
@@ -293,14 +293,14 @@ elimFolgt := procedure(f) {
 			return "0";
 		case isString((f)) :
 			return f;
-		case f(1) == "-" :
-			return ["-", elimFolgt(f(2))];
-		case f(2) == "*" :
-			return [elimFolgt(f(1)), "*", elimFolgt(f(3))];
-		case f(2) == "+" :
-			return [elimFolgt(f(1)), "+", elimFolgt(f(3))];
-		case f(2) == "->" :
-			return elimFolgt([["-", f(1)], "+", f(3)]);
+		case f[1] == "-" :
+			return ["-", elimFolgt(f[2])];
+		case f[2] == "*" :
+			return [elimFolgt(f[1]), "*", elimFolgt(f[3])];
+		case f[2] == "+" :
+			return [elimFolgt(f[1]), "+", elimFolgt(f[3])];
+		case f[2] == "->" :
+			return elimFolgt([["-", f[1]], "+", f[3]]);
 		default :
 			print("Fehler in elimFolgt( ", f, ")");
 	}
@@ -312,14 +312,14 @@ nnf := procedure(f) {
 			return "1";
 		case f == "0" :
 			return "0";
-		case isString((f)) :
+		case isString(f) :
 			return f;
-		case f(1) == "-" :
-			return neg(f(2));
-		case f(2) == "*" :
-			return [nnf(f(1)), "*", nnf(f(3))];
-		case f(2) == "+" :
-			return [nnf(f(1)), "+", nnf(f(3))];
+		case f[1] == "-" :
+			return neg(f[2]);
+		case f[2] == "*" :
+			return [nnf(f[1]), "*", nnf(f[3])];
+		case f[2] == "+" :
+			return [nnf(f[1]), "+", nnf(f[3])];
 		default :
 			print("Fehler in nnf( ", f, ")");
 	}
@@ -331,14 +331,14 @@ neg := procedure(f) {
 			return "0";
 		case f == "0" :
 			return "1";
-		case isString((f)) :
+		case isString(f) :
 			return ["-", f];
-		case f(1) == "-" :
-			return nnf(f(2));
-		case f(2) == "*" :
-			return [neg(f(1)), "+", neg(f(3))];
-		case f(2) == "+" :
-			return [neg(f(1)), "*", neg(f(3))];
+		case f[1] == "-" :
+			return nnf(f[2]);
+		case f[2] == "*" :
+			return [neg(f[1]), "+", neg(f[3])];
+		case f[2] == "+" :
+			return [neg(f[1]), "*", neg(f[3])];
 		default :
 			print("Fehler in neg( ", f, ")");
 	}
@@ -350,14 +350,14 @@ knf := procedure(f) {
 			return {};
 		case f == "0" :
 			return {{}};
-		case isString((f)) :
+		case isString(f) :
 			return {{f}};
-		case f(1) == "-" :
+		case f[1] == "-" :
 			return {{f}};
-		case f(2) == "*" :
-			return knf(f(1)) + knf(f(3));
-		case f(2) == "+" :
-			return {k1 + k2: k1 in knf(f(1)), k2 in knf(f(3))};
+		case f[2] == "*" :
+			return knf(f[1]) + knf(f[3]);
+		case f[2] == "+" :
+			return {k1 + k2: k1 in knf(f[1]), k2 in knf(f[3])};
 		default :
 			print("Fehler in knf( ", f, ")");
 	}

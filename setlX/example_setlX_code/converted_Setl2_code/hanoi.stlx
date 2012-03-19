@@ -1,6 +1,6 @@
 
 lastChars := procedure(x, n) {
-	s := str((x));
+	s := str(x);
 	m := n - #s;
 	return m * " " + s;
 };
@@ -14,11 +14,11 @@ partition := procedure(s1, s2, s3, all) {
 };
 
 movePossible := procedure(source, target) {
-	return source != [] && (target == [] || source(1) < target(1));
+	return source != [] && (target == [] || source[1] < target[1]);
 };
 
 oneStep := procedure(pS, r) {
-	return {p + [z]: p in pS, [y, z] in r | p(#p) == y};
+	return {p + [z]: p in pS, [y, z] in r | p[#p] == y};
 };
 
 eliminateCycles := procedure(pS) {
@@ -34,7 +34,7 @@ reachable := procedure(x, y, r) {
 	while (true) {
 		old_PS := pS;
 		pS := eliminateCycles(pS + oneStep(pS, r));
-		p := {p in pS | p(#p) == y};
+		p := {p in pS | p[#p] == y};
 		if (p != {}) {
 			return arb(p);
 		}
@@ -47,12 +47,12 @@ reachable := procedure(x, y, r) {
 all := {1, 2, 3};
 p := {[sort(s1), sort(s2), sort(s3)]: s1 in pow(all), s2 in pow(all), s3 in pow(all) | partition(s1, s2, s3, all)};
 print("P = ", p);
-r12 := {[[l1, l2, l3], [l1(2..), [l1(1)] + l2, l3]]: [l1, l2, l3] in p | movePossible(l1, l2)};
-r21 := {[[l1, l2, l3], [[l2(1)] + l1, l2(2..), l3]]: [l1, l2, l3] in p | movePossible(l2, l1)};
-r13 := {[[l1, l2, l3], [l1(2..), l2, [l1(1)] + l3]]: [l1, l2, l3] in p | movePossible(l1, l3)};
-r31 := {[[l1, l2, l3], [[l3(1)] + l1, l2, l3(2..)]]: [l1, l2, l3] in p | movePossible(l3, l1)};
-r23 := {[[l1, l2, l3], [l1, l2(2..), [l2(1)] + l3]]: [l1, l2, l3] in p | movePossible(l2, l3)};
-r32 := {[[l1, l2, l3], [l1, [l3(1)] + l2, l3(2..)]]: [l1, l2, l3] in p | movePossible(l3, l2)};
+r12 := {[[l1, l2, l3], [l1[2..], [l1[1]] + l2, l3]]: [l1, l2, l3] in p | movePossible(l1, l2)};
+r21 := {[[l1, l2, l3], [[l2[1]] + l1, l2[2..], l3]]: [l1, l2, l3] in p | movePossible(l2, l1)};
+r13 := {[[l1, l2, l3], [l1[2..], l2, [l1[1]] + l3]]: [l1, l2, l3] in p | movePossible(l1, l3)};
+r31 := {[[l1, l2, l3], [[l3[1]] + l1, l2, l3[2..]]]: [l1, l2, l3] in p | movePossible(l3, l1)};
+r23 := {[[l1, l2, l3], [l1, l2[2..], [l2[1]] + l3]]: [l1, l2, l3] in p | movePossible(l2, l3)};
+r32 := {[[l1, l2, l3], [l1, [l3[1]] + l2, l3[2..]]]: [l1, l2, l3] in p | movePossible(l3, l2)};
 for ([x, y] in r12) {
 	print(x, "  ->   ", y);
 }
@@ -66,9 +66,9 @@ start := [[1, 2, 3], [], []];
 goal := [[], [1, 2, 3], []];
 path := reachable(start, goal, r);
 for (i in [1 .. #path]) {
-	t1 := lastChars(path(i)(1), 20);
-	t2 := lastChars(path(i)(2), 20);
-	t3 := lastChars(path(i)(3), 20);
+	t1 := lastChars(path[i][1], 20);
+	t2 := lastChars(path[i][2], 20);
+	t3 := lastChars(path[i][3], 20);
 	print(t1, t2, t3);
 }
 

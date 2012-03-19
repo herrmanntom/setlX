@@ -33,7 +33,7 @@ print();
 t := makeTerm("Arrr",["said","the","pirate"]);
 a := str(args(t));
 print(canonical(t));
-print(fct(t), "(", a(2 .. #a-1), ")");
+print(fct(t), "(", a[2 .. #a-1], ")");
 print();
 
 /*******************************************************************************

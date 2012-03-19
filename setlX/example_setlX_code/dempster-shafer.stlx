@@ -5,17 +5,17 @@ var data;
 
 // selects (names of) all offenders
 omega := procedure() {
-    return { row(1) : row in data };
+    return { row[1] : row in data };
 };
 
 // select all offenders whose data in row i equals n
 selectEq := procedure(i, n) {
-    return { row(1) : row in data | row(i) == n };
+    return { row[1] : row in data | row[i] == n };
 };
 
 // select all offenders whose data in row i is in the set/list n
 selectIn := procedure(i, n) {
-    return { row(1) : row in data | row(i) in n };
+    return { row[1] : row in data | row[i] in n };
 };
 
 // adds evidences which are for the same set of offenders, but occur multiple times 
@@ -26,17 +26,17 @@ unify := procedure(l) {
 
 // removes conflicts from the evidenceSet s (evidences for empty set of offenders)
 removeConflict := procedure(s) {
-    c := s({}); // c is evidence of conflict 
+    c := s[{}];    // c is evidence of conflict 
     if (c == om) { // no conflict found
         return s;
     }
     s -= { [{}, c] }; // remove conflict from evidenceSet
-    return { [ e(1), e(2) / (1 - c) ] : e in s };
+    return { [ e[1], e[2] / (1 - c) ] : e in s };
 };
 
 // accumulation after Dempster-Shafer for two evidenceSets `x' and `y'
 accumulate := procedure(x, y) {
-    return removeConflict(unify([ [u(1)*v(1), u(2)*v(2)] : u in x, v in y ]));
+    return removeConflict(unify([ [u[1]*v[1], u[2]*v[2]] : u in x, v in y ]));
 };
 
 // Dempster-Shafer for all evidenceSets in `x'
@@ -49,11 +49,11 @@ accumulateAll := procedure(x) {
 };
 
 plausibility := procedure(s, n) {
-    return +/ [ e(2) : e in s | n in e(1) || (isSet(n) && n >= e(1)) ];
+    return +/ [ e[2] : e in s | n in e[1] || (isSet(n) && n >= e[1]) ];
 };
 
 believe := procedure(s, n) {
-    return +/ [ e(2) : e in s | { n } == e(1) || n == e(1) ];
+    return +/ [ e[2] : e in s | { n } == e[1] || n == e[1] ];
 };
 
 // stuff for printing
@@ -64,17 +64,17 @@ prettyPrint := procedure(evidenceSet) {
         while (#evidenceSet > 0) {
             mMax    := max(range(evidenceSet));
             for (e in evidenceSet) {
-                if (e(2) == mMax) {
+                if (e[2] == mMax) {
                     evidence    := e;
                     evidenceSet -= {e};
                     break;
                 }
             }
-            m := evidence(2);
-            if (evidence(1) == omega()) {
+            m := evidence[2];
+            if (evidence[1] == omega()) {
                 print("$nbrFormat(m)$ == m( Omega )");
             } else {
-                print("$nbrFormat(m)$ == m( $evidence(1)$ )");
+                print("$nbrFormat(m)$ == m( $evidence[1]$ )");
             }
         }
         print();

@@ -153,6 +153,20 @@ public class Term extends CollectionValue {
         return (new Cardinality(TermConverter.valueToExpr(this))).toTerm();
     }
 
+    // viral operation
+    public Term collectionAccess(List<Value> args) {
+        List<Expr> argExprs = new ArrayList<Expr>(args.size());
+        for (Value v : args) {
+            argExprs.add(TermConverter.valueToExpr(v));
+        }
+        return (new CollectionAccess(TermConverter.valueToExpr(this), argExprs)).toTerm();
+    }
+
+    // viral operation
+    public Term collectMap(Value arg) {
+        return (new CollectMap(TermConverter.valueToExpr(this), TermConverter.valueToExpr(arg))).toTerm();
+    }
+
     public SetlBoolean containsMember(Value element) {
         // Terms are inherently recursive, so search recursively
         return containsMemberRecursive(element); // this is implemented in CollectionValue.java
@@ -224,7 +238,7 @@ public class Term extends CollectionValue {
         return (new SumMembers(TermConverter.valueToExpr(this))).toTerm();
     }
 
-    /* calls (function calls) */
+    /* function call */
 
     // viral operation
     public Term call(List<Expr> exprs, List<Value> args) {
@@ -233,11 +247,6 @@ public class Term extends CollectionValue {
             argExprs.add(TermConverter.valueToExpr(v));
         }
         return (new Call(TermConverter.valueToExpr(this), argExprs)).toTerm();
-    }
-
-    // viral operation
-    public Term callCollection(Value arg) {
-        return (new CallCollection(TermConverter.valueToExpr(this), TermConverter.valueToExpr(arg))).toTerm();
     }
 
     /* string and char operations */

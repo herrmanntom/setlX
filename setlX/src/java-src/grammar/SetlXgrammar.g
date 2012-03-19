@@ -377,14 +377,14 @@ termArguments returns [List<Expr> args]
     ;
 
 call [boolean enableIgnore] returns [Expr c]
-    : variable                                             { c = $variable.v;                                             }
+    : variable                                         { c = $variable.v;                                             }
       (
-         '(' callParameters[$enableIgnore] ')'             { c = new Call(c, $callParameters.params);                     }
-       | (
-            '[' collectionAccessParams[$enableIgnore] ']'  { c = new CollectionAccess(c, $collectionAccessParams.params); }
-          | '{' anyExpr[$enableIgnore]                 '}' { c = new CollectMap(c, $anyExpr.ae);                          }
-         )*
-      )
+         '(' callParameters[$enableIgnore] ')'         { c = new Call(c, $callParameters.params);                     }
+      )?
+      (
+         '[' collectionAccessParams[$enableIgnore] ']' { c = new CollectionAccess(c, $collectionAccessParams.params); }
+       | '{' anyExpr[$enableIgnore]                '}' { c = new CollectMap(c, $anyExpr.ae);                          }
+      )*
     ;
 
 callParameters [boolean enableIgnore] returns [List<Expr> params]

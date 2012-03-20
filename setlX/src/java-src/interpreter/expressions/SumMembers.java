@@ -21,6 +21,8 @@ implemented here as:
 public class SumMembers extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'sumMembers";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1900;
 
     private Expr mExpr;
 
@@ -50,9 +52,14 @@ public class SumMembers extends Expr {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr expr = TermConverter.valueToExpr(term.firstMember());
+            Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             return new SumMembers(expr);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

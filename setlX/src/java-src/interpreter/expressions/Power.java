@@ -20,6 +20,8 @@ implemented here as:
 public class Power extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'power";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1800;
 
     private Expr mLhs;
     private Expr mExponent;
@@ -52,10 +54,15 @@ public class Power extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr lhs        = TermConverter.valueToExpr(term.firstMember());
-            Expr exponent   = TermConverter.valueToExpr(term.lastMember());
+            Expr lhs        = TermConverter.valueToExpr(PRECEDENCE, true , term.firstMember());
+            Expr exponent   = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
             return new Power(lhs, exponent);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

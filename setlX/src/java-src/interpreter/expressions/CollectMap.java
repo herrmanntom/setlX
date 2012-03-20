@@ -12,17 +12,19 @@ import interpreter.utilities.TermConverter;
 /*
 grammar rule:
 call
-    : variable ('(' callParameters ')' | ('[' elementAccessParameters ']' | '{' anyExpr '}')*)
+    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
     ;
 
 implemented here as:
-      ========                                                                  =======
-        mLhs                                                                      mArg
+      ========                                                                 =======
+        mLhs                                                                     mArg
 */
 
 public class CollectMap extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'collectMap";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1900;
 
     private Expr    mLhs;      // left hand side (Variable, other CollectMap, CollectionAccess, etc)
     private Expr    mArg;      // argument
@@ -66,6 +68,11 @@ public class CollectMap extends Expr {
             Expr arg = TermConverter.valueToExpr(term.lastMember());
             return new CollectMap(lhs, arg);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

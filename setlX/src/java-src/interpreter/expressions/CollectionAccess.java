@@ -15,17 +15,19 @@ import java.util.List;
 /*
 grammar rule:
 call
-    : variable ('(' callParameters ')' | ('[' elementAccessParameters ']' | '{' anyExpr '}')*)
+    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
     ;
 
 implemented here as:
-      =========                               =======================
-         mLhs                                           mArgs
+      =========                               ======================
+         mLhs                                          mArgs
 */
 
 public class CollectionAccess extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'collectionAccess";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1900;
 
     private Expr       mLhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
     private List<Expr> mArgs;      // list of arguments
@@ -90,6 +92,11 @@ public class CollectionAccess extends Expr {
             }
             return new CollectionAccess(lhs, args);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

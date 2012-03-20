@@ -33,6 +33,8 @@ public class Variable extends Expr {
      *          case x           : foo1(); // `x'.toTerm() results in 'Variable("x"); matches everything and binds it to x
      *      }
      */
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE                    = 9999;
 
     private String  mId;
     private boolean isTerm;
@@ -90,6 +92,11 @@ public class Variable extends Expr {
             String id = ((SetlString) term.firstMember()).getUnquotedString();
             return new Variable(id);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

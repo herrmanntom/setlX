@@ -30,6 +30,8 @@ implemented here as:
 public class Forall extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'forall";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1900;
 
     private Iterator  mIterator;
     private Condition mCondition;
@@ -92,6 +94,11 @@ public class Forall extends Expr {
             Condition   condition   = TermConverter.valueToCondition(term.lastMember());
             return new Forall(iterator, condition);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

@@ -3,6 +3,7 @@ package interpreter.utilities;
 import interpreter.exceptions.TermConversionException;
 import interpreter.boolExpressions.Equal;
 import interpreter.expressions.Assignment;
+import interpreter.expressions.BracketedExpr;
 import interpreter.expressions.CollectionAccessRangeDummy;
 import interpreter.expressions.Expr;
 import interpreter.expressions.SetListConstructor;
@@ -143,8 +144,19 @@ public class TermConverter {
         }
     }
 
+    public static Expr valueToExpr(int callersPrecedence, boolean brackedEqualLevel, Value value) {
+        Expr result         = (Expr) valueToCodeFragment(value, true);
+        int  exprPrecedence = result.precedence();
+        if (brackedEqualLevel && callersPrecedence >= exprPrecedence) {
+            return new BracketedExpr(result);
+        } else if (callersPrecedence > exprPrecedence) {
+            return new BracketedExpr(result);
+        }
+        return result;
+    }
+
     public static Expr valueToExpr(Value value) {
-        return (Expr) valueToCodeFragment(value, true);
+        return valueToExpr(0000, false, value);
     }
 
     public static Condition valueToCondition(Value value) {

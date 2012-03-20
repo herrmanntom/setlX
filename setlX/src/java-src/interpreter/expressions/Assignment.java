@@ -34,6 +34,9 @@ public class Assignment extends Expr {
     public  final static int    DIVISION                        = 4; // '/='
     public  final static int    MODULO                          = 5; // '%='
 
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE                      = 1000;
+
     private AssignmentLhs mLhs;
     private int           mType;
     private Expr          mRhs;
@@ -160,9 +163,14 @@ public class Assignment extends Expr {
                 throw new TermConversionException("malformed " + fc);
             }
             AssignmentLhs   lhs = AssignmentLhs.valueToAssignmentLhs(term.firstMember());
-            Expr            rhs = TermConverter.valueToExpr(term.lastMember());
+            Expr            rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
             return new Assignment(lhs, type, rhs);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

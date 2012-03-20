@@ -38,5 +38,8 @@ public abstract class Expr extends CodeFragment {
     /* term operations */
 
     public abstract Value toTerm();
+    
+    // precedence level in SetlX-grammar
+    public abstract int   precedence();
 }
 

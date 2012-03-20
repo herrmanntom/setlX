@@ -17,7 +17,7 @@ import java.util.List;
 /*
 grammar rule:
 call
-    : variable ('(' callParameters ')' | ('[' elementAccessParameters ']' | '{' anyExpr '}')*)
+    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
     ;
 
 implemented here as:
@@ -28,6 +28,8 @@ implemented here as:
 public class Call extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'call";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1900;
 
     private Expr       mLhs;       // left hand side (only variable is allowed here!)
     private List<Expr> mArgs;      // list of arguments
@@ -108,6 +110,11 @@ public class Call extends Expr {
             }
             return new Call(lhs, args);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

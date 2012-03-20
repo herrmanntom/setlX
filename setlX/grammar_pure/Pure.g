@@ -182,7 +182,7 @@ termArguments
     ;
 
 call
-    : variable ('(' callParameters ')' | ('[' collectionAccessParams ']' | '{' anyExpr '}')*)
+    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
     ;
 
 callParameters

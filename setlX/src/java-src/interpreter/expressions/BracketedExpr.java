@@ -21,6 +21,8 @@ implemented here as:
 public class BracketedExpr extends Expr {
     // functional character used in terms (MUST be classname starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'bracketedExpr";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1900;
 
     private Expr mExpr;
 
@@ -53,6 +55,11 @@ public class BracketedExpr extends Expr {
             Expr expr = TermConverter.valueToExpr(term.firstMember());
             return new BracketedExpr(expr);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

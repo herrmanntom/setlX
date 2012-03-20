@@ -31,8 +31,10 @@ mType     mConstructor
 */
 
 public class SetListConstructor extends Expr {
-    public final static int LIST  = 23;
-    public final static int SET   = 42;
+    public  final static int    LIST        = 23;
+    public  final static int    SET         = 42;
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE  = 9999;
 
     private int         mType;
     private Constructor mConstructor;
@@ -135,6 +137,11 @@ public class SetListConstructor extends Expr {
                 }
             }
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

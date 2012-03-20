@@ -21,6 +21,8 @@ implemented here as:
 public class Conjunction extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'conjunction";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1400;
 
     private Expr mLhs;
     private Expr mRhs;
@@ -53,10 +55,15 @@ public class Conjunction extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true,  term.lastMember());
             return new Conjunction(lhs, rhs);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

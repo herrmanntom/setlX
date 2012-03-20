@@ -21,6 +21,9 @@ implemented here as:
 */
 
 public class TermConstructor extends Expr {
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 9999;
+
     private Variable   mId;        // functional character of the term
     private List<Expr> mArgs;      // list of arguments
 
@@ -78,6 +81,11 @@ public class TermConstructor extends Expr {
             args.add(TermConverter.valueToExpr(v));
         }
         return new TermConstructor(new Variable(functionalCharacter), args);
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

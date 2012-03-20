@@ -32,6 +32,8 @@ implemented here as:
 public class StringConstructor extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'stringConstructor";
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 9999;
 
     private boolean      mEvaluate;    // should this string be evaluated ('@' -> false)
     private String       mOriginalStr; // original String
@@ -225,6 +227,11 @@ public class StringConstructor extends Expr {
         fragments.add(string);
         List<Expr>      exprs       = new LinkedList<Expr>();
         return new StringConstructor(evaluate, originalStr, fragments, exprs);
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

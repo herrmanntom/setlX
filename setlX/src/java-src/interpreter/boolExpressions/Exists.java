@@ -30,7 +30,9 @@ implemented here as:
 public class Exists extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'exists";
-    
+    // precedence level in SetlX-grammar
+    private final static int    PRECEDENCE           = 1900;
+
     private Iterator  mIterator;
     private Condition mCondition;
 
@@ -88,10 +90,15 @@ public class Exists extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Iterator	iterator	= Iterator.valueToIterator(term.firstMember());
-            Condition	condition	= TermConverter.valueToCondition(term.lastMember());
+            Iterator    iterator    = Iterator.valueToIterator(term.firstMember());
+            Condition   condition   = TermConverter.valueToCondition(term.lastMember());
             return new Exists(iterator, condition);
         }
+    }
+
+    // precedence level in SetlX-grammar
+    public int precedence() {
+        return PRECEDENCE;
     }
 }
 

@@ -11,6 +11,6 @@ testing x + x + y
 testing x * x
 1 * x + x * 1
 testing x / x
-1 * x - x * 1 / x * x
+(1 * x - x * 1) / x * x
 testing 1 / x
-0 * x - 1 / x * x
+(0 * x - 1) / x * x

@@ -8,7 +8,6 @@ import interpreter.exceptions.ParserException;
 import interpreter.exceptions.SyntaxErrorException;
 import interpreter.expressions.Expr;
 import interpreter.statements.Block;
-import interpreter.utilities.InputReader;
 
 import org.antlr.runtime.*;
 

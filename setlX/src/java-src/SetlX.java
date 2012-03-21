@@ -4,11 +4,13 @@ import interpreter.exceptions.ContinueException;
 import interpreter.exceptions.EndOfFileException;
 import interpreter.exceptions.ExitException;
 import interpreter.exceptions.FileNotReadableException;
+import interpreter.exceptions.FileNotWriteableException;
 import interpreter.exceptions.ParserException;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
 import interpreter.types.Real;
+import interpreter.utilities.DumpSetlX;
 import interpreter.utilities.Environment;
 import interpreter.utilities.ParseSetlX;
 
@@ -17,21 +19,38 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String VERSION         = "0.5.0";
+    private final static String VERSION         = "0.6.0";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "-====================================setlX====================================-";
 
     public static void main(String[] args) throws Exception {
+        boolean            dump        = false; // writes loaded code into a file, including internal line numbers
+        String             dumpFile    = "";    // file to dump into
         boolean            help        = false;
         boolean            interactive = false;
         boolean            verbose     = false; /* print extra information and use correct indentation when
                                                    printing statements etc.                                 */
         LinkedList<String> files       = new LinkedList<String>();
 
-        for (String s: args) {
+        for (int i = 0; i < args.length; i++) {
+            String s = args[i];
             if (s.equals("--version")) {
                 System.out.println(VERSION);
-                return;
+
+                System.exit(0); // exit OK
+
+            } else if (s.equals("--dump")) {
+                dump = true;
+                i++; // set to next argument
+                if (i < args.length) {
+                    dumpFile = args[i];
+                }
+                if ( (dumpFile.equals("")                                           ) || // no next argument
+                     (dumpFile.length() >= 2 && dumpFile.substring(0,2).equals("--"))    // some option is next argument
+                   ) {
+                    help = true;
+                    dump = false;
+                }
             } else if (s.equals("--help")) {
                 help = true;
             } else if (s.equals("--predictableRandom")) { // easier debugging
@@ -64,12 +83,17 @@ public class SetlX {
             printInteractiveBegin();
             parseAndExecuteInteractive();
         } else if (! help) {
+            boolean firstFile = true; // when first file is dumped, file is overwritten
             for (String file: files) {
-                parseAndExecuteFile(file, verbose);
+                parseAndExecuteFile(file, dump, dumpFile, firstFile, verbose);
+                firstFile = false; // subsequent files are appended
             }
         } else {
             printHelp();
         }
+
+        System.exit(0); // exit OK
+
     }
 
     private static void parseAndExecuteInteractive() throws Exception {
@@ -97,7 +121,7 @@ public class SetlX {
         printExecutionFinished();
     }
 
-    private static void parseAndExecuteFile(String fileName, boolean verbose) throws Exception {
+    private static void parseAndExecuteFile(String fileName, boolean dump, String dumpFile, boolean firstFile, boolean verbose) throws Exception {
         Environment.setInteractive(false);
         Environment.setPrintAfterEval(false);
         if (verbose) {
@@ -116,7 +140,8 @@ public class SetlX {
                 System.out.println("\n-================================Parsing=Failed===============================-\n");
             }
             System.err.println("Execution terminated due to errors in the input.");
-            return; // terminate execution
+
+            System.exit(1); // exit ERROR
         }
 
         // no parser errors when we get here
@@ -124,13 +149,31 @@ public class SetlX {
             System.out.println("none\n");
         }
 
-        // in verbose mode the parsed program is echoed
+        // get program text if needed
+        String program = null;
+        if (verbose || dump) {
+            Environment.setPrintVerbose(true); // enables correct indentation etc
+            program = blk.toString() + "\n";
+            Environment.setPrintVerbose(false);
+        }
+
+        //in verbose mode the parsed program is echoed
         if (verbose) {
             System.out.println("-================================Parsed=Program===============================-\n");
-            Environment.setPrintVerbose(true); // enables correct indentation etc
-            System.out.println(blk + "\n");
-            Environment.setPrintVerbose(false);
+            System.out.println(program);
             System.out.println("-===============================Execution=Result==============================-\n");
+        }
+
+        // when dump is enabled, the program is appended to the dumpFile
+        if (dump) {
+            try {
+                DumpSetlX.dumpToFile(program, dumpFile, /* append = */ ! firstFile);
+            } catch (FileNotWriteableException fnwe) {
+                System.err.println(fnwe.getMessage());
+
+                System.exit(2); // exit ERROR
+
+            }
         }
 
         // run the parsed code
@@ -214,6 +257,8 @@ public class SetlX {
                          + "The interactive mode will be started if called without any file parameters.\n");
         printHelpInteractive();
         System.out.println("Additional parameters:\n"
+                         + "  --dump <file-name>\n"
+                         + "      writes loaded code into a file, including internal line numbers\n"
                          + "  --predictableRandom\n"
                          + "      always use same random sequence (debugging)\n"
                          + "  --real32\n"

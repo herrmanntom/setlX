@@ -26,6 +26,9 @@ public class ParseSetlX {
             // parse the file contents (Antlr will print its parser errors into stderr ...)
             Block b = parseBlock(new ANTLRFileStream(fileName));
             b.computeLineNr();
+            // subtract last "non-existent" line from block
+            --Environment.sourceLine;
+
             return b;
 
         } catch (IOException ioe) {
@@ -40,6 +43,9 @@ public class ParseSetlX {
             // parse the input (Antlr will print its parser errors into stderr ...)
             Block b = parseBlock(new ANTLRInputStream(stream));
             b.computeLineNr();
+            // subtract last "non-existent" line from block
+            --Environment.sourceLine;
+
             return b;
 
         } catch (IOException ioe) {
@@ -54,6 +60,9 @@ public class ParseSetlX {
             // parse the input (Antlr will print its parser errors into stderr ...)
             Block b = parseBlock(new ANTLRInputStream(stream));
             b.computeLineNr();
+            // subtract last "non-existent" line from block
+            --Environment.sourceLine;
+
             return b;
 
         } catch (IOException ioe) {
@@ -68,6 +77,7 @@ public class ParseSetlX {
             // parse the input (Antlr will print its parser errors into stderr ...)
             Expr e = parseExpr(new ANTLRInputStream(stream));
             e.computeLineNr();
+
             return e;
 
         } catch (IOException ioe) {

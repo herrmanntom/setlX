@@ -14,6 +14,7 @@ import interpreter.utilities.DumpSetlX;
 import interpreter.utilities.Environment;
 import interpreter.utilities.ParseSetlX;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,13 +25,14 @@ public class SetlX {
     private final static String HEADER          = "-====================================setlX====================================-";
 
     public static void main(String[] args) throws Exception {
-        boolean            dump        = false; // writes loaded code into a file, including internal line numbers
-        String             dumpFile    = "";    // file to dump into
-        boolean            help        = false;
-        boolean            interactive = false;
-        boolean            verbose     = false; /* print extra information and use correct indentation when
+        boolean         dump        = false; // writes loaded code into a file, including internal line numbers
+        String          dumpFile    = "";    // file to dump into
+        boolean         help        = false;
+        boolean         interactive = false;
+        boolean         noExecution = false;
+        boolean         verbose     = false; /* print extra information and use correct indentation when
                                                    printing statements etc.                                 */
-        LinkedList<String> files       = new LinkedList<String>();
+        List<String>    files       = new LinkedList<String>();
 
         for (int i = 0; i < args.length; i++) {
             String s = args[i];
@@ -53,6 +55,8 @@ public class SetlX {
                 }
             } else if (s.equals("--help")) {
                 help = true;
+            } else if (s.equals("--noExecution")) {
+                noExecution = true;
             } else if (s.equals("--predictableRandom")) { // easier debugging
                 Environment.setPredictableRandoom();
             } else if (s.equals("--real32")) {
@@ -82,11 +86,10 @@ public class SetlX {
         if (interactive && ! help) {
             printInteractiveBegin();
             parseAndExecuteInteractive();
-        } else if (! help) {
-            boolean firstFile = true; // when first file is dumped, file is overwritten
-            for (String file: files) {
-                parseAndExecuteFile(file, dump, dumpFile, firstFile, verbose);
-                firstFile = false; // subsequent files are appended
+        } else if ( ! help) {
+            List<Block> programs = parseAndDumpFiles(files, dump, dumpFile, verbose);
+            if ( ! noExecution) {
+                executeFiles(programs, verbose);
             }
         } else {
             printHelp();
@@ -121,17 +124,19 @@ public class SetlX {
         printExecutionFinished();
     }
 
-    private static void parseAndExecuteFile(String fileName, boolean dump, String dumpFile, boolean firstFile, boolean verbose) throws Exception {
-        Environment.setInteractive(false);
-        Environment.setPrintAfterEval(false);
+    private static List<Block> parseAndDumpFiles(List<String> files, boolean dump, String dumpFile, boolean verbose) throws Exception {
+        // parsed programs
+        List<Block> programs = new ArrayList<Block>(files.size());
+
         if (verbose) {
             System.out.println("-================================Parser=Errors================================-\n");
         }
 
-        // parse the file contents (Antlr will print its parser errors into stderr ...)
-        Block   blk = null;
+        // parse content of all files (Antlr will print its parser errors into stderr ...)
         try {
-            blk = ParseSetlX.parseFile(fileName);
+            for (String fileName : files) {
+                programs.add(ParseSetlX.parseFile(fileName));
+            }
         } catch (ParserException pe) {
             if (pe instanceof FileNotReadableException) {
                 System.err.println(pe.getMessage());
@@ -147,37 +152,51 @@ public class SetlX {
         // no parser errors when we get here
         if (verbose) {
             System.out.println("none\n");
+            System.out.println("-================================Parsed=Program===============================-\n");
         }
 
-        // get program text if needed
-        String program = null;
+        // print and/or dump programs if needed
         if (verbose || dump) {
             Environment.setPrintVerbose(true); // enables correct indentation etc
-            program = blk.toString() + "\n";
+            for (int i = 0; i < programs.size(); i++) {
+                // get program text
+                String program = programs.get(i).toString();
+
+                //in verbose mode the parsed programs are echoed
+                if (verbose) {
+                    System.out.println(program);
+                }
+
+                // when dump is enabled, the program is appended to the dumpFile
+                if (dump) {
+                    try {
+                        DumpSetlX.dumpToFile(program, dumpFile, /* append = */ (i > 0) );
+                    } catch (FileNotWriteableException fnwe) {
+                        System.err.println(fnwe.getMessage());
+
+                        System.exit(2); // exit ERROR
+
+                    }
+                }
+            }
             Environment.setPrintVerbose(false);
         }
 
-        //in verbose mode the parsed program is echoed
+        return programs;
+    }
+
+    private static void executeFiles(List<Block> programs, boolean verbose) throws Exception {
+        Environment.setInteractive(false);
+        Environment.setPrintAfterEval(false);
+
         if (verbose) {
-            System.out.println("-================================Parsed=Program===============================-\n");
-            System.out.println(program);
-            System.out.println("-===============================Execution=Result==============================-\n");
-        }
-
-        // when dump is enabled, the program is appended to the dumpFile
-        if (dump) {
-            try {
-                DumpSetlX.dumpToFile(program, dumpFile, /* append = */ ! firstFile);
-            } catch (FileNotWriteableException fnwe) {
-                System.err.println(fnwe.getMessage());
-
-                System.exit(2); // exit ERROR
-
-            }
+            printExecutionStart();
         }
 
         // run the parsed code
-        execute(blk);
+        for (Block blk : programs) {
+            execute(blk);
+        }
 
         if (verbose) {
             printExecutionFinished();
@@ -259,6 +278,8 @@ public class SetlX {
         System.out.println("Additional parameters:\n"
                          + "  --dump <file-name>\n"
                          + "      writes loaded code into a file, including internal line numbers\n"
+                         + "  --noExecution\n"
+                         + "      load and check code for syntax errors, but do not execute it\n"
                          + "  --predictableRandom\n"
                          + "      always use same random sequence (debugging)\n"
                          + "  --real32\n"
@@ -270,6 +291,10 @@ public class SetlX {
                          + "      display the parsed program before executing it\n"
                          + "  --version\n"
                          + "      displays the interpreter version and terminates\n");
+    }
+
+    private static void printExecutionStart() {
+        System.out.println("\n-===============================Execution=Result==============================-\n");
     }
 
     private static void printExecutionFinished() {

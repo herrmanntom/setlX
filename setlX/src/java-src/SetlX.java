@@ -23,6 +23,13 @@ public class SetlX {
     private final static String VERSION         = "0.6.0";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "-====================================setlX====================================-";
+    
+    private final static int    EXIT_OK         = 0;
+    private final static int    EXIT_ERROR      = 1;
+    
+    private final static int    EXEC_OK         = 23;
+    private final static int    EXEC_ERROR      = 33;
+    private final static int    EXEC_EXIT       = 42;
 
     public static void main(String[] args) throws Exception {
         boolean         dump        = false; // writes loaded code into a file, including internal line numbers
@@ -39,7 +46,7 @@ public class SetlX {
             if (s.equals("--version")) {
                 System.out.println(VERSION);
 
-                System.exit(0); // exit OK
+                System.exit(EXIT_OK);
 
             } else if (s.equals("--dump")) {
                 dump = true;
@@ -95,7 +102,7 @@ public class SetlX {
             printHelp();
         }
 
-        System.exit(0); // exit OK
+        System.exit(EXIT_OK);
 
     }
 
@@ -114,13 +121,20 @@ public class SetlX {
             } catch (EndOfFileException eofe) {
                 // user wants to quit
                 System.out.println("\n\nGood Bye! (EOF)");
+
                 break;
+
             } catch (ParserException pe) {
                 System.err.println("\nLast input not executed due to errors in it.");
                 skipTest = true;
                 blk      = null;
+            } catch (NullPointerException e) { // this should never happen...
+                System.err.println("Internal Error. Please report this error including the code you typed.");
+
+                break;
+
             }
-        } while (skipTest || (blk != null && execute(blk)));
+        } while (skipTest || (blk != null && execute(blk) != EXEC_EXIT));
         printExecutionFinished();
     }
 
@@ -146,7 +160,12 @@ public class SetlX {
             }
             System.err.println("Execution terminated due to errors in the input.");
 
-            System.exit(1); // exit ERROR
+            System.exit(EXIT_ERROR);
+
+        } catch (NullPointerException e) { // this should never happen...
+            System.err.println("Internal Error. Please report this error including the code you loaded.");
+
+            System.exit(EXIT_ERROR);
         }
 
         // no parser errors when we get here
@@ -174,7 +193,7 @@ public class SetlX {
                     } catch (FileNotWriteableException fnwe) {
                         System.err.println(fnwe.getMessage());
 
-                        System.exit(2); // exit ERROR
+                        System.exit(EXIT_ERROR);
 
                     }
                 }
@@ -195,7 +214,9 @@ public class SetlX {
 
         // run the parsed code
         for (Block blk : programs) {
-            execute(blk);
+            if (execute(blk) != EXEC_OK) {
+                break; // stop in case of error
+            }
         }
 
         if (verbose) {
@@ -203,45 +224,51 @@ public class SetlX {
         }
     }
 
-    private static boolean execute(Block b) {
+    private static int execute(Block b) {
         try {
 
             b.execute();
 
         } catch (AbortException ae) { // code detected user did something wrong
             System.err.println(ae.getMessage());
+            return EXEC_ERROR;
         } catch (BreakException be) { // break outside of procedure
             if (Environment.isInteractive()) {
                 System.out.println(be.getMessage());
             }
+            return EXEC_ERROR;
         } catch (ContinueException ce) { // continue outside of procedure
             if (Environment.isInteractive()) {
                 System.out.println(ce.getMessage());
             }
+            return EXEC_ERROR;
         } catch (ExitException ee) { // user/code wants to quit
             if (Environment.isInteractive()) {
                 System.out.println(ee.getMessage());
             }
 
-            return false; // breaks loop while parsing interactively
+            return EXEC_EXIT; // breaks loop while parsing interactively
 
         } catch (ReturnException re) { // return outside of procedure
             if (Environment.isInteractive()) {
                 System.out.println(re.getMessage());
             }
+            return EXEC_ERROR;
         } catch (SetlException se) { // user/code did something wrong
             printExceptionsTrace(se.getTrace());
+            return EXEC_ERROR;
         } catch (NullPointerException e) { // this should never happen...
             System.err.println("Internal Error. Please report this error including the code you executed.");
+            return EXEC_ERROR;
         } catch (OutOfMemoryError oome) {
             System.err.println("Out of memory error.\n"
                              + "Try improving the SetlX program and/or execute with larger maximum memory size.\n"
                              + "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n"
                              + "\n"
                              + "If that does not help get a better machine ;-)\n");
-            return false; // breaks loop while parsing interactively
+            return EXEC_EXIT; // breaks loop while parsing interactively
         }
-        return true; // continue loop while parsing interactively
+        return EXEC_OK; // continue loop while parsing interactively
     }
 
     private static void printHeader() {
@@ -317,3 +344,4 @@ public class SetlX {
         }
     }
 }
+

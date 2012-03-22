@@ -179,11 +179,11 @@ public class SetlX {
             Environment.setPrintVerbose(true); // enables correct indentation etc
             for (int i = 0; i < programs.size(); i++) {
                 // get program text
-                String program = programs.get(i).toString();
+                String program = programs.get(i).toString() + '\n';
 
                 //in verbose mode the parsed programs are echoed
                 if (verbose) {
-                    System.out.println(program);
+                    System.out.print(program);
                 }
 
                 // when dump is enabled, the program is appended to the dumpFile

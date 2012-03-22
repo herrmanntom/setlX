@@ -39,12 +39,10 @@ public class StringConstructor extends Expr {
     private String       mOriginalStr; // original String
     private List<String> mFragments;   // list of string fragments for after and between expressions
     private List<Expr>   mExprs;       // list of $-Expressions
+    private int          mLineNr;
 
     public StringConstructor(boolean evaluate, String originalStr) {
-        mEvaluate    = evaluate;
-        mOriginalStr = originalStr;
-        mFragments   = new LinkedList<String>();
-        mExprs       = new LinkedList<Expr>();
+        this(evaluate, originalStr, new LinkedList<String>(), new LinkedList<Expr>());
 
         // Strip out double quotes which the parser left in
         originalStr  = originalStr.substring(1, originalStr.length() - 1);
@@ -114,6 +112,21 @@ public class StringConstructor extends Expr {
         mOriginalStr    = originalStr;
         mFragments      = fragments;
         mExprs          = exprs;
+        mLineNr         = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        for (Expr expr : mExprs) {
+            expr.computeLineNr();
+        }
     }
 
     public SetlString evaluate() throws SetlException {

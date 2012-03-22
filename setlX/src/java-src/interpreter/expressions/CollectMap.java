@@ -7,6 +7,7 @@ import interpreter.types.Om;
 import interpreter.types.ProcedureDefinition;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -28,10 +29,25 @@ public class CollectMap extends Expr {
 
     private Expr    mLhs;      // left hand side (Variable, other CollectMap, CollectionAccess, etc)
     private Expr    mArg;      // argument
+    private int     mLineNr;
 
     public CollectMap(Expr lhs, Expr arg) {
-        mLhs   = lhs;
-        mArg   = arg;
+        mLhs    = lhs;
+        mArg    = arg;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        mLhs.computeLineNr();
+        mArg.computeLineNr();
     }
 
     public Value evaluate() throws SetlException {

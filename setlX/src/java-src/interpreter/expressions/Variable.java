@@ -5,6 +5,7 @@ import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.VariableScope;
 
 /*
@@ -37,15 +38,28 @@ public class Variable extends Expr {
     private final static int    PRECEDENCE                    = 9999;
 
     private String  mId;
-    private boolean isTerm;
+    private boolean mIsTerm;
+    private int     mLineNr;
 
     public Variable(String id) {
         mId     = id;
-        isTerm  = (id.length() > 0 && (id.charAt(0) == '\'' || Character.isUpperCase(id.charAt(0))));
+        mIsTerm  = (id.length() > 0 && (id.charAt(0) == '\'' || Character.isUpperCase(id.charAt(0))));
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
     }
 
     public Value evaluate() {
-        if (isTerm) {
+        if (mIsTerm) {
             return new Term(mId);
         }
 
@@ -76,7 +90,7 @@ public class Variable extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        if (isTerm) {
+        if (mIsTerm) {
             return new Term(mId);
         }
 

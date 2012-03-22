@@ -6,6 +6,11 @@ import interpreter.types.Value;
 import interpreter.utilities.CodeFragment;
 
 public abstract class Statement extends CodeFragment {
+
+    public abstract int  getLineNr();
+
+    public abstract void computeLineNr();
+
     public abstract void execute() throws SetlException;
 
     /* string operations */

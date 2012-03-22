@@ -34,17 +34,20 @@ public class Iterator {
     private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private Expr        mCollection; // Rhs (should be Set/List)
     private Iterator    mNext;       // next iterator in iteratorChain
+    private int         mLineNr;
 
     public Iterator(Expr assignable, Expr collection) {
         mAssignable = assignable;
         mCollection = collection;
         mNext       = null;
+        mLineNr     = -1;
     }
 
     private Iterator(Expr assignable, Expr collection, Iterator next) {
         mAssignable = assignable;
         mCollection = collection;
         mNext       = next;
+        mLineNr     = -1;
     }
 
     // adds next iterator to end of current iterator chain
@@ -53,6 +56,22 @@ public class Iterator {
             mNext = i;
         } else {
             mNext.add(i);
+        }
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        mAssignable.computeLineNr();
+        mCollection.computeLineNr();
+        if (mNext != null) {
+            mNext.computeLineNr();
         }
     }
 

@@ -18,8 +18,22 @@ public class Exit extends Statement {
     private final static String FUNCTIONAL_CHARACTER    = "'exit";
 
     public  final static Exit   E                       = new Exit();
+    private              int    mLineNr;
 
-    private Exit() { }
+    private Exit() {
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
+    }
 
     public void execute() throws ExitException {
         throw new ExitException("Good Bye! (exit)");
@@ -28,7 +42,7 @@ public class Exit extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        return Environment.getTabs(tabs) + "exit;";
+        return Environment.getLineStart(getLineNr(), tabs) + "exit;";
     }
 
     /* term operations */

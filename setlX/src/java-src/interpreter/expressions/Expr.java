@@ -5,15 +5,21 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Value;
 import interpreter.utilities.CodeFragment;
+import interpreter.utilities.Environment;
 
 public abstract class Expr extends CodeFragment {
+
+    public abstract int getLineNr();
+
+    public abstract void computeLineNr();
+
     public Value eval() throws SetlException {
         try {
             return this.evaluate();
         } catch (AbortException ae) {
             throw ae;
         } catch (SetlException se) {
-            se.addToTrace("Error in \"" + this + "\":");
+            se.addToTrace("Error in \"" + this + "\" (" + getLineNr() + "):");
             throw se;
         }
     }
@@ -23,7 +29,7 @@ public abstract class Expr extends CodeFragment {
     /* sets this expression to the given value
        (only makes sense for variables and id-lists) */
     public void assign(Value v) throws SetlException {
-        throw new UndefinedOperationException("Error in \"" + this + "\":\n"
+        throw new UndefinedOperationException("Error in \"" + this + "\" (" + getLineNr() + "):\n"
                                             + "This expression can not be used as target for assignments.");
     }
 
@@ -38,7 +44,7 @@ public abstract class Expr extends CodeFragment {
     /* term operations */
 
     public abstract Value toTerm();
-    
+
     // precedence level in SetlX-grammar
     public abstract int   precedence();
 }

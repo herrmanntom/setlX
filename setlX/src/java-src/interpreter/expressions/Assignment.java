@@ -5,6 +5,7 @@ import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -41,6 +42,7 @@ public class Assignment extends Expr {
     private int           mType;
     private Expr          mRhs;
     private Expr          mExecutionRhs; // executed rhs, e.g. mLhs + mRhs, when type == "+="
+    private int           mLineNr;
 
     public Assignment(AssignmentLhs lhs, int type, Expr rhs) {
         mLhs  = lhs;
@@ -70,6 +72,20 @@ public class Assignment extends Expr {
                 mExecutionRhs = null;
                 break;
         }
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        mLhs.computeLineNr();
+        mExecutionRhs.computeLineNr(); // includes computation for mRhs
     }
 
     public Value evaluate() throws SetlException {

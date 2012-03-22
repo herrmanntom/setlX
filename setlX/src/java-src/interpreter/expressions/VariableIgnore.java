@@ -3,6 +3,7 @@ package interpreter.expressions;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Term;
 import interpreter.types.IgnoreDummy;
+import interpreter.utilities.Environment;
 
 /*
 grammar rules:
@@ -20,13 +21,28 @@ this class implements an ignored variable inside an idList or expression:
 
 public class VariableIgnore extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    public final static String FUNCTIONAL_CHARACTER = "'variableIgnore";
+    public  final static String         FUNCTIONAL_CHARACTER = "'variableIgnore";
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 9999;
+    private final static int            PRECEDENCE           = 9999;
 
-    public final static VariableIgnore VI = new VariableIgnore();
+    public  final static VariableIgnore VI                   = new VariableIgnore();
 
-    private VariableIgnore() {}
+    private              int            mLineNr;
+
+    private VariableIgnore() {
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+    }
 
     public IgnoreDummy evaluate() throws UndefinedOperationException {
         return IgnoreDummy.ID;

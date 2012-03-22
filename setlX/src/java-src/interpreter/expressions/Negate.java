@@ -4,6 +4,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -25,9 +26,23 @@ public class Negate extends Expr {
     private final static int    PRECEDENCE           = 1900;
 
     private Expr mExpr;
+    private int  mLineNr;
 
     public Negate(Expr expr) {
-        mExpr = expr;
+        mExpr   = expr;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        mExpr.computeLineNr();
     }
 
     public Value evaluate() throws SetlException {

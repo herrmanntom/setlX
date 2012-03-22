@@ -21,11 +21,9 @@ if (n <= 100000) {
     }
 
     beginCompSetlXSet := now();
-    fSS := 1;
-    for (i in {2 .. n}) {
-        fSS *= i;
-    }
+    fSS := */ {1 .. n};
     endCompSetlXSet := now();
+
     if (fSS != f) {
         abort("SetlX set factorial computation is wrong!");
     }

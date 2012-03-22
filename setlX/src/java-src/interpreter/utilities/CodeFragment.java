@@ -5,6 +5,10 @@ import interpreter.types.Value;
 
 public abstract class CodeFragment {
 
+    public abstract int getLineNr();
+
+    public abstract void computeLineNr();
+
     /* string operations */
 
     public abstract String toString(int tabs);

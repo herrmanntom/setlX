@@ -5,6 +5,7 @@ import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -26,9 +27,23 @@ public class Negation extends Expr {
     private final static int    PRECEDENCE           = 2000;
 
     private Expr mExpr;
+    private int  mLineNr;
 
     public Negation(Expr expr) {
-        mExpr = expr;
+        mExpr   = expr;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        mExpr.computeLineNr();
     }
 
     public Value evaluate() throws SetlException {

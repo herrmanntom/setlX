@@ -12,6 +12,19 @@ import java.util.List;
 
 public abstract class Value implements Comparable<Value> {
 
+    private int  mLineNr = -1;
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+    }
+
     public abstract Value   clone();
 
     /* Boolean operations */

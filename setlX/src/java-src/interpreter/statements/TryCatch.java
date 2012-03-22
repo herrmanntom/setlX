@@ -34,10 +34,27 @@ public class TryCatch extends Statement {
 
     private Block                        mBlockToTry;
     private List<TryCatchAbstractBranch> mTryList;
+    private int                          mLineNr;
 
     public TryCatch(Block blockToTry, List<TryCatchAbstractBranch> tryList) {
-        mBlockToTry     = blockToTry;
-        mTryList        = tryList;
+        mBlockToTry = blockToTry;
+        mTryList    = tryList;
+        mLineNr     = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
+        mBlockToTry.computeLineNr();
+        for (TryCatchAbstractBranch br : mTryList) {
+            br.computeLineNr();
+        }
     }
 
     public void execute() throws SetlException {
@@ -52,7 +69,7 @@ public class TryCatch extends Statement {
 
                 }
             }
-            // If we get here nothing matched. Throw as if nothing happened
+            // If we get here nothing matched. Re-throw as if nothing happened
             throw cise;
         }
     }
@@ -60,7 +77,7 @@ public class TryCatch extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getTabs(tabs);
+        String result = Environment.getLineStart(getLineNr(), tabs);
         result += "try ";
         result += mBlockToTry.toString(tabs, true);
         for (TryCatchAbstractBranch br : mTryList) {

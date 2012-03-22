@@ -159,8 +159,8 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
             result += "...";
         }
         result += ") {" + endl;
-        result += Environment.getTabs(tabs + 1) + "/* predefined procedure `" + mName + "' */" + endl;
-        result += Environment.getTabs(tabs) + "}";
+        result += Environment.getLineStart(tabs + 1) + "/* predefined procedure `" + mName + "' */" + endl;
+        result += Environment.getLineStart(tabs) + "}";
         return result;
     }
 

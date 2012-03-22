@@ -30,7 +30,8 @@ public class Block extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "'block";
 
-    private List<Statement>  mStatements;
+    private List<Statement> mStatements;
+    private int             mLineNr;
 
     public Block() {
         this(new LinkedList<Statement>());
@@ -38,10 +39,25 @@ public class Block extends Statement {
 
     public Block(List<Statement> statements) {
         mStatements = statements;
+        mLineNr = -1;
     }
 
     public void add(Statement stmnt) {
         mStatements.add(stmnt);
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        for (Statement stmnt : mStatements) {
+            stmnt.computeLineNr();
+        }
+        mLineNr = ++Environment.sourceLine;
     }
 
     public void execute() throws SetlException {
@@ -75,7 +91,7 @@ public class Block extends Statement {
             count++;
         }
         if (brackets) {
-            result += endl + Environment.getTabs(tabs) + "}";
+            result += endl + Environment.getLineStart(getLineNr(), tabs) + "}";
         }
         return result;
     }

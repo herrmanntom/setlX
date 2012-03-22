@@ -27,6 +27,12 @@ public class SetlList extends CollectionValue {
         mOriginalList       = list;
     }
 
+    public void computeLineNr() {
+        for (Value v : getList()) {
+            v.computeLineNr();
+        }
+    }
+
     public SetlList clone() {
         mOriginalList = getList();
         mList         = null;

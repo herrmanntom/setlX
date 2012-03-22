@@ -9,6 +9,7 @@ import interpreter.types.CollectionValue;
 import interpreter.types.SetlInt;
 import interpreter.types.SetlList;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,25 @@ implemented here as:
 
 public class ExplicitList extends Constructor {
     private List<Expr> mList;
+    private int        mLineNr;
 
     public ExplicitList(List<Expr> exprList) {
         mList   = exprList;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        for (Expr expr : mList) {
+            expr.computeLineNr();
+        }
     }
 
     public void fillCollection(CollectionValue collection) throws SetlException {

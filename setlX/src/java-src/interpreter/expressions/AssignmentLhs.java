@@ -7,6 +7,7 @@ import interpreter.types.CollectionValue;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -29,14 +30,33 @@ public class AssignmentLhs {
 
     private Expr        mLhs;   // lhs (should be either a Variable or ListConstructor)
     private List<Expr>  mItems; // subsequent CollectionAccess's upon the mLhs Expr
-
-    public AssignmentLhs(Expr lhs, List<Expr> items) {
-        mLhs   = lhs;
-        mItems = items;
-    }
+    private int         mLineNr;
 
     public AssignmentLhs(Expr lhs) {
         this(lhs, null);
+    }
+
+    public AssignmentLhs(Expr lhs, List<Expr> items) {
+        mLhs    = lhs;
+        mItems  = items;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        mLhs.computeLineNr();
+        if (mItems != null) {
+            for (Expr expr : mItems) {
+                expr.computeLineNr();
+            }
+        }
     }
 
     public Expr getExpr() {

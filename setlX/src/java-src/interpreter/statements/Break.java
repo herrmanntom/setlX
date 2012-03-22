@@ -19,7 +19,23 @@ public class Break extends Statement {
 
     public  final static Break  B                       = new Break();
 
-    private Break() { }
+    private              int    mLineNr;
+
+    private Break() {
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
+    }
+
 
     public void execute() throws BreakException {
         throw new BreakException("break");
@@ -28,7 +44,7 @@ public class Break extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        return Environment.getTabs(tabs) + "break;";
+        return Environment.getLineStart(getLineNr(), tabs) + "break;";
     }
 
     /* term operations */

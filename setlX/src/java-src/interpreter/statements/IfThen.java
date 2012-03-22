@@ -5,6 +5,7 @@ import interpreter.exceptions.TermConversionException;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,25 @@ public class IfThen extends Statement {
     private final static String FUNCTIONAL_CHARACTER = "'ifThen";
 
     private List<IfThenAbstractBranch> mBranchList;
+    private int                        mLineNr;
 
     public IfThen(List<IfThenAbstractBranch> branchList) {
         mBranchList = branchList;
+        mLineNr     = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
+        for (IfThenAbstractBranch br : mBranchList) {
+            br.computeLineNr();
+        }
     }
 
     public void execute() throws SetlException {

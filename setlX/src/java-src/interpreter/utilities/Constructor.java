@@ -9,6 +9,11 @@ import interpreter.types.Term;
 import interpreter.types.Value;
 
 public abstract class Constructor {
+
+    public abstract int         getLineNr();
+
+    public abstract void        computeLineNr();
+
     public abstract void        fillCollection(CollectionValue collection) throws SetlException;
 
     // sets the variables used to construct this list to the variables from the list given as a parameter

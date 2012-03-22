@@ -27,9 +27,22 @@ public class Return extends Statement {
     private final static String FUNCTIONAL_CHARACTER = "'return";
 
     private Expr mResult;
+    private int  mLineNr;
 
     public Return(Expr result) {
         mResult = result;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
     }
 
     public void execute() throws SetlException {
@@ -43,7 +56,7 @@ public class Return extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getTabs(tabs) + "return";
+        String result = Environment.getLineStart(getLineNr(), tabs) + "return";
         if (mResult != null){
             result += " " + mResult;
         }

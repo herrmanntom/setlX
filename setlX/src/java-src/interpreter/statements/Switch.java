@@ -27,15 +27,34 @@ public class Switch extends Statement {
     private final static String FUNCTIONAL_CHARACTER = "'switch";
 
     private List<SwitchAbstractBranch> mBranchList;
+    private int                        mLineNr;
+    private int                        mLineNr2;
 
     public Switch(List<SwitchAbstractBranch> branchList) {
         mBranchList = branchList;
+        mLineNr     = -1;
+        mLineNr2    = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
+        for (SwitchAbstractBranch br : mBranchList) {
+            br.computeLineNr();
+        }
+        mLineNr2 = ++Environment.sourceLine;
     }
 
     public void execute() throws SetlException {
-        for (SwitchAbstractBranch b : mBranchList) {
-            if (b.evalConditionToBool()) {
-                b.execute();
+        for (SwitchAbstractBranch br : mBranchList) {
+            if (br.evalConditionToBool()) {
+                br.execute();
                 break;
             }
         }
@@ -44,11 +63,11 @@ public class Switch extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getTabs(tabs) + "switch {" + Environment.getEndl();
-        for (SwitchAbstractBranch b : mBranchList) {
-            result += b.toString(tabs + 1);
+        String result = Environment.getLineStart(getLineNr(), tabs) + "switch {" + Environment.getEndl();
+        for (SwitchAbstractBranch br : mBranchList) {
+            result += br.toString(tabs + 1);
         }
-        result += Environment.getTabs(tabs) + "}";
+        result += Environment.getLineStart(mLineNr2, tabs) + "}";
         return result;
     }
 

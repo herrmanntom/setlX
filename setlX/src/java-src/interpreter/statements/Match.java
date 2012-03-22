@@ -31,21 +31,40 @@ public class Match extends Statement {
 
     private Expr                        mExpr;
     private List<MatchAbstractBranch>   mBranchList;
+    private int                         mLineNr;
+    private int                         mLineNr2;
 
     public Match(Expr expr, List<MatchAbstractBranch> branchList) {
         mExpr       = expr;
         mBranchList = branchList;
+        mLineNr     = -1;
+        mLineNr2    = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
+        for (MatchAbstractBranch br : mBranchList) {
+            br.computeLineNr();
+        }
+        mLineNr2 = ++Environment.sourceLine;
     }
 
     public void execute() throws SetlException {
         Value term = mExpr.eval().toTerm();
-        for (MatchAbstractBranch branch : mBranchList) {
-            MatchResult result = branch.matches(term);
+        for (MatchAbstractBranch br : mBranchList) {
+            MatchResult result = br.matches(term);
             if (result.isMatch()) {
                 // put all matching variables into current scope
                 result.setAllBindings();
                 // execute statements
-                branch.execute();
+                br.execute();
                 break;
             }
         }
@@ -54,11 +73,11 @@ public class Match extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getTabs(tabs) + "match (" + mExpr.toString(tabs) + ") {" + Environment.getEndl();
-        for (MatchAbstractBranch b : mBranchList) {
-            result += b.toString(tabs + 1);
+        String result = Environment.getLineStart(getLineNr(), tabs) + "match (" + mExpr.toString(tabs) + ") {" + Environment.getEndl();
+        for (MatchAbstractBranch br : mBranchList) {
+            result += br.toString(tabs + 1);
         }
-        result += Environment.getTabs(tabs) + "}";
+        result += Environment.getLineStart(mLineNr2, tabs) + "}";
         return result;
     }
 

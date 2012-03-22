@@ -34,11 +34,27 @@ public class Call extends Expr {
     private Expr       mLhs;       // left hand side (only variable is allowed here!)
     private List<Expr> mArgs;      // list of arguments
     private String     _this;      // pre-computed toString(), which has less stack penalty in case of stack overflow error...
+    private int        mLineNr;
 
     public Call(Expr lhs, List<Expr> args) {
-        mLhs            = lhs;
-        mArgs           = args;
-        _this           = _toString(0);
+        mLhs    = lhs;
+        mArgs   = args;
+        _this   = _toString(0);
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        for (Expr arg: mArgs) {
+            arg.computeLineNr();
+        }
     }
 
     public Value evaluate() throws SetlException {

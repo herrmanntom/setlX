@@ -6,6 +6,9 @@ import java.util.Random;
 
 public class Environment {
 
+    // last source line read/computed
+    public          static  int     sourceLine          = 0;
+
     // number of CPUs (cores) in the executing system
     private final   static  int     CORES               = Runtime.getRuntime().availableProcessors();
 
@@ -63,12 +66,16 @@ public class Environment {
         return sPrintVerbose;
     }
 
-    public static String getTabs(int tabs) {
-        if (tabs <= 0 || !sPrintVerbose) {
+    public static String getLineStart(int tabs) {
+        return getLineStart(-1, tabs);
+    }
+
+    public static String getLineStart(int lineNr, int tabs) {
+        if (!sPrintVerbose) {
             return "";
         }
-        String r = TAB;
-        for (int i = 1; i < tabs; i++) {
+        String r = lineNrToStr(lineNr) + TAB;
+        for (int i = 0; i < tabs; i++) {
             r += TAB;
         }
         return r;
@@ -80,6 +87,17 @@ public class Environment {
         } else {
             return " ";
         }
+    }
+
+    private static String lineNrToStr(int lineNr) {
+        String r = "";
+        if (lineNr > 0) {
+            r += lineNr;
+        }
+        while (r.length() < ("" + sourceLine).length()) {
+            r = " " + r;
+        }
+        return "/* " + r + " */ ";
     }
 }
 

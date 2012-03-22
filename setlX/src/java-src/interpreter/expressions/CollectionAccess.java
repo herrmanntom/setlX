@@ -7,6 +7,7 @@ import interpreter.types.Om;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
 import interpreter.types.Value;
+import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -31,10 +32,27 @@ public class CollectionAccess extends Expr {
 
     private Expr       mLhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
     private List<Expr> mArgs;      // list of arguments
+    private int        mLineNr;
 
     public CollectionAccess(Expr lhs, List<Expr> args) {
         mLhs    = lhs;
         mArgs   = args;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = Environment.sourceLine;
+        mLhs.computeLineNr();
+        for (Expr arg : mArgs) {
+            arg.computeLineNr();
+        }
     }
 
     public Value evaluate() throws SetlException {

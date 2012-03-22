@@ -24,7 +24,9 @@ public class ParseSetlX {
     public static Block parseFile(String fileName) throws ParserException {
         try {
             // parse the file contents (Antlr will print its parser errors into stderr ...)
-            return parseBlock(new ANTLRFileStream(fileName));
+            Block b = parseBlock(new ANTLRFileStream(fileName));
+            b.computeLineNr();
+            return b;
 
         } catch (IOException ioe) {
             throw new FileNotReadableException("File '" + fileName + "' could not be read.");
@@ -36,7 +38,9 @@ public class ParseSetlX {
             InputStream         stream = InputReader.getStream();
 
             // parse the input (Antlr will print its parser errors into stderr ...)
-            return parseBlock(new ANTLRInputStream(stream));
+            Block b = parseBlock(new ANTLRInputStream(stream));
+            b.computeLineNr();
+            return b;
 
         } catch (IOException ioe) {
             throw new EndOfFileException("eof");
@@ -48,7 +52,9 @@ public class ParseSetlX {
             InputStream         stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (Antlr will print its parser errors into stderr ...)
-            return parseBlock(new ANTLRInputStream(stream));
+            Block b = parseBlock(new ANTLRInputStream(stream));
+            b.computeLineNr();
+            return b;
 
         } catch (IOException ioe) {
             throw new EndOfFileException("eof");
@@ -60,7 +66,9 @@ public class ParseSetlX {
             InputStream         stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (Antlr will print its parser errors into stderr ...)
-            return parseExpr(new ANTLRInputStream(stream));
+            Expr e = parseExpr(new ANTLRInputStream(stream));
+            e.computeLineNr();
+            return e;
 
         } catch (IOException ioe) {
             throw new EndOfFileException("eof");

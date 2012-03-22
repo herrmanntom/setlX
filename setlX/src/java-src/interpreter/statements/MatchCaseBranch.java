@@ -34,20 +34,40 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     private List<Expr>  mExprs;      // expressions which creates terms to match
     private List<Value> mTerms;      // terms to match
     private Block       mStatements; // block to execute after match
+    private int         mLineNr;
 
     public MatchCaseBranch(List<Expr> exprs, Block statements){
-        mExprs      = exprs;
-        mTerms      = new ArrayList<Value>(exprs.size());
+        this(exprs, new ArrayList<Value>(exprs.size()), statements);
         for (Expr expr: exprs) {
             mTerms.add(expr.toTerm());
         }
-        mStatements = statements;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
+        for (Expr expr: mExprs) {
+            expr.computeLineNr();
+        }
+        for (Value term: mTerms) {
+            term.computeLineNr();
+        }
+        mStatements.computeLineNr();
+        // block counts an pending line
+        --Environment.sourceLine;
     }
 
     private MatchCaseBranch(List<Expr> exprs, List<Value> terms, Block statements){
         mExprs      = exprs;
         mTerms      = terms;
         mStatements = statements;
+        mLineNr     = -1;
     }
 
     public MatchResult matches(Value term) {
@@ -68,7 +88,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getTabs(tabs);
+        String result = Environment.getLineStart(getLineNr(), tabs);
         result += "case ";
 
         Iterator<Expr> iter = mExprs.iterator();

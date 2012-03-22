@@ -22,9 +22,22 @@ public class GlobalDefinition extends Statement {
     private final static String FUNCTIONAL_CHARACTER = "'globalDefinition";
 
     private Variable mVar;
+    private int      mLineNr;
 
     public GlobalDefinition(Variable var) {
-        mVar = var;
+        mVar    = var;
+        mLineNr = -1;
+    }
+
+    public int getLineNr() {
+        if (mLineNr < 0) {
+            computeLineNr();
+        }
+        return mLineNr;
+    }
+
+    public void computeLineNr() {
+        mLineNr = ++Environment.sourceLine;
     }
 
     public void execute() {
@@ -34,7 +47,7 @@ public class GlobalDefinition extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        return Environment.getTabs(tabs) + "var " + mVar.toString(tabs) + ";";
+        return Environment.getLineStart(getLineNr(), tabs) + "var " + mVar.toString(tabs) + ";";
     }
 
     /* term operations */

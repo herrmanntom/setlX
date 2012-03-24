@@ -154,6 +154,15 @@ public class SetlSet extends CollectionValue {
         return getMember(args.get(0));
     }
 
+    public Value collectionAccessUnCloned(List<Value> args) throws SetlException {
+        if (args.contains(RangeDummy.RD)) {
+            throw new UndefinedOperationException("Range operations are unsupported on '" + this + "'.");
+        } else if (args.size() != 1) {
+            throw new UndefinedOperationException("Can not access elements using arguments '" + args + "' on '" + this + "'; Exactly one argument is required.");
+        }
+        return getMemberUnCloned(args.get(0));
+    }
+
     // returns a set of all pairs which first element matches arg
     public Value collectMap(Value arg) throws SetlException {
         SetlSet result = new SetlSet();
@@ -201,13 +210,22 @@ public class SetlSet extends CollectionValue {
     }
 
     public Value getMember(Value element) throws SetlException {
+        return getMemberZZZInternal(element).clone();
+    }
+
+    public Value getMemberUnCloned(Value element) throws SetlException {
+        separateFromOriginal();
+        return getMemberZZZInternal(element);
+    }
+
+    private Value getMemberZZZInternal(Value element) throws SetlException {
         Value result = Om.OM;
         for (Value v: getSet()) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     if (v.getMember(new SetlInt(1)).equals(element)) {
                         if (result instanceof Om) {
-                            result = v.getMember(new SetlInt(2));
+                            result = v.getMemberUnCloned(new SetlInt(2));
                         } else {
                             // double match!
                             result = Om.OM;

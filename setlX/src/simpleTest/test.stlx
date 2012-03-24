@@ -284,3 +284,17 @@ precedences := procedure() {
 };
 precedences();
 
+complexLhsAssignment := procedure() {
+    a := [ [11, 12, 13], [21, 22, 23], [31, 32, 33] ];
+    a[2][4] := 24;
+    a[3][2] *= 10;
+    [a[1], a[2]] := [a[2], a[1]];
+    [a[1][1], a[2][2]] := [a[2][2], a[1][1]];
+    if (a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]]) {
+        printErr("test 18 successful (complexLhsAssignment)");
+    } else {
+        printErr("test 18 failed (complexLhsAssignment)");
+    }
+};
+complexLhsAssignment();
+

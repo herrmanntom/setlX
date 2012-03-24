@@ -4,22 +4,22 @@ atMostOne := procedure(s) {
 };
 
 atMostOneInColumn := procedure(board, column) {
-	columnElements := {row(column): row in board};
+	columnElements := {row[column]: row in board};
 	return atMostOne(columnElements);
 };
 
 atMostOneInUpperDiagonal := procedure(board, k) {
-	diagonalElements := {board(i)(j): i in {1 .. (#board)}, j in {1 .. (#board)} | (i + j == k)};
+	diagonalElements := {board[i][j]: i in {1 .. (#board)}, j in {1 .. (#board)} | (i + j == k)};
 	return atMostOne(diagonalElements);
 };
 
 atMostOneInLowerDiagonal := procedure(board, k) {
-	diagonalElements := {board(i)(j): i in {1 .. (#board)}, j in {1 .. (#board)} | (i - j == k)};
+	diagonalElements := {board[i][j]: i in {1 .. (#board)}, j in {1 .. (#board)} | (i - j == k)};
 	return atMostOne(diagonalElements);
 };
 
 oneInRow := procedure(board, row) {
-	return {{k: k in board(row)}};
+	return {{k: k in board[row]}};
 };
 
 allClauses := procedure(board) {
@@ -48,7 +48,7 @@ printBoard := procedure(i, board) {
 		print(line);
 		line := "        |";
 		for (col in [1 .. n]) {
-			if ({board(row)(col)} in i) {
+			if ({board[row][col]} in i) {
 				line := line + "   Q   |";
 			} else {
 				line := line + "       |";
@@ -70,7 +70,7 @@ printBoardSmall := procedure(i, board) {
 	for (row in [1 .. n]) {
 		line := "        |";
 		for (col in [1 .. n]) {
-			if ({board(row)(col)} in i) {
+			if ({board[row][col]} in i) {
 				line := line + "Q|";
 			} else {
 				line := line + " |";
@@ -102,9 +102,9 @@ saturate := procedure(s) {
 	units := {k in s | #k == 1};
 	used := {};
 	while (units != {}) {
-		unit := rnd(units);
+		unit := arb(units);
 		used := used + {unit};
-		literal := rnd(unit);
+		literal := arb(unit);
 		s := reduce(s, literal);
 		units := {k in s | #k == 1} - used;
 	}
@@ -117,12 +117,12 @@ reduce := procedure(s, l) {
 };
 
 selectLiteral := procedure(s, forbidden) {
-	return rnd({l: k in s, l in k | ( ! (l in forbidden) )});
+	return arb({l: k in s, l in k | ( ! (l in forbidden) )});
 };
 
 negateLiteral := procedure(l) {
-	if (l(1) == "-") {
-		return l(2);
+	if (l[1] == "-") {
+		return l[2];
 	} else {
 		return ["-", l];
 	}

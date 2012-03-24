@@ -23,10 +23,10 @@ public class SetlX {
     private final static String VERSION         = "0.6.0";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "-====================================setlX====================================-";
-    
+
     private final static int    EXIT_OK         = 0;
     private final static int    EXIT_ERROR      = 1;
-    
+
     private final static int    EXEC_OK         = 23;
     private final static int    EXEC_ERROR      = 33;
     private final static int    EXEC_EXIT       = 42;
@@ -139,6 +139,9 @@ public class SetlX {
     }
 
     private static List<Block> parseAndDumpFiles(List<String> files, boolean dump, String dumpFile, boolean verbose) throws Exception {
+        // print internal line numbers (for debugging of the interpreter)
+        //Environment.setPrintLineNumbers(true);
+
         // parsed programs
         List<Block> programs = new ArrayList<Block>(files.size());
 
@@ -304,7 +307,7 @@ public class SetlX {
         printHelpInteractive();
         System.out.println("Additional parameters:\n"
                          + "  --dump <file-name>\n"
-                         + "      writes loaded code into a file, including internal line numbers\n"
+                         + "      writes loaded code into a file\n"
                          + "  --noExecution\n"
                          + "      load and check code for syntax errors, but do not execute it\n"
                          + "  --predictableRandom\n"

@@ -38,13 +38,13 @@ public class Assignment extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE                      = 1000;
 
-    private AssignmentLhs mLhs;
-    private int           mType;
-    private Expr          mRhs;
-    private Expr          mExecutionRhs; // executed rhs, e.g. mLhs + mRhs, when type == "+="
-    private int           mLineNr;
+    private Expr    mLhs;
+    private int     mType;
+    private Expr    mRhs;
+    private Expr    mExecutionRhs; // executed rhs, e.g. mLhs + mRhs, when type == "+="
+    private int     mLineNr;
 
-    public Assignment(AssignmentLhs lhs, int type, Expr rhs) {
+    public Assignment(Expr lhs, int type, Expr rhs) {
         mLhs  = lhs;
         mType = type;
         mRhs  = rhs;
@@ -54,19 +54,19 @@ public class Assignment extends Expr {
                 mExecutionRhs = rhs;
                 break;
             case SUM:
-                mExecutionRhs = new Sum       (lhs.getExpr(), rhs);
+                mExecutionRhs = new Sum       (lhs, rhs);
                 break;
             case DIFFERENCE:
-                mExecutionRhs = new Difference(lhs.getExpr(), rhs);
+                mExecutionRhs = new Difference(lhs, rhs);
                 break;
             case PRODUCT:
-                mExecutionRhs = new Multiply  (lhs.getExpr(), rhs);
+                mExecutionRhs = new Multiply  (lhs, rhs);
                 break;
             case DIVISION:
-                mExecutionRhs = new Divide    (lhs.getExpr(), rhs);
+                mExecutionRhs = new Divide    (lhs, rhs);
                 break;
             case MODULO:
-                mExecutionRhs = new Modulo    (lhs.getExpr(), rhs);
+                mExecutionRhs = new Modulo    (lhs, rhs);
                 break;
             default:
                 mExecutionRhs = null;
@@ -92,7 +92,7 @@ public class Assignment extends Expr {
         if (mExecutionRhs == null) {
             throw new UndefinedOperationException("This assignment type is undefined.");
         }
-        return mLhs.setValue(mExecutionRhs.eval());
+        return mLhs.assign(mExecutionRhs.eval());
     }
 
     /* string operations */
@@ -178,8 +178,8 @@ public class Assignment extends Expr {
             } else {
                 throw new TermConversionException("malformed " + fc);
             }
-            AssignmentLhs   lhs = AssignmentLhs.valueToAssignmentLhs(term.firstMember());
-            Expr            rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            Expr lhs = TermConverter.valueToExpr(term.lastMember());
+            Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
             return new Assignment(lhs, type, rhs);
         }
     }

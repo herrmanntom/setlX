@@ -83,12 +83,12 @@ public class SetListConstructor extends Expr {
     }
 
     // sets this expression to the given value
-    public void assign(Value v) throws SetlException {
+    public Value assign(Value v) throws SetlException {
         if (v instanceof SetlList) {
             if (mType == LIST && mConstructor != null) {
-                mConstructor.setIds((SetlList) v);
+                return mConstructor.assign((SetlList) v);
             } else {
-                throw new UndefinedOperationException("Only explicit lists of variables can be used as targets for list assignments.");
+                throw new UndefinedOperationException("Only explicit lists can be used as targets for list assignments.");
             }
         } else {
             throw new IncompatibleTypeException("The value '" + v + "' is unusable for assignment to \"" + this + "\".");

@@ -55,7 +55,7 @@ public class ExplicitList extends Constructor {
     }
 
     // sets the variables used to form this list to the variables from the list given as a parameter
-    public void setIds(SetlList list) throws SetlException {
+    public Value assign(SetlList list) throws SetlException {
         if (list.size() != mList.size()) {
             throw new IncompatibleTypeException("Members of '" + list + "' are unusable for list assignment.");
         }
@@ -71,6 +71,7 @@ public class ExplicitList extends Constructor {
 
             e.assign(v);
         }
+        return list.clone();
     }
 
     public int size() {

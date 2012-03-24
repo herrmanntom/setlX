@@ -7,7 +7,8 @@ EBNF.class: Alternative.java MyToken.java Concatenation.java Postfix.java \
 	javac *.java
 
 updatePure: EBNF.class ../../src/java-src/grammar/SetlXgrammar.g
-	echo -e "grammar Pure;\n" > ../Pure.g
+	echo "grammar Pure;" > ../Pure.g
+	echo "" >> ../Pure.g
 	java EBNF < ../../src/java-src/grammar/SetlXgrammar.g >> ../Pure.g
 	grep -v "^WS :"        ../Pure.g   > ../Pure.g.2
 	grep -v "^REMAINDER :" ../Pure.g.2 > ../Pure.g

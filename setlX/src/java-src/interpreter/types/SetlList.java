@@ -134,6 +134,18 @@ public class SetlList extends CollectionValue {
         }
     }
 
+    public Value collectionAccessUnCloned(List<Value> args) throws SetlException {
+        if (args.contains(RangeDummy.RD)) {
+            // uncloned access is only used in assignments, so we should never get here
+            throw new UndefinedOperationException("Can not access elements using the arguments '" + args + "' on '" + this + "'; range is not allowed in assignments.");
+        } else if (args.size() == 1) {
+            return getMemberUnCloned(args.get(0));
+        } else {
+            // uncloned access is only used in assignments, so we should never get here
+            throw new UndefinedOperationException("Can not access elements using the arguments '" + args + "' on '" + this + "'; arguments are malformed.");
+        }
+    }
+
     public SetlBoolean containsMember(Value element) {
         return SetlBoolean.get(getList().contains(element));
     }

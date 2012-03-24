@@ -201,6 +201,10 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Can not access elements using the arguments '" + args + "' on this operand-type; '" + this + "' is not a collection value.");
     }
 
+    public Value collectionAccessUnCloned(List<Value> args) throws SetlException {
+        throw new IncompatibleTypeException("Can not access elements using the arguments '" + args + "' on this operand-type; '" + this + "' is not a collection value.");
+    }
+
     // returns a set of all pairs which first element matches arg
     public Value collectMap(Value arg) throws SetlException {
         throw new IncompatibleTypeException("Can not collect values of members matching the key '" + arg + "' on this operand-type; '" + this + "' is not a map.");

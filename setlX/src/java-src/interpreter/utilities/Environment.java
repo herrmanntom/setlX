@@ -17,6 +17,7 @@ public class Environment {
 
     private         static  boolean sIsInteractive      = false;
     private         static  boolean sPrintAfterEval     = false;
+    private         static  boolean sPrintLineNumbers   = false; // for debugging the interpreter
     private         static  boolean sPrintVerbose       = false;
 
     private final   static  String  TAB                 = "\t";
@@ -58,6 +59,14 @@ public class Environment {
         return sPrintAfterEval;
     }
 
+    public static void setPrintLineNumbers(boolean isPrintLineNumbers) {
+        sPrintLineNumbers = isPrintLineNumbers;
+    }
+
+    public static boolean isPrintLineNumbers() {
+        return sPrintLineNumbers;
+    }
+
     public static void setPrintVerbose(boolean printVerbose) {
         sPrintVerbose       = printVerbose;
     }
@@ -74,7 +83,12 @@ public class Environment {
         if (!sPrintVerbose) {
             return "";
         }
-        String r = lineNrToStr(lineNr) + TAB;
+        String r = null;
+        if (sPrintLineNumbers) {
+            r = lineNrToStr(lineNr) + TAB;
+        } else {
+            r = "";
+        }
         for (int i = 0; i < tabs; i++) {
             r += TAB;
         }

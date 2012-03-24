@@ -18,7 +18,7 @@ grammar SetlXgrammar;
 }
 
 @members {
-    private final static String IGNORE_TOKEN_ERROR = "ignore character ('_') is only valid inside match statements 'case' conditions";
+    private final static String IGNORE_TOKEN_ERROR = "ignore character ('_') is only valid inside assignments and match statements 'case' conditions";
 
     private void customErrorHandling(String tokenTextToMatch, String message) {
         state.syntaxErrors++;
@@ -138,50 +138,51 @@ exprList [boolean enableIgnore] returns [List<Expr> exprs]
 
 assignment returns [Assignment assign]
     @init {
-        AssignmentLhs lhs   = null;
-        List<Expr>    items = new LinkedList<Expr>();
         int           type  = -1;
     }
-    : (
-         variable
-         (
-           '[' a1 = anyExpr[false] ']' { items.add($a1.ae);                           }
-         )*                            { lhs = new AssignmentLhs($variable.v, items); }
-       | idList                        { lhs = new AssignmentLhs($idList.ilc);        }
-      )
+    : assignable[false]
       (
-         ':='           { type = Assignment.DIRECT;     }
-       | '+='           { type = Assignment.SUM;        }
-       | '-='           { type = Assignment.DIFFERENCE; }
-       | '*='           { type = Assignment.PRODUCT;    }
-       | '/='           { type = Assignment.DIVISION;   }
-       | '%='           { type = Assignment.MODULO;     }
+         ':='                { type = Assignment.DIRECT;     }
+       | '+='                { type = Assignment.SUM;        }
+       | '-='                { type = Assignment.DIFFERENCE; }
+       | '*='                { type = Assignment.PRODUCT;    }
+       | '/='                { type = Assignment.DIVISION;   }
+       | '%='                { type = Assignment.MODULO;     }
       )
       (
          ( assignment )=>
-         as = assignment     { $assign = new Assignment(lhs, type, $as.assign); }
-       | a2 = anyExpr[false] { $assign = new Assignment(lhs, type, $a2.ae);     }
+         as = assignment     { $assign = new Assignment($assignable.a, type, $as.assign); }
+       | a2 = anyExpr[false] { $assign = new Assignment($assignable.a, type, $a2.ae);     }
       )
     ;
 
-idList returns [SetListConstructor ilc]
-    : '[' explicitIdList ']' { ilc = new SetListConstructor(SetListConstructor.LIST, $explicitIdList.eil); }
+assignList returns [SetListConstructor alc]
+    : '[' explicitAssignList ']' { alc = new SetListConstructor(SetListConstructor.LIST, $explicitAssignList.eil); }
     ;
 
-explicitIdList returns [ExplicitList eil]
+explicitAssignList returns [ExplicitList eil]
     @init {
         List<Expr> exprs = new LinkedList<Expr>();
     }
-    : a1 = assignable       { exprs.add($a1.a);              }
+    : a1 = assignable[true]       { exprs.add($a1.a);              }
       (
-        ',' a2 = assignable { exprs.add($a2.a);              }
-      )*                    { eil = new ExplicitList(exprs); }
+        ',' a2 = assignable[true] { exprs.add($a2.a);              }
+      )*                          { eil = new ExplicitList(exprs); }
     ;
 
-assignable returns [Expr a]
-    : variable { a = $variable.v;       }
-    | idList   { a = $idList.ilc;       }
-    | '_'      { a = VariableIgnore.VI; }
+assignable [boolean enableIgnore] returns [Expr a]
+    : variable                 { a = $variable.v;                          }
+      (
+        '[' anyExpr[false] ']' { a = new CollectionAccess(a, $anyExpr.ae); }
+      )*
+    | assignList               { a = $assignList.alc;                      }
+    | '_'                      { if ($enableIgnore) {
+                                    a = VariableIgnore.VI;
+                                 } else {
+                                    customErrorHandling("_", IGNORE_TOKEN_ERROR);
+                                    a = null;
+                                 }
+                               }
     ;
 
 anyExpr [boolean enableIgnore] returns [Expr ae]
@@ -246,7 +247,7 @@ boolFactor [boolean enableIgnore] returns [Expr bf]
     | '!' b = boolFactor[$enableIgnore] { bf = new Negation($b.bf);              }
     | call[$enableIgnore]               { bf = $call.c;                          }
     | boolValue                         { bf = new ValueExpr($boolValue.bv);     }
-    | '_'                               { if ($enableIgnore){
+    | '_'                               { if ($enableIgnore) {
                                               bf = VariableIgnore.VI;
                                           } else {
                                               customErrorHandling("_", IGNORE_TOKEN_ERROR);
@@ -459,7 +460,7 @@ shortIterate [boolean enableIgnore] returns [Iteration si]
 
 iterator [boolean enableIgnore] returns [Iterator iter]
     :
-      assignable 'in' expr[$enableIgnore] { iter = new Iterator($assignable.a, $expr.ex); }
+      assignable[true] 'in' expr[$enableIgnore] { iter = new Iterator($assignable.a, $expr.ex); }
     ;
 
 iterate [boolean enableIgnore] returns [Iteration i]

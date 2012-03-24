@@ -19,7 +19,7 @@ public abstract class Expr extends CodeFragment {
         } catch (AbortException ae) {
             throw ae;
         } catch (SetlException se) {
-            se.addToTrace("Error in \"" + this + "\" (" + getLineNr() + "):");
+            se.addToTrace("Error in \"" + this + "\":");
             throw se;
         }
     }
@@ -28,8 +28,8 @@ public abstract class Expr extends CodeFragment {
 
     /* sets this expression to the given value
        (only makes sense for variables and id-lists) */
-    public void assign(Value v) throws SetlException {
-        throw new UndefinedOperationException("Error in \"" + this + "\" (" + getLineNr() + "):\n"
+    public Value assign(Value v) throws SetlException {
+        throw new UndefinedOperationException("Error in \"" + this + "\":\n"
                                             + "This expression can not be used as target for assignments.");
     }
 

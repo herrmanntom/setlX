@@ -72,8 +72,9 @@ public class Variable extends Expr {
     }
 
     // sets this expression to the given value
-    public void assign(Value v) {
+    public Value assign(Value v) {
         VariableScope.putValue(mId, v.clone());
+        return v.clone();
     }
 
     // sets this expression to the given value

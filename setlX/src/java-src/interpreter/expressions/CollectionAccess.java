@@ -1,8 +1,10 @@
 package interpreter.expressions;
 
+import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UnknownFunctionException;
+import interpreter.types.CollectionValue;
 import interpreter.types.Om;
 import interpreter.types.SetlList;
 import interpreter.types.Term;
@@ -33,6 +35,11 @@ public class CollectionAccess extends Expr {
     private Expr       mLhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
     private List<Expr> mArgs;      // list of arguments
     private int        mLineNr;
+
+    public CollectionAccess(Expr lhs, Expr arg) {
+        this(lhs, new ArrayList<Expr>(1));
+        mArgs.add(arg);
+    }
 
     public CollectionAccess(Expr lhs, List<Expr> args) {
         mLhs    = lhs;
@@ -69,6 +76,48 @@ public class CollectionAccess extends Expr {
         }
         // execute
         return lhs.collectionAccess(args);
+    }
+
+    private Value evaluateUnCloned() throws SetlException {
+        Value lhs = null;
+        if (mLhs instanceof Variable) {
+            lhs = mLhs.eval();
+        } else if (mLhs instanceof CollectionAccess) {
+            lhs = ((CollectionAccess) mLhs).evaluateUnCloned();
+        } else {
+            throw new IncompatibleTypeException("\"" + this + "\" is unusable for list assignment.");
+        }
+        if (lhs == Om.OM) {
+            throw new UnknownFunctionException("Identifier \"" + mLhs + "\" is undefined.");
+        }
+        // evaluate all arguments
+        List<Value> args = new ArrayList<Value>(mArgs.size());
+        for (Expr arg: mArgs) {
+            if (arg != null) {
+                args.add(arg.eval().clone());
+            }
+        }
+        // execute
+        return lhs.collectionAccessUnCloned(args);
+    }
+
+    // sets this expression to the given value
+    public Value assign(Value v) throws SetlException {
+        Value lhs = null;
+        if (mLhs instanceof Variable) {
+            lhs = mLhs.eval();
+            if (lhs == Om.OM) {
+                throw new UnknownFunctionException("Identifier \"" + mLhs + "\" is undefined.");
+            }
+        } else if (mLhs instanceof CollectionAccess) {
+            lhs = ((CollectionAccess) mLhs).evaluateUnCloned();
+        }
+        if (lhs != null && lhs instanceof CollectionValue && mArgs.size() == 1) {
+            lhs.setMember(mArgs.get(0).eval(), v); // no v.clone() here, because setMember() already clones
+            return v.clone();
+        } else {
+            throw new IncompatibleTypeException("Left-hand-side of \"" + mLhs + " := " + v + "\" is unusable for list assignment.");
+        }
     }
 
     /* string operations */

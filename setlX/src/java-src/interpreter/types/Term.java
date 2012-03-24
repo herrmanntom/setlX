@@ -166,6 +166,10 @@ public class Term extends CollectionValue {
         return (new CollectionAccess(TermConverter.valueToExpr(this), argExprs)).toTerm();
     }
 
+    public Value collectionAccessUnCloned(List<Value> args) throws SetlException {
+        return mBody.collectionAccessUnCloned(args);
+    }
+
     // viral operation
     public Term collectMap(Value arg) {
         return (new CollectMap(TermConverter.valueToExpr(this), TermConverter.valueToExpr(arg))).toTerm();

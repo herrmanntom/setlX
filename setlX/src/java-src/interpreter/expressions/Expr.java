@@ -45,6 +45,16 @@ public abstract class Expr extends CodeFragment {
 
     public abstract Value toTerm();
 
+    // toTerm when quoted ('@') expression is evaluated
+    public          Value toTermEvalArguments() throws SetlException {
+        return toTerm();
+    }
+
+    // toTerm when quoted with '@'
+    public          Value toTermQuoted() {
+        return toTerm();
+    }
+
     // precedence level in SetlX-grammar
     public abstract int   precedence();
 }

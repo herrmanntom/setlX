@@ -74,7 +74,7 @@ statement returns [Statement stmnt]
         List<MatchAbstractBranch>       matchList  = new LinkedList<MatchAbstractBranch>();
         List<TryCatchAbstractBranch>    tryList    = new LinkedList<TryCatchAbstractBranch>();
     }
-    : 'var' variable[false] ';'                                      { stmnt = new GlobalDefinition($variable.v);                    }
+    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                    }
     | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));               }
       (
         'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));         }
@@ -103,11 +103,11 @@ statement returns [Statement stmnt]
     | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);                }
     | 'try'                                '{' b1 = block '}'
       (
-         'catchLng'  '(' v1 = variable[false] ')' '{' b2 = block '}' { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));           }
-       | 'catchUsr'  '(' v1 = variable[false] ')' '{' b2 = block '}' { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));           }
+         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));           }
+       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));           }
       )*
       (
-         'catch'     '(' v2 = variable[false] ')' '{' b3 = block '}' { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));           }
+         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));           }
       )?
       { stmnt = new TryCatch($b1.blk, tryList); }
     | 'return' anyExpr[false]? ';'                                   { stmnt = new Return($anyExpr.ae);                              }
@@ -118,8 +118,8 @@ statement returns [Statement stmnt]
     | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);                 }
     ;
 
-variable [boolean quoted] returns [Variable v]
-    : ID        { v = new Variable($quoted, $ID.text);         }
+variable returns [Variable v]
+    : ID { v = new Variable($ID.text); }
     ;
 
 condition [boolean enableIgnore] returns [Condition cnd]
@@ -171,7 +171,7 @@ explicitAssignList returns [ExplicitList eil]
     ;
 
 assignable [boolean enableIgnore] returns [Expr a]
-    : variable[false]          { a = $variable.v;                          }
+    : variable                 { a = $variable.v;                          }
       (
         '[' anyExpr[false] ']' { a = new CollectionAccess(a, $anyExpr.ae); }
       )*
@@ -245,7 +245,7 @@ boolFactor [boolean enableIgnore] returns [Expr bf]
       comparison[$enableIgnore]         { bf = $comparison.comp;                 }
     | '(' boolExpr[$enableIgnore] ')'   { bf = new BracketedExpr($boolExpr.bex); }
     | '!' b = boolFactor[$enableIgnore] { bf = new Negation($b.bf);              }
-    | call[$enableIgnore, false]        { bf = $call.c;                          }
+    | call[$enableIgnore]               { bf = $call.c;                          }
     | boolValue                         { bf = new ValueExpr($boolValue.bv);     }
     | '_'                               { if ($enableIgnore) {
                                               bf = VariableIgnore.VI;
@@ -288,12 +288,12 @@ lambdaParameters returns [List<ParameterDef> paramList]
     @init {
         paramList = new LinkedList<ParameterDef>();
     }
-    : variable[false]              { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
+    : variable              { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
     | '['
       (
-        v1 = variable[false]       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
+        v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
         (
-          ',' v2 = variable[false] { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
+          ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
         )*
       )?
       ']'
@@ -316,8 +316,8 @@ procedureParameters returns [List<ParameterDef> paramList]
     ;
 
 procedureParameter returns [ParameterDef param]
-    : 'rw' variable[false] { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
-    | variable[false]      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
+    : 'rw' variable { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
+    | variable      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
 sum [boolean enableIgnore] returns [Expr s]
@@ -364,13 +364,13 @@ prefixOperation [boolean enableIgnore] returns [Expr po]
 simpleFactor [boolean enableIgnore, boolean quoted] returns [Expr sf]
     : '(' expr[$enableIgnore] ')'   { sf = new BracketedExpr($expr.ex); }
     | term                          { sf = $term.t;                     }
-    | call[$enableIgnore, $quoted]  { sf = $call.c;                     }
+    | call[$enableIgnore]           { sf = $call.c;                     }
     | value[$enableIgnore, $quoted] { sf = $value.v;                    }
     ;
 
 term returns [Expr t]
     : TERM '(' termArguments ')'
-      { t = new TermConstructor(new Variable(false, $TERM.text), $termArguments.args); }
+      { t = new TermConstructor(new Variable($TERM.text), $termArguments.args); }
     ;
 
 termArguments returns [List<Expr> args]
@@ -378,8 +378,8 @@ termArguments returns [List<Expr> args]
     |  /* epsilon */ { args = new LinkedList<Expr>(); }
     ;
 
-call [boolean enableIgnore, boolean quoted] returns [Expr c]
-    : variable[$quoted]                                { c = $variable.v;                                             }
+call [boolean enableIgnore,] returns [Expr c]
+    : variable                                         { c = $variable.v;                                             }
       (
          '(' callParameters[$enableIgnore] ')'         { c = new Call(c, $callParameters.params);                     }
       )?

@@ -76,6 +76,20 @@ public class CollectMap extends Expr {
         return result;
     }
 
+    public Term toTermEvalArguments() throws SetlException {
+        Term result = new Term(FUNCTIONAL_CHARACTER);
+        result.addMember(mLhs.toTermEvalArguments());
+        result.addMember(mArg.eval().toTerm());
+        return result;
+    }
+
+    public Term toTermQuoted() {
+        Term result = new Term(FUNCTIONAL_CHARACTER);
+        result.addMember(mLhs.toTermQuoted());
+        result.addMember(mArg.toTerm());
+        return result;
+    }
+
     public static CollectMap termToExpr(Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

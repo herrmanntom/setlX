@@ -46,7 +46,7 @@ public class Quote extends Expr {
     }
 
     public Value evaluate() throws SetlException {
-        return mExpr.eval();
+        return mExpr.toTermEvalArguments();
     }
 
     /* string operations */
@@ -58,11 +58,28 @@ public class Quote extends Expr {
     /* term operations */
 
     public Value toTerm() {
-        return mExpr.toTerm();
+        return mExpr.toTermQuoted();
+    }
+
+    public Value toTermEvalArguments() throws SetlException {
+        Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        result.addMember(mExpr.toTermEvalArguments());
+        return result;
+    }
+
+    public Term toTermQuoted() {
+        Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        result.addMember(mExpr.toTerm());
+        return result;
     }
 
     public static Quote termToExpr(Term term) throws TermConversionException {
-        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        if (term.size() != 1) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            return new Quote(expr);
+        }
     }
 
     // precedence level in SetlX-grammar

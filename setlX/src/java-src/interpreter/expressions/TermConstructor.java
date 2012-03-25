@@ -98,7 +98,7 @@ public class TermConstructor extends Expr {
         for (Value v : term) {
             args.add(TermConverter.valueToExpr(v));
         }
-        Expr result = new TermConstructor(new Variable(quoted, functionalCharacter), args);
+        Expr result = new TermConstructor(new Variable(functionalCharacter), args);
         if (quoted) {
             return new Quote(result);
         } else {

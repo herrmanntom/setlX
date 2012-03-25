@@ -37,13 +37,11 @@ public class Variable extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE                    = 9999;
 
-    private boolean mQuoted;      // during matching only variables with exactly the same name are to be matched
     private String  mId;
     private boolean mIsTerm;
     private int     mLineNr;
 
-    public Variable(boolean quoted, String id) {
-        mQuoted = quoted;
+    public Variable(String id) {
         mId     = id;
         mIsTerm = (id.length() > 0 && (id.charAt(0) == '^'));
         mLineNr = -1;
@@ -63,8 +61,6 @@ public class Variable extends Expr {
     public Value evaluate() {
         if (mIsTerm) {
             return new Term(mId);
-        } else if (mQuoted) {
-            return toTerm();
         }
 
         Value v = VariableScope.findValue(mId);
@@ -99,12 +95,17 @@ public class Variable extends Expr {
             return new Term(mId);
         }
 
-        Term result = null;
-        if (mQuoted) {
-            result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL);
-        } else {
-            result = new Term(FUNCTIONAL_CHARACTER);
+        Term result = new Term(FUNCTIONAL_CHARACTER);
+        result.addMember(new SetlString(mId));
+        return result;
+    }
+
+    public Term toTermQuoted() {
+        if (mIsTerm) {
+            return new Term(mId);
         }
+
+        Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL);
         result.addMember(new SetlString(mId));
         return result;
     }
@@ -114,7 +115,7 @@ public class Variable extends Expr {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             String  id     = ((SetlString) term.firstMember()).getUnquotedString();
-            return new Variable(false, id);
+            return new Variable(id);
         }
     }
 

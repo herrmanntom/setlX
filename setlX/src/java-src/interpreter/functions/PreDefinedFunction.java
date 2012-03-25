@@ -18,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 public abstract class PreDefinedFunction extends ProcedureDefinition {
+    // functional characters used in terms
+    private final   static  String  FUNCTIONAL_CHARACTER    = "^preDefinedProcedure";
 
     private String  mName;
     private boolean mUnlimitedParameters;
@@ -167,7 +169,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     /* term operations */
 
     public Value toTerm() {
-        Term result = new Term("^preDefinedProcedure");
+        Term result = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(new SetlString(mName));
 

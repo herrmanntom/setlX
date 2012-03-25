@@ -16,9 +16,12 @@ import java.util.Map;
 // This class collects the variable bindings and the function definitions in current scope.
 public class VariableScope {
     /*============================ static ============================*/
+    // functional characters used in terms
+    private final   static  String          FUNCTIONAL_CHARACTER_BINDING    = "^binding";
+    private final   static  String          FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
 
     // this scope stores all global variables
-    private static final VariableScope  sGlobals        = new VariableScope();
+    private final   static  VariableScope   sGlobals                        = new VariableScope();
 
     /* This variable stores the initial VariableScope:
        Predefined functions are dynamically loaded into this VariableScope,
@@ -26,10 +29,10 @@ public class VariableScope {
        VariableScope clones.
        Predefined functions should not be put into sGlobals, to allow local
        overrides inside functions.                                            */
-    private static final VariableScope  sInitial        = new VariableScope();
+    private final   static  VariableScope   sInitial                        = new VariableScope();
 
     // this variable stores the variable assignment that is currently active
-    private static VariableScope        sVariableScope  = sInitial;
+    private         static  VariableScope   sVariableScope                  = sInitial;
 
     public static VariableScope getScope() {
         return sVariableScope;
@@ -219,12 +222,12 @@ public class VariableScope {
         sGlobals.collectBindings(allVars, false);
 
         // term which represents the scope
-        Term        result      = new Term("^scope");
+        Term        result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
         // list of bindings in scope
         SetlList    bindings    = new SetlList();
 
         for (Map.Entry<String, Value> entry : allVars.entrySet()) {
-            Term    binding = new Term("^binding");
+            Term    binding = new Term(FUNCTIONAL_CHARACTER_BINDING);
             binding.addMember(new SetlString(entry.getKey()));
             binding.addMember(entry.getValue().toTerm());
 

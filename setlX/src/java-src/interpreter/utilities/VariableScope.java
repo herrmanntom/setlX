@@ -219,12 +219,12 @@ public class VariableScope {
         sGlobals.collectBindings(allVars, false);
 
         // term which represents the scope
-        Term        result      = new Term("'scope");
+        Term        result      = new Term("^scope");
         // list of bindings in scope
         SetlList    bindings    = new SetlList();
 
         for (Map.Entry<String, Value> entry : allVars.entrySet()) {
-            Term    binding = new Term("'binding");
+            Term    binding = new Term("^binding");
             binding.addMember(new SetlString(entry.getKey()));
             binding.addMember(entry.getValue().toTerm());
 

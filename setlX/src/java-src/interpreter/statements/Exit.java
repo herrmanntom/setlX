@@ -15,7 +15,7 @@ statement
 
 public class Exit extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER    = "'exit";
+    private final static String FUNCTIONAL_CHARACTER    = "^exit";
 
     public  final static Exit   E                       = new Exit();
     private              int    mLineNr;

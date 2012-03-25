@@ -29,7 +29,7 @@ implemented here as:
 
 public class Iterator {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "'iterator";
+    private final static String FUNCTIONAL_CHARACTER = "^iterator";
 
     private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private Expr        mCollection; // Rhs (should be Set/List)

@@ -31,7 +31,7 @@ implemented here as:
 
 public class ProcedureDefinition extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'procedure";
+    public  final static String FUNCTIONAL_CHARACTER = "^procedure";
 
     protected List<ParameterDef> mParameters;  // parameter list
     protected Block              mStatements;  // statements in the body of the definition

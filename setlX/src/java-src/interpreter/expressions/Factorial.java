@@ -21,7 +21,7 @@ implemented here as:
 
 public class Factorial extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'factorial";
+    private final static String FUNCTIONAL_CHARACTER = "^factorial";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 

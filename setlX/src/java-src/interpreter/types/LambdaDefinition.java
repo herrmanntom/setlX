@@ -26,7 +26,7 @@ implemented here as:
 
 public class LambdaDefinition extends ProcedureDefinition {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "'lambdaProcedure";
+    public  final static String FUNCTIONAL_CHARACTER = "^lambdaProcedure";
 
     private Expr mExpr; // expression in the body of the definition; used only for toString() and toTerm()
     private int  mLineNr;

@@ -41,20 +41,20 @@ exprList
     ;
 
 assignment
-    : (variable ('[' anyExpr ']')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
+    : assignable (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
     ;
 
-idList
-    : '[' explicitIdList ']'
+assignList
+    : '[' explicitAssignList ']'
     ;
 
-explicitIdList
+explicitAssignList
     : assignable (',' assignable)*
     ;
 
 assignable
-    : variable
-    | idList
+    : variable ('[' anyExpr ']')*
+    | assignList
     | '_'
     ;
 
@@ -163,6 +163,7 @@ prefixOperation
     | '*/' factor
     | '#' factor
     | '-' factor
+    | '@' factor
     ;
 
 simpleFactor
@@ -199,7 +200,7 @@ collectionAccessParams
 value
     : list
     | set
-    | string
+    | STRING
     | atomicValue
     | '_'
     ;
@@ -243,10 +244,6 @@ explicitList
     : exprList
     ;
 
-string
-    : '@'? STRING
-    ;
-
 boolValue
     : 'true'
     | 'false'
@@ -264,8 +261,8 @@ real
 
 
 
-TERM : ('\'' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
-ID : 'a'..'z' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+TERM : '^' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
+ID : ('a'..'z' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 NUMBER : '0' | '1'..'9' ('0'..'9')*;
 REAL : '.' ('0'..'9')+ (('e' | 'E') '-'? ('0'..'9')+)?;
 STRING : '"' ('\\"' | ~('"'))* '"';

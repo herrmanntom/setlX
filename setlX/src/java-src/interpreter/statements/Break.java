@@ -15,7 +15,7 @@ statement
 
 public class Break extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER    = "'break";
+    private final static String FUNCTIONAL_CHARACTER    = "^break";
 
     public  final static Break  B                       = new Break();
 

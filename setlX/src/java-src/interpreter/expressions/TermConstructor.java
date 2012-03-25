@@ -91,13 +91,19 @@ public class TermConstructor extends Expr {
         return result;
     }
 
-    public static TermConstructor termToExpr(Term term) {
+    public static Expr termToExpr(Term term) {
         String      functionalCharacter = term.functionalCharacter().getUnquotedString();
+        boolean     quoted              = ! (functionalCharacter.length() > 0 && (functionalCharacter.charAt(0) == '^'));
         List<Expr>  args                = new ArrayList<Expr>(term.size());
         for (Value v : term) {
             args.add(TermConverter.valueToExpr(v));
         }
-        return new TermConstructor(new Variable(functionalCharacter), args);
+        Expr result = new TermConstructor(new Variable(quoted, functionalCharacter), args);
+        if (quoted) {
+            return new Quote(result);
+        } else {
+            return result;
+        }
     }
 
     // precedence level in SetlX-grammar

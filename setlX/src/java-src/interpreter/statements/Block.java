@@ -28,7 +28,7 @@ implemented here as:
 
 public class Block extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'block";
+    private final static String FUNCTIONAL_CHARACTER = "^block";
 
     private List<Statement> mStatements;
     private int             mLineNr;

@@ -31,7 +31,7 @@ implemented here as:
 
 public class Iteration extends Constructor {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'iteration";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^iteration";
 
     private Expr      mExpr;
     private Iterator  mIterator;

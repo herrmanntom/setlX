@@ -22,7 +22,7 @@ implemented here as:
 
 public class MatchDefaultBranch extends MatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'matchDefaultBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchDefaultBranch";
 
     private Block   mStatements;
     private int     mLineNr;

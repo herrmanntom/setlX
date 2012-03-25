@@ -27,7 +27,7 @@ implemented with different classes which inherit from BranchMatchAbstract:
 
 public class Match extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'match";
+    private final static String FUNCTIONAL_CHARACTER = "^match";
 
     private Expr                        mExpr;
     private List<MatchAbstractBranch>   mBranchList;

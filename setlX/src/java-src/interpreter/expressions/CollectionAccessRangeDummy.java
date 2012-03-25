@@ -17,7 +17,7 @@ this class implements a range token inside the parameters of a CollectionAccess:
 
 public class CollectionAccessRangeDummy extends Expr {
     // functional character used in terms (MUST be classname starting with lower case letter!)
-    private final static String                     FUNCTIONAL_CHARACTER = "'collectionAccessRangeDummy";
+    private final static String                     FUNCTIONAL_CHARACTER = "^collectionAccessRangeDummy";
     // precedence level in SetlX-grammar
     private final static int                        PRECEDENCE           = 9999;
 

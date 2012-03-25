@@ -24,7 +24,7 @@ implemented with different classes which inherit from BranchAbstract:
 
 public class Switch extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'switch";
+    private final static String FUNCTIONAL_CHARACTER = "^switch";
 
     private List<SwitchAbstractBranch> mBranchList;
     private int                        mLineNr;

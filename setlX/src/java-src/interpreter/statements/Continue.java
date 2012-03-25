@@ -15,7 +15,7 @@ statement
 
 public class Continue extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String     FUNCTIONAL_CHARACTER    = "'continue";
+    private final static String     FUNCTIONAL_CHARACTER    = "^continue";
 
     public  final static Continue   C                       = new Continue();
     private              int        mLineNr;

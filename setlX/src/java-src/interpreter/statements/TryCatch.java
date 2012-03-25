@@ -30,7 +30,7 @@ implemented with different classes which inherit from BranchTryAbstract:
 
 public class TryCatch extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'tryCatch";
+    private final static String FUNCTIONAL_CHARACTER = "^tryCatch";
 
     private Block                        mBlockToTry;
     private List<TryCatchAbstractBranch> mTryList;

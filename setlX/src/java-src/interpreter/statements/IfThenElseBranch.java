@@ -20,7 +20,7 @@ implemented here as:
 
 public class IfThenElseBranch extends IfThenAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'ifThenElseBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^ifThenElseBranch";
 
     private Block   mStatements;
     private int     mLineNr;

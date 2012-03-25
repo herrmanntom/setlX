@@ -29,7 +29,7 @@ implemented here as:
 
 public class MatchCaseBranch extends MatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'matchCaseBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchCaseBranch";
 
     private List<Expr>  mExprs;      // expressions which creates terms to match
     private List<Value> mTerms;      // terms to match

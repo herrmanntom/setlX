@@ -18,37 +18,26 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-/*
-grammar rule:
-string
-    :   '@'?        STRING
-    ;
-
-implemented here as:
-        ====        ======
-      mEvaluate  mOriginalStr
-*/
-
 public class StringConstructor extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'stringConstructor";
+    private final static String FUNCTIONAL_CHARACTER = "^stringConstructor";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private boolean      mEvaluate;    // should this string be evaluated ('@' -> false)
+    private boolean      mQuoted;      // do not parse inner expressions ('@' -> true)
     private String       mOriginalStr; // original String
     private List<String> mFragments;   // list of string fragments for after and between expressions
     private List<Expr>   mExprs;       // list of $-Expressions
     private int          mLineNr;
 
-    public StringConstructor(boolean evaluate, String originalStr) {
-        this(evaluate, originalStr, new LinkedList<String>(), new LinkedList<Expr>());
+    public StringConstructor(boolean quoted, String originalStr) {
+        this(quoted, originalStr, new LinkedList<String>(), new LinkedList<Expr>());
 
         // Strip out double quotes which the parser left in
         originalStr  = originalStr.substring(1, originalStr.length() - 1);
         int length   = originalStr.length();
 
-        if (evaluate) {
+        if ( ! quoted) {
             StringBuilder fragment  = new StringBuilder(); // buffer for string fragment
             StringBuilder expr      = new StringBuilder(); // buffer for inner expr string
             boolean       innerExpr = false;               // currently reading inner expr ?
@@ -107,8 +96,8 @@ public class StringConstructor extends Expr {
         }
     }
 
-    private StringConstructor(boolean evaluate, String originalStr, List<String> fragments, List<Expr> exprs) {
-        mEvaluate       = evaluate;
+    private StringConstructor(boolean quoted, String originalStr, List<String> fragments, List<Expr> exprs) {
+        mQuoted         = quoted;
         mOriginalStr    = originalStr;
         mFragments      = fragments;
         mExprs          = exprs;
@@ -165,7 +154,7 @@ public class StringConstructor extends Expr {
     /* string operations */
 
     public String toString(int tabs) {
-        return (mEvaluate? "" : "@") + mOriginalStr;
+        return mOriginalStr;
     }
 
     /* term operations */
@@ -193,11 +182,11 @@ public class StringConstructor extends Expr {
         }
     }
 
-    public static StringConstructor termToExpr(Term term) throws TermConversionException {
+    public static Expr termToExpr(Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            boolean         evaluate    = true;
+            boolean         quoted      = false;
             String          originalStr = "\"";
             List<String>    fragments   = new LinkedList<String>();
             List<Expr>      exprs       = new LinkedList<Expr>();
@@ -208,8 +197,8 @@ public class StringConstructor extends Expr {
             while (fIter.hasNext()) {
                 SetlString  sstring = (SetlString) fIter.next();
                 String      string  = sstring.getUnquotedString();
-                if (evaluate && string.contains("$")) {
-                    evaluate = false;
+                if ( ! quoted && string.contains("$")) {
+                    quoted = true;
                 }
                 originalStr += sstring.getEscapedString();
                 fragments.add(string);
@@ -224,22 +213,32 @@ public class StringConstructor extends Expr {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
             originalStr += "\"";
-            return new StringConstructor(evaluate, originalStr, fragments, exprs);
+            Expr result = new StringConstructor(quoted, originalStr, fragments, exprs);
+            if (quoted) {
+                return new Quote(result);
+            } else {
+                return result;
+            }
         }
     }
 
-    public static StringConstructor valueToExpr(Value value) throws TermConversionException {
+    public static Expr valueToExpr(Value value) throws TermConversionException {
         if ( ! (value instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
         SetlString      sstring     = (SetlString) value;
         String          string      = sstring.getUnquotedString();
-        boolean         evaluate    = ! string.contains("$"); // string was not evaluated when it contains a $, otherwise it would have been split
+        boolean         quoted      = string.contains("$"); // string was quoted when it contains a $, otherwise it would have been split
         String          originalStr = "\"" + sstring.getEscapedString() + "\"";
         List<String>    fragments   = new LinkedList<String>();
         fragments.add(string);
         List<Expr>      exprs       = new LinkedList<Expr>();
-        return new StringConstructor(evaluate, originalStr, fragments, exprs);
+        Expr            result      = new StringConstructor(quoted, originalStr, fragments, exprs);
+        if (quoted) {
+            return new Quote(result);
+        } else {
+            return result;
+        }
     }
 
     // precedence level in SetlX-grammar

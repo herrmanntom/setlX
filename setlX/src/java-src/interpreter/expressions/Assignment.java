@@ -11,22 +11,22 @@ import interpreter.utilities.TermConverter;
 /*
 grammar rule:
 assignment
-    : (variable ('[' anyExpr ']')* | idList) (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
+    : assignable (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
     ;
 
 implemented here as:
-       ====================================   ====---====---====---====---====---====   ===================================
-                    mLhs                                       mType                                mRhs
+      ==========  ====---====---====---====---====---====   ===================================
+         mLhs                      mType                                  mRhs
 */
 
 public class Assignment extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER_DIRECT     = "'assignment";           // ':='
-    public  final static String FUNCTIONAL_CHARACTER_SUM        = "'sumAssignment";        // '+='
-    public  final static String FUNCTIONAL_CHARACTER_DIFFERENCE = "'differenceAssignment"; // '-='
-    public  final static String FUNCTIONAL_CHARACTER_PRODUCT    = "'productAssignment";    // '*='
-    public  final static String FUNCTIONAL_CHARACTER_DIVISION   = "'divisionAssignment";   // '/='
-    public  final static String FUNCTIONAL_CHARACTER_MODULO     = "'moduloAssignment";     // '%='
+    public  final static String FUNCTIONAL_CHARACTER_DIRECT     = "^assignment";           // ':='
+    public  final static String FUNCTIONAL_CHARACTER_SUM        = "^sumAssignment";        // '+='
+    public  final static String FUNCTIONAL_CHARACTER_DIFFERENCE = "^differenceAssignment"; // '-='
+    public  final static String FUNCTIONAL_CHARACTER_PRODUCT    = "^productAssignment";    // '*='
+    public  final static String FUNCTIONAL_CHARACTER_DIVISION   = "^divisionAssignment";   // '/='
+    public  final static String FUNCTIONAL_CHARACTER_MODULO     = "^moduloAssignment";     // '%='
 
     public  final static int    DIRECT                          = 0; // ':='
     public  final static int    SUM                             = 1; // '+='
@@ -178,7 +178,7 @@ public class Assignment extends Expr {
             } else {
                 throw new TermConversionException("malformed " + fc);
             }
-            Expr lhs = TermConverter.valueToExpr(term.lastMember());
+            Expr lhs = TermConverter.valueToExpr(term.firstMember());
             Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
             return new Assignment(lhs, type, rhs);
         }

@@ -23,7 +23,7 @@ implemented here as:
 
 public class Range extends Constructor {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'range";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^range";
 
     private Expr mStart;
     private Expr mSecond;

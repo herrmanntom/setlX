@@ -21,7 +21,7 @@ implemented here as:
 
 public class SwitchCaseBranch extends SwitchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'switchCaseBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^switchCaseBranch";
 
     private Condition mCondition;
     private Block     mStatements;

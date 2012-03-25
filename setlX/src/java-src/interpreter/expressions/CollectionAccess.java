@@ -28,7 +28,7 @@ implemented here as:
 
 public class CollectionAccess extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'collectionAccess";
+    private final static String FUNCTIONAL_CHARACTER = "^collectionAccess";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 

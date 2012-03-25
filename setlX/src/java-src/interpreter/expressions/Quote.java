@@ -10,25 +10,25 @@ import interpreter.utilities.TermConverter;
 /*
 grammar rule:
 prefixOperation
-    : '+/' factor
-    | [...]
+    : [...]
+    | '@' factor
     ;
 
 implemented here as:
-           ======
-           mExpr
+          ======
+          mExpr
 */
 
-public class SumMembers extends Expr {
+public class Quote extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^sumMembers";
+    private final static String FUNCTIONAL_CHARACTER = "^quote";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
     private Expr mExpr;
     private int  mLineNr;
 
-    public SumMembers(Expr expr) {
+    public Quote(Expr expr) {
         mExpr   = expr;
         mLineNr = -1;
     }
@@ -46,30 +46,23 @@ public class SumMembers extends Expr {
     }
 
     public Value evaluate() throws SetlException {
-        return mExpr.eval().sumMembers();
+        return mExpr.eval();
     }
 
     /* string operations */
 
     public String toString(int tabs) {
-        return "+/" + mExpr.toString(tabs);
+        return "@" + mExpr.toString(tabs);
     }
 
     /* term operations */
 
-    public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
-        result.addMember(mExpr.toTerm());
-        return result;
+    public Value toTerm() {
+        return mExpr.toTerm();
     }
 
-    public static SumMembers termToExpr(Term term) throws TermConversionException {
-        if (term.size() != 1) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
-            Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            return new SumMembers(expr);
-        }
+    public static Quote termToExpr(Term term) throws TermConversionException {
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
     // precedence level in SetlX-grammar

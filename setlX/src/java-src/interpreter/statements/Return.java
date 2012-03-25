@@ -24,7 +24,7 @@ implemented here as:
 
 public class Return extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'return";
+    private final static String FUNCTIONAL_CHARACTER = "^return";
 
     private Expr mResult;
     private int  mLineNr;

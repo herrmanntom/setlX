@@ -42,7 +42,7 @@ public class TermConverter {
             Term    term    = (Term) value;
             String  fc      = term.functionalCharacter().getUnquotedString();
             try {
-                if (fc.charAt(0) == '\'' && fc.length() >= 3) { // all internally used terms start with single straight quote
+                if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
                     // search in expr map
                     Method  converter   = sExprConverters.get(fc);
                     // and in statement map if allowed and nothing was found (yet)

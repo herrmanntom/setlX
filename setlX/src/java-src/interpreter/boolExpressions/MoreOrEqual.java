@@ -22,7 +22,7 @@ implemented here as:
 
 public class MoreOrEqual extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "'moreOrEqual";
+    private final static String FUNCTIONAL_CHARACTER = "^moreOrEqual";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 

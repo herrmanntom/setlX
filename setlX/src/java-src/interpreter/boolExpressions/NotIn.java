@@ -21,7 +21,7 @@ implemented here as:
 
 public class NotIn extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "'notIn";
+    private final static String FUNCTIONAL_CHARACTER = "^notIn";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 

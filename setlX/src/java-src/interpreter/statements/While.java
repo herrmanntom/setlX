@@ -23,7 +23,7 @@ implemented here as:
 
 public class While extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'while";
+    private final static String FUNCTIONAL_CHARACTER = "^while";
 
     private Condition mCondition;
     private Block     mStatements;

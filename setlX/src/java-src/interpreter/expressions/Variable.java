@@ -21,9 +21,9 @@ implemented here as:
 
 public class Variable extends Expr {
     // This functional character is used internally
-    public  final static String FUNCTIONAL_CHARACTER          = "'Variable";
+    public  final static String FUNCTIONAL_CHARACTER          = "^Variable";
     // this one is used externally (e.g. during toString)
-    public  final static String FUNCTIONAL_CHARACTER_EXTERNAL = "'variable";
+    public  final static String FUNCTIONAL_CHARACTER_EXTERNAL = "^variable";
     /* both are equal during matching and compare. However while terms with the
      * internal one always bind anything, terms with the external one only match
      * and do not bind.
@@ -37,13 +37,15 @@ public class Variable extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE                    = 9999;
 
+    private boolean mQuoted;      // during matching only variables with exactly the same name are to be matched
     private String  mId;
     private boolean mIsTerm;
     private int     mLineNr;
 
-    public Variable(String id) {
+    public Variable(boolean quoted, String id) {
+        mQuoted = quoted;
         mId     = id;
-        mIsTerm  = (id.length() > 0 && (id.charAt(0) == '\'' || Character.isUpperCase(id.charAt(0))));
+        mIsTerm = (id.length() > 0 && (id.charAt(0) == '^'));
         mLineNr = -1;
     }
 
@@ -61,6 +63,8 @@ public class Variable extends Expr {
     public Value evaluate() {
         if (mIsTerm) {
             return new Term(mId);
+        } else if (mQuoted) {
+            return toTerm();
         }
 
         Value v = VariableScope.findValue(mId);
@@ -95,7 +99,12 @@ public class Variable extends Expr {
             return new Term(mId);
         }
 
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        Term result = null;
+        if (mQuoted) {
+            result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL);
+        } else {
+            result = new Term(FUNCTIONAL_CHARACTER);
+        }
         result.addMember(new SetlString(mId));
         return result;
     }
@@ -104,8 +113,8 @@ public class Variable extends Expr {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            String id = ((SetlString) term.firstMember()).getUnquotedString();
-            return new Variable(id);
+            String  id     = ((SetlString) term.firstMember()).getUnquotedString();
+            return new Variable(false, id);
         }
     }
 

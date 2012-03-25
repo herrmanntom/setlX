@@ -271,10 +271,10 @@ formatedString := procedure() {
 formatedString();
 
 precedences := procedure() {
-    a := str(   'conjunction('disjunction('disjunction('variable("a"), 'variable("b")),
-                                          'conjunction('negation('variable("a")), 'negation('variable("b")))),
-                             'disjunction('disjunction('variable("a"), 'variable("b")),
-                                          'conjunction('negation('variable("a")), 'negation('variable("b")))))
+    a := str(   ^conjunction(^disjunction(^disjunction(^variable("a"), ^variable("b")),
+                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b")))),
+                             ^disjunction(^disjunction(^variable("a"), ^variable("b")),
+                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b")))))
             );
     if (a == "(a || b || !a && !b) && (a || b || !a && !b)") {
         printErr("test 17 successful (precedences)");

@@ -21,7 +21,7 @@ implemented here as:
 
 public class IfThenElseIfBranch extends IfThenAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'ifThenElseIfBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^ifThenElseIfBranch";
 
     private Condition mCondition;
     private Block     mStatements;

@@ -27,7 +27,7 @@ getInput := procedure() {
         print("Please enter some SetlX expression using the 'value' variable");
         try {
             expr:= parse(/*get()*/ fromB(inputB));
-            if (! isTerm(expr) || 'variable("value") notin expr) {
+            if (! isTerm(expr) || ^variable("value") notin expr) {
                 throw("wrong!");
             }
             return expr;

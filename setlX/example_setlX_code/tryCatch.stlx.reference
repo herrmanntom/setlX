@@ -7,5 +7,5 @@ Something else happened:
 
 Language error: Error: 'om + om' is undefined.
 
-Error in "throw("the end is near")" (40):
+Error in "throw("the end is near")":
 Error: "the end is near"

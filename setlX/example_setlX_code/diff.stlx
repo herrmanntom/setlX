@@ -9,9 +9,15 @@ diff := procedure(t, x) {
             return diff(t1, x) * t2 + t1 * diff(t2, x);
         case t1 / t2 :
             return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / t2 * t2;
+        case f ** g :
+            return diff( @exp(g * @ln(f)), x);
+        case @ln(a) :
+            return diff(a, x) / a;
+        case @exp(a) :
+            return diff(a, x) * @exp(a);
         case (t) :
             return diff(t, x);
-        case 'variable(t) :
+        case ^variable(t) :
             if (t == x) {
                 return 1;
             } else {
@@ -28,9 +34,9 @@ diff := procedure(t, x) {
 
 test := procedure(s) {
     t := parse(s);
-    print("testing $t$");
+    print("testing $t$:");
     d := diff(t, "x");
-    print(d);
+    print(d, "\n");
 };
 
 test("x");
@@ -41,4 +47,7 @@ test("x+x+y");
 test("x*x");
 test("x/x");
 test("1/x");
+test("ln(x)");
+test("exp(x)");
+test("x ** x");
 

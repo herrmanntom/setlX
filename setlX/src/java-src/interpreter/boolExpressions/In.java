@@ -21,7 +21,7 @@ implemented here as:
 
 public class In extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "'in";
+    private final static String FUNCTIONAL_CHARACTER = "^in";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 

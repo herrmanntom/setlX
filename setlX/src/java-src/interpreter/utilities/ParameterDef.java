@@ -22,8 +22,8 @@ implemented here as:
 
 public class ParameterDef {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER    = "'parameter";
-    private final static String FUNCTIONAL_CHARACTER_RW = "'rwParameter";
+    private final static String FUNCTIONAL_CHARACTER    = "^parameter";
+    private final static String FUNCTIONAL_CHARACTER_RW = "^rwParameter";
 
     public final static int READ_ONLY   = 0;
     public final static int READ_WRITE  = 1;
@@ -37,7 +37,7 @@ public class ParameterDef {
     }
 
     public ParameterDef(String id, int type) {
-        this(new Variable(id), type);
+        this(new Variable(false, id), type);
     }
 
     public ParameterDef(Variable var) {
@@ -45,7 +45,7 @@ public class ParameterDef {
     }
 
     public ParameterDef(String id) {
-        this(new Variable(id), READ_ONLY);
+        this(id, READ_ONLY);
     }
 
     public void assign(Value v) throws SetlException {

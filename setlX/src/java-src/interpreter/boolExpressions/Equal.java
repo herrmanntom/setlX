@@ -21,7 +21,7 @@ implemented here as:
 
 public class Equal extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "'equal";
+    private final static String FUNCTIONAL_CHARACTER = "^equal";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 

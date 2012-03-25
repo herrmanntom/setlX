@@ -21,7 +21,7 @@ this class implements an ignored variable inside an idList or expression:
 
 public class VariableIgnore extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    public  final static String         FUNCTIONAL_CHARACTER = "'variableIgnore";
+    public  final static String         FUNCTIONAL_CHARACTER = "^variableIgnore";
     // precedence level in SetlX-grammar
     private final static int            PRECEDENCE           = 9999;
 

@@ -20,7 +20,7 @@ implemented here as:
 
 public class Multiply extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'multiply";
+    private final static String FUNCTIONAL_CHARACTER = "^multiply";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
 

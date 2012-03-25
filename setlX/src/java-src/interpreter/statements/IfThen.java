@@ -24,7 +24,7 @@ implemented with different classes which inherit from BranchAbstract:
 
 public class IfThen extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'ifThen";
+    private final static String FUNCTIONAL_CHARACTER = "^ifThen";
 
     private List<IfThenAbstractBranch> mBranchList;
     private int                        mLineNr;

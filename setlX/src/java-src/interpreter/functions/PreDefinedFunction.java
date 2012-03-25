@@ -167,7 +167,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     /* term operations */
 
     public Value toTerm() {
-        Term result = new Term("'preDefinedProcedure");
+        Term result = new Term("^preDefinedProcedure");
 
         result.addMember(new SetlString(mName));
 

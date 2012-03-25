@@ -68,13 +68,29 @@ match (exprTerm) {
 
 print();
 
+exprString := "sqrt(a**2 + b**2) == c";
+exprTerm   := parse(exprString);
+
+print(canonical(exprTerm));
+
+match (exprTerm) {
+    case @fnc(x + _ ** y) == _ : // MUST NOT match
+        print("match: fnc: x = $x$, y = $y$");
+    case @sqrt(x + _ ** y) == _ : // match the function call only if it is exactly sqrt
+        print("match: sqrt: x = $x$, y = $y$");
+    default :
+        print("failed to match");
+}
+
+print();
+
 exprString := "u";
 exprTerm   := parse(exprString);
 
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case 'variable(x) :
+    case ^variable(x) :
         print("match: x = $x$");
     default :
         print("failed to match");

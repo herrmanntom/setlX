@@ -30,7 +30,7 @@ implemented here as:
 
 public class Forall extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'forall";
+    private final static String FUNCTIONAL_CHARACTER = "^forall";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 

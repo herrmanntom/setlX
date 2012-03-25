@@ -20,7 +20,7 @@ implemented here as:
 
 public class Modulo extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'modulo";
+    private final static String FUNCTIONAL_CHARACTER = "^modulo";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
 

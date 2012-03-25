@@ -1,16 +1,33 @@
-testing x
+testing x:
 1
-testing y
+
+testing y:
 0
-testing 1
+
+testing 1:
 0
-testing x + x
+
+testing x + x:
 2
-testing x + x + y
+
+testing x + x + y:
 2
-testing x * x
+
+testing x * x:
 1 * x + x * 1
-testing x / x
+
+testing x / x:
 (1 * x - x * 1) / x * x
-testing 1 / x
+
+testing 1 / x:
 (0 * x - 1) / x * x
+
+testing ln(x):
+1 / x
+
+testing exp(x):
+1 * exp(x)
+
+testing x ** x:
+(1 * ln(x) + x * (1 / x)) * exp(x * ln(x))
+

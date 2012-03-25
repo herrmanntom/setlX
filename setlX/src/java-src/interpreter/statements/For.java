@@ -23,7 +23,7 @@ implemented here as:
 
 public class For extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "'for";
+    private final static String FUNCTIONAL_CHARACTER = "^for";
 
     private Iterator    mIterator;
     private Block       mStatements;

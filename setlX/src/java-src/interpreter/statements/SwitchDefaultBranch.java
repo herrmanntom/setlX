@@ -20,7 +20,7 @@ implemented here as:
 
 public class SwitchDefaultBranch extends SwitchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'switchDefaultBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^switchDefaultBranch";
 
     private Block   mStatements;
     private int     mLineNr;

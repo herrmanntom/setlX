@@ -27,7 +27,7 @@ implemented here as:
 
 public class TryCatchBranch extends TryCatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "'tryCatchBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^tryCatchBranch";
 
     private Variable                    mErrorVar;
     private Block                       mBlockToRecover;

@@ -21,7 +21,7 @@ implemented here as:
 
 public class BoolUnEqual extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "'boolUnEqual";
+    private final static String FUNCTIONAL_CHARACTER = "^boolUnEqual";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1100;
 

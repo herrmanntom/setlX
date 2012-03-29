@@ -34,6 +34,7 @@ build:                                                      \
         bin/grammar/SetlXgrammar*.class                              \
         bin/SetlX.class
 	if [ ! -x setlX ]; then chmod +x setlX; fi
+	unix2dos make.cmd setlX.cmd
 
 bin/SetlX.class :                                            \
         java-src/SetlX.java                                          \

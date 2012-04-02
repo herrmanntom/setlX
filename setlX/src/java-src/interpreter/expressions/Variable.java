@@ -34,16 +34,15 @@ public class Variable extends Expr {
      *          case x           : foo1(); // `x'.toTerm() results in 'Variable("x"); matches everything and binds it to x
      *      }
      */
+
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE                    = 9999;
 
     private String  mId;
-    private boolean mIsTerm;
     private int     mLineNr;
 
     public Variable(String id) {
         mId     = id;
-        mIsTerm = (id.length() > 0 && (id.charAt(0) == '^'));
         mLineNr = -1;
     }
 
@@ -59,10 +58,6 @@ public class Variable extends Expr {
     }
 
     public Value evaluate() {
-        if (mIsTerm) {
-            return new Term(mId);
-        }
-
         Value v = VariableScope.findValue(mId);
         if (v == null) {
             return Om.OM;
@@ -91,20 +86,12 @@ public class Variable extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        if (mIsTerm) {
-            return new Term(mId);
-        }
-
         Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(new SetlString(mId));
         return result;
     }
 
     public Term toTermQuoted() {
-        if (mIsTerm) {
-            return new Term(mId);
-        }
-
         Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL);
         result.addMember(new SetlString(mId));
         return result;

@@ -18,19 +18,19 @@ term
 
 implemented here as:
       ====     ==============
-      mID          mArgs
+     mFChar        mArgs
 */
 
 public class TermConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private Variable   mId;        // functional character of the term
+    private String     mFChar;     // functional character of the term
     private List<Expr> mArgs;      // list of arguments
     private int        mLineNr;
 
-    public TermConstructor(Variable id, List<Expr> args) {
-        mId     = id;
+    public TermConstructor(String fChar, List<Expr> args) {
+        mFChar  = fChar;
         mArgs   = args;
         mLineNr = -1;
     }
@@ -50,13 +50,7 @@ public class TermConstructor extends Expr {
     }
 
     public Term evaluate() throws SetlException {
-        Value   r       = mId.eval();
-        Term    result  = null;
-        if (r instanceof Term) {
-            result  = (Term) r;
-        } else { // this should not happen if Variable is implemented correctly
-            throw new IncompatibleTypeException("Identifier \"" + mId + "\" is not a term.");
-        }
+        Term    result  = new Term(mFChar);
 
         for (Expr arg: mArgs) {
             result.addMember(arg.eval().toTerm()); // evaluate arguments at runtime
@@ -68,7 +62,7 @@ public class TermConstructor extends Expr {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = mId + "(";
+        String result = mFChar + "(";
         for (int i = 0; i < mArgs.size(); ++i) {
             if (i > 0) {
                 result += ", ";
@@ -82,7 +76,7 @@ public class TermConstructor extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term result = mId.toTerm();
+        Term result = new Term(mFChar);
 
         for (Expr arg: mArgs) {
             result.addMember(arg.toTerm()); // do not evaluate here
@@ -91,19 +85,17 @@ public class TermConstructor extends Expr {
         return result;
     }
 
+    public Term toTermQuoted() throws SetlException {
+        return this.evaluate();
+    }
+
     public static Expr termToExpr(Term term) {
         String      functionalCharacter = term.functionalCharacter().getUnquotedString();
-        boolean     quoted              = ! (functionalCharacter.length() > 0 && (functionalCharacter.charAt(0) == '^'));
         List<Expr>  args                = new ArrayList<Expr>(term.size());
         for (Value v : term) {
             args.add(TermConverter.valueToExpr(v));
         }
-        Expr result = new TermConstructor(new Variable(functionalCharacter), args);
-        if (quoted) {
-            return new Quote(result);
-        } else {
-            return result;
-        }
+        return new TermConstructor(functionalCharacter, args);
     }
 
     // precedence level in SetlX-grammar

@@ -1,6 +1,7 @@
 package interpreter.types;
 
 import interpreter.boolExpressions.*;
+import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.*;
@@ -249,12 +250,16 @@ public class Term extends CollectionValue {
     /* function call */
 
     // viral operation
-    public Term call(List<Expr> exprs, List<Value> args) {
-        List<Expr> argExprs = new ArrayList<Expr>(args.size());
-        for (Value v : args) {
-            argExprs.add(TermConverter.valueToExpr(v));
+    public Term call(List<Expr> exprs, List<Value> args) throws IncompatibleTypeException {
+        if (mFunctionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
+            List<Expr> argExprs = new ArrayList<Expr>(args.size());
+            for (Value v : args) {
+                argExprs.add(TermConverter.valueToExpr(v));
+            }
+            return (new Call(new Variable(TermConverter.valueToExpr(this).toString()), argExprs)).toTerm();
+        } else {
+            throw new IncompatibleTypeException("Viral term expansion is only supported when performing a call on a term representing a variable.");
         }
-        return (new Call(TermConverter.valueToExpr(this), argExprs)).toTerm();
     }
 
     /* string and char operations */

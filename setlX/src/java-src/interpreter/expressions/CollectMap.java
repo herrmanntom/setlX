@@ -76,17 +76,10 @@ public class CollectMap extends Expr {
         return result;
     }
 
-    public Term toTermEvalArguments() throws SetlException {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
-        result.addMember(mLhs.toTermEvalArguments());
-        result.addMember(mArg.eval().toTerm());
-        return result;
-    }
-
-    public Term toTermQuoted() {
+    public Term toTermQuoted() throws SetlException {
         Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mLhs.toTermQuoted());
-        result.addMember(mArg.toTerm());
+        result.addMember(mArg.eval().toTerm());
         return result;
     }
 

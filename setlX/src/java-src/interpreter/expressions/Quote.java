@@ -46,7 +46,7 @@ public class Quote extends Expr {
     }
 
     public Value evaluate() throws SetlException {
-        return mExpr.toTermEvalArguments();
+        return mExpr.toTermQuoted();
     }
 
     /* string operations */
@@ -58,13 +58,7 @@ public class Quote extends Expr {
     /* term operations */
 
     public Value toTerm() {
-        return mExpr.toTermQuoted();
-    }
-
-    public Value toTermEvalArguments() throws SetlException {
-        Term        result      = new Term(FUNCTIONAL_CHARACTER);
-        result.addMember(mExpr.toTermEvalArguments());
-        return result;
+        return this.toTermQuoted();
     }
 
     public Term toTermQuoted() {

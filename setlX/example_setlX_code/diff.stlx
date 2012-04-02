@@ -11,9 +11,9 @@ diff := procedure(t, x) {
             return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / t2 * t2;
         case f ** g :
             return diff( @exp(g * @ln(f)), x);
-        case @ln(a) :
+        case ln(a) :
             return diff(a, x) / a;
-        case @exp(a) :
+        case exp(a) :
             return diff(a, x) * @exp(a);
         case (t) :
             return diff(t, x);

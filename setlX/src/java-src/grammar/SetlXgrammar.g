@@ -370,7 +370,7 @@ simpleFactor [boolean enableIgnore, boolean quoted] returns [Expr sf]
 
 term returns [Expr t]
     : TERM '(' termArguments ')'
-      { t = new TermConstructor(new Variable($TERM.text), $termArguments.args); }
+      { t = new TermConstructor($TERM.text, $termArguments.args); }
     ;
 
 termArguments returns [List<Expr> args]
@@ -379,9 +379,12 @@ termArguments returns [List<Expr> args]
     ;
 
 call [boolean enableIgnore,] returns [Expr c]
-    : variable                                         { c = $variable.v;                                             }
+    @init {
+        Variable var = null;
+    }
+    : variable                                         { c = var = $variable.v;                                       }
       (
-         '(' callParameters[$enableIgnore] ')'         { c = new Call(c, $callParameters.params);                     }
+         '(' callParameters[$enableIgnore] ')'         { c = new Call(var, $callParameters.params);                   }
       )?
       (
          '[' collectionAccessParams[$enableIgnore] ']' { c = new CollectionAccess(c, $collectionAccessParams.params); }
@@ -498,7 +501,7 @@ atomicValue returns [Value av]
     | 'om'       { av = Om.OM;                     }
     ;
 
-// this rule is required, otherwise "aaa"(2..) fails to get parsed
+// this rule is required, otherwise `a(2..)' fails to get parsed
 real returns [Real r]
     @init {
         String n = "";
@@ -510,8 +513,8 @@ real returns [Real r]
 
 
 
-TERM            : '^'('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
-ID              : ('a' .. 'z'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
+TERM            : ('^'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
+ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : '.'('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
 STRING          : '"' ('\\"'|~('"'))* '"';

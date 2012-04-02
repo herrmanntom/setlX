@@ -31,12 +31,17 @@ public class PD_makeTerm extends PreDefinedFunction {
         }
         String fct = arg0.getUnquotedString();
 
-        // use correct internal representation when user wants to create a variable
-        if (fct.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)) {
-            fct = Variable.FUNCTIONAL_CHARACTER;
+        // check if name is usable as term (fist char is upper case or single qoute ( ' ))
+        if (fct.length() > 0 && (fct.charAt(0) == '^' || Character.isUpperCase(fct.charAt(0)))) {
+            // use correct internal representation when user wants to create a variable
+            if (fct.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)) {
+                fct = Variable.FUNCTIONAL_CHARACTER;
+            }
+            // make the new Term
+            return new Term(fct, (SetlList) arg1);
+        } else {
+            throw new IncompatibleTypeException("functionalCharacter '" + fct + "' must start with an upper case letter or a hat ('^').");
         }
-        // make the new Term
-        return new Term(fct, (SetlList) arg1);
     }
 }
 

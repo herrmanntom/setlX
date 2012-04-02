@@ -42,9 +42,9 @@ This is a $test$
 This is a test
 This is a $test$
 
-{throwACoin, print} = {^lambdaProcedure([], ^call(^variable("rnd"), [{"heads", "tails"}])), ^preDefinedProcedure("print")}
+{throwACoin, print} = {^lambdaProcedure([], ^call("rnd", [{"heads", "tails"}])), ^preDefinedProcedure("print")}
 a + 10 * b % 4 = ^sum(^variable("a"), ^modulo(^multiply(10, ^variable("b")), 4))
-"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = ^block([^call(^variable("print"), [^call(^variable("parseStatements"), ["print(\"that is crazy!\");"])])])
+"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = ^block([^call("print", [^call("parseStatements", ["print(\"that is crazy!\");"])])])
 
 6
 foo

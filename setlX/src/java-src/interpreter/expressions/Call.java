@@ -6,6 +6,7 @@ import interpreter.exceptions.TermConversionException;
 import interpreter.exceptions.UnknownFunctionException;
 import interpreter.types.Om;
 import interpreter.types.SetlList;
+import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
@@ -31,12 +32,12 @@ public class Call extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private Expr       mLhs;       // left hand side (only variable is allowed here!)
+    private Variable   mLhs;       // left hand side
     private List<Expr> mArgs;      // list of arguments
     private String     _this;      // pre-computed toString(), which has less stack penalty in case of stack overflow error...
     private int        mLineNr;
 
-    public Call(Expr lhs, List<Expr> args) {
+    public Call(Variable lhs, List<Expr> args) {
         mLhs    = lhs;
         mArgs   = args;
         _this   = _toString(0);
@@ -52,6 +53,7 @@ public class Call extends Expr {
 
     public void computeLineNr() {
         mLineNr = Environment.sourceLine;
+        mLhs.computeLineNr();
         for (Expr arg: mArgs) {
             arg.computeLineNr();
         }
@@ -65,9 +67,7 @@ public class Call extends Expr {
         // evaluate all arguments
         List<Value> args = new ArrayList<Value>(mArgs.size());
         for (Expr arg: mArgs) {
-            if (arg != null) {
-                args.add(arg.eval().clone());
-            }
+            args.add(arg.eval().clone());
         }
         try {
             // also supply the original expressions (mArgs), which are needed for 'rw' parameters
@@ -106,7 +106,7 @@ public class Call extends Expr {
     public Term toTerm() {
         Term        result      = new Term(FUNCTIONAL_CHARACTER);
         SetlList    arguments   = new SetlList();
-        result.addMember(mLhs.toTerm());
+        result.addMember(new SetlString(mLhs.toString()));
         result.addMember(arguments);
         for (Expr arg: mArgs) {
             arguments.addMember(arg.toTerm());
@@ -114,10 +114,10 @@ public class Call extends Expr {
         return result;
     }
 
-    public Term toTermEvalArguments() throws SetlException {
+    public Term toTermQuoted() throws SetlException {
         Term        result      = new Term(FUNCTIONAL_CHARACTER);
         SetlList    arguments   = new SetlList();
-        result.addMember(mLhs.toTermEvalArguments());
+        result.addMember(new SetlString(mLhs.toString()));
         result.addMember(arguments);
         for (Expr arg: mArgs) {
             arguments.addMember(arg.eval().toTerm());
@@ -125,28 +125,17 @@ public class Call extends Expr {
         return result;
     }
 
-    public Term toTermQuoted() {
-        Term        result      = new Term(FUNCTIONAL_CHARACTER);
-        SetlList    arguments   = new SetlList();
-        result.addMember(mLhs.toTermQuoted());
-        result.addMember(arguments);
-        for (Expr arg: mArgs) {
-            arguments.addMember(arg.toTerm());
-        }
-        return result;
-    }
-
     public static Call termToExpr(Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
+        if (term.size() != 2 || ! (term.firstMember() instanceof SetlString && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr        lhs     = TermConverter.valueToExpr(term.firstMember());
+            String      lhs     = ((SetlString) term.firstMember()).getUnquotedString();
             SetlList    argsLst = (SetlList) term.lastMember();
             List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
             for (Value v : argsLst) {
                 args.add(TermConverter.valueToExpr(v));
             }
-            return new Call(lhs, args);
+            return new Call(new Variable(lhs), args);
         }
     }
 

@@ -46,12 +46,7 @@ public abstract class Expr extends CodeFragment {
     public abstract Value toTerm();
 
     // toTerm when quoted ('@') expression is evaluated
-    public          Value toTermEvalArguments() throws SetlException {
-        return toTerm();
-    }
-
-    // toTerm when quoted with '@'
-    public          Value toTermQuoted() {
+    public          Value toTermQuoted() throws SetlException  {
         return toTerm();
     }
 

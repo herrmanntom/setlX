@@ -28,7 +28,7 @@ match (exprTerm) {
 
 print();
 
-list	:= [1, "foo", 7];
+list    := [1, "foo", 7];
 
 print(canonical(list));
 
@@ -41,7 +41,7 @@ match (list) {
 
 print();
 
-list	:= [1, "foo", 7];
+list    := [1, "foo", 7];
 
 print(canonical(list));
 
@@ -60,24 +60,24 @@ exprTerm   := parse(exprString);
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case fnc(x + _ ** y) == _ :
-        print("match: fnc = $fnc$, x = $x$, y = $y$");
+    case sqrt(x + _ ** y) == _ :  // match the function call only if it is exactly sqrt
+        print("match: sqrt: x = $x$, y = $y$");
     default :
         print("failed to match");
 }
 
 print();
 
-exprString := "sqrt(a**2 + b**2) == c";
+exprString := "sqrt(a**2 + b**2)";
 exprTerm   := parse(exprString);
 
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case @fnc(x + _ ** y) == _ : // MUST NOT match
+    case fnc(x + _ ** y): // MUST NOT match, because it matches only a call to `fnc'
         print("match: fnc: x = $x$, y = $y$");
-    case @sqrt(x + _ ** y) == _ : // match the function call only if it is exactly sqrt
-        print("match: sqrt: x = $x$, y = $y$");
+    case ^call(fnc, [x + _ ** y]): // matches all function calls with matching arguments
+        print("match: fnc = $fnc$, x = $x$, y = $y$");
     default :
         print("failed to match");
 }

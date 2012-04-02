@@ -4,7 +4,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
-import interpreter.types.SetlInt;
+import interpreter.types.Rational;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
@@ -60,7 +60,7 @@ public class Range extends Constructor {
         if (mSecond != null) {
             step = mSecond.eval().difference(start);
         } else {
-            step = new SetlInt(1);
+            step = new Rational(1);
         }
         start.fillCollectionWithinRange(step, mStop.eval(), collection);
     }
@@ -94,14 +94,14 @@ public class Range extends Constructor {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                Expr start  = TermConverter.valueToExpr(term.getMember(new SetlInt(1)));
+                Expr start  = TermConverter.valueToExpr(term.firstMember());
 
                 Expr second = null;
-                if (! term.getMember(new SetlInt(2)).equals(new SetlString("nil"))) {
-                    second  = TermConverter.valueToExpr(term.getMember(new SetlInt(2)));
+                if (! term.getMember(new Rational(2)).equals(new SetlString("nil"))) {
+                    second  = TermConverter.valueToExpr(term.getMember(new Rational(2)));
                 }
 
-                Expr stop   = TermConverter.valueToExpr(term.getMember(new SetlInt(3)));
+                Expr stop   = TermConverter.valueToExpr(term.lastMember());
                 return new Range(start, second, stop);
             } catch (SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

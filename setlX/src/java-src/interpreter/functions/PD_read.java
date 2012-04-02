@@ -1,7 +1,6 @@
 package interpreter.functions;
 
 import interpreter.types.Om;
-import interpreter.types.SetlInt;
 import interpreter.types.SetlString;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;

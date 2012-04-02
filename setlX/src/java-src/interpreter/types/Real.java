@@ -29,19 +29,21 @@ public class Real extends NumberValue {
     private BigDecimal mReal;
 
     public Real(String s) {
-        mReal = new BigDecimal(s, mathContext);
+        this(new BigDecimal(s, mathContext));
+    }
+
+    public Real(double real) {
+        this(new BigDecimal(real, mathContext));
     }
 
     public Real(BigDecimal real) {
         mReal = new BigDecimal(real.toString(), mathContext);
     }
 
-    public Real(BigInteger number) {
-        mReal = new BigDecimal(number, mathContext);
-    }
-
-    public Real(double real) {
-        mReal = new BigDecimal(real, mathContext);
+    public Real(BigInteger nominator, BigInteger denominator) {
+        BigDecimal n = new BigDecimal(nominator,   mathContext);
+        BigDecimal d = new BigDecimal(denominator, mathContext);
+        mReal = n.divide(d, mathContext);
     }
 
     public Real clone() {
@@ -57,8 +59,8 @@ public class Real extends NumberValue {
 
     /* type conversions */
 
-    public SetlInt toInteger() {
-        return new SetlInt(mReal.toBigInteger());
+    public Rational toInteger() {
+        return new Rational(mReal.toBigInteger());
     }
 
     public Real toReal() {
@@ -80,7 +82,8 @@ public class Real extends NumberValue {
             if (subtrahend instanceof Real) {
                 right = ((Real) subtrahend).mReal;
             } else {
-                right = new BigDecimal(((SetlInt) subtrahend).getNumber());
+                Rational s = ((Rational) subtrahend);
+                right = s.toReal().mReal;
             }
             return new Real(mReal.subtract(right, mathContext));
         } else if (subtrahend instanceof Term) {
@@ -90,8 +93,8 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value differenceFlipped(SetlInt minuend) throws SetlException {
-        Real left = new Real(minuend.getNumber());
+    public Value differenceFlipped(Rational minuend) throws SetlException {
+        Real left = minuend.toReal();
         return left.difference(this);
     }
 
@@ -105,7 +108,8 @@ public class Real extends NumberValue {
             } else if (divisor == Infinity.NEGATIVE) {
                 return new Real(-0.0);
             } else {
-                right = new BigDecimal(((SetlInt) divisor).getNumber());
+                Rational d = (Rational) divisor;
+                right = d.toReal().mReal;
             }
             try {
                 return new Real(mReal.divide(right, mathContext));
@@ -119,9 +123,13 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value divideFlipped(SetlInt dividend) throws SetlException {
-        Real left = new Real(dividend.getNumber());
+    public Value divideFlipped(Rational dividend) throws SetlException {
+        Real left = dividend.toReal();
         return left.divide(this);
+    }
+
+    public Rational floor() {
+        return new Rational(mReal.toBigInteger());
     }
 
     public Value multiply(Value multiplier) throws IncompatibleTypeException {
@@ -133,7 +141,8 @@ public class Real extends NumberValue {
             if (multiplier instanceof Real) {
                 right = ((Real) multiplier).mReal;
             } else {
-                right = new BigDecimal(((SetlInt) multiplier).getNumber());
+                Rational m = (Rational) multiplier;
+                right = m.toReal().mReal;
             }
             return new Real(mReal.multiply(right, mathContext));
         } else if (multiplier instanceof Term) {
@@ -160,7 +169,8 @@ public class Real extends NumberValue {
             if (summand instanceof Real) {
                 right = ((Real) summand).mReal;
             } else {
-                right = new BigDecimal(((SetlInt) summand).getNumber());
+                Rational s = (Rational) summand;
+                right = s.toReal().mReal;
             }
             return new Real(mReal.add(right, mathContext));
         } else if (summand instanceof Term) {
@@ -185,16 +195,16 @@ public class Real extends NumberValue {
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(Value v) {
         if (v instanceof Real) {
             Real nr = (Real) v;
             return mReal.compareTo(nr.mReal);
-        } else if (v instanceof SetlInt) {
-            SetlInt nr = (SetlInt) v;
-            return mReal.compareTo(new BigDecimal(nr.getNumber()));
+        } else if (v instanceof Rational) {
+            Rational nr = (Rational) v;
+            return mReal.compareTo(nr.toReal().mReal);
         } else if (v instanceof SetlError || v == Om.OM || v == Infinity.NEGATIVE || v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) {
             // only SetlError, Om, -Infinity and SetlBoolean are smaller
             return 1;

@@ -7,7 +7,7 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.CollectionValue;
-import interpreter.types.SetlInt;
+import interpreter.types.Rational;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
@@ -132,13 +132,13 @@ public class Iterator {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
 
-                Expr        assignable  = TermConverter.valueToExpr(term.getMember(new SetlInt(1)));
+                Expr        assignable  = TermConverter.valueToExpr(term.firstMember());
 
-                Expr        collection  = TermConverter.valueToExpr(term.getMember(new SetlInt(2)));
+                Expr        collection  = TermConverter.valueToExpr(term.getMember(new Rational(2)));
 
                 Iterator    iterator    = null;
-                if (! term.getMember(new SetlInt(3)).equals(new SetlString("nil"))) {
-                    iterator    = Iterator.valueToIterator(term.getMember(new SetlInt(3)));
+                if (! term.lastMember().equals(new SetlString("nil"))) {
+                    iterator    = Iterator.valueToIterator(term.lastMember());
                 }
                 return new Iterator(assignable, collection, iterator);
             } catch (SetlException se) {

@@ -1,8 +1,8 @@
 // this program tests the factorial syntax
 
 erlangB := procedure(a, n) {
-	p := (a ** n + 0.0) / n!;
-	p /= +/{(a**i + 0.0) / i!: i in {0 .. n}};
+	p := (a ** n) / n!;
+	p /= +/{(a**i) / i!: i in {0 .. n}};
 	return p;
 };
 
@@ -32,8 +32,8 @@ solveN := procedure(a, p) {
 };
 
 erlangC := procedure(a, n) {
-	p := ((a ** n) * n + 0.0) / (n! * (n - a));
-	p /= (+/{(a**i + 0.0) / i!: i in {0 .. n - 1}}) + p;
+	p := ((a ** n) * n) / (n! * (n - a));
+	p /= (+/{(a**i) / i!: i in {0 .. n - 1}}) + p;
 	return p;
 };
 

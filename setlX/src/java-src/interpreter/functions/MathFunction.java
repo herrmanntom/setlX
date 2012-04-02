@@ -27,7 +27,7 @@ public class MathFunction extends PreDefinedFunction {
             throw new IncompatibleTypeException("This function requires a single number as parameter.");
         }
         try {
-            Object result = mFunction.invoke(null, new Double(args.get(0).toString()));
+            Object result = mFunction.invoke(null, new Double(args.get(0).toReal().toString()));
             return new Real(new Double(result.toString()));
         } catch (NumberFormatException nfe) {
             throw new NumberToLargeException("'" + args.get(0) + "' is to large for this operation.");

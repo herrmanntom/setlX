@@ -60,7 +60,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 product = product.multiply(v);
             }
         }
-        return (product != null)? product : new SetlInt(1);
+        return (product != null)? product : new Rational(1);
     }
 
     public final    Value           randomMember() throws NumberToLargeException {
@@ -98,12 +98,12 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 sum = sum.sum(v);
             }
         }
-        return (sum != null)? sum : new SetlInt(0);
+        return (sum != null)? sum : new Rational(0);
     }
 
     /* string and char operations */
 
-    public abstract String			canonical();
+    public abstract String          canonical();
 
     /* term operations */
 

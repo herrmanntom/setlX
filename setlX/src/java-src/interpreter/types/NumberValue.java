@@ -22,8 +22,8 @@ public abstract class NumberValue extends Value {
     public abstract NumberValue negate() throws IncompatibleTypeException;
 
     public          Value       power(Value exponent) throws SetlException {
-        if (exponent instanceof SetlInt) {
-            return this.power(((SetlInt) exponent).intValue());
+        if (exponent.isInteger() == SetlBoolean.TRUE) {
+            return this.power(((Rational) exponent).intValue());
         } else if (exponent instanceof Term) {
             return ((Term) exponent).powerFlipped(this);
         } else {
@@ -31,7 +31,7 @@ public abstract class NumberValue extends Value {
         }
     }
 
-    public abstract NumberValue power(int exponent) throws UndefinedOperationException;
+    public abstract NumberValue power(int exponent) throws SetlException;
 
     public abstract Value       sum(Value summand) throws SetlException;
 

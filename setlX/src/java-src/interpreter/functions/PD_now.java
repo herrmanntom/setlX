@@ -1,6 +1,6 @@
 package interpreter.functions;
 
-import interpreter.types.SetlInt;
+import interpreter.types.Rational;
 import interpreter.types.Value;
 
 import java.util.List;
@@ -18,7 +18,7 @@ public class PD_now extends PreDefinedFunction {
     public Value execute(List<Value> args,
                          List<Value> writeBackVars
     ) {
-        return new SetlInt("" + System.currentTimeMillis());
+        return new Rational("" + System.currentTimeMillis());
     }
 }
 

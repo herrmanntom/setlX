@@ -116,11 +116,11 @@ public class SetlList extends CollectionValue {
         if (args.contains(RangeDummy.RD)) {
             if (aSize == 2 && vFirst == RangeDummy.RD) {
                 // everything up to high boundary: this(  .. y);
-                return getMembers(new SetlInt(1), args.get(1));
+                return getMembers(new Rational(1), args.get(1));
 
             } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
                 // everything from low boundary:   this(x ..  );
-                return getMembers(vFirst, new SetlInt(size()));
+                return getMembers(vFirst, new Rational(size()));
 
             } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
                 // full range spec:                this(x .. y);
@@ -168,8 +168,8 @@ public class SetlList extends CollectionValue {
 
     private Value getMemberZZZInternal(Value vIndex) throws SetlException {
         int index = 0;
-        if (vIndex instanceof SetlInt) {
-            index = ((SetlInt)vIndex).intValue();
+        if (vIndex.isInteger() == SetlBoolean.TRUE) {
+            index = ((Rational)vIndex).intValue();
         } else {
             throw new IncompatibleTypeException("Index '" + vIndex + "' is not a integer.");
         }
@@ -184,27 +184,27 @@ public class SetlList extends CollectionValue {
 
     public Value getMembers(Value vLow, Value vHigh) throws SetlException {
         int low = 0, high = 0;
-        if (vLow instanceof SetlInt) {
-            low = ((SetlInt)vLow).intValue();
+        if (vLow.isInteger() == SetlBoolean.TRUE) {
+            low = ((Rational)vLow).intValue();
         } else {
             throw new IncompatibleTypeException("Lower bound '" + vLow + "' is not a integer.");
         }
-        if (vHigh instanceof SetlInt) {
-            high = ((SetlInt)vHigh).intValue();
+        if (vHigh.isInteger() == SetlBoolean.TRUE) {
+            high = ((Rational)vHigh).intValue();
         } else {
             throw new IncompatibleTypeException("Upper bound '" + vHigh + "' is not a integer.");
         }
 
         SetlList result = new SetlList();
 
-        if (high > size()) {
-            throw new NumberToLargeException("Upper bound '" + high + "' is larger as list size '" + size() + "'.");
+        if (low < 1) {
+            throw new NumberToLargeException("Lower bound '" + low + "' is lower as '1'.");
         }
         if (size() == 0) {
             throw new NumberToLargeException("Lower bound '" + low + "' is larger as list size '" + size() + "'.");
         }
-        if (low < 1) {
-            throw new NumberToLargeException("Lower bound '" + low + "' is lower as '1'.");
+        if (high > size()) {
+            throw new NumberToLargeException("Upper bound '" + high + "' is larger as list size '" + size() + "'.");
         }
         for (int i = low - 1; i < high; i++) {
             result.addMember(getList().get(i).clone());
@@ -260,8 +260,8 @@ public class SetlList extends CollectionValue {
     public void setMember(Value vIndex, Value v) throws SetlException {
         separateFromOriginal();
         int index = 0;
-        if (vIndex instanceof SetlInt) {
-            index = ((SetlInt)vIndex).intValue();
+        if (vIndex.isInteger() == SetlBoolean.TRUE) {
+            index = ((Rational)vIndex).intValue();
         } else {
             throw new IncompatibleTypeException("Index '" + vIndex + "' is not a integer.");
         }
@@ -359,7 +359,7 @@ public class SetlList extends CollectionValue {
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(Value v){

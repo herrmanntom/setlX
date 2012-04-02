@@ -6,7 +6,7 @@ import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.expressions.VariableIgnore;
 import interpreter.types.CollectionValue;
-import interpreter.types.SetlInt;
+import interpreter.types.Rational;
 import interpreter.types.SetlList;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
@@ -66,7 +66,7 @@ public class ExplicitList extends Constructor {
             }
             Value v = null;
             try {
-                v = list.getMember(new SetlInt(i + 1));
+                v = list.getMember(new Rational(i + 1));
             } catch (SetlException se) { /* this can not fail at this point */};
 
             e.assign(v);

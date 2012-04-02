@@ -169,8 +169,8 @@ public class SetlSet extends CollectionValue {
         for (Value v: getSet()) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
-                    if (v.getMember(new SetlInt(1)).equals(arg)) {
-                        result.addMember(v.getMember(new SetlInt(2)));
+                    if (v.firstMember().equals(arg)) {
+                        result.addMember(v.lastMember());
                     }
                 } else {
                     throw new IncompatibleTypeException("'" + this + "' is not a map.");
@@ -191,7 +191,7 @@ public class SetlSet extends CollectionValue {
         for (Value v: getSet()) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
-                    result.addMember(v.getMember(new SetlInt(1)));
+                    result.addMember(v.firstMember());
                 } else {
                     throw new IncompatibleTypeException("'" + this + "' is not a map.");
                 }
@@ -223,9 +223,9 @@ public class SetlSet extends CollectionValue {
         for (Value v: getSet()) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
-                    if (v.getMember(new SetlInt(1)).equals(element)) {
+                    if (v.firstMember().equals(element)) {
                         if (result instanceof Om) {
-                            result = v.getMemberUnCloned(new SetlInt(2));
+                            result = v.getMemberUnCloned(new Rational(2));
                         } else {
                             // double match!
                             result = Om.OM;
@@ -278,7 +278,7 @@ public class SetlSet extends CollectionValue {
             if (v instanceof SetlList) {
                 SetlList list  = (SetlList) v;
                 if (list.size() == 2) {
-                    result.addMember(list.getMember(new SetlInt(2)));
+                    result.addMember(list.lastMember());
                 } else {
                     throw new IncompatibleTypeException("'" + this + "' is not a map.");
                 }
@@ -296,7 +296,7 @@ public class SetlSet extends CollectionValue {
             if (element instanceof SetlList) {
                 SetlList list  = (SetlList) element;
                 if (list.size() == 2) {
-                    if (list.getMember(new SetlInt(1)).equals(index)) {
+                    if (list.firstMember().equals(index)) {
                         // Mark all matching pairs for deletion
                         delete.add(element);
                     } else if (delete.size() > 0) {
@@ -420,7 +420,7 @@ public class SetlSet extends CollectionValue {
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(Value v){

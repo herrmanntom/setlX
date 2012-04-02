@@ -79,6 +79,10 @@ public abstract class Value implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isRational() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isSet() {
         return SetlBoolean.FALSE;
     }
@@ -126,7 +130,11 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public void fillCollectionWithinRange(Value step, Value stop, CollectionValue collection) throws SetlException {
-        throw new IncompatibleTypeException("Start argument '" + this + "' is not an integer.");
+        throw new IncompatibleTypeException("Start argument '" + this + "' is not a number.");
+    }
+
+    public Value floor() throws SetlException {
+        throw new IncompatibleTypeException("Argument '" + this + "' is not a number.");
     }
 
     public final Value maximum(Value other) throws SetlException {
@@ -194,7 +202,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public Value cardinality() throws IncompatibleTypeException {
-        return new SetlInt(this.size());
+        return new Rational(this.size());
     }
 
     public Value collectionAccess(List<Value> args) throws SetlException {
@@ -341,7 +349,7 @@ public abstract class Value implements Comparable<Value> {
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < SetlInt & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
     public abstract int compareTo(Value v);

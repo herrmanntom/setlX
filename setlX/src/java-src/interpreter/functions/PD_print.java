@@ -9,7 +9,6 @@ import java.util.List;
 
 public class PD_print extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_print();
-    protected           boolean            interprete;
 
     private PD_print() {
         this("print");
@@ -17,7 +16,6 @@ public class PD_print extends PreDefinedFunction {
 
     protected PD_print(String fName) {
         super(fName);
-        interprete = true;
         addParameter("value");
         enableUnlimitedParameters();
         allowFewerParameters();

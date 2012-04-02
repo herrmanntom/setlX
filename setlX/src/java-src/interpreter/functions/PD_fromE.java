@@ -7,7 +7,7 @@ import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
-// fromE(collectionValue)  : selects and removes the last member from `collectionValue'
+// fromE(rw collectionValue)     : selects and removes the last member from `collectionValue'
 
 public class PD_fromE extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fromE();

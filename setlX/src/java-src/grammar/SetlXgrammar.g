@@ -496,9 +496,9 @@ boolValue returns [Value bv]
     ;
 
 atomicValue returns [Value av]
-    : NUMBER     { av = new SetlInt($NUMBER.text); }
-    | real       { av = $real.r;                   }
-    | 'om'       { av = Om.OM;                     }
+    : NUMBER     { av = new Rational($NUMBER.text); }
+    | real       { av = $real.r;                    }
+    | 'om'       { av = Om.OM;                      }
     ;
 
 // this rule is required, otherwise `a(2..)' fails to get parsed

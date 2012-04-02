@@ -13,16 +13,18 @@ m :=  1000;
 n := 50000;
 
 // values of all allowed steps between 0 and 1
-values := {(0.0 + x)/m : x in [1 .. m]};
+values := {x/m : x in [1 .. m]};
 
 // number of points found to be in the circle
 inCircle := 0;
 
 for (x in [1 .. n]) {
 	// is point(rnd(values), rnd(values)) in circle?
-	if ( sqrt(rnd(values) ** 2 + rnd(values) ** 2) <= 1.0) {
+	if ( sqrt(rnd(values) ** 2 + rnd(values) ** 2) <= 1) {
 		inCircle += 1;
 	}
 }
 
-print("pi := $ 4.0 * inCircle / n $, which is almost $mathConst(\"pi\")$");
+pseudoPi := 4 * inCircle / n;
+
+print("pi := $ pseudoPi $ (or $ nDecimalPlaces(pseudoPi, 5) $), which is almost $mathConst(\"pi\")$");

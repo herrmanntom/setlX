@@ -7,7 +7,7 @@ import interpreter.utilities.ParameterDef;
 
 import java.util.List;
 
-// fromB(collectionValue)  : selects and removes the first member from `collectionValue'
+// fromB(rw collectionValue)     : selects and removes the first member from `collectionValue'
 
 public class PD_fromB extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fromB();

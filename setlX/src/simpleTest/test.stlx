@@ -298,3 +298,30 @@ complexLhsAssignment := procedure() {
 };
 complexLhsAssignment();
 
+valueVsReference := procedure() {
+    l1 := [ 1, 2, 3 ];
+    l2 := l1;
+    l2[2] := 5;
+
+    correct := l1 == [1, 2, 3] && l2 == [1, 5, 3];
+
+    s := { l1, l2 };
+
+    correct := correct && s == {[1, 2, 3], [1, 5, 3]};
+
+    l1[1] := 17;
+
+    correct := correct && l1 == [17, 2, 3] && s == {[1, 2, 3], [1, 5, 3]};
+
+    // another sanity check
+
+    correct := correct && l2 in s;
+
+    if (correct) {
+        printErr("test 19 successful (valueVsReference)");
+    } else {
+        printErr("test 19 failed (valueVsReference)");
+    }
+};
+valueVsReference();
+

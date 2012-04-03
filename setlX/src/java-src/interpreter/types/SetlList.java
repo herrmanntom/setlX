@@ -107,7 +107,7 @@ public class SetlList extends CollectionValue {
 
     public void addMember(Value element) {
         separateFromOriginal();
-        mList.add(element);
+        mList.add(element.clone());
     }
 
     public Value collectionAccess(List<Value> args) throws SetlException {
@@ -308,7 +308,7 @@ public class SetlList extends CollectionValue {
 
     /* term operations */
 
-    public MatchResult matchesTerm(Value other) {
+    public MatchResult matchesTerm(Value other) throws IncompatibleTypeException {
         if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
         } else if ( ! (other instanceof SetlList)) {

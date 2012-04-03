@@ -13,7 +13,7 @@ failedCount=$(grep -c "failed" $tmpFile)
 okCount=$(grep -c "successful" $tmpFile)
 
 # alert the user and stop
-if [ $failedCount -gt 0 -o $okCount -lt 18 ]
+if [ $failedCount -gt 0 -o $okCount -lt 19 ] # <=  "19" is number of tests in `make test'
   then
     echo "the initial testfile '$simpleTest' failed!"
     rm -f $tmpFile

@@ -138,23 +138,29 @@ public class CollectionAccess extends Expr {
 
     public Term toTerm() {
         Term        result      = new Term(FUNCTIONAL_CHARACTER);
-        SetlList    arguments   = new SetlList();
+
         result.addMember(mLhs.toTerm());
-        result.addMember(arguments);
+
+        SetlList    arguments   = new SetlList();
         for (Expr arg: mArgs) {
             arguments.addMember(arg.toTerm());
         }
+        result.addMember(arguments);
+
         return result;
     }
 
     public Term toTermQuoted() throws SetlException {
         Term        result      = new Term(FUNCTIONAL_CHARACTER);
-        SetlList    arguments   = new SetlList();
+
         result.addMember(mLhs.toTermQuoted());
-        result.addMember(arguments);
+
+        SetlList    arguments   = new SetlList();
         for (Expr arg: mArgs) {
             arguments.addMember(arg.eval().toTerm());
         }
+        result.addMember(arguments);
+
         return result;
     }
 

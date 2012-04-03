@@ -164,21 +164,21 @@ public class StringConstructor extends Expr {
             // simple string without $-expression
             return new SetlString(mFragments.get(0));
         } else {
-            Term t  = new Term(FUNCTIONAL_CHARACTER);
+            Term result  = new Term(FUNCTIONAL_CHARACTER);
 
             SetlList strList = new SetlList();
             for (String str: mFragments) {
                 strList.addMember(new SetlString(str));
             }
-            t.addMember(strList);
+            result.addMember(strList);
 
             SetlList expList = new SetlList();
             for (Expr expr: mExprs) {
                 expList.addMember(expr.toTerm());
             }
-            t.addMember(expList);
+            result.addMember(expList);
 
-            return t;
+            return result;
         }
     }
 

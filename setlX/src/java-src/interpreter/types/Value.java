@@ -111,6 +111,10 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Operand '" + this + "' is not a number or character.");
     }
 
+    public Value ceil() throws SetlException {
+        throw new IncompatibleTypeException("Argument '" + this + "' is not a number.");
+    }
+
     public Value difference(Value subtrahend) throws SetlException {
         if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(this);
@@ -330,7 +334,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* term operations */
 
-    public MatchResult matchesTerm(Value other) {
+    public MatchResult matchesTerm(Value other) throws IncompatibleTypeException {
         if (other == IgnoreDummy.ID || this.equals(other)) {
             return new MatchResult(true);
         } else {

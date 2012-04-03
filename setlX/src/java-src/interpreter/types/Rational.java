@@ -97,6 +97,21 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.abs(), mDenominator.abs());
     }
 
+    // The ceil(ing) of a number x is defined as the lowest integer n such that n => x.
+    // The calculation is rather complicated because the integer division of negative
+    // numbers in Java does not satisfy the mathematical specification that
+    // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
+    public Rational ceil() {
+        if (mNominator.compareTo(BigInteger.ZERO) > 0 &&
+             ! mIsInteger
+           )
+        {
+            BigInteger q = mNominator.divide(mDenominator).add(BigInteger.ONE);
+            return new Rational(q);
+        }
+        return new Rational(mNominator.divide(mDenominator));
+    }
+
     public Value difference(Value subtrahend) throws SetlException {
         if (subtrahend instanceof Rational) {
             Rational    s = (Rational) subtrahend;
@@ -259,7 +274,8 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     public Rational floor() {
         if (mNominator.compareTo(BigInteger.ZERO) < 0 &&
-            mDenominator.compareTo(BigInteger.ONE) != 0)
+             ! mIsInteger
+           )
         {
             BigInteger q = mNominator.divide(mDenominator).subtract(BigInteger.ONE);
             return new Rational(q);

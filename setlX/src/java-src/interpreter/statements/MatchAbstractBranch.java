@@ -1,5 +1,6 @@
 package interpreter.statements;
 
+import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
@@ -7,7 +8,7 @@ import interpreter.utilities.MatchResult;
 
 public abstract class MatchAbstractBranch extends Statement {
 
-    public abstract MatchResult         matches(Value term);
+    public abstract MatchResult         matches(Value term) throws IncompatibleTypeException;
 
     public static   MatchAbstractBranch valueToMatchAbstractBranch(Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {

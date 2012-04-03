@@ -1,5 +1,6 @@
 package interpreter.statements;
 
+import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
@@ -43,6 +44,13 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         }
     }
 
+    private MatchCaseBranch(List<Expr> exprs, List<Value> terms, Block statements){
+        mExprs      = exprs;
+        mTerms      = terms;
+        mStatements = statements;
+        mLineNr     = -1;
+    }
+
     public int getLineNr() {
         if (mLineNr < 0) {
             computeLineNr();
@@ -63,14 +71,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         --Environment.sourceLine;
     }
 
-    private MatchCaseBranch(List<Expr> exprs, List<Value> terms, Block statements){
-        mExprs      = exprs;
-        mTerms      = terms;
-        mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public MatchResult matches(Value term) {
+    public MatchResult matches(Value term) throws IncompatibleTypeException {
         MatchResult last = new MatchResult(false);
         for (Value v : mTerms) {
             last = v.matchesTerm(term);
@@ -115,7 +116,9 @@ public class MatchCaseBranch extends MatchAbstractBranch {
             termList.addMember(v);
         }
         result.addMember(termList);
+
         result.addMember(mStatements.toTerm());
+
         return result;
     }
 

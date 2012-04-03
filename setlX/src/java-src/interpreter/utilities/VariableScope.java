@@ -223,9 +223,9 @@ public class VariableScope {
 
         // term which represents the scope
         Term        result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
+
         // list of bindings in scope
         SetlList    bindings    = new SetlList();
-
         for (Map.Entry<String, Value> entry : allVars.entrySet()) {
             Term    binding = new Term(FUNCTIONAL_CHARACTER_BINDING);
             binding.addMember(new SetlString(entry.getKey()));

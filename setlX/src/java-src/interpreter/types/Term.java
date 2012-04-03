@@ -283,7 +283,7 @@ public class Term extends CollectionValue {
 
     /* term operations */
 
-    public MatchResult matchesTerm(Value other) {
+    public MatchResult matchesTerm(Value other) throws IncompatibleTypeException {
         if (mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) || (other instanceof Term && ((Term) other).mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER))) {
             return new MatchResult(true); // one of the terms is `ignore'
         } else if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) && mBody.size() == 1) {

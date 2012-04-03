@@ -73,6 +73,14 @@ public class Real extends NumberValue {
         return new Real(mReal.abs());
     }
 
+    public Rational ceil() {
+        if (mReal.compareTo(BigDecimal.ZERO) > 0) {
+            return new Rational(mReal.toBigInteger().add(BigInteger.ONE));
+        } else {
+            return new Rational(mReal.toBigInteger());
+        }
+    }
+
     public Value difference(Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof NumberValue) {
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
@@ -129,7 +137,11 @@ public class Real extends NumberValue {
     }
 
     public Rational floor() {
-        return new Rational(mReal.toBigInteger());
+        if (mReal.compareTo(BigDecimal.ZERO) < 0) {
+            return new Rational(mReal.toBigInteger().subtract(BigInteger.ONE));
+        } else {
+            return new Rational(mReal.toBigInteger());
+        }
     }
 
     public Value multiply(Value multiplier) throws IncompatibleTypeException {

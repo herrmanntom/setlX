@@ -1,5 +1,6 @@
 package interpreter.types;
 
+import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.utilities.Environment;
@@ -107,6 +108,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     /* term operations */
 
-    public abstract MatchResult     matchesTerm(Value other);
+    public abstract MatchResult     matchesTerm(Value other) throws IncompatibleTypeException;
 }
 

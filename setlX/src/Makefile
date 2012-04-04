@@ -16,7 +16,8 @@ interactive:                                                 \
 test:                                                        \
         setlX.jar                                                    \
         simpleTest/test.stlx
-	sed -e 's/$$/\r/' < simpleTest/test.stlx > simpleTest/test.windows.stlx
+	cp simpleTest/test.stlx simpleTest/test.windows.stlx
+	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos simpleTest/test.windows.stlx; fi
 	./setlX simpleTest/test.windows.stlx --verbose
 	rm -f simpleTest/test.windows.stlx
 
@@ -34,10 +35,7 @@ build:                                                      \
         bin/grammar/SetlXgrammar*.class                              \
         bin/SetlX.class
 	if [ ! -x setlX ]; then chmod +x setlX; fi
-	sed -e 's/\r$$//' < make.cmd   > make_.cmd  # unix2dos
-	sed -e 's/$$/\r/' < make_.cmd  > make.cmd   # dos2unix
-	sed -e 's/\r$$//' < setlX.cmd  > setlX_.cmd # unix2dos
-	sed -e 's/$$/\r/' < setlX_.cmd > setlX.cmd  # dos2unix
+	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos make.cmd setlX.cmd; fi
 	rm -f make_.cmd setlX_.cmd
 
 bin/SetlX.class :                                            \

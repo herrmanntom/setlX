@@ -378,7 +378,7 @@ termArguments returns [List<Expr> args]
     |  /* epsilon */ { args = new LinkedList<Expr>(); }
     ;
 
-call [boolean enableIgnore,] returns [Expr c]
+call [boolean enableIgnore] returns [Expr c]
     @init {
         Variable var = null;
     }

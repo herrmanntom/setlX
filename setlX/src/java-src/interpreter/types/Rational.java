@@ -85,7 +85,11 @@ public class Rational extends NumberValue {
 
     /* type conversion */
     public Rational toInteger() {
-        return this.floor();
+        if (mIsInteger) {
+            return this;
+        } else {
+            return new Rational(mNominator.divide(mDenominator));
+        }
     }
 
     public Real toReal() {

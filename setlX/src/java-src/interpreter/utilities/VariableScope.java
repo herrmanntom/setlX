@@ -26,8 +26,8 @@ public class VariableScope {
 
     static {
         sGlobals = new VariableScope();
-        sGlobals.storeValue("e",  new Real(Math.E) );
-        sGlobals.storeValue("pi", new Real(Math.PI));
+        sGlobals.storeValue("e",  new Real("2.718281828459045235360287471352662497757247093699959574966967627724077")); // max precision possible with --real256
+        sGlobals.storeValue("pi", new Real("3.141592653589793238462643383279502884197169399375105820974944592307816")); // max precision possible with --real256
     }
 
     /* This variable stores the initial VariableScope:

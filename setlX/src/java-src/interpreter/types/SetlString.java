@@ -65,6 +65,19 @@ public class SetlString extends Value {
 
     public Value toInteger() {
         try {
+            Rational result = new Rational(mString);
+            if (result.isInteger() == SetlBoolean.TRUE) {
+                return result;
+            } else {
+                return Om.OM;
+            }
+        } catch (NumberFormatException nfe) {
+            return Om.OM;
+        }
+    }
+
+    public Value toRational() {
+        try {
             return new Rational(mString);
         } catch (NumberFormatException nfe) {
             return Om.OM;

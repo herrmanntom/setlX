@@ -63,6 +63,15 @@ public class Real extends NumberValue {
         return new Rational(mReal.toBigInteger());
     }
 
+    public Value toRational() {
+        int scale = mReal.scale();
+        if (scale >= 0) {
+            return new Rational(mReal.unscaledValue(), BigInteger.TEN.pow(scale));
+        } else /* (scale < 0) */ { // real is in fact an integer
+            return new Rational(mReal.unscaledValue().multiply(BigInteger.TEN.pow(scale * -1)));
+        }
+    }
+
     public Real toReal() {
         return this;
     }
@@ -197,6 +206,7 @@ public class Real extends NumberValue {
     /* string and char operations */
 
     public String toString() {
+        mReal = mReal.stripTrailingZeros();
         return mReal.toString();
     }
 

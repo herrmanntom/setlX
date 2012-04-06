@@ -101,6 +101,10 @@ public abstract class Value implements Comparable<Value> {
         return Om.OM;
     }
 
+    public Value toRational() {
+        return Om.OM;
+    }
+
     public Value toReal() {
         return Om.OM;
     }

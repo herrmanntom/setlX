@@ -20,15 +20,16 @@ public class Rational extends NumberValue {
     private final static    Rational    ZERO            = new Rational(0);
     private final static    Rational    ONE             = new Rational(1);
 
-    public Rational(String s){
-        this(new BigInteger(s));
+    public Rational(String s) {
+        // yes... _this_ must be the first statement
+        this( (s.indexOf('/') == -1)? new BigInteger(s) : new BigInteger(s.substring(0, s.indexOf('/'))), (s.indexOf('/') == -1)? BigInteger.ONE : new BigInteger(s.substring(s.indexOf('/') + 1)) );
     }
 
-    public Rational(int number){
+    public Rational(int number) {
         this(BigInteger.valueOf(number));
     }
 
-    public Rational(BigInteger number){
+    public Rational(BigInteger number) {
         mNominator      = number;
         mDenominator    = BigInteger.ONE;
         mIsInteger      = true;
@@ -37,7 +38,7 @@ public class Rational extends NumberValue {
     // This constructor creates a new rational number with nominator n and
     // denominator d.  Care is taken, that the denominator is always positive
     // and that the rational number is in lowest terms.
-    private Rational(BigInteger n, BigInteger d) {
+    /*package*/ Rational(BigInteger n, BigInteger d) {
         if (d.signum() == -1) {
             n = n.negate();
             d = d.negate();
@@ -46,6 +47,9 @@ public class Rational extends NumberValue {
         mNominator      = n.divide(ggt);
         mDenominator    = d.divide(ggt);
         mIsInteger      = mDenominator.compareTo(BigInteger.ONE) == 0;
+        if (mDenominator.compareTo(BigInteger.ZERO) == 0) {
+            throw new NumberFormatException("new Rational: Devision by zero!");
+        }
     }
 
     public Rational clone() {
@@ -90,6 +94,10 @@ public class Rational extends NumberValue {
         } else {
             return new Rational(mNominator.divide(mDenominator));
         }
+    }
+
+    public Rational toRational() {
+        return this;
     }
 
     public Real toReal() {

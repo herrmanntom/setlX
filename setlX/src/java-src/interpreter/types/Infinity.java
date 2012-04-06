@@ -99,6 +99,10 @@ public class Infinity extends NumberValue {
         throw new UndefinedOperationException("'" + this + " ** " + exponent + "' is undefined.");
     }
 
+    public NumberValue power(double exponent) throws UndefinedOperationException{
+        throw new UndefinedOperationException("'" + this + " ** " + exponent + "' is undefined.");
+    }
+
     public Value sum(Value summand) throws SetlException {
         if (summand instanceof NumberValue) {
             if (this == summand.negate()) {

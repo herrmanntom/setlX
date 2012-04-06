@@ -1,6 +1,7 @@
 package interpreter.types;
 
 import interpreter.exceptions.IncompatibleTypeException;
+import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 
@@ -49,6 +50,22 @@ public class Real extends NumberValue {
     public Real clone() {
         // this value is more or less atomic and can not be changed once set
         return this;
+    }
+
+    public double doubleValue() throws NumberToLargeException {
+        if ( mReal.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0 ||
+             (
+               mReal.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) < 0 &&
+               mReal.compareTo(BigDecimal.ZERO) != 0
+             )
+           )
+        {
+            String msg = "The value of " + mReal + " is too large or to small for " +
+                         "this operation.";
+            throw new NumberToLargeException(msg);
+        } else {
+            return mReal.doubleValue();
+        }
     }
 
     /* type checks (sort of Boolean operation) */
@@ -181,6 +198,16 @@ public class Real extends NumberValue {
         return new Real(mReal.pow(exponent, mathContext));
     }
 
+    public Real power(double exponent) throws NumberToLargeException, IncompatibleTypeException {
+        if (mReal.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IncompatibleTypeException("Left-hand-side of '" + this + " ** " + exponent + "' is negative.");
+        }
+        double a = doubleValue(); // may throw exception
+
+        // a ** exponent = exp(ln(a ** exponent) = exp(exponent * ln(a))
+        return new Real(Math.exp(exponent * Math.log(a)));
+    }
+
     public Value sum(Value summand) throws IncompatibleTypeException {
         if (summand instanceof NumberValue) {
             if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
@@ -206,7 +233,6 @@ public class Real extends NumberValue {
     /* string and char operations */
 
     public String toString() {
-        mReal = mReal.stripTrailingZeros();
         return mReal.toString();
     }
 

@@ -5,6 +5,7 @@ import interpreter.exceptions.JVMException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.NumberValue;
+import interpreter.types.Om;
 import interpreter.types.Real;
 import interpreter.types.Value;
 
@@ -26,15 +27,22 @@ public class MathFunction extends PreDefinedFunction {
         if (!(args.get(0) instanceof NumberValue)) {
             throw new IncompatibleTypeException("This function requires a single number as parameter.");
         }
-        try {
-            Object result = mFunction.invoke(null, new Double(args.get(0).toReal().toString()));
-            return new Real(new Double(result.toString()));
-        } catch (NumberFormatException nfe) {
-            throw new NumberToLargeException("'" + args.get(0) + "' is to large for this operation.");
-        } catch (Exception e) {
-            throw new JVMException("Error during calling a predefined mathematical function.\n"
-                                 + "This is probably a bug in the interpreter.\n"
-                                 + "Please report it including executed source example.");
+        Value  arg      = args.get(0).toReal();
+        if (arg != Om.OM) {
+            try {
+                Object result   = mFunction.invoke(null, ((Real) arg).doubleValue());
+                return new Real(new Double(result.toString()));
+            } catch (NumberFormatException nfe) {
+                throw new NumberToLargeException("Involved numbers are to large or to small for this operation.");
+            } catch (SetlException se) {
+                throw se;
+            } catch (Exception e) {
+                throw new JVMException("Error during calling a predefined mathematical function.\n"
+                                     + "This is probably a bug in the interpreter.\n"
+                                     + "Please report it including executed source example.");
+            }
+        } else {
+            throw new IncompatibleTypeException("This function requires a single number as parameter.");
         }
     }
 }

@@ -57,6 +57,13 @@ public class Rational extends NumberValue {
         return this;
     }
 
+    public boolean intConvertable() {
+        return (mIsInteger &&
+                mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0 &&
+                mNominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) > 0
+               );
+    }
+
     public int intValue() throws NotAnIntegerException, NumberToLargeException {
         if (! mIsInteger) {
             String msg = "The fraction " + mNominator + "/" + mDenominator + " can't be converted" +
@@ -66,7 +73,7 @@ public class Rational extends NumberValue {
         if (mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
             mNominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
         {
-            String msg = "The absolute value of " + mNominator + " is too big for " +
+            String msg = "The absolute value of " + mNominator + " is too large or to small for " +
                          "this operation.";
             throw new NumberToLargeException(msg);
         } else {
@@ -345,10 +352,15 @@ public class Rational extends NumberValue {
     }
 
     public Rational power(int exponent) throws NumberToLargeException {
-        if (exponent < 0) {
-            throw new NumberToLargeException("Right-hand-side of '" + this + " ** " + exponent + "' is negative.");
+        if (exponent >= 0) {
+            return new Rational(mNominator  .pow(exponent     ), mDenominator.pow(exponent     ));
+        } else {
+            return new Rational(mDenominator.pow(exponent * -1), mNominator  .pow(exponent * -1));
         }
-        return new Rational(mNominator.pow(exponent), mDenominator.pow(exponent));
+    }
+
+    public Real power(double exponent) throws SetlException {
+        return toReal().power(exponent);
     }
 
     public Value sum(Value summand) throws SetlException {

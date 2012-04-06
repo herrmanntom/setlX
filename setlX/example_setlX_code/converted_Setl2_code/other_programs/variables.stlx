@@ -1,38 +1,38 @@
 
-allVars := procedure(e) {
+allVars := procedure(expr) {
 	operators := {"+", "-", "*", "/"};
 	switch {
-		case isString(e) :
-			return {e};
-		case e[2] in operators :
-			return allVars(e[1]) + allVars(e[3]);
+		case isString(expr) :
+			return {expr};
+		case expr[2] in operators :
+			return allVars(expr[1]) + allVars(expr[3]);
 		default :
-			abort("Error in allVars(" + e + ")");
+			abort("Error in allVars(" + expr + ")");
 	}
 };
 
-countVars := procedure(e, x) {
+countVars := procedure(expr, x) {
 	count := 0;
 	operators := {"+", "-", "*", "/"};
 	switch {
-		case x == e :
+		case x == expr :
 			count := count + 1;
-		case isString(e) :
+		case isString(expr) :
 			count := count;
-		case e[2] in operators :
-			return countVars(e[1], x) + countVars(e[3], x);
+		case expr[2] in operators :
+			return countVars(expr[1], x) + countVars(expr[3], x);
 		default :
-			abort("Error in countVars(" + e + ")");
+			abort("Error in countVars(" + expr + ")");
 	}
 	return count;
 };
 
-singleVars := procedure(e) {
-	return {x in allVars(e) | countVars(e, x) == 1};
+singleVars := procedure(expr) {
+	return {x in allVars(expr) | countVars(expr, x) == 1};
 };
 
-testVars := procedure(e, x) {
-	mTokenList := scanExpr(e);
+testVars := procedure(expr, x) {
+	mTokenList := scanExpr(expr);
 	mIndex := 1;
 	expr := parseExpr();
 	print("   allVars( ", prettyPrint(expr), ") = ", allVars(expr));

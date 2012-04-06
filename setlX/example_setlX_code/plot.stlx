@@ -34,7 +34,7 @@ prettyPlot2 := procedure(f, l) {
     print();
 };
 
-functions := [sin, x |-> x, x |-> x * x, x |-> x * x + x, x |-> x ** 3 - 7, x |-> mathConst("e") ** x];
+functions := [sin, x |-> x, x |-> x * x, x |-> x * x + x, x |-> x ** 3 - 7, x |-> e ** x];
 data      := [-5 .. 5];
 
 for (f in functions) {

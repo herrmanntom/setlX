@@ -1,12 +1,12 @@
 // this program demonstrates some of the new and possibly interesting built-in functions
 
 /*******************************************************************************
-  mathConst(name)               // get the value of a mathematical constant (currently only pi and e)
+  some math constants (not really a function)
 */
 
-circumference := [r] |-> 2 * mathConst("pi") * r;
+circumference := [r] |-> 2 * pi * r;
 print("The circumference of a circle with radius 10 is: " + circumference(10) + ".");
-print("100 is approximately " + log(mathConst("e") ** 100) + ".");
+print("100 is approximately " + log(e ** 100) + ".");
 print();
 
 /*******************************************************************************
@@ -54,12 +54,13 @@ print();
 
 /*******************************************************************************
   int(stringOrNumber)           // convert string or number into an integer, returns om on failure
+  rational(stringOrNumber)      // convert string or number into a rational, returns om on failure
   real(stringOrNumber)          // convert string or number into a real, returns om on failure
   str(value)                    // converts any value into a string, can not fail
 */
 
 getIntRealOrStringFromInput := procedure(input) {
-    testFunctions := [int, real, str];
+    testFunctions := [int, rational, real, str];
     for (f in testFunctions) {
         result := f(input);
         if (result != om) {
@@ -72,14 +73,15 @@ getIntRealOrStringFromInput := procedure(input) {
 
 valueWithType := procedure(value) {
     switch {
-        case isInteger(value): return "int    : " + value;
-        case isReal(value)   : return "real   : " + value;
-        case isString(value) : return "string : \"" + value + "\"";
-        default              : return "??     : '"  + value + "'";
+        case isInteger(value)  : return "int      : " + value;
+        case isRational(value) : return "rational : " + value;
+        case isReal(value)     : return "real     : " + value;
+        case isString(value)   : return "string   : \"" + value + "\"";
+        default                : return "??       : '"  + value + "'";
     }
 };
 
-userinput := ["99","text","text with number 5", "5.99", 6, 99.999, om, abs];
+userinput := ["99","text","text with number 5", "5.99", 6, 99.999, om, abs, 1/3, "99/100"];
 for (i in userinput) {
     print("direct:    ", valueWithType(i));
     print("converted: ", valueWithType(getIntRealOrStringFromInput(i)));

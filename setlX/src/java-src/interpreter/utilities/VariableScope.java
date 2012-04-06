@@ -4,6 +4,7 @@ import interpreter.functions.MathFunction;
 import interpreter.functions.PreDefinedFunction;
 import interpreter.types.Om;
 import interpreter.types.ProcedureDefinition;
+import interpreter.types.Real;
 import interpreter.types.SetlList;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
@@ -21,7 +22,13 @@ public class VariableScope {
     private final   static  String          FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
 
     // this scope stores all global variables
-    private final   static  VariableScope   sGlobals                        = new VariableScope();
+    private final   static  VariableScope   sGlobals;
+
+    static {
+        sGlobals = new VariableScope();
+        sGlobals.storeValue("e",  new Real(Math.E) );
+        sGlobals.storeValue("pi", new Real(Math.PI));
+    }
 
     /* This variable stores the initial VariableScope:
        Predefined functions are dynamically loaded into this VariableScope,

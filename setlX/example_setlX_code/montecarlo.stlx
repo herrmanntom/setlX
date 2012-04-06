@@ -27,4 +27,4 @@ for (x in [1 .. n]) {
 
 pseudoPi := 4 * inCircle / n;
 
-print("pi := $ pseudoPi $ (or $ nDecimalPlaces(pseudoPi, 5) $), which is almost $mathConst(\"pi\")$");
+print("pi := $ pseudoPi $ (or $ nDecimalPlaces(pseudoPi, 5) $), which is almost $pi$");

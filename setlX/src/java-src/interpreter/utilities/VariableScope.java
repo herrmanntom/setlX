@@ -6,6 +6,7 @@ import interpreter.types.Om;
 import interpreter.types.ProcedureDefinition;
 import interpreter.types.Real;
 import interpreter.types.SetlList;
+import interpreter.types.SetlSet;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
@@ -18,7 +19,6 @@ import java.util.Map;
 public class VariableScope {
     /*============================ static ============================*/
     // functional characters used in terms
-    private final   static  String          FUNCTIONAL_CHARACTER_BINDING    = "^binding";
     private final   static  String          FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
 
     // this scope stores all global variables
@@ -232,9 +232,9 @@ public class VariableScope {
         Term        result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
 
         // list of bindings in scope
-        SetlList    bindings    = new SetlList();
+        SetlSet     bindings    = new SetlSet();
         for (Map.Entry<String, Value> entry : allVars.entrySet()) {
-            Term    binding = new Term(FUNCTIONAL_CHARACTER_BINDING);
+            SetlList    binding = new SetlList();
             binding.addMember(new SetlString(entry.getKey()));
             binding.addMember(entry.getValue().toTerm());
 

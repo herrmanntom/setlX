@@ -4,7 +4,6 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -26,25 +25,10 @@ public class Power extends Expr {
 
     private Expr mLhs;
     private Expr mExponent;
-    private int  mLineNr;
 
     public Power(Expr lhs, Expr exponent) {
-        mLhs        = lhs;
-        mExponent   = exponent;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mLhs.computeLineNr();
-        mExponent.computeLineNr();
+        mLhs      = lhs;
+        mExponent = exponent;
     }
 
     public Value evaluate() throws SetlException {

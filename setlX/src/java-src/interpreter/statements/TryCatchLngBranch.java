@@ -33,25 +33,10 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
     private Variable                    mErrorVar;
     private Block                       mBlockToRecover;
     private CatchableInSetlXException   mException;      // last catched exception
-    private int                         mLineNr;
 
     public TryCatchLngBranch(Variable errorVar, Block blockToRecover){
         mErrorVar       = errorVar;
         mBlockToRecover = blockToRecover;
-        mLineNr         = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mErrorVar.computeLineNr();
-        mBlockToRecover.computeLineNr();
     }
 
     public boolean catches(CatchableInSetlXException cise) {

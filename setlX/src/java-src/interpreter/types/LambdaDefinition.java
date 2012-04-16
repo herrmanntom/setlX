@@ -29,29 +29,11 @@ public class LambdaDefinition extends ProcedureDefinition {
     public  final static String FUNCTIONAL_CHARACTER = "^lambdaProcedure";
 
     private Expr mExpr; // expression in the body of the definition; used only for toString() and toTerm()
-    private int  mLineNr;
 
     public LambdaDefinition(List<ParameterDef> parameters, Expr expr) {
         super(parameters, new Block());
         mExpr = expr;
         mStatements.add(new Return(mExpr));
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        // statements thinks its a line ahead
-        --Environment.sourceLine;
-        mStatements.computeLineNr();
-        // and the block adds another line, which is not there
-        --Environment.sourceLine;
     }
 
     /* string and char operations */

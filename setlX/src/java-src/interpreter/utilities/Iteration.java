@@ -8,7 +8,6 @@ import interpreter.types.Rational;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.Iterator;
 import interpreter.utilities.IteratorExecutionContainer;
 
@@ -36,7 +35,6 @@ public class Iteration extends Constructor {
     private Expr      mExpr;
     private Iterator  mIterator;
     private Condition mCondition;
-    private int       mLineNr;
 
     private class Exec implements IteratorExecutionContainer {
         private Expr            mExpr;
@@ -64,25 +62,6 @@ public class Iteration extends Constructor {
         mExpr      = expr;
         mIterator  = iterator;
         mCondition = condition;
-        mLineNr    = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        if (mExpr != null) {
-            mExpr.computeLineNr();
-        }
-        mIterator.computeLineNr();
-        if (mCondition != null) {
-            mCondition.computeLineNr();
-        }
     }
 
     public void fillCollection(CollectionValue collection) throws SetlException {

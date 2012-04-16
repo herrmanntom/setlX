@@ -24,12 +24,7 @@ public class ParseSetlX {
     public static Block parseFile(String fileName) throws ParserException {
         try {
             // parse the file contents (Antlr will print its parser errors into stderr ...)
-            Block b = parseBlock(new ANTLRFileStream(fileName));
-            b.computeLineNr();
-            // subtract last "non-existent" line from block
-            --Environment.sourceLine;
-
-            return b;
+            return parseBlock(new ANTLRFileStream(fileName));
 
         } catch (IOException ioe) {
             throw new FileNotReadableException("File '" + fileName + "' could not be read.");
@@ -41,12 +36,7 @@ public class ParseSetlX {
             InputStream         stream = InputReader.getStream();
 
             // parse the input (Antlr will print its parser errors into stderr ...)
-            Block b = parseBlock(new ANTLRInputStream(stream));
-            b.computeLineNr();
-            // subtract last "non-existent" line from block
-            --Environment.sourceLine;
-
-            return b;
+            return parseBlock(new ANTLRInputStream(stream));
 
         } catch (IOException ioe) {
             throw new EndOfFileException("eof");
@@ -58,12 +48,7 @@ public class ParseSetlX {
             InputStream         stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (Antlr will print its parser errors into stderr ...)
-            Block b = parseBlock(new ANTLRInputStream(stream));
-            b.computeLineNr();
-            // subtract last "non-existent" line from block
-            --Environment.sourceLine;
-
-            return b;
+            return parseBlock(new ANTLRInputStream(stream));
 
         } catch (IOException ioe) {
             throw new EndOfFileException("eof");
@@ -75,10 +60,7 @@ public class ParseSetlX {
             InputStream         stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (Antlr will print its parser errors into stderr ...)
-            Expr e = parseExpr(new ANTLRInputStream(stream));
-            e.computeLineNr();
-
-            return e;
+            return parseExpr(new ANTLRInputStream(stream));
 
         } catch (IOException ioe) {
             throw new EndOfFileException("eof");

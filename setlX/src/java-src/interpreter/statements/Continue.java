@@ -18,22 +18,8 @@ public class Continue extends Statement {
     private final static String     FUNCTIONAL_CHARACTER    = "^continue";
 
     public  final static Continue   C                       = new Continue();
-    private              int        mLineNr;
 
-    private Continue() {
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-    }
+    private Continue() {  }
 
     public void exec() throws ContinueException {
         throw new ContinueException("continue");
@@ -42,7 +28,7 @@ public class Continue extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        return Environment.getLineStart(getLineNr(), tabs) + "continue;";
+        return Environment.getLineStart(tabs) + "continue;";
     }
 
     /* term operations */

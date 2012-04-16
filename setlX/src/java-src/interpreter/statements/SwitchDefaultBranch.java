@@ -23,25 +23,9 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^switchDefaultBranch";
 
     private Block   mStatements;
-    private int     mLineNr;
 
     public SwitchDefaultBranch(Block statements) {
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        mStatements.computeLineNr();
-        // block counts an pending line
-        --Environment.sourceLine;
     }
 
     public boolean evalConditionToBool() {
@@ -59,7 +43,7 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs);
+        String result = Environment.getLineStart(tabs);
         result += "default:" + Environment.getEndl();
         result += mStatements.toString(tabs + 1) + Environment.getEndl();
         return result;

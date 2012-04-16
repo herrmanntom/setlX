@@ -7,7 +7,6 @@ import interpreter.exceptions.ThrownInSetlXException;
 import interpreter.expressions.Variable;
 import interpreter.types.SetlError;
 import interpreter.types.Term;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -32,25 +31,10 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
     private Variable                    mErrorVar;
     private Block                       mBlockToRecover;
     private CatchableInSetlXException   mException;      // last catched exception
-    private int                         mLineNr;
 
     public TryCatchBranch(Variable errorVar, Block blockToRecover){
         mErrorVar       = errorVar;
         mBlockToRecover = blockToRecover;
-        mLineNr         = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mErrorVar.computeLineNr();
-        mBlockToRecover.computeLineNr();
     }
 
     public boolean catches(CatchableInSetlXException cise) {

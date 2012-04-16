@@ -20,23 +20,9 @@ implemented here as:
 
 public class Condition {
     private Expr mExpr;
-    private int  mLineNr;
 
     public Condition(Expr expr) {
-        mExpr   = expr;
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mExpr.computeLineNr();
+        mExpr = expr;
     }
 
     public SetlBoolean eval() throws SetlException {

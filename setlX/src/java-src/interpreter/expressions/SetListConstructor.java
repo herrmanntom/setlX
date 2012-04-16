@@ -11,7 +11,6 @@ import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Constructor;
-import interpreter.utilities.Environment;
 import interpreter.utilities.VariableScope;
 
 import java.util.List;
@@ -39,26 +38,10 @@ public class SetListConstructor extends Expr {
 
     private int         mType;
     private Constructor mConstructor;
-    private int         mLineNr;
 
     public SetListConstructor(int type, Constructor constructor) {
         mType        = type;
         mConstructor = constructor;
-        mLineNr      = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        if (mConstructor != null) {
-            mConstructor.computeLineNr();
-        }
     }
 
     public Value evaluate() throws SetlException {

@@ -141,9 +141,6 @@ public class SetlX {
     }
 
     private static List<Block> parseAndDumpFiles(List<String> files, boolean dump, String dumpFile, boolean verbose) throws Exception {
-        // print internal line numbers (for debugging of the interpreter)
-        //Environment.setPrintLineNumbers(true);
-
         // parsed programs
         List<Block> programs = new ArrayList<Block>(files.size());
 

@@ -4,7 +4,6 @@ import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.SetlException;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -27,26 +26,10 @@ public class TermConstructor extends Expr {
 
     private String     mFChar;     // functional character of the term
     private List<Expr> mArgs;      // list of arguments
-    private int        mLineNr;
 
     public TermConstructor(String fChar, List<Expr> args) {
         mFChar  = fChar;
         mArgs   = args;
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        for (Expr arg : mArgs) {
-            arg.computeLineNr();
-        }
     }
 
     public Term evaluate() throws SetlException {

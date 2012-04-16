@@ -22,7 +22,6 @@ public class Environment {
 
     private         static  boolean         sIsInteractive              = false;
     private         static  boolean         sPrintAfterEval             = false;
-    private         static  boolean         sPrintLineNumbers           = false; // for debugging the interpreter
     private         static  boolean         sPrintVerbose               = false;
 
     private final   static  String          TAB                         = "\t";
@@ -79,14 +78,6 @@ public class Environment {
         return sPrintAfterEval;
     }
 
-    public static void setPrintLineNumbers(boolean isPrintLineNumbers) {
-        sPrintLineNumbers = isPrintLineNumbers;
-    }
-
-    public static boolean isPrintLineNumbers() {
-        return sPrintLineNumbers;
-    }
-
     public static void setPrintVerbose(boolean printVerbose) {
         sPrintVerbose       = printVerbose;
     }
@@ -96,20 +87,11 @@ public class Environment {
     }
 
     public static String getLineStart(int tabs) {
-        return getLineStart(-1, tabs);
-    }
-
-    public static String getLineStart(int lineNr, int tabs) {
-        if (!sPrintVerbose) {
+        if (!sPrintVerbose || tabs <= 0) {
             return "";
         }
-        String r = null;
-        if (sPrintLineNumbers) {
-            r = lineNrToStr(lineNr) + TAB;
-        } else {
-            r = "";
-        }
-        for (int i = 0; i < tabs; i++) {
+        String r = TAB;
+        for (int i = 1; i < tabs; i++) {
             r += TAB;
         }
         return r;
@@ -121,17 +103,6 @@ public class Environment {
         } else {
             return " ";
         }
-    }
-
-    private static String lineNrToStr(int lineNr) {
-        String r = "";
-        if (lineNr > 0) {
-            r += lineNr;
-        }
-        while (r.length() < ("" + sourceLine).length()) {
-            r = " " + r;
-        }
-        return "/* " + r + " */ ";
     }
 
     public static void setBreakpoint(String id) {

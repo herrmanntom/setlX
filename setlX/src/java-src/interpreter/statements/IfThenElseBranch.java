@@ -3,7 +3,6 @@ package interpreter.statements;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -23,23 +22,9 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^ifThenElseBranch";
 
     private Block   mStatements;
-    private int     mLineNr;
 
     public IfThenElseBranch(Block statements){
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mStatements.computeLineNr();
     }
 
     public boolean evalConditionToBool() {

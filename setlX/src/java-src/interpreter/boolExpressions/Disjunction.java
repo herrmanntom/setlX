@@ -5,7 +5,6 @@ import interpreter.exceptions.TermConversionException;
 import interpreter.expressions.Expr;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -27,25 +26,10 @@ public class Disjunction extends Expr {
 
     private Expr mLhs;
     private Expr mRhs;
-    private int  mLineNr;
 
     public Disjunction(Expr lhs, Expr rhs) {
-        mLhs    = lhs;
-        mRhs    = rhs;
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mLhs.computeLineNr();
-        mRhs.computeLineNr();
+        mLhs = lhs;
+        mRhs = rhs;
     }
 
     public Value evaluate() throws SetlException {

@@ -5,7 +5,6 @@ import interpreter.types.Om;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.VariableScope;
 
 /*
@@ -39,22 +38,9 @@ public class Variable extends Expr {
     private final static int    PRECEDENCE                    = 9999;
 
     private String  mId;
-    private int     mLineNr;
 
     public Variable(String id) {
-        mId     = id;
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
+        mId = id;
     }
 
     public Value evaluate() {

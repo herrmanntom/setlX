@@ -2,7 +2,6 @@ package interpreter.expressions;
 
 import interpreter.types.RangeDummy;
 import interpreter.types.Term;
-import interpreter.utilities.Environment;
 
 /*
 grammar rule:
@@ -23,22 +22,7 @@ public class CollectionAccessRangeDummy extends Expr {
 
     public  final static CollectionAccessRangeDummy CARD                 = new CollectionAccessRangeDummy();
 
-    private              int                        mLineNr;
-
-    private CollectionAccessRangeDummy() {
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-    }
+    private CollectionAccessRangeDummy() {}
 
     public RangeDummy evaluate() {
         return RangeDummy.RD;

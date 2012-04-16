@@ -34,10 +34,6 @@ public class Term extends CollectionValue {
         mBody                = body;
     }
 
-    public void computeLineNr() {
-        mBody.computeLineNr();
-    }
-
     public Term clone() {
         return new Term(mFunctionalCharacter, mBody.clone());
     }

@@ -25,27 +25,10 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
 
     private Condition mCondition;
     private Block     mStatements;
-    private int       mLineNr;
 
     public SwitchCaseBranch(Condition condition, Block statements){
         mCondition  = condition;
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        mCondition.computeLineNr();
-        mStatements.computeLineNr();
-        // block counts an pending line
-        --Environment.sourceLine;
     }
 
     public boolean evalConditionToBool() throws SetlException {
@@ -63,7 +46,7 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs);
+        String result = Environment.getLineStart(tabs);
         result += "case " + mCondition.toString(tabs) + ":" + Environment.getEndl();
         result += mStatements.toString(tabs + 1) + Environment.getEndl();
         return result;

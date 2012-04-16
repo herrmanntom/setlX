@@ -31,29 +31,10 @@ public class Match extends Statement {
 
     private Expr                        mExpr;
     private List<MatchAbstractBranch>   mBranchList;
-    private int                         mLineNr;
-    private int                         mLineNr2;
 
     public Match(Expr expr, List<MatchAbstractBranch> branchList) {
         mExpr       = expr;
         mBranchList = branchList;
-        mLineNr     = -1;
-        mLineNr2    = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        for (MatchAbstractBranch br : mBranchList) {
-            br.computeLineNr();
-        }
-        mLineNr2 = ++Environment.sourceLine;
     }
 
     public void exec() throws SetlException {
@@ -73,11 +54,11 @@ public class Match extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs) + "match (" + mExpr.toString(tabs) + ") {" + Environment.getEndl();
+        String result = Environment.getLineStart(tabs) + "match (" + mExpr.toString(tabs) + ") {" + Environment.getEndl();
         for (MatchAbstractBranch br : mBranchList) {
             result += br.toString(tabs + 1);
         }
-        result += Environment.getLineStart(mLineNr2, tabs) + "}";
+        result += Environment.getLineStart(tabs) + "}";
         return result;
     }
 

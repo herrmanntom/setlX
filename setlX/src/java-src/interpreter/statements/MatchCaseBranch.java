@@ -35,7 +35,6 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     private List<Expr>  mExprs;      // expressions which creates terms to match
     private List<Value> mTerms;      // terms to match
     private Block       mStatements; // block to execute after match
-    private int         mLineNr;
 
     public MatchCaseBranch(List<Expr> exprs, Block statements){
         this(exprs, new ArrayList<Value>(exprs.size()), statements);
@@ -48,27 +47,6 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         mExprs      = exprs;
         mTerms      = terms;
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        for (Expr expr: mExprs) {
-            expr.computeLineNr();
-        }
-        for (Value term: mTerms) {
-            term.computeLineNr();
-        }
-        mStatements.computeLineNr();
-        // block counts an pending line
-        --Environment.sourceLine;
     }
 
     public MatchResult matches(Value term) throws IncompatibleTypeException {
@@ -93,7 +71,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs);
+        String result = Environment.getLineStart(tabs);
         result += "case ";
 
         Iterator<Expr> iter = mExprs.iterator();

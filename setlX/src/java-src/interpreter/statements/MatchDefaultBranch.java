@@ -25,25 +25,9 @@ public class MatchDefaultBranch extends MatchAbstractBranch {
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchDefaultBranch";
 
     private Block   mStatements;
-    private int     mLineNr;
 
     public MatchDefaultBranch(Block statements) {
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        mStatements.computeLineNr();
-        // block counts an pending line
-        --Environment.sourceLine;
     }
 
     public MatchResult matches(Value term) {
@@ -61,7 +45,7 @@ public class MatchDefaultBranch extends MatchAbstractBranch {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs);
+        String result = Environment.getLineStart(tabs);
         result += "default:" + Environment.getEndl();
         result += mStatements.toString(tabs + 1) + Environment.getEndl();
         return result;

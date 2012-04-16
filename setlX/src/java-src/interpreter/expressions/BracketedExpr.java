@@ -4,7 +4,6 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -26,23 +25,9 @@ public class BracketedExpr extends Expr {
     private final static int    PRECEDENCE           = 1900;
 
     private Expr mExpr;
-    private int  mLineNr;
 
     public BracketedExpr(Expr expr) {
-        mExpr   = expr;
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mExpr.computeLineNr();
+        mExpr = expr;
     }
 
     public Value evaluate() throws SetlException {

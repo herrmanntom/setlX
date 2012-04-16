@@ -4,7 +4,6 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.TermConversionException;
 import interpreter.types.Term;
 import interpreter.utilities.Condition;
-import interpreter.utilities.Environment;
 import interpreter.utilities.TermConverter;
 
 /*
@@ -25,25 +24,10 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
 
     private Condition mCondition;
     private Block     mStatements;
-    private int       mLineNr;
 
     public IfThenElseIfBranch(Condition condition, Block statements){
         mCondition  = condition;
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mCondition.computeLineNr();
-        mStatements.computeLineNr();
     }
 
     public boolean evalConditionToBool() throws SetlException {

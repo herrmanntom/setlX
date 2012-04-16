@@ -3,7 +3,6 @@ package interpreter.expressions;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Term;
 import interpreter.types.IgnoreDummy;
-import interpreter.utilities.Environment;
 
 /*
 grammar rules:
@@ -27,22 +26,7 @@ public class VariableIgnore extends Expr {
 
     public  final static VariableIgnore VI                   = new VariableIgnore();
 
-    private              int            mLineNr;
-
-    private VariableIgnore() {
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-    }
+    private VariableIgnore() { }
 
     public IgnoreDummy evaluate() throws UndefinedOperationException {
         return IgnoreDummy.ID;

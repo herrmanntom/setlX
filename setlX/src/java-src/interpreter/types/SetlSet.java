@@ -28,12 +28,6 @@ public class SetlSet extends CollectionValue {
         mOriginalSet        = set;
     }
 
-    public void computeLineNr() {
-        for (Value v : getSet()) {
-            v.computeLineNr();
-        }
-    }
-
     public SetlSet clone() {
         mOriginalSet = getSet();
         mSet         = null;

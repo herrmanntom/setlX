@@ -31,7 +31,6 @@ public class Block extends Statement {
     private final static String FUNCTIONAL_CHARACTER = "^block";
 
     private List<Statement> mStatements;
-    private int             mLineNr;
 
     public Block() {
         this(new LinkedList<Statement>());
@@ -39,25 +38,10 @@ public class Block extends Statement {
 
     public Block(List<Statement> statements) {
         mStatements = statements;
-        mLineNr = -1;
     }
 
     public void add(Statement stmnt) {
         mStatements.add(stmnt);
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        for (Statement stmnt : mStatements) {
-            stmnt.computeLineNr();
-        }
-        mLineNr = ++Environment.sourceLine;
     }
 
     public void execute() throws SetlException {
@@ -95,7 +79,7 @@ public class Block extends Statement {
             count++;
         }
         if (brackets) {
-            result += endl + Environment.getLineStart(getLineNr(), tabs) + "}";
+            result += endl + Environment.getLineStart(tabs) + "}";
         }
         return result;
     }

@@ -27,28 +27,9 @@ public class Switch extends Statement {
     private final static String FUNCTIONAL_CHARACTER = "^switch";
 
     private List<SwitchAbstractBranch> mBranchList;
-    private int                        mLineNr;
-    private int                        mLineNr2;
 
     public Switch(List<SwitchAbstractBranch> branchList) {
         mBranchList = branchList;
-        mLineNr     = -1;
-        mLineNr2    = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        for (SwitchAbstractBranch br : mBranchList) {
-            br.computeLineNr();
-        }
-        mLineNr2 = ++Environment.sourceLine;
     }
 
     public void exec() throws SetlException {
@@ -63,11 +44,11 @@ public class Switch extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs) + "switch {" + Environment.getEndl();
+        String result = Environment.getLineStart(tabs) + "switch {" + Environment.getEndl();
         for (SwitchAbstractBranch br : mBranchList) {
             result += br.toString(tabs + 1);
         }
-        result += Environment.getLineStart(mLineNr2, tabs) + "}";
+        result += Environment.getLineStart(tabs) + "}";
         return result;
     }
 

@@ -29,25 +29,10 @@ public class While extends Statement {
 
     private Condition mCondition;
     private Block     mStatements;
-    private int       mLineNr;
 
     public While(Condition condition, Block statements) {
         mCondition  = condition;
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        mCondition.computeLineNr();
-        mStatements.computeLineNr();
     }
 
     public void exec() throws SetlException {
@@ -75,7 +60,7 @@ public class While extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs);
+        String result = Environment.getLineStart(tabs);
         result += "while (" + mCondition.toString(tabs) + ") ";
         result += mStatements.toString(tabs, true);
         return result;

@@ -8,7 +8,6 @@ import interpreter.types.Rational;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 
 /*
 grammar rule:
@@ -28,29 +27,11 @@ public class Range extends Constructor {
     private Expr mStart;
     private Expr mSecond;
     private Expr mStop;
-    private int  mLineNr;
 
     public Range(Expr start, Expr second, Expr stop) {
         mStart  = start;
         mSecond = second;
         mStop   = stop;
-        mLineNr = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mStart.computeLineNr();
-        if (mSecond != null) {
-            mSecond.computeLineNr();
-        }
-        mStop.computeLineNr();
     }
 
     public void fillCollection(CollectionValue collection) throws SetlException {

@@ -8,7 +8,6 @@ import interpreter.types.SetlBoolean;
 import interpreter.types.Term;
 import interpreter.types.Value;
 import interpreter.utilities.Condition;
-import interpreter.utilities.Environment;
 import interpreter.utilities.Iterator;
 import interpreter.utilities.IteratorExecutionContainer;
 import interpreter.utilities.TermConverter;
@@ -36,7 +35,6 @@ public class Exists extends Expr {
 
     private Iterator  mIterator;
     private Condition mCondition;
-    private int       mLineNr;
 
     private class Exec implements IteratorExecutionContainer {
         private Condition       mCondition;
@@ -61,20 +59,6 @@ public class Exists extends Expr {
     public Exists(Iterator iterator, Condition condition) {
         mIterator  = iterator;
         mCondition = condition;
-        mLineNr    = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mIterator.computeLineNr();
-        mCondition.computeLineNr();
     }
 
     public SetlBoolean evaluate() throws SetlException {

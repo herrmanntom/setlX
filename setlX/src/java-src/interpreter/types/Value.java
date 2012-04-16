@@ -5,25 +5,11 @@ import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.expressions.Expr;
-import interpreter.utilities.Environment;
 import interpreter.utilities.MatchResult;
 
 import java.util.List;
 
 public abstract class Value implements Comparable<Value> {
-
-    private int  mLineNr = -1;
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-    }
 
     public abstract Value   clone();
 

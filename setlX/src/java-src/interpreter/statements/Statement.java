@@ -12,10 +12,6 @@ public abstract class Statement extends CodeFragment {
     // is debug mode active? MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public static   boolean sDebugModeActive = false;
 
-    public abstract int  getLineNr();
-
-    public abstract void computeLineNr();
-
     public          void execute() throws SetlException {
         if (sDebugModeActive && ! Environment.isDebugPromptActive()) {
             DebugPrompt.prompt(this);

@@ -10,7 +10,6 @@ import interpreter.types.SetlList;
 import interpreter.types.SetlString;
 import interpreter.types.Term;
 import interpreter.types.Value;
-import interpreter.utilities.Environment;
 import interpreter.utilities.ParseSetlX;
 import interpreter.utilities.TermConverter;
 
@@ -28,7 +27,6 @@ public class StringConstructor extends Expr {
     private String       mOriginalStr; // original String
     private List<String> mFragments;   // list of string fragments for after and between expressions
     private List<Expr>   mExprs;       // list of $-Expressions
-    private int          mLineNr;
 
     public StringConstructor(boolean quoted, String originalStr) {
         this(quoted, originalStr, new LinkedList<String>(), new LinkedList<Expr>());
@@ -101,21 +99,6 @@ public class StringConstructor extends Expr {
         mOriginalStr    = originalStr;
         mFragments      = fragments;
         mExprs          = exprs;
-        mLineNr         = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        for (Expr expr : mExprs) {
-            expr.computeLineNr();
-        }
     }
 
     public SetlString evaluate() throws SetlException {

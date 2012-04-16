@@ -39,29 +39,15 @@ public class ProcedureDefinition extends Value {
 
     protected List<ParameterDef> mParameters;  // parameter list
     protected Block              mStatements;  // statements in the body of the definition
-    private   int                mLineNr;
 
     public ProcedureDefinition(List<ParameterDef> parameters, Block statements) {
         mParameters = parameters;
         mStatements = statements;
-        mLineNr = -1;
     }
 
     public ProcedureDefinition clone() {
         // this value can not be changed once set => no harm in returning the original
         return this;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = Environment.sourceLine;
-        mStatements.computeLineNr();
     }
 
     /* type checks (sort of Boolean operation) */

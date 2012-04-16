@@ -29,7 +29,6 @@ public class For extends Statement {
 
     private Iterator    mIterator;
     private Block       mStatements;
-    private int         mLineNr;
 
     private class Exec implements IteratorExecutionContainer {
         private Block   mStatements;
@@ -47,20 +46,6 @@ public class For extends Statement {
     public For(Iterator iterator, Block statements) {
         mIterator   = iterator;
         mStatements = statements;
-        mLineNr     = -1;
-    }
-
-    public int getLineNr() {
-        if (mLineNr < 0) {
-            computeLineNr();
-        }
-        return mLineNr;
-    }
-
-    public void computeLineNr() {
-        mLineNr = ++Environment.sourceLine;
-        mIterator.computeLineNr();
-        mStatements.computeLineNr();
     }
 
     public void exec() throws SetlException {
@@ -81,7 +66,7 @@ public class For extends Statement {
     /* string operations */
 
     public String toString(int tabs) {
-        String result = Environment.getLineStart(getLineNr(), tabs);
+        String result = Environment.getLineStart(tabs);
         result += "for (" + mIterator.toString(tabs) + ") ";
         result += mStatements.toString(tabs, true);
         return result;

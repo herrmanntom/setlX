@@ -35,7 +35,7 @@ public class Exit extends Statement {
         mLineNr = ++Environment.sourceLine;
     }
 
-    public void execute() throws ExitException {
+    public void exec() throws ExitException {
         throw new ExitException("Good Bye! (exit)");
     }
 

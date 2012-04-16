@@ -19,7 +19,9 @@ import java.util.List;
 
 public abstract class PreDefinedFunction extends ProcedureDefinition {
     // functional characters used in terms
-    private final   static  String  FUNCTIONAL_CHARACTER    = "^preDefinedProcedure";
+    private final static String  FUNCTIONAL_CHARACTER = "^preDefinedProcedure";
+    // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean sStepThroughFunction = false;
 
     private String  mName;
     private boolean mUnlimitedParameters;
@@ -105,11 +107,15 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         }
 
         // List of writeBack-values, which should be stored into the outer scope
-        LinkedList<Value> writeBackVars = new LinkedList<Value>();
+        LinkedList<Value>   writeBackVars   = new LinkedList<Value>();
 
         // results of call to predefined function
-        Value             result        = null;
-        WriteBackAgent    wba           = new WriteBackAgent();
+        Value               result          = null;
+        WriteBackAgent      wba             = new WriteBackAgent();
+
+        if (sStepThroughFunction) {
+            Environment.setDebugStepThroughFunction(false);
+        }
 
         try {
             // call predefined function (which may add writeBack-values to List)

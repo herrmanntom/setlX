@@ -23,7 +23,9 @@ implemented here as:
 
 public class For extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^for";
+    private final static String  FUNCTIONAL_CHARACTER   = "^for";
+    // continue execution of this loop in debug mode until it finishes. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean sFinishLoop            = false;
 
     private Iterator    mIterator;
     private Block       mStatements;
@@ -61,9 +63,19 @@ public class For extends Statement {
         mStatements.computeLineNr();
     }
 
-    public void execute() throws SetlException {
-        Exec e = new Exec(mStatements);
+    public void exec() throws SetlException {
+        Exec    e           = new Exec(mStatements);
+        boolean finishLoop  = sFinishLoop;
+        if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
+            Environment.setDebugFinishLoop(false);
+        }
         mIterator.eval(e);
+        if (sFinishLoop) {
+            Environment.setDebugModeActive(true);
+            Environment.setDebugFinishLoop(false);
+        } else if (finishLoop) {
+            Environment.setDebugFinishLoop(true);
+        }
     }
 
     /* string operations */

@@ -4,6 +4,8 @@ public class Om extends Value {
 
     public final static Om OM = new Om();
 
+    private boolean isHidden  = false; // do not display when printing result after evaluating in interactive mode
+
     private Om() {  }
 
     public Om clone() {
@@ -38,4 +40,14 @@ public class Om extends Value {
             return -1;
         }
     }
+
+    public boolean isHidden() {
+        return isHidden && ((isHidden = false) || true); // reset to false after one query
+    }
+
+    public Om hide() {
+        isHidden = true;
+        return this;
+    }
 }
+

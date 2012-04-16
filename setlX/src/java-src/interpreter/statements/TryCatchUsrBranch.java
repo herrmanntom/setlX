@@ -74,6 +74,10 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         mBlockToRecover.execute();
     }
 
+    public void exec() throws SetlException {
+        execute();
+    }
+
     /* string operations */
 
     public String toString(int tabs) {

@@ -28,9 +28,13 @@ implemented here as:
 
 public class Call extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^call";
+    private final static String     FUNCTIONAL_CHARACTER = "^call";
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 1900;
+    private final static int        PRECEDENCE           = 1900;
+    // are any breakpoints set? MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean    sBreakpointsEnabled  = false;
+    // continue execution of function, which includes this call, in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean    sFinishOuterFunction = false;
 
     private Variable   mLhs;       // left hand side
     private List<Expr> mArgs;      // list of arguments
@@ -70,8 +74,23 @@ public class Call extends Expr {
             args.add(arg.eval().clone());
         }
         try {
-            // also supply the original expressions (mArgs), which are needed for 'rw' parameters
-            return lhs.call(mArgs, args);
+            if (sBreakpointsEnabled && ! Environment.isDebugPromptActive()) {
+                if (Environment.isBreakpoint(mLhs.toString())) {
+                    Environment.setDebugModeActive(true);
+                }
+            }
+            boolean finishOuterFunction = sFinishOuterFunction;
+            if (finishOuterFunction) { // unset, because otherwise it would be reset when this call returns
+                Environment.setDebugFinishFunction(false);
+            }
+            try {
+                // also supply the original expressions (mArgs), which are needed for 'rw' parameters
+                return lhs.call(mArgs, args);
+            } finally {
+                if (finishOuterFunction) {
+                    Environment.setDebugFinishFunction(true);
+                }
+            }
         } catch (StackOverflowError e) {
             throw new JVMException("Stack overflow.\n"
                                  + "Try preventing recursion and/or execute with larger stack size.\n"

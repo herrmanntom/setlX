@@ -54,6 +54,10 @@ public class MatchDefaultBranch extends MatchAbstractBranch {
         mStatements.execute();
     }
 
+    public void exec() throws SetlException {
+        execute();
+    }
+
     /* string operations */
 
     public String toString(int tabs) {

@@ -35,7 +35,7 @@ public class Continue extends Statement {
         mLineNr = ++Environment.sourceLine;
     }
 
-    public void execute() throws ContinueException {
+    public void exec() throws ContinueException {
         throw new ContinueException("continue");
     }
 

@@ -6,6 +6,7 @@ import interpreter.exceptions.ExitException;
 import interpreter.exceptions.FileNotReadableException;
 import interpreter.exceptions.FileNotWriteableException;
 import interpreter.exceptions.ParserException;
+import interpreter.exceptions.ResetException;
 import interpreter.exceptions.ReturnException;
 import interpreter.exceptions.SetlException;
 import interpreter.statements.Block;
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String VERSION         = "0.6.3";
+    private final static String VERSION         = "0.7.0";
     private final static String VERSION_PREFIX  = "v";
     private final static String HEADER          = "-====================================setlX====================================-";
 
@@ -114,6 +115,7 @@ public class SetlX {
         do {
             System.out.println(); // newline to visually separate the next input
             System.out.print("=> ");
+            System.out.flush();
             try {
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();
@@ -230,6 +232,7 @@ public class SetlX {
     private static int execute(Block b) {
         try {
 
+            Environment.setDebugModeActive(false);
             b.execute();
 
         } catch (AbortException ae) { // code detected user did something wrong
@@ -252,6 +255,11 @@ public class SetlX {
 
             return EXEC_EXIT; // breaks loop while parsing interactively
 
+        } catch (ResetException re) { // user/code wants to quit debugging
+            if (Environment.isInteractive()) {
+                System.out.println("Resetting to interactive prompt.");
+            }
+            return EXEC_OK;
         } catch (ReturnException re) { // return outside of procedure
             if (Environment.isInteractive()) {
                 System.out.println(re.getMessage());

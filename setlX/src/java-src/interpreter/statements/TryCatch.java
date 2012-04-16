@@ -57,7 +57,7 @@ public class TryCatch extends Statement {
         }
     }
 
-    public void execute() throws SetlException {
+    public void exec() throws SetlException {
         try{
             mBlockToTry.execute();
         } catch (CatchableInSetlXException cise) {

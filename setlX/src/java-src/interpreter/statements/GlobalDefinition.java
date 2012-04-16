@@ -40,7 +40,7 @@ public class GlobalDefinition extends Statement {
         mLineNr = ++Environment.sourceLine;
     }
 
-    public void execute() {
+    public void exec() {
         mVar.makeGlobal();
     }
 

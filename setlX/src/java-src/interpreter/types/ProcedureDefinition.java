@@ -31,7 +31,11 @@ implemented here as:
 
 public class ProcedureDefinition extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^procedure";
+    public  final static String  FUNCTIONAL_CHARACTER = "^procedure";
+    // execute this function continuesly in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean sStepThroughFunction = false;
+    // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean sFinishFunction      = false;
 
     protected List<ParameterDef> mParameters;  // parameter list
     protected Block              mStatements;  // statements in the body of the definition
@@ -85,11 +89,17 @@ public class ProcedureDefinition extends Value {
         }
 
         // results of call to procedure
-        Value           result  = Om.OM;
-        WriteBackAgent  wba     = new WriteBackAgent();
+        Value           result      = Om.OM;
+        WriteBackAgent  wba         = new WriteBackAgent();
+        boolean         stepThrough = sStepThroughFunction;
 
         try {
             try {
+                if (stepThrough) {
+                    Environment.setDebugStepThroughFunction(false);
+                    Environment.setDebugModeActive(false);
+                }
+
                 // execute, e.g. perform real procedure call
                 mStatements.execute();
             } catch (ReturnException re) {
@@ -117,6 +127,13 @@ public class ProcedureDefinition extends Value {
 
             // write values in WriteBackAgent into restored scope
             wba.writeBack();
+
+            if (stepThrough || sFinishFunction) {
+                Environment.setDebugModeActive(true);
+                if (sFinishFunction) {
+                    Environment.setDebugFinishFunction(false);
+                }
+            }
         }
 
         return result;

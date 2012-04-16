@@ -56,7 +56,7 @@ public class Match extends Statement {
         mLineNr2 = ++Environment.sourceLine;
     }
 
-    public void execute() throws SetlException {
+    public void exec() throws SetlException {
         Value term = mExpr.eval().toTerm();
         for (MatchAbstractBranch br : mBranchList) {
             MatchResult result = br.matches(term);

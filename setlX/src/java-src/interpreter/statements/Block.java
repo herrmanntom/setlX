@@ -66,6 +66,10 @@ public class Block extends Statement {
         }
     }
 
+    public void exec() throws SetlException {
+        execute();
+    }
+
     /* string operations */
 
     public String toString(int tabs) {

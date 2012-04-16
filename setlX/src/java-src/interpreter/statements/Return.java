@@ -45,7 +45,7 @@ public class Return extends Statement {
         mLineNr = ++Environment.sourceLine;
     }
 
-    public void execute() throws SetlException {
+    public void exec() throws SetlException {
         if (mResult != null) {
             throw new ReturnException(mResult.eval());
         } else {

@@ -5,16 +5,23 @@ import interpreter.exceptions.SetlException;
 import interpreter.exceptions.UndefinedOperationException;
 import interpreter.types.Value;
 import interpreter.utilities.CodeFragment;
+import interpreter.utilities.DebugPrompt;
 import interpreter.utilities.Environment;
 
 public abstract class Expr extends CodeFragment {
+    // step execution of this expr. MAY ONLY BE SET BY ENVIRONMENT CLASS!zzz
+    public static boolean sStepNext = false;
 
     public abstract int getLineNr();
 
     public abstract void computeLineNr();
 
-    public Value eval() throws SetlException {
+    public final Value eval() throws SetlException {
         try {
+            if (sStepNext && Environment.isDebugModeActive() && ! Environment.isDebugPromptActive()) {
+                Environment.setDebugStepNextExpr(false);
+                DebugPrompt.prompt(this);
+            }
             return this.evaluate();
         } catch (AbortException ae) {
             throw ae;

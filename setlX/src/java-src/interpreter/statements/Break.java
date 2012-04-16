@@ -37,7 +37,7 @@ public class Break extends Statement {
     }
 
 
-    public void execute() throws BreakException {
+    public void exec() throws BreakException {
         throw new BreakException("break");
     }
 

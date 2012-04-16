@@ -31,12 +31,8 @@ public class ValueExpr extends Expr {
         mValue.computeLineNr();
     }
 
-    public Value eval() {
-        return mValue;
-    }
-
     public Value evaluate() {
-        return eval();
+        return mValue;
     }
 
     /* string operations */

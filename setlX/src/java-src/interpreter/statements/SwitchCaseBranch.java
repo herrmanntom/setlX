@@ -56,6 +56,10 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
         mStatements.execute();
     }
 
+    public void exec() throws SetlException {
+        execute();
+    }
+
     /* string operations */
 
     public String toString(int tabs) {

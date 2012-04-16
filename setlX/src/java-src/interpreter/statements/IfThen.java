@@ -48,7 +48,7 @@ public class IfThen extends Statement {
         }
     }
 
-    public void execute() throws SetlException {
+    public void exec() throws SetlException {
         for (IfThenAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
                 br.execute();

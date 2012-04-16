@@ -51,7 +51,7 @@ public class Switch extends Statement {
         mLineNr2 = ++Environment.sourceLine;
     }
 
-    public void execute() throws SetlException {
+    public void exec() throws SetlException {
         for (SwitchAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
                 br.execute();

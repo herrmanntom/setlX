@@ -2,6 +2,7 @@ package interpreter.statements;
 
 import interpreter.exceptions.SetlException;
 import interpreter.expressions.Expr;
+import interpreter.types.Om;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
@@ -38,9 +39,9 @@ public class ExpressionStatement extends Statement {
         mExpr.computeLineNr();
     }
 
-    public void execute() throws SetlException {
+    public void exec() throws SetlException {
         Value v = mExpr.eval();
-        if (Environment.isPrintAfterEval()) {
+        if (Environment.isPrintAfterEval() && (v != Om.OM || !((Om) v).isHidden() )) {
             System.out.println("Result: " + v);
         }
     }

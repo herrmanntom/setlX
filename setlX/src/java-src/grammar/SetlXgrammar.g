@@ -74,7 +74,7 @@ statement returns [Statement stmnt]
         List<MatchAbstractBranch>       matchList  = new LinkedList<MatchAbstractBranch>();
         List<TryCatchAbstractBranch>    tryList    = new LinkedList<TryCatchAbstractBranch>();
     }
-    : 'var' variable ';'                                             { stmnt = new GlobalDefinition($variable.v);                    }
+    : 'var' listOfVariables ';'                                      { stmnt = new GlobalDefinition($listOfVariables.lov);           }
     | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));               }
       (
         'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));         }
@@ -116,6 +116,16 @@ statement returns [Statement stmnt]
     | 'exit' ';'                                                     { stmnt = Exit.E;                                               }
     | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);          }
     | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);                 }
+    ;
+
+listOfVariables returns [List<Variable> lov]
+    @init {
+        lov = new LinkedList<Variable>();
+    }
+    : v1 = variable       { lov.add($v1.v);             }
+      (
+        ',' v2 = variable { lov.add($v2.v);             }
+      )*
     ;
 
 variable returns [Variable v]

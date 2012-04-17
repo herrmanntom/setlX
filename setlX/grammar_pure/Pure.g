@@ -13,7 +13,7 @@ block
     ;
 
 statement
-    : 'var' variable ';'
+    : 'var' listOfVariables ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
     | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
@@ -26,6 +26,10 @@ statement
     | 'exit' ';'
     | (assignment)=> assignment ';'
     | anyExpr ';'
+    ;
+
+listOfVariables
+    : variable (',' variable)*
     ;
 
 variable

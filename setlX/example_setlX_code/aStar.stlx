@@ -1,0 +1,72 @@
+// this program demonstrates how straight forward implementing A* can be
+
+var h;
+var transition;
+
+aStar := procedure(s, t) {
+    g := closed := path := f := {};
+
+    g[s]    := 0;
+    open    := {s};
+    path[s] := [s];
+    f[s]    := g[s] + h[s];
+
+    while(open != {}) {
+        x       := arb( {x in open | f[x] == min( {f[y] : y in open} ) } );
+        open    -= {x};
+        closed  += {x};
+        if (x in t) {
+            print("path $s$ -> $t$: $path[x]$");
+            return;
+        } else {
+            for ( [y, yCost] in transition{x} ) {
+                if (y notin closed && y notin open) {
+                    path[y] := [y] + path[x];
+                    open    += {y};
+                    g[y]    := g[x] + yCost;
+                    f[y]    := g[y] + h[y];
+                } else if (g[x] + yCost < g[y]) {
+                    path[y] := [y] + path[x];
+                    g[y]    := g[x] + yCost;
+                    f[y]    := g[y] + h[y];
+                    if (y in closed) {
+                        open    += {y};
+                        closed  -= {y};
+                    }
+                }
+            }
+        }
+    }
+    print("path $s$ -> $t$: no solution");
+};
+
+// query
+
+h := {[1, 22], [2, 94], [3, 98], [4, 34], [5, 88], [6, 4], [7, 8], [8, 5], [9, 1], [10, 0]};
+
+transition := {
+    [ 1, [ 4, 13]],
+    [ 1, [ 5, 65]],
+    [ 1, [10, 53]],
+    [ 2, [ 9, 29]],
+    [ 3, [ 2,  7]],
+    [ 3, [ 4, 13]],
+    [ 3, [ 9, 11]],
+    [ 4, [ 3, 12]],
+    [ 5, [ 7, 55]],
+    [ 5, [10, 35]],
+    [ 6, [ 5, 12]],
+    [ 7, [ 4,  8]],
+    [ 7, [ 8, 11]],
+    [ 8, [ 9,  9]],
+    [ 8, [ 6, 39]],
+    [10, [ 6, 17]],
+    [10, [ 7, 14]],
+    [10, [ 8, 23]]
+};
+
+aStar(1, {6});
+aStar(1, {9});
+aStar(1, {6, 9});
+aStar(3, {7});
+

@@ -100,14 +100,7 @@ public class VariableScope {
 
     public static void makeGlobal(String var) {
         if (sGlobals.locateValue(var).mV == null) {
-            Value v = findValue(var);
-            if (v != null) {
-                sGlobals.storeValue(var, v);
-                // remove local variable (will survive if nested somewhere in mOriginalScope)
-                sVariableScope.mVarBindings.remove(v);
-            } else {
-                sGlobals.storeValue(var, Om.OM);
-            }
+            sGlobals.storeValue(var, Om.OM);
         }
     }
 

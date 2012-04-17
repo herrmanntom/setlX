@@ -1,7 +1,6 @@
 // this program demonstrates the parser and eval functionality, and is rigged to not require user input
 
-var inputA;
-var inputB;
+var inputA, inputB;
 
 inputA := ["%x","x","5"];
 inputB := ["%x","value + value","value ** value"];

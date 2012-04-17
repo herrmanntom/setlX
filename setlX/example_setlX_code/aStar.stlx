@@ -1,7 +1,7 @@
 // this program demonstrates how straight forward implementing A* can be
 
-var h;
-var transition;
+/* algorithm */
+var h, transition;
 
 aStar := procedure(s, t) {
     g := closed := path := f := {};
@@ -40,10 +40,11 @@ aStar := procedure(s, t) {
     print("path $s$ -> $t$: no solution");
 };
 
-// query
-
+/* graph */
+// heuristic: [node, estimation]
 h := {[1, 22], [2, 94], [3, 98], [4, 34], [5, 88], [6, 4], [7, 8], [8, 5], [9, 1], [10, 0]};
 
+// transitions: [node, [neighbor, cost]] which represents the path: node --{cost}--> neighbor
 transition := {
     [ 1, [ 4, 13]],
     [ 1, [ 5, 65]],
@@ -65,6 +66,7 @@ transition := {
     [10, [ 8, 23]]
 };
 
+/* query */
 aStar(1, {6});
 aStar(1, {9});
 aStar(1, {6, 9});

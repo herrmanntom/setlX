@@ -4,36 +4,26 @@
 var h, transition;
 
 aStar := procedure(s, t) {
-    g := closed := path := f := {};
+    g := path := f := {};
 
-    g[s]    := 0;
-    open    := {s};
-    path[s] := [s];
-    f[s]    := g[s] + h[s];
+    g[s]        := 0;
+    path[s]     := [ s ];
+    f[s]        := h[s];
+    openQueue   := { [f[s], s] };
 
-    while(open != {}) {
-        x       := arb( {x in open | f[x] == min( {f[y] : y in open} ) } );
-        open    -= {x};
-        closed  += {x};
+    while(openQueue != {}) {
+        [fx, x] := fromB(openQueue);
         if (x in t) {
             print("path $s$ -> $t$: $path[x]$");
             return;
-        } else {
-            for ( [y, yCost] in transition{x} ) {
-                if (y notin closed && y notin open) {
-                    path[y] := [y] + path[x];
-                    open    += {y};
-                    g[y]    := g[x] + yCost;
-                    f[y]    := g[y] + h[y];
-                } else if (g[x] + yCost < g[y]) {
-                    path[y] := [y] + path[x];
-                    g[y]    := g[x] + yCost;
-                    f[y]    := g[y] + h[y];
-                    if (y in closed) {
-                        open    += {y};
-                        closed  -= {y};
-                    }
-                }
+        }
+        for ( [y, yCost] in transition{x} ) {
+            if (g[y] == om || g[x] + yCost < g[y]) {
+                path[y]     := [y] + path[x];
+                g[y]        := g[x] + yCost;
+                openQueue   -= { [f[y], y] };
+                f[y]        := g[y] + h[y];
+                openQueue   += { [f[y], y] };
             }
         }
     }

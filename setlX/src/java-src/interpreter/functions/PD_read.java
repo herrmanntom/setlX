@@ -5,8 +5,6 @@ import interpreter.types.SetlString;
 import interpreter.types.Value;
 import interpreter.utilities.Environment;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,13 +18,15 @@ public class PD_read extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        BufferedReader br         = new BufferedReader(new InputStreamReader(System.in));
         Value          inputValue = Om.OM;
         String         input      = null;
         try {
             do {
-                System.out.print(": ");
-                input = br.readLine().trim();
+                Environment.promptForStdInOnStdOut(": ");
+                input = Environment.getStdIn().readLine();
+                if (input != null) {
+                    input = input.trim();
+                }
             } while (input != null && input.equals(""));
         } catch (IOException ioe) {
             System.err.println(ioe);

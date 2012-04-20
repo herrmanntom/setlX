@@ -4,11 +4,9 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
 
 public final class InputReader {
-    private static BufferedReader br  = null;
     private static String         EOL = "\n";
 
     /**
@@ -27,12 +25,10 @@ public final class InputReader {
      * @return input from System.in, wrapped in new InputStream
      */
     public static InputStream getStream() throws EOFException {
-        if (br == null) {
-            br = new BufferedReader(new InputStreamReader(System.in));
-        }
-        StringBuilder input     = new StringBuilder();
-        String        line      = null;
-        int           endlAdded = 0;
+        BufferedReader  br          = Environment.getStdIn();
+        StringBuilder   input       = new StringBuilder();
+        String          line        = null;
+        int             endlAdded   = 0;
         try {
             while (true) {
                 // line is read and returned without termination character(s)

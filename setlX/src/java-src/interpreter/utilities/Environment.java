@@ -8,6 +8,9 @@ import interpreter.statements.Statement;
 import interpreter.statements.While;
 import interpreter.types.ProcedureDefinition;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -16,6 +19,9 @@ import java.util.Random;
 public class Environment {
     // number of CPUs (cores) in the executing system
     private final   static  int             CORES                       = Runtime.getRuntime().availableProcessors();
+
+    // buffered reader for stdin
+    private         static  BufferedReader  stdInReader                 = null;
 
     // random number generator
     private         static  Random          randoom                     = null;
@@ -48,6 +54,24 @@ public class Environment {
         } else {
             return 1;
         }
+    }
+
+    public static BufferedReader getStdIn() {
+        if (stdInReader == null) {
+            stdInReader = new BufferedReader(new InputStreamReader(System.in));
+        }
+        return stdInReader;
+    }
+
+    public static boolean promptForStdInOnStdOut(String prompt) throws IOException {
+        // Only if a pipe is connected the input is instantly ready.
+        // A human usually takes time AFTER the prompt to type something ;-)
+        if ( ! getStdIn().ready()) {
+            System.out.print(prompt);
+            System.out.flush();
+            return true;
+        }
+        return false;
     }
 
     public static void setPredictableRandoom() {

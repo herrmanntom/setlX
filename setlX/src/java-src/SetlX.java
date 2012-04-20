@@ -21,25 +21,28 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String VERSION         = "0.7.1";
-    private final static String VERSION_PREFIX  = "v";
-    private final static String HEADER          = "-====================================setlX====================================-";
+    private final static String     VERSION         = "0.7.2";
+    private final static String     VERSION_PREFIX  = "v";
+    private final static String     HEADER          = "-====================================setlX====================================-";
 
-    private final static int    EXIT_OK         = 0;
-    private final static int    EXIT_ERROR      = 1;
+    private final static int        EXIT_OK         = 0;
+    private final static int        EXIT_ERROR      = 1;
 
-    private final static int    EXEC_OK         = 23;
-    private final static int    EXEC_ERROR      = 33;
-    private final static int    EXEC_EXIT       = 42;
+    private final static int        EXEC_OK         = 23;
+    private final static int        EXEC_ERROR      = 33;
+    private final static int        EXEC_EXIT       = 42;
+
+    // global parameters
+    private       static boolean    unhideExceptions= false; // 'secret' option to print stack trace of unhandled java exceptions
+    private       static boolean    verbose         = false; /* print extra information and use correct indentation when
+                                                                printing statements etc.                                 */
 
     public static void main(String[] args) throws Exception {
-        boolean         dump        = false; // writes loaded code into a file, including internal line numbers
+        boolean         dump        = false; // writes loaded code into a file
         String          dumpFile    = "";    // file to dump into
         boolean         help        = false;
         boolean         interactive = false;
         boolean         noExecution = false;
-        boolean         verbose     = false; /* print extra information and use correct indentation when
-                                                   printing statements etc.                                 */
         List<String>    files       = new LinkedList<String>();
 
         for (int i = 0; i < args.length; i++) {
@@ -75,6 +78,8 @@ public class SetlX {
                 Real.setPrecision128();
             } else if (s.equals("--real256")) {
                 Real.setPrecision256();
+            } else if (s.equals("--unhideExceptions")) {
+                unhideExceptions = true;
             } else if (s.equals("--verbose")) {
                 verbose = true;
             } else if (s.length() >= 2 && s.substring(0,2).equals("--")) { // invalid option
@@ -95,9 +100,9 @@ public class SetlX {
             printInteractiveBegin();
             parseAndExecuteInteractive();
         } else if ( ! help) {
-            List<Block> programs = parseAndDumpFiles(files, dump, dumpFile, verbose);
+            List<Block> programs = parseAndDumpFiles(files, dump, dumpFile);
             if ( ! noExecution) {
-                executeFiles(programs, verbose);
+                executeFiles(programs);
             }
         } else {
             printHelp();
@@ -113,9 +118,7 @@ public class SetlX {
         Block   blk      = null;
         boolean skipTest = false;
         do {
-            System.out.println(); // newline to visually separate the next input
-            System.out.print("=> ");
-            System.out.flush();
+            Environment.promptForStdInOnStdOut("\n=> "); // including newline to visually separate the next input
             try {
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();
@@ -140,7 +143,7 @@ public class SetlX {
         printExecutionFinished();
     }
 
-    private static List<Block> parseAndDumpFiles(List<String> files, boolean dump, String dumpFile, boolean verbose) throws Exception {
+    private static List<Block> parseAndDumpFiles(List<String> files, boolean dump, String dumpFile) throws Exception {
         // parsed programs
         List<Block> programs = new ArrayList<Block>(files.size());
 
@@ -206,7 +209,7 @@ public class SetlX {
         return programs;
     }
 
-    private static void executeFiles(List<Block> programs, boolean verbose) throws Exception {
+    private static void executeFiles(List<Block> programs) throws Exception {
         Environment.setInteractive(false);
         Environment.setPrintAfterEval(false);
 
@@ -265,9 +268,6 @@ public class SetlX {
         } catch (SetlException se) { // user/code did something wrong
             printExceptionsTrace(se.getTrace());
             return EXEC_ERROR;
-        } catch (NullPointerException e) { // this should never happen...
-            System.err.println("Internal Error. Please report this error including the code you executed.");
-            return EXEC_ERROR;
         } catch (OutOfMemoryError oome) {
             System.err.println("Out of memory error.\n"
                              + "Try improving the SetlX program and/or execute with larger maximum memory size.\n"
@@ -275,6 +275,12 @@ public class SetlX {
                              + "\n"
                              + "If that does not help get a better machine ;-)\n");
             return EXEC_EXIT; // breaks loop while parsing interactively
+        } catch (Exception e) { // this should never happen...
+            System.err.println("Internal Error. Please report this error including the code you executed.");
+            if (unhideExceptions) {
+                e.printStackTrace();
+            }
+            return EXEC_ERROR;
         }
         return EXEC_OK; // continue loop while parsing interactively
     }

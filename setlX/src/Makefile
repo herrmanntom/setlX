@@ -24,7 +24,6 @@ test:                                                        \
 build:                                                      \
         setlX                                                        \
         java-src/grammar/SetlXgrammar*.java                          \
-        bin/comparableSet/*.class                                    \
         bin/interpreter/exceptions/*.class                           \
         bin/interpreter/types/*.class                                \
         bin/interpreter/utilities/*.class                            \
@@ -33,18 +32,18 @@ build:                                                      \
         bin/interpreter/expressions/*.class                          \
         bin/interpreter/statements/*.class                           \
         bin/grammar/SetlXgrammar*.class                              \
-        bin/SetlX.class
+        bin/interpreter/SetlX.class
 	if [ ! -x setlX ]; then chmod +x setlX; fi
 	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos make.cmd setlX.cmd; fi
 	rm -f make_.cmd setlX_.cmd
 
-bin/SetlX.class :                                            \
-        java-src/SetlX.java                                          \
+bin/interpreter/SetlX.class :                                \
+        java-src/interpreter/SetlX.java                              \
         java-src/interpreter/exceptions/*.java                       \
         java-src/interpreter/types/*.java                            \
         java-src/interpreter/utilities/*.java                        \
         java-src/interpreter/statements/Block.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/SetlX.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/SetlX.java
 
 bin/grammar/SetlXgrammar*.class :                            \
         java-src/grammar/SetlXgrammar*.java                          \
@@ -128,7 +127,6 @@ bin/interpreter/types/*.class :                              \
         java-src/interpreter/utilities/ParameterDef.java             \
         java-src/interpreter/utilities/VariableScope.java            \
         java-src/interpreter/utilities/WriteBackAgent.java           \
-        java-src/comparableSet/*.java                                \
         java-src/interpreter/exceptions/*.java
 	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/types/*.java
 
@@ -137,11 +135,6 @@ bin/interpreter/exceptions/*.class :                         \
         java-src/interpreter/types/Value.java
 	mkdir -p bin/
 	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/exceptions/*.java
-
-bin/comparableSet/*.class :                                  \
-        java-src/comparableSet/*.java
-	mkdir -p bin/
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/comparableSet/*.java
 
 java-src/grammar/SetlXgrammar*.java :                        \
         java-src/grammar/SetlXgrammar.g

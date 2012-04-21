@@ -20,7 +20,7 @@ REM set javaParameters=%javaParameters% -Xmx6g"
 REM ############################################################################
 
 IF EXIST %setlXJarLocation% (
-    java -cp "%setlXJarLocation%;%CLASSPATH%" %javaParameters% SetlX %*
+    java -cp "%setlXJarLocation%;%CLASSPATH%" %javaParameters% interpreter.SetlX %*
 ) ELSE (
     echo "The setlX.jar file can not be found!"
 )

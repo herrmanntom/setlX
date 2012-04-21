@@ -14,7 +14,6 @@ IF EXIST java-src (
     )
     java  -cp antlr\antlr-*.jar org.antlr.Tool -fo java-src\grammar java-src\grammar\SetlXgrammar.g
     mkdir bin
-    javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\comparableSet\*.java
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\interpreter\exceptions\*.java
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\interpreter\types\*.java
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\interpreter\utilities\*.java
@@ -23,7 +22,7 @@ IF EXIST java-src (
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\interpreter\expressions\*.java
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\interpreter\statements\*.java
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\grammar\SetlXgrammar*.java
-    javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\SetlX.java
+    javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\interpreter\SetlX.java
     cd bin
     jar xf ..\antlr\antlr-*.jar org/antlr/runtime
     cd ..

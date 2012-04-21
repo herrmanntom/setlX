@@ -256,7 +256,7 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException("Right-hand-side of '*/ " + this + "' is not a collection value.");
     }
 
-    public SetlSet powerSet() throws IncompatibleTypeException {
+    public SetlSet powerSet() throws SetlException {
         throw new IncompatibleTypeException("Operand '" + this + "' is not a set.");
     }
 

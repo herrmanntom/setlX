@@ -28,7 +28,7 @@ javaParameters="$javaParameters -Xss16m"
 
 if [ -f "$setlXJarLocation" ]
   then
-    java -cp "$setlXJarLocation:$CLASSPATH" $javaParameters SetlX "$@"
+    java -cp "$setlXJarLocation:$CLASSPATH" $javaParameters interpreter.SetlX "$@"
 else
     echo "The setlX.jar file can not be found!"
 fi

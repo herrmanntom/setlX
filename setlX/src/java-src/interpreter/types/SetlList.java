@@ -1,6 +1,5 @@
 package interpreter.types;
 
-import comparableSet.ComparableList;
 import interpreter.exceptions.IncompatibleTypeException;
 import interpreter.exceptions.NumberToLargeException;
 import interpreter.exceptions.SetlException;
@@ -10,55 +9,84 @@ import interpreter.utilities.MatchResult;
 import interpreter.utilities.TermConverter;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
-public class SetlList extends CollectionValue {
+/* This class implements a list of arbitrary SetlX values.
+ * It will most likely be created and filled by an SetListConstructor
+ * (or is result of an operation).
+ *
+ * Also see:
+ *   interpreter.utilities.Constructor
+ *   interpreter.utilities.ExplicitList
+ *   interpreter.utilities.Iteration
+ *   interpreter.utilities.Range
+ */
 
-    private ComparableList<Value> mList;
-    private ComparableList<Value> mOriginalList;
+public class SetlList extends CollectionValue {
+    /* To allow initially `free' cloning, by only marking a clone without
+     * actually doing any cloning, this list carries a isClone flag.
+     *
+     * If the contents of this SetlList is modified `separateFromOriginal()'
+     * MUST be called before the modification, which then performs the real cloning,
+     * if required.
+     *
+     * Main benefit of this technique is to perform the real cloning only
+     * when a clone is actually modified, thus not performing a time consuming
+     * cloning, when the clone is only used read-only, which it is in most cases.
+     */
+
+    private LinkedList<Value>   mList;
+    private boolean             isCloned; // is this list a clone?
 
     public SetlList() {
-        mList               = new ComparableList<Value>();
-        mOriginalList       = null;
+        mList       = new LinkedList<Value>();
+        isCloned    = false; // new lists are not a clone
     }
 
-    private SetlList(ComparableList<Value> list) {
-        mList               = null;
-        mOriginalList       = list;
+    private SetlList(LinkedList<Value> list) {
+        mList       = list;
+        isCloned    = true;  // lists created from another list ARE a clone
     }
 
     public SetlList clone() {
-        mOriginalList = getList();
-        mList         = null;
-        return new SetlList(mOriginalList);
+        /* When cloning, THIS list is marked to be a clone as well.
+         *
+         * This is done, because even though THIS is the original, it must also be
+         * cloned upon modification, otherwise clones which carry the same
+         * member list of THIS list would not notice, e.g.
+         * modifications of THIS original would bleed through to the clones.
+         */
+        isCloned = true;
+        return new SetlList(mList);
     }
 
-    public void separateFromOriginal() {
-        if (mOriginalList != null) {
-            mList = new ComparableList<Value>();
-            for (Value v: mOriginalList) {
+    /* If the contents of THIS SetlList is modified, the following function MUST
+     * be called before the modification. It performs the real cloning,
+     * if THIS is actually marked as a clone.
+     *
+     * While clone() is called upon all members of this list, this does not perform
+     * a `deep' cloning, as the members themselves are only marked for cloning.
+     */
+    private void separateFromOriginal() {
+        if (isCloned) {
+            LinkedList<Value> original = mList;
+            mList = new LinkedList<Value>();
+            for (Value v: original) {
                 mList.add(v.clone());
             }
-            mOriginalList = null;
-        }
-    }
-
-    private ComparableList<Value> getList() {
-        if (mList != null) {
-            return mList;
-        } else {
-            return mOriginalList;
+            isCloned = false;
         }
     }
 
     public Iterator<Value> iterator() {
-        return getList().iterator();
+        return mList.iterator();
     }
 
     public void compress() {
         while (true) {
-            if (getList().size() > 0 && getList().getLast() == Om.OM) {
-                getList().removeLast();
+            if (mList.size() > 0 && mList.getLast() == Om.OM) {
+                mList.removeLast();
             } else {
                 break;
             }
@@ -74,18 +102,10 @@ public class SetlList extends CollectionValue {
     /* arithmetic operations */
 
     public Value sum(Value summand) throws IncompatibleTypeException {
-        if (summand instanceof SetlList) {
-            SetlList s      = ((SetlList) summand).clone();
-            s.separateFromOriginal();
-            SetlList result = this.clone();
-            result.separateFromOriginal();
-            result.mList.addAll(s.mList);
-            return result;
-        } else if (summand instanceof Term) {
+        if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
         } else if (summand instanceof CollectionValue) {
             SetlList result = this.clone();
-            result.separateFromOriginal();
             for (Value v: (CollectionValue) summand) {
                 result.addMember(v.clone());
             }
@@ -141,14 +161,14 @@ public class SetlList extends CollectionValue {
     }
 
     public SetlBoolean containsMember(Value element) {
-        return SetlBoolean.get(getList().contains(element));
+        return SetlBoolean.get(mList.contains(element));
     }
 
     public Value firstMember() {
         if (size() < 1) {
             return Om.OM;
         }
-        return getList().getFirst().clone();
+        return mList.getFirst().clone();
     }
 
     public Value getMember(Value index) throws SetlException {
@@ -173,7 +193,7 @@ public class SetlList extends CollectionValue {
         if (index > size()) {
             return Om.OM;
         }
-        return getList().get(index - 1);
+        return mList.get(index - 1);
     }
 
     public Value getMembers(Value vLow, Value vHigh) throws SetlException {
@@ -189,8 +209,6 @@ public class SetlList extends CollectionValue {
             throw new IncompatibleTypeException("Upper bound '" + vHigh + "' is not a integer.");
         }
 
-        SetlList result = new SetlList();
-
         if (low < 1) {
             throw new NumberToLargeException("Lower bound '" + low + "' is lower as '1'.");
         }
@@ -200,8 +218,10 @@ public class SetlList extends CollectionValue {
         if (high > size()) {
             throw new NumberToLargeException("Upper bound '" + high + "' is larger as list size '" + size() + "'.");
         }
+
+        SetlList result = new SetlList();
         for (int i = low - 1; i < high; i++) {
-            result.addMember(getList().get(i).clone());
+            result.addMember(mList.get(i).clone());
         }
         return result;
     }
@@ -210,12 +230,12 @@ public class SetlList extends CollectionValue {
         if (size() < 1) {
             return Om.OM;
         }
-        return getList().getLast().clone();
+        return mList.getLast().clone();
     }
 
     public Value maximumMember() throws SetlException {
         Value max = Infinity.NEGATIVE;
-        for (Value v: getList()) {
+        for (Value v: mList) {
             if (v.maximum(max).equals(v)) {
                 max = v;
             }
@@ -225,7 +245,7 @@ public class SetlList extends CollectionValue {
 
     public Value minimumMember() throws SetlException {
         Value min = Infinity.POSITIVE;
-        for (Value v: getList()) {
+        for (Value v: mList) {
             if (v.minimum(min).equals(v)) {
                 min = v;
             }
@@ -276,7 +296,7 @@ public class SetlList extends CollectionValue {
     }
 
     public int size() {
-        return getList().size();
+        return mList.size();
     }
 
     /* string and char operations */
@@ -311,7 +331,7 @@ public class SetlList extends CollectionValue {
         // 'other' is a list
         SetlList otherList = (SetlList) other;
 
-        if (getList().size() != otherList.getList().size()) {
+        if (mList.size() != otherList.mList.size()) {
             return new MatchResult(false);
         }
 
@@ -340,7 +360,7 @@ public class SetlList extends CollectionValue {
 
     public Value toTerm() {
         SetlList termList = new SetlList();
-        for (Value v: getList()) {
+        for (Value v: mList) {
             termList.addMember(v.toTerm());
         }
         return termList;
@@ -358,8 +378,24 @@ public class SetlList extends CollectionValue {
      */
     public int compareTo(Value v){
         if (v instanceof SetlList) {
-            SetlList l = (SetlList) v;
-            return getList().compareTo(l.getList());
+            Iterator<Value> iterFirst  = iterator();
+            Iterator<Value> iterSecond = ((SetlList) v).iterator();
+            while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                Value first  = iterFirst .next();
+                Value second = iterSecond.next();
+                int   cmp    = first.compareTo(second);
+                if (cmp == 0) {
+                    continue;
+                }
+                return cmp;
+            }
+            if (iterFirst.hasNext()) {
+                return 1;
+            }
+            if (iterSecond.hasNext()) {
+                return -1;
+            }
+            return 0;
         } else if (v instanceof Term || v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
             // only Term, ProcedureDefinition and +Infinity are bigger
             return -1;

@@ -23,9 +23,7 @@ setlX/grammar_pure/PureParser.java
 setlX/grammar_pure/*.class
 setlX/src/antlr/antlr-*-complete.jar
 setlX/src/bin
-setlX/src/java-src/grammar/SetlXgrammar.tokens
-setlX/src/java-src/grammar/SetlXgrammarLexer.java
-setlX/src/java-src/grammar/SetlXgrammarParser.java
+setlX/src/java-src/org/randoom/setlx/grammar
 setlX/src/setlX.jar
 setlX/developmentGuide.pdf
 setlX/manual.pdf

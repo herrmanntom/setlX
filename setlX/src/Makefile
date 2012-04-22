@@ -23,6 +23,7 @@ test:                                                        \
 
 build:                                                      \
         setlX                                                                   \
+        java-src/org/randoom/setlx/grammar/SetlXgrammar*.java                   \
         bin/org/randoom/setlx/exceptions/*.class                                \
         bin/org/randoom/setlx/types/*.class                                     \
         bin/org/randoom/setlx/utilities/*.class                                 \

@@ -52,11 +52,11 @@ transition := procedure(x) {
         head := left[1];
         tail := left[2..];
         // to center
-        if (#center == 0 || head < center[1]) {
+        if (#center == 0 || head < first(center)) {
             possibleTransitions += { [ [ tail, [head] + center, right         ], 1] };
         }
         // to right
-        if (#right == 0 || head < right[1]) {
+        if (#right == 0 || head < first(right)) {
             possibleTransitions += { [ [ tail, center         , [head] + right], 1] };
         }
     }
@@ -65,11 +65,11 @@ transition := procedure(x) {
         head := center[1];
         tail := center[2..];
         // to left
-        if (#left == 0 || head < left[1]) {
+        if (#left == 0 || head < first(left)) {
             possibleTransitions += { [ [ [head] + left, tail, right         ], 1] };
         }
         // to right
-        if (#right == 0 || head < right[1]) {
+        if (#right == 0 || head < first(right)) {
             possibleTransitions += { [ [ left,          tail, [head] + right], 1] };
         }
     }
@@ -78,11 +78,11 @@ transition := procedure(x) {
         head := right[1];
         tail := right[2..];
         // to left
-        if (#left == 0 || head < left[1]) {
+        if (#left == 0 || head < first(left)) {
             possibleTransitions += { [ [ [head] + left, center,          tail], 1] };
         }
         // to center
-        if (#center == 0 || head < center[1]) {
+        if (#center == 0 || head < first(center)) {
             possibleTransitions += { [ [ left,          [head] + center, tail], 1] };
         }
     }

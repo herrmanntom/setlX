@@ -1,4 +1,4 @@
-path 1 -> {6}: [6, 10, 1]
-path 1 -> {9}: [9, 8, 10, 1]
-path 1 -> {6, 9}: [6, 10, 1]
+path 1 -> {6}: [6, 10, 1], cost = 74, 8 nodes expanded
+path 1 -> {9}: [9, 8, 10, 1], cost = 86, 9 nodes expanded
+path 1 -> {6, 9}: [6, 10, 1], cost = 74, 8 nodes expanded
 path 3 -> {7}: no solution

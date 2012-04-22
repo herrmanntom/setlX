@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: interpreter.SetlX
+Main-Class: org.randoom.setlx.SetlX
 

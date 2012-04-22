@@ -14,7 +14,7 @@ aStar := procedure(s, t) {
     while(openQueue != {}) {
         [fx, x] := fromB(openQueue);
         if (x in t) {
-            print("path $s$ -> $t$: $path[x]$");
+            print("path $s$ -> $t$: $path[x]$, cost = $fx$, $#path$ nodes expanded");
             return;
         }
         for ( [y, yCost] in transition{x} ) {

@@ -1,0 +1,17 @@
+package org.randoom.setlx.exceptions;
+
+import org.randoom.setlx.types.Value;
+
+public class ThrownInSetlXException extends CatchableInSetlXException {
+    private Value mValue;
+
+    public ThrownInSetlXException(Value value) {
+        super("Error: " + value.toString());
+        mValue = value;
+    }
+
+    public Value getValue() {
+        return mValue;
+    }
+}
+

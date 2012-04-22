@@ -1,0 +1,100 @@
+// this program demonstrates how straight forward implementing A* can be
+
+/* algorithm */
+var h, transition;
+
+aStar := procedure(s, t) {
+    g := path := f := {};
+
+    g[s]        := 0;
+    path[s]     := [ s ];
+    f[s]        := h(s);
+    openQueue   := { [f[s], s] };
+
+    while(openQueue != {}) {
+        [fx, x] := fromB(openQueue);
+        if (x in t) {
+            p := path[x];
+            while(#p > 0) {
+                print(fromE(p));
+            }
+            print("cost: $fx$");
+            print("nodes expanded: $#path$");
+            return;
+        }
+        for ( [y, yCost] in transition(x) ) {
+            if (g[y] == om || g[x] + yCost < g[y]) {
+                path[y]     := [y] + path[x];
+                g[y]        := g[x] + yCost;
+                openQueue   -= { [f[y], y] };
+                f[y]        := g[y] + h(y);
+                openQueue   += { [f[y], y] };
+            }
+        }
+    }
+    print("path $s$ -> $t$: no solution");
+};
+
+/* graph */
+// heuristic
+h := procedure(x) {
+    return +/{2 ** (disk -1) : disk in x[1] + x[2]};
+};
+
+// transitions
+transition := procedure(x) {
+    possibleTransitions := {};
+    left    := x[1];
+    center  := x[2];
+    right   := x[3];
+    // from left
+    if (#left > 0) {
+        head := left[1];
+        tail := left[2..];
+        // to center
+        if (#center == 0 || head < center[1]) {
+            possibleTransitions += { [ [ tail, [head] + center, right         ], 1] };
+        }
+        // to right
+        if (#right == 0 || head < right[1]) {
+            possibleTransitions += { [ [ tail, center         , [head] + right], 1] };
+        }
+    }
+    // from center
+    if (#center > 0) {
+        head := center[1];
+        tail := center[2..];
+        // to left
+        if (#left == 0 || head < left[1]) {
+            possibleTransitions += { [ [ [head] + left, tail, right         ], 1] };
+        }
+        // to right
+        if (#right == 0 || head < right[1]) {
+            possibleTransitions += { [ [ left,          tail, [head] + right], 1] };
+        }
+    }
+    // from right
+    if (#right > 0) {
+        head := right[1];
+        tail := right[2..];
+        // to left
+        if (#left == 0 || head < left[1]) {
+            possibleTransitions += { [ [ [head] + left, center,          tail], 1] };
+        }
+        // to center
+        if (#center == 0 || head < center[1]) {
+            possibleTransitions += { [ [ left,          [head] + center, tail], 1] };
+        }
+    }
+    return possibleTransitions;
+};
+
+/* query */
+hanoi := procedure(n) {
+    print("computing towers of hanoi with $n$ disks:");
+    //start := now();
+    aStar([[1 .. n],[],[]], {[[],[],[1 .. n]]});
+    //print("computation took $nDecimalPlaces((now()-start)/1000, 2)$s");
+};
+
+hanoi(5);

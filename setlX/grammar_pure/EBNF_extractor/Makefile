@@ -6,16 +6,16 @@ EBNF.class: Alternative.java MyToken.java Concatenation.java Postfix.java \
             Negation.java Range.java
 	javac *.java
 
-updatePure: EBNF.class ../../src/java-src/grammar/SetlXgrammar.g
+updatePure: EBNF.class ../../src/grammar/SetlXgrammar.g
 	echo "grammar Pure;" > ../Pure.g
 	echo "" >> ../Pure.g
-	java EBNF < ../../src/java-src/grammar/SetlXgrammar.g >> ../Pure.g
+	java EBNF < ../../src/grammar/SetlXgrammar.g >> ../Pure.g
 	grep -v "^WS :"        ../Pure.g   > ../Pure.g.2
 	grep -v "^REMAINDER :" ../Pure.g.2 > ../Pure.g
 	rm ../Pure.g.2
-	grep "^WS        " ../../src/java-src/grammar/SetlXgrammar.g       >> ../Pure.g
+	grep "^WS        " ../../src/grammar/SetlXgrammar.g       >> ../Pure.g
 	echo "// see SetlXgrammar.g for explanation of the following rule" >> ../Pure.g
-	grep "^REMAINDER " ../../src/java-src/grammar/SetlXgrammar.g       >> ../Pure.g
+	grep "^REMAINDER " ../../src/grammar/SetlXgrammar.g       >> ../Pure.g
 	echo "" >> ../Pure.g
 
 EBNF_GrammarParser.java EBNF_GrammarLexer.java: EBNF_Grammar.g

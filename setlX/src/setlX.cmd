@@ -14,13 +14,16 @@ set javaParameters=
 REM execute with increased stack size
 set javaParameters=%javaParameters% -Xss16m
 
-REM uncomment the next line by removing 'REM' to execute with increased maximum memory size (6GB) (>2GB needs 64 Bit mode!)
-REM set javaParameters=%javaParameters% -Xmx6g"
+REM uncomment by removing 'REM' to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
+REM set javaParameters=%javaParameters% -Xms6g -Xmx6g
+
+REM uncomment by removing 'REM' to force execution in 64 bit mode (only recent Java versions for Windows support this)
+REM set javaParameters=%javaParameters% -d64
 
 REM ############################################################################
 
 IF EXIST %setlXJarLocation% (
-    java -cp "%setlXJarLocation%;%CLASSPATH%" %javaParameters% interpreter.SetlX %*
+    java -cp "%setlXJarLocation%;%CLASSPATH%" %javaParameters% org.randoom.setlx.SetlX %*
 ) ELSE (
     echo "The setlX.jar file can not be found!"
 )

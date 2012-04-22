@@ -1,20 +1,20 @@
 CLASSPATH=antlr/antlr-*.jar
 
 setlX.jar:                                                   \
-        antlr/antlr-*.jar                                            \
-        java-src/MANIFEST.MF                                         \
+        antlr/antlr-*.jar                                                       \
+        java-src/MANIFEST.MF                                                    \
         build
 	rm -f setlX.jar
 	cd bin; jar xf ../antlr/antlr-*.jar org/antlr/runtime
 	jar cmf java-src/MANIFEST.MF setlX.jar -C bin/ .
-	rm -rf bin/org
+	rm -rf bin/org/antlr
 
 interactive:                                                 \
         setlX.jar
 	./setlX
 
 test:                                                        \
-        setlX.jar                                                    \
+        setlX.jar                                                               \
         simpleTest/test.stlx
 	cp simpleTest/test.stlx simpleTest/test.windows.stlx
 	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos simpleTest/test.windows.stlx; fi
@@ -22,129 +22,127 @@ test:                                                        \
 	rm -f simpleTest/test.windows.stlx
 
 build:                                                      \
-        setlX                                                        \
-        java-src/grammar/SetlXgrammar*.java                          \
-        bin/interpreter/exceptions/*.class                           \
-        bin/interpreter/types/*.class                                \
-        bin/interpreter/utilities/*.class                            \
-        bin/interpreter/functions/*.class                            \
-        bin/interpreter/boolExpressions/*.class                      \
-        bin/interpreter/expressions/*.class                          \
-        bin/interpreter/statements/*.class                           \
-        bin/grammar/SetlXgrammar*.class                              \
-        bin/interpreter/SetlX.class
+        setlX                                                                   \
+        bin/org/randoom/setlx/exceptions/*.class                                \
+        bin/org/randoom/setlx/types/*.class                                     \
+        bin/org/randoom/setlx/utilities/*.class                                 \
+        bin/org/randoom/setlx/functions/*.class                                 \
+        bin/org/randoom/setlx/boolExpressions/*.class                           \
+        bin/org/randoom/setlx/expressions/*.class                               \
+        bin/org/randoom/setlx/statements/*.class                                \
+        bin/org/randoom/setlx/grammar/SetlXgrammar*.class                       \
+        bin/org/randoom/setlx/SetlX.class
 	if [ ! -x setlX ]; then chmod +x setlX; fi
 	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos make.cmd setlX.cmd; fi
 	rm -f make_.cmd setlX_.cmd
 
-bin/interpreter/SetlX.class :                                \
-        java-src/interpreter/SetlX.java                              \
-        java-src/interpreter/exceptions/*.java                       \
-        java-src/interpreter/types/*.java                            \
-        java-src/interpreter/utilities/*.java                        \
-        java-src/interpreter/statements/Block.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/SetlX.java
+bin/org/randoom/setlx/SetlX.class :                         \
+        java-src/org/randoom/setlx/SetlX.java                                   \
+        java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/Real.java                              \
+        java-src/org/randoom/setlx/utilities/*.java                             \
+        java-src/org/randoom/setlx/statements/Block.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/SetlX.java
 
-bin/grammar/SetlXgrammar*.class :                            \
-        java-src/grammar/SetlXgrammar*.java                          \
-        java-src/grammar/SetlXgrammar.g                              \
-        java-src/interpreter/types/*.java                            \
-        java-src/interpreter/utilities/*.java                        \
-        java-src/interpreter/boolExpressions/*.java                  \
-        java-src/interpreter/expressions/*.java                      \
-        java-src/interpreter/statements/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/grammar/SetlXgrammar*.java
+bin/org/randoom/setlx/grammar/SetlXgrammar*.class :                            \
+        java-src/org/randoom/setlx/grammar/SetlXgrammar*.java                   \
+        java-src/org/randoom/setlx/types/*.java                                 \
+        java-src/org/randoom/setlx/utilities/*.java                             \
+        java-src/org/randoom/setlx/boolExpressions/*.java                       \
+        java-src/org/randoom/setlx/expressions/*.java                           \
+        java-src/org/randoom/setlx/statements/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/grammar/SetlXgrammar*.java
 
-bin/interpreter/statements/*.class :                         \
-        java-src/interpreter/statements/*.java                       \
-        java-src/interpreter/exceptions/*.java                       \
-        java-src/interpreter/types/*.java                            \
-        java-src/interpreter/expressions/*.java                      \
-        java-src/interpreter/utilities/*.java                        \
-        java-src/interpreter/boolExpressions/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/statements/*.java
+bin/org/randoom/setlx/statements/*.class :                  \
+        java-src/org/randoom/setlx/statements/*.java                            \
+        java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/*.java                                 \
+        java-src/org/randoom/setlx/expressions/*.java                           \
+        java-src/org/randoom/setlx/utilities/*.java                             \
+        java-src/org/randoom/setlx/boolExpressions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/statements/*.java
 
-bin/interpreter/expressions/*.class :                        \
-        java-src/interpreter/expressions/*.java                      \
-        java-src/interpreter/statements/Statement.java               \
-        java-src/interpreter/exceptions/*.java                       \
-        java-src/interpreter/types/*.java                            \
-        java-src/interpreter/utilities/*.java                        \
-        java-src/interpreter/boolExpressions/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/expressions/*.java
+bin/org/randoom/setlx/expressions/*.class :                 \
+        java-src/org/randoom/setlx/expressions/*.java                           \
+        java-src/org/randoom/setlx/statements/Statement.java                    \
+        java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/*.java                                 \
+        java-src/org/randoom/setlx/utilities/*.java                             \
+        java-src/org/randoom/setlx/boolExpressions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/expressions/*.java
 
-bin/interpreter/boolExpressions/*.class :                    \
-        java-src/interpreter/boolExpressions/*.java                  \
-        java-src/interpreter/expressions/Expr.java                   \
-        java-src/interpreter/exceptions/*.java                       \
-        java-src/interpreter/types/*.java                            \
-        java-src/interpreter/utilities/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/boolExpressions/*.java
+bin/org/randoom/setlx/boolExpressions/*.class :             \
+        java-src/org/randoom/setlx/boolExpressions/*.java                       \
+        java-src/org/randoom/setlx/expressions/Expr.java                        \
+        java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/*.java                                 \
+        java-src/org/randoom/setlx/utilities/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/boolExpressions/*.java
 
-bin/interpreter/functions/*.class :                          \
-        java-src/interpreter/functions/*.java                        \
-        java-src/interpreter/expressions/Expr.java                   \
-        java-src/interpreter/statements/Statement.java               \
-        java-src/interpreter/exceptions/*.java                       \
-        java-src/interpreter/types/*.java                            \
-        java-src/interpreter/utilities/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/functions/*.java
+bin/org/randoom/setlx/functions/*.class :                   \
+        java-src/org/randoom/setlx/functions/*.java                             \
+        java-src/org/randoom/setlx/expressions/Expr.java                        \
+        java-src/org/randoom/setlx/statements/Statement.java                    \
+        java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/*.java                                 \
+        java-src/org/randoom/setlx/utilities/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/functions/*.java
 
-bin/interpreter/utilities/*.class :                          \
-        java-src/interpreter/utilities/*.java                        \
-        java-src/interpreter/boolExpressions/Equal.java              \
-        java-src/interpreter/expressions/Assignment.java             \
-        java-src/interpreter/expressions/Call.java                   \
-        java-src/interpreter/expressions/CollectionAccessRangeDummy.java \
-        java-src/interpreter/expressions/Expr.java                   \
-        java-src/interpreter/expressions/SetListConstructor.java     \
-        java-src/interpreter/expressions/StringConstructor.java      \
-        java-src/interpreter/expressions/TermConstructor.java        \
-        java-src/interpreter/expressions/ValueExpr.java              \
-        java-src/interpreter/expressions/Variable.java               \
-        java-src/interpreter/expressions/VariableIgnore.java         \
-        java-src/interpreter/statements/Block.java                   \
-        java-src/interpreter/statements/ExpressionStatement.java     \
-        java-src/interpreter/statements/For.java                     \
-        java-src/interpreter/statements/Statement.java               \
-        java-src/interpreter/statements/While.java                   \
-        java-src/interpreter/functions/MathFunction.java             \
-        java-src/interpreter/functions/PreDefinedFunction.java       \
-        java-src/grammar/SetlXgrammar*.java                          \
-        java-src/interpreter/exceptions/*.java                       \
-        java-src/interpreter/types/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/utilities/*.java
+bin/org/randoom/setlx/utilities/*.class :                   \
+        java-src/org/randoom/setlx/utilities/*.java                             \
+        java-src/org/randoom/setlx/boolExpressions/Equal.java                   \
+        java-src/org/randoom/setlx/expressions/Assignment.java                  \
+        java-src/org/randoom/setlx/expressions/Call.java                        \
+        java-src/org/randoom/setlx/expressions/CollectionAccessRangeDummy.java  \
+        java-src/org/randoom/setlx/expressions/Expr.java                        \
+        java-src/org/randoom/setlx/expressions/SetListConstructor.java          \
+        java-src/org/randoom/setlx/expressions/StringConstructor.java           \
+        java-src/org/randoom/setlx/expressions/TermConstructor.java             \
+        java-src/org/randoom/setlx/expressions/ValueExpr.java                   \
+        java-src/org/randoom/setlx/expressions/Variable.java                    \
+        java-src/org/randoom/setlx/expressions/VariableIgnore.java              \
+        java-src/org/randoom/setlx/statements/Block.java                        \
+        java-src/org/randoom/setlx/statements/ExpressionStatement.java          \
+        java-src/org/randoom/setlx/statements/For.java                          \
+        java-src/org/randoom/setlx/statements/Statement.java                    \
+        java-src/org/randoom/setlx/statements/While.java                        \
+        java-src/org/randoom/setlx/functions/MathFunction.java                  \
+        java-src/org/randoom/setlx/functions/PreDefinedFunction.java            \
+        java-src/org/randoom/setlx/grammar/SetlXgrammar*.java                   \
+        java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/utilities/*.java
 
-bin/interpreter/types/*.class :                              \
-        java-src/interpreter/types/*.java                            \
-        java-src/interpreter/boolExpressions/*.java                  \
-        java-src/interpreter/expressions/*.java                      \
-        java-src/interpreter/functions/PreDefinedFunction.java       \
-        java-src/interpreter/statements/Block.java                   \
-        java-src/interpreter/statements/Return.java                  \
-        java-src/interpreter/utilities/Environment.java              \
-        java-src/interpreter/utilities/MatchResult.java              \
-        java-src/interpreter/utilities/ParameterDef.java             \
-        java-src/interpreter/utilities/VariableScope.java            \
-        java-src/interpreter/utilities/WriteBackAgent.java           \
-        java-src/interpreter/exceptions/*.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/types/*.java
+bin/org/randoom/setlx/types/*.class :                       \
+        java-src/org/randoom/setlx/types/*.java                                 \
+        java-src/org/randoom/setlx/boolExpressions/*.java                       \
+        java-src/org/randoom/setlx/expressions/*.java                           \
+        java-src/org/randoom/setlx/functions/PreDefinedFunction.java            \
+        java-src/org/randoom/setlx/statements/Block.java                        \
+        java-src/org/randoom/setlx/statements/Return.java                       \
+        java-src/org/randoom/setlx/utilities/Environment.java                   \
+        java-src/org/randoom/setlx/utilities/MatchResult.java                   \
+        java-src/org/randoom/setlx/utilities/ParameterDef.java                  \
+        java-src/org/randoom/setlx/utilities/VariableScope.java                 \
+        java-src/org/randoom/setlx/utilities/WriteBackAgent.java                \
+        java-src/org/randoom/setlx/exceptions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/types/*.java
 
-bin/interpreter/exceptions/*.class :                         \
-        java-src/interpreter/exceptions/*.java                       \
-        java-src/interpreter/types/Value.java
+bin/org/randoom/setlx/exceptions/*.class :                  \
+        java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/Value.java
 	mkdir -p bin/
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/interpreter/exceptions/*.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/exceptions/*.java
 
-java-src/grammar/SetlXgrammar*.java :                        \
-        java-src/grammar/SetlXgrammar.g
-	java  -cp $(CLASSPATH) org.antlr.Tool -fo java-src/grammar java-src/grammar/SetlXgrammar.g
+java-src/org/randoom/setlx/grammar/SetlXgrammar*.java :     \
+        grammar/SetlXgrammar.g
+	java  -cp $(CLASSPATH) org.antlr.Tool -fo java-src/org/randoom/setlx/grammar grammar/SetlXgrammar.g
 
 clean:
 	rm -rf bin/
-	rm -f  java-src/grammar/*.java java-src/grammar/*.tokens
+	rm -f  java-src/org/randoom/setlx/grammar/*
 
-dist-clean:                                                  \
+dist-clean:                                                 \
         clean
 	rm -f  setlX.jar
 

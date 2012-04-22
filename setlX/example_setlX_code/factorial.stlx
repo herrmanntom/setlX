@@ -1,7 +1,13 @@
 // this program can be used to test the performance of the factorial implementation
 
 print("Which factorial should be computed?");
+beginRead := now();
 n := read();
+if (beginRead - now() < 100) { // input in less than 0.1s is from automatic test
+    printStats := false; // hide stats to get same output every time
+} else {
+    printStats := true;
+}
 
 beginCompNative := now();
 f := n!;
@@ -33,10 +39,12 @@ beginPrint := now();
 print(n,"! := ", f);
 endPrint := now();
 
-print();
-print("Computing the factorial of ", n, " took \t", (endCompNative  - beginCompNative  - 0.0)/1000, " seconds (using multithreaded native implementation).");
-if (beginCompSetlXLoop != om) {
-    print("Computing the factorial of ", n, " took \t", (endCompSetlXLoop  - beginCompSetlXLoop  - 0.0)/1000, " seconds (using SetlX loop).");
-    print("Computing the factorial of ", n, " took \t", (endCompSetlXSet  - beginCompSetlXSet  - 0.0)/1000, " seconds (using a SetlX set).");
+if (printStats) {
+    print();
+    print("Computing the factorial of ", n, " took \t", (endCompNative  - beginCompNative  - 0.0)/1000, " seconds (using multithreaded native implementation).");
+    if (beginCompSetlXLoop != om) {
+        print("Computing the factorial of ", n, " took \t", (endCompSetlXLoop  - beginCompSetlXLoop  - 0.0)/1000, " seconds (using SetlX loop).");
+        print("Computing the factorial of ", n, " took \t", (endCompSetlXSet  - beginCompSetlXSet  - 0.0)/1000, " seconds (using a SetlX set).");
+    }
+    print("Printing the factorial of  ", n, " took \t", (endPrint - beginPrint - 0.0)/1000, " seconds.");
 }
-print("Printing the factorial of  ", n, " took \t", (endPrint - beginPrint - 0.0)/1000, " seconds.");

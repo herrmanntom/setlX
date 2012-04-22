@@ -1,0 +1,4 @@
+Bitte Formel eingeben
+[["a", "+", "b"], "<->", "c"]
+Die Formel "((a + b) <-> c)" ist keine Tautologie.
+Gegenbeispiel: {["a", false], ["b", false], ["c", true]}

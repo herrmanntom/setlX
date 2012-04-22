@@ -36,7 +36,12 @@ while IFS= read path
     echo -n "executing file '$filename' ..."
 
     # execute with setlX
-    cd src; ./setlX --predictableRandom ../$path > $tmpFile 2>&1; cd ..
+    if [ -e $path.input ]
+      then
+        cd src; cat ../$path.input | ./setlX --predictableRandom ../$path > $tmpFile 2>&1; cd ..
+    else
+        cd src; ./setlX --predictableRandom ../$path > $tmpFile 2>&1; cd ..
+    fi
 
     diff $path.reference $tmpFile > diff.result
     if [ $? -eq 1 ]

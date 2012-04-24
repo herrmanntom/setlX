@@ -1,4 +1,4 @@
-// this program computes the towers of hanoi using A*
+// this program computes the towers of hanoi using A* and a 'perfect' heuristic
 
 /* algorithm */
 aStar := procedure(s, t) {
@@ -34,17 +34,51 @@ aStar := procedure(s, t) {
 };
 
 /* graph */
-/* heuristic:
- *   a) actual cost is (2 ** numberOfDisks)-1
- *   b) having disks right (x[3]) is good, therefore costs nothing
- *   c) having disks in the middle (x[2]) is OK, therefore costs only 1/3
- *   d) having disks left (x[1]) is bad, therefore it costs the full ammount
- *   e) Sum over 2 ** (disk -1) is used, because the result of "all disks left"
- *      equals the acutal cost.
- */
+// heuristics
 h := procedure(x) {
-    return   +/{2 ** (disk -1) : disk in x[1]}
-           + +/{2 ** (disk -1) : disk in x[2]} * 1/3;
+    n := max(+/ x);
+    // as this problem was solved a long time ago, we simply compute the actual cost
+    return numberSteps(x, n);
+};
+
+/* Computes the number of steps necessary to move all the disks onto the 3rd pole.
+ *   x is the triple of lists describing the current configuration,
+ *   n is the total number of disks.
+ */
+numberSteps := procedure(x, n) {
+    if (n == 0) {
+        return 0;
+    }
+    n3 := #x[3];
+    if (n3 > 0 && last(x[3]) == n) {
+        // biggest disk is already on pole 3, therefore we can ignore it
+        // and compute how long it takes to move the other disks on top
+        return numberSteps([x[1], x[2], x[3][1 .. n3 - 1]], n - 1);
+    }
+    // figure out if the biggest disk is on pole 1 or on pole2
+    [ last1, last2 ] := [ 0, 0 ];
+    if (#x[1] > 0) {
+        last1 := last(x[1]);
+    } 
+    if (#x[2] > 0) {
+        last2 := last(x[2]);
+    } 
+    if (last1 >= last2) {
+        [ maxIdx, minIdx ] := [ 1, 2 ];
+    } else {
+        [ maxIdx, minIdx ] := [ 2, 1 ];
+    }
+    [ tMax, tMin ] := [ x[maxIdx], x[minIdx] ];
+    m := #tMax;
+    // to finish, all disks on top of the biggest disk (tMax) must be moved to
+    // the other pole (tMin), which is computed using numberSteps(), again
+    // ignoring the biggest disk
+    //
+    // then the biggest disk must be moved to pole 3 and all the other disks
+    // need to be moved on top of it
+    // moving the biggest disk costs 1 and moving the rest is the whole hanoi
+    // problem all over again, for which we know it will cost (2 ** (n-1)) -1
+    return numberSteps([tMax[1 .. m - 1], x[3], tMin], n-1) + 2 ** (n-1);
 };
 
 // transitions

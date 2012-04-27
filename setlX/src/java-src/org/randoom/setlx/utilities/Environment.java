@@ -18,49 +18,46 @@ import java.util.Random;
 
 public class Environment {
     // number of CPUs (cores) in the executing system
-    private final   static  int             CORES                       = Runtime.getRuntime().availableProcessors();
+    private final   static  int             sCORES                      = Runtime.getRuntime().availableProcessors();
 
     // buffered reader for stdin
-    private         static  BufferedReader  stdInReader                 = null;
+    private         static  BufferedReader  sStdInReader                = null;
 
     // random number generator
-    private         static  Random          randoom                     = null;
+    private         static  Random          sRandoom                    = null;
 
     private         static  boolean         sIsInteractive              = false;
     private         static  boolean         sPrintAfterEval             = false;
     private         static  boolean         sPrintVerbose               = false;
+    private         static  boolean         sAssertsDisabled            = false;
 
-    private final   static  String          TAB                         = "\t";
-    private final   static  String          ENDL                        = "\n";
+    private final   static  String          sTAB                        = "\t";
+    private final   static  String          sENDL                       = "\n";
 
     /* -- debugger -- */
+    private final   static  HashSet<String> sBreakpoints                = new HashSet<String>();
+    private         static  boolean         sBreakpointsEnabled         = false; // are any breakpoints set?
 
-    // last source line read/computed
-    public          static  int             sourceLine                  = 0;
-
-    private final   static  HashSet<String> breakpoints                 = new HashSet<String>();
-    private         static  boolean         breakpointsEnabled          = false; // are any breakpoints set?
-
-    private         static  boolean         debugModeActive             = false;
-    private         static  boolean         debugPromptActive           = false;
-    private         static  boolean         debugStepNextExpr           = false;
-    private         static  boolean         debugStepThroughFunction    = false;
-    private         static  boolean         debugFinishFunction         = false;
-    private         static  boolean         debugFinishLoop             = false;
+    private         static  boolean         sDebugModeActive            = false;
+    private         static  boolean         sDebugPromptActive          = false;
+    private         static  boolean         sDebugStepNextExpr          = false;
+    private         static  boolean         sDebugStepThroughFunction   = false;
+    private         static  boolean         sDebugFinishFunction        = false;
+    private         static  boolean         sDebugFinishLoop            = false;
 
     public static int getNumberOfCores() {
-        if (CORES >= 2) {
-            return CORES;
+        if (sCORES >= 2) {
+            return sCORES;
         } else {
             return 1;
         }
     }
 
     public static BufferedReader getStdIn() {
-        if (stdInReader == null) {
-            stdInReader = new BufferedReader(new InputStreamReader(System.in));
+        if (sStdInReader == null) {
+            sStdInReader = new BufferedReader(new InputStreamReader(System.in));
         }
-        return stdInReader;
+        return sStdInReader;
     }
 
     public static boolean promptForStdInOnStdOut(String prompt) throws IOException {
@@ -75,15 +72,15 @@ public class Environment {
     }
 
     public static void setPredictableRandoom() {
-        randoom = new Random(0);
+        sRandoom = new Random(0);
     }
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
     public static int getRandomInt(int upperBoundary) {
-        if (randoom == null) {
-            randoom = new Random();
+        if (sRandoom == null) {
+            sRandoom = new Random();
         }
-        return randoom.nextInt(upperBoundary);
+        return sRandoom.nextInt(upperBoundary);
     }
 
     public static void setInteractive(boolean isInteractive) {
@@ -103,119 +100,127 @@ public class Environment {
     }
 
     public static void setPrintVerbose(boolean printVerbose) {
-        sPrintVerbose       = printVerbose;
+        sPrintVerbose   = printVerbose;
     }
 
     public static boolean isPrintVerbose() {
         return sPrintVerbose;
     }
 
+    public static void setAssertsDisabled(boolean assertsDisabled) {
+        sAssertsDisabled    = assertsDisabled;
+    }
+
+    public static boolean areAssertsDisabled() {
+        return sAssertsDisabled;
+    }
+
     public static String getLineStart(int tabs) {
         if (!sPrintVerbose || tabs <= 0) {
             return "";
         }
-        String r = TAB;
+        String r = sTAB;
         for (int i = 1; i < tabs; i++) {
-            r += TAB;
+            r += sTAB;
         }
         return r;
     }
 
     public static String getEndl() {
         if (sPrintVerbose) {
-            return ENDL;
+            return sENDL;
         } else {
             return " ";
         }
     }
 
     public static void setBreakpoint(String id) {
-        breakpoints.add(id);
+        sBreakpoints.add(id);
         setBreakpointsEnabled(true);
     }
 
     public static boolean removeBreakpoint(String id) {
-        boolean result = breakpoints.remove(id);
-        setBreakpointsEnabled(breakpoints.size() > 0);
+        boolean result  = sBreakpoints.remove(id);
+        setBreakpointsEnabled(sBreakpoints.size() > 0);
         return result;
     }
 
     public static void removeAllBreakpoints() {
-        breakpoints.clear();
+        sBreakpoints.clear();
         setBreakpointsEnabled(false);
     }
 
     public static boolean isBreakpoint(String id) {
-        return breakpoints.contains(id);
+        return sBreakpoints.contains(id);
     }
 
     public static String[] getAllBreakpoints() {
-        return breakpoints.toArray(new String[0]);
+        return sBreakpoints.toArray(new String[0]);
     }
 
     public static void setBreakpointsEnabled(boolean enabled) {
-        breakpointsEnabled       = enabled;
-        Call.sBreakpointsEnabled = enabled;
+        sBreakpointsEnabled         = enabled;
+        Call.sBreakpointsEnabled    = enabled;
     }
 
     public static boolean areBreakpointsEnabled() {
-        return breakpointsEnabled;
+        return sBreakpointsEnabled;
     }
 
     public static void setDebugModeActive(boolean active) {
-        debugModeActive                 = active;
-        Statement.sDebugModeActive      = active;
+        sDebugModeActive            = active;
+        Statement.sDebugModeActive  = active;
     }
 
     public static boolean isDebugModeActive() {
-        return debugModeActive;
+        return sDebugModeActive;
     }
 
     public static void setDebugPromptActive(boolean active) {
-        debugPromptActive = active;
+        sDebugPromptActive  = active;
     }
 
     public static boolean isDebugPromptActive() {
-        return debugPromptActive;
+        return sDebugPromptActive;
     }
 
     public static void setDebugStepNextExpr(boolean stepNextExpr) {
-        debugStepNextExpr   = stepNextExpr;
+        sDebugStepNextExpr  = stepNextExpr;
         Expr.sStepNext      = stepNextExpr;
     }
 
     public static boolean isDebugStepNextExpr() {
-        return debugStepNextExpr;
+        return sDebugStepNextExpr;
     }
 
     public static void setDebugStepThroughFunction(boolean stepThrough) {
-        debugStepThroughFunction                    = stepThrough;
+        sDebugStepThroughFunction                   = stepThrough;
         ProcedureDefinition.sStepThroughFunction    = stepThrough;
         PreDefinedFunction.sStepThroughFunction     = stepThrough;
     }
 
     public static boolean isDebugStepThroughFunction() {
-        return debugStepThroughFunction;
+        return sDebugStepThroughFunction;
     }
 
     public static void setDebugFinishFunction(boolean finish) {
-        debugFinishFunction                 = finish;
+        sDebugFinishFunction                = finish;
         ProcedureDefinition.sFinishFunction = finish;
         Call.sFinishOuterFunction           = finish;
     }
 
     public static boolean isDebugFinishFunction() {
-        return debugFinishFunction;
+        return sDebugFinishFunction;
     }
 
     public static void setDebugFinishLoop(boolean finish) {
-        debugFinishLoop     = finish;
+        sDebugFinishLoop    = finish;
         For.sFinishLoop     = finish;
         While.sFinishLoop   = finish;
     }
 
     public static boolean isDebugFinishLoop() {
-        return debugFinishLoop;
+        return sDebugFinishLoop;
     }
 }
 

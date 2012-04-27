@@ -24,6 +24,7 @@ statement
     | 'continue' ';'
     | 'break' ';'
     | 'exit' ';'
+    | 'assert' '(' condition ',' anyExpr ')' ';'
     | (assignment)=> assignment ';'
     | anyExpr ';'
     ;

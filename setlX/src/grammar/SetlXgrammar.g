@@ -44,7 +44,7 @@ initBlock returns [Block blk]
         List<Statement> stmnts = new LinkedList<Statement>();
     }
     : (
-        statement  { stmnts.add($statement.stmnt); }
+        statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )+
       EOF
       { blk = new Block(stmnts); }
@@ -62,7 +62,7 @@ block returns [Block blk]
         List<Statement> stmnts = new LinkedList<Statement>();
     }
     : (
-        statement  { stmnts.add($statement.stmnt); }
+        statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )*
       { blk = new Block(stmnts); }
     ;
@@ -114,6 +114,11 @@ statement returns [Statement stmnt]
     | 'continue' ';'                                                 { stmnt = Continue.C;                                           }
     | 'break' ';'                                                    { stmnt = Break.B;                                              }
     | 'exit' ';'                                                     { stmnt = Exit.E;                                               }
+    | 'assert' '(' condition[false] ',' anyExpr[false] ')' ';'       { stmnt = (Environment.areAssertsDisabled())?
+                                                                                   null
+                                                                               :
+                                                                                   new Assert($condition.cnd, $anyExpr.ae);
+                                                                               ;                                                     }
     | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);          }
     | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);                 }
     ;

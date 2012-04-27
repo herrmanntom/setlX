@@ -144,8 +144,14 @@ print(b); // ~0.84
 print();
 
 /*******************************************************************************
+  assert(condition , message)   // stop execution and display message, if condition evaluates to false
+*/
+foo := [1 .. 10];
+assert(foo == [1,2,3,4,5,6,7,8,9], "foo is malformed"); // assertion will fail
+
+/*******************************************************************************
   The following function can only be demonstrated in interactive mode:
   printAfterEval(toggle)        // configures output of results after each evaluation of an statement containing an expression
 */
- 
+
 

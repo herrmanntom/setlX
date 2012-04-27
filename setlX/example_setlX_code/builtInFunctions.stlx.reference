@@ -55,3 +55,4 @@ foo
 198
 0.8414709848078965
 
+Assertion failed: "foo is malformed"

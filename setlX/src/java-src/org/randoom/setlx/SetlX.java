@@ -23,7 +23,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "0.7.2";
+    private final static String     VERSION         = "0.7.3";
     private final static String     VERSION_PREFIX  = "v";
     private final static String     HEADER          = "-====================================setlX====================================-";
 
@@ -70,6 +70,8 @@ public class SetlX {
                 }
             } else if (s.equals("--help")) {
                 help = true;
+            } else if (s.equals("--noAssert")) {
+                Environment.setAssertsDisabled(true);
             } else if (s.equals("--noExecution")) {
                 noExecution = true;
             } else if (s.equals("--predictableRandom")) { // easier debugging
@@ -355,6 +357,8 @@ public class SetlX {
             "Additional parameters:\n" +
             "  --dump <file-name>\n" +
             "      writes loaded code into a file\n" +
+            "  --noAssert\n" +
+            "      disables all assert functions\n" +
             "  --noExecution\n" +
             "      load and check code for syntax errors, but do not execute it\n" +
             "  --predictableRandom\n" +

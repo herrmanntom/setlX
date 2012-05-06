@@ -22,6 +22,7 @@ public class Environment {
 
     // buffered reader for stdin
     private         static  BufferedReader  sStdInReader                = null;
+    private         static  boolean         sIsHuman                    = false;
 
     // random number generator
     private         static  Random          sRandoom                    = null;
@@ -61,11 +62,17 @@ public class Environment {
     }
 
     public static boolean promptForStdInOnStdOut(String prompt) throws IOException {
-        // Only if a pipe is connected the input is instantly ready.
+        // Only if a pipe is connected the input is ready (has input buffered)
+        // BEFORE the prompt.
         // A human usually takes time AFTER the prompt to type something ;-)
-        if ( ! getStdIn().ready()) {
+        //
+        // Also if at one time a prompt was displayed, display all following
+        // prompts. (User may continue to type into stdin AFTER we last read
+        // from it, causing stdin to be ready, but human controlled)
+        if (sIsHuman || ! getStdIn().ready()) {
             System.out.print(prompt);
             System.out.flush();
+            sIsHuman = true;
             return true;
         }
         return false;

@@ -1,0 +1,4 @@
+../example_SetlX_code/crazyParserSyntaxErrorCheck.stlx line 4:0 missing EOF at '%'
+../example_SetlX_code/crazyParserSyntaxErrorCheck.stlx line 5:1 character ''' is invalid
+../example_SetlX_code/crazyParserSyntaxErrorCheck.stlx line 5:2 character ''' is invalid
+Execution terminated due to errors in the input.

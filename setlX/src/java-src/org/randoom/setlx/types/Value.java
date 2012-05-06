@@ -328,6 +328,12 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public SetlSet permutations() throws SetlException {
+        throw new IncompatibleTypeException(
+            "Operand '" + this + "' is not a collection value."
+        );
+    }
+
     public SetlSet powerSet() throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a set."

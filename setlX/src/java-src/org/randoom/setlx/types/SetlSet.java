@@ -343,7 +343,14 @@ public class SetlSet extends CollectionValue {
         return firstMember();
     }
 
-    // Compute the power set of the given argument according to the
+    public SetlSet permutations() throws SetlException {
+        // add all members to a new list
+        SetlList    result  = (SetlList) (new SetlList()).sum(this);
+        // permutate list and return result
+        return result.permutations();
+    }
+
+    // Compute the power set of this set according to the
     // following recursive equations:
     //     power({})      = { {} }
     //     power(A + {x}) = power(A) + { {x} + s : s in power(A) }
@@ -456,11 +463,34 @@ public class SetlSet extends CollectionValue {
     public MatchResult matchesTerm(Value other) throws IncompatibleTypeException {
         if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
+        } else if ( ! (other instanceof SetlSet)) {
+            return new MatchResult(false);
+        } else if ( this.size() != other.size()) {
+            return new MatchResult(false);
         }
-        throw new IncompatibleTypeException(
-            "Using lexicographically ordered collections like sets as match condition is unsupported." +
-            " Try using the isSet() function outside of the match statement."
-        );
+        // add all members to a new list
+        SetlList    thisList            = (SetlList) (new SetlList()).sum(this);
+        // permutate `other'
+        SetlSet     otherPermutations   = null;
+        try {
+            otherPermutations   = other.permutations();
+        } catch (SetlException se) {
+            // will not happen
+        }
+        // this set matches, when one permutation matches
+        for (Value permutation : otherPermutations) {
+            MatchResult match   = thisList.matchesTerm(permutation);
+            if (match.isMatch()) {
+                return match;
+            }
+        }
+        // and does not match, when no permutation matches
+        return new MatchResult(false);
+
+//        throw new IncompatibleTypeException(
+//            "Using lexicographically ordered collections like sets as match condition is unsupported." +
+//            " Try using the isSet() function outside of the match statement."
+//        );
     }
 
     public Value toTerm() {
@@ -470,7 +500,6 @@ public class SetlSet extends CollectionValue {
         }
         return termSet;
     }
-
 
     /* comparisons */
 

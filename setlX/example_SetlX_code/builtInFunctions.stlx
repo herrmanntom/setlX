@@ -102,6 +102,7 @@ print();
 
 /*******************************************************************************
   now()                         // get current time since epoch in ms
+  sleep(time_in_ms)             // pause execution for a number of milliseconds
 */
 
 daysSinceEpoch := procedure(ms) {
@@ -112,6 +113,9 @@ daysSinceEpoch := procedure(ms) {
 // print(daysSinceEpoch(now()) + " days have gone by since 1970-01-01.");
 // now make it testable...
 print("When this was written, " + daysSinceEpoch(1333372502020) + " days had gone by since 1970-01-01.");
+print("Lets wait 500ms to commemorate this occasion.");
+sleep(500);
+print("OK, that's enough.");
 print();
 
 /*******************************************************************************
@@ -141,6 +145,12 @@ print( evalTerm(parse("1 + 5")) ); // 6
 evalTerm(parseStatements("print(\"foo\");a := 99 * 2;b:= sin(1);")); // prints foo and sets a, b
 print(a); // 198
 print(b); // ~0.84
+print();
+
+/*******************************************************************************
+  permutations(collectionValue) // computes all permutations of the element in `collectionValue'
+*/
+print("All permutations of $[1,2,2,3]$ are $permutations([1,2,2,3])$.");
 print();
 
 /*******************************************************************************

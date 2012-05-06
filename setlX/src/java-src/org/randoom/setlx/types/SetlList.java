@@ -146,7 +146,7 @@ public class SetlList extends CollectionValue {
             return getMember(vFirst);
         } else {
             throw new UndefinedOperationException(
-                "Can not access elements using the arguments '" + args + "' on '" + this + "';" + 
+                "Can not access elements using the arguments '" + args + "' on '" + this + "';" +
                 " arguments are malformed."
             );
         }
@@ -156,7 +156,7 @@ public class SetlList extends CollectionValue {
         if (args.contains(RangeDummy.RD)) {
             // uncloned access is only used in assignments, so we should never get here
             throw new UndefinedOperationException(
-                "Can not access elements using the arguments '" + args + "' on '" + this + "';" + 
+                "Can not access elements using the arguments '" + args + "' on '" + this + "';" +
                 " range is not allowed in assignments."
             );
         } else if (args.size() == 1) {
@@ -164,7 +164,7 @@ public class SetlList extends CollectionValue {
         } else {
             // uncloned access is only used in assignments, so we should never get here
             throw new UndefinedOperationException(
-                "Can not access elements using the arguments '" + args + "' on '" + this + "';" + 
+                "Can not access elements using the arguments '" + args + "' on '" + this + "';" +
                 " arguments are malformed."
             );
         }
@@ -275,6 +275,28 @@ public class SetlList extends CollectionValue {
             }
         }
         return min.clone();
+    }
+
+    public SetlSet permutations() throws SetlException {
+        if (size() == 0) {
+            SetlSet permutations = new SetlSet();
+            permutations.addMember(clone());
+            return permutations;
+        }
+        Value           last            = lastMember();
+        SetlList        rest            = clone();
+        rest.removeLastMember();
+        SetlSet         permutatateRest = rest.permutations();
+        SetlSet         permutations    = new SetlSet();
+        for (Value permutation : permutatateRest) {
+            for (int i = 0; i <= permutation.size(); i++) {
+                SetlList    perm    = (SetlList) permutation.clone();
+                perm.separateFromOriginal();
+                perm.mList.add(i, last.clone());
+                permutations.addMember(perm);
+            }
+        }
+        return permutations;
     }
 
     public void removeMember(Value element) {

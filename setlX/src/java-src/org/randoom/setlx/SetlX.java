@@ -141,9 +141,7 @@ public class SetlX {
                 skipTest = true;
                 blk      = null;
             } catch (Exception e) { // this should never happen...
-                System.err.println(
-                    "Internal Error. Please report this error including the code you typed."
-                );
+                printInternalError();
                 if (unhideExceptions) {
                     e.printStackTrace();
                 }
@@ -186,9 +184,7 @@ public class SetlX {
             System.exit(EXIT_ERROR);
 
         } catch (Exception e) { // this should never happen...
-            System.err.println(
-                "Internal Error. Please report this error including the code you loaded."
-            );
+            printInternalError();
             if (unhideExceptions) {
                 e.printStackTrace();
             }
@@ -303,9 +299,7 @@ public class SetlX {
             );
             return EXEC_EXIT; // breaks loop while parsing interactively
         } catch (Exception e) { // this should never happen...
-            System.err.println(
-                "Internal Error. Please report this error including the code you executed."
-            );
+            printInternalError();
             if (unhideExceptions) {
                 e.printStackTrace();
             }
@@ -372,6 +366,13 @@ public class SetlX {
             "      display the parsed program before executing it\n" +
             "  --version\n" +
             "      displays the interpreter version and terminates\n"
+        );
+    }
+
+    private static void printInternalError() {
+        System.err.println(
+            "Internal Error. Please report this error including steps and/or code " +
+            "to reproduce to `setlx@randoom.org'."
         );
     }
 

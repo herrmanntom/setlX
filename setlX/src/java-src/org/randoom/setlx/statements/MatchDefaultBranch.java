@@ -12,12 +12,12 @@ import org.randoom.setlx.utilities.TermConverter;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' expr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' anyExpr ')' '{' ( ... )* ('default' ':' block)? '}'
     ;
 
 implemented here as:
-                                                                           =====
-                                                                        mStatements
+                                                          =====
+                                                       mStatements
 */
 
 public class MatchDefaultBranch extends MatchAbstractBranch {

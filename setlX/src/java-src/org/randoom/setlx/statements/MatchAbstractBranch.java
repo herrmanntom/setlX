@@ -18,6 +18,10 @@ public abstract class MatchAbstractBranch extends Statement {
             String  fc      = term.functionalCharacter().getUnquotedString();
             if        (fc.equals(MatchCaseBranch.FUNCTIONAL_CHARACTER)) {
                 return MatchCaseBranch.termToBranch(term);
+            } else if (fc.equals(MatchSplitListBranch.FUNCTIONAL_CHARACTER)) {
+                return MatchSplitListBranch.termToBranch(term);
+            } else if (fc.equals(MatchSplitSetBranch.FUNCTIONAL_CHARACTER)) {
+                return MatchSplitSetBranch.termToBranch(term);
             } else if (fc.equals(MatchDefaultBranch.FUNCTIONAL_CHARACTER)) {
                 return MatchDefaultBranch.termToBranch(term);
             } else {

@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
@@ -20,12 +19,12 @@ import java.util.List;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' expr ')' '{' ('case' exprList ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block | 'case' '[' listOfVariables '|' variable ']' ':' block | 'case' '{' listOfVariables '|' variable '}' ':' block)* ('default' ':' block)? '}'
     ;
 
 implemented here as:
-                                       ========     =====
-                                        mTerms   mStatements
+                                          ========     =====
+                                           mTerms   mStatements
 */
 
 public class MatchCaseBranch extends MatchAbstractBranch {
@@ -109,8 +108,8 @@ public class MatchCaseBranch extends MatchAbstractBranch {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             SetlList    termList    = (SetlList) term.firstMember();
-            List<Expr>  exprs       = new ArrayList<Expr>();
-            List<Value> terms       = new ArrayList<Value>();
+            List<Expr>  exprs       = new ArrayList<Expr>(termList.size());
+            List<Value> terms       = new ArrayList<Value>(termList.size());
             for (Value v : termList) {
                 exprs.add(TermConverter.valueToExpr(v));
                 terms.add(v);

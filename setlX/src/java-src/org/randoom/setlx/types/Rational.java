@@ -22,15 +22,15 @@ public class Rational extends NumberValue {
 
     public Rational(String s) {
         // yes... _this_ must be the first statement
-        this(	(s.indexOf('/') == -1)?
-        			new BigInteger(s)
-        		:
-        			new BigInteger(s.substring(0, s.indexOf('/')))
-        	,
-        		(s.indexOf('/') == -1)?
-        			BigInteger.ONE
-        		:
-        			new BigInteger(s.substring(s.indexOf('/') + 1))
+        this(   (s.indexOf('/') == -1)?
+                    new BigInteger(s)
+                :
+                    new BigInteger(s.substring(0, s.indexOf('/')))
+            ,
+                (s.indexOf('/') == -1)?
+                    BigInteger.ONE
+                :
+                    new BigInteger(s.substring(s.indexOf('/') + 1))
         );
     }
 

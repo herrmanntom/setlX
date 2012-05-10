@@ -23,6 +23,10 @@ public class MatchResult {
         return mMatches;
     }
 
+    public boolean hasBindings() {
+        return mVarBindings.size() > 0;
+    }
+
     public void addBinding(String id, Value value) {
         mVarBindings.put(id, value);
     }

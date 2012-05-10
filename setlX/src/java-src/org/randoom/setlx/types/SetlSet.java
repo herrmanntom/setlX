@@ -10,6 +10,7 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.LinkedList;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -114,6 +115,12 @@ public class SetlSet extends CollectionValue {
 
     public SetlBoolean isSet() {
         return SetlBoolean.TRUE;
+    }
+
+    /* type conversion */
+
+    /*package*/ SetlList toList() {
+        return new SetlList(new LinkedList<Value>(mSet));
     }
 
     /* arithmetic operations */
@@ -468,29 +475,54 @@ public class SetlSet extends CollectionValue {
         } else if ( this.size() != other.size()) {
             return new MatchResult(false);
         }
-        // add all members to a new list
-        SetlList    thisList            = (SetlList) (new SetlList()).sum(this);
-        // permutate `other'
+
+        // first match all atomic values
+        TreeSet<Value> thisCopy     = new TreeSet<Value>(mSet);
+        TreeSet<Value> otherCopy    = new TreeSet<Value>(((SetlSet)other).mSet);
+
+        for (Value v : mSet) {
+            // remove value from both sets, if
+            // a) it is contained in both sets
+            if (otherCopy.contains(v)) {
+                // b) it realy matches itself
+                // c) AND is a 'simple' match, i.e. does not include any variables
+                //        which must be set after the match
+                MatchResult mr = v.matchesTerm(v);
+                if (mr.isMatch() && ( ! mr.hasBindings())) {
+                    thisCopy .remove(v);
+                    otherCopy.remove(v);
+                }
+            } else {
+                if ( ! (v instanceof CollectionValue)) {
+                    // this atomic value must be present to match both sets, but
+                    // it is not
+                    return new MatchResult(false);
+                }
+                // non atomic values are allowed to be left over, as they might
+                // contain variables to be matched, which will match a permutation
+            }
+        }
+
+        // add remaining members from `this' to a new list
+        SetlList    thisList            = (new SetlSet(thisCopy)).toList();
+        // permutate remaining members from `other'
         SetlSet     otherPermutations   = null;
         try {
-            otherPermutations   = other.permutations();
+            otherPermutations   = (new SetlSet(otherCopy)).permutations();
         } catch (SetlException se) {
             // will not happen
         }
-        // this set matches, when one permutation matches
+
+        // both set match, when (at least) one permutation matches
         for (Value permutation : otherPermutations) {
             MatchResult match   = thisList.matchesTerm(permutation);
             if (match.isMatch()) {
                 return match;
             }
         }
+
         // and does not match, when no permutation matches
         return new MatchResult(false);
-
-//        throw new IncompatibleTypeException(
-//            "Using lexicographically ordered collections like sets as match condition is unsupported." +
-//            " Try using the isSet() function outside of the match statement."
-//        );
     }
 
     public Value toTerm() {

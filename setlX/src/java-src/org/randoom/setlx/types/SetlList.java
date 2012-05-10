@@ -44,7 +44,7 @@ public class SetlList extends CollectionValue {
         isCloned    = false; // new lists are not a clone
     }
 
-    private SetlList(LinkedList<Value> list) {
+    /*package*/ SetlList(LinkedList<Value> list) {
         mList       = list;
         isCloned    = true;  // lists created from another list ARE a clone
     }

@@ -1,0 +1,29 @@
+matcher := procedure(t) {
+    match(t) {
+        case []:
+            print("empty list");
+        case [x,y]:
+            print("lists only two: $x$, $y$");
+        case [x,y,z | r]:
+            print("lists first: $x$, $y$, $z$ rest: $r$");
+        
+        // also works with sets
+        
+        case {}:
+            print("empty set");
+        case {x,y}:
+            print("sets only two: $x$, $y$");
+        case {x | r}:
+            print("sets first: $x$ rest: $r$");
+        default:
+            print("no match");
+    }
+};
+
+matcher([]);
+matcher([1, 5]);
+matcher([1 .. 10]);
+matcher({});
+matcher({"a", [1 .. 5]});
+matcher({"a"});
+

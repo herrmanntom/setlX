@@ -93,10 +93,12 @@ statement returns [Statement stmnt]
       '}' { stmnt = new Switch(caseList); }
     | 'match' '(' anyExpr[false] ')' '{'
       (
-        'case' exprList[true] ':' b1 = block                         { matchList.add(new MatchCaseBranch($exprList.exprs, $b1.blk)); }
+         'case'  exprList[true]                                ':' b1 = block  { matchList.add(new MatchCaseBranch($exprList.exprs, $b1.blk));     }
+       | 'case' '[' l1 = listOfVariables '|' v1 = variable ']' ':' b2 = block  { matchList.add(new MatchSplitListBranch($l1.lov, $v1.v, $b2.blk)); }
+       | 'case' '{' l2 = listOfVariables '|' v2 = variable '}' ':' b3 = block  { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, $b3.blk)); }
       )*
       (
-        'default'             ':' b2 = block                         { matchList.add(new MatchDefaultBranch($b2.blk));               }
+        'default'             ':' b4 = block                         { matchList.add(new MatchDefaultBranch($b4.blk));               }
       )?
       '}' { stmnt = new Match($anyExpr.ae, matchList); }
     | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);               }

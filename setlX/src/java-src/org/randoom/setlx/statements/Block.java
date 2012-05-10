@@ -8,7 +8,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -33,7 +33,7 @@ public class Block extends Statement {
     private List<Statement> mStatements;
 
     public Block() {
-        this(new LinkedList<Statement>());
+        this(new ArrayList<Statement>());
     }
 
     public Block(List<Statement> statements) {

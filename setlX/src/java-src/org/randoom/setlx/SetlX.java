@@ -349,8 +349,6 @@ public class SetlX {
         printHelpInteractive();
         System.out.println(
             "Additional parameters:\n" +
-            "  --dump <file-name>\n" +
-            "      writes loaded code into a file\n" +
             "  --noAssert\n" +
             "      disables all assert functions\n" +
             "  --noExecution\n" +

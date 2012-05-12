@@ -5,6 +5,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + implemented splitting lists and sets in match
  + added permutations() function
  + added sleep() function
+ + updated development manual
  # fixed bug when reading from stdin
  * renamend examples folder
 

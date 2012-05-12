@@ -55,8 +55,6 @@ This interpreter is implemented in Java and uses object oriented approaches, whe
 
 Note that this guide assumes extensive knowledge and understanding of the \SetlX{} programming language itself.
 
-\todo{Add more stuff about implementing operations on values in the value classes itself, value semantic etc\ldots}
-
 \subsection{Folder Structure}
 
 The following folders are used to structure the interpreter and its surrounding components:
@@ -64,18 +62,18 @@ The following folders are used to structure the interpreter and its surrounding 
 \begin{itemize}
 	\folder{documentation}
 			{\LaTeX{} sources for the documentation.}
-	\folder{example\_setlX\_code}
-			{Example programs in \SetlX{} to test the interpreter.\\&
+	\folder{example\_SetlX\_code}
+			{Example programs in \SetlX{} to test the interpreter and demonstrate some of its functions.\\&
 			 (Also includes some programs, which where automatically converted from \SetlTwo{} sources.)}
 	\folder{grammar\_pure}
 			{\SetlX{} grammar in Antlr syntax as used by the interpreter, but without any Java statements. This `pure' version can be automatically created from the interpreter syntax with the included `EBNF\_extractor' by executing \command{make update}. Also includes a simple program to parse \SetlX{} code without interpretation.}
 	\folder{src}
-			{Launching script and source code of the interpreter itself.}
+			{Launching script, make files and source code of the interpreter itself.}
 	\begin{itemize}
 		\folder{antlr}
 				{Antlr `jar' file and license.}
 		\folder{grammar}
-				{\SetlX{} grammar in Antlr syntax, which is used to generate java files.}
+				{\SetlX{} grammar in Antlr syntax, which is used to generate Java files.}
 		\folder{java-src}
 				{Java code of the interpreter (see section \ref{srcStructure}).}
 		\folder{simpleTest}
@@ -110,10 +108,6 @@ The code is structured into multiple packages. The interpreter packages are some
 
 This section describes specific implementations, which are scattered into multiple classes and therefore lack a dedicated place to describe their interactions.
 
-\subsection{Exception Handling}
-
-\todo{tbd}
-
 \subsection{Predefined Functions}
 
 All predefined functions in \setlX{}, like `\command{read()}' and `\command{isSet(x)}', are dynamically loaded at runtime on their first invocation using Java's reflection API. This makes it relatively easy to create new functionality without the need of changing (or even completely understanding) the rest of the interpreter.
@@ -135,7 +129,7 @@ In order to be found by this algorithm, predefined functions have to follow stri
 public final static PreDefinedFunction DEFINITION
                                     = new PD_<name>();
 \end{lstlisting}
-	\item And finally the actual work of the function has to be implemented inside the `\command{execute()}' method. The value returned by this method us used as return value of the function during execution. If no value should be returned, return `\command{Om.OM}' instead (import \command{org.randoom.setlx.types.Om}).
+	\item And finally the actual work of the function has to be implemented inside the `\command{execute()}' method. The value returned by this method is used as return value of the function during execution. If no value should be returned, return `\command{Om.OM}' instead (import \command{org.randoom.setlx.types.Om}).
 
 \end{itemize}
 
@@ -183,9 +177,6 @@ doNotChangeScope();
 \nonSubsubsection{Predefined Math Functions}
 
 When an identifier can not be found, after searching for predefined functions, a query for a matching Java Math method, with a single double as parameter, is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{org/randoom/setlx/functions/MathFunction.java}). This class behaves as any other predefined function and converts the \setlX{} value type `Real' into a standard java double, which can used with Java's Math functions.
-\subsection{Iterators}
-
-\todo{tbd}
 
 \section{Build Targets}
 
@@ -231,15 +222,35 @@ make dist-clean
 
 \end{itemize}
 
-\section{Semi Automatic Testing}
+\section{Semi Automatic Testing}\label{testing}
 
-\todo{tbd, see `test\_all' script}
+As a sorry excuse for quality assurance and control a simple \command{test\_all} script is included with the interpreters source. This script should be run after every functional change, but at least before creating a new version, by executing
+
+\begin{lstlisting}[frame=none,numbers=none]
+./test_all
+\end{lstlisting}
+
+The logic of the script is as follows:
+\begin{itemize}
+	\item First \command{make test} is executed and its result verified.
+	\item Each source file ending in \command{.stlx} inside the \command{example\_SetX\_code} folder will be executed, if a file with the same basename, but ending in \command{.stlx.reference} exists.
+	\item If the executed program requires user input, a file with the same basename, but ending in \command{.stlx.input} must be created, including an input per line. This fill will be piped into the interpreter when executing the source file.
+	\item Execution uses the \command{src} folder as working directory and starts \setlX{} with the \command{--predictableRandom} option, thus ensuring predictable results. 
+	\item The output (on both stdout and stderr) of the execution and the reference file are compared using diff.
+	\item When the resulting diff is empty, the next source file is executed.
+	\item Should the resulting diff file not be empty, the script stops. The diff result should then be examined.
+\end{itemize}
 
 \section{Undocumented Features}
 
-% --unhideExceptions
+In addition to the options documented in the manual, \setlX{} has a few `undocumented' options:
 
-\todo{tbd}
+\begin{itemize}
+	\param{--dump <file-name>}
+	      {Writes loaded code into a file (has no effect in interactive mode).}
+	\param{--unhideExceptions}
+	      {Exceptions, which may occur unexpectedly in the Java code (e.g. \command{NullPointerException}), are hidden from the user and instead display a generic error message. When setting this option, the interpreter will print the usual Java stack trace of all unexpected exceptions.}
+\end{itemize}
 
 \section{Distribution}
 
@@ -259,7 +270,7 @@ The automated distribution creation script can be launched by executing
 ./createDistributions
 \end{lstlisting}
 
-Note that this process will `clean' the source (e.g. remove all automatically created files), rebuild the interpreter and its documentation and finally cleans the source again.
+Note that this process will `clean' the source (e.g. remove all automatically created files), rebuild the interpreter and its documentation and finally cleans the source again. It is advisable to run the \command{test\_all} script before creating a new version (see section \ref{testing}).
 
 \subsection{Distributing setlX}
 

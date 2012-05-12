@@ -1,0 +1,17 @@
+Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
+
+---v0.7.4--- 2012/05/12
+ + implemented matching for sets
+ + implemented splitting lists and sets in match
+ + added permutations() function
+ + added sleep() function
+ # fixed bug when reading from stdin
+ * renamend examples folder
+
+---v0.7.3--- 2012/04/26
+ + added assert function and option to disable assertions
+ + updated aStar hanoi examples
+
+---v0.7.2--- 2012/04/22
+ * initial change log entry
+

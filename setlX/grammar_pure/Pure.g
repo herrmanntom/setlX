@@ -151,7 +151,7 @@ sum
     ;
 
 product
-    : power ('*' power | '/' power | '%' power)*
+    : power ('*' power | '/' power | '\\' power | '%' power)*
     ;
 
 power

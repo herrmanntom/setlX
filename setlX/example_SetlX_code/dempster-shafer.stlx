@@ -93,7 +93,7 @@ prettyPrint := procedure(evidenceSet) {
 
 nbrFormat := procedure(value) {
     roundValue := 1000;
-    rVal    := round(value * roundValue) / roundValue;
+    rVal    := real(round(value * roundValue) / roundValue);
     result  := str(rVal);
     if (floor(rVal) == rVal) {
         result += ".";

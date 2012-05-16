@@ -202,6 +202,12 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value round() throws SetlException {
+        throw new IncompatibleTypeException(
+            "Argument '" + this + "' is not a number."
+        );
+    }
+
     public Value sum(Value summand) throws SetlException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);

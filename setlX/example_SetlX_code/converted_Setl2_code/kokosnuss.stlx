@@ -23,5 +23,5 @@ print("Am Anfang sind es ", n, " Kokosn�sse");
 print("Nach dem ersten Teilen bleiben noch ", teile_k_mal(n, 1), " Kokosn�sse.");
 print("Nach dem zweiten Teilen bleiben noch ", teile_k_mal(n, 2), " Kokosn�sse.");
 print("Nach dem dritten Teilen bleiben noch ", teile_k_mal(n, 3), " Kokosn�sse.");
-print("Beim letzten Teilen bekommt jeder ", floor(teile_k_mal(n, 3) / 3), " Kokosn�sse.");
+print("Beim letzten Teilen bekommt jeder ", teile_k_mal(n, 3) \ 3, " Kokosn�sse.");
 

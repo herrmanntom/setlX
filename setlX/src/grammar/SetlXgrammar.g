@@ -349,9 +349,10 @@ sum [boolean enableIgnore] returns [Expr s]
 product [boolean enableIgnore] returns [Expr p]
     : p1 = power[$enableIgnore]         { p = $p1.pow;                  }
       (
-          '*' p2 = power[$enableIgnore] { p = new Multiply(p, $p2.pow); }
-        | '/' p2 = power[$enableIgnore] { p = new Divide(p, $p2.pow);   }
-        | '%' p2 = power[$enableIgnore] { p = new Modulo(p, $p2.pow);   }
+          '*'  p2 = power[$enableIgnore] { p = new Multiply(p, $p2.pow);        }
+        | '/'  p2 = power[$enableIgnore] { p = new Divide(p, $p2.pow);          }
+        | '\\' p2 = power[$enableIgnore] { p = new IntegerDivision(p, $p2.pow); }
+        | '%'  p2 = power[$enableIgnore] { p = new Modulo(p, $p2.pow);          }
       )*
     ;
 

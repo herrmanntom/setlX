@@ -32,8 +32,7 @@ public class SetlString extends Value {
                     sb.append('\0');
                 } else {
                     // seems like not part of known escape sequence
-                    sb.append('\\');
-                    i -= 1; // char sequence read was only one char long
+                    sb.append(n);
                 }
                 i += 2;
             } else {

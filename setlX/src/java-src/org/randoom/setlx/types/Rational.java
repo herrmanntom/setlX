@@ -372,6 +372,15 @@ public class Rational extends NumberValue {
         return toReal().power(exponent);
     }
 
+    public Rational round() throws SetlException {
+        if (mIsInteger) {
+            return this;
+        } else {
+            Rational roundPart = (Rational) this.difference(this.toInteger()).toReal().round();
+            return (Rational) this.toInteger().sum(roundPart);
+        }
+    }
+
     public Value sum(Value summand) throws SetlException {
         if (summand instanceof Rational) {
             Rational r = (Rational) summand;

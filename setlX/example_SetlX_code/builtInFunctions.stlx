@@ -107,7 +107,7 @@ print();
 
 daysSinceEpoch := procedure(ms) {
     aDayInMs := 1000 * 60 ** 2 * 24;
-    return floor(ms / aDayInMs);
+    return ms \ aDayInMs; // integer division
 };
 
 // print(daysSinceEpoch(now()) + " days have gone by since 1970-01-01.");

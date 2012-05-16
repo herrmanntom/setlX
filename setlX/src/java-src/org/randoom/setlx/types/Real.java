@@ -218,6 +218,10 @@ public class Real extends NumberValue {
         return new Real(Math.exp(exponent * Math.log(a)));
     }
 
+    public Rational round() {
+        return new Rational(mReal.setScale(0, mathContext.getRoundingMode()).toBigInteger());
+    }
+
     public Value sum(Value summand) throws IncompatibleTypeException {
         if (summand instanceof NumberValue) {
             if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {

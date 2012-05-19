@@ -28,7 +28,7 @@ public class ExpressionStatement extends Statement {
     public void exec() throws SetlException {
         Value v = mExpr.eval();
         if (Environment.isPrintAfterEval() && (v != Om.OM || !((Om) v).isHidden() )) {
-            System.out.println("Result: " + v);
+            Environment.outWriteLn("Result: " + v);
         }
     }
 

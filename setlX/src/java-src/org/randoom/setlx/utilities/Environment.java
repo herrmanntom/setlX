@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.expressions.Call;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
@@ -8,60 +9,84 @@ import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.statements.While;
 import org.randoom.setlx.types.ProcedureDefinition;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Random;
 
 // This class provides environment variables
 
 public class Environment {
-    // number of CPUs (cores) in the executing system
-    private final   static  int             sCORES                      = Runtime.getRuntime().availableProcessors();
+    // interface provider to the outer world
+    private         static  EnvironmentProvider sEnvProvider                = null;
 
-    // buffered reader for stdin
-    private         static  BufferedReader  sStdInReader                = null;
-    private         static  boolean         sIsHuman                    = false;
+    // is input feed by a human?
+    private         static  boolean             sIsHuman                    = false;
 
     // random number generator
-    private         static  Random          sRandoom                    = null;
+    private         static  Random              sRandoom                    = null;
 
-    private         static  boolean         sIsInteractive              = false;
-    private         static  boolean         sPrintAfterEval             = false;
-    private         static  boolean         sPrintVerbose               = false;
-    private         static  boolean         sAssertsDisabled            = false;
-
-    private final   static  String          sTAB                        = "\t";
-    private final   static  String          sENDL                       = "\n";
+    private         static  boolean             sIsInteractive              = false;
+    private         static  boolean             sPrintAfterEval             = false;
+    private         static  boolean             sPrintVerbose               = false;
+    private         static  boolean             sAssertsDisabled            = false;
 
     /* -- debugger -- */
-    private final   static  HashSet<String> sBreakpoints                = new HashSet<String>();
-    private         static  boolean         sBreakpointsEnabled         = false; // are any breakpoints set?
+    private final   static  HashSet<String>     sBreakpoints                = new HashSet<String>();
+    private         static  boolean             sBreakpointsEnabled         = false; // are any breakpoints set?
 
-    private         static  boolean         sDebugModeActive            = false;
-    private         static  boolean         sDebugPromptActive          = false;
-    private         static  boolean         sDebugStepNextExpr          = false;
-    private         static  boolean         sDebugStepThroughFunction   = false;
-    private         static  boolean         sDebugFinishFunction        = false;
-    private         static  boolean         sDebugFinishLoop            = false;
+    private         static  boolean             sDebugModeActive            = false;
+    private         static  boolean             sDebugPromptActive          = false;
+    private         static  boolean             sDebugStepNextExpr          = false;
+    private         static  boolean             sDebugStepThroughFunction   = false;
+    private         static  boolean             sDebugFinishFunction        = false;
+    private         static  boolean             sDebugFinishLoop            = false;
+
+    public static void setEnvironmentProvider(EnvironmentProvider envProvider) {
+        sEnvProvider = envProvider;
+    }
 
     public static int getNumberOfCores() {
-        if (sCORES >= 2) {
-            return sCORES;
+        int cores = sEnvProvider.getNumberOfCores();
+        if (cores >= 2) {
+            return cores;
         } else {
             return 1;
         }
     }
 
-    public static BufferedReader getStdIn() {
-        if (sStdInReader == null) {
-            sStdInReader = new BufferedReader(new InputStreamReader(System.in));
-        }
-        return sStdInReader;
+    public static String inReadLine() throws JVMIOException {
+        return sEnvProvider.inReadLine();
     }
 
-    public static boolean promptForStdInOnStdOut(String prompt) throws IOException {
+
+    // write to standard output
+    public static void outWrite(String msg) {
+        sEnvProvider.outWrite(msg);
+    }
+    public static void outWriteLn(String msg) {
+        sEnvProvider.outWrite(msg + sEnvProvider.getEndl());
+    }
+    public static void outWriteLn() {
+        sEnvProvider.outWrite(sEnvProvider.getEndl());
+    }
+    public static void outFlush() {
+        sEnvProvider.outFlush();
+    }
+
+    // write to standard error
+    public static void errWrite(String msg) {
+        sEnvProvider.errWrite(msg);
+    }
+    public static void errWriteLn(String msg) {
+        sEnvProvider.errWrite(msg + sEnvProvider.getEndl());
+    }
+    public static void errWriteLn() {
+        sEnvProvider.errWrite(sEnvProvider.getEndl());
+    }
+    public static void errFlush() {
+        sEnvProvider.errFlush();
+    }
+
+    public static boolean promptForStdInOnStdOut(String prompt) throws JVMIOException {
         // Only if a pipe is connected the input is ready (has input buffered)
         // BEFORE the prompt.
         // A human usually takes time AFTER the prompt to type something ;-)
@@ -69,9 +94,9 @@ public class Environment {
         // Also if at one time a prompt was displayed, display all following
         // prompts. (User may continue to type into stdin AFTER we last read
         // from it, causing stdin to be ready, but human controlled)
-        if (sIsHuman || ! getStdIn().ready()) {
-            System.out.print(prompt);
-            System.out.flush();
+        if (sIsHuman || ! sEnvProvider.inReady()) {
+            sEnvProvider.outWrite(prompt);
+            sEnvProvider.outFlush();
             sIsHuman = true;
             return true;
         }
@@ -126,16 +151,17 @@ public class Environment {
         if (!sPrintVerbose || tabs <= 0) {
             return "";
         }
-        String r = sTAB;
+        String tab = sEnvProvider.getTab();
+        String r   = tab;
         for (int i = 1; i < tabs; i++) {
-            r += sTAB;
+            r += tab;
         }
         return r;
     }
 
     public static String getEndl() {
         if (sPrintVerbose) {
-            return sENDL;
+            return sEnvProvider.getEndl();
         } else {
             return " ";
         }

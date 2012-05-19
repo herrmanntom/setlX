@@ -15,6 +15,8 @@ grammar SetlXgrammar;
 
 @lexer::header {
     package org.randoom.setlx.grammar;
+
+    import org.randoom.setlx.utilities.Environment;
 }
 
 @members {
@@ -28,12 +30,30 @@ grammar SetlXgrammar;
             if (t.getText().equals(tokenTextToMatch)) {
                 String sourceName = getSourceName();
                 if (sourceName != null) {
-                    System.err.print(sourceName + " ");
+                    Environment.errWrite(sourceName + " ");
                 }
-                System.err.println("line " + t.getLine() + ":" + (t.getCharPositionInLine() + 1) + " " + message);
+                Environment.errWriteLn("line " + t.getLine() + ":" + (t.getCharPositionInLine() + 1) + " " + message);
                 break;
             }
         }
+    }
+
+    private static String lastErrorMsg = ""; // reset this variable after each parsing run!
+
+    // make error reporting platform independend
+    // and ignore duplicate messages, which occur when using syntactical predicates
+    public void emitErrorMessage(String msg) {
+        if ( ! lastErrorMsg.equals(msg)) {
+            Environment.errWriteLn(msg);
+            lastErrorMsg = msg;
+        }
+    }
+}
+
+@lexer::members {
+    // make error reporting platform independend
+    public void emitErrorMessage(String msg) {
+        Environment.errWriteLn(msg);
     }
 }
 
@@ -47,14 +67,14 @@ initBlock returns [Block blk]
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )+
       EOF
-      { blk = new Block(stmnts); }
+      { blk = new Block(stmnts); lastErrorMsg = ""; }
     ;
 
 /* Require at termination with EOF.
    Otherwhise antlr runs into strange parser behavior ... */
 initAnyExpr returns [Expr ae]
     : anyExpr[false] EOF
-      { ae = $anyExpr.ae; }
+      { ae = $anyExpr.ae; lastErrorMsg = ""; }
     ;
 
 block returns [Block blk]
@@ -553,5 +573,5 @@ WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
  * Matching any character here works, because the lexer matches rules in order.
  */
 
-REMAINDER       : . { state.syntaxErrors++; System.err.println(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
+REMAINDER       : . { state.syntaxErrors++; Environment.errWriteLn(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
 

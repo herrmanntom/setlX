@@ -1,11 +1,11 @@
 package org.randoom.setlx.functions;
 
+import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 
-import java.io.IOException;
 import java.util.List;
 
 // read()                  : reads from stdin until user enters at least one character, converts input into integer or real if possible
@@ -23,14 +23,14 @@ public class PD_read extends PreDefinedFunction {
         try {
             do {
                 Environment.promptForStdInOnStdOut(": ");
-                input = Environment.getStdIn().readLine();
+                input = Environment.inReadLine();
                 if (input != null) {
                     input = input.trim();
                 }
             } while (input != null && input.equals(""));
-        } catch (IOException ioe) {
-            System.err.println(ioe);
-            System.err.println("IO error trying to read from stdin!");
+        } catch (JVMIOException ioe) {
+            Environment.errWriteLn(ioe.getMessage());
+            Environment.errWriteLn("IO error trying to read from stdin!");
         }
 
         if (input != null) {

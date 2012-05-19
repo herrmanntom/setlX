@@ -142,7 +142,7 @@ public class ParseSetlX {
                     String  error   = "line " + t.getLine() + ":" + t.getCharPositionInLine();
                             error  += " input '" + ts.toString(index, ts.size()) + "' includes unidentified errors";
                     // fake Antlr like error message
-                    System.err.println(error);
+                    Environment.errWriteLn(error);
                     // and stop parsing
                     throw new SyntaxErrorException(error);
                 }

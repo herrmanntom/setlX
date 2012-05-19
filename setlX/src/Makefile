@@ -45,7 +45,7 @@ bin/org/randoom/setlx/SetlX.class :                         \
         java-src/org/randoom/setlx/statements/Block.java
 	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/SetlX.java
 
-bin/org/randoom/setlx/grammar/SetlXgrammar*.class :                            \
+bin/org/randoom/setlx/grammar/SetlXgrammar*.class :         \
         java-src/org/randoom/setlx/grammar/SetlXgrammar*.java                   \
         java-src/org/randoom/setlx/types/*.java                                 \
         java-src/org/randoom/setlx/utilities/*.java                             \

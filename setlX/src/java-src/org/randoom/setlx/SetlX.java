@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
+import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.ReturnException;
@@ -15,11 +16,16 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.EnvironmentProvider;
 import org.randoom.setlx.utilities.ParseSetlX;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
 
 public class SetlX {
 
@@ -40,6 +46,71 @@ public class SetlX {
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
+    // This interface class provides access to the I/O mechanisms of the target platform etc
+    private static class PcEnvProvider implements EnvironmentProvider {
+
+        private final static String         sTAB            = "\t";
+        private final static String         sENDL           = "\n";
+
+        // buffered reader for stdin
+        private       static BufferedReader sStdInReader    = null;
+
+        private static BufferedReader getStdIn() {
+            if (sStdInReader == null) {
+                sStdInReader = new BufferedReader(new InputStreamReader(System.in));
+            }
+            return sStdInReader;
+        }
+
+        /* interface functions */
+
+        // number of CPUs (cores) in the executing system
+        public int      getNumberOfCores() {
+            return Runtime.getRuntime().availableProcessors();
+        }
+
+        // read from input
+        public boolean  inReady() throws JVMIOException {
+            try {
+                return getStdIn().ready();
+            } catch (IOException ioe) {
+                throw new JVMIOException("Unable to open stdIn!");
+            }
+        }
+        public String   inReadLine() throws JVMIOException {
+            try {
+                       // line is read and returned without termination character(s)
+                return getStdIn().readLine();
+            } catch (IOException ioe) {
+                throw new JVMIOException("Unable to open stdIn!");
+            }
+        }
+
+        // write to standard output
+        public void     outWrite(String msg) {
+            System.out.print(msg);
+        }
+        public void     outFlush() {
+            System.out.flush();
+        }
+
+        // write to standard error
+        public void     errWrite(String msg) {
+            System.err.print(msg);
+        }
+        public void     errFlush() {
+            System.err.flush();
+        }
+
+        // some text format stuff
+        public String   getTab() {
+            return sTAB;
+        }
+        public String   getEndl() {
+            return sENDL;
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         boolean         dump        = false; // writes loaded code into a file
         String          dumpFile    = "";    // file to dump into
@@ -48,10 +119,13 @@ public class SetlX {
         boolean         noExecution = false;
         List<String>    files       = new LinkedList<String>();
 
+        // initialize Environment
+        Environment.setEnvironmentProvider(new PcEnvProvider());
+
         for (int i = 0; i < args.length; i++) {
             String s = args[i];
             if (s.equals("--version")) {
-                System.out.println(VERSION);
+                Environment.outWriteLn(VERSION);
 
                 System.exit(EXIT_OK);
 
@@ -132,12 +206,12 @@ public class SetlX {
                 skipTest    = false;
             } catch (EndOfFileException eofe) {
                 // user wants to quit
-                System.out.println("\n\nGood Bye! (EOF)");
+                Environment.outWriteLn("\n\nGood Bye! (EOF)");
 
                 break;
 
             } catch (ParserException pe) {
-                System.err.println("\nLast input not executed due to errors in it.");
+                Environment.errWriteLn("\nLast input not executed due to errors in it.");
                 skipTest = true;
                 blk      = null;
             } catch (Exception e) { // this should never happen...
@@ -160,7 +234,7 @@ public class SetlX {
         List<Block> programs = new ArrayList<Block>(files.size());
 
         if (verbose) {
-            System.out.println(
+            Environment.outWriteLn(
                 "-================================Parser=Errors================================-\n"
             );
         }
@@ -172,14 +246,14 @@ public class SetlX {
             }
         } catch (ParserException pe) {
             if (pe instanceof FileNotReadableException) {
-                System.err.println(pe.getMessage());
+                Environment.errWriteLn(pe.getMessage());
             }
             if (verbose) {
-                System.out.println(
+                Environment.outWriteLn(
                     "\n-================================Parsing=Failed===============================-\n"
                 );
             }
-            System.err.println("Execution terminated due to errors in the input.");
+            Environment.errWriteLn("Execution terminated due to errors in the input.");
 
             System.exit(EXIT_ERROR);
 
@@ -194,8 +268,8 @@ public class SetlX {
 
         // no parser errors when we get here
         if (verbose) {
-            System.out.println("none\n");
-            System.out.println(
+            Environment.outWriteLn("none\n");
+            Environment.outWriteLn(
                 "-================================Parsed=Program===============================-\n"
             );
         }
@@ -209,7 +283,7 @@ public class SetlX {
 
                 //in verbose mode the parsed programs are echoed
                 if (verbose) {
-                    System.out.print(program);
+                    Environment.outWriteLn(program);
                 }
 
                 // when dump is enabled, the program is appended to the dumpFile
@@ -217,7 +291,7 @@ public class SetlX {
                     try {
                         DumpSetlX.dumpToFile(program, dumpFile, /* append = */ (i > 0) );
                     } catch (FileNotWriteableException fnwe) {
-                        System.err.println(fnwe.getMessage());
+                        Environment.errWriteLn(fnwe.getMessage());
 
                         System.exit(EXIT_ERROR);
 
@@ -257,40 +331,40 @@ public class SetlX {
             b.execute();
 
         } catch (AbortException ae) { // code detected user did something wrong
-            System.err.println(ae.getMessage());
+            Environment.errWriteLn(ae.getMessage());
             return EXEC_ERROR;
         } catch (BreakException be) { // break outside of procedure
             if (Environment.isInteractive()) {
-                System.out.println(be.getMessage());
+                Environment.outWriteLn(be.getMessage());
             }
             return EXEC_ERROR;
         } catch (ContinueException ce) { // continue outside of procedure
             if (Environment.isInteractive()) {
-                System.out.println(ce.getMessage());
+                Environment.outWriteLn(ce.getMessage());
             }
             return EXEC_ERROR;
         } catch (ExitException ee) { // user/code wants to quit
             if (Environment.isInteractive()) {
-                System.out.println(ee.getMessage());
+                Environment.outWriteLn(ee.getMessage());
             }
 
             return EXEC_EXIT; // breaks loop while parsing interactively
 
         } catch (ResetException re) { // user/code wants to quit debugging
             if (Environment.isInteractive()) {
-                System.out.println("Resetting to interactive prompt.");
+                Environment.outWriteLn("Resetting to interactive prompt.");
             }
             return EXEC_OK;
         } catch (ReturnException re) { // return outside of procedure
             if (Environment.isInteractive()) {
-                System.out.println(re.getMessage());
+                Environment.outWriteLn(re.getMessage());
             }
             return EXEC_ERROR;
         } catch (SetlException se) { // user/code did something wrong
             printExceptionsTrace(se.getTrace());
             return EXEC_ERROR;
         } catch (OutOfMemoryError oome) {
-            System.err.println(
+            Environment.errWriteLn(
                 "The setlX interpreter has ran out of memory.\n" +
                 "Try improving the SetlX program and/or execute with larger maximum memory size.\n" +
                 "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n" +
@@ -314,11 +388,11 @@ public class SetlX {
         String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 2) );
         header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 2);
         // print header
-        System.out.println("\n" + header + "\n");
+        Environment.outWriteLn("\n" + header + "\n");
     }
 
     private static void printShortHelp() {
-        System.out.println(
+        Environment.outWriteLn(
             "Welcome to the setlX interpreter!\n" +
             "\n" +
             "You can display some helpful information by using '--help' as parameter when\n" +
@@ -328,13 +402,13 @@ public class SetlX {
 
     private static void printInteractiveBegin() {
         printHelpInteractive();
-        System.out.print(
+        Environment.outWriteLn(
             "-===============================Interactive=Mode==============================-\n"
         );
     }
 
     private static void printHelpInteractive() {
-        System.out.println(
+        Environment.outWriteLn(
             "Interactive-Mode:\n" +
             "  Two newline characters execute previous input.\n" +
             "  The 'exit;' statement terminates the interpreter.\n"
@@ -342,12 +416,12 @@ public class SetlX {
     }
 
     private static void printHelp() {
-        System.out.println(
+        Environment.outWriteLn(
             "File paths supplied as parameters for this program will be parsed and executed.\n" +
             "The interactive mode will be started if called without any file parameters.\n"
         );
         printHelpInteractive();
-        System.out.println(
+        Environment.outWriteLn(
             "Additional parameters:\n" +
             "  --noAssert\n" +
             "      disables all assert functions\n" +
@@ -368,20 +442,20 @@ public class SetlX {
     }
 
     private static void printInternalError() {
-        System.err.println(
+        Environment.errWriteLn(
             "Internal Error. Please report this error including steps and/or code " +
             "to reproduce to `setlx@randoom.org'."
         );
     }
 
     private static void printExecutionStart() {
-        System.out.println(
+        Environment.outWriteLn(
             "\n-===============================Execution=Result==============================-\n"
         );
     }
 
     private static void printExecutionFinished() {
-        System.out.println(
+        Environment.outWriteLn(
             "\n-==============================Execution=Finished=============================-\n"
         );
     }
@@ -394,10 +468,10 @@ public class SetlX {
             // leave out some messages in the middle, which are most likely just clutter
             if (end > max && i > m_2 - 1 && i < end - (m_2 + 1)) {
                 if (i == m_2) {
-                    System.err.println(" ... \n     omitted " + (end - max) + " messages\n ... ");
+                    Environment.errWriteLn(" ... \n     omitted " + (end - max) + " messages\n ... ");
                 }
             } else {
-                System.err.println(trace.get(i));
+                Environment.errWriteLn(trace.get(i));
             }
         }
     }

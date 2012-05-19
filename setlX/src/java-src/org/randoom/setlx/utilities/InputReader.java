@@ -1,10 +1,10 @@
 package org.randoom.setlx.utilities;
 
-import java.io.BufferedReader;
+import org.randoom.setlx.exceptions.EndOfFileException;
+import org.randoom.setlx.exceptions.JVMIOException;
+
 import java.io.ByteArrayInputStream;
-import java.io.EOFException;
 import java.io.InputStream;
-import java.io.IOException;
 
 public final class InputReader {
     private static String         EOL = "\n";
@@ -24,31 +24,30 @@ public final class InputReader {
      *
      * @return input from System.in, wrapped in new InputStream
      */
-    public static InputStream getStream() throws EOFException {
-        BufferedReader  br          = Environment.getStdIn();
+    public static InputStream getStream() throws EndOfFileException {
         StringBuilder   input       = new StringBuilder();
         String          line        = null;
         int             endlAdded   = 0;
         try {
             while (true) {
                 // line is read and returned without termination character(s)
-                line   = br.readLine();
+                line   = Environment.inReadLine();
                 // add line termination (Unix style '\n' by default)
                 input.append(line);
                 input.append(EOL);  endlAdded += EOL.length();
                 if (line == null) {
-                    throw new EOFException("EndOfFile");
+                    throw new EndOfFileException("EndOfFile");
                 } else if (line.length() == 0 && input.length() > endlAdded) {
                     byte[] byteArray = input.substring(0, input.length() - EOL.length()).getBytes();
                     return new ByteArrayInputStream(byteArray);
                 }
             }
-        } catch (EOFException eof) {
+        } catch (EndOfFileException eof) {
             throw eof;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (JVMIOException e) {
+            // should never happen
+            throw new EndOfFileException("unable to read from stdin...");
         }
-        return null;
     }
 
     /**

@@ -27,7 +27,7 @@ public class PD_lsBreak extends PreDefinedFunction {
             message += " no breakpoints set\n";
         }
 
-        System.err.println(message);
+        Environment.errWriteLn(message);
 
         return Om.OM;
     }

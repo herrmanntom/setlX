@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.Environment;
 
 import java.util.List;
 
@@ -26,12 +27,16 @@ public class PD_print extends PreDefinedFunction {
         for (Value arg : args) {
             print(arg.getUnquotedString());
         }
-        print("\n");
+        printEndl();
         return Om.OM;
     }
 
     protected void print(String txt) {
-        System.out.print(txt);
+        Environment.outWrite(txt);
+    }
+
+    protected void printEndl() {
+        Environment.outWriteLn();
     }
 }
 

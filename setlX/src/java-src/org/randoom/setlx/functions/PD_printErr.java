@@ -1,5 +1,7 @@
 package org.randoom.setlx.functions;
 
+import org.randoom.setlx.utilities.Environment;
+
 // printErr(value, ...)    : same as print, but prints into stderr
 
 public class PD_printErr extends PD_print {
@@ -10,7 +12,11 @@ public class PD_printErr extends PD_print {
     }
 
     protected void print(String txt) {
-        System.err.print(txt);
+        Environment.errWrite(txt);
+    }
+
+    protected void printEndl() {
+        Environment.errWriteLn();
     }
 }
 

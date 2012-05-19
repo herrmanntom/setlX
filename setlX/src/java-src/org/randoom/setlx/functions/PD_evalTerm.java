@@ -66,7 +66,7 @@ public class PD_evalTerm extends PreDefinedFunction {
 
                 // newline to visually separate result
                 if (printAfterEval && doNotDisableOutput == SetlBoolean.TRUE) {
-                    System.out.println();
+                    Environment.outWriteLn();
                 }
             }
         } finally {

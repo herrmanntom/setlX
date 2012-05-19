@@ -24,10 +24,10 @@ public class DebugPrompt {
     public static void prompt(String message) throws SetlException {
         continePrompt = true;
         if (firstPrompt) {
-            System.out.println(
+            Environment.outWriteLn(
                 "-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Debug~Mode~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-"
             );
-            System.out.println(
+            Environment.outWriteLn(
                 "Execute helpDgb(); to display debugger commands and their explanation."
             );
             firstPrompt = false;
@@ -36,13 +36,13 @@ public class DebugPrompt {
         Block   blk      = null;
         do {
             // prompt including newline to visually separate the next input
-            System.out.print("\n" + message + "\ndbg> ");
-            System.out.flush();
+            Environment.outWrite("\n" + message + "\ndbg> ");
+            Environment.outFlush();
             try {
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();
             } catch (ParserException pe) {
-                System.err.println("\nLast input not executed due to errors in it.");
+                Environment.errWriteLn("\nLast input not executed due to errors in it.");
                 blk      = null;
             }
             if (blk != null) {

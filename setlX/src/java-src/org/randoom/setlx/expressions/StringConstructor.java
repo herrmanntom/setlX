@@ -10,6 +10,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -59,7 +60,7 @@ public class StringConstructor extends Expr {
                              * error count and (later) halt.
                              * However we can at least provide the user with some feedback.
                              */
-                            System.err.println(
+                            Environment.errWriteLn(
                                 "Parsing-Error in string " + this + ": " + se.getMessage()
                             );
                         }
@@ -93,7 +94,7 @@ public class StringConstructor extends Expr {
                  */
                 ParseSetlX.addReportedError();
                 // However we can at least provide the user with some feedback.
-                System.err.println("Parsing-Error in string " + this + ": closing '$' missing.");
+                Environment.errWriteLn("Parsing-Error in string " + this + ": closing '$' missing.");
             }
             // outer string must always be appended, even if empty
             mFragments.add(fragment.toString());

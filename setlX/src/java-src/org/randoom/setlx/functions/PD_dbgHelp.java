@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.Environment;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class PD_dbgHelp extends PreDefinedFunction {
                           "  resume();       // resume normal execution\n" +
                           "  reset();        // stop execution and return to interactive prompt\n";
 
-        System.err.println(message);
+        Environment.errWriteLn(message);
         return Om.OM.hide();
     }
 }

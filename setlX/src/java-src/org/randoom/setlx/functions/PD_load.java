@@ -70,7 +70,7 @@ public class PD_load extends PreDefinedFunction {
 
         // newline to visually separate result
         if (printAfterEval && doNotDisableOutput == SetlBoolean.TRUE) {
-            System.out.println();
+            Environment.outWriteLn();
         }
 
         // everything is good

@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v0.7.6--- ??
+ # suppressed duplicate parser error messages
+ + introduced some more platform independence (in preparation for Android version)
+ 
 ---v0.7.5--- 2012/05/16
  + added \ operator for integer division, e.g. a \ b == floor(a/b)
  + round() works for unlimited precision values
@@ -11,7 +15,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added sleep() function
  + updated development manual
  # fixed bug when reading from stdin
- * renamend examples folder
+ * renamed examples folder
 
 ---v0.7.3--- 2012/04/26
  + added assert function and option to disable assertions

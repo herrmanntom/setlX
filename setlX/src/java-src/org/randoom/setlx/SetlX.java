@@ -29,7 +29,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "0.7.5";
+    private final static String     VERSION         = "0.7.6";
     private final static String     VERSION_PREFIX  = "v";
     private final static String     HEADER          = "-====================================setlX====================================-";
 

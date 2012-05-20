@@ -11,7 +11,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Iterator;
 import org.randoom.setlx.utilities.IteratorExecutionContainer;
 
-import java.util.List;
 
 /*
 grammar rules:

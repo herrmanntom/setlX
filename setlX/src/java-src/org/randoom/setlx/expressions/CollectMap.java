@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;

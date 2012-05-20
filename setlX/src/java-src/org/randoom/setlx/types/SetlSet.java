@@ -1,17 +1,14 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
-import java.util.NavigableSet;
 import java.util.TreeSet;
 
 /* This class implements an set of arbitrary SetlX values.
@@ -228,8 +225,8 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(arg);
         upperBound.addMember(Infinity.POSITIVE);
 
-        NavigableSet<Value> subSet  = mSet.subSet(lowerBound, false, upperBound, true);
-        SetlSet             result  = new SetlSet();
+        TreeSet<Value>  subSet  = (TreeSet<Value>) mSet.subSet(lowerBound, false, upperBound, true);
+        SetlSet         result  = new SetlSet();
 
         for (Value v: subSet) {
             if (v instanceof SetlList) {
@@ -302,8 +299,8 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(element);
         upperBound.addMember(Infinity.POSITIVE);
 
-        NavigableSet<Value> subSet  = mSet.subSet(lowerBound, false, upperBound, true);
-        Value               result  = Om.OM;
+        TreeSet<Value>  subSet  = (TreeSet<Value>) mSet.subSet(lowerBound, false, upperBound, true);
+        Value           result  = Om.OM;
 
         for (Value v: subSet) {
             if (v instanceof SetlList) {

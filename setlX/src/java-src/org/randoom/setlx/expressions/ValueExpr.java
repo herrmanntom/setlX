@@ -1,7 +1,5 @@
 package org.randoom.setlx.expressions;
 
-import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
 // this class wraps values into an expression

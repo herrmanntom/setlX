@@ -89,13 +89,14 @@ public class TermConverter {
                     // invoke method found
                     if (converter != null) {
                         try {
-                            // FIX: compiler is unable to determine that invoked method may throw this exception
-                            if (false) { throw new TermConversionException(""); }
                             return (CodeFragment) converter.invoke(null, term);
-                        } catch (TermConversionException tce) {
-                            throw tce;
-                        } catch (Exception iae) { // this will never ever happen ;-)
-                            throw new TermConversionException("Impossible error...");
+                        } catch (Exception e) {
+                            if (e instanceof TermConversionException) {
+                                throw (TermConversionException) e;
+                            } else { // will never happen ;-)
+                                // because we know this method exists etc
+                                throw new TermConversionException("Impossible error...");
+                            }
                         }
                     }
                     // special cases

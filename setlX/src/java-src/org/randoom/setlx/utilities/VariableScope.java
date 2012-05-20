@@ -57,7 +57,7 @@ public class VariableScope {
         }
         SearchItem i = sVariableScope.locateValue(var);
         if (i.mIsClone) { // will never be clone when sVariableScope.mReadThrough is true
-            sVariableScope.putValue(var, i.mV); // store values found in outer scope into current scope
+            sVariableScope.storeValue(var, i.mV); // store values found in outer scope into current scope
         } else if (i.mV == null) {
             // search if name matches a predefined function (which start with 'PD_')
             String packageName = PreDefinedFunction.class.getPackage().getName();

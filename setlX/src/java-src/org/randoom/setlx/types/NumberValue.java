@@ -1,9 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 
 public abstract class NumberValue extends Value {
 

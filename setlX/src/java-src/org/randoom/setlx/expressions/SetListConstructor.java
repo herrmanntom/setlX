@@ -7,13 +7,10 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Constructor;
-import org.randoom.setlx.utilities.VariableScope;
 
-import java.util.List;
 
 /*
 grammar rules:

@@ -3,9 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.boolExpressions.*;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.*;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
 

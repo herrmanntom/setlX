@@ -7,7 +7,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.Environment;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 // This class represents a rational number
@@ -18,7 +17,6 @@ public class Rational extends NumberValue {
     private                 boolean     mIsInteger;
 
     private final static    Rational    ZERO            = new Rational(0);
-    private final static    Rational    ONE             = new Rational(1);
 
     public Rational(String s) {
         // yes... _this_ must be the first statement

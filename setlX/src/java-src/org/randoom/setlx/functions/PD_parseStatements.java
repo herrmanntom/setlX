@@ -3,7 +3,6 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParseSetlX;

@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.TermConverter;
 

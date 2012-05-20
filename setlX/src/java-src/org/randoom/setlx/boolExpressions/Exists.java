@@ -13,7 +13,6 @@ import org.randoom.setlx.utilities.IteratorExecutionContainer;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 
-import java.util.List;
 
 /*
 grammar rule:

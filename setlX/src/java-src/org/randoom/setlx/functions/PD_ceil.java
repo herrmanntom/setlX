@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
 
 import java.util.List;
 

@@ -1,11 +1,8 @@
 package org.randoom.setlx.expressions;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.types.IgnoreDummy;
-import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -24,13 +21,12 @@ public class StringConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private boolean      mQuoted;      // do not parse inner expressions ('@' -> true)
     private String       mOriginalStr; // original String
     private List<String> mFragments;   // list of string fragments for after and between expressions
     private List<Expr>   mExprs;       // list of $-Expressions
 
     public StringConstructor(boolean quoted, String originalStr) {
-        this(quoted, originalStr, new LinkedList<String>(), new LinkedList<Expr>());
+        this(originalStr, new LinkedList<String>(), new LinkedList<Expr>());
 
         // Strip out double quotes which the parser left in
         originalStr  = originalStr.substring(1, originalStr.length() - 1);
@@ -103,8 +99,7 @@ public class StringConstructor extends Expr {
         }
     }
 
-    private StringConstructor(boolean quoted, String originalStr, List<String> fragments, List<Expr> exprs) {
-        mQuoted         = quoted;
+    private StringConstructor(String originalStr, List<String> fragments, List<Expr> exprs) {
         mOriginalStr    = originalStr;
         mFragments      = fragments;
         mExprs          = exprs;
@@ -205,7 +200,7 @@ public class StringConstructor extends Expr {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
             originalStr += "\"";
-            Expr result = new StringConstructor(quoted, originalStr, fragments, exprs);
+            Expr result = new StringConstructor(originalStr, fragments, exprs);
             if (quoted) {
                 return new Quote(result);
             } else {
@@ -226,7 +221,7 @@ public class StringConstructor extends Expr {
         List<String>    fragments   = new LinkedList<String>();
         fragments.add(string);
         List<Expr>      exprs       = new LinkedList<Expr>();
-        Expr            result      = new StringConstructor(quoted, originalStr, fragments, exprs);
+        Expr            result      = new StringConstructor(originalStr, fragments, exprs);
         if (quoted) {
             return new Quote(result);
         } else {

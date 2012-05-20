@@ -33,7 +33,7 @@ public class MathFunction extends PreDefinedFunction {
         if (arg != Om.OM) {
             try {
                 Object result   = mFunction.invoke(null, ((Real) arg).doubleValue());
-                return new Real(new Double(result.toString()));
+                return new Real(Double.valueOf(result.toString()));
             } catch (NumberFormatException nfe) {
                 throw new NumberToLargeException(
                     "Involved numbers are to large or to small for this operation."

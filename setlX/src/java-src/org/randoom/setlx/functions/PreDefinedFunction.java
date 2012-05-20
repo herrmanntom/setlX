@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.ProcedureDefinition;
-import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;

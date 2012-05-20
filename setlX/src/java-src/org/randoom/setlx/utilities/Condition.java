@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
 /*

@@ -7,7 +7,6 @@ import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.TermConverter;
 
 /*

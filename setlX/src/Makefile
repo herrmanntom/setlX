@@ -32,18 +32,18 @@ build:                                                      \
         bin/org/randoom/setlx/expressions/*.class                               \
         bin/org/randoom/setlx/statements/*.class                                \
         bin/org/randoom/setlx/grammar/SetlXgrammar*.class                       \
-        bin/org/randoom/setlx/SetlX.class
+        bin/org/randoom/setlxUI/pc/SetlX.class
 	if [ ! -x setlX ]; then chmod +x setlX; fi
 	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos make.cmd setlX.cmd; fi
 	rm -f make_.cmd setlX_.cmd
 
-bin/org/randoom/setlx/SetlX.class :                         \
-        java-src/org/randoom/setlx/SetlX.java                                   \
+bin/org/randoom/setlxUI/pc/SetlX.class :                    \
+        java-src/org/randoom/setlxUI/pc/SetlX.java                              \
         java-src/org/randoom/setlx/exceptions/*.java                            \
         java-src/org/randoom/setlx/types/Real.java                              \
         java-src/org/randoom/setlx/utilities/*.java                             \
         java-src/org/randoom/setlx/statements/Block.java
-	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlx/SetlX.java
+	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlxUI/pc/SetlX.java
 
 bin/org/randoom/setlx/grammar/SetlXgrammar*.class :         \
         java-src/org/randoom/setlx/grammar/SetlXgrammar*.java                   \

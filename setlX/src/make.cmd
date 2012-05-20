@@ -21,7 +21,7 @@ IF EXIST java-src (
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\org\randoom\setlx\expressions\*.java
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\org\randoom\setlx\statements\*.java
     javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\org\randoom\setlx\grammar\SetlXgrammar*.java
-    javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\org\randoom\setlx\SetlX.java
+    javac -cp antlr\antlr-*.jar -d bin -sourcepath java-src java-src\org\randoom\setlxUI\pc\SetlX.java
     cd bin
     jar xf ..\antlr\antlr-*.jar org/antlr/runtime
     cd ..

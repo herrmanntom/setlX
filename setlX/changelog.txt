@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v0.7.6--- ??
  # suppressed duplicate parser error messages
  + introduced some more platform independence (in preparation for Android version)
+ + code cleanup
  
 ---v0.7.5--- 2012/05/16
  + added \ operator for integer division, e.g. a \ b == floor(a/b)

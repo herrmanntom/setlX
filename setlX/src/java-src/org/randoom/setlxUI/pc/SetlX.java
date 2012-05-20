@@ -1,4 +1,4 @@
-package org.randoom.setlx;
+package org.randoom.setlxUI.pc;
 
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.BreakException;

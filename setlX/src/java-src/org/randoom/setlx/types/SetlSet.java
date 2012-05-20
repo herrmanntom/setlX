@@ -9,6 +9,7 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.Iterator;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.NavigableSet;
 import java.util.TreeSet;
 
 /* This class implements an set of arbitrary SetlX values.
@@ -18,6 +19,7 @@ import java.util.TreeSet;
  * (or is result of an operation).
  *
  * Also see:
+ *   interpreter.expressions.SetListConstructor
  *   interpreter.utilities.Constructor
  *   interpreter.utilities.ExplicitList
  *   interpreter.utilities.Iteration
@@ -225,9 +227,17 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(arg);
         upperBound.addMember(Infinity.POSITIVE);
 
-        TreeSet<Value>  subSet  = (TreeSet<Value>) mSet.subSet(lowerBound, false, upperBound, true);
-        SetlSet         result  = new SetlSet();
+        NavigableSet<Value> navSubSet   = mSet.subSet(lowerBound, false, upperBound, true);
 
+        // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
+        TreeSet<Value>      subSet      = null;
+        if (navSubSet instanceof TreeSet) { // on all tested runtimes this is a TreeSet, be one can't be sure
+            subSet  = (TreeSet<Value>) navSubSet;
+        } else { // slow, but secure shallow copy is better than ClassCastException
+            subSet  = new TreeSet<Value>(navSubSet);
+        }
+
+        SetlSet             result      = new SetlSet();
         for (Value v: subSet) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
@@ -299,13 +309,21 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(element);
         upperBound.addMember(Infinity.POSITIVE);
 
-        TreeSet<Value>  subSet  = (TreeSet<Value>) mSet.subSet(lowerBound, false, upperBound, true);
-        Value           result  = Om.OM;
+        NavigableSet<Value> navSubSet   = mSet.subSet(lowerBound, false, upperBound, true);
 
+        // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
+        TreeSet<Value>      subSet      = null;
+        if (navSubSet instanceof TreeSet) { // on all tested runtimes this is a TreeSet, be one can't be sure
+            subSet  = (TreeSet<Value>) navSubSet;
+        } else { // slow, but secure shallow copy is better than ClassCastException
+            subSet  = new TreeSet<Value>(navSubSet);
+        }
+
+        Value               result      = Om.OM;
         for (Value v: subSet) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
-                    if (result instanceof Om) {
+                    if (result == Om.OM) {
                         result = v.getMemberUnCloned(new Rational(2));
                     } else {
                         // double match!

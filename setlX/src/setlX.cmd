@@ -23,7 +23,7 @@ REM set javaParameters=%javaParameters% -d64
 REM ############################################################################
 
 IF EXIST %setlXJarLocation% (
-    java -cp "%setlXJarLocation%;%CLASSPATH%" %javaParameters% org.randoom.setlx.SetlX %*
+    java -cp "%setlXJarLocation%;%CLASSPATH%" %javaParameters% org.randoom.setlxUI.pc.SetlX %*
 ) ELSE (
     echo "The setlX.jar file can not be found!"
 )

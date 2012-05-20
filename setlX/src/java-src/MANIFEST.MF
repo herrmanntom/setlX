@@ -1,3 +1,3 @@
 Manifest-Version: 1.0
-Main-Class: org.randoom.setlx.SetlX
+Main-Class: org.randoom.setlxUI.pc.SetlX
 

@@ -36,6 +36,10 @@ public class Block extends Statement {
         this(new ArrayList<Statement>());
     }
 
+    public Block(int size) {
+        this(new ArrayList<Statement>(size));
+    }
+
     public Block(List<Statement> statements) {
         mStatements = statements;
     }
@@ -103,7 +107,7 @@ public class Block extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             SetlList    stmnts  = (SetlList) term.lastMember();
-            Block       block   = new Block();
+            Block       block   = new Block(stmnts.size());
             for (Value v : stmnts) {
                 block.add(TermConverter.valueToStatement(v));
             }

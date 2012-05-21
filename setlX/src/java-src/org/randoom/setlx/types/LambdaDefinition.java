@@ -30,7 +30,7 @@ public class LambdaDefinition extends ProcedureDefinition {
     private Expr mExpr; // expression in the body of the definition; used only for toString() and toTerm()
 
     public LambdaDefinition(List<ParameterDef> parameters, Expr expr) {
-        super(parameters, new Block());
+        super(parameters, new Block(1));
         mExpr = expr;
         mStatements.add(new Return(mExpr));
     }

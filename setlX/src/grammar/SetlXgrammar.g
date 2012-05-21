@@ -9,7 +9,7 @@ grammar SetlXgrammar;
     import org.randoom.setlx.types.*;
     import org.randoom.setlx.utilities.*;
 
-    import java.util.LinkedList;
+    import java.util.ArrayList;
     import java.util.List;
 }
 
@@ -61,7 +61,7 @@ grammar SetlXgrammar;
    Otherwhise antlr runs into strange parser behavior ... */
 initBlock returns [Block blk]
     @init{
-        List<Statement> stmnts = new LinkedList<Statement>();
+        List<Statement> stmnts = new ArrayList<Statement>();
     }
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
@@ -79,7 +79,7 @@ initAnyExpr returns [Expr ae]
 
 block returns [Block blk]
     @init{
-        List<Statement> stmnts = new LinkedList<Statement>();
+        List<Statement> stmnts = new ArrayList<Statement>();
     }
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
@@ -89,10 +89,10 @@ block returns [Block blk]
 
 statement returns [Statement stmnt]
     @init{
-        List<IfThenAbstractBranch>      ifList     = new LinkedList<IfThenAbstractBranch>();
-        List<SwitchAbstractBranch>      caseList   = new LinkedList<SwitchAbstractBranch>();
-        List<MatchAbstractBranch>       matchList  = new LinkedList<MatchAbstractBranch>();
-        List<TryCatchAbstractBranch>    tryList    = new LinkedList<TryCatchAbstractBranch>();
+        List<IfThenAbstractBranch>      ifList     = new ArrayList<IfThenAbstractBranch>();
+        List<SwitchAbstractBranch>      caseList   = new ArrayList<SwitchAbstractBranch>();
+        List<MatchAbstractBranch>       matchList  = new ArrayList<MatchAbstractBranch>();
+        List<TryCatchAbstractBranch>    tryList    = new ArrayList<TryCatchAbstractBranch>();
     }
     : 'var' listOfVariables ';'                                      { stmnt = new GlobalDefinition($listOfVariables.lov);           }
     | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));               }
@@ -147,7 +147,7 @@ statement returns [Statement stmnt]
 
 listOfVariables returns [List<Variable> lov]
     @init {
-        lov = new LinkedList<Variable>();
+        lov = new ArrayList<Variable>();
     }
     : v1 = variable       { lov.add($v1.v);             }
       (
@@ -165,7 +165,7 @@ condition [boolean enableIgnore] returns [Condition cnd]
 
 exprList [boolean enableIgnore] returns [List<Expr> exprs]
     @init {
-        exprs = new LinkedList<Expr>();
+        exprs = new ArrayList<Expr>();
     }
     : a1 = anyExpr[$enableIgnore]       { exprs.add($a1.ae);             }
       (
@@ -199,7 +199,7 @@ assignList returns [SetListConstructor alc]
 
 explicitAssignList returns [ExplicitList eil]
     @init {
-        List<Expr> exprs = new LinkedList<Expr>();
+        List<Expr> exprs = new ArrayList<Expr>();
     }
     : a1 = assignable[true]       { exprs.add($a1.a);              }
       (
@@ -323,7 +323,7 @@ lambdaDefinition returns [LambdaDefinition ld]
 
 lambdaParameters returns [List<ParameterDef> paramList]
     @init {
-        paramList = new LinkedList<ParameterDef>();
+        paramList = new ArrayList<ParameterDef>();
     }
     : variable              { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
     | '['
@@ -343,7 +343,7 @@ procedureDefinition returns [ProcedureDefinition pd]
 
 procedureParameters returns [List<ParameterDef> paramList]
     @init {
-        paramList = new LinkedList<ParameterDef>();
+        paramList = new ArrayList<ParameterDef>();
     }
     : dp1 = procedureParameter       { paramList.add($dp1.param); }
       (
@@ -413,7 +413,7 @@ term returns [Expr t]
 
 termArguments returns [List<Expr> args]
     : exprList[true] { args = $exprList.exprs;        }
-    |  /* epsilon */ { args = new LinkedList<Expr>(); }
+    |  /* epsilon */ { args = new ArrayList<Expr>(); }
     ;
 
 call [boolean enableIgnore] returns [Expr c]
@@ -432,7 +432,7 @@ call [boolean enableIgnore] returns [Expr c]
 
 callParameters [boolean enableIgnore] returns [List<Expr> params]
     @init {
-        params = new LinkedList<Expr>();
+        params = new ArrayList<Expr>();
     }
     : exprList[$enableIgnore] { params = $exprList.exprs; }
     |  /* epsilon */
@@ -440,7 +440,7 @@ callParameters [boolean enableIgnore] returns [List<Expr> params]
 
 collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
     @init {
-        params = new LinkedList<Expr>();
+        params = new ArrayList<Expr>();
     }
     : ( expr[true] '..' )=>
       e1 = expr[$enableIgnore]   { params.add($e1.ex);                          }
@@ -573,5 +573,5 @@ WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
  * Matching any character here works, because the lexer matches rules in order.
  */
 
-REMAINDER       : . { state.syntaxErrors++; Environment.errWriteLn(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
+REMAINDER       : . { state.syntaxErrors++; emitErrorMessage(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
 

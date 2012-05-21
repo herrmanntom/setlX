@@ -23,7 +23,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -117,7 +116,7 @@ public class SetlX {
         boolean         help        = false;
         boolean         interactive = false;
         boolean         noExecution = false;
-        List<String>    files       = new LinkedList<String>();
+        List<String>    files       = new ArrayList<String>();
 
         // initialize Environment
         Environment.setEnvironmentProvider(new PcEnvProvider());
@@ -464,7 +463,7 @@ public class SetlX {
         int end = trace.size();
         int max = 40;
         int m_2 = max / 2;
-        for (int i = 0; i < end; ++i) {
+        for (int i = end - 1; i >= 0; --i) {
             // leave out some messages in the middle, which are most likely just clutter
             if (end > max && i > m_2 - 1 && i < end - (m_2 + 1)) {
                 if (i == m_2) {

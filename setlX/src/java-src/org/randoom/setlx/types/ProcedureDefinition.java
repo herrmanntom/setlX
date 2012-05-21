@@ -78,7 +78,7 @@ public class ProcedureDefinition extends Value {
 
         // results of call to procedure
         Value           result      = Om.OM;
-        WriteBackAgent  wba         = new WriteBackAgent();
+        WriteBackAgent  wba         = new WriteBackAgent(mParameters.size());
         boolean         stepThrough = sStepThroughFunction;
 
         try {

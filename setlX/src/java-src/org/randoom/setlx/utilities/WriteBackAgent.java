@@ -4,16 +4,17 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Value;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WriteBackAgent {
 
-    private LinkedList<Expr>  mExpressions;
-    private LinkedList<Value> mValues;
+    private List<Expr>  mExpressions;
+    private List<Value> mValues;
 
-    public WriteBackAgent() {
-        mExpressions = new LinkedList<Expr>();
-        mValues      = new LinkedList<Value>();
+    public WriteBackAgent(int size) {
+        mExpressions = new ArrayList<Expr>(size);
+        mValues      = new ArrayList<Value>(size);
     }
 
     public void add(Expr expression, Value value) {

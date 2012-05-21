@@ -24,6 +24,7 @@ prolog
       '@header'?
       '@lexer::header'?
       '@members'?
+      '@lexer::members'?
     ;
 
 rule returns [Rule rule]

@@ -11,9 +11,8 @@ import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
 public class StringConstructor extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
@@ -21,12 +20,12 @@ public class StringConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private String       mOriginalStr; // original String
-    private List<String> mFragments;   // list of string fragments for after and between expressions
-    private List<Expr>   mExprs;       // list of $-Expressions
+    private String              mOriginalStr; // original String
+    private ArrayList<String>   mFragments;   // list of string fragments for after and between expressions
+    private ArrayList<Expr>     mExprs;       // list of $-Expressions
 
     public StringConstructor(boolean quoted, String originalStr) {
-        this(originalStr, new LinkedList<String>(), new LinkedList<Expr>());
+        this(originalStr, new ArrayList<String>(), new ArrayList<Expr>());
 
         // Strip out double quotes which the parser left in
         originalStr  = originalStr.substring(1, originalStr.length() - 1);
@@ -94,12 +93,15 @@ public class StringConstructor extends Expr {
             }
             // outer string must always be appended, even if empty
             mFragments.add(fragment.toString());
+
+            mFragments.trimToSize();
+            mExprs.trimToSize();
         } else {
             mFragments.add(originalStr);
         }
     }
 
-    private StringConstructor(String originalStr, List<String> fragments, List<Expr> exprs) {
+    private StringConstructor(String originalStr, ArrayList<String> fragments, ArrayList<Expr> exprs) {
         mOriginalStr    = originalStr;
         mFragments      = fragments;
         mExprs          = exprs;
@@ -173,13 +175,16 @@ public class StringConstructor extends Expr {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            boolean         quoted      = false;
-            String          originalStr = "\"";
-            List<String>    fragments   = new LinkedList<String>();
-            List<Expr>      exprs       = new LinkedList<Expr>();
+            boolean             quoted      = false;
+            String              originalStr = "\"";
+            SetlList            frags       = (SetlList) term.firstMember();
+            SetlList            exps        = (SetlList) term.lastMember();
 
-            Iterator<Value> fIter       = ((SetlList) term.firstMember()).iterator();
-            Iterator<Value> eIter       = ((SetlList) term.lastMember()).iterator();
+            ArrayList<String>   fragments   = new ArrayList<String>(frags.size());
+            ArrayList<Expr>     exprs       = new ArrayList<Expr>(exps.size());
+
+            Iterator<Value>     fIter       = frags.iterator();
+            Iterator<Value>     eIter       = exps.iterator();
 
             while (fIter.hasNext()) {
                 SetlString  sstring = (SetlString) fIter.next();
@@ -213,15 +218,15 @@ public class StringConstructor extends Expr {
         if ( ! (value instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
-        SetlString      sstring     = (SetlString) value;
-        String          string      = sstring.getUnquotedString();
+        SetlString          sstring     = (SetlString) value;
+        String              string      = sstring.getUnquotedString();
         // string was quoted when it contains a $, otherwise it would have been split
-        boolean         quoted      = string.contains("$");
-        String          originalStr = "\"" + sstring.getEscapedString() + "\"";
-        List<String>    fragments   = new LinkedList<String>();
+        boolean             quoted      = string.contains("$");
+        String              originalStr = "\"" + sstring.getEscapedString() + "\"";
+        ArrayList<String>   fragments   = new ArrayList<String>(1);
         fragments.add(string);
-        List<Expr>      exprs       = new LinkedList<Expr>();
-        Expr            result      = new StringConstructor(originalStr, fragments, exprs);
+        ArrayList<Expr>     exprs       = new ArrayList<Expr>(0);
+        Expr                result      = new StringConstructor(originalStr, fragments, exprs);
         if (quoted) {
             return new Quote(result);
         } else {

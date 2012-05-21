@@ -183,7 +183,7 @@ public class TermConverter {
         if (s instanceof Block) {
             return (Block) s;
         } else { // wrap into block
-            Block   b   = new Block();
+            Block   b   = new Block(1);
             b.add(s);
             return b;
         }

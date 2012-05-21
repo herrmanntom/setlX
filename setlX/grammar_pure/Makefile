@@ -1,4 +1,4 @@
-CLASSPATH=.:../src/antlr/antlr-3.4-complete.jar
+CLASSPATH=.:../src/antlr/antlr-3.4-complete-no-antlrv2.jar
 
 run: PureLexer.class PureParser.class ParsePure.class input.stlx
 	java  -cp $(CLASSPATH) ParsePure < input.stlx
@@ -10,7 +10,7 @@ Pure.tokens PureLexer.java PureParser.java: Pure.g
 	java  -cp $(CLASSPATH) org.antlr.Tool Pure.g
 
 update:
-	cd EBNF_extractor; CLASSPATH=.:../../src/antlr/antlr-3.4-complete.jar make updatePure
+	cd EBNF_extractor; CLASSPATH=.:../../src/antlr/antlr-3.4-complete-no-antlrv2.jar make updatePure
 
 clean:
 	rm -f *.class

@@ -1,4 +1,4 @@
-CLASSPATH=.:../../src/antlr/antlr-3.4-complete.jar
+CLASSPATH=.:../../src/antlr/antlr-3.4-complete-no-antlrv2.jar
 
 EBNF.class: Alternative.java MyToken.java Concatenation.java Postfix.java \
             Epsilon.java Expr.java Rule.java Grammar.java Variable.java   \

@@ -21,7 +21,7 @@ setlX/grammar_pure/Pure.tokens
 setlX/grammar_pure/PureLexer.java
 setlX/grammar_pure/PureParser.java
 setlX/grammar_pure/*.class
-setlX/src/antlr/antlr-*-complete.jar
+setlX/src/antlr/antlr-*.jar
 setlX/src/bin
 setlX/src/java-src/org/randoom/setlx/grammar
 setlX/src/setlX.jar

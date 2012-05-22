@@ -32,7 +32,7 @@ public class GlobalDefinition extends Statement {
         mVars = vars;
     }
 
-    public void exec() {
+    protected void exec() {
         for (Variable var : mVars) {
             var.makeGlobal();
         }

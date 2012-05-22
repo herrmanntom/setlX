@@ -21,7 +21,7 @@ public abstract class Statement extends CodeFragment {
         }
     }
 
-    public abstract void exec() throws SetlException;
+    protected abstract void exec() throws SetlException;
 
     /* string operations */
 

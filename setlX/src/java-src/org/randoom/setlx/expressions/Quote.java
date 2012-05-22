@@ -30,7 +30,7 @@ public class Quote extends Expr {
         mExpr = expr;
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         return mExpr.toTermQuoted();
     }
 

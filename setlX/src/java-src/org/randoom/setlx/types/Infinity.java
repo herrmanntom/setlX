@@ -109,13 +109,13 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public NumberValue power(int exponent) throws UndefinedOperationException{
+    protected NumberValue power(int exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );
     }
 
-    public NumberValue power(double exponent) throws UndefinedOperationException{
+    protected NumberValue power(double exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );

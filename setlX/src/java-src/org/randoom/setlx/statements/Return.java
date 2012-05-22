@@ -32,7 +32,7 @@ public class Return extends Statement {
         mResult = result;
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         if (mResult != null) {
             throw new ReturnException(mResult.eval());
         } else {

@@ -37,7 +37,7 @@ public class Match extends Statement {
         mBranchList = branchList;
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         Value term = mExpr.eval().toTerm();
         for (MatchAbstractBranch br : mBranchList) {
             MatchResult result = br.matches(term);

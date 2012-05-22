@@ -358,7 +358,7 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.negate(), mDenominator);
     }
 
-    public Rational power(int exponent) throws NumberToLargeException {
+    protected Rational power(int exponent) throws NumberToLargeException {
         if (exponent >= 0) {
             return new Rational(mNominator  .pow(exponent     ), mDenominator.pow(exponent     ));
         } else {
@@ -366,7 +366,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Real power(double exponent) throws SetlException {
+    protected Real power(double exponent) throws SetlException {
         return toReal().power(exponent);
     }
 

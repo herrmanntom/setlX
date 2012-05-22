@@ -107,7 +107,7 @@ public class StringConstructor extends Expr {
         mExprs          = exprs;
     }
 
-    public SetlString evaluate() throws SetlException {
+    protected SetlString evaluate() throws SetlException {
         Iterator<String>    fIter   = mFragments.iterator();
         Iterator<Expr>      eIter   = mExprs.iterator();
         // there always is at least one fragment, even if empty

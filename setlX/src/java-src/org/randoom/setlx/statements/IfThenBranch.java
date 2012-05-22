@@ -39,7 +39,7 @@ public class IfThenBranch extends IfThenAbstractBranch {
         mStatements.execute();
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         execute();
     }
 

@@ -18,7 +18,7 @@ public class ValueExpr extends Expr {
         return mValue;
     }
 
-    public Value evaluate() {
+    protected Value evaluate() {
         return eval();
     }
 

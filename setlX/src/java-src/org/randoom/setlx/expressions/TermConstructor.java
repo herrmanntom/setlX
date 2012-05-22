@@ -31,7 +31,7 @@ public class TermConstructor extends Expr {
         mArgs   = args;
     }
 
-    public Term evaluate() throws SetlException {
+    protected Term evaluate() throws SetlException {
         Term    result  = new Term(mFChar);
 
         for (Expr arg: mArgs) {

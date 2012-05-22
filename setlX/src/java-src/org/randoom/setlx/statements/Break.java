@@ -21,7 +21,7 @@ public class Break extends Statement {
 
     private Break() { }
 
-    public void exec() throws BreakException {
+    protected void exec() throws BreakException {
         throw new BreakException("break");
     }
 

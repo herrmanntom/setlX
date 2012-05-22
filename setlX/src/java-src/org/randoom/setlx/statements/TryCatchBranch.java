@@ -57,7 +57,7 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
         mBlockToRecover.execute();
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         execute();
     }
 

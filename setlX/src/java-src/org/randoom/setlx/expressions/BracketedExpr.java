@@ -30,7 +30,7 @@ public class BracketedExpr extends Expr {
         mExpr = expr;
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         return mExpr.eval();
     }
 

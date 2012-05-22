@@ -43,7 +43,7 @@ public class Variable extends Expr {
         mId = id;
     }
 
-    public Value evaluate() {
+    protected Value evaluate() {
         Value v = VariableScope.findValue(mId);
         if (v == null) {
             return Om.OM;

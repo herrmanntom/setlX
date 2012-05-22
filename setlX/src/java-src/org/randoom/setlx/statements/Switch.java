@@ -32,7 +32,7 @@ public class Switch extends Statement {
         mBranchList = branchList;
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         for (SwitchAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
                 br.execute();

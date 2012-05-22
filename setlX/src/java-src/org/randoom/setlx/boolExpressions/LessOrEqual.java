@@ -60,7 +60,7 @@ public class LessOrEqual extends Expr {
      * a >= b
      */
 
-    public SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate() throws SetlException {
         Value lhs = mLhs.eval();
         Value rhs = mRhs.eval();
         return SetlBoolean.get(lhs.isLessThan(rhs) == SetlBoolean.TRUE || lhs.isEqual(rhs) == SetlBoolean.TRUE);

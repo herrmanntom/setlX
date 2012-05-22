@@ -27,7 +27,7 @@ public abstract class Expr extends CodeFragment {
         }
     }
 
-    public abstract Value evaluate() throws SetlException;
+    protected abstract Value evaluate() throws SetlException;
 
     /* sets this expression to the given value
        (only makes sense for variables and id-lists) */

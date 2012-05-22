@@ -38,10 +38,10 @@ public abstract class NumberValue extends Value {
         }
     }
 
-    public abstract NumberValue power(int    exponent) throws SetlException;
-    public abstract NumberValue power(double exponent) throws SetlException;
+    protected abstract NumberValue power(int    exponent) throws SetlException;
+    protected abstract NumberValue power(double exponent) throws SetlException;
 
-    public abstract Value       sum(Value summand) throws SetlException;
+    public 	  abstract Value       sum(Value summand) throws SetlException;
 
     /* comparisons */
 

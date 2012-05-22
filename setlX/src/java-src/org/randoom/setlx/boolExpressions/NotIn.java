@@ -32,7 +32,7 @@ public class NotIn extends Expr {
         mRhs = rhs;
     }
 
-    public SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate() throws SetlException {
         // note: rhs and lhs swapped!
         return mRhs.eval().containsMember(mLhs.eval()).not();
     }

@@ -72,7 +72,7 @@ public class Assignment extends Expr {
         }
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         if (mExecutionRhs == null) {
             throw new UndefinedOperationException("This assignment type is undefined.");
         }

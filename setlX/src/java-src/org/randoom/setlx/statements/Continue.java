@@ -21,7 +21,7 @@ public class Continue extends Statement {
 
     private Continue() {  }
 
-    public void exec() throws ContinueException {
+    protected void exec() throws ContinueException {
         throw new ContinueException("continue");
     }
 

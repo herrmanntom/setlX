@@ -36,7 +36,7 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
         mStatements.execute();
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         execute();
     }
 

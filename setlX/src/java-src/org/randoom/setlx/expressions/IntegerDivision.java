@@ -31,7 +31,7 @@ public class IntegerDivision extends Expr {
         mRhs = rhs;
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         return mLhs.eval().divide(mRhs.eval()).floor();
     }
 

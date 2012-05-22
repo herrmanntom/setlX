@@ -44,7 +44,7 @@ public class CollectionAccess extends Expr {
         mArgs   = args;
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         Value lhs = mLhs.eval();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(

@@ -31,7 +31,7 @@ public class Multiply extends Expr {
         mRhs = rhs;
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         return mLhs.eval().multiply(mRhs.eval());
     }
 

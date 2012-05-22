@@ -28,7 +28,7 @@ public class VariableIgnore extends Expr {
 
     private VariableIgnore() { }
 
-    public IgnoreDummy evaluate() throws UndefinedOperationException {
+    protected IgnoreDummy evaluate() throws UndefinedOperationException {
         return IgnoreDummy.ID;
     }
 

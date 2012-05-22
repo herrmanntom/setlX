@@ -60,7 +60,7 @@ public class Exists extends Expr {
         mCondition = condition;
     }
 
-    public SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate() throws SetlException {
         Exec e = new Exec(mCondition);
         mIterator.eval(e);
         if (e.mResult == SetlBoolean.TRUE && e.mScope != null) {

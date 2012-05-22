@@ -54,7 +54,7 @@ public class Block extends Statement {
         }
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         execute();
     }
 

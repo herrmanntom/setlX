@@ -59,7 +59,7 @@ public class More extends Expr {
      * a >= b
      */
 
-    public SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate() throws SetlException {
         // note: rhs and lhs swapped!
         return mRhs.eval().isLessThan(mLhs.eval());
     }

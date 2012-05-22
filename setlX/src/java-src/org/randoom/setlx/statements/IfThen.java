@@ -31,7 +31,7 @@ public class IfThen extends Statement {
         mBranchList = branchList;
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         for (IfThenAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
                 br.execute();

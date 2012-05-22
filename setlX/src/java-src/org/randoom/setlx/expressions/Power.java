@@ -31,7 +31,7 @@ public class Power extends Expr {
         mExponent = exponent;
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         return mLhs.eval().power(mExponent.eval());
     }
 

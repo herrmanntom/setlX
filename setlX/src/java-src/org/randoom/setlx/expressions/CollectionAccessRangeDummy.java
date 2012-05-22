@@ -24,7 +24,7 @@ public class CollectionAccessRangeDummy extends Expr {
 
     private CollectionAccessRangeDummy() {}
 
-    public RangeDummy evaluate() {
+    protected RangeDummy evaluate() {
         return RangeDummy.RD;
     }
 

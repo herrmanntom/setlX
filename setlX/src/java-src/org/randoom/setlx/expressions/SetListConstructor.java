@@ -41,7 +41,7 @@ public class SetListConstructor extends Expr {
         mConstructor = constructor;
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         Value result = null;
         if (mType == SET) {
             SetlSet set = new SetlSet();

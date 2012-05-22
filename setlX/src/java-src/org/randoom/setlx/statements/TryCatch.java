@@ -40,7 +40,7 @@ public class TryCatch extends Statement {
         mTryList    = tryList;
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         try{
             mBlockToTry.execute();
         } catch (CatchableInSetlXException cise) {

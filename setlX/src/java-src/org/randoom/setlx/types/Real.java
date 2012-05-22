@@ -202,11 +202,11 @@ public class Real extends NumberValue {
         return new Real(mReal.negate(mathContext));
     }
 
-    public Real power(int exponent) {
+    protected Real power(int exponent) {
         return new Real(mReal.pow(exponent, mathContext));
     }
 
-    public Real power(double exponent) throws NumberToLargeException, IncompatibleTypeException {
+    protected Real power(double exponent) throws NumberToLargeException, IncompatibleTypeException {
         if (mReal.compareTo(BigDecimal.ZERO) < 0) {
             throw new IncompatibleTypeException(
                 "Left-hand-side of '" + this + " ** " + exponent + "' is negative."

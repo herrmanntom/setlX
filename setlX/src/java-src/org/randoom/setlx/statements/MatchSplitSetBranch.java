@@ -66,7 +66,7 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
         mStatements.execute();
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         execute();
     }
 

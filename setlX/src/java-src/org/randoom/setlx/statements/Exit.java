@@ -21,7 +21,7 @@ public class Exit extends Statement {
 
     private Exit() { }
 
-    public void exec() throws ExitException {
+    protected void exec() throws ExitException {
         throw new ExitException("Good Bye! (exit)");
     }
 

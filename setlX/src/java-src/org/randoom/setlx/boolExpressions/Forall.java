@@ -60,7 +60,7 @@ public class Forall extends Expr {
         mCondition = condition;
     }
 
-    public SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate() throws SetlException {
         Exec e = new Exec(mCondition);
         mIterator.eval(e);
         if (e.mResult == SetlBoolean.FALSE && e.mScope != null) {

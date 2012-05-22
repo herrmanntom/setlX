@@ -33,7 +33,7 @@ public class Assert extends Statement {
         mMessage    = message;
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         if ( ! mCondition.evalToBool()) {
             throw new AssertException("Assertion failed: " + mMessage.eval().toString());
         }

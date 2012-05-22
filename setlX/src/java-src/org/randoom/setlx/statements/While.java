@@ -35,7 +35,7 @@ public class While extends Statement {
         mStatements = statements;
     }
 
-    public void exec() throws SetlException {
+    protected void exec() throws SetlException {
         boolean finishLoop  = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             Environment.setDebugFinishLoop(false);

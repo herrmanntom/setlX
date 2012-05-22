@@ -46,7 +46,7 @@ public class Call extends Expr {
         _this   = _toString(0);
     }
 
-    public Value evaluate() throws SetlException {
+    protected Value evaluate() throws SetlException {
         Value lhs = mLhs.eval();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(

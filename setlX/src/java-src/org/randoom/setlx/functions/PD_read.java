@@ -22,7 +22,7 @@ public class PD_read extends PreDefinedFunction {
         String         input      = null;
         try {
             do {
-                Environment.promptForStdInOnStdOut(": ");
+                Environment.prompt(": ");
                 input = Environment.inReadLine();
                 if (input != null) {
                     input = input.trim();

@@ -84,16 +84,16 @@ public class SetlX {
         public void     outWrite(String msg) {
             System.out.print(msg);
         }
-        public void     outFlush() {
-            System.out.flush();
-        }
 
         // write to standard error
         public void     errWrite(String msg) {
             System.err.print(msg);
         }
-        public void     errFlush() {
-            System.err.flush();
+
+        // prompt for user input
+        public void    promptForInput(String msg) {
+            System.out.print(msg);
+            System.out.flush();
         }
 
         // some text format stuff
@@ -206,7 +206,7 @@ public class SetlX {
         boolean skipTest = false;
         do {
             // prompt including newline to visually separate the next input
-            Environment.promptForStdInOnStdOut("\n=> ");
+            Environment.prompt("\n=> ");
             try {
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();

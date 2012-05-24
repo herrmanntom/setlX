@@ -15,11 +15,12 @@ public interface EnvironmentProvider {
 
     // write to standard output
     public abstract void    outWrite(String msg);
-    public abstract void    outFlush();
 
     // write to standard error
     public abstract void    errWrite(String msg);
-    public abstract void    errFlush();
+
+    // prompt for user input
+    public abstract void    promptForInput(String msg);
 
     // some text format stuff
     public abstract String  getTab();

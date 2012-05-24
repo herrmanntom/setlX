@@ -36,8 +36,7 @@ public class DebugPrompt {
         Block   blk      = null;
         do {
             // prompt including newline to visually separate the next input
-            Environment.outWrite("\n" + message + "\ndbg> ");
-            Environment.outFlush();
+            Environment.promptUnchecked("\n" + message + "\ndbg> ");
             try {
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();

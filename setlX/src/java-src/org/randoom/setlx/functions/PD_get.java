@@ -21,7 +21,7 @@ public class PD_get extends PreDefinedFunction {
         Value          inputValue = Om.OM;
         String         input      = null;
         try {
-            Environment.promptForStdInOnStdOut(": ");
+            Environment.prompt(": ");
             input = Environment.inReadLine();
         } catch (JVMIOException ioe) {
             Environment.errWriteLn(ioe.getMessage());

@@ -64,9 +64,6 @@ public class Environment {
     public static void outWriteLn() {
         sEnvProvider.outWrite(sEnvProvider.getEndl());
     }
-    public static void outFlush() {
-        sEnvProvider.outFlush();
-    }
 
     // write to standard error
     public static void errWrite(String msg) {
@@ -78,11 +75,8 @@ public class Environment {
     public static void errWriteLn() {
         sEnvProvider.errWrite(sEnvProvider.getEndl());
     }
-    public static void errFlush() {
-        sEnvProvider.errFlush();
-    }
 
-    public static boolean promptForStdInOnStdOut(String prompt) throws JVMIOException {
+    public static boolean prompt(String prompt) throws JVMIOException {
         // Only if a pipe is connected the input is ready (has input buffered)
         // BEFORE the prompt.
         // A human usually takes time AFTER the prompt to type something ;-)
@@ -91,12 +85,15 @@ public class Environment {
         // prompts. (User may continue to type into stdin AFTER we last read
         // from it, causing stdin to be ready, but human controlled)
         if (sIsHuman || ! sEnvProvider.inReady()) {
-            sEnvProvider.outWrite(prompt);
-            sEnvProvider.outFlush();
+            sEnvProvider.promptForInput(prompt);
             sIsHuman = true;
             return true;
         }
         return false;
+    }
+
+    public static void promptUnchecked(String prompt) {
+        sEnvProvider.promptForInput(prompt);
     }
 
     /* other stuff */

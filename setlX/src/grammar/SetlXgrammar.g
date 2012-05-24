@@ -38,14 +38,24 @@ grammar SetlXgrammar;
         }
     }
 
-    private static String lastErrorMsg = ""; // reset this variable after each parsing run!
+    // reset these variables after each parsing run!
+    private static String lastErrorMsg  = "";
+    private static int    lastCount     = 0;
+
+    private static void resetLastError() {
+        lastErrorMsg    = "";
+        lastCount       = 0;
+    }
 
     // make error reporting platform independend
     // and ignore duplicate messages, which occur when using syntactical predicates
     public void emitErrorMessage(String msg) {
-        if ( ! lastErrorMsg.equals(msg)) {
+        if (lastErrorMsg.equals(msg)) {
+            state.syntaxErrors  = lastCount;
+        } else {
             Environment.errWriteLn(msg);
             lastErrorMsg = msg;
+            lastCount    = state.syntaxErrors;
         }
     }
 }
@@ -62,19 +72,23 @@ grammar SetlXgrammar;
 initBlock returns [Block blk]
     @init{
         List<Statement> stmnts = new ArrayList<Statement>();
+        resetLastError();
     }
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )+
       EOF
-      { blk = new Block(stmnts); lastErrorMsg = ""; }
+      { blk = new Block(stmnts); }
     ;
 
 /* Require at termination with EOF.
    Otherwhise antlr runs into strange parser behavior ... */
 initAnyExpr returns [Expr ae]
+    @init{
+        resetLastError();
+    }
     : anyExpr[false] EOF
-      { ae = $anyExpr.ae; lastErrorMsg = ""; }
+      { ae = $anyExpr.ae; }
     ;
 
 block returns [Block blk]

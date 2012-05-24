@@ -1,28 +1,23 @@
-// this program computes pi using a monte carlo algorithm which uses rnd()
+// this program computes pi using a monte carlo algorithm which uses random()
 //==============================================================================
-// Essentially it creates random points in a coordinate system, 
+// Essentially it creates random points in a coordinate system,
 // with 0 <= x <=1 and 0 <= y <=1 and computes if they are within a unit circle
 // with is centered at 0,0.
 //
 // number of points within this cirle devided by all points is around a
 // quarter of pi
 
-// how many steps between 0 and 1 (inclusive) should be possible for x and y coordinates?
-m :=  1000;
 // how many random points to create?
 n := 50000;
-
-// values of all allowed steps between 0 and 1
-values := {x/m : x in [1 .. m]};
 
 // number of points found to be in the circle
 inCircle := 0;
 
 for (x in [1 .. n]) {
-	// is point(rnd(values), rnd(values)) in circle?
-	if ( sqrt(rnd(values) ** 2 + rnd(values) ** 2) <= 1) {
-		inCircle += 1;
-	}
+    // is point(random(), random()) in circle?
+    if ( sqrt(random() ** 2 + random() ** 2) <= 1) {
+        inCircle += 1;
+    }
 }
 
 pseudoPi := 4 * inCircle / n;

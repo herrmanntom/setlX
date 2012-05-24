@@ -10,10 +10,6 @@ import java.io.IOException;
 public class DumpSetlX {
 
     public static void dumpToFile(String program, String fileName, boolean append) throws FileNotWriteableException {
-        // first be nice to crude operating systems
-        if ( ! System.getProperty("line.separator").equals("\n")) {
-            program = program.replaceAll("\n", System.getProperty("line.separator"));
-        }
         // then dump to file
         BufferedWriter out = null;
         try {

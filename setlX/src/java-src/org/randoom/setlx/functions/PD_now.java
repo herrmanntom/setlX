@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.Environment;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class PD_now extends PreDefinedFunction {
     public Value execute(List<Value> args,
                          List<Value> writeBackVars
     ) {
-        return new Rational("" + System.currentTimeMillis());
+        return new Rational("" + Environment.currentTimeMillis());
     }
 }
 

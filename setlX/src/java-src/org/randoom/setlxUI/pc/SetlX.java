@@ -49,7 +49,7 @@ public class SetlX {
     private static class PcEnvProvider implements EnvironmentProvider {
 
         private final static String         sTAB            = "\t";
-        private final static String         sENDL           = "\n";
+        private       static String         sENDL           = null;
 
         // buffered reader for stdin
         private       static BufferedReader sStdInReader    = null;
@@ -62,11 +62,6 @@ public class SetlX {
         }
 
         /* interface functions */
-
-        // number of CPUs (cores) in the executing system
-        public int      getNumberOfCores() {
-            return Runtime.getRuntime().availableProcessors();
-        }
 
         // read from input
         public boolean  inReady() throws JVMIOException {
@@ -106,7 +101,20 @@ public class SetlX {
             return sTAB;
         }
         public String   getEndl() {
+            if (sENDL == null) {
+                sENDL = System.getProperty("line.separator");
+            }
             return sENDL;
+        }
+
+        // number of CPUs (cores) in the executing system
+        public int      getNumberOfCores() {
+            return Runtime.getRuntime().availableProcessors();
+        }
+
+        // current time in ms
+        public long     currentTimeMillis() {
+            return System.currentTimeMillis();
         }
     }
 

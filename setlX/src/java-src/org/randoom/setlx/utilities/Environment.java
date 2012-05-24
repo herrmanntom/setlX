@@ -44,19 +44,15 @@ public class Environment {
         sEnvProvider = envProvider;
     }
 
-    public static int getNumberOfCores() {
-        int cores = sEnvProvider.getNumberOfCores();
-        if (cores >= 2) {
-            return cores;
-        } else {
-            return 1;
-        }
+    public static EnvironmentProvider getEnvironmentProvider() {
+        return sEnvProvider;
     }
+
+    /* I/O */
 
     public static String inReadLine() throws JVMIOException {
         return sEnvProvider.inReadLine();
     }
-
 
     // write to standard output
     public static void outWrite(String msg) {
@@ -103,6 +99,22 @@ public class Environment {
         return false;
     }
 
+    /* other stuff */
+
+    public static int getNumberOfCores() {
+        int cores = sEnvProvider.getNumberOfCores();
+        if (cores >= 2) {
+            return cores;
+        } else {
+            return 1;
+        }
+    }
+
+    // current time in ms
+    public static long currentTimeMillis() {
+        return sEnvProvider.currentTimeMillis();
+    }
+
     public static void setPredictableRandoom() {
         sRandoom = new Random(0);
     }
@@ -113,6 +125,14 @@ public class Environment {
             sRandoom = new Random();
         }
         return sRandoom.nextInt(upperBoundary);
+    }
+
+    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
+    public static double getRandomDouble() {
+        if (sRandoom == null) {
+            sRandoom = new Random();
+        }
+        return sRandoom.nextDouble();
     }
 
     public static void setInteractive(boolean isInteractive) {

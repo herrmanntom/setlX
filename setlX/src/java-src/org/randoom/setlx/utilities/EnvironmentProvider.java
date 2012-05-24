@@ -6,8 +6,7 @@ import org.randoom.setlx.exceptions.JVMIOException;
 
 public interface EnvironmentProvider {
 
-    // number of CPUs (cores) in the executing system
-    public abstract int     getNumberOfCores();
+    /* I/O */
 
     // read from input
     public abstract boolean inReady() throws JVMIOException;
@@ -25,6 +24,14 @@ public interface EnvironmentProvider {
     // some text format stuff
     public abstract String  getTab();
     public abstract String  getEndl();
+
+    /* other stuff */
+
+    // number of CPUs (cores) in the executing system
+    public abstract int     getNumberOfCores();
+
+    // current time in ms
+    public abstract long    currentTimeMillis();
 
 }
 

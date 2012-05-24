@@ -2,12 +2,13 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.JVMIOException;
+import org.randoom.setlx.utilities.Environment;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 public final class InputReader {
-    private static String         EOL = "\n";
+    private static String         EOL = null;
 
     /**
      * Reads from system in and returns an input stream
@@ -28,11 +29,14 @@ public final class InputReader {
         StringBuilder   input       = new StringBuilder();
         String          line        = null;
         int             endlAdded   = 0;
+        if (EOL == null) {
+            EOL = Environment.getEndl();
+        }
         try {
             while (true) {
                 // line is read and returned without termination character(s)
                 line   = Environment.inReadLine();
-                // add line termination (Unix style '\n' by default)
+                // add line termination (e.g. Unix style '\n')
                 input.append(line);
                 input.append(EOL);  endlAdded += EOL.length();
                 if (line == null) {
@@ -47,23 +51,6 @@ public final class InputReader {
         } catch (JVMIOException e) {
             // should never happen
             throw new EndOfFileException("unable to read from stdin...");
-        }
-    }
-
-    /**
-     * (re-)sets EOL sequence of read stream to native or Unix EOL
-     *
-     * (re-)sets EOL sequence of streams subsequently read by
-     * getStream() to the EOL sequence native to the executing platform
-     * or to Unix style '\n' EOL sequence
-     *
-     * @param useNativeEOL if true uses native EOL, Unix EOL otherwise
-     */
-    public static void useNativeEOL(boolean useNativeEOL) {
-        if (useNativeEOL) {
-            EOL = System.getProperty("line.separator");
-        } else {
-            EOL = "\n";
         }
     }
 }

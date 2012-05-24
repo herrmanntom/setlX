@@ -410,7 +410,7 @@ public class SetlX {
     private static void printInteractiveBegin() {
         printHelpInteractive();
         Environment.outWriteLn(
-            "-===============================Interactive=Mode==============================-\n"
+            "-===============================Interactive=Mode==============================-"
         );
     }
 

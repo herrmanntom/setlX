@@ -28,7 +28,7 @@ public class DebugPrompt {
                 "-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Debug~Mode~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-"
             );
             Environment.outWriteLn(
-                "Execute helpDgb(); to display debugger commands and their explanation."
+                "Execute dbgHelp(); to display debugger commands and their explanation."
             );
             firstPrompt = false;
         }

@@ -40,7 +40,7 @@ public class VariableScope {
     private final   static  VariableScope   sInitial                        = new VariableScope();
 
     // this variable stores the variable assignment that is currently active
-    private         static  VariableScope   sVariableScope                  = sInitial;
+    private         static  VariableScope   sVariableScope                  = sInitial.clone();
 
     public static VariableScope getScope() {
         return sVariableScope;
@@ -48,6 +48,10 @@ public class VariableScope {
 
     public static void setScope(VariableScope newEnv) {
         sVariableScope = newEnv;
+    }
+
+    public static void resetScope() {
+        sVariableScope = sInitial.clone();
     }
 
     public static Value findValue(String var) {

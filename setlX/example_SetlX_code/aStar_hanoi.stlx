@@ -2,31 +2,25 @@
 
 /* algorithm */
 aStar := procedure(s, t) {
-    g := path := f := {};
+    g := predecessor := f := {};
 
     g[s]        := 0;
-    path[s]     := [ s ];
     f[s]        := h(s);
     openQueue   := { [f[s], s] };
 
     while(openQueue != {}) {
         [fx, x] := fromB(openQueue);
         if (x in t) {
-            p := path[x];
-            while(#p > 0) {
-                print(fromE(p));
-            }
-            print("cost: $fx$");
-            print("nodes expanded: $#path$");
+            printPath(s, t, x, fx, predecessor);
             return;
         }
         for ( [y, yCost] in transition(x) ) {
             if (g[y] == om || g[x] + yCost < g[y]) {
-                path[y]     := [y] + path[x];
-                g[y]        := g[x] + yCost;
-                openQueue   -= { [f[y], y] };
-                f[y]        := g[y] + h(y);
-                openQueue   += { [f[y], y] };
+                predecessor[y]  := x;
+                g[y]            := g[x] + yCost;
+                openQueue       -= { [f[y], y] };
+                f[y]            := g[y] + h(y);
+                openQueue       += { [f[y], y] };
             }
         }
     }
@@ -68,6 +62,24 @@ moveFromTo := procedure(x, from, to) {
     }
 };
 
+/* print the path */
+printPath := procedure(start, targets, end, cost, predecessor) {
+    // rebuild path
+    p    := end;
+    path := [end];
+    while(p != start) {
+        p    := predecessor[p];
+        path += [p];
+    }
+    // print path
+    print("path $start$ -> $targets$:");
+    while(#path > 0) {
+        print(fromE(path));
+    }
+    print("cost: $cost$");
+    print("nodes expanded: $#predecessor$");
+};
+
 /* query */
 hanoi := procedure(n) {
     print("computing towers of hanoi with $n$ disks:");
@@ -77,3 +89,4 @@ hanoi := procedure(n) {
 };
 
 hanoi(6);
+

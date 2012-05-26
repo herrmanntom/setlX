@@ -4,26 +4,25 @@
 var h, transition;
 
 aStar := procedure(s, t) {
-    g := path := f := {};
+    g := predecessor := f := {};
 
     g[s]        := 0;
-    path[s]     := [ s ];
     f[s]        := h[s];
     openQueue   := { [f[s], s] };
 
     while(openQueue != {}) {
         [fx, x] := fromB(openQueue);
         if (x in t) {
-            print("path $s$ -> $t$: $path[x]$, cost = $fx$, $#path$ nodes expanded");
+            printPath(s, t, x, fx, predecessor);
             return;
         }
         for ( [y, yCost] in transition{x} ) {
             if (g[y] == om || g[x] + yCost < g[y]) {
-                path[y]     := [y] + path[x];
-                g[y]        := g[x] + yCost;
-                openQueue   -= { [f[y], y] };
-                f[y]        := g[y] + h[y];
-                openQueue   += { [f[y], y] };
+                predecessor[y]  := x;
+                g[y]            := g[x] + yCost;
+                openQueue       -= { [f[y], y] };
+                f[y]            := g[y] + h[y];
+                openQueue       += { [f[y], y] };
             }
         }
     }
@@ -54,6 +53,19 @@ transition := {
     [10, [ 6, 17]],
     [10, [ 7, 14]],
     [10, [ 8, 23]]
+};
+
+/* print the path */
+printPath := procedure(start, targets, end, cost, predecessor) {
+    // rebuild path
+    p    := end;
+    path := [end];
+    while(p != start) {
+        p    := predecessor[p];
+        path += [p];
+    }
+    // print path
+    print("path $start$ -> $targets$: $path$, cost = $cost$, $#predecessor$ nodes expanded");
 };
 
 /* query */

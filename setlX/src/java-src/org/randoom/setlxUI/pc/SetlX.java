@@ -107,14 +107,9 @@ public class SetlX {
             return sENDL;
         }
 
-        // number of CPUs (cores) in the executing system
-        public int      getNumberOfCores() {
-            return Runtime.getRuntime().availableProcessors();
-        }
-
-        // current time in ms
-        public long     currentTimeMillis() {
-            return System.currentTimeMillis();
+        // allow modification of fileName/path when reading files
+        public String   filterFileName(String fileName) {
+            return fileName; // not required on PC
         }
     }
 

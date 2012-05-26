@@ -6,8 +6,6 @@ import org.randoom.setlx.exceptions.JVMIOException;
 
 public interface EnvironmentProvider {
 
-    /* I/O */
-
     // read from input
     public abstract boolean inReady() throws JVMIOException;
                    // line is read and returned without termination character(s)
@@ -26,13 +24,8 @@ public interface EnvironmentProvider {
     public abstract String  getTab();
     public abstract String  getEndl();
 
-    /* other stuff */
-
-    // number of CPUs (cores) in the executing system
-    public abstract int     getNumberOfCores();
-
-    // current time in ms
-    public abstract long    currentTimeMillis();
+    // allow modification of fileName/path when reading files
+    public abstract String  filterFileName(String fileName);
 
 }
 

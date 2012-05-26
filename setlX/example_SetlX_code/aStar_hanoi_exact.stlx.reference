@@ -1,4 +1,5 @@
 computing towers of hanoi with 6 disks:
+path [[1, 2, 3, 4, 5, 6], [], []] -> {[[], [], [1, 2, 3, 4, 5, 6]]}:
 [[1, 2, 3, 4, 5, 6], [], []]
 [[2, 3, 4, 5, 6], [1], []]
 [[3, 4, 5, 6], [1], [2]]
@@ -64,4 +65,4 @@ computing towers of hanoi with 6 disks:
 [[], [1], [2, 3, 4, 5, 6]]
 [[], [], [1, 2, 3, 4, 5, 6]]
 cost: 63
-nodes expanded: 96
+nodes expanded: 95

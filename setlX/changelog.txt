@@ -1,16 +1,17 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v0.7.6--- ??
+---v0.7.6--- 2012-05-26
  # suppressed duplicate parser error messages
  + new random() function returning a random real:    0.0 <= random() <= 1.0
+ + updated aStar examples
  + introduced some more platform independence (in preparation for Android version)
  + code cleanup
  
----v0.7.5--- 2012/05/16
+---v0.7.5--- 2012-05-16
  + added \ operator for integer division, e.g. a \ b == floor(a/b)
  + round() works for unlimited precision values
 
----v0.7.4--- 2012/05/12
+---v0.7.4--- 2012-05-12
  + implemented matching for sets
  + implemented splitting lists and sets in match
  + added permutations() function
@@ -19,10 +20,10 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  # fixed bug when reading from stdin
  * renamed examples folder
 
----v0.7.3--- 2012/04/26
+---v0.7.3--- 2012-04-26
  + added assert function and option to disable assertions
  + updated aStar hanoi examples
 
----v0.7.2--- 2012/04/22
+---v0.7.2--- 2012-04-22
  * initial change log entry
 

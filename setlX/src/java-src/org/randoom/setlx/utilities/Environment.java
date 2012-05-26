@@ -18,6 +18,9 @@ public class Environment {
     // interface provider to the outer world
     private         static  EnvironmentProvider sEnvProvider                = null;
 
+    // number of CPUs/Cores in System
+    private         static  int                 sCORES                      = Runtime.getRuntime().availableProcessors();
+
     // is input feed by a human?
     private         static  boolean             sIsHuman                    = false;
 
@@ -96,12 +99,16 @@ public class Environment {
         sEnvProvider.promptForInput(prompt);
     }
 
+    // allow modification of fileName/path when reading files
+    public static String filterFileName(String fileName) {
+        return sEnvProvider.filterFileName(fileName);
+    }
+
     /* other stuff */
 
     public static int getNumberOfCores() {
-        int cores = sEnvProvider.getNumberOfCores();
-        if (cores >= 2) {
-            return cores;
+        if (sCORES >= 2) {
+            return sCORES;
         } else {
             return 1;
         }
@@ -109,7 +116,7 @@ public class Environment {
 
     // current time in ms
     public static long currentTimeMillis() {
-        return sEnvProvider.currentTimeMillis();
+        return System.currentTimeMillis();
     }
 
     public static void setPredictableRandoom() {

@@ -22,6 +22,8 @@ public class ParseSetlX {
 
     public static Block parseFile(String fileName) throws ParserException {
         try {
+            // allow modification of fileName/path by environment provider
+            fileName = Environment.filterFileName(fileName);
             // parse the file contents (Antlr will print its parser errors into stderr ...)
             return parseBlock(new ANTLRFileStream(fileName));
 

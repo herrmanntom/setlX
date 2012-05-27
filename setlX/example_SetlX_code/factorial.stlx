@@ -3,7 +3,7 @@
 print("Which factorial should be computed?");
 beginRead := now();
 n := read();
-if (beginRead - now() < 100) { // input in less than 0.1s is from automatic test
+if (now() - beginRead < 100) { // input in less than 0.1s is from automatic test
     printStats := false; // hide stats to get same output every time
 } else {
     printStats := true;

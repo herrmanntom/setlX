@@ -28,7 +28,9 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "0.7.6";
+    private final static String     VERSION         = "0.7.7";
+    private final static String     SETLX_URL       = "http://setlX.randoom.org/";
+    private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
     private final static String     HEADER          = "-====================================setlX====================================-";
 
@@ -396,6 +398,9 @@ public class SetlX {
     private static void printShortHelp() {
         Environment.outWriteLn(
             "Welcome to the setlX interpreter!\n" +
+            "\n" +
+            "Open Source Software from " + SETLX_URL +"\n" +
+            "(c) " + C_YEARS + " by Herrmann, Tom\n" +
             "\n" +
             "You can display some helpful information by using '--help' as parameter when\n" +
             "launching this program.\n"

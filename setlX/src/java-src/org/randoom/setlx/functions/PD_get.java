@@ -8,20 +8,31 @@ import org.randoom.setlx.utilities.Environment;
 
 import java.util.List;
 
-// get()                   : reads a single line from stdin
+// get(message, ...)             : prompts the user with `message', then reads a single line from stdin
 
 public class PD_get extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_get();
 
     private PD_get() {
         super("get");
+        addParameter("message");
+        enableUnlimitedParameters();
+        allowFewerParameters();
+        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         Value          inputValue = Om.OM;
         String         input      = null;
+        String         prompt     = "";
+        for (Value arg : args) {
+            prompt += arg.getUnquotedString();
+        }
+        if (prompt.length() > 0) {
+            prompt += " ";
+        }
         try {
-            Environment.prompt(": ");
+            Environment.prompt(prompt + ": ");
             input = Environment.inReadLine();
         } catch (JVMIOException ioe) {
             Environment.errWriteLn(ioe.getMessage());

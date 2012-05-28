@@ -1,8 +1,7 @@
 // this program can be used to test the performance of the factorial implementation
 
-print("Which factorial should be computed?");
 beginRead := now();
-n := read();
+n := read("Which factorial should be computed?");
 if (now() - beginRead < 100) { // input in less than 0.1s is from automatic test
     printStats := false; // hide stats to get same output every time
 } else {

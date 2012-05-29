@@ -23,6 +23,7 @@ public class Environment {
 
     // is input feed by a human?
     private         static  boolean             sIsHuman                    = false;
+    private final   static  int                 sMAX_CHARS                  = 5000;
 
     // random number generator
     private         static  Random              sRandoom                    = null;
@@ -59,7 +60,18 @@ public class Environment {
 
     // write to standard output
     public static void outWrite(String msg) {
-        sEnvProvider.outWrite(msg);
+        if (msg.length() < sMAX_CHARS) {
+            sEnvProvider.outWrite(msg);
+        } else {
+            final int length = msg.length();
+            for (int i = 0; i < length; i += sMAX_CHARS) {
+                if (i + sMAX_CHARS < length) {
+                    sEnvProvider.outWrite(msg.substring(i, i + sMAX_CHARS));
+                } else {
+                    sEnvProvider.outWrite(msg.substring(i));
+                }
+            }
+        }
     }
     public static void outWriteLn(String msg) {
         sEnvProvider.outWrite(msg + sEnvProvider.getEndl());

@@ -30,9 +30,6 @@ public class PD_read extends PreDefinedFunction {
         for (Value arg : args) {
             prompt += arg.getUnquotedString();
         }
-        if (prompt.length() > 0) {
-            prompt += " ";
-        }
         try {
             do {
                 Environment.prompt(prompt + ": ");

@@ -1,12 +1,16 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v0.7.7--- 2012-06-??
+ + added optional parameter `msg' to read(msg) and get(msg)
+   msg will be displayed in front of the prompt
+
 ---v0.7.6--- 2012-05-26
  # suppressed duplicate parser error messages
  + new random() function returning a random real:    0.0 <= random() <= 1.0
  + updated aStar examples
  + introduced some more platform independence (in preparation for Android version)
  + code cleanup
- 
+
 ---v0.7.5--- 2012-05-16
  + added \ operator for integer division, e.g. a \ b == floor(a/b)
  + round() works for unlimited precision values

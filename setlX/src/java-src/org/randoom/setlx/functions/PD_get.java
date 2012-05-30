@@ -28,9 +28,6 @@ public class PD_get extends PreDefinedFunction {
         for (Value arg : args) {
             prompt += arg.getUnquotedString();
         }
-        if (prompt.length() > 0) {
-            prompt += " ";
-        }
         try {
             Environment.prompt(prompt + ": ");
             input = Environment.inReadLine();

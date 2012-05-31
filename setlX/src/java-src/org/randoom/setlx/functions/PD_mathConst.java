@@ -2,8 +2,6 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Real;
-import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 
 import java.util.List;

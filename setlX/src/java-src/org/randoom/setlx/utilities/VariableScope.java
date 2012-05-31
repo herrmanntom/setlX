@@ -4,7 +4,6 @@ import org.randoom.setlx.functions.MathFunction;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;
-import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;

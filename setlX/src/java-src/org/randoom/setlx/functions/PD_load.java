@@ -12,7 +12,9 @@ import org.randoom.setlx.utilities.ParseSetlX;
 
 import java.util.List;
 
-// load(path [, output])   : loads SetlX source code file and executes it, if `output' is true results of statements are printed when in interactive mode
+// load(path [, output])         : loads SetlX source code file and executes it,
+//                                 if `output' is true results of statements are
+//                                 printed when in interactive mode
 
 public class PD_load extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_load();

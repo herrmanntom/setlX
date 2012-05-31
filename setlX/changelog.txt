@@ -2,7 +2,10 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v0.7.7--- 2012-06-??
  + added optional parameter `msg' to read(msg) and get(msg)
-   msg will be displayed in front of the prompt
+   `msg' will be displayed in front of the prompt
+ + added fileAPI (i.e. readFile(), writeFile(), appendFile(), deleteFile())
+ + added function mathConst(name) to retrieve "e" and "pi"
+ - e and pi are not defined as global variables anymore
 
 ---v0.7.6--- 2012-05-26
  # suppressed duplicate parser error messages

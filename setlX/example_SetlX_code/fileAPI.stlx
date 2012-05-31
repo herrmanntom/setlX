@@ -1,0 +1,26 @@
+// this program demonstrates the simple file API of SetlX
+
+
+// readFile(fileName)            : reads file and returns list of strings, each
+//                                 representing a single line of the file read
+fileContent := readFile("../example_SetlX_code/fileAPI.stlx");  // will fail if relative path is wrong...
+
+for (x in [1 .. #fileContent]) {
+    print("/*$x$*/\t" + fileContent[x]);
+}
+
+// writeFile(fileName, content)  : writes a list of strings into a file, each
+//                                 string representing a single line
+writeFile("test.tmp", fileContent[1 .. (#fileContent \ 2)]);
+
+// appendFile(fileName, content) : appends a list of strings to a file, each
+//                                 string representing a single line
+appendFile("test.tmp", fileContent[(#fileContent \ 2 + 1) .. #fileContent]);
+
+// deleteFile(fileName)          : delete a file, return true on success
+success := deleteFile("test.tmp");
+
+if (success) {
+    print("tmp file deleted!");
+}
+

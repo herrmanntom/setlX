@@ -22,14 +22,7 @@ public class VariableScope {
     private final   static  String          FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
 
     // this scope stores all global variables
-    private final   static  VariableScope   sGlobals;
-
-    static {
-        sGlobals = new VariableScope();
-        // create constants with max precision possible when using --real256 option
-        sGlobals.storeValue("e",  new Real("2.718281828459045235360287471352662497757247093699959574966967627724077"));
-        sGlobals.storeValue("pi", new Real("3.141592653589793238462643383279502884197169399375105820974944592307816"));
-    }
+    private final   static  VariableScope   sGlobals                        = new VariableScope();
 
     /* This variable stores the initial VariableScope:
        Predefined functions are dynamically loaded into this VariableScope,
@@ -52,6 +45,7 @@ public class VariableScope {
 
     public static void resetScope() {
         sVariableScope = sInitial.clone();
+        sGlobals.mVarBindings.clear();
     }
 
     public static Value findValue(String var) {

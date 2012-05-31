@@ -1,12 +1,12 @@
 // this program demonstrates some of the new and possibly interesting built-in functions
 
 /*******************************************************************************
-  some math constants (not really a function)
+  mathConst(name_of_constant)   // get the value of a mathematical constant (currently only pi and e)
 */
 
-circumference := [r] |-> 2 * pi * r;
+circumference := [r] |-> 2 * mathConst("pi") * r;
 print("The circumference of a circle with radius 10 is: " + circumference(10) + ".");
-print("100 is approximately " + log(e ** 100) + ".");
+print("100 is approximately " + log(mathConst("e") ** 100) + ".");
 print();
 
 /*******************************************************************************

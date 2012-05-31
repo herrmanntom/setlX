@@ -55,7 +55,7 @@ solve := procedure(l, n) {
             check(l, x);
             // if this works, try to add more queens
             return solve(l + [x], n);
-        } catchUsr (e) {
+        } catchUsr (error) {
             // do nothing, next value of x is tried automatically
         }
     }
@@ -112,7 +112,7 @@ solveAndPrint := procedure(n) {
         l := solve([], n);
         print(l);
         printBoard(l);
-    } catchUsr (e) {
+    } catchUsr (error) {
         print("There is no solution for n = $n$.");
     }
 };

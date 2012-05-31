@@ -5,9 +5,9 @@ someOtherThing := 23;
 try {
     something => someOtherThing; // this will fail and the program would be terminated
     print("... and this will never be executed.");
-} catch (e) {
+} catch (error) {
     printErr("Some error occurred!:");
-    printErr(e);
+    printErr(error);
 }
 print("However, using the try catch block we can still get here in spite of the error!");
 
@@ -18,13 +18,13 @@ try {
     x := [{"why use return, when we can throw things around"}, "??"];
     throw(x);
     print("this will also never be executed.");
-} catch (e) {
-    if (isError(e)) { // this identifies real errors, e.g. NOT created using throw() function
+} catch (error) {
+    if (isError(error)) { // this identifies real errors, e.g. NOT created using throw() function
         printErr("Some error occurred!:");
-        printErr(e);
+        printErr(error);
     } else {
         print("Something else happened:");
-        print(e);
+        print(error);
     }
 }
 
@@ -37,8 +37,8 @@ try {
     } else {
         om + om; // language error
     }
-} catchUsr (e) { // this will only catch `errors' thrown by the user using throw() function
-    print("User error: " + e );
+} catchUsr (error) { // this will only catch `errors' thrown by the user using throw() function
+    print("User error: " + error );
 } catchLng (error) { // this will catch real errors, e.g. NOT created using throw() function
     print("Language error: " + error );
 } catch (foo) { // this will catch everything

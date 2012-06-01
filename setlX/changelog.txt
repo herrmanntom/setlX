@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v0.7.7--- 2012-06-??
+---v0.7.7--- 2012-06-01
  + added optional parameter `msg' to read(msg) and get(msg)
    `msg' will be displayed in front of the prompt
  + added fileAPI (i.e. readFile(), writeFile(), appendFile(), deleteFile())

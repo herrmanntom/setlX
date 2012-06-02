@@ -39,7 +39,6 @@ public class PD_read extends PreDefinedFunction {
                 }
             } while (input != null && input.equals(""));
         } catch (JVMIOException ioe) {
-            Environment.errWriteLn(ioe.getMessage());
             Environment.errWriteLn("IO error trying to read from stdin!");
         }
 

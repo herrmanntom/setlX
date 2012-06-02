@@ -32,7 +32,6 @@ public class PD_get extends PreDefinedFunction {
             Environment.prompt(prompt + ": ");
             input = Environment.inReadLine();
         } catch (JVMIOException ioe) {
-            Environment.errWriteLn(ioe.getMessage());
             Environment.errWriteLn("IO error trying to read from stdin!");
         }
 

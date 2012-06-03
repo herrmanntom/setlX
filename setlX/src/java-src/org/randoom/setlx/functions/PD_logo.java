@@ -25,30 +25,30 @@ import java.util.List;
 
 public class PD_logo extends PreDefinedFunction {
     public  final static PreDefinedFunction DEFINITION  = new PD_logo();
-    private final static String[]           COINS       = {"Penny", "Nickel", "Dime", "Quarter"};
+    private       static int                count       = 0;
     private final static String             LOGO_BIG    = "\n" +
     "                                                                    " + "\n" +
     "        .mO0C0O0M0P0U0T0E0R0S000M0A0K0E000V0E0R0Y000F0A0S0T0om.     " + "\n" +
     "       .OOOOOOOOOOOOOOOOOOOOOO0S0E0T0L0X0OOOOOOOOOOOOOOOOOOOOOO.    " + "\n" +
     "       OOO'                                                 'OOO    " + "\n" +
     "       OOO                                                   OOO    " + "\n" +
-    "       OOO                      =W,       dg.                OOO    " + "\n" +
-    "       OOO                       4Wc.     'WWc               OOO    " + "\n" +
-    "       OOO                        ?$mi     .WW6              OOO    " + "\n" +
-    "       OOO         _____           jWWg,   W 'W              OOO    " + "\n" +
-    "       OOO      .wWWWWWWWwa.      jW -WWw, W                 OOO    " + "\n" +
-    "       OOO     jW       -WWWi    [Wf   -WWwm      .aaaa.     OOO    " + "\n" +
-    "     .OOO'    .WWw.      )WWW    [Wk     'WWc    ,W    W,    'OOO.  " + "\n" +
-    "   .aOOOP     'WWW'      .WWW;    ?Wg,     'Wm,  WW    WW     $OOOa." + "\n" +
-    "   OOOO{        *        jWWW      WWW       WW  WW    WW      }OOOO" + "\n" +
-    "   'YOOO,               _WWW`   -'??'`        ^  '@    @'     $OOOY'" + "\n" +
+    "       OOO                      mW.       Wm                 OOO    " + "\n" +
+    "       OOO                       YWw.     'WW.               OOO    " + "\n" +
+    "       OOO                        YWWi     .WWw              OOO    " + "\n" +
+    "       OOO         _____           YWWw.   W 'W              OOO    " + "\n" +
+    "       OOO      .wWWWWWWWwa.      iW 'WWw, W                 OOO    " + "\n" +
+    "       OOO     .W.      'WWWi    [WW   'WWwW      .aaaa.     OOO    " + "\n" +
+    "     .OOO'    .WWW.      'WWW    [WW     'WWw    .W    W.    'OOO.  " + "\n" +
+    "   .aOOOY     'WWW'       WWWi    YWw.     'Ww.  WW    WW     YOOOa." + "\n" +
+    "   OOOO{                 iWWW      WWW       Ww  WW    WW      }OOOO" + "\n" +
+    "   'YOOOo               .WWW'   -wWW'         Y  'W    W'     oOOOY'" + "\n" +
     "     'OOO.             sWWW                       'aaaa'     .OOO'  " + "\n" +
-    "       OOO           _yWW/                                   OOO    " + "\n" +
+    "       OOO           .yWW/                                   OOO    " + "\n" +
     "       OOO         .wWW/                                     OOO    " + "\n" +
     "       OOO        sWW/                                       OOO    " + "\n" +
-    "       OOO      _dW/      _.M                                OOO    " + "\n" +
-    "       OOO    _wWWWWWWWWWWWWM                                OOO    " + "\n" +
-    "       OOO    ''''''''''''''`                                OOO    " + "\n" +
+    "       OOO      .dW/      _.M                                OOO    " + "\n" +
+    "       OOO    .wWWWWWWWWWWWWM                                OOO    " + "\n" +
+    "       OOO    ```````````````                                OOO    " + "\n" +
     "       OOO                                                   OOO    " + "\n" +
     "       OOO.                                                 .OOO    " + "\n" +
     "       'OOOOOOOOOOOOOOOOOOOOOO0S0E0T0L0X0OOOOOOOOOOOOOOOOOOOOOO'    " + "\n" +
@@ -62,21 +62,22 @@ public class PD_logo extends PreDefinedFunction {
     "    |OO'                                    'OO|   " + "\n" +
     "    |OO                 mm     m.            OO|   " + "\n" +
     "    |OO                 'Ww    'Ww.          OO|   " + "\n" +
-    "    |OO                  -Wwc   'WWw         OO|   " + "\n" +
+    "    |OO                  -Wwc   'Ww.         OO|   " + "\n" +
     "    |OO     .wWWWWWw     .W Ww. W 'Y         OO|   " + "\n" +
-    "    |OO    wW     'Ww.   WW  YW.d    .wWw,   OO|   " + "\n" +
-    "   .OOO   wWWw     WWw   WW,  'Yw.   W' 'W   OOO.  " + "\n" +
-    " .oOOY'   'WWW     WWY    WWm  'Yw   W   W   'YOOo." + "\n" +
-    " 'YOOo.           iWY   -mY'     W   W. .W   .oOOY'" + "\n" +
-    "   'OOO         .wW'                  YWY    OOO'  " + "\n" +
+    "   .OOO    wW     'Ww.   WW  YW.d    .wWw,   OOO.  " + "\n" +
+    " .oOOY'   wWWw     WWw   WW,  'Yw.   W' 'W   'YOOo." + "\n" +
+    " 'YOOo.   'WW'     WWY    WWm  'Yw   W   W   .oOOY'" + "\n" +
+    "   'OOO           iWY   -mY'     W   W. .W   OOO'  " + "\n" +
+    "    |OO         .wW'                  YWY    OO|   " + "\n" +
     "    |OO       .wW'                           OO|   " + "\n" +
     "    |OO     .wW'    .M                       OO|   " + "\n" +
     "    |OO    mWWWWWWWWWM                       OO|   " + "\n" +
-    "    |OO   ''''''''''''                       OO|   " + "\n" +
     "    |OO                                      OO|   " + "\n" +
     "     OOOooooooooooooooooooooooooooooooooooooOOO    " + "\n" +
     "     'OOOOOOOOOOOOOO0S0E0T0L0X0OOOOOOOOOOOOOOO'    " + "\n" +
     "                                                   " + "\n";
+
+    private final static String[]           COINS       = {"Penny", "Nickel", "Dime", "Quarter"};
 
     private PD_logo() {
         super("logo");
@@ -85,7 +86,7 @@ public class PD_logo extends PreDefinedFunction {
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         String  logo  = LOGO_SMALL;
         int     payUp = 0;
-        while(payUp <= 0 && payUp > -3) {
+        while(payUp <= 0 && payUp > -3 && count < 3) {
             try {
                 payUp--;
                 Environment.prompt("Insert USD-Coin: ");
@@ -104,7 +105,15 @@ public class PD_logo extends PreDefinedFunction {
             } catch (JVMIOException ioe) { /* who cares? */}
         }
         if (payUp <= 0) {
-            Environment.outWriteLn("Too bad... here a `penny' for your thoughts.");
+            if (++count == 3) {
+                Environment.outWriteLn("You got 2 pennies already and won't let one go? You are an ass.");
+            } else if (count > 3) {
+                Environment.outWriteLn("You are an ass.");
+            } else if (count > 1) {
+                Environment.outWriteLn("Too bad... here's another `penny' for your thoughts.");
+            } else {
+                Environment.outWriteLn("Too bad... here's a `penny' for your thoughts.");
+            }
             return new Rational(0);
         } else if (payUp == 1) {
             Environment.outWriteLn("  ...cheap bastard...  ");
@@ -113,13 +122,14 @@ public class PD_logo extends PreDefinedFunction {
             Environment.outWriteLn("  ...well... never mind...  ");
             logo = LOGO_SMALL;
         }  else if (payUp == 3) {
-            Environment.outWriteLn("  ...you can to one better...  ");
+            Environment.outWriteLn("  ...you can do one better...  ");
             logo = LOGO_BIG;
         } else {
-            Environment.outWriteLn("Thank You!");
+            Environment.outWriteLn("Thank you!");
             logo = LOGO_BIG;
         }
 
+        count = 0;
         int timeSum = 0;
         for (int i = 0; i < logo.length(); i++) {
             Environment.outWrite("" + logo.charAt(i));

@@ -11,6 +11,7 @@ import org.randoom.setlx.statements.Block;
 import org.antlr.runtime.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 
@@ -24,9 +25,12 @@ public class ParseSetlX {
         try {
             // allow modification of fileName/path by environment provider
             fileName = Environment.filterFileName(fileName);
-            // parse the file contents (Antlr will print its parser errors into stderr ...)
-            return parseBlock(new ANTLRFileStream(fileName));
-
+            if (new File(fileName).isFile()) {
+                // parse the file contents (Antlr will print its parser errors into stderr ...)
+                return parseBlock(new ANTLRFileStream(fileName));
+            } else {
+                throw new FileNotReadableException("File '" + fileName + "' could not be read.");
+            }
         } catch (IOException ioe) {
             throw new FileNotReadableException("File '" + fileName + "' could not be read.");
         }

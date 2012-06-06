@@ -7,13 +7,13 @@ import org.randoom.setlx.utilities.Environment;
 
 import java.util.List;
 
-// printAfterEval(toggle)    : configures output of results after each evaluation of an statement containing an expression
+// trace(toggle)             : configures output of all assignments
 
-public class PD_printAfterEval extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_printAfterEval();
+public class PD_trace extends PreDefinedFunction {
+    public final static PreDefinedFunction DEFINITION = new PD_trace();
 
-    private PD_printAfterEval() {
-        super("printAfterEval");
+    private PD_trace() {
+        super("trace");
         addParameter("toggle");
     }
 
@@ -26,9 +26,9 @@ public class PD_printAfterEval extends PreDefinedFunction {
         }
 
         if (toggle == SetlBoolean.TRUE) {
-            Environment.setPrintAfterEval(true);
+            Environment.setTraceAssignments(true);
         } else /* if (toggle == SetlBoolean.FALSE) */ {
-            Environment.setPrintAfterEval(false);
+            Environment.setTraceAssignments(false);
         }
 
         // everything seems fine

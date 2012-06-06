@@ -198,7 +198,6 @@ public class SetlX {
 
     private static void parseAndExecuteInteractive() throws Exception {
         Environment.setInteractive(true);
-        Environment.setPrintAfterEval(true);
         Block   blk      = null;
         boolean skipTest = false;
         do {
@@ -207,6 +206,7 @@ public class SetlX {
             try {
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();
+                blk.markLastExprStatement();
                 skipTest    = false;
             } catch (EndOfFileException eofe) {
                 // user wants to quit
@@ -310,7 +310,6 @@ public class SetlX {
 
     private static void executeFiles(List<Block> programs) throws Exception {
         Environment.setInteractive(false);
-        Environment.setPrintAfterEval(false);
 
         if (verbose) {
             printExecutionStart();

@@ -1,5 +1,10 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v0.7.8--- 2012-06-06
+ * output of results in interactive mode will only be displayed for last statement
+ * output added by the interpreter is enclosed in ~< >~
+ + added trace() function to print assignments
+
 ---v0.7.7--- 2012-06-01
  + added optional parameter `msg' to read(msg) and get(msg)
    `msg' will be displayed in front of the prompt

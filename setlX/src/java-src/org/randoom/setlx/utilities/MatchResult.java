@@ -40,6 +40,10 @@ public class MatchResult {
     public void setAllBindings() {
         for (Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
             VariableScope.putValue(entry.getKey(), entry.getValue().clone());
+
+            if (Environment.isTraceAssignments()) {
+                Environment.outWriteLn("~< Trace (match): " + entry.getKey() + " := " + entry.getValue() + " >~");
+            }
         }
     }
 }

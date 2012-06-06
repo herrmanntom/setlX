@@ -28,8 +28,8 @@ public class Environment {
     private         static  Random              sRandoom                    = null;
 
     private         static  boolean             sIsInteractive              = false;
-    private         static  boolean             sPrintAfterEval             = false;
     private         static  boolean             sPrintVerbose               = false;
+    private         static  boolean             sTraceAssignments           = false;
     private         static  boolean             sAssertsDisabled            = false;
 
     /* -- debugger -- */
@@ -147,20 +147,20 @@ public class Environment {
         return sIsInteractive;
     }
 
-    public static void setPrintAfterEval(boolean isPrintAfterEval) {
-        sPrintAfterEval = isPrintAfterEval;
-    }
-
-    public static boolean isPrintAfterEval() {
-        return sPrintAfterEval;
-    }
-
     public static void setPrintVerbose(boolean printVerbose) {
         sPrintVerbose   = printVerbose;
     }
 
     public static boolean isPrintVerbose() {
         return sPrintVerbose;
+    }
+
+    public static void setTraceAssignments(boolean traceAssignments) {
+        sTraceAssignments = traceAssignments;
+    }
+
+    public static boolean isTraceAssignments() {
+        return sTraceAssignments;
     }
 
     public static void setAssertsDisabled(boolean assertsDisabled) {

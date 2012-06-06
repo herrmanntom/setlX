@@ -17,6 +17,7 @@ public class PD_dbgHelp extends PreDefinedFunction {
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         String message  = "Debugger Commands:\n" +
+                          "  trace(boolean); // enable/disable output of assignments\n" +
                           "  setBreak(\"id\"); // set breakpoint in function bound to \"id\"\n" +
                           "  rmBreak(\"id\");  // remove breakpoint in function bound to \"id\"\n" +
                           "  lsBreak();      // list breakpoints\n" +

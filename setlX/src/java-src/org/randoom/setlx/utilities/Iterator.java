@@ -143,6 +143,11 @@ public class Iterator {
                 innerScope.setWriteThrough(false); // force iteration variables to be local to this block
                 // assign value from collection
                 mAssignable.assign(v);
+
+                if (Environment.isTraceAssignments()) {
+                    Environment.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
+                }
+
                 // reset WriteThrough, because changes during execution are not strictly local
                 innerScope.setWriteThrough(true);
                 /* Starts iteration of next iterator or execution if this is the

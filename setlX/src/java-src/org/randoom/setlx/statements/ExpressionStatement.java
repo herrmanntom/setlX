@@ -19,16 +19,22 @@ implemented here as:
 */
 
 public class ExpressionStatement extends Statement {
-    private Expr   mExpr;
+    private Expr    mExpr;
+    private boolean mPrintAfterEval;
 
     public ExpressionStatement(Expr expression) {
-        mExpr   = expression;
+        mExpr           = expression;
+        mPrintAfterEval = false;
+    }
+
+    public void setPrintAfterEval() {
+        mPrintAfterEval = true;
     }
 
     protected void exec() throws SetlException {
         Value v = mExpr.eval();
-        if (Environment.isPrintAfterEval() && (v != Om.OM || !((Om) v).isHidden() )) {
-            Environment.outWriteLn("Result: " + v);
+        if (mPrintAfterEval && (v != Om.OM || !((Om) v).isHidden()) ) {
+            Environment.outWriteLn("~< Result: " + v + " >~");
         }
     }
 

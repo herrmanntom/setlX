@@ -58,6 +58,15 @@ public class Block extends Statement {
         execute();
     }
 
+    public void markLastExprStatement() {
+        if (mStatements.size() > 0) {
+            Statement stmnt = mStatements.get(mStatements.size() - 1);
+            if (stmnt instanceof ExpressionStatement) {
+                ((ExpressionStatement) stmnt).setPrintAfterEval();
+            }
+        }
+    }
+
     /* string operations */
 
     public String toString(int tabs) {

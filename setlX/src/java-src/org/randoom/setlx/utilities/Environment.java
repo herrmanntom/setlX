@@ -17,6 +17,7 @@ import java.util.Random;
 public class Environment {
     // interface provider to the outer world
     private         static  EnvironmentProvider sEnvProvider                = null;
+    private         static  boolean             sStopExecution              = false;
 
     // number of CPUs/Cores in System
     private         static  int                 sCORES                      = Runtime.getRuntime().availableProcessors();
@@ -49,6 +50,14 @@ public class Environment {
 
     public static EnvironmentProvider getEnvironmentProvider() {
         return sEnvProvider;
+    }
+
+    public static void stopExecution(boolean stopExecution) {
+        sStopExecution = stopExecution;
+    }
+
+    public static boolean isExecutionStopped() {
+        return sStopExecution;
     }
 
     /* I/O */

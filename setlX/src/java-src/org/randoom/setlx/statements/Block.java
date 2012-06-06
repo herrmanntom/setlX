@@ -1,6 +1,7 @@
 package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
@@ -50,6 +51,9 @@ public class Block extends Statement {
 
     public void execute() throws SetlException {
         for (Statement stmnt : mStatements) {
+            if (Environment.isExecutionStopped()) {
+                throw new StopExecutionException("Interrupted");
+            }
             stmnt.execute();
         }
     }

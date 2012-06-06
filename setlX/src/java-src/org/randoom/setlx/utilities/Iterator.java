@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.ContinueException;
 import org.randoom.setlx.exceptions.BreakException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
@@ -131,6 +132,9 @@ public class Iterator {
     /* private functions */
 
     private void evaluate(IteratorExecutionContainer exec) throws SetlException {
+        if (Environment.isExecutionStopped()) {
+            throw new StopExecutionException("Interrupted");
+        }
         Value iterationValue = mCollection.eval(); // trying to iterate over this value
         if (iterationValue instanceof CollectionValue) {
             CollectionValue coll        = (CollectionValue) iterationValue;

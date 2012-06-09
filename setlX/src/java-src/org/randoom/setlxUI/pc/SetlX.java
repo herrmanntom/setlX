@@ -243,7 +243,7 @@ public class SetlX {
             );
         }
 
-        // parse content of all files (Antlr will print its parser errors into stderr ...)
+        // parse content of all files (ANTLR will print its parser errors into stderr ...)
         try {
             for (String fileName : files) {
                 programs.add(ParseSetlX.parseFile(fileName));

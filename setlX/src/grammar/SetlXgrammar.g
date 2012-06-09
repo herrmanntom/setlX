@@ -68,7 +68,7 @@ grammar SetlXgrammar;
 }
 
 /* Require at least one statement to begin parsing and terminate only with EOF.
-   Otherwhise antlr runs into strange parser behavior ... */
+   Otherwhise ANTLR runs into strange parser behavior ... */
 initBlock returns [Block blk]
     @init{
         List<Statement> stmnts = new ArrayList<Statement>();
@@ -82,7 +82,7 @@ initBlock returns [Block blk]
     ;
 
 /* Require at termination with EOF.
-   Otherwhise antlr runs into strange parser behavior ... */
+   Otherwhise ANTLR runs into strange parser behavior ... */
 initAnyExpr returns [Expr ae]
     @init{
         resetLastError();

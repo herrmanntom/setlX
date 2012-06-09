@@ -26,7 +26,7 @@ public class ParseSetlX {
             // allow modification of fileName/path by environment provider
             fileName = Environment.filterFileName(fileName);
             if (new File(fileName).isFile()) {
-                // parse the file contents (Antlr will print its parser errors into stderr ...)
+                // parse the file contents (ANTLR will print its parser errors into stderr ...)
                 return parseBlock(new ANTLRFileStream(fileName));
             } else {
                 throw new FileNotReadableException("File '" + fileName + "' could not be read.");
@@ -40,7 +40,7 @@ public class ParseSetlX {
         try {
             InputStream         stream = InputReader.getStream();
 
-            // parse the input (Antlr will print its parser errors into stderr ...)
+            // parse the input (ANTLR will print its parser errors into stderr ...)
             return parseBlock(new ANTLRInputStream(stream));
 
         } catch (IOException ioe) {
@@ -52,7 +52,7 @@ public class ParseSetlX {
         try {
             InputStream         stream = new ByteArrayInputStream(input.getBytes());
 
-            // parse the input (Antlr will print its parser errors into stderr ...)
+            // parse the input (ANTLR will print its parser errors into stderr ...)
             return parseBlock(new ANTLRInputStream(stream));
 
         } catch (IOException ioe) {
@@ -64,7 +64,7 @@ public class ParseSetlX {
         try {
             InputStream         stream = new ByteArrayInputStream(input.getBytes());
 
-            // parse the input (Antlr will print its parser errors into stderr ...)
+            // parse the input (ANTLR will print its parser errors into stderr ...)
             return parseExpr(new ANTLRInputStream(stream));
 
         } catch (IOException ioe) {
@@ -113,7 +113,7 @@ public class ParseSetlX {
             // parse the input
             CodeFragment        frag   = parseFragment(parser, type);
 
-            // now Antlr will print its parser errors into stderr ...
+            // now ANTLR will print its parser errors into stderr ...
 
             /* check for unparsed syntax errors at the end of the input stream */
 
@@ -133,7 +133,7 @@ public class ParseSetlX {
                 // parse again to force displaying syntax error in remaining tokenStream
                 parseFragment(parser, type);
 
-                // now Antlr will (again) print its parser errors into stderr ...
+                // now ANTLR will (again) print its parser errors into stderr ...
 
                 // check if parser moved the index
                 if (index == ts.index()) {
@@ -147,7 +147,7 @@ public class ParseSetlX {
                     Token   t       = ts.get(index);
                     String  error   = "line " + t.getLine() + ":" + t.getCharPositionInLine();
                             error  += " input '" + ts.toString(index, ts.size()) + "' includes unidentified errors";
-                    // fake Antlr like error message
+                    // fake ANTLR like error message
                     Environment.errWriteLn(error);
                     // and stop parsing
                     throw new SyntaxErrorException(error);

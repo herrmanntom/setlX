@@ -30,7 +30,9 @@ implemented here as:
 
 public class Iterator {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "^iterator";
+    private final static String		FUNCTIONAL_CHARACTER = "^iterator";
+    // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean    sStopExecution       = false;
 
     private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private Expr        mCollection; // Rhs (should be Set/List)
@@ -132,7 +134,7 @@ public class Iterator {
     /* private functions */
 
     private void evaluate(IteratorExecutionContainer exec) throws SetlException {
-        if (Environment.isExecutionStopped()) {
+        if (sStopExecution) {
             throw new StopExecutionException("Interrupted");
         }
         Value iterationValue = mCollection.eval(); // trying to iterate over this value

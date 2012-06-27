@@ -210,7 +210,7 @@ public abstract class Value implements Comparable<Value> {
     public Value sum(Value summand) throws SetlException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
-        } else if (summand instanceof SetlString) {
+        } else if (summand instanceof SetlString && this != Om.OM) {
             return ((SetlString) summand).sumFlipped(this);
         }
         throw new UndefinedOperationException(

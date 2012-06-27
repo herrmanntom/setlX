@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.0.1--- 2012-06-27
+ * +/[] and */[] return om, not 0 or 1 respectively
+ * fixed parsing rules for reals and ranges
+
 ---v1.0.0--- 2012-06-10
  * updated documentation
 

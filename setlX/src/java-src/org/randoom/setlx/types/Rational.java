@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.Environment;
 
@@ -251,7 +252,9 @@ public class Rational extends NumberValue {
                 try {
                     threads[i].join();
                     result = result.multiply(threads[i].result);
-                } catch (InterruptedException ie) {}
+                } catch (InterruptedException ie) {
+                    throw new StopExecutionException("Interrupted");
+                }
             }
         }
         return new Rational(result);

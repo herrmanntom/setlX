@@ -29,7 +29,9 @@ implemented here as:
 
 public class Block extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^block";
+    private final static String     FUNCTIONAL_CHARACTER = "^block";
+    // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean    sStopExecution       = false;
 
     private List<Statement> mStatements;
 
@@ -51,7 +53,7 @@ public class Block extends Statement {
 
     public void execute() throws SetlException {
         for (Statement stmnt : mStatements) {
-            if (Environment.isExecutionStopped()) {
+            if (sStopExecution) {
                 throw new StopExecutionException("Interrupted");
             }
             stmnt.execute();

@@ -17,6 +17,8 @@ grammar SetlXgrammar;
     package org.randoom.setlx.grammar;
 
     import org.randoom.setlx.utilities.Environment;
+
+    import java.util.LinkedList;
 }
 
 @members {
@@ -64,6 +66,23 @@ grammar SetlXgrammar;
     // make error reporting platform independend
     public void emitErrorMessage(String msg) {
         Environment.errWriteLn(msg);
+    }
+
+    // fix parsing: list[2..]
+    LinkedList<Token> tokens = new LinkedList<Token>();
+
+    public void emit(Token token) {
+        state.token = token;
+        tokens.add(token);
+    }
+
+    public Token nextToken() {
+        super.nextToken();
+        if (tokens.size() == 0) {
+            return Token.EOF_TOKEN;
+        } else {
+            return tokens.removeFirst();
+        }
     }
 }
 
@@ -456,13 +475,13 @@ collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
     @init {
         params = new ArrayList<Expr>();
     }
-    : ( expr[true] '..' )=>
+    : ( expr[true] RANGE_SIGN )=>
       e1 = expr[$enableIgnore]   { params.add($e1.ex);                          }
-      '..'                       { params.add(CollectionAccessRangeDummy.CARD); }
+      RANGE_SIGN                 { params.add(CollectionAccessRangeDummy.CARD); }
       (
         e2 = expr[$enableIgnore] { params.add($e2.ex);                          }
       )?
-    | '..'                       { params.add(CollectionAccessRangeDummy.CARD); }
+    | RANGE_SIGN                 { params.add(CollectionAccessRangeDummy.CARD); }
       expr[$enableIgnore]        { params.add($expr.ex);                        }
     | expr[$enableIgnore]        { params.add($expr.ex);                        }
     ;
@@ -506,7 +525,7 @@ range [boolean enableIgnore] returns [Range r]
       (
         ',' e2 = expr[$enableIgnore] { e = $e2.ex; }
       )?
-      '..'  e3 = expr[$enableIgnore]
+      RANGE_SIGN  e3 = expr[$enableIgnore]
       { r = new Range($e1.ex, e, $e3.ex); }
     ;
 
@@ -549,26 +568,19 @@ boolValue returns [Value bv]
 
 atomicValue returns [Value av]
     : NUMBER     { av = new Rational($NUMBER.text); }
-    | real       { av = $real.r;                    }
+    | REAL       { av = new Real($REAL.text);       }
     | 'om'       { av = Om.OM;                      }
     ;
-
-// this rule is required, otherwise `a(2..)' fails to get parsed
-real returns [Real r]
-    @init {
-        String n = "";
-    }
-    : (
-        NUMBER      { n = $NUMBER.text;             }
-      )? REAL       { r = new Real(n + $REAL.text); }
-    ;
-
-
 
 TERM            : ('^'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
 ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
-REAL            : '.'('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
+REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
+RANGE_SIGN      : '..';
+// fix parsing: list[2..]
+NUMBER_RANGE    : n = NUMBER     {$n.setType(NUMBER); emit($n);}
+                  r = RANGE_SIGN { $r.setType(RANGE_SIGN); emit($r);}
+                ;
 STRING          : '"' ('\\"'|~('"'))* '"';
 
 LINE_COMMENT    : '//' ~('\r\n' | '\n' | '\r')*             { skip(); } ;

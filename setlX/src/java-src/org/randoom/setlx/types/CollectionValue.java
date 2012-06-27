@@ -61,7 +61,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 product = product.multiply(v);
             }
         }
-        return (product != null)? product : new Rational(1);
+        return (product != null)? product : Om.OM;
     }
 
     public final    Value           randomMember() throws NumberToLargeException {
@@ -83,7 +83,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
     }
 
-
     public abstract void            removeMember(Value element);
 
     public abstract void            removeFirstMember();
@@ -101,7 +100,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 sum = sum.sum(v);
             }
         }
-        return (sum != null)? sum : new Rational(0);
+        return (sum != null)? sum : Om.OM;
     }
 
     /* string and char operations */

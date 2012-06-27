@@ -125,13 +125,23 @@ public class SetlString extends Value {
             return new SetlString(mString.concat(s.mString));
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
-        } else {
+        } else if (summand != Om.OM) {
             return new SetlString(mString.concat(summand.toString()));
+        } else {
+            throw new IncompatibleTypeException(
+                "'" + this + " + " + summand + "' is undefined."
+            );
         }
     }
 
     public SetlString sumFlipped(Value summand) throws IncompatibleTypeException {
-        return new SetlString(summand.toString().concat(mString));
+        if (summand != Om.OM) {
+            return new SetlString(summand.toString().concat(mString));
+        } else {
+            throw new IncompatibleTypeException(
+                "'" + this + " + " + summand + "' is undefined."
+            );
+        }
     }
 
     /* operations on collection values (Lists, Sets [, Strings]) */

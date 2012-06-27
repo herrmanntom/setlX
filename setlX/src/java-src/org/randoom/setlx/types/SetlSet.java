@@ -177,9 +177,7 @@ public class SetlSet extends CollectionValue {
     /* operations on collection values (Lists, Sets [, Strings]) */
 
     public void addMember(Value element) {
-        if (element == Om.OM) {
-            return;
-        } else {
+        if (element != Om.OM) {
             separateFromOriginal();
             mSet.add(element.clone());
         }
@@ -432,7 +430,7 @@ public class SetlSet extends CollectionValue {
         // remove all previously set pairs which first member matches index
         mSet.removeAll(new TreeSet<Value>(mSet.subSet(lowerBound, true, upperBound, true)));
 
-        /* to get here this set must be empty or a map without a pair matching the index */
+        /* now this set must either be empty or a map without a pair matching the index */
         if (v != Om.OM) {
             // add new pair [index, value] to this set
             SetlList pair = new SetlList();

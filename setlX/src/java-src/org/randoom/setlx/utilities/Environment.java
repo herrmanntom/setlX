@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.expressions.Call;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.For;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.statements.While;
@@ -17,7 +18,6 @@ import java.util.Random;
 public class Environment {
     // interface provider to the outer world
     private         static  EnvironmentProvider sEnvProvider                = null;
-    private         static  boolean             sStopExecution              = false;
 
     // number of CPUs/Cores in System
     private         static  int                 sCORES                      = Runtime.getRuntime().availableProcessors();
@@ -28,6 +28,7 @@ public class Environment {
     // random number generator
     private         static  Random              sRandoom                    = null;
 
+    private         static  boolean             sStopExecution              = false;
     private         static  boolean             sIsInteractive              = false;
     private         static  boolean             sPrintVerbose               = false;
     private         static  boolean             sTraceAssignments           = false;
@@ -50,14 +51,6 @@ public class Environment {
 
     public static EnvironmentProvider getEnvironmentProvider() {
         return sEnvProvider;
-    }
-
-    public static void stopExecution(boolean stopExecution) {
-        sStopExecution = stopExecution;
-    }
-
-    public static boolean isExecutionStopped() {
-        return sStopExecution;
     }
 
     /* I/O */
@@ -146,6 +139,16 @@ public class Environment {
             sRandoom = new Random();
         }
         return sRandoom.nextDouble();
+    }
+
+    public static void stopExecution(boolean stopExecution) {
+        sStopExecution          = stopExecution;
+        Block.sStopExecution    = stopExecution;
+        Iterator.sStopExecution = stopExecution;
+    }
+
+    private static boolean isExecutionStopped() {
+        return sStopExecution;
     }
 
     public static void setInteractive(boolean isInteractive) {

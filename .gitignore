@@ -1,11 +1,4 @@
-accounting/
 older_versions/
-dhbw_documentation/*.aux
-dhbw_documentation/*.dvi
-dhbw_documentation/*.log
-dhbw_documentation/*.out
-dhbw_documentation/*.pdf
-dhbw_documentation/*.toc
 setlX/documentation/*.aux
 setlX/documentation/*.dvi
 setlX/documentation/*.log
@@ -27,7 +20,4 @@ setlX/src/java-src/org/randoom/setlx/grammar
 setlX/src/setlX.jar
 setlX/developmentGuide.pdf
 setlX/manual.pdf
-task/*.pdf
-test_interpreter/
-antlr-reference.pdf
 setlX_*.zip

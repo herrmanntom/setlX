@@ -388,6 +388,12 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public SetlList split(Value pattern) throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Argument '" + this + "' is not a string."
+        );
+    }
+
     public Value sumMembers() throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '+/ " + this + "' is not a collection value."

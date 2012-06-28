@@ -250,6 +250,20 @@ public class SetlString extends Value {
         return mString.length();
     }
 
+    public SetlList split(Value pattern) throws IncompatibleTypeException {
+        if ( ! (pattern instanceof SetlString)) {
+            throw new IncompatibleTypeException(
+                "Pattern '" + pattern  + "' is not a string."
+            );
+        }
+        String[] strings = mString.split(pattern.getUnquotedString());
+        SetlList result  = new SetlList();
+        for (String str : strings) {
+            result.addMember(new SetlString(str));
+        }
+        return result;
+    }
+
     /* string and char operations */
 
     public SetlString str() {

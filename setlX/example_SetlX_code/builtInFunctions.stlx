@@ -73,11 +73,11 @@ getIntRealOrStringFromInput := procedure(input) {
 
 valueWithType := procedure(value) {
     switch {
-        case isInteger(value)  : return "int      : " + value;
-        case isRational(value) : return "rational : " + value;
-        case isReal(value)     : return "real     : " + value;
-        case isString(value)   : return "string   : \"" + value + "\"";
-        default                : return "??       : '"  + value + "'";
+        case isInteger(value)  : return "int      : $value$";
+        case isRational(value) : return "rational : $value$";
+        case isReal(value)     : return "real     : $value$";
+        case isString(value)   : return "string   : \"$value$\"";
+        default                : return "??       : '$value$'";
     }
 };
 
@@ -151,6 +151,12 @@ print();
   permutations(collectionValue) // computes all permutations of the element in `collectionValue'
 */
 print("All permutations of $[1,2,2,3]$ are $permutations([1,2,2,3])$.");
+print();
+
+/*******************************************************************************
+  strSplit(string, pattern)     // splits string at pattern into a list of strings
+*/
+print(strSplit("from;hell;;I;come", ";"));
 print();
 
 /*******************************************************************************

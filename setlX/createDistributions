@@ -78,6 +78,7 @@ cd ..
 # create distribution names
 binOnly="setlX_v$versionForFileNames.binary_only"
 devel="setlX_v$versionForFileNames.devel"
+examples="setlX_v$versionForFileNames.examples"
 
 # remove distribution zips if present
 rm -f "$binOnly.zip"
@@ -90,6 +91,15 @@ echo -n "=> Creating binary only distribution ... "
 mkdir -p zipContents
 cp changelog.txt manual.pdf src/setlX src/setlX.cmd src/setlX.jar zipContents/.
 cd zipContents; zip -qr "../$binOnly.zip" . ; cd ..
+rm -rf zipContents
+echo "done"
+
+# create examples zip
+echo -n "=> Creating example code distribution ... "
+mkdir -p zipContents zipContents/converted_Setl2_code
+cp example_SetlX_code/*.stlx zipContents/.
+cp example_SetlX_code/converted_Setl2_code/*.stlx zipContents/converted_Setl2_code/.
+cd zipContents; zip -qr "../$examples.zip" . ; cd ..
 rm -rf zipContents
 echo "done"
 

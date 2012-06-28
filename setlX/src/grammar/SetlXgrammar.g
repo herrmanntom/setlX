@@ -410,10 +410,18 @@ product [boolean enableIgnore] returns [Expr p]
     ;
 
 power [boolean enableIgnore] returns [Expr pow]
-    : factor[$enableIgnore, false]    { pow = $factor.f;               }
+    : reduce[$enableIgnore]           { pow = $reduce.r;               }
       (
         '**' p = power[$enableIgnore] { pow = new Power (pow, $p.pow); }
       )?
+    ;
+
+reduce [boolean enableIgnore] returns [Expr r]
+    : f1 = factor[$enableIgnore, false]           { r = $f1.f;                               }
+      (
+          '+/'  f2 = factor[$enableIgnore, false] { r = new SumMembersBinary(r, $f2.f);      }
+        | '*/'  f2 = factor[$enableIgnore, false] { r = new MultiplyMembersBinary(r, $f2.f); }
+      )*
     ;
 
 factor [boolean enableIgnore, boolean quoted] returns [Expr f]
@@ -577,8 +585,9 @@ ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
 RANGE_SIGN      : '..';
-// fix parsing: list[2..]
-NUMBER_RANGE    : n = NUMBER     {$n.setType(NUMBER); emit($n);}
+// fix parsing `list[2..]' by emitting two tokens for one rule. Otherwise ANTLR
+// gets confused and want's to parse a REAL and runs into an unexpected second dot.
+NUMBER_RANGE    : n = NUMBER     { $n.setType(NUMBER); emit($n);    }
                   r = RANGE_SIGN { $r.setType(RANGE_SIGN); emit($r);}
                 ;
 STRING          : '"' ('\\"'|~('"'))* '"';

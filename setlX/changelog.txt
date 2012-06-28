@@ -1,7 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v1.0.1--- 2012-06-29
+ * adding om to a string (e.g. "" + om) will now result in an error
  * +/[] and */[] return om, not 0 or 1 respectively
+ + added binary forms of +/ and */ operators to specify neutral element
  + fixed parsing rules for reals and ranges
  + added compare(valueA, valueB) function
  + added strSplit(string, pattern) function

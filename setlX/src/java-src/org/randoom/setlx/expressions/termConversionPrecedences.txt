@@ -15,6 +15,7 @@ Precedence, Associativity, Operator(s)
 1600,       left,          +, -
 1700,       left,          *, /, \, %
 1800,       right,         **
+1850,       left,          binary +/, binary */
 1900,       right,         - i.e. unary minus
 1900,       left,          ! i.e. factorial
 1900,       -,             (), other unary operators and expressions e.g. call etc

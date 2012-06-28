@@ -120,7 +120,7 @@ atom returns [Expr expr]
     : '(' regexp ')' { $expr = $regexp.expr; }
     | l = LITERAL { $expr = new MyToken($l.text); }
       ('..' r = LITERAL { $expr = new Range($l.text, $r.text); })?
-    | TOKEN { $expr = new MyToken($TOKEN.text); }
+    | (name '=')? TOKEN { $expr = new MyToken($TOKEN.text); }
     ;
 
 VAR      : ('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;

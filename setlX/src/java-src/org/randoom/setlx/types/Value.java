@@ -327,7 +327,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value multiplyMembers() throws SetlException {
+    public Value multiplyMembers(Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '*/ " + this + "' is not a collection value."
         );
@@ -394,7 +394,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value sumMembers() throws SetlException {
+    public Value sumMembers(Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '+/ " + this + "' is not a collection value."
         );

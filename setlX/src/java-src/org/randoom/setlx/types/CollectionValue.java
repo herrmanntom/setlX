@@ -52,7 +52,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Value           minimumMember() throws SetlException;
 
-    public          Value           multiplyMembers() throws SetlException {
+    public          Value           multiplyMembers(Value neutral) throws SetlException {
         Value product = null;
         for (Value v: this) {
             if (product == null) {
@@ -61,7 +61,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 product = product.multiply(v);
             }
         }
-        return (product != null)? product : Om.OM;
+        return (product != null)? product : neutral;
     }
 
     public final    Value           randomMember() throws NumberToLargeException {
@@ -91,7 +91,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract int             size();
 
-    public          Value           sumMembers() throws SetlException {
+    public          Value           sumMembers(Value neutral) throws SetlException {
         Value sum = null;
         for (Value v: this) {
             if (sum == null) {
@@ -100,7 +100,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
                 sum = sum.sum(v);
             }
         }
-        return (sum != null)? sum : Om.OM;
+        return (sum != null)? sum : neutral;
     }
 
     /* string and char operations */

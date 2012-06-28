@@ -155,7 +155,11 @@ product
     ;
 
 power
-    : factor ('**' power)?
+    : reduce ('**' power)?
+    ;
+
+reduce
+    : factor ('+/' factor | '*/' factor)*
     ;
 
 factor
@@ -197,8 +201,8 @@ callParameters
     ;
 
 collectionAccessParams
-    : (expr '..')=> expr '..' expr?
-    | '..' expr
+    : (expr RANGE_SIGN)=> expr RANGE_SIGN expr?
+    | RANGE_SIGN expr
     | expr
     ;
 
@@ -226,7 +230,7 @@ constructor
     ;
 
 range
-    : expr (',' expr)? '..' expr
+    : expr (',' expr)? RANGE_SIGN expr
     ;
 
 shortIterate
@@ -256,12 +260,8 @@ boolValue
 
 atomicValue
     : NUMBER
-    | real
+    | REAL
     | 'om'
-    ;
-
-real
-    : NUMBER? REAL
     ;
 
 
@@ -269,7 +269,9 @@ real
 TERM : ('^' | 'A'..'Z') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 ID : 'a'..'z' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 NUMBER : '0' | '1'..'9' ('0'..'9')*;
-REAL : '.' ('0'..'9')+ (('e' | 'E') '-'? ('0'..'9')+)?;
+REAL : NUMBER? '.' ('0'..'9')+ (('e' | 'E') '-'? ('0'..'9')+)?;
+RANGE_SIGN : '..';
+NUMBER_RANGE : NUMBER RANGE_SIGN;
 STRING : '"' ('\\"' | ~('"'))* '"';
 LINE_COMMENT : '//' (~('\r\n' | '\n' | '\r'))*;
 MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';

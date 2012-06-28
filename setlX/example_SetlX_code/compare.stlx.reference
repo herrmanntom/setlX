@@ -1,0 +1,10 @@
+`["foo", "bar"]' comes before `["test"]'
+
+`["test"]' comes after `["foo", "bar"]'
+
+`77' comes after `om'
+
+`1/3' and `1/3' are equal
+
+`procedure (x) { /* predefined procedure `sin' */ }' comes after `procedure (value, ...) { /* predefined procedure `print' */ }'
+

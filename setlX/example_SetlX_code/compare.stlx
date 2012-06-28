@@ -1,0 +1,32 @@
+// this program demonstrates the compare function
+
+// Some comparisons are by design not possible using the standard operators in
+// SetlX. This mostly includes comparing different types of values and strings.
+// Using the compare(valueA, valueB) function, a deterministic, but arbitrary
+// order between ALL values of ALL types can be established.
+//
+// Note however that the result of the function only establishes an order and
+// does not imply any other relationship between the compared values.
+//
+// Also note that values in SetlX sets are ordered in this fashion.
+
+establishOrder := procedure(valueA, valueB) {
+    if (compare(valueA, valueB) < 0) {
+        print("`$valueA$' comes before `$valueB$'");
+    } else if (compare(valueA, valueB) == 0) {
+        print("`$valueA$' and `$valueB$' are equal");
+    } else if (compare(valueA, valueB) > 0) {
+        print("`$valueA$' comes after `$valueB$'");
+    }
+    print();
+};
+
+// compare arrays
+establishOrder(["foo", "bar"], ["test"]);
+establishOrder(["test"], ["foo", "bar"]);
+// different value types
+establishOrder(77, om);
+// or the same value types
+establishOrder(1/3, 2/6);
+// and even functions
+establishOrder(sin, print);

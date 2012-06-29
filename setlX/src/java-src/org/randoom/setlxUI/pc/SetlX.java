@@ -53,6 +53,8 @@ public class SetlX {
         private final static String         sTAB            = "\t";
         private       static String         sENDL           = null;
 
+      /*package*/     static String         sLibraryPath    = "";
+
         // buffered reader for stdin
         private       static BufferedReader sStdInReader    = null;
 
@@ -113,6 +115,16 @@ public class SetlX {
         public String   filterFileName(String fileName) {
             return fileName; // not required on PC
         }
+
+        // allow modification of library name
+        public String   filterLibraryName(String name) {
+            name = name.trim();
+            if (name.length() < 1 || name.charAt(0) == '/') {
+                return name;
+            } else {
+                return sLibraryPath + name;
+            }
+        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -122,9 +134,14 @@ public class SetlX {
         boolean         interactive = false;
         boolean         noExecution = false;
         List<String>    files       = new ArrayList<String>();
+        PcEnvProvider   envProvider = new PcEnvProvider();
 
         // initialize Environment
-        Environment.setEnvironmentProvider(new PcEnvProvider());
+        Environment.setEnvironmentProvider(envProvider);
+
+        if ((envProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
+            envProvider.sLibraryPath = "";
+        }
 
         for (int i = 0; i < args.length; i++) {
             String s = args[i];
@@ -148,6 +165,20 @@ public class SetlX {
                 }
             } else if (s.equals("--help")) {
                 help = true;
+            } else if (s.equals("--libraryPath")) {
+                i++; // set to next argument
+                if (i < args.length) {
+                    envProvider.sLibraryPath = args[i];
+                }
+                // check for incorrect contents
+                if (  envProvider.sLibraryPath.equals("") ||
+                      (
+                        envProvider.sLibraryPath.length() >= 2 &&
+                        envProvider.sLibraryPath.substring(0,2).equals("--")
+                      )
+                   ) {
+                    help = true;
+                }
             } else if (s.equals("--multiLineMode")) {
                 Environment.setMultiLineMode(true);
             } else if (s.equals("--noAssert")) {
@@ -433,6 +464,8 @@ public class SetlX {
         printHelpInteractive();
         Environment.outWriteLn(
             "Additional parameters:\n" +
+            "  --libraryPath <path>\n" +
+            "     override SETLX_LIBRARY_PATH environment variable\n" +
             "  --multiLineMode\n" +
             "     only accept input in interactive mode after additional new line\n" +
             "  --noAssert\n" +

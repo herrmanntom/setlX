@@ -14,12 +14,19 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 public class ParseSetlX {
 
-    private final   static  int EXPR    =  1337;
-    private final   static  int BLOCK   = 31337;
-    private         static  int errors  =     0; // our own error accounting, which survives nested parsing
+    private final   static  int             EXPR            =  1337;
+    private final   static  int             BLOCK           = 31337;
+    private final   static  List<String>    loadedLibraries = new LinkedList<String>();
+    private         static  int             errors          =     0; // our own error accounting, which survives nested parsing
+
+    /*package*/ static void clearLoadedLibraries() {
+        loadedLibraries.clear();
+    }
 
     public static Block parseFile(String fileName) throws ParserException {
         try {
@@ -33,6 +40,26 @@ public class ParseSetlX {
             }
         } catch (IOException ioe) {
             throw new FileNotReadableException("File '" + fileName + "' could not be read.");
+        }
+    }
+
+    public static Block parseLibrary(String name) throws ParserException {
+        try {
+            // allow modification of name by environment provider
+            name = Environment.filterLibraryName(name + ".stlx");
+            if (new File(name).isFile()) {
+                if (loadedLibraries.contains(name)) {
+                    return new Block();
+                } else {
+                    loadedLibraries.add(name);
+                    // parse the file contents (ANTLR will print its parser errors into stderr ...)
+                    return parseBlock(new ANTLRFileStream(name));
+                }
+            } else {
+                throw new FileNotReadableException("Library '" + name + "' could not be read.");
+            }
+        } catch (IOException ioe) {
+            throw new FileNotReadableException("Library '" + name + "' could not be found.");
         }
     }
 

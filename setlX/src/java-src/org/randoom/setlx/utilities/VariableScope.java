@@ -45,6 +45,7 @@ public class VariableScope {
     public static void resetScope() {
         sVariableScope = sInitial.clone();
         sGlobals.mVarBindings.clear();
+        ParseSetlX.clearLoadedLibraries();
     }
 
     public static Value findValue(String var) {

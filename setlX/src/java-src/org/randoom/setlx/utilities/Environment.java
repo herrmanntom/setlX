@@ -107,6 +107,11 @@ public class Environment {
         return sEnvProvider.filterFileName(fileName);
     }
 
+    // allow modification of library name
+    public static String filterLibraryName(String name) {
+        return sEnvProvider.filterLibraryName(name);
+    }
+
     /* other stuff */
 
     public static int getNumberOfCores() {

@@ -27,5 +27,8 @@ public interface EnvironmentProvider {
     // allow modification of fileName/path when reading files
     public abstract String  filterFileName(String fileName);
 
+    // allow modification of library name
+    public abstract String  filterLibraryName(String name);
+
 }
 

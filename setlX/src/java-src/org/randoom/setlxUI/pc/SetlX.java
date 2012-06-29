@@ -148,6 +148,8 @@ public class SetlX {
                 }
             } else if (s.equals("--help")) {
                 help = true;
+            } else if (s.equals("--multiLineMode")) {
+                Environment.setMultiLineMode(true);
             } else if (s.equals("--noAssert")) {
                 Environment.setAssertsDisabled(true);
             } else if (s.equals("--noExecution")) {
@@ -206,6 +208,9 @@ public class SetlX {
             try {
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive();
+                if ( ! Environment.isMultiLineEnabled()) {
+                    Environment.outWriteLn();
+                }
                 blk.markLastExprStatement();
                 skipTest    = false;
             } catch (EndOfFileException eofe) {
@@ -416,7 +421,6 @@ public class SetlX {
     private static void printHelpInteractive() {
         Environment.outWriteLn(
             "Interactive-Mode:\n" +
-            "  Two newline characters execute previous input.\n" +
             "  The 'exit;' statement terminates the interpreter.\n"
         );
     }
@@ -429,6 +433,8 @@ public class SetlX {
         printHelpInteractive();
         Environment.outWriteLn(
             "Additional parameters:\n" +
+            "  --multiLineMode\n" +
+            "     only accept input in interactive mode after additional new line\n" +
             "  --noAssert\n" +
             "      disables all assert functions\n" +
             "  --noExecution\n" +

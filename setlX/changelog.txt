@@ -7,6 +7,9 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + fixed parsing rules for reals and ranges
  + added compare(valueA, valueB) function
  + added strSplit(string, pattern) function
+ * input in interactive mode is now accepted WITHOUT entering an empty line
+ + newline can be escaped by adding a backslash before pressing [Enter]
+ + added --multiLineMode option and multiLineMode() function to restore previous behavior
 
 ---v1.0.0--- 2012-06-10
  * updated documentation

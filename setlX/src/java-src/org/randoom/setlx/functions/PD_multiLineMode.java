@@ -7,13 +7,13 @@ import org.randoom.setlx.utilities.Environment;
 
 import java.util.List;
 
-// trace(toggle)                 : configures output of all assignments
+// multiLineMode(toggle)         : only accept input after additional new line
 
-public class PD_trace extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_trace();
+public class PD_multiLineMode extends PreDefinedFunction {
+    public final static PreDefinedFunction DEFINITION = new PD_multiLineMode();
 
-    private PD_trace() {
-        super("trace");
+    private PD_multiLineMode() {
+        super("multiLineMode");
         addParameter("toggle");
     }
 
@@ -26,9 +26,9 @@ public class PD_trace extends PreDefinedFunction {
         }
 
         if (toggle == SetlBoolean.TRUE) {
-            Environment.setTraceAssignments(true);
+            Environment.setMultiLineMode(true);
         } else /* if (toggle == SetlBoolean.FALSE) */ {
-            Environment.setTraceAssignments(false);
+            Environment.setMultiLineMode(false);
         }
 
         // everything seems fine

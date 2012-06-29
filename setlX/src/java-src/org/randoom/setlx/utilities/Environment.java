@@ -29,6 +29,7 @@ public class Environment {
     private         static  Random              sRandoom                    = null;
 
     private         static  boolean             sStopExecution              = false;
+    private         static  boolean             sMultiLineMode              = false;
     private         static  boolean             sIsInteractive              = false;
     private         static  boolean             sPrintVerbose               = false;
     private         static  boolean             sTraceAssignments           = false;
@@ -147,8 +148,16 @@ public class Environment {
         Iterator.sStopExecution = stopExecution;
     }
 
-    private static boolean isExecutionStopped() {
+    public static boolean isExecutionStopped() {
         return sStopExecution;
+    }
+
+    public static void setMultiLineMode(boolean multiLineMode) {
+        sMultiLineMode          = multiLineMode;
+    }
+
+    public static boolean isMultiLineEnabled() {
+        return sMultiLineMode;
     }
 
     public static void setInteractive(boolean isInteractive) {

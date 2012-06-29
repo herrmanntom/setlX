@@ -65,6 +65,11 @@ setlXJarLocation="/usr/local/setlX/setlX.jar"
 \begin{lstlisting}[frame=none,numbers=none]
 chmod +x /usr/local/bin/setlX
 \end{lstlisting}
+	\item \textbf{(Optional)} Set the `\command{SETLX\_LIBRARY\_PATH}' environment variable to the path where \setlX{} should look for library files, e.g. add the line
+\begin{lstlisting}[frame=none,numbers=none]
+export SETLX_LIBRARY_PATH="/home/<user>/setlX/library";
+\end{lstlisting}
+to the configuration file of your shell (e.g. `\command{/home/<user>/.bashrc}').
 \end{enumerate}
 
 \subsection{Microsoft Windows}
@@ -95,6 +100,10 @@ set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
 		\item Do not alter the existing content of the `\command{Variable value}' field, but add a semicolon (`\command{;}'), followed by the full path to the folder where you installed setlX, to its very end. Using the previous example path, the new value should look like:
 \begin{lstlisting}[frame=none,numbers=none]
 <previous value>;C:\Progam Files\setlX
+\end{lstlisting}
+		\item \textbf{(Optional)} Add the `\command{SETLX\_LIBRARY\_PATH}' environment variable and set it to the path where \setlX{} should look for library files, e.g.
+\begin{lstlisting}[frame=none,numbers=none]
+C:\Progam Files\setlX\library
 \end{lstlisting}
 		\item Accept all changes by clicking `\command{OK}' in all windows you opened before.
 		\item End you current session and login into Windows again.

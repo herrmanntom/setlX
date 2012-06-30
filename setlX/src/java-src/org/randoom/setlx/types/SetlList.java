@@ -317,6 +317,16 @@ public class SetlList extends CollectionValue {
         compress();
     }
 
+    public SetlList reverse() {
+        // mark this list to be clone
+        isCloned = true;
+        LinkedList<Value>   reverse = new LinkedList<Value>();
+        for (final Value v : mList) {
+            reverse.addFirst(v);
+        }
+        return new SetlList(reverse);
+    }
+
     public void setMember(Value vIndex, Value v) throws SetlException {
         separateFromOriginal();
         int index = 0;

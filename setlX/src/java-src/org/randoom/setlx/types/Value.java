@@ -375,6 +375,12 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value reverse() throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Operand '" + this + "' is not a list or string."
+        );
+    }
+
     public void setMember(Value index, Value v) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not set member with index '" + index + "' from operand;" +

@@ -246,6 +246,15 @@ public class SetlString extends Value {
         return new SetlString(result);
     }
 
+    public SetlString reverse() {
+        int             length  = mString.length();
+        StringBuilder   reverse = new StringBuilder();
+        for(int i = length; i > 0; --i) {
+            reverse.append(mString.charAt(i-1));
+        }
+        return new SetlString(reverse.toString());
+    }
+
     public int size() {
         return mString.length();
     }
@@ -256,10 +265,19 @@ public class SetlString extends Value {
                 "Pattern '" + pattern  + "' is not a string."
             );
         }
-        String[] strings = mString.split(pattern.getUnquotedString());
+        String   p       = pattern.getUnquotedString();
+        String[] strings = mString.split(p);
         SetlList result  = new SetlList();
         for (String str : strings) {
             result.addMember(new SetlString(str));
+        }
+        // fix strSplit("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
+        if (p.equals("") && strings.length >= 1 && strings[0].equals("")) {
+            result.removeFirstMember();
+        }
+        // fix strSplit(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
+        if (mString.endsWith(p)) {
+            result.addMember(new SetlString(""));
         }
         return result;
     }

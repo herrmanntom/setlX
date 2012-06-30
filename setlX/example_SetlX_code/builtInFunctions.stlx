@@ -154,6 +154,17 @@ print("All permutations of $[1,2,2,3]$ are $permutations([1,2,2,3])$.");
 print();
 
 /*******************************************************************************
+  reverse(collectionValue)      : reverse the order of members in `collectionValue'
+*/
+l := [1..10];
+print("$l$ <-> $reverse(l)$");
+l := [[x,y] : x in [1..3], y in [2..4]];
+print("$l$ <-> $reverse(l)$");
+l := "SetlX";
+print("$l$ <-> $reverse(l)$");
+print();
+
+/*******************************************************************************
   strSplit(string, pattern)     // splits string at pattern into a list of strings
 */
 print(strSplit("from;hell;;I;come", ";"));

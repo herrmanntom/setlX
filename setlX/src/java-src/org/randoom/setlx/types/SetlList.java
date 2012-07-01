@@ -362,6 +362,7 @@ public class SetlList extends CollectionValue {
             if (v == Om.OM) {
                 return; // nothing to do
             } else {
+                mList.ensureCapacity(index + 1);
                 // fill gap from size to index with OM, if necessary
                 while (index >= mList.size()) {
                     mList.add(Om.OM);

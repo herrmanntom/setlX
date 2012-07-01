@@ -12,12 +12,12 @@ public class MatchResult {
     private        boolean              mMatches;     // does the term match?
     private final  Map<String, Value>   mVarBindings; // variables to set when term matches
 
-    public MatchResult(boolean matches) {
+    public MatchResult(final boolean matches) {
         mMatches        = matches;
         mVarBindings    = new HashMap<String, Value>();
     }
 
-    public void setMatches(boolean matches) {
+    public void setMatches(final boolean matches) {
         mMatches = matches;
     }
 
@@ -29,18 +29,18 @@ public class MatchResult {
         return mVarBindings.size() > 0;
     }
 
-    public void addBinding(String id, Value value) {
+    public void addBinding(final String id, final Value value) {
         mVarBindings.put(id, value);
     }
 
-    public void addBindings(MatchResult otherResult) {
+    public void addBindings(final MatchResult otherResult) {
         if (otherResult.mMatches) {
             mVarBindings.putAll(otherResult.mVarBindings);
         }
     }
 
     public void setAllBindings() {
-        for (Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
+        for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
             VariableScope.putValue(entry.getKey(), entry.getValue().clone());
 
             if (sTraceAssignments) {

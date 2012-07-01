@@ -36,7 +36,7 @@ public class SetListConstructor extends Expr {
     private final int           mType;
     private final Constructor   mConstructor;
 
-    public SetListConstructor(int type, Constructor constructor) {
+    public SetListConstructor(final int type, final Constructor constructor) {
         mType        = type;
         mConstructor = constructor;
     }
@@ -53,7 +53,7 @@ public class SetListConstructor extends Expr {
             if (mConstructor != null) {
                 mConstructor.fillCollection(list);
             }
-            list.compressAndResetIterator();
+            list.compress();
             return list;
         } else {
             throw new UndefinedOperationException(
@@ -63,7 +63,7 @@ public class SetListConstructor extends Expr {
     }
 
     // sets this expression to the given value
-    public Value assign(Value v) throws SetlException {
+    public Value assign(final Value v) throws SetlException {
         if (v instanceof SetlList) {
             if (mType == LIST && mConstructor != null) {
                 return mConstructor.assign((SetlList) v);
@@ -81,7 +81,7 @@ public class SetListConstructor extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String r;
         if (mType == SET) {
             r = "{";
@@ -118,7 +118,7 @@ public class SetListConstructor extends Expr {
         return result;
     }
 
-    public static SetListConstructor valueToExpr(Value value) throws TermConversionException {
+    public static SetListConstructor valueToExpr(final Value value) throws TermConversionException {
         if ( ! (value instanceof SetlList || value instanceof SetlSet)) {
             throw new TermConversionException("not a collectionValue");
         } else {

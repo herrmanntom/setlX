@@ -31,29 +31,29 @@ public class CollectionAccess extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private Expr       mLhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
-    private List<Expr> mArgs;      // list of arguments
+    private final Expr       mLhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
+    private final List<Expr> mArgs;      // list of arguments
 
-    public CollectionAccess(Expr lhs, Expr arg) {
+    public CollectionAccess(final Expr lhs, final Expr arg) {
         this(lhs, new ArrayList<Expr>(1));
         mArgs.add(arg);
     }
 
-    public CollectionAccess(Expr lhs, List<Expr> args) {
+    public CollectionAccess(final Expr lhs, final List<Expr> args) {
         mLhs    = lhs;
         mArgs   = args;
     }
 
     protected Value evaluate() throws SetlException {
-        Value lhs = mLhs.eval();
+        final Value lhs = mLhs.eval();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
                 "Identifier \"" + mLhs + "\" is undefined."
             );
         }
         // evaluate all arguments
-        List<Value> args = new ArrayList<Value>(mArgs.size());
-        for (Expr arg: mArgs) {
+        final List<Value> args = new ArrayList<Value>(mArgs.size());
+        for (final Expr arg: mArgs) {
             if (arg != null) {
                 args.add(arg.eval().clone());
             }
@@ -79,8 +79,8 @@ public class CollectionAccess extends Expr {
             );
         }
         // evaluate all arguments
-        List<Value> args = new ArrayList<Value>(mArgs.size());
-        for (Expr arg: mArgs) {
+        final List<Value> args = new ArrayList<Value>(mArgs.size());
+        for (final Expr arg: mArgs) {
             if (arg != null) {
                 args.add(arg.eval().clone());
             }
@@ -90,7 +90,7 @@ public class CollectionAccess extends Expr {
     }
 
     // sets this expression to the given value
-    public Value assign(Value v) throws SetlException {
+    public Value assign(final Value v) throws SetlException {
         Value lhs = null;
         if (mLhs instanceof Variable) {
             lhs = mLhs.eval();
@@ -114,7 +114,7 @@ public class CollectionAccess extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = mLhs.toString(tabs) + "[";
         for (int i = 0; i < mArgs.size(); ++i) {
             if (i > 0) {
@@ -129,12 +129,12 @@ public class CollectionAccess extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(mLhs.toTerm());
 
-        SetlList    arguments   = new SetlList();
-        for (Expr arg: mArgs) {
+        final SetlList    arguments   = new SetlList(mArgs.size());
+        for (final Expr arg: mArgs) {
             arguments.addMember(arg.toTerm());
         }
         result.addMember(arguments);
@@ -143,12 +143,12 @@ public class CollectionAccess extends Expr {
     }
 
     public Term toTermQuoted() throws SetlException {
-        Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(mLhs.toTermQuoted());
 
-        SetlList    arguments   = new SetlList();
-        for (Expr arg: mArgs) {
+        final SetlList    arguments   = new SetlList(mArgs.size());
+        for (final Expr arg: mArgs) {
             arguments.addMember(arg.eval().toTerm());
         }
         result.addMember(arguments);
@@ -156,14 +156,14 @@ public class CollectionAccess extends Expr {
         return result;
     }
 
-    public static CollectionAccess termToExpr(Term term) throws TermConversionException {
+    public static CollectionAccess termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr        lhs     = TermConverter.valueToExpr(term.firstMember());
-            SetlList    argsLst = (SetlList) term.lastMember();
-            List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
-            for (Value v : argsLst) {
+            final Expr        lhs     = TermConverter.valueToExpr(term.firstMember());
+            final SetlList    argsLst = (SetlList) term.lastMember();
+            final List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
+            for (final Value v : argsLst) {
                 args.add(TermConverter.valueToExpr(v));
             }
             return new CollectionAccess(lhs, args);

@@ -19,7 +19,7 @@ public class Rational extends NumberValue {
 
     private final static    Rational    ZERO            = new Rational(0);
 
-    public Rational(String s) {
+    public Rational(final String s) {
         // yes... _this_ must be the first statement
         this(   (s.indexOf('/') == -1)?
                     new BigInteger(s)
@@ -33,11 +33,11 @@ public class Rational extends NumberValue {
         );
     }
 
-    public Rational(int number) {
+    public Rational(final int number) {
         this(BigInteger.valueOf(number));
     }
 
-    public Rational(BigInteger number) {
+    public Rational(final BigInteger number) {
         mNominator      = number;
         mDenominator    = BigInteger.ONE;
         mIsInteger      = true;
@@ -141,7 +141,7 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.divide(mDenominator));
     }
 
-    public Value difference(Value subtrahend) throws SetlException {
+    public Value difference(final Value subtrahend) throws SetlException {
         if (subtrahend instanceof Rational) {
             final Rational s = (Rational) subtrahend;
             if (mIsInteger && s.mIsInteger) {
@@ -168,7 +168,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Value divide(Value divisor) throws SetlException {
+    public Value divide(final Value divisor) throws SetlException {
         if (divisor instanceof Rational) {
                 final Rational d = (Rational) divisor;
                 if (mIsInteger && d.mIsInteger) {
@@ -205,7 +205,7 @@ public class Rational extends NumberValue {
         private final int        to;
         /*package*/   BigInteger result;
 
-        public Factorial(int from, int to) {
+        public Factorial(final int from, final int to) {
             this.from   = from;
             this.to     = to;
             this.result = BigInteger.valueOf(from);
@@ -263,9 +263,9 @@ public class Rational extends NumberValue {
         return new Rational(result);
     }
 
-    public void fillCollectionWithinRange(Value step_,
-                                          Value stop_,
-                                          CollectionValue collection)
+    public void fillCollectionWithinRange(final Value step_,
+                                          final Value stop_,
+                                          final CollectionValue collection)
         throws SetlException
     {
         Rational step = null;
@@ -320,7 +320,7 @@ public class Rational extends NumberValue {
 
     // The mathematical specification of the modulo function is:
     //     a % b = a - floor(a/b) * b
-    public Value modulo(Value modulo) throws IncompatibleTypeException, SetlException {
+    public Value modulo(final Value modulo) throws IncompatibleTypeException, SetlException {
         if (modulo instanceof Rational) {
             final Rational b = (Rational) modulo;
             if (mIsInteger && b.mIsInteger) {
@@ -338,7 +338,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Value multiply(Value multiplier) throws SetlException {
+    public Value multiply(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final Rational r = (Rational) multiplier;
             if (mIsInteger && r.mIsInteger) {
@@ -367,7 +367,7 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.negate(), mDenominator);
     }
 
-    protected Rational power(int exponent) throws NumberToLargeException {
+    protected Rational power(final int exponent) throws NumberToLargeException {
         if (exponent >= 0) {
             return new Rational(mNominator  .pow(exponent     ), mDenominator.pow(exponent     ));
         } else {
@@ -375,7 +375,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    protected Real power(double exponent) throws SetlException {
+    protected Real power(final double exponent) throws SetlException {
         return toReal().power(exponent);
     }
 
@@ -388,7 +388,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Value sum(Value summand) throws SetlException {
+    public Value sum(final Value summand) throws SetlException {
         if (summand instanceof Rational) {
             final Rational r = (Rational) summand;
             if (mIsInteger && r.mIsInteger) {
@@ -454,7 +454,7 @@ public class Rational extends NumberValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (v instanceof Rational) {
             final Rational r = (Rational) v;
             if (mIsInteger && r.mIsInteger) {

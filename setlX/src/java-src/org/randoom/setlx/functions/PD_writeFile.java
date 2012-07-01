@@ -23,45 +23,46 @@ public class PD_writeFile extends PreDefinedFunction {
         this("writeFile");
     }
 
-    protected PD_writeFile(String name) {
+    protected PD_writeFile(final String name) {
         super(name);
         addParameter("fileName");
         addParameter("contents");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
+    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
         return exec(args, false);
     }
 
-    protected Value exec(List<Value> args, boolean append) throws IncompatibleTypeException, FileNotWriteableException {
-        Value           fileArg     = args.get(0);
+    protected Value exec(final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
+        final Value           fileArg     = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Expression-argument '" + fileArg + "' is not a string.");
         }
-        Value           contentArg  = args.get(1);
+        final Value           contentArg  = args.get(1);
 
         // get name of file to be written
-        String          fileName    = fileArg.getUnquotedString();
+        final String          fileName    = fileArg.getUnquotedString();
         // get content to be written into the file
-        CollectionValue content     = null;
+              CollectionValue content     = null;
         if (contentArg instanceof CollectionValue && ! (contentArg instanceof Term)) {
             content = (CollectionValue) contentArg;
         } else {
-            content = new SetlList();
+            content = new SetlList(1);
             content.addMember(contentArg);
         }
 
-        boolean verbose = Environment.isPrintVerbose();
+        final boolean verbose = Environment.isPrintVerbose();
         Environment.setPrintVerbose(true);
-        String  endl    = Environment.getEndl();
+        String        endl    = Environment.getEndl();
         Environment.setPrintVerbose(verbose);
 
         // write file
-        String  toWrite = "";
-        for (Value v : content) {
-            toWrite += v.getUnquotedString() + endl;
+        final StringBuilder sb = new StringBuilder();
+        for (final Value v : content) {
+            sb.append(v.getUnquotedString());
+            sb.append(endl);
         }
-        DumpSetlX.dumpToFile(toWrite, fileName, append);
+        DumpSetlX.dumpToFile(sb.toString(), fileName, append);
 
         return SetlBoolean.TRUE;
     }

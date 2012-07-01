@@ -39,15 +39,15 @@ public class Block extends Statement {
         this(new ArrayList<Statement>());
     }
 
-    public Block(int size) {
+    public Block(final int size) {
         this(new ArrayList<Statement>(size));
     }
 
-    public Block(List<Statement> statements) {
+    public Block(final List<Statement> statements) {
         mStatements = statements;
     }
 
-    public void add(Statement stmnt) {
+    public void add(final Statement stmnt) {
         mStatements.add(stmnt);
     }
 
@@ -75,11 +75,11 @@ public class Block extends Statement {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         return toString(tabs, false);
     }
 
-    public String toString(int tabs, boolean brackets) {
+    public String toString(final int tabs, final boolean brackets) {
         final String endl      = Environment.getEndl();
               int    stmntTabs = tabs;
         if (brackets) {
@@ -90,7 +90,7 @@ public class Block extends Statement {
             result += "{" + endl;
         }
         int count = 1;
-        for (Statement stmnt: mStatements) {
+        for (final Statement stmnt: mStatements) {
             result += stmnt.toString(stmntTabs);
             if (count < mStatements.size()) {
                 result += endl;
@@ -106,9 +106,9 @@ public class Block extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList stmntList = new SetlList();
+        final SetlList stmntList = new SetlList(mStatements.size());
         for (Statement s: mStatements) {
             stmntList.addMember(s.toTerm());
         }
@@ -117,12 +117,12 @@ public class Block extends Statement {
         return result;
     }
 
-    public static Block termToStatement(Term term) throws TermConversionException {
+    public static Block termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            SetlList    stmnts  = (SetlList) term.lastMember();
-            Block       block   = new Block(stmnts.size());
+            final SetlList    stmnts  = (SetlList) term.lastMember();
+            final Block       block   = new Block(stmnts.size());
             for (final Value v : stmnts) {
                 block.add(TermConverter.valueToStatement(v));
             }

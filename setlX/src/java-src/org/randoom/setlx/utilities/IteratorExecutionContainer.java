@@ -7,7 +7,7 @@ public interface IteratorExecutionContainer {
 
     /* lastIterationValue is the very last value added to the environment
        before execution.                                                    */
-    public void execute(Value lastIterationValue) throws SetlException;
+    public void execute(final Value lastIterationValue) throws SetlException;
 
 }
 

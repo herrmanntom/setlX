@@ -24,11 +24,15 @@ public class Term extends CollectionValue {
     // arguments in inner body of the term; e.g. e1, e2, ..., en
     private SetlList    mBody;
 
-    public Term(String functionalCharacter) {
-        this(functionalCharacter, new SetlList());
+    public Term(final String functionalCharacter) {
+        this(functionalCharacter, 3);
     }
 
-    public Term(String functionalCharacter, SetlList body) {
+    public Term(final String functionalCharacter, final int initialCapacity) {
+        this(functionalCharacter, new SetlList(initialCapacity));
+    }
+
+    public Term(final String functionalCharacter, final SetlList body) {
         mFunctionalCharacter = functionalCharacter;
         mBody                = body;
     }
@@ -44,14 +48,14 @@ public class Term extends CollectionValue {
     /* Boolean operations */
 
     // viral operation
-    public Term and(Expr other) throws SetlException {
+    public Term and(final Expr other) throws SetlException {
         return (    new Conjunction(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(other.eval())
                     )
                ).toTerm();
     }
-    public Term andFlipped(Value other) {
+    public Term andFlipped(final Value other) {
         return (    new Conjunction(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this)
@@ -60,14 +64,14 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term implies(Expr other) throws SetlException {
+    public Term implies(final Expr other) throws SetlException {
         return (    new Implication(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(other.eval())
                     )
                ).toTerm();
     }
-    public Term impliesFlipped(Value other) {
+    public Term impliesFlipped(final Value other) {
         return (    new Implication(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this)
@@ -84,14 +88,14 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term or(Expr other) throws SetlException {
+    public Term or(final Expr other) throws SetlException {
         return (    new Disjunction(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(other.eval())
                     )
                ).toTerm();
     }
-    public Term orFlipped(Value other) {
+    public Term orFlipped(final Value other) {
         return (    new Disjunction(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this))
@@ -107,14 +111,14 @@ public class Term extends CollectionValue {
     /* arithmetic operations */
 
     // viral operation
-    public Term difference(Value subtrahend) {
+    public Term difference(final Value subtrahend) {
         return (    new Difference(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(subtrahend)
                     )
                ).toTerm();
     }
-    public Term differenceFlipped(Value subtrahend) {
+    public Term differenceFlipped(final Value subtrahend) {
         return (    new Difference(
                         TermConverter.valueToExpr(subtrahend),
                         TermConverter.valueToExpr(this)
@@ -123,14 +127,14 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term divide(Value divisor) {
+    public Term divide(final Value divisor) {
         return (    new Divide(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(divisor)
                     )
                ).toTerm();
     }
-    public Term divideFlipped(Value divisor) {
+    public Term divideFlipped(final Value divisor) {
         return (    new Divide(
                         TermConverter.valueToExpr(divisor),
                         TermConverter.valueToExpr(this)
@@ -147,14 +151,14 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term modulo(Value modulo) {
+    public Term modulo(final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(modulo)
                     )
                ).toTerm();
     }
-    public Term moduloFlipped(Value modulo) {
+    public Term moduloFlipped(final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(modulo),
                         TermConverter.valueToExpr(this)
@@ -163,14 +167,14 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term multiply(Value multiplier) {
+    public Term multiply(final Value multiplier) {
         return (    new Multiply(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(multiplier)
                     )
                ).toTerm();
     }
-    public Term multiplyFlipped(Value multiplier) {
+    public Term multiplyFlipped(final Value multiplier) {
         return (    new Multiply(
                         TermConverter.valueToExpr(multiplier),
                         TermConverter.valueToExpr(this)
@@ -187,14 +191,14 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term power(Value exponent) {
+    public Term power(final Value exponent) {
         return (    new Power(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(exponent)
                     )
                ).toTerm();
     }
-    public Term powerFlipped(Value exponent) {
+    public Term powerFlipped(final Value exponent) {
         return (    new Power(
                         TermConverter.valueToExpr(exponent),
                         TermConverter.valueToExpr(this)
@@ -203,14 +207,14 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term sum(Value summand) {
+    public Term sum(final Value summand) {
         return (    new Sum(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(summand)
                     )
                ).toTerm();
     }
-    public Term sumFlipped(Value summand) {
+    public Term sumFlipped(final Value summand) {
         return (    new Sum(
                         TermConverter.valueToExpr(summand),
                         TermConverter.valueToExpr(this)
@@ -220,7 +224,7 @@ public class Term extends CollectionValue {
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
-    public void addMember(Value element) {
+    public void addMember(final Value element) {
         mBody.addMember(element);
     }
 
@@ -237,8 +241,8 @@ public class Term extends CollectionValue {
     }
 
     // viral operation
-    public Term collectionAccess(List<Value> args) {
-        List<Expr> argExprs = new ArrayList<Expr>(args.size());
+    public Term collectionAccess(final List<Value> args) {
+        final List<Expr> argExprs = new ArrayList<Expr>(args.size());
         for (final Value v : args) {
             argExprs.add(TermConverter.valueToExpr(v));
         }
@@ -248,19 +252,19 @@ public class Term extends CollectionValue {
                ).toTerm();
     }
 
-    public Value collectionAccessUnCloned(List<Value> args) throws SetlException {
+    public Value collectionAccessUnCloned(final List<Value> args) throws SetlException {
         return mBody.collectionAccessUnCloned(args);
     }
 
     // viral operation
-    public Term collectMap(Value arg) {
+    public Term collectMap(final Value arg) {
         return (    new CollectMap(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(arg))
                ).toTerm();
     }
 
-    public SetlBoolean containsMember(Value element) {
+    public SetlBoolean containsMember(final Value element) {
         // Terms are inherently recursive, so search recursively
         return containsMemberRecursive(element); // this is implemented in CollectionValue.java
     }
@@ -277,15 +281,15 @@ public class Term extends CollectionValue {
         }
     }
 
-    public Value getMember(Value index) throws SetlException {
+    public Value getMember(final Value index) throws SetlException {
         return mBody.getMember(index);
     }
 
-    public Value getMemberUnCloned(Value index) throws SetlException {
+    public Value getMemberUnCloned(final Value index) throws SetlException {
         return mBody.getMemberUnCloned(index);
     }
 
-    public Value getMembers(Value low, Value high) throws SetlException {
+    public Value getMembers(final Value low, final Value high) throws SetlException {
         return mBody.getMembers(low, high);
     }
 
@@ -321,7 +325,7 @@ public class Term extends CollectionValue {
         mBody.removeLastMember();
     }
 
-    public void setMember(Value index, Value v) throws SetlException {
+    public void setMember(final Value index, final Value v) throws SetlException {
         mBody.setMember(index, v);
     }
 
@@ -340,9 +344,9 @@ public class Term extends CollectionValue {
     /* function call */
 
     // viral operation
-    public Term call(List<Expr> exprs, List<Value> args) throws IncompatibleTypeException {
+    public Term call(final List<Expr> exprs, final List<Value> args) throws IncompatibleTypeException {
         if (mFunctionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
-            List<Expr> argExprs = new ArrayList<Expr>(args.size());
+            final List<Expr> argExprs = new ArrayList<Expr>(args.size());
             for (final Value v : args) {
                 argExprs.add(TermConverter.valueToExpr(v));
             }
@@ -381,7 +385,7 @@ public class Term extends CollectionValue {
 
     /* term operations */
 
-    public MatchResult matchesTerm(Value other) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final Value other) throws IncompatibleTypeException {
         if ( mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) ||
                 ( other instanceof Term &&
                   ((Term) other).mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER)
@@ -390,13 +394,13 @@ public class Term extends CollectionValue {
             return new MatchResult(true); // one of the terms is `ignore'
         } else if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) && mBody.size() == 1) {
             // 'this' is a variable, which match anything (except ignore of course)
-            MatchResult result  = new MatchResult(true);
+            final MatchResult result  = new MatchResult(true);
             // get name of variable
-            Value       idStr   = mBody.iterator().next();
+            final Value       idStr   = mBody.iterator().next();
             if ( ! (idStr instanceof SetlString)) { // wrong 'variable term
                 return new MatchResult(false);
             }
-            String      id      = idStr.toString();
+                  String      id      = idStr.toString();
             if (id.length() <= 2) { // wrong 'variable term (name is to short)
                 return new MatchResult(false);
             }
@@ -409,7 +413,7 @@ public class Term extends CollectionValue {
             return new MatchResult(false);
         }
         // 'other' is a term
-        Term otherTerm = (Term) other;
+        final Term otherTerm = (Term) other;
 
         if ( ! mFunctionalCharacter.equals(otherTerm.mFunctionalCharacter)) {
             // functional characters do not match
@@ -425,13 +429,11 @@ public class Term extends CollectionValue {
         }
 
         // same functional character & same number of arguments
-        MatchResult     result      = new MatchResult(true);
-        Iterator<Value> thisIter    = iterator();
-        Iterator<Value> otherIter   = otherTerm.iterator();
+        final MatchResult     result      = new MatchResult(true);
+        final Iterator<Value> thisIter    = iterator();
+        final Iterator<Value> otherIter   = otherTerm.iterator();
         while (thisIter.hasNext() && otherIter.hasNext()) {
-            Value       thisMember  = thisIter .next();
-            Value       otherMember = otherIter.next();
-            MatchResult subResult   = thisMember.matchesTerm(otherMember);
+            MatchResult subResult   = thisIter.next().matchesTerm(otherIter.next());
             if (subResult.isMatch()) {
                 result.addBindings(subResult);
             } else {
@@ -454,10 +456,10 @@ public class Term extends CollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (v instanceof Term) {
-            Term other = (Term) v;
-            int cmp = mFunctionalCharacter.compareTo(other.mFunctionalCharacter);
+            final Term other = (Term) v;
+                  int  cmp   = mFunctionalCharacter.compareTo(other.mFunctionalCharacter);
             if (cmp != 0 && (
                     (
                         mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&

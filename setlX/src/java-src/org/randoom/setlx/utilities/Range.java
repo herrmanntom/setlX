@@ -28,13 +28,13 @@ public class Range extends Constructor {
     private final Expr mSecond;
     private final Expr mStop;
 
-    public Range(Expr start, Expr second, Expr stop) {
+    public Range(final Expr start, final Expr second, final Expr stop) {
         mStart  = start;
         mSecond = second;
         mStop   = stop;
     }
 
-    public void fillCollection(CollectionValue collection) throws SetlException {
+    public void fillCollection(final CollectionValue collection) throws SetlException {
         final Value start = mStart.eval();
               Value step  = null;
         // compute step
@@ -48,7 +48,7 @@ public class Range extends Constructor {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String r = mStart.toString(tabs);
         if (mSecond != null) {
             r += ", " + mSecond.toString(tabs);
@@ -58,7 +58,7 @@ public class Range extends Constructor {
 
     /* term operations */
 
-    public void addToTerm(CollectionValue collection) {
+    public void addToTerm(final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mStart.toTerm());
         if (mSecond != null) {
@@ -70,7 +70,7 @@ public class Range extends Constructor {
         collection.addMember(result);
     }
 
-    /*package*/ static Range termToRange(Term term) throws TermConversionException {
+    /*package*/ static Range termToRange(final Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

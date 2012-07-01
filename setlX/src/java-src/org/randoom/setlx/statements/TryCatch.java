@@ -32,10 +32,10 @@ public class TryCatch extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^tryCatch";
 
-    private Block                        mBlockToTry;
-    private List<TryCatchAbstractBranch> mTryList;
+    private final Block                        mBlockToTry;
+    private final List<TryCatchAbstractBranch> mTryList;
 
-    public TryCatch(Block blockToTry, List<TryCatchAbstractBranch> tryList) {
+    public TryCatch(final Block blockToTry, final List<TryCatchAbstractBranch> tryList) {
         mBlockToTry = blockToTry;
         mTryList    = tryList;
     }
@@ -43,8 +43,8 @@ public class TryCatch extends Statement {
     protected void exec() throws SetlException {
         try{
             mBlockToTry.execute();
-        } catch (CatchableInSetlXException cise) {
-            for (TryCatchAbstractBranch br : mTryList) {
+        } catch (final CatchableInSetlXException cise) {
+            for (final TryCatchAbstractBranch br : mTryList) {
                 if (br.catches(cise)) {
                     br.execute();
 
@@ -59,11 +59,11 @@ public class TryCatch extends Statement {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs);
         result += "try ";
         result += mBlockToTry.toString(tabs, true);
-        for (TryCatchAbstractBranch br : mTryList) {
+        for (final TryCatchAbstractBranch br : mTryList) {
             result += br.toString(tabs);
         }
         return result;
@@ -72,12 +72,12 @@ public class TryCatch extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(mBlockToTry.toTerm());
 
-        SetlList branchList = new SetlList();
-        for (TryCatchAbstractBranch br: mTryList) {
+        final SetlList branchList = new SetlList(mTryList.size());
+        for (final TryCatchAbstractBranch br: mTryList) {
             branchList.addMember(br.toTerm());
         }
         result.addMember(branchList);
@@ -85,14 +85,14 @@ public class TryCatch extends Statement {
         return result;
     }
 
-    public static TryCatch termToStatement(Term term) throws TermConversionException {
+    public static TryCatch termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Block                           block       = TermConverter.valueToBlock(term.firstMember());
-            SetlList                        branches    = (SetlList) term.lastMember();
-            List<TryCatchAbstractBranch>    branchList  = new ArrayList<TryCatchAbstractBranch>(branches.size());
-            for (Value v : branches) {
+            final Block                           block       = TermConverter.valueToBlock(term.firstMember());
+            final SetlList                        branches    = (SetlList) term.lastMember();
+            final List<TryCatchAbstractBranch>    branchList  = new ArrayList<TryCatchAbstractBranch>(branches.size());
+            for (final Value v : branches) {
                 branchList.add(TryCatchAbstractBranch.valueToTryCatchAbstractBranch(v));
             }
             return new TryCatch(block, branchList);

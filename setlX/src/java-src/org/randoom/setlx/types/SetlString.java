@@ -9,7 +9,7 @@ import java.util.List;
 
 public class SetlString extends Value {
 
-    public static SetlString createFromConstructor(String s) {
+    public static SetlString createFromConstructor(final String s) {
         // parse escape sequences
         final int           length    = s.length();
         final StringBuilder sb        = new StringBuilder(length);
@@ -44,7 +44,7 @@ public class SetlString extends Value {
 
     private String mString;
 
-    public SetlString(String string){
+    public SetlString(final String string){
         mString = string;
     }
 
@@ -102,7 +102,7 @@ public class SetlString extends Value {
         }
     }
 
-    public Value multiply(Value multiplier) throws SetlException {
+    public Value multiply(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int           m   = ((Rational) multiplier).intValue();
             final StringBuilder sb  = new StringBuilder(mString.length() * m);
@@ -119,7 +119,7 @@ public class SetlString extends Value {
         }
     }
 
-    public Value sum(Value summand) throws IncompatibleTypeException {
+    public Value sum(final Value summand) throws IncompatibleTypeException {
         if (summand instanceof SetlString) {
             return new SetlString(mString.concat(((SetlString) summand).mString));
         } else if (summand instanceof Term) {
@@ -133,7 +133,7 @@ public class SetlString extends Value {
         }
     }
 
-    public SetlString sumFlipped(Value summand) throws IncompatibleTypeException {
+    public SetlString sumFlipped(final Value summand) throws IncompatibleTypeException {
         if (summand != Om.OM) {
             return new SetlString(summand.toString().concat(mString));
         } else {
@@ -145,7 +145,7 @@ public class SetlString extends Value {
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
-    public Value collectionAccess(List<Value> args) throws SetlException {
+    public Value collectionAccess(final List<Value> args) throws SetlException {
         final int   aSize   = args.size();
         final Value vFirst  = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {
@@ -175,7 +175,7 @@ public class SetlString extends Value {
         }
     }
 
-    public SetlBoolean containsMember(Value element) throws IncompatibleTypeException {
+    public SetlBoolean containsMember(final Value element) throws IncompatibleTypeException {
         if ( ! (element instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Left-hand-side of '" + element  + " in " + this + "' is not a string."
@@ -188,7 +188,7 @@ public class SetlString extends Value {
         }
     }
 
-    public SetlString getMember(Value vIndex) throws SetlException {
+    public SetlString getMember(final Value vIndex) throws SetlException {
         int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
             index = ((Rational)vIndex).intValue();
@@ -210,7 +210,7 @@ public class SetlString extends Value {
         return new SetlString(mString.substring(index - 1, index));
     }
 
-    public Value getMembers(Value vLow, Value vHigh) throws SetlException {
+    public Value getMembers(final Value vLow, final Value vHigh) throws SetlException {
         int low = 0, high = 0;
         if (vLow.isInteger() == SetlBoolean.TRUE) {
             low = ((Rational)vLow).intValue();
@@ -252,7 +252,7 @@ public class SetlString extends Value {
         return mString.length();
     }
 
-    public SetlList split(Value pattern) throws IncompatibleTypeException {
+    public SetlList split(final Value pattern) throws IncompatibleTypeException {
         if ( ! (pattern instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Pattern '" + pattern  + "' is not a string."
@@ -260,7 +260,7 @@ public class SetlString extends Value {
         }
         final String    p       = pattern.getUnquotedString();
         final String[]  strings = mString.split(p);
-        final SetlList  result  = new SetlList();
+        final SetlList  result  = new SetlList(strings.length);
         for (final String str : strings) {
             result.addMember(new SetlString(str));
         }
@@ -332,7 +332,7 @@ public class SetlString extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (v instanceof SetlString) {
             return mString.compareTo(((SetlString) v).mString);
         } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof Term ||

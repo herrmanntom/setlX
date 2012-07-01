@@ -9,15 +9,15 @@ public abstract class NumberValue extends Value {
 
     public abstract NumberValue absoluteValue();
 
-    public abstract Value       difference(Value subtrahend) throws SetlException;
+    public abstract Value       difference(final Value subtrahend) throws SetlException;
 
-    public abstract Value       divide(Value divisor) throws SetlException;
+    public abstract Value       divide(final Value divisor) throws SetlException;
 
-    public abstract Value       multiply(Value multiplier) throws SetlException;
+    public abstract Value       multiply(final Value multiplier) throws SetlException;
 
     public abstract NumberValue negate() throws IncompatibleTypeException;
 
-    public          Value       power(Value exponent) throws SetlException {
+    public          Value       power(final Value exponent) throws SetlException {
         if (exponent.isInteger() == SetlBoolean.TRUE && ((Rational) exponent).intConvertable()) {
             return this.power(((Rational) exponent).intValue());
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
@@ -38,14 +38,14 @@ public abstract class NumberValue extends Value {
         }
     }
 
-    protected abstract NumberValue power(int    exponent) throws SetlException;
-    protected abstract NumberValue power(double exponent) throws SetlException;
+    protected abstract NumberValue power(final int    exponent) throws SetlException;
+    protected abstract NumberValue power(final double exponent) throws SetlException;
 
-    public    abstract Value       sum(Value summand) throws SetlException;
+    public    abstract Value       sum(final Value summand) throws SetlException;
 
     /* comparisons */
 
-    public final    SetlBoolean isLessThan(Value other) throws IncompatibleTypeException {
+    public final    SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
         if (other instanceof NumberValue) {
             return SetlBoolean.get(this.compareTo(other) < 0);
         } else {

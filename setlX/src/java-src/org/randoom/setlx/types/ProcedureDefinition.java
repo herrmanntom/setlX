@@ -40,7 +40,7 @@ public class ProcedureDefinition extends Value {
     protected final List<ParameterDef> mParameters;  // parameter list
     protected final Block              mStatements;  // statements in the body of the definition
 
-    public ProcedureDefinition(List<ParameterDef> parameters, Block statements) {
+    public ProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
         mParameters = parameters;
         mStatements = statements;
     }
@@ -58,7 +58,7 @@ public class ProcedureDefinition extends Value {
 
     /* function call */
 
-    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
+    public Value call(final List<Expr> exprs, final List<Value> args) throws SetlException {
         if (mParameters.size() != args.size()) {
             throw new IncorrectNumberOfParametersException(
                 "'" + this + "' is defined with a different number of parameters " +
@@ -129,7 +129,7 @@ public class ProcedureDefinition extends Value {
 
     /* string and char operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = "procedure (";
         for (int i = 0; i < mParameters.size(); ++i) {
             if (i > 0) {
@@ -149,9 +149,9 @@ public class ProcedureDefinition extends Value {
     /* term operations */
 
     public Value toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        final SetlList paramList = new SetlList();
+        final SetlList paramList = new SetlList(mParameters.size());
         for (final ParameterDef param: mParameters) {
             paramList.addMember(param.toTerm());
         }
@@ -162,7 +162,7 @@ public class ProcedureDefinition extends Value {
         return result;
     }
 
-    public static ProcedureDefinition termToValue(Term term) throws TermConversionException {
+    public static ProcedureDefinition termToValue(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -187,7 +187,7 @@ public class ProcedureDefinition extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (this == v) { // from using clone()
             return 0;
         } else if (v instanceof ProcedureDefinition) {

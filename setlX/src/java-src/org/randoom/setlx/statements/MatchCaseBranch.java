@@ -31,26 +31,26 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchCaseBranch";
 
-    private List<Expr>  mExprs;      // expressions which creates terms to match
-    private List<Value> mTerms;      // terms to match
-    private Block       mStatements; // block to execute after match
+    private final List<Expr>  mExprs;      // expressions which creates terms to match
+    private final List<Value> mTerms;      // terms to match
+    private final Block       mStatements; // block to execute after match
 
-    public MatchCaseBranch(List<Expr> exprs, Block statements){
+    public MatchCaseBranch(final List<Expr> exprs, final Block statements){
         this(exprs, new ArrayList<Value>(exprs.size()), statements);
-        for (Expr expr: exprs) {
+        for (final Expr expr: exprs) {
             mTerms.add(expr.toTerm());
         }
     }
 
-    private MatchCaseBranch(List<Expr> exprs, List<Value> terms, Block statements){
+    private MatchCaseBranch(final List<Expr> exprs, final List<Value> terms, final Block statements){
         mExprs      = exprs;
         mTerms      = terms;
         mStatements = statements;
     }
 
-    public MatchResult matches(Value term) throws IncompatibleTypeException {
+    public MatchResult matches(final Value term) throws IncompatibleTypeException {
         MatchResult last = new MatchResult(false);
-        for (Value v : mTerms) {
+        for (final Value v : mTerms) {
             last = v.matchesTerm(term);
             if (last.isMatch()) {
                 return last;
@@ -69,11 +69,11 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs);
         result += "case ";
 
-        Iterator<Expr> iter = mExprs.iterator();
+        final Iterator<Expr> iter = mExprs.iterator();
         while (iter.hasNext()) {
             Expr expr   = iter.next();
             result += expr.toString(tabs);
@@ -90,10 +90,10 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        Term     result   = new Term(FUNCTIONAL_CHARACTER);
+        final Term     result   = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList termList = new SetlList();
-        for (Value v: mTerms) {
+        final SetlList termList = new SetlList(mTerms.size());
+        for (final Value v: mTerms) {
             termList.addMember(v);
         }
         result.addMember(termList);
@@ -107,14 +107,14 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            SetlList    termList    = (SetlList) term.firstMember();
-            List<Expr>  exprs       = new ArrayList<Expr>(termList.size());
-            List<Value> terms       = new ArrayList<Value>(termList.size());
-            for (Value v : termList) {
+            final SetlList    termList  = (SetlList) term.firstMember();
+            final List<Expr>  exprs     = new ArrayList<Expr>(termList.size());
+            final List<Value> terms     = new ArrayList<Value>(termList.size());
+            for (final Value v : termList) {
                 exprs.add(TermConverter.valueToExpr(v));
                 terms.add(v);
             }
-            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            final Block       block     = TermConverter.valueToBlock(term.lastMember());
             return new MatchCaseBranch(exprs, terms, block);
         }
     }

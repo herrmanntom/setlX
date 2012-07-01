@@ -26,14 +26,14 @@ public class Switch extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^switch";
 
-    private List<SwitchAbstractBranch> mBranchList;
+    private final List<SwitchAbstractBranch> mBranchList;
 
-    public Switch(List<SwitchAbstractBranch> branchList) {
+    public Switch(final List<SwitchAbstractBranch> branchList) {
         mBranchList = branchList;
     }
 
     protected void exec() throws SetlException {
-        for (SwitchAbstractBranch br : mBranchList) {
+        for (final SwitchAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
                 br.execute();
                 break;
@@ -45,7 +45,7 @@ public class Switch extends Statement {
 
     public String toString(int tabs) {
         String result = Environment.getLineStart(tabs) + "switch {" + Environment.getEndl();
-        for (SwitchAbstractBranch br : mBranchList) {
+        for (final SwitchAbstractBranch br : mBranchList) {
             result += br.toString(tabs + 1);
         }
         result += Environment.getLineStart(tabs) + "}";
@@ -55,10 +55,10 @@ public class Switch extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList branchList = new SetlList();
-        for (SwitchAbstractBranch br: mBranchList) {
+        final SetlList branchList = new SetlList(mBranchList.size());
+        for (final SwitchAbstractBranch br: mBranchList) {
             branchList.addMember(br.toTerm());
         }
         result.addMember(branchList);
@@ -66,13 +66,13 @@ public class Switch extends Statement {
         return result;
     }
 
-    public static Switch termToStatement(Term term) throws TermConversionException {
+    public static Switch termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            SetlList                    branches    = (SetlList) term.firstMember();
-            List<SwitchAbstractBranch>  branchList  = new ArrayList<SwitchAbstractBranch>(branches.size());
-            for (Value v : branches) {
+            final SetlList                    branches    = (SetlList) term.firstMember();
+            final List<SwitchAbstractBranch>  branchList  = new ArrayList<SwitchAbstractBranch>(branches.size());
+            for (final Value v : branches) {
                 branchList.add(SwitchAbstractBranch.valueToSwitchAbstractBranch(v));
             }
             return new Switch(branchList);

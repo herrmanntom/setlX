@@ -25,14 +25,14 @@ public class IfThen extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^ifThen";
 
-    private List<IfThenAbstractBranch> mBranchList;
+    private final List<IfThenAbstractBranch> mBranchList;
 
-    public IfThen(List<IfThenAbstractBranch> branchList) {
+    public IfThen(final List<IfThenAbstractBranch> branchList) {
         mBranchList = branchList;
     }
 
     protected void exec() throws SetlException {
-        for (IfThenAbstractBranch br : mBranchList) {
+        for (final IfThenAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
                 br.execute();
                 break;
@@ -42,9 +42,9 @@ public class IfThen extends Statement {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = "";
-        for (IfThenAbstractBranch br : mBranchList) {
+        for (final IfThenAbstractBranch br : mBranchList) {
             result += br.toString(tabs);
         }
         return result;
@@ -53,10 +53,10 @@ public class IfThen extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term     result     = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList branchList = new SetlList();
-        for (IfThenAbstractBranch br: mBranchList) {
+        final SetlList branchList = new SetlList(mBranchList.size());
+        for (final IfThenAbstractBranch br: mBranchList) {
             branchList.addMember(br.toTerm());
         }
         result.addMember(branchList);
@@ -64,13 +64,13 @@ public class IfThen extends Statement {
         return result;
     }
 
-    public static IfThen termToStatement(Term term) throws TermConversionException {
+    public static IfThen termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            SetlList                    branches    = (SetlList) term.firstMember();
-            List<IfThenAbstractBranch>  branchList  = new ArrayList<IfThenAbstractBranch>(branches.size());
-            for (Value v : branches) {
+            final SetlList                   branches   = (SetlList) term.firstMember();
+            final List<IfThenAbstractBranch> branchList = new ArrayList<IfThenAbstractBranch>(branches.size());
+            for (final Value v : branches) {
                 branchList.add(IfThenAbstractBranch.valueToIfThenAbstractBranch(v));
             }
             return new IfThen(branchList);

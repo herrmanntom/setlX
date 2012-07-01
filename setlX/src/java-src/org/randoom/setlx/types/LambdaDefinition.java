@@ -29,7 +29,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     private final Expr mExpr; // expression in the body of the definition; used directly only for toString() and toTerm()
 
-    public LambdaDefinition(List<ParameterDef> parameters, Expr expr) {
+    public LambdaDefinition(final List<ParameterDef> parameters, final Expr expr) {
         super(parameters, new Block(1));
         mExpr = expr;
         mStatements.add(new Return(mExpr));
@@ -37,7 +37,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     /* string and char operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = "";
         if (mParameters.size() == 1) {
             result += mParameters.get(0);
@@ -51,9 +51,9 @@ public class LambdaDefinition extends ProcedureDefinition {
     /* term operations */
 
     public Value toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        final SetlList paramList = new SetlList();
+        final SetlList paramList = new SetlList(mParameters.size());
         for (ParameterDef param: mParameters) {
             paramList.addMember(param.toTerm());
         }
@@ -64,7 +64,7 @@ public class LambdaDefinition extends ProcedureDefinition {
         return result;
     }
 
-    public static LambdaDefinition termToValue(Term term) throws TermConversionException {
+    public static LambdaDefinition termToValue(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

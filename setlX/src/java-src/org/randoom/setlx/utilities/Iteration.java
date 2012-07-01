@@ -40,13 +40,13 @@ public class Iteration extends Constructor {
         private final   Condition       mCondition;
         private final   CollectionValue mCollection;
 
-        public Exec (CollectionValue collection, Expr expr, Condition condition) {
+        public Exec (final CollectionValue collection, final Expr expr, final Condition condition) {
             mCollection = collection;
             mExpr       = expr;
             mCondition  = condition;
         }
 
-        public void execute(Value lastIterationValue) throws SetlException {
+        public void execute(final Value lastIterationValue) throws SetlException {
             if (mCondition == null || mCondition.evalToBool()) {
                 if (mExpr != null) {
                     mCollection.addMember(mExpr.eval());
@@ -57,19 +57,19 @@ public class Iteration extends Constructor {
         }
     }
 
-    public Iteration(Expr expr, Iterator iterator, Condition condition) {
+    public Iteration(final Expr expr, final Iterator iterator, final Condition condition) {
         mExpr      = expr;
         mIterator  = iterator;
         mCondition = condition;
     }
 
-    public void fillCollection(CollectionValue collection) throws SetlException {
+    public void fillCollection(final CollectionValue collection) throws SetlException {
         mIterator.eval(new Exec(collection, mExpr, mCondition));
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String r;
         if (mExpr != null) {
             r = mExpr.toString(tabs) + " : ";
@@ -85,7 +85,7 @@ public class Iteration extends Constructor {
 
     /* term operations */
 
-    public void addToTerm(CollectionValue collection) {
+    public void addToTerm(final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
         if (mExpr != null) {
             result.addMember(mExpr.toTerm());
@@ -101,19 +101,19 @@ public class Iteration extends Constructor {
         collection.addMember(result);
     }
 
-    /*package*/ static Iteration termToIteration(Term term) throws TermConversionException {
+    /*package*/ static Iteration termToIteration(final Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                Expr        expr        = TermConverter.valueToExpr(term.firstMember());
+                final Expr        expr        = TermConverter.valueToExpr(term.firstMember());
 
-                Iterator    iterator    = null;
+                      Iterator    iterator    = null;
                 if (! term.getMember(new Rational(2)).equals(new SetlString("nil"))) {
                     iterator  = Iterator.valueToIterator(term.getMember(new Rational(2)));
                 }
 
-                Condition   cond        = null;
+                      Condition   cond        = null;
                 if (! term.lastMember().equals(new SetlString("nil"))) {
                     cond    = TermConverter.valueToCondition(term.lastMember());
                 }

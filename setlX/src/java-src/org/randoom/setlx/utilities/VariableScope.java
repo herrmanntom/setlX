@@ -38,7 +38,7 @@ public class VariableScope {
         return sVariableScope;
     }
 
-    public static void setScope(VariableScope newEnv) {
+    public static void setScope(final VariableScope newEnv) {
         sVariableScope = newEnv;
     }
 
@@ -48,7 +48,7 @@ public class VariableScope {
         ParseSetlX.clearLoadedLibraries();
     }
 
-    public static Value findValue(String var) {
+    public static Value findValue(final String var) {
         final Value v = sGlobals.locateValue(var).mV;
         if (v != null) {
             return v;
@@ -89,7 +89,7 @@ public class VariableScope {
         return i.mV;
     }
 
-    public static void putValue(String var, Value value) {
+    public static void putValue(final String var, final Value value) {
         if (sGlobals.locateValue(var).mV != null) {
             sGlobals.storeValue(var, value);
         } else {
@@ -97,7 +97,7 @@ public class VariableScope {
         }
     }
 
-    public static void makeGlobal(String var) {
+    public static void makeGlobal(final String var) {
         if (sGlobals.locateValue(var).mV == null) {
             sGlobals.storeValue(var, Om.OM);
         }
@@ -126,8 +126,8 @@ public class VariableScope {
         /*package*/ Value   mV;
         /*package*/ boolean mIsClone;
 
-        SearchItem(Value v, boolean isClone) {
-            mV = v;
+        SearchItem(final Value v, final boolean isClone) {
+            mV       = v;
             mIsClone = isClone;
         }
     }
@@ -142,7 +142,7 @@ public class VariableScope {
     }
 
     public VariableScope clone() {
-        final VariableScope	newEnv = new VariableScope();
+        final VariableScope newEnv = new VariableScope();
         newEnv.mOriginalScope      = this;
         return newEnv;
     }
@@ -162,11 +162,11 @@ public class VariableScope {
         return newEnv;
     }
 
-    public void setWriteThrough(boolean writeThrough) {
+    public void setWriteThrough(final boolean writeThrough) {
         mWriteThrough = writeThrough;
     }
 
-    private SearchItem locateValue(String var) {
+    private SearchItem locateValue(final String var) {
         if (this == sGlobals     && var.length()  == 3   &&
             var.charAt(1) == 97  && var.charAt(2) == 114 && var.charAt(0) == 119
         ) {
@@ -193,7 +193,7 @@ public class VariableScope {
     }
 
     // collect all bindings reachable from current scope (except global variables!)
-    private void collectBindings(Map<String, Value> result, boolean restrictToFunctions) {
+    private void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
         if (mOriginalScope != null) {
             mOriginalScope.collectBindings(result, mRestrictToFunctions);
@@ -207,7 +207,7 @@ public class VariableScope {
         }
     }
 
-    private void storeValue(String var, Value value) {
+    private void storeValue(final String var, final Value value) {
         if (!mWriteThrough || mVarBindings.get(var) != null) {
             // this scope does not allow write through or variable is stored here
             mVarBindings.put(var, value);
@@ -231,9 +231,9 @@ public class VariableScope {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
 
         // list of bindings in scope
-        final SetlSet	bindings    = new SetlSet();
+        final SetlSet   bindings    = new SetlSet();
         for (final Map.Entry<String, Value> entry : allVars.entrySet()) {
-            final SetlList	binding = new SetlList();
+            final SetlList  binding = new SetlList(2);
             binding.addMember(new SetlString(entry.getKey()));
             binding.addMember(entry.getValue().toTerm());
 

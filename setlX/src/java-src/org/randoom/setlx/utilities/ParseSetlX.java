@@ -75,7 +75,7 @@ public class ParseSetlX {
         }
     }
 
-    public static Block parseStringToBlock(String input) throws ParserException {
+    public static Block parseStringToBlock(final String input) throws ParserException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
@@ -87,7 +87,7 @@ public class ParseSetlX {
         }
     }
 
-    public static Expr parseStringToExpr(String input) throws ParserException {
+    public static Expr parseStringToExpr(final String input) throws ParserException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
@@ -109,15 +109,15 @@ public class ParseSetlX {
 
     /* private methods */
 
-    private static Block parseBlock(ANTLRStringStream input) throws SyntaxErrorException {
+    private static Block parseBlock(final ANTLRStringStream input) throws SyntaxErrorException {
         return (Block) handleFragmentParsing(input, BLOCK);
     }
 
-    private static Expr parseExpr(ANTLRStringStream input) throws SyntaxErrorException {
+    private static Expr parseExpr(final ANTLRStringStream input) throws SyntaxErrorException {
         return (Expr) handleFragmentParsing(input, EXPR);
     }
 
-    private static CodeFragment parseFragment(SetlXgrammarParser parser, int type) throws RecognitionException {
+    private static CodeFragment parseFragment(final SetlXgrammarParser parser, final int type) throws RecognitionException {
         switch (type) {
             case EXPR:
                 return parser.initAnyExpr();
@@ -129,7 +129,7 @@ public class ParseSetlX {
         }
     }
 
-    private static CodeFragment handleFragmentParsing(ANTLRStringStream input, int type) throws SyntaxErrorException {
+    private static CodeFragment handleFragmentParsing(final ANTLRStringStream input, final int type) throws SyntaxErrorException {
         SetlXgrammarLexer   lexer   = null;
         SetlXgrammarParser  parser  = null;
         try {

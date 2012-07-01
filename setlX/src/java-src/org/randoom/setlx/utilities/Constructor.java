@@ -9,10 +9,10 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
 public abstract class Constructor {
-    public abstract void        fillCollection(CollectionValue collection) throws SetlException;
+    public abstract void        fillCollection(final CollectionValue collection) throws SetlException;
 
     // sets the variables used to construct this list to the variables from the list given as a parameter
-    public Value assign(SetlList list) throws SetlException {
+    public Value assign(final SetlList list) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "Only explicit lists can be used as targets for list assignments."
@@ -21,13 +21,13 @@ public abstract class Constructor {
 
     /* String operations */
 
-    public abstract String      toString(int tabs);
+    public abstract String      toString(final int tabs);
 
     /* term operations */
 
-    public abstract void        addToTerm(CollectionValue collection);
+    public abstract void        addToTerm(final CollectionValue collection);
 
-    public static   Constructor CollectionValueToConstructor(CollectionValue value) throws TermConversionException {
+    public static   Constructor CollectionValueToConstructor(final CollectionValue value) throws TermConversionException {
         if (value.size() == 1 && value.firstMember() instanceof Term) {
             final Term    term    = (Term) value.firstMember();
             final String  fc      = term.functionalCharacter().getUnquotedString();

@@ -12,12 +12,12 @@ public class WriteBackAgent {
     private final List<Expr>  mExpressions;
     private final List<Value> mValues;
 
-    public WriteBackAgent(int size) {
+    public WriteBackAgent(final int size) {
         mExpressions = new ArrayList<Expr>(size);
         mValues      = new ArrayList<Value>(size);
     }
 
-    public void add(Expr expression, Value value) {
+    public void add(final Expr expression, final Value value) {
         mExpressions.add(expression);
         mValues.add(value);
     }

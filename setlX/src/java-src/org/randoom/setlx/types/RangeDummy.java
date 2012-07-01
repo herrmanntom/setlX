@@ -15,7 +15,7 @@ public class RangeDummy extends Value {
         return " .. ";
     }
 
-    public int compareTo(Value v) {
+    public int compareTo(final Value v) {
         if (v == RD) {
             return 0;
         } else {

@@ -16,7 +16,7 @@ public class Infinity extends NumberValue {
         return this;
     }
 
-    public static Infinity get(boolean positive){
+    public static Infinity get(final boolean positive){
         if (positive) {
             return POSITIVE;
         } else {
@@ -36,7 +36,7 @@ public class Infinity extends NumberValue {
         return POSITIVE;
     }
 
-    public Value difference(Value subtrahend) throws SetlException {
+    public Value difference(final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
             if (this == subtrahend) {
                 throw new UndefinedOperationException(
@@ -53,7 +53,7 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public Value divide(Value divisor) throws SetlException {
+    public Value divide(final Value divisor) throws SetlException {
         if (divisor == POSITIVE || divisor == NEGATIVE) {
             throw new UndefinedOperationException(
                 "'" + this + " / " + divisor + "' is undefined."
@@ -77,7 +77,7 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public Value multiply(Value multiplier) throws SetlException {
+    public Value multiply(final Value multiplier) throws SetlException {
         if (multiplier instanceof NumberValue) {
             if (this == multiplier) {
                 return POSITIVE;
@@ -109,19 +109,19 @@ public class Infinity extends NumberValue {
         }
     }
 
-    protected NumberValue power(int exponent) throws UndefinedOperationException{
+    protected NumberValue power(final int exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );
     }
 
-    protected NumberValue power(double exponent) throws UndefinedOperationException{
+    protected NumberValue power(final double exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );
     }
 
-    public Value sum(Value summand) throws SetlException {
+    public Value sum(final Value summand) throws SetlException {
         if (summand instanceof NumberValue) {
             if (this == summand.negate()) {
                 throw new UndefinedOperationException(
@@ -161,7 +161,7 @@ public class Infinity extends NumberValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v) {
+    public int compareTo(final Value v) {
         if (this == v) {
             return 0;
         } else if (this == POSITIVE) {

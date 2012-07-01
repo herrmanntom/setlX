@@ -33,7 +33,7 @@ public class TermConverter {
     private static Map<String, Method> sExprConverters;
     private static Map<String, Method> sStatementConverters;
 
-    public static CodeFragment valueToCodeFragment(Value value, boolean restrictToExpr) {
+    public static CodeFragment valueToCodeFragment(final Value value, final boolean restrictToExpr) {
         if (value instanceof Term) {
             if (sExprConverters == null || sStatementConverters == null) {
                 sExprConverters         = new HashMap<String, Method>();
@@ -150,7 +150,7 @@ public class TermConverter {
         }
     }
 
-    public static Expr valueToExpr(int callersPrecedence, boolean brackedEqualLevel, Value value) {
+    public static Expr valueToExpr(final int callersPrecedence, final boolean brackedEqualLevel, final Value value) {
         final Expr result         = (Expr) valueToCodeFragment(value, true);
         final int  exprPrecedence = result.precedence();
         if (brackedEqualLevel && callersPrecedence >= exprPrecedence) {
@@ -161,15 +161,15 @@ public class TermConverter {
         return result;
     }
 
-    public static Expr valueToExpr(Value value) {
+    public static Expr valueToExpr(final Value value) {
         return valueToExpr(0000, false, value);
     }
 
-    public static Condition valueToCondition(Value value) {
+    public static Condition valueToCondition(final Value value) {
         return new Condition(valueToExpr(value));
     }
 
-    public static Statement valueToStatement(Value value) {
+    public static Statement valueToStatement(final Value value) {
         final CodeFragment cf = valueToCodeFragment(value, false);
         if (cf instanceof Statement) {
             return (Statement) cf;
@@ -178,7 +178,7 @@ public class TermConverter {
         }
     }
 
-    public static Block valueToBlock(Value value) {
+    public static Block valueToBlock(final Value value) {
         final Statement   s   = valueToStatement(value);
         if (s instanceof Block) {
             return (Block) s;

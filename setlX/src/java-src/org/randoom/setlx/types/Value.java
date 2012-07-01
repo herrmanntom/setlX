@@ -14,13 +14,13 @@ public abstract class Value implements Comparable<Value> {
 
     /* Boolean operations */
 
-    public Value and(Expr other) throws SetlException {
+    public Value and(final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " && " + other + "' is not a Boolean value."
         );
     }
 
-    public Value implies(Expr other) throws SetlException {
+    public Value implies(final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " => " + other + "' is not a Boolean value."
         );
@@ -32,7 +32,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value or(Expr other) throws SetlException {
+    public Value or(final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " || " + other + "' is not a Boolean value."
         );
@@ -116,7 +116,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value difference(Value subtrahend) throws SetlException {
+    public Value difference(final Value subtrahend) throws SetlException {
         if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(this);
         }
@@ -125,7 +125,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value divide(Value divisor) throws SetlException {
+    public Value divide(final Value divisor) throws SetlException {
         if (divisor instanceof Term) {
             return ((Term) divisor).divideFlipped(this);
         }
@@ -140,7 +140,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public void fillCollectionWithinRange(Value step, Value stop, CollectionValue collection) throws SetlException {
+    public void fillCollectionWithinRange(final Value step, final Value stop, final CollectionValue collection) throws SetlException {
         throw new IncompatibleTypeException(
             "Start argument '" + this + "' is not a number."
         );
@@ -152,7 +152,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public final Value maximum(Value other) throws SetlException {
+    public final Value maximum(final Value other) throws SetlException {
         if(other != Om.OM && this.isLessThan(other) == SetlBoolean.TRUE){
             return other.clone();
         } else {
@@ -160,7 +160,7 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
-    public final Value minimum(Value other) throws SetlException {
+    public final Value minimum(final Value other) throws SetlException {
         if(other == Om.OM || other.isLessThan(this) == SetlBoolean.TRUE){
             return other.clone();
         } else {
@@ -168,7 +168,7 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
-    public Value modulo(Value modulo) throws SetlException {
+    public Value modulo(final Value modulo) throws SetlException {
         if (modulo instanceof Term) {
             return ((Term) modulo).moduloFlipped(this);
         }
@@ -177,7 +177,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value multiply(Value multiplier) throws SetlException {
+    public Value multiply(final Value multiplier) throws SetlException {
         if (multiplier instanceof Term) {
             return ((Term) multiplier).multiplyFlipped(this);
         }
@@ -192,7 +192,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value power(Value exponent) throws SetlException {
+    public Value power(final Value exponent) throws SetlException {
         if (exponent instanceof Term) {
             return ((Term) exponent).powerFlipped(this);
         }
@@ -207,7 +207,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value sum(Value summand) throws SetlException {
+    public Value sum(final Value summand) throws SetlException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
         } else if (summand instanceof SetlString && this != Om.OM) {
@@ -220,7 +220,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 
-    public void addMember(Value element) throws SetlException {
+    public void addMember(final Value element) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not add '" + element + "' into operand; '" + this + "' is not a collection value."
         );
@@ -242,14 +242,14 @@ public abstract class Value implements Comparable<Value> {
         return new Rational(this.size());
     }
 
-    public Value collectionAccess(List<Value> args) throws SetlException {
+    public Value collectionAccess(final List<Value> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not access elements using the arguments '" + args + "' on this operand-type;" +
             " '" + this + "' is not a collection value."
         );
     }
 
-    public Value collectionAccessUnCloned(List<Value> args) throws SetlException {
+    public Value collectionAccessUnCloned(final List<Value> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not access elements using the arguments '" + args + "' on this operand-type;" +
             " '" + this + "' is not a collection value."
@@ -257,14 +257,14 @@ public abstract class Value implements Comparable<Value> {
     }
 
     // returns a set of all pairs which first element matches arg
-    public Value collectMap(Value arg) throws SetlException {
+    public Value collectMap(final Value arg) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not collect values of members matching the key '" + arg + "' on this operand-type;" +
             " '" + this + "' is not a map."
         );
     }
 
-    public SetlBoolean containsMember(Value element) throws IncompatibleTypeException {
+    public SetlBoolean containsMember(final Value element) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '" + element  + " in " + this + "' is not a collection value."
         );
@@ -288,21 +288,21 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value getMember(Value index) throws SetlException {
+    public Value getMember(final Value index) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member with index '" + index + "' from operand;" +
             " '" + this + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
-    public Value getMemberUnCloned(Value index) throws SetlException {
+    public Value getMemberUnCloned(final Value index) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member with index '" + index + "' from operand;" +
             " '" + this + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
-    public Value getMembers(Value low, Value high) throws SetlException {
+    public Value getMembers(final Value low, final Value high) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member between index '" + low + "' and '" + high + "' from operand;" +
             " '" + this + "' is not a collection value or ranges are unsupported for this type."
@@ -327,7 +327,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value multiplyMembers(Value neutral) throws SetlException {
+    public Value multiplyMembers(final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '*/ " + this + "' is not a collection value."
         );
@@ -357,7 +357,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public void removeMember(Value element) throws IncompatibleTypeException {
+    public void removeMember(final Value element) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Can not remove '" + element + "' from operand; '" + this + "' is not a collection value."
         );
@@ -381,7 +381,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public void setMember(Value index, Value v) throws SetlException {
+    public void setMember(final Value index, final Value v) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not set member with index '" + index + "' from operand;" +
             " '" + this + "' is not a collection value or direct access is unsupported for this type."
@@ -394,13 +394,13 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public SetlList split(Value pattern) throws IncompatibleTypeException {
+    public SetlList split(final Value pattern) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a string."
         );
     }
 
-    public Value sumMembers(Value neutral) throws SetlException {
+    public Value sumMembers(final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '+/ " + this + "' is not a collection value."
         );
@@ -408,7 +408,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* function call */
 
-    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
+    public Value call(final List<Expr> exprs, final List<Value> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure."
         );
@@ -434,7 +434,7 @@ public abstract class Value implements Comparable<Value> {
         return new SetlString(this.toString());
     }
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         return toString();
     }
 
@@ -442,7 +442,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* term operations */
 
-    public MatchResult matchesTerm(Value other) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final Value other) throws IncompatibleTypeException {
         if (other == IgnoreDummy.ID || this.equals(other)) {
             return new MatchResult(true);
         } else {
@@ -465,9 +465,9 @@ public abstract class Value implements Comparable<Value> {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public abstract int compareTo(Value v);
+    public abstract int compareTo(final Value v);
 
-    public final boolean equals(Object o) {
+    public final boolean equals(final Object o) {
         if (this == o) {
             return true;
         } else if (o instanceof Value) {
@@ -477,13 +477,13 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
-    public final SetlBoolean isEqual(Value other) {
+    public final SetlBoolean isEqual(final Value other) {
         return SetlBoolean.get(this.equals(other));
     }
 
     /* this comparison is different than `this.compareTo(other) < 0' and should
        throw errors on seemingly incomparable types like `5 < TRUE'            */
-    public SetlBoolean isLessThan(Value other) throws SetlException {
+    public SetlBoolean isLessThan(final Value other) throws SetlException {
         throw new UndefinedOperationException("'" + this + " < " + other + "' is undefined.");
     }
 }

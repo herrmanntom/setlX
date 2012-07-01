@@ -29,19 +29,19 @@ public class Real extends NumberValue {
 
     private final BigDecimal mReal;
 
-    public Real(String s) {
+    public Real(final String s) {
         this(new BigDecimal(s, mathContext));
     }
 
-    public Real(double real) {
+    public Real(final double real) {
         this(new BigDecimal(real, mathContext));
     }
 
-    public Real(BigDecimal real) {
+    public Real(final BigDecimal real) {
         mReal = new BigDecimal(real.toString(), mathContext);
     }
 
-    public Real(BigInteger nominator, BigInteger denominator) {
+    public Real(final BigInteger nominator, final BigInteger denominator) {
         BigDecimal n = new BigDecimal(nominator,   mathContext);
         BigDecimal d = new BigDecimal(denominator, mathContext);
         mReal = n.divide(d, mathContext);
@@ -107,7 +107,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value difference(Value subtrahend) throws IncompatibleTypeException {
+    public Value difference(final Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof NumberValue) {
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
                 return (Infinity) subtrahend.negate();
@@ -129,11 +129,11 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value differenceFlipped(Rational minuend) throws SetlException {
+    public Value differenceFlipped(final Rational minuend) throws SetlException {
         return minuend.toReal().difference(this);
     }
 
-    public Value divide(Value divisor) throws SetlException {
+    public Value divide(final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
             BigDecimal right = null;
             if (divisor instanceof Real) {
@@ -162,7 +162,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value divideFlipped(Rational dividend) throws SetlException {
+    public Value divideFlipped(final Rational dividend) throws SetlException {
         return dividend.toReal().divide(this);
     }
 
@@ -174,7 +174,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value multiply(Value multiplier) throws IncompatibleTypeException {
+    public Value multiply(final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof NumberValue) {
             if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
                 return (Infinity) multiplier;
@@ -200,11 +200,11 @@ public class Real extends NumberValue {
         return new Real(mReal.negate(mathContext));
     }
 
-    protected Real power(int exponent) {
+    protected Real power(final int exponent) {
         return new Real(mReal.pow(exponent, mathContext));
     }
 
-    protected Real power(double exponent) throws NumberToLargeException, IncompatibleTypeException {
+    protected Real power(final double exponent) throws NumberToLargeException, IncompatibleTypeException {
         if (mReal.compareTo(BigDecimal.ZERO) < 0) {
             throw new IncompatibleTypeException(
                 "Left-hand-side of '" + this + " ** " + exponent + "' is negative."
@@ -220,7 +220,7 @@ public class Real extends NumberValue {
         return new Rational(mReal.setScale(0, mathContext.getRoundingMode()).toBigInteger());
     }
 
-    public Value sum(Value summand) throws IncompatibleTypeException {
+    public Value sum(final Value summand) throws IncompatibleTypeException {
         if (summand instanceof NumberValue) {
             if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
                 return (Infinity) summand;
@@ -261,7 +261,7 @@ public class Real extends NumberValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v) {
+    public int compareTo(final Value v) {
         if (v instanceof Real) {
             final Real nr = (Real) v;
             return mReal.compareTo(nr.mReal);
@@ -277,3 +277,4 @@ public class Real extends NumberValue {
         }
     }
 }
+

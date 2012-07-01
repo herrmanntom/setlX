@@ -32,22 +32,22 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchSplitListBranch";
 
-    private List<Variable> mVars;       // variables which are to be extracted
-    private Variable       mRest;       // variable for the rest of the list
-    private Block          mStatements; // block to execute after match
+    private final List<Variable> mVars;       // variables which are to be extracted
+    private final Variable       mRest;       // variable for the rest of the list
+    private final Block          mStatements; // block to execute after match
 
-    public MatchSplitListBranch(List<Variable> vars, Variable rest, Block statements){
+    public MatchSplitListBranch(final List<Variable> vars, final Variable rest, final Block statements){
         mVars       = vars;
         mRest       = rest;
         mStatements = statements;
     }
 
-    public MatchResult matches(Value term) throws IncompatibleTypeException {
+    public MatchResult matches(final Value term) throws IncompatibleTypeException {
         if (term instanceof SetlList) {
-            SetlList other = (SetlList) term.clone();
+            final SetlList other = (SetlList) term.clone();
             if (other.size() >= mVars.size()) {
-                MatchResult result = new MatchResult(true);
-                for (Variable var : mVars) {
+                final MatchResult result = new MatchResult(true);
+                for (final Variable var : mVars) {
                     result.addBinding(var.toString(), other.firstMember());
                     other.removeFirstMember();
                 }
@@ -71,14 +71,13 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs);
         result += "case [";
 
-        Iterator<Variable> iter = mVars.iterator();
+        final Iterator<Variable> iter = mVars.iterator();
         while (iter.hasNext()) {
-            Variable var = iter.next();
-            result += var.toString(tabs);
+            result += iter.next().toString(tabs);
             if (iter.hasNext()) {
                 result += ", ";
             }
@@ -93,10 +92,10 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        Term     result   = new Term(FUNCTIONAL_CHARACTER);
+        final Term     result  = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList varList = new SetlList();
-        for (Variable var: mVars) {
+        final SetlList varList = new SetlList(mVars.size());
+        for (final Variable var: mVars) {
             varList.addMember(var.toTerm());
         }
         result.addMember(varList);
@@ -107,14 +106,14 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
         return result;
     }
 
-    public static MatchSplitListBranch termToBranch(Term term) throws TermConversionException {
+    public static MatchSplitListBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                SetlList        varList = (SetlList) term.firstMember();
-                List<Variable>  vars    = new ArrayList<Variable>(varList.size());
-                for (Value var : varList) {
+                final SetlList        varList = (SetlList) term.firstMember();
+                final List<Variable>  vars    = new ArrayList<Variable>(varList.size());
+                for (final Value var : varList) {
                     if (var instanceof Term) {
                         vars.add(Variable.termToExpr((Term) var));
                     } else {
@@ -127,7 +126,7 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
                 } else {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
-                Block           block   = TermConverter.valueToBlock(term.lastMember());
+                final Block           block   = TermConverter.valueToBlock(term.lastMember());
                 return new MatchSplitListBranch(vars, rest, block);
             } catch (SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

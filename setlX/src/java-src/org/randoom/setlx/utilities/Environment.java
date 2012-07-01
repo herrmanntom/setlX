@@ -47,7 +47,7 @@ public class Environment {
     private         static  boolean             sDebugFinishFunction        = false;
     private         static  boolean             sDebugFinishLoop            = false;
 
-    public static void setEnvironmentProvider(EnvironmentProvider envProvider) {
+    public static void setEnvironmentProvider(final EnvironmentProvider envProvider) {
         sEnvProvider = envProvider;
     }
 
@@ -62,28 +62,30 @@ public class Environment {
     }
 
     // write to standard output
-    public static void outWrite(String msg) {
+    public static void outWrite(final String msg) {
         sEnvProvider.outWrite(msg);
     }
-    public static void outWriteLn(String msg) {
-        sEnvProvider.outWrite(msg + sEnvProvider.getEndl());
+    public static void outWriteLn(final String msg) {
+        sEnvProvider.outWrite(msg);
+        sEnvProvider.outWrite(sEnvProvider.getEndl());
     }
     public static void outWriteLn() {
         sEnvProvider.outWrite(sEnvProvider.getEndl());
     }
 
     // write to standard error
-    public static void errWrite(String msg) {
+    public static void errWrite(final String msg) {
         sEnvProvider.errWrite(msg);
     }
-    public static void errWriteLn(String msg) {
-        sEnvProvider.errWrite(msg + sEnvProvider.getEndl());
+    public static void errWriteLn(final String msg) {
+        sEnvProvider.errWrite(msg);
+        sEnvProvider.errWrite(sEnvProvider.getEndl());
     }
     public static void errWriteLn() {
         sEnvProvider.errWrite(sEnvProvider.getEndl());
     }
 
-    public static boolean prompt(String prompt) throws JVMIOException {
+    public static boolean prompt(final String prompt) throws JVMIOException {
         // Only if a pipe is connected the input is ready (has input buffered)
         // BEFORE the prompt.
         // A human usually takes time AFTER the prompt to type something ;-)
@@ -99,17 +101,17 @@ public class Environment {
         return false;
     }
 
-    public static void promptUnchecked(String prompt) {
+    public static void promptUnchecked(final String prompt) {
         sEnvProvider.promptForInput(prompt);
     }
 
     // allow modification of fileName/path when reading files
-    public static String filterFileName(String fileName) {
+    public static String filterFileName(final String fileName) {
         return sEnvProvider.filterFileName(fileName);
     }
 
     // allow modification of library name
-    public static String filterLibraryName(String name) {
+    public static String filterLibraryName(final String name) {
         return sEnvProvider.filterLibraryName(name);
     }
 
@@ -133,7 +135,7 @@ public class Environment {
     }
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
-    public static int getRandomInt(int upperBoundary) {
+    public static int getRandomInt(final int upperBoundary) {
         if (sRandoom == null) {
             sRandoom = new Random();
         }
@@ -148,7 +150,7 @@ public class Environment {
         return sRandoom.nextDouble();
     }
 
-    public static void stopExecution(boolean stopExecution) {
+    public static void stopExecution(final boolean stopExecution) {
         sStopExecution          = stopExecution;
         Block.sStopExecution    = stopExecution;
         Iterator.sStopExecution = stopExecution;
@@ -158,7 +160,7 @@ public class Environment {
         return sStopExecution;
     }
 
-    public static void setMultiLineMode(boolean multiLineMode) {
+    public static void setMultiLineMode(final boolean multiLineMode) {
         sMultiLineMode          = multiLineMode;
     }
 
@@ -166,7 +168,7 @@ public class Environment {
         return sMultiLineMode;
     }
 
-    public static void setInteractive(boolean isInteractive) {
+    public static void setInteractive(final boolean isInteractive) {
         sIsInteractive = isInteractive;
     }
 
@@ -174,7 +176,7 @@ public class Environment {
         return sIsInteractive;
     }
 
-    public static void setPrintVerbose(boolean printVerbose) {
+    public static void setPrintVerbose(final boolean printVerbose) {
         sPrintVerbose   = printVerbose;
     }
 
@@ -182,7 +184,7 @@ public class Environment {
         return sPrintVerbose;
     }
 
-    public static void setTraceAssignments(boolean traceAssignments) {
+    public static void setTraceAssignments(final boolean traceAssignments) {
         sTraceAssignments               = traceAssignments;
         Assignment.sTraceAssignments    = traceAssignments;
         Iterator.sTraceAssignments      = traceAssignments;
@@ -193,7 +195,7 @@ public class Environment {
         return sTraceAssignments;
     }
 
-    public static void setAssertsDisabled(boolean assertsDisabled) {
+    public static void setAssertsDisabled(final boolean assertsDisabled) {
         sAssertsDisabled    = assertsDisabled;
     }
 
@@ -201,7 +203,7 @@ public class Environment {
         return sAssertsDisabled;
     }
 
-    public static String getLineStart(int tabs) {
+    public static String getLineStart(final int tabs) {
         if (!sPrintVerbose || tabs <= 0) {
             return "";
         }
@@ -221,12 +223,12 @@ public class Environment {
         }
     }
 
-    public static void setBreakpoint(String id) {
+    public static void setBreakpoint(final String id) {
         sBreakpoints.add(id);
         setBreakpointsEnabled(true);
     }
 
-    public static boolean removeBreakpoint(String id) {
+    public static boolean removeBreakpoint(final String id) {
         final boolean result  = sBreakpoints.remove(id);
         setBreakpointsEnabled(sBreakpoints.size() > 0);
         return result;
@@ -237,7 +239,7 @@ public class Environment {
         setBreakpointsEnabled(false);
     }
 
-    public static boolean isBreakpoint(String id) {
+    public static boolean isBreakpoint(final String id) {
         return sBreakpoints.contains(id);
     }
 
@@ -245,7 +247,7 @@ public class Environment {
         return sBreakpoints.toArray(new String[0]);
     }
 
-    public static void setBreakpointsEnabled(boolean enabled) {
+    public static void setBreakpointsEnabled(final boolean enabled) {
         sBreakpointsEnabled         = enabled;
         Call.sBreakpointsEnabled    = enabled;
     }
@@ -254,7 +256,7 @@ public class Environment {
         return sBreakpointsEnabled;
     }
 
-    public static void setDebugModeActive(boolean active) {
+    public static void setDebugModeActive(final boolean active) {
         sDebugModeActive            = active;
         Statement.sDebugModeActive  = active;
     }
@@ -263,7 +265,7 @@ public class Environment {
         return sDebugModeActive;
     }
 
-    public static void setDebugPromptActive(boolean active) {
+    public static void setDebugPromptActive(final boolean active) {
         sDebugPromptActive  = active;
     }
 
@@ -271,7 +273,7 @@ public class Environment {
         return sDebugPromptActive;
     }
 
-    public static void setDebugStepNextExpr(boolean stepNextExpr) {
+    public static void setDebugStepNextExpr(final boolean stepNextExpr) {
         sDebugStepNextExpr  = stepNextExpr;
         Expr.sStepNext      = stepNextExpr;
     }
@@ -280,7 +282,7 @@ public class Environment {
         return sDebugStepNextExpr;
     }
 
-    public static void setDebugStepThroughFunction(boolean stepThrough) {
+    public static void setDebugStepThroughFunction(final boolean stepThrough) {
         sDebugStepThroughFunction                   = stepThrough;
         ProcedureDefinition.sStepThroughFunction    = stepThrough;
         PreDefinedFunction.sStepThroughFunction     = stepThrough;
@@ -290,7 +292,7 @@ public class Environment {
         return sDebugStepThroughFunction;
     }
 
-    public static void setDebugFinishFunction(boolean finish) {
+    public static void setDebugFinishFunction(final boolean finish) {
         sDebugFinishFunction                = finish;
         ProcedureDefinition.sFinishFunction = finish;
         Call.sFinishOuterFunction           = finish;
@@ -300,7 +302,7 @@ public class Environment {
         return sDebugFinishFunction;
     }
 
-    public static void setDebugFinishLoop(boolean finish) {
+    public static void setDebugFinishLoop(final boolean finish) {
         sDebugFinishLoop    = finish;
         For.sFinishLoop     = finish;
         While.sFinishLoop   = finish;

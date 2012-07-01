@@ -16,7 +16,7 @@ public class SetlBoolean extends Value {
         return this;
     }
 
-    public static SetlBoolean get(boolean value){
+    public static SetlBoolean get(final boolean value){
         if (value) {
             return TRUE;
         } else {
@@ -26,7 +26,7 @@ public class SetlBoolean extends Value {
 
     /* Boolean operations */
 
-    public Value and(Expr other) throws SetlException {
+    public Value and(final Expr other) throws SetlException {
         if (this == FALSE) {
             return FALSE;
         } else { // this == TRUE
@@ -45,7 +45,7 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public Value implies(Expr other) throws SetlException {
+    public Value implies(final Expr other) throws SetlException {
         if (this == FALSE) {
             return TRUE;
         } else { // this == TRUE
@@ -72,7 +72,7 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public Value or(Expr other) throws SetlException {
+    public Value or(final Expr other) throws SetlException {
         if (this == TRUE) {
             return TRUE;
         } else { // this == FALSE
@@ -119,7 +119,7 @@ public class SetlBoolean extends Value {
      * This ranking is necessary to allow sets and lists of different types.
      */
     // also FALSE < TRUE
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (this == v) {
             // as only exacly one FALSE and TRUE object exist, we can compare by reference
             return 0;

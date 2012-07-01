@@ -21,13 +21,13 @@ public class IgnoreDummy extends Value {
 
     /* term operations */
 
-    public MatchResult matchesTerm(Value other) {
+    public MatchResult matchesTerm(final Value other) {
         return new MatchResult(true);
     }
 
     /* comparisons */
 
-    public int compareTo(Value v) {
+    public int compareTo(final Value v) {
         if (v == ID) {
             return 0;
         } else {

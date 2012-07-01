@@ -36,26 +36,26 @@ public class Call extends Expr {
     // continue execution of function, which includes this call, in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sFinishOuterFunction = false;
 
-    private Variable   mLhs;    // left hand side
-    private List<Expr> mArgs;   // list of arguments
-    private String     _this;   // pre-computed toString(), which has less stack penalty in case of stack overflow error...
+    private final Variable   mLhs;    // left hand side
+    private final List<Expr> mArgs;   // list of arguments
+    private final String     _this;   // pre-computed toString(), which has less stack penalty in case of stack overflow error...
 
-    public Call(Variable lhs, List<Expr> args) {
+    public Call(final Variable lhs, final List<Expr> args) {
         mLhs    = lhs;
         mArgs   = args;
         _this   = _toString(0);
     }
 
     protected Value evaluate() throws SetlException {
-        Value lhs = mLhs.eval();
+        final Value lhs = mLhs.eval();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
                 "Identifier \"" + mLhs + "\" is undefined."
             );
         }
         // evaluate all arguments
-        List<Value> args = new ArrayList<Value>(mArgs.size());
-        for (Expr arg: mArgs) {
+        final List<Value> args = new ArrayList<Value>(mArgs.size());
+        for (final Expr arg: mArgs) {
             args.add(arg.eval().clone());
         }
         try {
@@ -87,7 +87,7 @@ public class Call extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         if (tabs == 0 && ! Environment.isPrintVerbose()) {
             return _this;
         } else {
@@ -95,7 +95,7 @@ public class Call extends Expr {
         }
     }
 
-    public String _toString(int tabs) {
+    public String _toString(final int tabs) {
         String result = mLhs.toString(tabs) + "(";
         for (int i = 0; i < mArgs.size(); ++i) {
             if (i > 0) {
@@ -110,12 +110,12 @@ public class Call extends Expr {
     /* term operations */
 
     public Term toTerm() {
-        Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(new SetlString(mLhs.toString()));
 
-        SetlList    arguments   = new SetlList();
-        for (Expr arg: mArgs) {
+        final SetlList    arguments   = new SetlList(mArgs.size());
+        for (final Expr arg: mArgs) {
             arguments.addMember(arg.toTerm());
         }
         result.addMember(arguments);
@@ -124,11 +124,11 @@ public class Call extends Expr {
     }
 
     public Term toTermQuoted() throws SetlException {
-        Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(new SetlString(mLhs.toString()));
 
-        SetlList    arguments   = new SetlList();
+        final SetlList    arguments   = new SetlList(mArgs.size());
         for (Expr arg: mArgs) {
             arguments.addMember(arg.eval().toTerm());
         }
@@ -141,10 +141,10 @@ public class Call extends Expr {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlString && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            String      lhs     = ((SetlString) term.firstMember()).getUnquotedString();
-            SetlList    argsLst = (SetlList) term.lastMember();
-            List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
-            for (Value v : argsLst) {
+            final String      lhs     = ((SetlString) term.firstMember()).getUnquotedString();
+            final SetlList    argsLst = (SetlList) term.lastMember();
+            final List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
+            for (final Value v : argsLst) {
                 args.add(TermConverter.valueToExpr(v));
             }
             return new Call(new Variable(lhs), args);

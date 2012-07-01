@@ -20,7 +20,7 @@ implemented here as:
 public class Condition {
     private final Expr mExpr;
 
-    public Condition(Expr expr) {
+    public Condition(final Expr expr) {
         mExpr = expr;
     }
 
@@ -39,7 +39,7 @@ public class Condition {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         return mExpr.toString(tabs);
     }
 

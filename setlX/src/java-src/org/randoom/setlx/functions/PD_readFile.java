@@ -26,25 +26,23 @@ public class PD_readFile extends PreDefinedFunction {
         addParameter("fileName");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException, FileNotReadableException {
-        Value   fileArg = args.get(0);
+    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, FileNotReadableException {
+        final Value fileArg = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Expression-argument '" + fileArg + "' is not a string."
             );
         }
 
-        // get name of file to be read
-        String          fileName    = fileArg.getUnquotedString();
-        // allow modification of fileName/path by environment provider
-        fileName = Environment.filterFileName(fileName);
+        // get name of file to be read and allow modification of fileName/path by environment provider
+        final String    fileName    = Environment.filterFileName(fileArg.getUnquotedString());
 
         // read file
         FileInputStream fstream     = null;
         DataInputStream fIn         = null;
         BufferedReader  fBr         = null;
 
-        SetlList        fileContent = new SetlList();
+        final SetlList  fileContent = new SetlList();
 
         try {
             fstream     = new FileInputStream(fileName);

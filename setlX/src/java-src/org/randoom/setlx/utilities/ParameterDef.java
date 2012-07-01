@@ -31,24 +31,24 @@ public class ParameterDef {
     private final Variable mVar;
     private final int      mType;
 
-    public ParameterDef(Variable var, int type) {
+    public ParameterDef(final Variable var, final int type) {
         mVar  = var;
         mType = type;
     }
 
-    public ParameterDef(String id, int type) {
+    public ParameterDef(final String id, final int type) {
         this(new Variable(id), type);
     }
 
-    public ParameterDef(Variable var) {
+    public ParameterDef(final Variable var) {
         this(var, READ_ONLY);
     }
 
-    public ParameterDef(String id) {
+    public ParameterDef(final String id) {
         this(id, READ_ONLY);
     }
 
-    public void assign(Value v) throws SetlException {
+    public void assign(final Value v) throws SetlException {
         mVar.assign(v);
     }
 
@@ -84,7 +84,7 @@ public class ParameterDef {
         return result;
     }
 
-    public static ParameterDef valueToParameterDef(Value value) throws TermConversionException {
+    public static ParameterDef valueToParameterDef(final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }

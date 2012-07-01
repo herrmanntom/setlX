@@ -32,21 +32,21 @@ public class Forall extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private Iterator  mIterator;
-    private Condition mCondition;
+    private final Iterator  mIterator;
+    private final Condition mCondition;
 
     private class Exec implements IteratorExecutionContainer {
-        private Condition       mCondition;
-        public  SetlBoolean     mResult;
-        public  VariableScope   mScope;
+        private final Condition     mCondition;
+        public        SetlBoolean   mResult;
+        public        VariableScope mScope;
 
-        public Exec (Condition condition) {
+        public Exec (final Condition condition) {
             mCondition = condition;
             mResult    = SetlBoolean.TRUE;
             mScope     = null;
         }
 
-        public void execute(Value lastIterationValue) throws SetlException {
+        public void execute(final Value lastIterationValue) throws SetlException {
             mResult = mCondition.eval();
             if (mResult == SetlBoolean.FALSE) {
                 mScope = VariableScope.getScope();  // save state where result is true
@@ -55,13 +55,13 @@ public class Forall extends Expr {
         }
     }
 
-    public Forall(Iterator iterator, Condition condition) {
+    public Forall(final Iterator iterator, final Condition condition) {
         mIterator  = iterator;
         mCondition = condition;
     }
 
     protected SetlBoolean evaluate() throws SetlException {
-        Exec e = new Exec(mCondition);
+        final Exec e = new Exec(mCondition);
         mIterator.eval(e);
         if (e.mResult == SetlBoolean.FALSE && e.mScope != null) {
             // retore state in which mBoolExpr is false
@@ -72,25 +72,25 @@ public class Forall extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         return "forall (" + mIterator.toString(tabs) + " | " + mCondition.toString(tabs) + ")";
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mIterator.toTerm());
         result.addMember(mCondition.toTerm());
         return result;
     }
 
-    public static Forall termToExpr(Term term) throws TermConversionException {
+    public static Forall termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Iterator    iterator    = Iterator.valueToIterator(term.firstMember());
-            Condition   condition   = TermConverter.valueToCondition(term.lastMember());
+            final Iterator  iterator  = Iterator.valueToIterator(term.firstMember());
+            final Condition condition = TermConverter.valueToCondition(term.lastMember());
             return new Forall(iterator, condition);
         }
     }

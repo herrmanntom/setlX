@@ -27,18 +27,18 @@ implemented here as:
 public class ExplicitList extends Constructor {
     private final List<Expr> mList;
 
-    public ExplicitList(List<Expr> exprList) {
+    public ExplicitList(final List<Expr> exprList) {
         mList = exprList;
     }
 
-    public void fillCollection(CollectionValue collection) throws SetlException {
+    public void fillCollection(final CollectionValue collection) throws SetlException {
         for (final Expr e: mList) {
             collection.addMember(e.eval());
         }
     }
 
     // sets the variables used to form this list to the variables from the list given as a parameter
-    public Value assign(SetlList list) throws SetlException {
+    public Value assign(final SetlList list) throws SetlException {
         if (list.size() != mList.size()) {
             throw new IncompatibleTypeException(
                 "Members of '" + list + "' are unusable for list assignment."
@@ -65,7 +65,7 @@ public class ExplicitList extends Constructor {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         final StringBuilder sb = new StringBuilder(size() * 3); // reserve at least 3 chars per expression
         for (final Expr e: mList) {
             if (sb.length() > 0) {
@@ -78,13 +78,13 @@ public class ExplicitList extends Constructor {
 
     /* term operations */
 
-    public void addToTerm(CollectionValue collection) {
+    public void addToTerm(final CollectionValue collection) {
         for (final Expr member: mList) {
             collection.addMember(member.toTerm());
         }
     }
 
-    /*package*/ static ExplicitList collectionValueToExplicitList(CollectionValue value) throws TermConversionException {
+    /*package*/ static ExplicitList collectionValueToExplicitList(final CollectionValue value) throws TermConversionException {
         final List<Expr> exprList = new ArrayList<Expr>(value.size());
         for (final Value v : value) {
             exprList.add(TermConverter.valueToExpr(v));

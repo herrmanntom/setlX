@@ -6,11 +6,11 @@ public class SetlError extends Value {
 
     private final String mMessage;
 
-    public SetlError(String message){
+    public SetlError(final String message){
         mMessage = message;
     }
 
-    public SetlError(SetlException exception){
+    public SetlError(final SetlException exception){
         this(exception.getMessage());
     }
 
@@ -46,7 +46,7 @@ public class SetlError extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (v instanceof SetlError) {
             final SetlError error = (SetlError) v;
             return mMessage.compareTo(error.mMessage);

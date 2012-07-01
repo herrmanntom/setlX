@@ -6,7 +6,7 @@ public abstract class CodeFragment {
 
     /* string operations */
 
-    public abstract String toString(int tabs);
+    public abstract String toString(final int tabs);
 
     /* term operations */
 

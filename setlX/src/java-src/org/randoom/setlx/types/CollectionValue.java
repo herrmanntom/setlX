@@ -14,7 +14,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 
-    public abstract void            addMember(Value element);
+    public abstract void            addMember(final Value element);
 
     public final    Value           arbitraryMember() {
         if (this.size() < 1) {
@@ -27,10 +27,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
     }
 
-    public abstract SetlBoolean     containsMember(Value element);
+    public abstract SetlBoolean     containsMember(final Value element);
 
     // compare not only own members, but also all members contained in own members
-    public          SetlBoolean     containsMemberRecursive(Value element) {
+    public          SetlBoolean     containsMemberRecursive(final Value element) {
         for (final Value v: this) {
             if (v.equals(element)) {
                 return SetlBoolean.TRUE;
@@ -52,7 +52,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Value           minimumMember() throws SetlException;
 
-    public          Value           multiplyMembers(Value neutral) throws SetlException {
+    public          Value           multiplyMembers(final Value neutral) throws SetlException {
         Value product = null;
         for (final Value v: this) {
             if (product == null) {
@@ -83,7 +83,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
     }
 
-    public abstract void            removeMember(Value element);
+    public abstract void            removeMember(final Value element);
 
     public abstract void            removeFirstMember();
 
@@ -91,7 +91,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract int             size();
 
-    public          Value           sumMembers(Value neutral) throws SetlException {
+    public          Value           sumMembers(final Value neutral) throws SetlException {
         Value sum = null;
         for (final Value v: this) {
             if (sum == null) {
@@ -109,6 +109,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     /* term operations */
 
-    public abstract MatchResult     matchesTerm(Value other) throws IncompatibleTypeException;
+    public abstract MatchResult     matchesTerm(final Value other) throws IncompatibleTypeException;
 }
 

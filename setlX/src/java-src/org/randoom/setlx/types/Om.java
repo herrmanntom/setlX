@@ -3,7 +3,7 @@ package org.randoom.setlx.types;
 public class Om extends Value {
 
     public final static Om OM = new Om();
-    
+
     // do not display when printing result after evaluating in interactive mode
     private boolean isHidden  = false;
 
@@ -11,6 +11,15 @@ public class Om extends Value {
 
     public Om clone() {
         // this value is atomic and can not be changed
+        return this;
+    }
+
+    public boolean isHidden() {
+        return isHidden && ((isHidden = false) || true); // reset to false after one query
+    }
+
+    public Om hide() {
+        isHidden = true;
         return this;
     }
 
@@ -31,7 +40,7 @@ public class Om extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (v == OM) {
             return 0;
         } else if (v instanceof SetlError) {
@@ -41,15 +50,6 @@ public class Om extends Value {
             // everything else is bigger than Om
             return -1;
         }
-    }
-
-    public boolean isHidden() {
-        return isHidden && ((isHidden = false) || true); // reset to false after one query
-    }
-
-    public Om hide() {
-        isHidden = true;
-        return this;
     }
 }
 

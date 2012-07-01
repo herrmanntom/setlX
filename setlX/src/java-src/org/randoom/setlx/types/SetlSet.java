@@ -6,9 +6,9 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.LinkedList;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
@@ -42,12 +42,12 @@ public class SetlSet extends CollectionValue {
     private TreeSet<Value> mSet;
     private boolean        isCloned; // is this set a clone?
 
-    public SetlSet(){
+    public SetlSet() {
         mSet        = new TreeSet<Value>();
         isCloned    = false; // new sets are not a clone
     }
 
-    private SetlSet(TreeSet<Value> set){
+    private SetlSet(final TreeSet<Value> set){
         mSet        = set;
         isCloned    = true;  // sets created from another set ARE a clone
     }
@@ -86,7 +86,7 @@ public class SetlSet extends CollectionValue {
         return mSet.iterator();
     }
 
-    public SetlBoolean isLessThan(Value other) throws IncompatibleTypeException {
+    public SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
         if (other instanceof SetlSet) {
             SetlSet otr = (SetlSet) other;
             return SetlBoolean.get((otr.mSet.containsAll(mSet)) && this.compareTo(otr) != 0);
@@ -119,15 +119,15 @@ public class SetlSet extends CollectionValue {
     /* type conversion */
 
     /*package*/ SetlList toList() {
-        return new SetlList(new LinkedList<Value>(mSet));
+        return new SetlList(new ArrayList<Value>(mSet));
     }
 
     /* arithmetic operations */
 
-    public Value difference(Value subtrahend) throws IncompatibleTypeException {
+    public Value difference(final Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof SetlSet) {
-            SetlSet s       = (SetlSet) subtrahend;
-            SetlSet result  = clone();
+            final SetlSet s       = (SetlSet) subtrahend;
+            final SetlSet result  = clone();
             result.separateFromOriginal();
             result.mSet.removeAll(s.mSet);
             return result;
@@ -140,10 +140,10 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value multiply(Value multiplier) throws IncompatibleTypeException {
+    public Value multiply(final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
-            SetlSet m       = (SetlSet) multiplier;
-            SetlSet result  = clone();
+            final SetlSet m       = (SetlSet) multiplier;
+            final SetlSet result  = clone();
             result.separateFromOriginal();
             result.mSet.retainAll(m.mSet);
             return result;
@@ -156,11 +156,11 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value sum(Value summand) throws IncompatibleTypeException {
+    public Value sum(final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
         } else if(summand instanceof CollectionValue) {
-            SetlSet result = this.clone();
+            final SetlSet result = this.clone();
             for (final Value v: (CollectionValue) summand) {
                 result.addMember(v.clone());
             }
@@ -176,14 +176,14 @@ public class SetlSet extends CollectionValue {
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
-    public void addMember(Value element) {
+    public void addMember(final Value element) {
         if (element != Om.OM) {
             separateFromOriginal();
             mSet.add(element.clone());
         }
     }
 
-    public Value collectionAccess(List<Value> args) throws SetlException {
+    public Value collectionAccess(final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException(
                 "Range operations are unsupported on '" + this + "'."
@@ -197,7 +197,7 @@ public class SetlSet extends CollectionValue {
         return getMember(args.get(0));
     }
 
-    public Value collectionAccessUnCloned(List<Value> args) throws SetlException {
+    public Value collectionAccessUnCloned(final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException(
                 "Range operations are unsupported on '" + this + "'."
@@ -212,16 +212,16 @@ public class SetlSet extends CollectionValue {
     }
 
     // returns a set of all pairs which first element matches arg
-    public Value collectMap(Value arg) throws SetlException {
+    public Value collectMap(final Value arg) throws SetlException {
         /* Extract the subset of all members, for which this is true
          * [arg] < subset <= [arg, +infinity]
          *
          * As this set is in lexicographical order, all pairs which first element
          * matches arg must be in this subset.
          */
-        final Value lowerBound  = new SetlList();
+        final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(arg);
-        final Value upperBound  = new SetlList();
+        final Value upperBound  = new SetlList(2);
         upperBound.addMember(arg);
         upperBound.addMember(Infinity.POSITIVE);
 
@@ -285,25 +285,25 @@ public class SetlSet extends CollectionValue {
         return mSet.first().clone();
     }
 
-    public Value getMember(Value element) throws SetlException {
+    public Value getMember(final Value element) throws SetlException {
         return getMemberZZZInternal(element).clone();
     }
 
-    public Value getMemberUnCloned(Value element) throws SetlException {
+    public Value getMemberUnCloned(final Value element) throws SetlException {
         separateFromOriginal();
         return getMemberZZZInternal(element);
     }
 
-    private Value getMemberZZZInternal(Value element) throws SetlException {
+    private Value getMemberZZZInternal(final Value element) throws SetlException {
         /* Extract the subset of all members, for which this is true
          * [element] < subset <= [element, +infinity]
          *
          * As this set is in lexicographical order, all pairs which first element
          * matches element must be in this subset.
          */
-        final Value lowerBound  = new SetlList();
+        final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(element);
-        final Value upperBound  = new SetlList();
+        final Value upperBound  = new SetlList(2);
         upperBound.addMember(element);
         upperBound.addMember(Infinity.POSITIVE);
 
@@ -411,7 +411,7 @@ public class SetlSet extends CollectionValue {
         return result;
     }
 
-    public void setMember(Value index, Value v) throws SetlException {
+    public void setMember(final Value index, final Value v) throws SetlException {
         separateFromOriginal();
         /* Extract the subset of all members, for which this is true
          * [index] <= subset <= [index, +infinity]
@@ -419,9 +419,9 @@ public class SetlSet extends CollectionValue {
          * As this set is in lexicographical order, all pairs which first element
          * matches index must be in this subset.
          */
-        final Value lowerBound  = new SetlList();
+        final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(index);
-        final Value upperBound  = new SetlList();
+        final Value upperBound  = new SetlList(2);
         upperBound.addMember(index);
         upperBound.addMember(Infinity.POSITIVE);
 
@@ -431,7 +431,7 @@ public class SetlSet extends CollectionValue {
         /* now this set must either be empty or a map without a pair matching the index */
         if (v != Om.OM) {
             // add new pair [index, value] to this set
-            SetlList pair = new SetlList();
+            SetlList pair = new SetlList(2);
             pair.addMember(index);
             pair.addMember(v);
             mSet.add(pair);
@@ -478,7 +478,7 @@ public class SetlSet extends CollectionValue {
 
     /* term operations */
 
-    public MatchResult matchesTerm(Value other) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final Value other) throws IncompatibleTypeException {
         if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
         } else if ( ! (other instanceof SetlSet)) {
@@ -555,7 +555,7 @@ public class SetlSet extends CollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(Value v){
+    public int compareTo(final Value v){
         if (v instanceof SetlSet) {
             final Iterator<Value> iterFirst  = mSet.iterator();
             final Iterator<Value> iterSecond = ((SetlSet) v).mSet.iterator();

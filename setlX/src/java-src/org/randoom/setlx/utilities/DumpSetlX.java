@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class DumpSetlX {
 
-    public static void dumpToFile(String content, String fileName, boolean append) throws FileNotWriteableException {
+    public static void dumpToFile(final String content, String fileName, final boolean append) throws FileNotWriteableException {
         // then dump to file
         FileWriter     fWr = null;
         BufferedWriter out = null;
@@ -20,9 +20,9 @@ public class DumpSetlX {
             fWr = new FileWriter(fileName, append);
             out = new BufferedWriter(fWr);
             out.write(content);
-        } catch (FileNotFoundException fnfe) {
+        } catch (final FileNotFoundException fnfe) {
             throw new FileNotWriteableException("File '" + fileName + "' could not be opened for writing.");
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new FileNotWriteableException(ioe.getMessage());
         } finally {
             try {
@@ -32,7 +32,7 @@ public class DumpSetlX {
                 if (fWr != null) {
                     fWr.close();
                 }
-            } catch (IOException ioe) {
+            } catch (final IOException ioe) {
                 // don't care at this point
             }
         }

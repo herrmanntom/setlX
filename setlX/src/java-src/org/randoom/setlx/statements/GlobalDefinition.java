@@ -26,14 +26,14 @@ public class GlobalDefinition extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^globalDefinition";
 
-    private List<Variable> mVars;
+    private final List<Variable> mVars;
 
-    public GlobalDefinition(List<Variable> vars) {
+    public GlobalDefinition(final List<Variable> vars) {
         mVars = vars;
     }
 
     protected void exec() {
-        for (Variable var : mVars) {
+        for (final Variable var : mVars) {
             var.makeGlobal();
         }
     }
@@ -56,7 +56,7 @@ public class GlobalDefinition extends Statement {
     public Term toTerm() {
         Term result = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList varList = new SetlList();
+        final SetlList varList = new SetlList(mVars.size());
         for (Variable var : mVars) {
             varList.addMember(var.toTerm());
         }
@@ -65,13 +65,13 @@ public class GlobalDefinition extends Statement {
         return result;
     }
 
-    public static GlobalDefinition termToStatement(Term term) throws TermConversionException {
+    public static GlobalDefinition termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            SetlList        vars    = (SetlList) term.firstMember();
-            List<Variable>  varList = new ArrayList<Variable>(vars.size());
-            for (Value v : vars) {
+            final SetlList          vars    = (SetlList) term.firstMember();
+            final List<Variable>    varList = new ArrayList<Variable>(vars.size());
+            for (final Value v : vars) {
                 if ( ! (v instanceof Term)) {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }

@@ -40,20 +40,20 @@ public class Iterator {
     private final Expr      mCollection; // Rhs (should be Set/List)
     private       Iterator  mNext;       // next iterator in iteratorChain
 
-    public Iterator(Expr assignable, Expr collection) {
+    public Iterator(final Expr assignable, final Expr collection) {
         mAssignable = assignable;
         mCollection = collection;
         mNext       = null;
     }
 
-    private Iterator(Expr assignable, Expr collection, Iterator next) {
+    private Iterator(final Expr assignable, final Expr collection, final Iterator next) {
         mAssignable = assignable;
         mCollection = collection;
         mNext       = next;
     }
 
     // adds next iterator to end of current iterator chain
-    public void add(Iterator i) {
+    public void add(final Iterator i) {
         if (mNext == null) {
             mNext = i;
         } else {
@@ -67,7 +67,7 @@ public class Iterator {
              variable to be local
        note: variables inside the whole iteration are not _not_ local
              all will be written `through' these inner scopes                 */
-    public void eval(IteratorExecutionContainer exec) throws SetlException {
+    public void eval(final IteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = VariableScope.getScope();
         try {
             evaluate(exec);
@@ -81,7 +81,7 @@ public class Iterator {
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = mAssignable.toString(tabs) + " in " + mCollection.toString(tabs);
         if (mNext != null) {
             result += ", " + mNext.toString(tabs);
@@ -107,22 +107,22 @@ public class Iterator {
         return result;
     }
 
-    public static Iterator valueToIterator(Value value) throws TermConversionException {
+    public static Iterator valueToIterator(final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                Term    term    = (Term) value;
-                String  fc      = term.functionalCharacter().getUnquotedString();
+                final Term      term    = (Term) value;
+                final String    fc      = term.functionalCharacter().getUnquotedString();
                 if (! fc.equals(FUNCTIONAL_CHARACTER) || term.size() != 3) {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
 
-                Expr        assignable  = TermConverter.valueToExpr(term.firstMember());
+                final Expr      assignable  = TermConverter.valueToExpr(term.firstMember());
 
-                Expr        collection  = TermConverter.valueToExpr(term.getMember(new Rational(2)));
+                final Expr      collection  = TermConverter.valueToExpr(term.getMember(new Rational(2)));
 
-                Iterator    iterator    = null;
+                      Iterator  iterator    = null;
                 if (! term.lastMember().equals(new SetlString("nil"))) {
                     iterator    = Iterator.valueToIterator(term.lastMember());
                 }
@@ -135,7 +135,7 @@ public class Iterator {
 
     /* private functions */
 
-    private void evaluate(IteratorExecutionContainer exec) throws SetlException {
+    private void evaluate(final IteratorExecutionContainer exec) throws SetlException {
         if (sStopExecution) {
             throw new StopExecutionException("Interrupted");
         }

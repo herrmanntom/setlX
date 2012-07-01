@@ -45,14 +45,14 @@ public class SetlList extends CollectionValue {
 
     public SetlList() {
         mList       = new LinkedList<Value>();
+        mIterator   = mList.listIterator(0);
         isCloned    = false; // new lists are not a clone
-        resetIterator(0);
     }
 
     /*package*/ SetlList(LinkedList<Value> list) {
         mList       = list;
+        mIterator   = mList.listIterator(0);
         isCloned    = true;  // lists created from another list ARE a clone
-        resetIterator(0);
     }
 
     public SetlList clone() {
@@ -86,8 +86,19 @@ public class SetlList extends CollectionValue {
         }
     }
 
-    private void resetIterator(int index) {
-        mIterator = mList.listIterator(index);
+    private void resetIterator(final int index) {
+        // does it take more steps to go from current index or 0 to new position?
+        final int deltaAbs = Math.abs(mIterator.nextIndex() - index);
+        if (deltaAbs < index) { // go from current index
+            while(mIterator.nextIndex() < index) {
+                mIterator.next();
+            }
+            while(mIterator.nextIndex() > index) {
+                mIterator.previous();
+            }
+        } else { // go from start
+            mIterator = mList.listIterator(index);
+        }
     }
 
     public Iterator<Value> iterator() {

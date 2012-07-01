@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.0.1--- 2012-06-29
+---v1.0.1--- 2012-07-01
  * adding om to a string (e.g. "" + om) will now result in an error
  * +/[] and */[] return om, not 0 or 1 respectively
  + added binary forms of +/ and */ operators to specify neutral element
@@ -9,7 +9,6 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added strSplit(string, pattern) function
  + added reverse(collectionValue) function
  + improved performance of consecutive list accesses
- + various other minor performance improvements
  * input in interactive mode is now accepted WITHOUT entering an empty line
  + newline can be escaped by adding a backslash before pressing [Enter]
  + added --multiLineMode option and multiLineMode() function to restore previous behavior

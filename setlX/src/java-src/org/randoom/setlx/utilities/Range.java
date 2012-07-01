@@ -24,9 +24,9 @@ public class Range extends Constructor {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^range";
 
-    private Expr mStart;
-    private Expr mSecond;
-    private Expr mStop;
+    private final Expr mStart;
+    private final Expr mSecond;
+    private final Expr mStop;
 
     public Range(Expr start, Expr second, Expr stop) {
         mStart  = start;
@@ -35,8 +35,8 @@ public class Range extends Constructor {
     }
 
     public void fillCollection(CollectionValue collection) throws SetlException {
-        Value start = mStart.eval();
-        Value step  = null;
+        final Value start = mStart.eval();
+              Value step  = null;
         // compute step
         if (mSecond != null) {
             step = mSecond.eval().difference(start);
@@ -59,7 +59,7 @@ public class Range extends Constructor {
     /* term operations */
 
     public void addToTerm(CollectionValue collection) {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mStart.toTerm());
         if (mSecond != null) {
             result.addMember(mSecond.toTerm());
@@ -75,14 +75,14 @@ public class Range extends Constructor {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                Expr start  = TermConverter.valueToExpr(term.firstMember());
+                final Expr start  = TermConverter.valueToExpr(term.firstMember());
 
-                Expr second = null;
+                      Expr second = null;
                 if (! term.getMember(new Rational(2)).equals(new SetlString("nil"))) {
                     second  = TermConverter.valueToExpr(term.getMember(new Rational(2)));
                 }
 
-                Expr stop   = TermConverter.valueToExpr(term.lastMember());
+                final Expr stop   = TermConverter.valueToExpr(term.lastMember());
                 return new Range(start, second, stop);
             } catch (SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

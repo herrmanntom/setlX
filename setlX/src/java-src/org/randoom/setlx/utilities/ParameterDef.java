@@ -28,8 +28,8 @@ public class ParameterDef {
     public final static int READ_ONLY   = 0;
     public final static int READ_WRITE  = 1;
 
-    private Variable mVar;
-    private int      mType;
+    private final Variable mVar;
+    private final int      mType;
 
     public ParameterDef(Variable var, int type) {
         mVar  = var;
@@ -74,7 +74,7 @@ public class ParameterDef {
     /* term operations */
 
     public Term toTerm() {
-        Term result;
+        final Term result;
         if (mType == READ_WRITE) {
             result = new Term(FUNCTIONAL_CHARACTER_RW);
         } else {
@@ -88,13 +88,13 @@ public class ParameterDef {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
-        Term    term    = (Term) value;
-        String  fc      = term.functionalCharacter().getUnquotedString();
+        final Term   term   = (Term) value;
+        final String fc     = term.functionalCharacter().getUnquotedString();
         if (fc.equals(FUNCTIONAL_CHARACTER) && term.size() == 1 && term.firstMember() instanceof Term) {
-            Variable var = Variable.termToExpr((Term) term.firstMember());
+            final Variable var = Variable.termToExpr((Term) term.firstMember());
             return new ParameterDef(var, READ_ONLY);
         } else if (fc.equals(FUNCTIONAL_CHARACTER_RW) && term.size() == 1 && term.firstMember() instanceof Term) {
-            Variable var = Variable.termToExpr((Term) term.firstMember());
+            final Variable var = Variable.termToExpr((Term) term.firstMember());
             return new ParameterDef(var, READ_WRITE);
         } else {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

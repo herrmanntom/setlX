@@ -29,8 +29,8 @@ public abstract class Constructor {
 
     public static   Constructor CollectionValueToConstructor(CollectionValue value) throws TermConversionException {
         if (value.size() == 1 && value.firstMember() instanceof Term) {
-            Term    term    = (Term) value.firstMember();
-            String  fc      = term.functionalCharacter().getUnquotedString();
+            final Term    term    = (Term) value.firstMember();
+            final String  fc      = term.functionalCharacter().getUnquotedString();
             if (fc.equals(Iteration.FUNCTIONAL_CHARACTER)) {
                 return Iteration.termToIteration(term);
             } else if (fc.equals(Range.FUNCTIONAL_CHARACTER)) {

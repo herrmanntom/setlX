@@ -25,14 +25,14 @@ implemented here as:
 */
 
 public class ExplicitList extends Constructor {
-    private List<Expr> mList;
+    private final List<Expr> mList;
 
     public ExplicitList(List<Expr> exprList) {
         mList = exprList;
     }
 
     public void fillCollection(CollectionValue collection) throws SetlException {
-        for (Expr e: mList) {
+        for (final Expr e: mList) {
             collection.addMember(e.eval());
         }
     }
@@ -45,7 +45,7 @@ public class ExplicitList extends Constructor {
             );
         }
         for (int i = 0; i < mList.size(); ++i) {
-            Expr  e = mList.get(i);
+            final Expr  e = mList.get(i);
             if (e == VariableIgnore.VI) {
                 continue; // ignore this position e.g. 2nd position in `[x, _, y]'
             }
@@ -66,27 +66,27 @@ public class ExplicitList extends Constructor {
     /* string operations */
 
     public String toString(int tabs) {
-        String r = "";
-        for (Expr e: mList) {
-            if (!r.equals("")) {
-                r += ", ";
+        final StringBuilder sb = new StringBuilder(size() * 3); // reserve at least 3 chars per expression
+        for (final Expr e: mList) {
+            if (sb.length() > 0) {
+                sb.append(", ");
             }
-            r += e.toString(tabs);
+            sb.append(e.toString(tabs));
         }
-        return r;
+        return sb.toString();
     }
 
     /* term operations */
 
     public void addToTerm(CollectionValue collection) {
-        for (Expr member: mList) {
+        for (final Expr member: mList) {
             collection.addMember(member.toTerm());
         }
     }
 
     /*package*/ static ExplicitList collectionValueToExplicitList(CollectionValue value) throws TermConversionException {
-        List<Expr> exprList = new ArrayList<Expr>(value.size());
-        for (Value v : value) {
+        final List<Expr> exprList = new ArrayList<Expr>(value.size());
+        for (final Value v : value) {
             exprList.add(TermConverter.valueToExpr(v));
         }
         return new ExplicitList(exprList);

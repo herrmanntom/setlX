@@ -33,7 +33,7 @@ public class Block extends Statement {
     // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sStopExecution       = false;
 
-    private List<Statement> mStatements;
+    private final List<Statement> mStatements;
 
     public Block() {
         this(new ArrayList<Statement>());
@@ -52,7 +52,7 @@ public class Block extends Statement {
     }
 
     public void execute() throws SetlException {
-        for (Statement stmnt : mStatements) {
+        for (final Statement stmnt : mStatements) {
             if (sStopExecution) {
                 throw new StopExecutionException("Interrupted");
             }
@@ -66,7 +66,7 @@ public class Block extends Statement {
 
     public void markLastExprStatement() {
         if (mStatements.size() > 0) {
-            Statement stmnt = mStatements.get(mStatements.size() - 1);
+            final Statement stmnt = mStatements.get(mStatements.size() - 1);
             if (stmnt instanceof ExpressionStatement) {
                 ((ExpressionStatement) stmnt).setPrintAfterEval();
             }
@@ -80,8 +80,8 @@ public class Block extends Statement {
     }
 
     public String toString(int tabs, boolean brackets) {
-        String endl      = Environment.getEndl();
-        int    stmntTabs = tabs;
+        final String endl      = Environment.getEndl();
+              int    stmntTabs = tabs;
         if (brackets) {
             stmntTabs += 1;
         }
@@ -123,7 +123,7 @@ public class Block extends Statement {
         } else {
             SetlList    stmnts  = (SetlList) term.lastMember();
             Block       block   = new Block(stmnts.size());
-            for (Value v : stmnts) {
+            for (final Value v : stmnts) {
                 block.add(TermConverter.valueToStatement(v));
             }
             return block;

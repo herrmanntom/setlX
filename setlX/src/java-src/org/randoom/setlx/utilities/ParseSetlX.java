@@ -21,8 +21,8 @@ public class ParseSetlX {
 
     private final   static  int             EXPR            =  1337;
     private final   static  int             BLOCK           = 31337;
-    private final   static  List<String>    loadedLibraries = new LinkedList<String>();
     private         static  int             errors          =     0; // our own error accounting, which survives nested parsing
+    private final   static  List<String>    loadedLibraries = new LinkedList<String>();
 
     /*package*/ static void clearLoadedLibraries() {
         loadedLibraries.clear();
@@ -65,7 +65,7 @@ public class ParseSetlX {
 
     public static Block parseInteractive() throws ParserException {
         try {
-            InputStream         stream = InputReader.getStream();
+            final InputStream stream = InputReader.getStream();
 
             // parse the input (ANTLR will print its parser errors into stderr ...)
             return parseBlock(new ANTLRInputStream(stream));
@@ -77,7 +77,7 @@ public class ParseSetlX {
 
     public static Block parseStringToBlock(String input) throws ParserException {
         try {
-            InputStream         stream = new ByteArrayInputStream(input.getBytes());
+            final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (ANTLR will print its parser errors into stderr ...)
             return parseBlock(new ANTLRInputStream(stream));
@@ -89,7 +89,7 @@ public class ParseSetlX {
 
     public static Expr parseStringToExpr(String input) throws ParserException {
         try {
-            InputStream         stream = new ByteArrayInputStream(input.getBytes());
+            final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (ANTLR will print its parser errors into stderr ...)
             return parseExpr(new ANTLRInputStream(stream));
@@ -133,12 +133,12 @@ public class ParseSetlX {
         SetlXgrammarLexer   lexer   = null;
         SetlXgrammarParser  parser  = null;
         try {
-                                lexer  = new SetlXgrammarLexer(input);
-            CommonTokenStream   ts     = new CommonTokenStream(lexer);
-                                parser = new SetlXgrammarParser(ts);
+                                    lexer  = new SetlXgrammarLexer(input);
+            final CommonTokenStream ts     = new CommonTokenStream(lexer);
+                                    parser = new SetlXgrammarParser(ts);
 
             // parse the input
-            CodeFragment        frag   = parseFragment(parser, type);
+            final CodeFragment      frag   = parseFragment(parser, type);
 
             // now ANTLR will print its parser errors into stderr ...
 
@@ -147,7 +147,7 @@ public class ParseSetlX {
             // fill token stream until EOF is reached (parser fills only as far as its lookahead needs)
             ts.fill();
             // current index in stream of tokens
-            int index = ts.index();
+            final int index = ts.index();
 
             /*
              *  If the index into the tokenStream (which was set by the parser)
@@ -171,9 +171,9 @@ public class ParseSetlX {
                      *  Note: In SetlX this can NEVER be the case, because
                      *        epsilon can NOT be derived from any start-rule!
                      */
-                    Token   t       = ts.get(index);
-                    String  error   = "line " + t.getLine() + ":" + t.getCharPositionInLine();
-                            error  += " input '" + ts.toString(index, ts.size()) + "' includes unidentified errors";
+                    final Token t = ts.get(index);
+                    String error  = "line " + t.getLine() + ":" + t.getCharPositionInLine();
+                           error += " input '" + ts.toString(index, ts.size()) + "' includes unidentified errors";
                     // fake ANTLR like error message
                     Environment.errWriteLn(error);
                     // and stop parsing

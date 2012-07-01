@@ -31,11 +31,11 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     // compare not only own members, but also all members contained in own members
     public          SetlBoolean     containsMemberRecursive(Value element) {
-        for (Value v: this) {
+        for (final Value v: this) {
             if (v.equals(element)) {
                 return SetlBoolean.TRUE;
             } else if (v instanceof CollectionValue) {
-                CollectionValue innerValue = (CollectionValue) v;
+                final CollectionValue innerValue = (CollectionValue) v;
                 if (innerValue.containsMemberRecursive(element) == SetlBoolean.TRUE) {
                     return SetlBoolean.TRUE;
                 }
@@ -54,7 +54,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public          Value           multiplyMembers(Value neutral) throws SetlException {
         Value product = null;
-        for (Value v: this) {
+        for (final Value v: this) {
             if (product == null) {
                 product = v.clone();
             } else {
@@ -68,9 +68,9 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         if (this.size() < 1) {
             return Om.OM;
         } else {
-            int needle = Environment.getRandomInt(this.size());
-            int pos    = 0;
-            for (Value v: this) {
+            final int needle = Environment.getRandomInt(this.size());
+                  int pos    = 0;
+            for (final Value v: this) {
                 if (pos == needle) {
                     return v.clone();
                 }
@@ -93,7 +93,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public          Value           sumMembers(Value neutral) throws SetlException {
         Value sum = null;
-        for (Value v: this) {
+        for (final Value v: this) {
             if (sum == null) {
                 sum = v.clone();
             } else {

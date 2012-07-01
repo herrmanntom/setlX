@@ -239,7 +239,7 @@ public class Term extends CollectionValue {
     // viral operation
     public Term collectionAccess(List<Value> args) {
         List<Expr> argExprs = new ArrayList<Expr>(args.size());
-        for (Value v : args) {
+        for (final Value v : args) {
             argExprs.add(TermConverter.valueToExpr(v));
         }
         return (    new CollectionAccess(
@@ -343,7 +343,7 @@ public class Term extends CollectionValue {
     public Term call(List<Expr> exprs, List<Value> args) throws IncompatibleTypeException {
         if (mFunctionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
             List<Expr> argExprs = new ArrayList<Expr>(args.size());
-            for (Value v : args) {
+            for (final Value v : args) {
                 argExprs.add(TermConverter.valueToExpr(v));
             }
             return (    new Call(

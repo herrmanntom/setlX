@@ -23,7 +23,7 @@ public abstract class NumberValue extends Value {
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
             return this.power(((Real) exponent.toReal()).doubleValue());
         } else if (exponent.isReal() == SetlBoolean.TRUE) {
-            Rational r = (Rational) exponent.toRational();
+            final Rational r = (Rational) exponent.toRational();
             if (r.isInteger() == SetlBoolean.TRUE && r.intConvertable()) {
                 return this.power(r.intValue());
             } else {
@@ -41,7 +41,7 @@ public abstract class NumberValue extends Value {
     protected abstract NumberValue power(int    exponent) throws SetlException;
     protected abstract NumberValue power(double exponent) throws SetlException;
 
-    public 	  abstract Value       sum(Value summand) throws SetlException;
+    public    abstract Value       sum(Value summand) throws SetlException;
 
     /* comparisons */
 

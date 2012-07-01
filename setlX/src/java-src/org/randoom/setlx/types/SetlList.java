@@ -10,6 +10,7 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 /* This class implements a list of arbitrary SetlX values.
  * It will most likely be created and filled by an SetListConstructor
@@ -37,16 +38,21 @@ public class SetlList extends CollectionValue {
      */
 
     private LinkedList<Value>   mList;
-    private boolean             isCloned; // is this list a clone?
+    // cache of last position in list, prevents reiterating from beginning
+    private ListIterator<Value> mIterator;
+    // is this list a clone
+    private boolean             isCloned;
 
     public SetlList() {
         mList       = new LinkedList<Value>();
         isCloned    = false; // new lists are not a clone
+        resetIterator(0);
     }
 
     /*package*/ SetlList(LinkedList<Value> list) {
         mList       = list;
         isCloned    = true;  // lists created from another list ARE a clone
+        resetIterator(0);
     }
 
     public SetlList clone() {
@@ -72,21 +78,27 @@ public class SetlList extends CollectionValue {
         if (isCloned) {
             LinkedList<Value> original = mList;
             mList = new LinkedList<Value>();
-            for (Value v: original) {
+            for (final Value v: original) {
                 mList.add(v.clone());
             }
+            resetIterator(0);
             isCloned = false;
         }
+    }
+
+    private void resetIterator(int index) {
+        mIterator = mList.listIterator(index);
     }
 
     public Iterator<Value> iterator() {
         return mList.iterator();
     }
 
-    public void compress() {
+    public void compressAndResetIterator() {
         while (mList.size() > 0 && mList.getLast() == Om.OM) {
             mList.removeLast();
         }
+        resetIterator(0);
     }
 
     /* type checks (sort of Boolean operation) */
@@ -101,14 +113,14 @@ public class SetlList extends CollectionValue {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
         } else if (summand instanceof CollectionValue) {
-            SetlList result = this.clone();
-            for (Value v: (CollectionValue) summand) {
+            final SetlList result = this.clone();
+            for (final Value v: (CollectionValue) summand) {
                 result.addMember(v.clone());
             }
             return result;
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(this);
-        }  else {
+        } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " + " + summand + "' is not a list or string."
             );
@@ -120,11 +132,12 @@ public class SetlList extends CollectionValue {
     public void addMember(Value element) {
         separateFromOriginal();
         mList.add(element.clone());
+        resetIterator(0);
     }
 
     public Value collectionAccess(List<Value> args) throws SetlException {
-        int   aSize  = args.size();
-        Value vFirst = (aSize >= 1)? args.get(0) : null;
+        final int   aSize  = args.size();
+        final Value vFirst = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {
             if (aSize == 2 && vFirst == RangeDummy.RD) {
                 // everything up to high boundary: this(  .. y);
@@ -207,7 +220,16 @@ public class SetlList extends CollectionValue {
         if (index > size()) {
             return Om.OM;
         }
-        return mList.get(index - 1);
+        // in java the index is one lower
+        index--;
+        if (mIterator.previousIndex() == index) {
+            return mIterator.previous();
+        } else {
+            if (mIterator.nextIndex() != index) {
+                resetIterator(index);
+            }
+            return mIterator.next();
+        }
     }
 
     public Value getMembers(Value vLow, Value vHigh) throws SetlException {
@@ -243,9 +265,15 @@ public class SetlList extends CollectionValue {
             );
         }
 
-        SetlList result = new SetlList();
-        for (int i = low - 1; i < high; i++) {
-            result.addMember(mList.get(i).clone());
+        // in java the index is one lower
+        low--;
+        if (mIterator.nextIndex() != low) {
+            resetIterator(low);
+        }
+
+        final SetlList result = new SetlList();
+        for (int i = low; i < high; i++) {
+            result.addMember(mIterator.next().clone());
         }
         return result;
     }
@@ -259,7 +287,7 @@ public class SetlList extends CollectionValue {
 
     public Value maximumMember() throws SetlException {
         Value max = Infinity.NEGATIVE;
-        for (Value v: mList) {
+        for (final Value v: mList) {
             if (v.maximum(max).equals(v)) {
                 max = v;
             }
@@ -269,7 +297,7 @@ public class SetlList extends CollectionValue {
 
     public Value minimumMember() throws SetlException {
         Value min = Infinity.POSITIVE;
-        for (Value v: mList) {
+        for (final Value v: mList) {
             if (v.minimum(min).equals(v)) {
                 min = v;
             }
@@ -279,18 +307,18 @@ public class SetlList extends CollectionValue {
 
     public SetlSet permutations() throws SetlException {
         if (size() == 0) {
-            SetlSet permutations = new SetlSet();
+            final SetlSet permutations = new SetlSet();
             permutations.addMember(clone());
             return permutations;
         }
-        Value           last            = lastMember();
-        SetlList        rest            = clone();
+        final Value     last            = lastMember();
+        final SetlList  rest            = clone();
         rest.removeLastMember();
-        SetlSet         permutatateRest = rest.permutations();
-        SetlSet         permutations    = new SetlSet();
-        for (Value permutation : permutatateRest) {
+        final SetlSet   permutatateRest = rest.permutations();
+        final SetlSet   permutations    = new SetlSet();
+        for (final Value permutation : permutatateRest) {
             for (int i = 0; i <= permutation.size(); i++) {
-                SetlList    perm    = (SetlList) permutation.clone();
+                final SetlList  perm    = (SetlList) permutation.clone();
                 perm.separateFromOriginal();
                 perm.mList.add(i, last.clone());
                 permutations.addMember(perm);
@@ -302,25 +330,26 @@ public class SetlList extends CollectionValue {
     public void removeMember(Value element) {
         separateFromOriginal();
         mList.remove(element);
-        compress();
+        compressAndResetIterator();
     }
 
     public void removeFirstMember() {
         separateFromOriginal();
         mList.removeFirst();
-        compress();
+        compressAndResetIterator();
     }
 
     public void removeLastMember() {
         separateFromOriginal();
         mList.removeLast();
-        compress();
+        compressAndResetIterator();
     }
 
     public SetlList reverse() {
         // mark this list to be clone
         isCloned = true;
-        LinkedList<Value>   reverse = new LinkedList<Value>();
+        // create reversed clone of this list
+        final LinkedList<Value> reverse = new LinkedList<Value>();
         for (final Value v : mList) {
             reverse.addFirst(v);
         }
@@ -342,16 +371,36 @@ public class SetlList extends CollectionValue {
                 "Index '" + index + "' is lower as '1'."
             );
         }
-        if (v == Om.OM) {
-            if (index <= mList.size()) {
-                mList.set(index - 1, v);
+
+        // in java the index is one lower
+        index--;
+
+        if (index >= mList.size()) {
+            if (v == Om.OM) {
+                return; // nothing to do
+            } else {
+                // fill gap from size to index with OM, if necessary
+                while (index >= mList.size()) {
+                    mList.add(Om.OM);
+                }
+                resetIterator(0);
             }
-            compress();
+        }
+
+        // set index to value
+        if (mIterator.previousIndex() == index) {
+            mIterator.previous(); // marks index for following set(v)
         } else {
-            while (index > mList.size()) {
-                mList.add(Om.OM);
+            if (mIterator.nextIndex() != index) {
+                resetIterator(index);
             }
-            mList.set(index - 1, v.clone());
+            mIterator.next();    // marks index for following set(v)
+        }
+        // set value at index which was previously marked
+        mIterator.set(v.clone());
+
+        if (v == Om.OM) {
+            compressAndResetIterator();
         }
     }
 
@@ -364,10 +413,9 @@ public class SetlList extends CollectionValue {
     public String canonical() {
         String result = "[";
 
-        Iterator<Value> iter    = iterator();
+        final Iterator<Value> iter  = iterator();
         while (iter.hasNext()) {
-            Value   member  = iter.next();
-            result += member.canonical();
+            result += iter.next().canonical();
             if (iter.hasNext()) {
                 result += ", ";
             }
@@ -388,21 +436,18 @@ public class SetlList extends CollectionValue {
         } else if ( ! (other instanceof SetlList)) {
             return new MatchResult(false);
         }
-        // 'other' is a list
-        SetlList otherList = (SetlList) other;
+        final SetlList otherList = (SetlList) other;
 
         if (mList.size() != otherList.mList.size()) {
             return new MatchResult(false);
         }
 
-        // same number of members
-        MatchResult     result      = new MatchResult(true);
-        Iterator<Value> thisIter    = iterator();
-        Iterator<Value> otherIter   = otherList.iterator();
+        // match all members
+        final MatchResult       result      = new MatchResult(true);
+        final Iterator<Value>   thisIter    = iterator();
+        final Iterator<Value>   otherIter   = otherList.iterator();
         while (thisIter.hasNext() && otherIter.hasNext()) {
-            Value       thisMember  = thisIter .next();
-            Value       otherMember = otherIter.next();
-            MatchResult subResult   = thisMember.matchesTerm(otherMember);
+            final MatchResult subResult   = thisIter.next().matchesTerm(otherIter.next());
             if (subResult.isMatch()) {
                 result.addBindings(subResult);
             } else {
@@ -410,12 +455,11 @@ public class SetlList extends CollectionValue {
             }
         }
 
-        // all members match
         return result;
     }
 
     public Value toTerm() {
-        SetlList termList = new SetlList();
+        final SetlList termList = new SetlList();
         for (Value v: mList) {
             termList.addMember(v.toTerm());
         }
@@ -435,12 +479,10 @@ public class SetlList extends CollectionValue {
      */
     public int compareTo(Value v){
         if (v instanceof SetlList) {
-            Iterator<Value> iterFirst  = iterator();
-            Iterator<Value> iterSecond = ((SetlList) v).iterator();
+            final Iterator<Value> iterFirst  = iterator();
+            final Iterator<Value> iterSecond = ((SetlList) v).iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
-                Value first  = iterFirst .next();
-                Value second = iterSecond.next();
-                int   cmp    = first.compareTo(second);
+                final int cmp = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp == 0) {
                     continue;
                 }

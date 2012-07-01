@@ -30,13 +30,15 @@ implemented here as:
 
 public class Iterator {
     // functional character used in terms
-    private final static String		FUNCTIONAL_CHARACTER = "^iterator";
+    private final static String     FUNCTIONAL_CHARACTER = "^iterator";
     // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sStopExecution       = false;
+    // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean    sTraceAssignments    = false;
 
-    private Expr        mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
-    private Expr        mCollection; // Rhs (should be Set/List)
-    private Iterator    mNext;       // next iterator in iteratorChain
+    private final Expr      mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
+    private final Expr      mCollection; // Rhs (should be Set/List)
+    private       Iterator  mNext;       // next iterator in iteratorChain
 
     public Iterator(Expr assignable, Expr collection) {
         mAssignable = assignable;
@@ -66,7 +68,7 @@ public class Iterator {
        note: variables inside the whole iteration are not _not_ local
              all will be written `through' these inner scopes                 */
     public void eval(IteratorExecutionContainer exec) throws SetlException {
-        VariableScope   outerScope  = VariableScope.getScope();
+        final VariableScope outerScope = VariableScope.getScope();
         try {
             evaluate(exec);
         } catch (BreakException ee) {
@@ -94,7 +96,7 @@ public class Iterator {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(mAssignable.toTerm());
         result.addMember(mCollection.toTerm());
         if (mNext != null) {
@@ -137,20 +139,20 @@ public class Iterator {
         if (sStopExecution) {
             throw new StopExecutionException("Interrupted");
         }
-        Value iterationValue = mCollection.eval(); // trying to iterate over this value
+        final Value iterationValue = mCollection.eval(); // trying to iterate over this value
         if (iterationValue instanceof CollectionValue) {
-            CollectionValue coll        = (CollectionValue) iterationValue;
+            final CollectionValue   coll        = (CollectionValue) iterationValue;
             // scope for inner execution/next iterator
-            VariableScope   innerScope  = VariableScope.getScope().createInteratorBlock();
+            final VariableScope     innerScope  = VariableScope.getScope().createInteratorBlock();
             // iterate over items
-            for (Value v: coll) {
+            for (final Value v: coll) {
                 // restore inner scope
                 VariableScope.setScope(innerScope);
                 innerScope.setWriteThrough(false); // force iteration variables to be local to this block
                 // assign value from collection
                 mAssignable.assign(v);
 
-                if (Environment.isTraceAssignments()) {
+                if (sTraceAssignments) {
                     Environment.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
                 }
 

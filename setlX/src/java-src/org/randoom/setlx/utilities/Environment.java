@@ -1,6 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.JVMIOException;
+import org.randoom.setlx.expressions.Assignment;
 import org.randoom.setlx.expressions.Call;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
@@ -20,7 +21,7 @@ public class Environment {
     private         static  EnvironmentProvider sEnvProvider                = null;
 
     // number of CPUs/Cores in System
-    private         static  int                 sCORES                      = Runtime.getRuntime().availableProcessors();
+    private final   static  int                 sCORES                      = Runtime.getRuntime().availableProcessors();
 
     // is input feed by a human?
     private         static  boolean             sIsHuman                    = false;
@@ -182,7 +183,10 @@ public class Environment {
     }
 
     public static void setTraceAssignments(boolean traceAssignments) {
-        sTraceAssignments = traceAssignments;
+        sTraceAssignments               = traceAssignments;
+        Assignment.sTraceAssignments    = traceAssignments;
+        Iterator.sTraceAssignments      = traceAssignments;
+        MatchResult.sTraceAssignments   = traceAssignments;
     }
 
     public static boolean isTraceAssignments() {
@@ -201,8 +205,8 @@ public class Environment {
         if (!sPrintVerbose || tabs <= 0) {
             return "";
         }
-        String tab = sEnvProvider.getTab();
-        String r   = tab;
+        final String tab = sEnvProvider.getTab();
+              String r   = tab;
         for (int i = 1; i < tabs; i++) {
             r += tab;
         }
@@ -223,7 +227,7 @@ public class Environment {
     }
 
     public static boolean removeBreakpoint(String id) {
-        boolean result  = sBreakpoints.remove(id);
+        final boolean result  = sBreakpoints.remove(id);
         setBreakpointsEnabled(sBreakpoints.size() > 0);
         return result;
     }

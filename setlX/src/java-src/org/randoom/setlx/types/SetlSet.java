@@ -75,7 +75,7 @@ public class SetlSet extends CollectionValue {
         if (isCloned) {
             TreeSet<Value> original = mSet;
             mSet = new TreeSet<Value>();
-            for (Value v: original) {
+            for (final Value v: original) {
                 mSet.add(v.clone());
             }
             isCloned = false;
@@ -100,7 +100,7 @@ public class SetlSet extends CollectionValue {
     /* type checks (sort of boolean operation) */
 
     public SetlBoolean isMap() {
-        for (Value v: mSet) {
+        for (final Value v: mSet) {
             if (v instanceof SetlList) {
                 if (((SetlList) v).size() != 2) {
                     return SetlBoolean.FALSE;
@@ -161,7 +161,7 @@ public class SetlSet extends CollectionValue {
             return ((Term) summand).sumFlipped(this);
         } else if(summand instanceof CollectionValue) {
             SetlSet result = this.clone();
-            for (Value v: (CollectionValue) summand) {
+            for (final Value v: (CollectionValue) summand) {
                 result.addMember(v.clone());
             }
             return result;
@@ -219,13 +219,13 @@ public class SetlSet extends CollectionValue {
          * As this set is in lexicographical order, all pairs which first element
          * matches arg must be in this subset.
          */
-        Value   lowerBound  = new SetlList();
+        final Value lowerBound  = new SetlList();
         lowerBound.addMember(arg);
-        Value   upperBound  = new SetlList();
+        final Value upperBound  = new SetlList();
         upperBound.addMember(arg);
         upperBound.addMember(Infinity.POSITIVE);
 
-        NavigableSet<Value> navSubSet   = mSet.subSet(lowerBound, false, upperBound, true);
+        final NavigableSet<Value>   navSubSet   = mSet.subSet(lowerBound, false, upperBound, true);
 
         // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
         TreeSet<Value>      subSet      = null;
@@ -235,8 +235,8 @@ public class SetlSet extends CollectionValue {
             subSet  = new TreeSet<Value>(navSubSet);
         }
 
-        SetlSet             result      = new SetlSet();
-        for (Value v: subSet) {
+        final SetlSet       result      = new SetlSet();
+        for (final Value v: subSet) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     result.addMember(v.lastMember());
@@ -260,7 +260,7 @@ public class SetlSet extends CollectionValue {
 
     public SetlSet domain() throws SetlException {
         SetlSet result = new SetlSet();
-        for (Value v: mSet) {
+        for (final Value v: mSet) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     result.addMember(v.firstMember());
@@ -301,24 +301,24 @@ public class SetlSet extends CollectionValue {
          * As this set is in lexicographical order, all pairs which first element
          * matches element must be in this subset.
          */
-        Value   lowerBound  = new SetlList();
+        final Value lowerBound  = new SetlList();
         lowerBound.addMember(element);
-        Value   upperBound  = new SetlList();
+        final Value upperBound  = new SetlList();
         upperBound.addMember(element);
         upperBound.addMember(Infinity.POSITIVE);
 
-        NavigableSet<Value> navSubSet   = mSet.subSet(lowerBound, false, upperBound, true);
+        final NavigableSet<Value>   navSubSet   = mSet.subSet(lowerBound, false, upperBound, true);
 
         // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
-        TreeSet<Value>      subSet      = null;
+        TreeSet<Value>              subSet      = null;
         if (navSubSet instanceof TreeSet) { // on all tested runtimes this is a TreeSet, be one can't be sure
             subSet  = (TreeSet<Value>) navSubSet;
         } else { // slow, but secure shallow copy is better than ClassCastException
             subSet  = new TreeSet<Value>(navSubSet);
         }
 
-        Value               result      = Om.OM;
-        for (Value v: subSet) {
+        Value                       result      = Om.OM;
+        for (final Value v: subSet) {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     if (result == Om.OM) {
@@ -364,10 +364,8 @@ public class SetlSet extends CollectionValue {
     }
 
     public SetlSet permutations() throws SetlException {
-        // add all members to a new list
-        SetlList    result  = (SetlList) (new SetlList()).sum(this);
-        // permutate list and return result
-        return result.permutations();
+        // add all members to a new list, then permutate list and return result
+        return toList().permutations();
     }
 
     // Compute the power set of this set according to the
@@ -376,27 +374,27 @@ public class SetlSet extends CollectionValue {
     //     power(A + {x}) = power(A) + { {x} + s : s in power(A) }
     public SetlSet powerSet() throws SetlException {
         if (size() == 0) {
-            SetlSet power = new SetlSet();
+            final SetlSet power = new SetlSet();
             power.addMember(clone());
             return power;
         }
-        Value          last      = lastMember();
-        SetlSet        rest      = clone();
+        final Value     last      = lastMember();
+        final SetlSet   rest      = clone();
         rest.removeLastMember();
-        SetlSet        powerRest = rest.powerSet();
-        SetlSet        powerSet  = powerRest.clone();
+        final SetlSet   powerRest = rest.powerSet();
+        final SetlSet   powerSet  = powerRest.clone();
         powerRest.separateFromOriginal();
-        for (Value subSet : powerRest) {
+        for (final Value subSet : powerRest) {
             subSet.addMember(last);
         }
         return (SetlSet) powerSet.sum(powerRest);
     }
 
     public SetlSet range() throws SetlException {
-        SetlSet result = new SetlSet();
-        for (Value v: mSet) {
+        final SetlSet result = new SetlSet();
+        for (final Value v: mSet) {
             if (v instanceof SetlList) {
-                SetlList list  = (SetlList) v;
+                final SetlList list  = (SetlList) v;
                 if (list.size() == 2) {
                     result.addMember(list.lastMember());
                 } else {
@@ -421,9 +419,9 @@ public class SetlSet extends CollectionValue {
          * As this set is in lexicographical order, all pairs which first element
          * matches index must be in this subset.
          */
-        Value   lowerBound  = new SetlList();
+        final Value lowerBound  = new SetlList();
         lowerBound.addMember(index);
-        Value   upperBound  = new SetlList();
+        final Value upperBound  = new SetlList();
         upperBound.addMember(index);
         upperBound.addMember(Infinity.POSITIVE);
 
@@ -462,9 +460,9 @@ public class SetlSet extends CollectionValue {
     public String canonical() {
         String result = "{";
 
-        Iterator<Value> iter    = iterator();
+        final Iterator<Value> iter  = iterator();
         while (iter.hasNext()) {
-            Value   member  = iter.next();
+            final Value member= iter.next();
             result += member.canonical();
             if (iter.hasNext()) {
                 result += ", ";
@@ -490,17 +488,17 @@ public class SetlSet extends CollectionValue {
         }
 
         // first match all atomic values
-        TreeSet<Value> thisCopy     = new TreeSet<Value>(mSet);
-        TreeSet<Value> otherCopy    = new TreeSet<Value>(((SetlSet)other).mSet);
+        final TreeSet<Value> thisCopy   = new TreeSet<Value>(mSet);
+        final TreeSet<Value> otherCopy  = new TreeSet<Value>(((SetlSet)other).mSet);
 
-        for (Value v : mSet) {
+        for (final Value v : mSet) {
             // remove value from both sets, if
             // a) it is contained in both sets
             if (otherCopy.contains(v)) {
                 // b) it realy matches itself
                 // c) AND is a 'simple' match, i.e. does not include any variables
                 //        which must be set after the match
-                MatchResult mr = v.matchesTerm(v);
+                final MatchResult mr = v.matchesTerm(v);
                 if (mr.isMatch() && ( ! mr.hasBindings())) {
                     thisCopy .remove(v);
                     otherCopy.remove(v);
@@ -517,9 +515,9 @@ public class SetlSet extends CollectionValue {
         }
 
         // add remaining members from `this' to a new list
-        SetlList    thisList            = (new SetlSet(thisCopy)).toList();
+        final SetlList  thisList            = (new SetlSet(thisCopy)).toList();
         // permutate remaining members from `other'
-        SetlSet     otherPermutations   = null;
+              SetlSet   otherPermutations   = null;
         try {
             otherPermutations   = (new SetlSet(otherCopy)).permutations();
         } catch (SetlException se) {
@@ -527,8 +525,8 @@ public class SetlSet extends CollectionValue {
         }
 
         // both set match, when (at least) one permutation matches
-        for (Value permutation : otherPermutations) {
-            MatchResult match   = thisList.matchesTerm(permutation);
+        for (final Value permutation : otherPermutations) {
+            final MatchResult match = thisList.matchesTerm(permutation);
             if (match.isMatch()) {
                 return match;
             }
@@ -539,8 +537,8 @@ public class SetlSet extends CollectionValue {
     }
 
     public Value toTerm() {
-        SetlSet termSet = new SetlSet();
-        for (Value v: mSet) {
+        final SetlSet termSet = new SetlSet();
+        for (final Value v: mSet) {
             termSet.addMember(v.toTerm());
         }
         return termSet;
@@ -559,12 +557,10 @@ public class SetlSet extends CollectionValue {
      */
     public int compareTo(Value v){
         if (v instanceof SetlSet) {
-            Iterator<Value> iterFirst  = mSet.iterator();
-            Iterator<Value> iterSecond = ((SetlSet) v).mSet.iterator();
+            final Iterator<Value> iterFirst  = mSet.iterator();
+            final Iterator<Value> iterSecond = ((SetlSet) v).mSet.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
-                Value   first  = iterFirst .next();
-                Value   second = iterSecond.next();
-                int     cmp    = first.compareTo(second);
+                int     cmp    = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp == 0) {
                     continue;
                 }

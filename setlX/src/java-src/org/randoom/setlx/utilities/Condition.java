@@ -18,14 +18,14 @@ implemented here as:
 */
 
 public class Condition {
-    private Expr mExpr;
+    private final Expr mExpr;
 
     public Condition(Expr expr) {
         mExpr = expr;
     }
 
     public SetlBoolean eval() throws SetlException {
-        Value v = mExpr.eval();
+        final Value v = mExpr.eval();
         if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) { // is Boolean value?
             return (SetlBoolean) v;
         } else {

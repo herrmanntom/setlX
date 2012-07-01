@@ -21,27 +21,30 @@ implemented here as:
 
 public class Assignment extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER_DIRECT     = "^assignment";           // ':='
-    public  final static String FUNCTIONAL_CHARACTER_SUM        = "^sumAssignment";        // '+='
-    public  final static String FUNCTIONAL_CHARACTER_DIFFERENCE = "^differenceAssignment"; // '-='
-    public  final static String FUNCTIONAL_CHARACTER_PRODUCT    = "^productAssignment";    // '*='
-    public  final static String FUNCTIONAL_CHARACTER_DIVISION   = "^divisionAssignment";   // '/='
-    public  final static String FUNCTIONAL_CHARACTER_MODULO     = "^moduloAssignment";     // '%='
+    public  final static String     FUNCTIONAL_CHARACTER_DIRECT     = "^assignment";           // ':='
+    public  final static String     FUNCTIONAL_CHARACTER_SUM        = "^sumAssignment";        // '+='
+    public  final static String     FUNCTIONAL_CHARACTER_DIFFERENCE = "^differenceAssignment"; // '-='
+    public  final static String     FUNCTIONAL_CHARACTER_PRODUCT    = "^productAssignment";    // '*='
+    public  final static String     FUNCTIONAL_CHARACTER_DIVISION   = "^divisionAssignment";   // '/='
+    public  final static String     FUNCTIONAL_CHARACTER_MODULO     = "^moduloAssignment";     // '%='
+    // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    public        static boolean    sTraceAssignments               = false;
 
-    public  final static int    DIRECT                          = 0; // ':='
-    public  final static int    SUM                             = 1; // '+='
-    public  final static int    DIFFERENCE                      = 2; // '-='
-    public  final static int    PRODUCT                         = 3; // '*='
-    public  final static int    DIVISION                        = 4; // '/='
-    public  final static int    MODULO                          = 5; // '%='
+    // type of assignment
+    public  final static int        DIRECT                          = 0; // ':='
+    public  final static int        SUM                             = 1; // '+='
+    public  final static int        DIFFERENCE                      = 2; // '-='
+    public  final static int        PRODUCT                         = 3; // '*='
+    public  final static int        DIVISION                        = 4; // '/='
+    public  final static int        MODULO                          = 5; // '%='
 
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE                      = 1000;
+    private final static int        PRECEDENCE                      = 1000;
 
-    private Expr    mLhs;
-    private int     mType;
-    private Expr    mRhs;
-    private Expr    mExecutionRhs; // executed rhs, e.g. mLhs + mRhs, when type == "+="
+    private final Expr  mLhs;
+    private final int   mType;
+    private final Expr  mRhs;
+    private final Expr  mExecutionRhs; // executed rhs, e.g. mLhs + mRhs, when type == "+="
 
     public Assignment(Expr lhs, int type, Expr rhs) {
         mLhs  = lhs;
@@ -77,9 +80,9 @@ public class Assignment extends Expr {
         if (mExecutionRhs == null) {
             throw new UndefinedOperationException("This assignment type is undefined.");
         }
-        Value assigned = mLhs.assign(mExecutionRhs.eval());
+        final Value assigned = mLhs.assign(mExecutionRhs.eval());
 
-        if (Environment.isTraceAssignments()) {
+        if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs.toString() + " := " + assigned + " >~");
         }
 
@@ -149,7 +152,7 @@ public class Assignment extends Expr {
     }
 
     public static Assignment termToExpr(Term term) throws TermConversionException {
-        String  fc  = term.functionalCharacter().getUnquotedString();
+        final String fc = term.functionalCharacter().getUnquotedString();
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + fc);
         } else {
@@ -169,8 +172,8 @@ public class Assignment extends Expr {
             } else {
                 throw new TermConversionException("malformed " + fc);
             }
-            Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
             return new Assignment(lhs, type, rhs);
         }
     }

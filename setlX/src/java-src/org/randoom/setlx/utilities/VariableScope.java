@@ -49,20 +49,20 @@ public class VariableScope {
     }
 
     public static Value findValue(String var) {
-        Value      v = sGlobals.locateValue(var).mV;
+        final Value v = sGlobals.locateValue(var).mV;
         if (v != null) {
             return v;
         }
-        SearchItem i = sVariableScope.locateValue(var);
+        final SearchItem i = sVariableScope.locateValue(var);
         if (i.mIsClone) { // will never be clone when sVariableScope.mReadThrough is true
             sVariableScope.storeValue(var, i.mV); // store values found in outer scope into current scope
         } else if (i.mV == null) {
             // search if name matches a predefined function (which start with 'PD_')
-            String packageName = PreDefinedFunction.class.getPackage().getName();
-            String className   = "PD_" + var;
+            final String packageName = PreDefinedFunction.class.getPackage().getName();
+            final String className   = "PD_" + var;
             try {
-                Class<?> c = Class.forName(packageName + '.' + className);
-                i.mV       = (PreDefinedFunction) c.getField("DEFINITION").get(null);
+                final Class<?> c = Class.forName(packageName + '.' + className);
+                i.mV             = (PreDefinedFunction) c.getField("DEFINITION").get(null);
             } catch (Exception e) {
                 /* Name does not match predefined function.
                    But return value already is null, no change necessary.     */
@@ -105,11 +105,11 @@ public class VariableScope {
 
     /*========================== end static ==========================*/
 
-    private Map<String, Value>  mVarBindings;
+    private final   Map<String, Value>  mVarBindings;
     // stores reference to original scope object upon cloning
-    private VariableScope       mOriginalScope;
+    private         VariableScope       mOriginalScope;
     // if set mOriginalScope is only searched for functions, not variables
-    private boolean             mRestrictToFunctions;
+    private         boolean             mRestrictToFunctions;
     /* If set variables read from outer scopes will _not_ be copied to
        current one     and
        variables changed in this scope will be written into scopes
@@ -119,12 +119,13 @@ public class VariableScope {
        because the iteration variables are local to each iteration, but other
        variables used inside the iteration are not local to the iteration
        (e.g. iteration do not introduce an inner scope!).                     */
-    private boolean            mReadThrough;
-    private boolean            mWriteThrough;
+    private         boolean             mReadThrough;
+    private         boolean             mWriteThrough;
 
     private class SearchItem {
-        Value   mV;
-        boolean mIsClone;
+        /*package*/ Value   mV;
+        /*package*/ boolean mIsClone;
+
         SearchItem(Value v, boolean isClone) {
             mV = v;
             mIsClone = isClone;
@@ -141,22 +142,22 @@ public class VariableScope {
     }
 
     public VariableScope clone() {
-        VariableScope   newEnv  = new VariableScope();
-        newEnv.mOriginalScope   = this;
+        final VariableScope	newEnv = new VariableScope();
+        newEnv.mOriginalScope      = this;
         return newEnv;
     }
 
     /* iterators need special scopeBlocks, because the iteration variables are local
        to their iteration, but all other variables inside the execution body are not */
     public VariableScope createInteratorBlock() {
-        VariableScope   newEnv  = this.clone();
-        newEnv.mReadThrough     = true;
-        newEnv.mWriteThrough    = true;
+        final VariableScope newEnv = this.clone();
+        newEnv.mReadThrough        = true;
+        newEnv.mWriteThrough       = true;
         return newEnv;
     }
 
     public VariableScope cloneFunctions() {
-        VariableScope   newEnv      = this.clone();
+        final VariableScope newEnv  = this.clone();
         newEnv.mRestrictToFunctions = true;
         return newEnv;
     }
@@ -169,12 +170,12 @@ public class VariableScope {
         if (this == sGlobals     && var.length()  == 3   &&
             var.charAt(1) == 97  && var.charAt(2) == 114 && var.charAt(0) == 119
         ) {
-            char[] v = {87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
+            final char[] v = {87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
             return new SearchItem(new SetlString(new String(v)), false);
         }
-        Value v = mVarBindings.get(var);
+        final Value v = mVarBindings.get(var);
         if (v == null && mOriginalScope != null) {
-            SearchItem i = mOriginalScope.locateValue(var);
+            final SearchItem i = mOriginalScope.locateValue(var);
             if (i.mV != null && (!mRestrictToFunctions || i.mV instanceof ProcedureDefinition)) {
                 if (i.mIsClone || mReadThrough) { // don't clone when already cloned or readThrough is true
                     if (mRestrictToFunctions) { // i.mV must be SetlDefinition be get here
@@ -198,8 +199,8 @@ public class VariableScope {
             mOriginalScope.collectBindings(result, mRestrictToFunctions);
         }
         // add own bindings (possibly overwriting values from inner bindings)
-        for (Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
-            Value   val = entry.getValue();
+        for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
+            final Value val = entry.getValue();
             if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
                 result.put(entry.getKey(), val);
             }
@@ -221,18 +222,18 @@ public class VariableScope {
     /* term operations */
 
     public Term toTerm() {
-        Map<String, Value>  allVars = new HashMap<String, Value>();
+        final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
         sGlobals.collectBindings(allVars, false);
 
         // term which represents the scope
-        Term        result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
+        final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
 
         // list of bindings in scope
-        SetlSet     bindings    = new SetlSet();
-        for (Map.Entry<String, Value> entry : allVars.entrySet()) {
-            SetlList    binding = new SetlList();
+        final SetlSet	bindings    = new SetlSet();
+        for (final Map.Entry<String, Value> entry : allVars.entrySet()) {
+            final SetlList	binding = new SetlList();
             binding.addMember(new SetlString(entry.getKey()));
             binding.addMember(entry.getValue().toTerm());
 

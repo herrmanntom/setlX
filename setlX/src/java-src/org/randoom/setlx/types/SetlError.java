@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 
 public class SetlError extends Value {
 
-    private String mMessage;
+    private final String mMessage;
 
     public SetlError(String message){
         mMessage = message;
@@ -48,7 +48,7 @@ public class SetlError extends Value {
      */
     public int compareTo(Value v){
         if (v instanceof SetlError) {
-            SetlError error = (SetlError) v;
+            final SetlError error = (SetlError) v;
             return mMessage.compareTo(error.mMessage);
         } else {
             // everything is bigger

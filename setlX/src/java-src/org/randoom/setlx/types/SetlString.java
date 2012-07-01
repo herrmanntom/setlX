@@ -11,11 +11,11 @@ public class SetlString extends Value {
 
     public static SetlString createFromConstructor(String s) {
         // parse escape sequences
-        int           length    = s.length();
-        StringBuilder sb        = new StringBuilder(length);
+        final int           length    = s.length();
+        final StringBuilder sb        = new StringBuilder(length);
         for (int i = 0; i < length; ) {
-            char c = s.charAt(i);                          // current char
-            char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
+            final char c = s.charAt(i);                          // current char
+            final char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
             if (c == '\\') {
                 if (n == '\\') {
                     sb.append('\\');
@@ -63,7 +63,7 @@ public class SetlString extends Value {
 
     public Value toInteger() {
         try {
-            Rational result = new Rational(mString);
+            final Rational result = new Rational(mString);
             if (result.isInteger() == SetlBoolean.TRUE) {
                 return result;
             } else {
@@ -104,12 +104,12 @@ public class SetlString extends Value {
 
     public Value multiply(Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
-            int    m      = ((Rational) multiplier).intValue();
-            String result = "";
+            final int           m   = ((Rational) multiplier).intValue();
+            final StringBuilder sb  = new StringBuilder(mString.length() * m);
             for (int i = 0; i < m; ++i) {
-                result += mString;
+                sb.append(mString);
             }
-            return new SetlString(result);
+            return new SetlString(sb.toString());
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).multiplyFlipped(this);
         } else {
@@ -121,8 +121,7 @@ public class SetlString extends Value {
 
     public Value sum(Value summand) throws IncompatibleTypeException {
         if (summand instanceof SetlString) {
-            SetlString s      = (SetlString) summand;
-            return new SetlString(mString.concat(s.mString));
+            return new SetlString(mString.concat(((SetlString) summand).mString));
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
         } else if (summand != Om.OM) {
@@ -147,8 +146,8 @@ public class SetlString extends Value {
     /* operations on collection values (Lists, Sets [, Strings]) */
 
     public Value collectionAccess(List<Value> args) throws SetlException {
-        int   aSize  = args.size();
-        Value vFirst = (aSize >= 1)? args.get(0) : null;
+        final int   aSize   = args.size();
+        final Value vFirst  = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {
             if (aSize == 2 && vFirst == RangeDummy.RD) {
                 // everything up to high boundary: this(  .. y);
@@ -242,17 +241,11 @@ public class SetlString extends Value {
                 "Upper bound '" + high + "' is larger as size '" + mString.length() + "' of string '" + mString + "'."
             );
         }
-        String result = mString.substring(low - 1, high);
-        return new SetlString(result);
+        return new SetlString(mString.substring(low - 1, high));
     }
 
     public SetlString reverse() {
-        int             length  = mString.length();
-        StringBuilder   reverse = new StringBuilder();
-        for(int i = length; i > 0; --i) {
-            reverse.append(mString.charAt(i-1));
-        }
-        return new SetlString(reverse.toString());
+        return new SetlString((new StringBuilder(mString)).reverse().toString());
     }
 
     public int size() {
@@ -265,20 +258,27 @@ public class SetlString extends Value {
                 "Pattern '" + pattern  + "' is not a string."
             );
         }
-        String   p       = pattern.getUnquotedString();
-        String[] strings = mString.split(p);
-        SetlList result  = new SetlList();
-        for (String str : strings) {
+        final String    p       = pattern.getUnquotedString();
+        final String[]  strings = mString.split(p);
+        final SetlList  result  = new SetlList();
+        for (final String str : strings) {
             result.addMember(new SetlString(str));
         }
-        // fix strSplit("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
-        if (p.equals("") && strings.length >= 1 && strings[0].equals("")) {
+
+        // fix split("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
+        if (strings.length >= 1 && strings[0].equals("") && p.equals("")) {
             result.removeFirstMember();
         }
-        // fix strSplit(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
-        if (mString.endsWith(p)) {
+        // fix split(";", ";") => [], should be ["", ""]
+        else if (mString.equals(p)) {
+            result.addMember(new SetlString(""));
             result.addMember(new SetlString(""));
         }
+        // fix split(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
+        else if (mString.endsWith(p)) {
+            result.addMember(new SetlString(""));
+        }
+
         return result;
     }
 
@@ -294,10 +294,10 @@ public class SetlString extends Value {
 
     public String getEscapedString() {
         // parse escape sequences
-        int           length    = mString.length();
-        StringBuilder sb        = new StringBuilder(length);
+        final int           length  = mString.length();
+        final StringBuilder sb      = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            char c = mString.charAt(i);  // current char
+            final char c = mString.charAt(i);  // current char
             if (c == '\\') {
                 sb.append("\\\\");
             } else if (c == '\n') {
@@ -334,8 +334,7 @@ public class SetlString extends Value {
      */
     public int compareTo(Value v){
         if (v instanceof SetlString) {
-            SetlString str = (SetlString) v;
-            return mString.compareTo(str.mString);
+            return mString.compareTo(((SetlString) v).mString);
         } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof Term ||
                    v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
             // SetlSet, SetlList, Term, ProcedureDefinition and +Infinity are bigger

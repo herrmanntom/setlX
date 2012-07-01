@@ -20,16 +20,15 @@ import java.io.InputStream;
 
 public final class InputReader {
     private static String   EOL         = null;
-    private static boolean  multiLine   = false;
 
     public static InputStream getStream() throws EndOfFileException {
-        StringBuilder   input       = new StringBuilder();
-        String          line        = null;
-        int             endlAdded   = 0;
+        final StringBuilder   input       = new StringBuilder();
+              String          line        = null;
+              int             endlAdded   = 0;
+        final boolean         multiLine   = Environment.isMultiLineEnabled();
         if (EOL == null) {
             EOL = Environment.getEndl();
         }
-        multiLine = Environment.isMultiLineEnabled();
         try {
             while (true) {
                 // line is read and returned without termination character(s)
@@ -37,12 +36,14 @@ public final class InputReader {
                 if (line == null) {
                     throw new EndOfFileException("EndOfFile");
                 } else {
+                    // append line
+                    input.append(line);
                     if (line.endsWith("\\")) {
-                        // append only line (without backslash and termination)
-                        input.append(line.substring(0, line.length() -1));
+                        // remove backslash for added line
+                        input.deleteCharAt(input.length() - 1);
+                        continue;
                     } else {
-                        // add line and termination (e.g. Unix style '\n')
-                        input.append(line);
+                        // add line termination (e.g. Unix style '\n')
                         input.append(EOL);  endlAdded += EOL.length();
                     }
                 }

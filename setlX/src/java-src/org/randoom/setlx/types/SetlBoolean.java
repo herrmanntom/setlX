@@ -30,7 +30,7 @@ public class SetlBoolean extends Value {
         if (this == FALSE) {
             return FALSE;
         } else { // this == TRUE
-            Value otr = other.eval();
+            final Value otr = other.eval();
             if (otr == TRUE) {
                 return TRUE;
             } else if (otr == FALSE) {
@@ -49,7 +49,7 @@ public class SetlBoolean extends Value {
         if (this == FALSE) {
             return TRUE;
         } else { // this == TRUE
-            Value otr = other.eval();
+            final Value otr = other.eval();
             if (otr == TRUE) {
                 return TRUE;
             } else if (otr == FALSE) {
@@ -76,7 +76,7 @@ public class SetlBoolean extends Value {
         if (this == TRUE) {
             return TRUE;
         } else { // this == FALSE
-            Value otr = other.eval();
+            final Value otr = other.eval();
             if (otr == TRUE) {
                 return TRUE;
             } else if (otr == FALSE) {

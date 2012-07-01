@@ -9,8 +9,8 @@ import java.util.List;
 
 public class WriteBackAgent {
 
-    private List<Expr>  mExpressions;
-    private List<Value> mValues;
+    private final List<Expr>  mExpressions;
+    private final List<Value> mValues;
 
     public WriteBackAgent(int size) {
         mExpressions = new ArrayList<Expr>(size);
@@ -33,10 +33,8 @@ public class WriteBackAgent {
        to write the values back, the current pair of expr+value is ignored. */
     public void writeBack() {
         for (int i = 0; i < mExpressions.size(); ++i) {
-            Expr  expr  = mExpressions.get(i);
-            Value value = mValues.get(i).clone();
             try {
-                expr.assign(value);
+                mExpressions.get(i).assign(mValues.get(i));
             } catch (SetlException se) {
                 // assignment failed => just ignore it
             }

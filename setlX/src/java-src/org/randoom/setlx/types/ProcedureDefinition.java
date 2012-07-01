@@ -37,8 +37,8 @@ public class ProcedureDefinition extends Value {
     // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean sFinishFunction      = false;
 
-    protected List<ParameterDef> mParameters;  // parameter list
-    protected Block              mStatements;  // statements in the body of the definition
+    protected final List<ParameterDef> mParameters;  // parameter list
+    protected final Block              mStatements;  // statements in the body of the definition
 
     public ProcedureDefinition(List<ParameterDef> parameters, Block statements) {
         mParameters = parameters;
@@ -67,7 +67,7 @@ public class ProcedureDefinition extends Value {
         }
 
         // save old scope
-        VariableScope oldScope = VariableScope.getScope();
+        final VariableScope oldScope = VariableScope.getScope();
         // create new scope used for the function call
         VariableScope.setScope(oldScope.cloneFunctions());
 
@@ -77,9 +77,9 @@ public class ProcedureDefinition extends Value {
         }
 
         // results of call to procedure
-        Value           result      = Om.OM;
-        WriteBackAgent  wba         = new WriteBackAgent(mParameters.size());
-        boolean         stepThrough = sStepThroughFunction;
+              Value           result      = Om.OM;
+        final WriteBackAgent  wba         = new WriteBackAgent(mParameters.size());
+        final boolean         stepThrough = sStepThroughFunction;
 
         try {
             try {
@@ -97,12 +97,12 @@ public class ProcedureDefinition extends Value {
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < mParameters.size(); ++i) {
-                ParameterDef param = mParameters.get(i);
+                final ParameterDef param = mParameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE) {
                     // value of parameter after execution
-                    Value postValue = param.getValue();
+                    final Value postValue = param.getValue();
                     // expression used to fill parameter before execution
-                    Expr  preExpr   = exprs.get(i);
+                    final Expr  preExpr   = exprs.get(i);
                     /* if possible the WriteBackAgent will set the variable used in this
                        expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);
@@ -149,10 +149,10 @@ public class ProcedureDefinition extends Value {
     /* term operations */
 
     public Value toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList paramList = new SetlList();
-        for (ParameterDef param: mParameters) {
+        final SetlList paramList = new SetlList();
+        for (final ParameterDef param: mParameters) {
             paramList.addMember(param.toTerm());
         }
         result.addMember(paramList);
@@ -166,12 +166,12 @@ public class ProcedureDefinition extends Value {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            SetlList            paramList   = (SetlList) term.firstMember();
-            List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
-            for (Value v : paramList) {
+            final SetlList            paramList   = (SetlList) term.firstMember();
+            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(v));
             }
-            Block               block       = TermConverter.valueToBlock(term.lastMember());
+            final Block               block       = TermConverter.valueToBlock(term.lastMember());
             return new ProcedureDefinition(parameters, block);
         }
     }
@@ -191,10 +191,10 @@ public class ProcedureDefinition extends Value {
         if (this == v) { // from using clone()
             return 0;
         } else if (v instanceof ProcedureDefinition) {
-            ProcedureDefinition other = (ProcedureDefinition) v;
+            final ProcedureDefinition other = (ProcedureDefinition) v;
             if (this instanceof PreDefinedFunction && other instanceof PreDefinedFunction) {
-                PreDefinedFunction _this  = (PreDefinedFunction) this;
-                PreDefinedFunction _other = (PreDefinedFunction) other;
+                final PreDefinedFunction _this  = (PreDefinedFunction) this;
+                final PreDefinedFunction _other = (PreDefinedFunction) other;
                 return _this.getName().compareTo(_other.getName());
             } else {
                 int cmp = mParameters.toString().compareTo(other.mParameters.toString());

@@ -33,8 +33,8 @@ public class SetListConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE  = 9999;
 
-    private int         mType;
-    private Constructor mConstructor;
+    private final int           mType;
+    private final Constructor   mConstructor;
 
     public SetListConstructor(int type, Constructor constructor) {
         mType        = type;
@@ -42,26 +42,24 @@ public class SetListConstructor extends Expr {
     }
 
     protected Value evaluate() throws SetlException {
-        Value result = null;
         if (mType == SET) {
-            SetlSet set = new SetlSet();
+            final SetlSet set = new SetlSet();
             if (mConstructor != null) {
                 mConstructor.fillCollection(set);
             }
-            result = set;
+            return set;
         } else if (mType == LIST) {
-            SetlList list = new SetlList();
+            final SetlList list = new SetlList();
             if (mConstructor != null) {
                 mConstructor.fillCollection(list);
             }
-            list.compress();
-            result = list;
+            list.compressAndResetIterator();
+            return list;
         } else {
             throw new UndefinedOperationException(
                 "This set/list constructor type is undefined."
             );
         }
-        return result;
     }
 
     // sets this expression to the given value
@@ -106,12 +104,12 @@ public class SetListConstructor extends Expr {
     /* term operations */
 
     public Value toTerm() {
-        CollectionValue result;
+        final CollectionValue result;
         if (mType == SET) {
             result = new SetlSet();
         } else if (mType == LIST) {
             result = new SetlList();
-        } else {
+        } else { // will not happen, but we can not throw an exception here
             result = new Term("'undefindedSetListConstructor");
         }
         if (mConstructor != null) {
@@ -124,7 +122,7 @@ public class SetListConstructor extends Expr {
         if ( ! (value instanceof SetlList || value instanceof SetlSet)) {
             throw new TermConversionException("not a collectionValue");
         } else {
-            CollectionValue cv = (CollectionValue) value;
+            final CollectionValue cv = (CollectionValue) value;
             if (cv.size() == 0) { // empty
                 if (cv instanceof SetlList) {
                     return new SetListConstructor(LIST, null);
@@ -132,7 +130,7 @@ public class SetListConstructor extends Expr {
                     return new SetListConstructor(SET,  null);
                 }
             } else { // not empty
-                Constructor c = Constructor.CollectionValueToConstructor(cv);
+                final Constructor c = Constructor.CollectionValueToConstructor(cv);
                 if (cv instanceof SetlList) {
                     return new SetListConstructor(LIST, c);
                 } else /* if (cv instanceof SetlSet) */ {

@@ -24,7 +24,7 @@ public class PD_print extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        for (Value arg : args) {
+        for (final Value arg : args) {
             print(arg.getUnquotedString());
         }
         printEndl();

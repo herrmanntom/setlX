@@ -28,7 +28,7 @@ grammar SetlXgrammar;
         state.syntaxErrors++;
         // sometimes antr get ahead of itself and index is not on currently matched or next token
         for (int i = input.index(); i >= 0; --i) {
-            Token t = input.get(i);
+            final Token t = input.get(i);
             if (t.getText().equals(tokenTextToMatch)) {
                 String sourceName = getSourceName();
                 if (sourceName != null) {

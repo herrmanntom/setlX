@@ -27,7 +27,7 @@ public class LambdaDefinition extends ProcedureDefinition {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = "^lambdaProcedure";
 
-    private Expr mExpr; // expression in the body of the definition; used only for toString() and toTerm()
+    private final Expr mExpr; // expression in the body of the definition; used directly only for toString() and toTerm()
 
     public LambdaDefinition(List<ParameterDef> parameters, Expr expr) {
         super(parameters, new Block(1));
@@ -51,9 +51,9 @@ public class LambdaDefinition extends ProcedureDefinition {
     /* term operations */
 
     public Value toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
 
-        SetlList paramList = new SetlList();
+        final SetlList paramList = new SetlList();
         for (ParameterDef param: mParameters) {
             paramList.addMember(param.toTerm());
         }
@@ -68,12 +68,12 @@ public class LambdaDefinition extends ProcedureDefinition {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            SetlList            paramList   = (SetlList) term.firstMember();
-            List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
-            for (Value v : paramList) {
+            final SetlList            paramList   = (SetlList) term.firstMember();
+            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(v));
             }
-            Expr                expr        = TermConverter.valueToExpr(term.lastMember());
+            final Expr                expr        = TermConverter.valueToExpr(term.lastMember());
             return new LambdaDefinition(parameters, expr);
         }
     }

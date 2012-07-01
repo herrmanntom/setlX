@@ -31,14 +31,14 @@ public class Iteration extends Constructor {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^iteration";
 
-    private Expr      mExpr;
-    private Iterator  mIterator;
-    private Condition mCondition;
+    private final   Expr      mExpr;
+    private final   Iterator  mIterator;
+    private final   Condition mCondition;
 
     private class Exec implements IteratorExecutionContainer {
-        private Expr            mExpr;
-        private Condition       mCondition;
-        private CollectionValue mCollection;
+        private final   Expr            mExpr;
+        private final   Condition       mCondition;
+        private final   CollectionValue mCollection;
 
         public Exec (CollectionValue collection, Expr expr, Condition condition) {
             mCollection = collection;
@@ -64,8 +64,7 @@ public class Iteration extends Constructor {
     }
 
     public void fillCollection(CollectionValue collection) throws SetlException {
-        Exec e = new Exec(collection, mExpr, mCondition);
-        mIterator.eval(e);
+        mIterator.eval(new Exec(collection, mExpr, mCondition));
     }
 
     /* string operations */
@@ -87,7 +86,7 @@ public class Iteration extends Constructor {
     /* term operations */
 
     public void addToTerm(CollectionValue collection) {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
         if (mExpr != null) {
             result.addMember(mExpr.toTerm());
         } else {

@@ -27,7 +27,7 @@ public class Real extends NumberValue {
         mathContext = new MathContext(70, RoundingMode.HALF_EVEN);
     }
 
-    private BigDecimal mReal;
+    private final BigDecimal mReal;
 
     public Real(String s) {
         this(new BigDecimal(s, mathContext));
@@ -60,9 +60,9 @@ public class Real extends NumberValue {
              )
            )
         {
-            String msg = "The value of " + mReal + " is too large or to small for " +
-                         "this operation.";
-            throw new NumberToLargeException(msg);
+            throw new NumberToLargeException(
+                "The value of " + mReal + " is too large or to small for this operation."
+            );
         } else {
             return mReal.doubleValue();
         }
@@ -81,7 +81,7 @@ public class Real extends NumberValue {
     }
 
     public Value toRational() {
-        int scale = mReal.scale();
+        final int scale = mReal.scale();
         if (scale >= 0) {
             return new Rational(mReal.unscaledValue(), BigInteger.TEN.pow(scale));
         } else /* (scale < 0) */ { // real is in fact an integer
@@ -130,8 +130,7 @@ public class Real extends NumberValue {
     }
 
     public Value differenceFlipped(Rational minuend) throws SetlException {
-        Real left = minuend.toReal();
-        return left.difference(this);
+        return minuend.toReal().difference(this);
     }
 
     public Value divide(Value divisor) throws SetlException {
@@ -164,8 +163,7 @@ public class Real extends NumberValue {
     }
 
     public Value divideFlipped(Rational dividend) throws SetlException {
-        Real left = dividend.toReal();
-        return left.divide(this);
+        return dividend.toReal().divide(this);
     }
 
     public Rational floor() {
@@ -212,7 +210,7 @@ public class Real extends NumberValue {
                 "Left-hand-side of '" + this + " ** " + exponent + "' is negative."
             );
         }
-        double a = doubleValue(); // may throw exception
+        final double a = doubleValue(); // may throw exception
 
         // a ** exponent = exp(ln(a ** exponent) = exp(exponent * ln(a))
         return new Real(Math.exp(exponent * Math.log(a)));
@@ -265,10 +263,10 @@ public class Real extends NumberValue {
      */
     public int compareTo(Value v) {
         if (v instanceof Real) {
-            Real nr = (Real) v;
+            final Real nr = (Real) v;
             return mReal.compareTo(nr.mReal);
         } else if (v instanceof Rational) {
-            Rational nr = (Rational) v;
+            final Rational nr = (Rational) v;
             return mReal.compareTo(nr.toReal().mReal);
         } else if (v instanceof SetlError || v == Om.OM || v == Infinity.NEGATIVE ||
                    v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) {

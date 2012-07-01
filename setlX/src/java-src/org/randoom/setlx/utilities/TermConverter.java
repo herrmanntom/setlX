@@ -39,8 +39,8 @@ public class TermConverter {
                 sExprConverters         = new HashMap<String, Method>();
                 sStatementConverters    = new HashMap<String, Method>();
             }
-            Term    term    = (Term) value;
-            String  fc      = term.functionalCharacter().getUnquotedString();
+            final Term    term    = (Term) value;
+            final String  fc      = term.functionalCharacter().getUnquotedString();
             try {
                 if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
                     // search in expr map
@@ -52,13 +52,13 @@ public class TermConverter {
                     // search via reflection, if method was not found in maps
                     if (converter == null) {
                         // string used for method look-up
-                        String      needle              = fc.substring(1, 2).toUpperCase() + fc.substring(2);
+                        final String    needle              = fc.substring(1, 2).toUpperCase() + fc.substring(2);
                         // look it up in [bool]expression and statement packages
-                        String      packageNameBExpr    = Equal    .class.getPackage().getName();
-                        String      packageNameExpr     = Expr     .class.getPackage().getName();
-                        String      packageNameStmnt    = Statement.class.getPackage().getName();
+                        final String    packageNameBExpr    = Equal    .class.getPackage().getName();
+                        final String    packageNameExpr     = Expr     .class.getPackage().getName();
+                        final String    packageNameStmnt    = Statement.class.getPackage().getName();
                         // class which is searched
-                        Class<?>    clAss               = null;
+                              Class<?>  clAss               = null;
                         try {
                             clAss       = Class.forName(packageNameBExpr + '.' + needle);
                             converter   = clAss.getMethod("termToExpr", Term.class);
@@ -151,8 +151,8 @@ public class TermConverter {
     }
 
     public static Expr valueToExpr(int callersPrecedence, boolean brackedEqualLevel, Value value) {
-        Expr result         = (Expr) valueToCodeFragment(value, true);
-        int  exprPrecedence = result.precedence();
+        final Expr result         = (Expr) valueToCodeFragment(value, true);
+        final int  exprPrecedence = result.precedence();
         if (brackedEqualLevel && callersPrecedence >= exprPrecedence) {
             return new BracketedExpr(result);
         } else if (callersPrecedence > exprPrecedence) {
@@ -170,7 +170,7 @@ public class TermConverter {
     }
 
     public static Statement valueToStatement(Value value) {
-        CodeFragment cf = valueToCodeFragment(value, false);
+        final CodeFragment cf = valueToCodeFragment(value, false);
         if (cf instanceof Statement) {
             return (Statement) cf;
         } else { // must be an expression
@@ -179,7 +179,7 @@ public class TermConverter {
     }
 
     public static Block valueToBlock(Value value) {
-        Statement   s   = valueToStatement(value);
+        final Statement   s   = valueToStatement(value);
         if (s instanceof Block) {
             return (Block) s;
         } else { // wrap into block

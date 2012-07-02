@@ -24,27 +24,27 @@ public class MatchDefaultBranch extends MatchAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchDefaultBranch";
 
-    private Block   mStatements;
+    private final Block   mStatements;
 
-    public MatchDefaultBranch(Block statements) {
+    public MatchDefaultBranch(final Block statements) {
         mStatements = statements;
     }
 
-    public MatchResult matches(Value term) {
+    public MatchResult matches(final Value term) {
         return new MatchResult(true);
     }
 
-    public void execute() throws SetlException {
-        mStatements.execute();
+    public Value execute() throws SetlException {
+        return mStatements.execute();
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs);
         result += "default:" + Environment.getEndl();
         result += mStatements.toString(tabs + 1) + Environment.getEndl();
@@ -54,16 +54,16 @@ public class MatchDefaultBranch extends MatchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(mStatements.toTerm());
         return result;
     }
 
-    public static MatchDefaultBranch termToBranch(Term term) throws TermConversionException {
+    public static MatchDefaultBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Block block = TermConverter.valueToBlock(term.firstMember());
+            final Block block = TermConverter.valueToBlock(term.firstMember());
             return new MatchDefaultBranch(block);
         }
     }

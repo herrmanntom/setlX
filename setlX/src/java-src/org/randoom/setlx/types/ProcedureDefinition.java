@@ -1,7 +1,6 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
-import org.randoom.setlx.exceptions.ReturnException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
@@ -58,12 +57,19 @@ public class ProcedureDefinition extends Value {
 
     /* function call */
 
-    public Value call(final List<Expr> exprs, final List<Value> args) throws SetlException {
-        if (mParameters.size() != args.size()) {
+    public Value call(final List<Expr> args) throws SetlException {
+        final int size = args.size();
+        if (mParameters.size() != size) {
             throw new IncorrectNumberOfParametersException(
                 "'" + this + "' is defined with a different number of parameters " +
                 "(" + mParameters.size() + ")."
             );
+        }
+
+        // evaluate arguments
+        ArrayList<Value> values = new ArrayList<Value>(size);
+        for (final Expr arg : args) {
+            values.add(arg.eval());
         }
 
         // save old scope
@@ -72,28 +78,26 @@ public class ProcedureDefinition extends Value {
         VariableScope.setScope(oldScope.cloneFunctions());
 
         // put arguments into inner scope
-        for (int i = 0; i < mParameters.size(); ++i) {
-            mParameters.get(i).assign(args.get(i));
+        for (int i = 0; i < size; ++i) {
+            mParameters.get(i).assign(values.get(i));
         }
 
+        // get rid of value-list
+        values = null;
+
         // results of call to procedure
-              Value           result      = Om.OM;
+              Value           result      = null;
         final WriteBackAgent  wba         = new WriteBackAgent(mParameters.size());
         final boolean         stepThrough = sStepThroughFunction;
 
         try {
-            try {
-                if (stepThrough) {
-                    Environment.setDebugStepThroughFunction(false);
-                    Environment.setDebugModeActive(false);
-                }
+            if (stepThrough) {
+                Environment.setDebugStepThroughFunction(false);
+                Environment.setDebugModeActive(false);
+            }
 
-                // execute, e.g. perform real procedure call
-                mStatements.execute();
-            } catch (ReturnException re) {
-                // get result
-                result = re.getValue();
-            } // let all other exceptions through
+            // execute, e.g. perform real procedure call
+            result = mStatements.execute();
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < mParameters.size(); ++i) {
@@ -102,7 +106,7 @@ public class ProcedureDefinition extends Value {
                     // value of parameter after execution
                     final Value postValue = param.getValue();
                     // expression used to fill parameter before execution
-                    final Expr  preExpr   = exprs.get(i);
+                    final Expr  preExpr   = args.get(i);
                     /* if possible the WriteBackAgent will set the variable used in this
                        expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);
@@ -124,7 +128,11 @@ public class ProcedureDefinition extends Value {
             }
         }
 
-        return result;
+        if (result != null) {
+            return result;
+        } else {
+            return Om.OM;
+        }
     }
 
     /* string and char operations */

@@ -61,12 +61,12 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
         }
     }
 
-    public void execute() throws SetlException {
-        mStatements.execute();
+    public Value execute() throws SetlException {
+        return mStatements.execute();
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     /* string operations */
@@ -92,7 +92,7 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        final Term     result  = new Term(FUNCTIONAL_CHARACTER);
+        final Term     result  = new Term(FUNCTIONAL_CHARACTER, 3);
 
         final SetlList varList = new SetlList(mVars.size());
         for (final Variable var: mVars) {

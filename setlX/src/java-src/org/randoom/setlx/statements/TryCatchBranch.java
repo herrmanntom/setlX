@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;
 
 /*
@@ -28,22 +29,22 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^tryCatchBranch";
 
-    private Variable                    mErrorVar;
-    private Block                       mBlockToRecover;
-    private CatchableInSetlXException   mException;      // last catched exception
+    private final Variable                  mErrorVar;
+    private final Block                     mBlockToRecover;
+    private       CatchableInSetlXException mException;      // last catched exception
 
-    public TryCatchBranch(Variable errorVar, Block blockToRecover){
+    public TryCatchBranch(final Variable errorVar, final Block blockToRecover){
         mErrorVar       = errorVar;
         mBlockToRecover = blockToRecover;
     }
 
-    public boolean catches(CatchableInSetlXException cise) {
+    public boolean catches(final CatchableInSetlXException cise) {
         // store exception
         mException = cise;
         return true;
     }
 
-    public void execute() throws SetlException {
+    public Value execute() throws SetlException {
         if (mException instanceof ThrownInSetlXException) {
             // assign directly
             mErrorVar.assign( ((ThrownInSetlXException) mException).getValue() );
@@ -54,16 +55,16 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
         // remove stored exception
         mException = null;
         // execute
-        mBlockToRecover.execute();
+        return mBlockToRecover.execute();
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = " catch (" + mErrorVar.toString(tabs) + ") ";
         result += mBlockToRecover.toString(tabs, true);
         return result;
@@ -72,18 +73,18 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        Term    result  = new Term(FUNCTIONAL_CHARACTER);
+        final Term    result  = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mErrorVar.toTerm());
         result.addMember(mBlockToRecover.toTerm());
         return result;
     }
 
-    public static TryCatchBranch termToBranch(Term term) throws TermConversionException {
+    public static TryCatchBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Variable    var     = Variable.termToExpr((Term) term.firstMember());
-            Block       block   = TermConverter.valueToBlock(term.lastMember());
+            final Variable  var     = Variable.termToExpr((Term) term.firstMember());
+            final Block     block   = TermConverter.valueToBlock(term.lastMember());
             return new TryCatchBranch(var, block);
         }
     }

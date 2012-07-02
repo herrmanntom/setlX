@@ -11,21 +11,22 @@ public abstract class Statement extends CodeFragment {
     // is debug mode active? MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public static   boolean sDebugModeActive = false;
 
-    public          void execute() throws SetlException {
+    public          Value execute() throws SetlException {
         if (sDebugModeActive && ! Environment.isDebugPromptActive()) {
             DebugPrompt.prompt(this);
-            exec();
+            final Value result = exec();
             Expr.sStepNext = false;
+            return result;
         } else {
-            exec();
+            return exec();
         }
     }
 
-    protected abstract void exec() throws SetlException;
+    protected abstract Value exec() throws SetlException;
 
     /* string operations */
 
-    public abstract String toString(int tabs);
+    public abstract String toString(final int tabs);
 
     public String toString() {
         return toString(0);

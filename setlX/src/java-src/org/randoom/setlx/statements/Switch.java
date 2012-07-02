@@ -32,18 +32,18 @@ public class Switch extends Statement {
         mBranchList = branchList;
     }
 
-    protected void exec() throws SetlException {
+    protected Value exec() throws SetlException {
         for (final SwitchAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
-                br.execute();
-                break;
+                return br.execute();
             }
         }
+        return null;
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs) + "switch {" + Environment.getEndl();
         for (final SwitchAbstractBranch br : mBranchList) {
             result += br.toString(tabs + 1);
@@ -55,7 +55,7 @@ public class Switch extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final SwitchAbstractBranch br: mBranchList) {

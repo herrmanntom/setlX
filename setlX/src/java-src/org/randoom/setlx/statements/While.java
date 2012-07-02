@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.ContinueException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.TermConverter;
@@ -27,22 +28,26 @@ public class While extends Statement {
     // continue execution of this loop in debug mode until it finishes. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean sFinishLoop            = false;
 
-    private Condition mCondition;
-    private Block     mStatements;
+    private final Condition mCondition;
+    private final Block     mStatements;
 
-    public While(Condition condition, Block statements) {
+    public While(final Condition condition, final Block statements) {
         mCondition  = condition;
         mStatements = statements;
     }
 
-    protected void exec() throws SetlException {
-        boolean finishLoop  = sFinishLoop;
+    protected Value exec() throws SetlException {
+        final boolean finishLoop  = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             Environment.setDebugFinishLoop(false);
         }
+        Value result = null;
         while (mCondition.evalToBool()) {
             try{
-                mStatements.execute();
+                result = mStatements.execute();
+                if (result != null) {
+                    return result;
+                }
             } catch (ContinueException e) {
                 continue;
             } catch (BreakException e) {
@@ -55,11 +60,12 @@ public class While extends Statement {
         } else if (finishLoop) {
             Environment.setDebugFinishLoop(true);
         }
+        return null;
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs);
         result += "while (" + mCondition.toString(tabs) + ") ";
         result += mStatements.toString(tabs, true);
@@ -69,7 +75,7 @@ public class While extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mCondition.toTerm());
         result.addMember(mStatements.toTerm());
         return result;
@@ -79,8 +85,8 @@ public class While extends Statement {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Condition   condition   = TermConverter.valueToCondition(term.firstMember());
-            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            final Condition condition   = TermConverter.valueToCondition(term.firstMember());
+            final Block     block       = TermConverter.valueToBlock(term.lastMember());
             return new While(condition, block);
         }
     }

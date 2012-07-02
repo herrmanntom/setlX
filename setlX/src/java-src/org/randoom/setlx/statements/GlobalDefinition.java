@@ -32,15 +32,16 @@ public class GlobalDefinition extends Statement {
         mVars = vars;
     }
 
-    protected void exec() {
+    protected Value exec() {
         for (final Variable var : mVars) {
             var.makeGlobal();
         }
+        return null;
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs) + "var ";
         for (int i = 0; i < mVars.size(); i++) {
             if (i > 0) {
@@ -54,10 +55,10 @@ public class GlobalDefinition extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList varList = new SetlList(mVars.size());
-        for (Variable var : mVars) {
+        for (final Variable var : mVars) {
             varList.addMember(var.toTerm());
         }
         result.addMember(varList);

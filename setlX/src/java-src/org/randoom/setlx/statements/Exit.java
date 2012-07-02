@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 
 /*
@@ -21,24 +22,24 @@ public class Exit extends Statement {
 
     private Exit() { }
 
-    protected void exec() throws ExitException {
+    protected Value exec() throws ExitException {
         throw new ExitException("Good Bye! (exit)");
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         return Environment.getLineStart(tabs) + "exit;";
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        Term result = new Term(FUNCTIONAL_CHARACTER, 0);
         return result;
     }
 
-    public static Exit termToStatement(Term term) throws TermConversionException {
+    public static Exit termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 0) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

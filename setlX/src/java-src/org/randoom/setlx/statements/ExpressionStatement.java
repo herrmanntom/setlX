@@ -19,10 +19,10 @@ implemented here as:
 */
 
 public class ExpressionStatement extends Statement {
-    private Expr    mExpr;
-    private boolean mPrintAfterEval;
+    private final Expr    mExpr;
+    private       boolean mPrintAfterEval;
 
-    public ExpressionStatement(Expr expression) {
+    public ExpressionStatement(final Expr expression) {
         mExpr           = expression;
         mPrintAfterEval = false;
     }
@@ -31,16 +31,17 @@ public class ExpressionStatement extends Statement {
         mPrintAfterEval = true;
     }
 
-    protected void exec() throws SetlException {
-        Value v = mExpr.eval();
+    protected Value exec() throws SetlException {
+        final Value v = mExpr.eval();
         if (mPrintAfterEval && (v != Om.OM || !((Om) v).isHidden()) ) {
             Environment.outWriteLn("~< Result: " + v + " >~");
         }
+        return null;
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         return Environment.getLineStart(tabs) + mExpr.toString(tabs) + ";";
     }
 

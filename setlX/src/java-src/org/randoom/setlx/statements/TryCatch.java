@@ -40,16 +40,13 @@ public class TryCatch extends Statement {
         mTryList    = tryList;
     }
 
-    protected void exec() throws SetlException {
+    protected Value exec() throws SetlException {
         try{
-            mBlockToTry.execute();
+            return mBlockToTry.execute();
         } catch (final CatchableInSetlXException cise) {
             for (final TryCatchAbstractBranch br : mTryList) {
                 if (br.catches(cise)) {
-                    br.execute();
-
-                    return;
-
+                    return br.execute();
                 }
             }
             // If we get here nothing matched. Re-throw as if nothing happened
@@ -72,7 +69,7 @@ public class TryCatch extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(mBlockToTry.toTerm());
 

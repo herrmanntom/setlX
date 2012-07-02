@@ -10,7 +10,6 @@ import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
-import org.randoom.setlx.exceptions.ReturnException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Real;
@@ -28,7 +27,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "1.0.1";
+    private final static String     VERSION         = "1.0.2";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
@@ -394,11 +393,6 @@ public class SetlX {
                 Environment.outWriteLn("Resetting to interactive prompt.");
             }
             return EXEC_OK;
-        } catch (ReturnException re) { // return outside of procedure
-            if (Environment.isInteractive()) {
-                Environment.outWriteLn(re.getMessage());
-            }
-            return EXEC_ERROR;
         } catch (SetlException se) { // user/code did something wrong
             printExceptionsTrace(se.getTrace());
             return EXEC_ERROR;

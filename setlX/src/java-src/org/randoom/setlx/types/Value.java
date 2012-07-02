@@ -408,7 +408,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* function call */
 
-    public Value call(final List<Expr> exprs, final List<Value> args) throws SetlException {
+    public Value call(final List<Expr> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure."
         );

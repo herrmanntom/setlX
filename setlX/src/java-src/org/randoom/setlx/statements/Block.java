@@ -51,17 +51,22 @@ public class Block extends Statement {
         mStatements.add(stmnt);
     }
 
-    public void execute() throws SetlException {
+    public Value execute() throws SetlException {
+        Value result = null;
         for (final Statement stmnt : mStatements) {
             if (sStopExecution) {
                 throw new StopExecutionException("Interrupted");
             }
-            stmnt.execute();
+            result = stmnt.execute();
+            if (result != null) {
+                return result;
+            }
         }
+        return null;
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     public void markLastExprStatement() {
@@ -106,7 +111,7 @@ public class Block extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList stmntList = new SetlList(mStatements.size());
         for (Statement s: mStatements) {

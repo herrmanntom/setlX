@@ -37,7 +37,7 @@ public class Match extends Statement {
         mBranchList = branchList;
     }
 
-    protected void exec() throws SetlException {
+    protected Value exec() throws SetlException {
         final Value term = mExpr.eval().toTerm();
         for (final MatchAbstractBranch br : mBranchList) {
             final MatchResult result = br.matches(term);
@@ -45,15 +45,15 @@ public class Match extends Statement {
                 // put all matching variables into current scope
                 result.setAllBindings();
                 // execute statements
-                br.execute();
-                break;
+                return br.execute();
             }
         }
+        return null;
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs) + "match (" + mExpr.toString(tabs) + ") {" + Environment.getEndl();
         for (final MatchAbstractBranch br : mBranchList) {
             result += br.toString(tabs + 1);
@@ -65,12 +65,12 @@ public class Match extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(mExpr.toTerm());
 
         final SetlList branchList = new SetlList(mBranchList.size());
-        for (MatchAbstractBranch br: mBranchList) {
+        for (final MatchAbstractBranch br: mBranchList) {
             branchList.addMember(br.toTerm());
         }
         result.addMember(branchList);

@@ -22,12 +22,12 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean sStepThroughFunction = false;
 
-    private String  mName;
-    private boolean mUnlimitedParameters;
-    private boolean mAllowFewerParameters;
-    private boolean mDoNotChangeScope;
+    private final String  mName;
+    private       boolean mUnlimitedParameters;
+    private       boolean mAllowFewerParameters;
+    private       boolean mDoNotChangeScope;
 
-    protected PreDefinedFunction(String name) {
+    protected PreDefinedFunction(final String name) {
         super(new ArrayList<ParameterDef>(), new Block());
         mName                   = name;
         mUnlimitedParameters    = false;
@@ -40,10 +40,10 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     }
 
     // add parameters to own definition
-    protected void addParameter(String param) {
+    protected void addParameter(final String param) {
         mParameters.add(new ParameterDef(param, ParameterDef.READ_ONLY));
     }
-    protected void addParameter(String param, int type) {
+    protected void addParameter(final String param, final int type) {
         mParameters.add(new ParameterDef(param, type));
     }
 
@@ -63,30 +63,32 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     }
 
     // this function is to be implemented by all predefined functions
-    public abstract Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException;
+    protected abstract Value execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException;
 
     // this function is called from within SetlX
-    public Value call(List<Expr> exprs, List<Value> args) throws SetlException {
-        if (mParameters.size() < args.size()) {
+    public Value call(final List<Expr> args) throws SetlException {
+        final int paramSize = mParameters.size();
+        final int argsSize  = args.size();
+        if (paramSize < argsSize) {
             if (mUnlimitedParameters) {
                 // unlimited means: at least the number of defined parameters or more
                 // no error
             } else {
                 String error = "Procedure is defined with a fewer number of parameters ";
-                error +=       "(" + mParameters.size();
+                error +=       "(" + paramSize;
                 if (mAllowFewerParameters) {
                     error +=   " or less";
                 }
                 error +=       ").";
                 throw new IncorrectNumberOfParametersException(error);
             }
-        } else if (mParameters.size() > args.size()) {
+        } else if (paramSize > argsSize) {
             if (mAllowFewerParameters) {
                 // fewer parameters are allowed
                 // no error
             } else {
                 String error = "Procedure is defined with a larger number of parameters ";
-                error +=       "(" + mParameters.size();
+                error +=       "(" + paramSize;
                 if (mUnlimitedParameters) {
                     error +=   " or more";
                 }
@@ -95,22 +97,26 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
             }
         }
 
-        // save old scope
-        VariableScope oldScope = VariableScope.getScope();
-        // create new scope used for the function call
-        VariableScope.setScope(oldScope.cloneFunctions());
+        // evaluate arguments
+        final ArrayList<Value> values = new ArrayList<Value>(argsSize);
+        for (final Expr arg : args) {
+            values.add(arg.eval());
+        }
 
-        if (mDoNotChangeScope) {
-            //we just changed our mind
-            VariableScope.setScope(oldScope);
+        // save old scope
+        VariableScope oldScope = null;
+        if ( ! mDoNotChangeScope) {
+            oldScope = VariableScope.getScope();
+            // create new scope used for the function call
+            VariableScope.setScope(oldScope.cloneFunctions());
         }
 
         // List of writeBack-values, which should be stored into the outer scope
-        ArrayList<Value>    writeBackVars   = new ArrayList<Value>(mParameters.size());
+        final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
 
         // results of call to predefined function
-        Value               result          = null;
-        WriteBackAgent      wba             = null;
+        Value           result  = null;
+        WriteBackAgent  wba     = null;
 
         if (sStepThroughFunction) {
             Environment.setDebugStepThroughFunction(false);
@@ -118,18 +124,18 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
         try {
             // call predefined function (which may add writeBack-values to List)
-            result  = this.execute(args, writeBackVars);
+            result  = this.execute(values, writeBackVars);
 
             // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
             if (( ! mDoNotChangeScope) && writeBackVars.size() > 0) {
                 wba = new WriteBackAgent(writeBackVars.size());
-                for (int i = 0; i < mParameters.size(); ++i) {
-                    ParameterDef param = mParameters.get(i);
+                for (int i = 0; i < paramSize; ++i) {
+                    final ParameterDef param = mParameters.get(i);
                     if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
                         // value of parameter after execution
-                        Value postValue = writeBackVars.remove(0);
+                        final Value postValue = writeBackVars.remove(0);
                         // expression used to fill parameter before execution
-                        Expr  preExpr   = exprs.get(i);
+                        final Expr  preExpr   = args.get(i);
                         /* if possible the WriteBackAgent will set the variable used in
                            this expression to its postExecution state in the outer scope */
                         wba.add(preExpr, postValue);
@@ -153,7 +159,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     /* string and char operations */
 
-    public final String toString(int tabs) {
+    public final String toString(final int tabs) {
         String endl = Environment.getEndl();
         String result = "procedure (";
         for (int i = 0; i < mParameters.size(); ++i) {

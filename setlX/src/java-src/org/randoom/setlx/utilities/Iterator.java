@@ -67,16 +67,17 @@ public class Iterator {
              variable to be local
        note: variables inside the whole iteration are not _not_ local
              all will be written `through' these inner scopes                 */
-    public void eval(final IteratorExecutionContainer exec) throws SetlException {
+    public Value eval(final IteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = VariableScope.getScope();
         try {
-            evaluate(exec);
+            return evaluate(exec);
         } catch (BreakException ee) {
             // throwing the exception already broke the loop
             // nothing to be done, not a real error
         } finally { // make sure scope is always reset
             VariableScope.setScope(outerScope);
         }
+        return null;
     }
 
     /* string operations */
@@ -135,7 +136,7 @@ public class Iterator {
 
     /* private functions */
 
-    private void evaluate(final IteratorExecutionContainer exec) throws SetlException {
+    private Value evaluate(final IteratorExecutionContainer exec) throws SetlException {
         if (sStopExecution) {
             throw new StopExecutionException("Interrupted");
         }
@@ -163,15 +164,20 @@ public class Iterator {
                    Stops iteration if requested by execution.
                    Note: BreakException breaks the loop and is handled by eval() */
                 try {
+                    Value result = null;
                     if (mNext != null) {
-                        mNext.evaluate(exec);
+                        result = mNext.evaluate(exec);
                     } else {
-                        exec.execute(v);
+                        result = exec.execute(v);
+                    }
+                    if (result != null) {
+                        return result;
                     }
                 } catch (ContinueException ce) {
                     continue;
                 }
             }
+            return null;
         } else {
             throw new IncompatibleTypeException(
                 "Evaluation of iterator '" + iterationValue + "' is not a collection value."

@@ -27,45 +27,45 @@ public class For extends Statement {
     // continue execution of this loop in debug mode until it finishes. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean sFinishLoop            = false;
 
-    private Iterator    mIterator;
-    private Block       mStatements;
+    private final Iterator  mIterator;
+    private final Block     mStatements;
 
     private class Exec implements IteratorExecutionContainer {
-        private Block   mStatements;
+        private final Block mStatements;
 
-        public Exec (Block statements) {
+        public Exec(final Block statements) {
             mStatements = statements;
         }
 
-        public void execute(Value lastIterationValue) throws SetlException {
-            mStatements.execute();
+        public Value execute(final Value lastIterationValue) throws SetlException {
+            return mStatements.execute();
             // ContinueException and BreakException are handled by outer iterator
         }
     }
 
-    public For(Iterator iterator, Block statements) {
+    public For(final Iterator iterator, final Block statements) {
         mIterator   = iterator;
         mStatements = statements;
     }
 
-    protected void exec() throws SetlException {
-        Exec    e           = new Exec(mStatements);
-        boolean finishLoop  = sFinishLoop;
+    protected Value exec() throws SetlException {
+        final boolean finishLoop = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             Environment.setDebugFinishLoop(false);
         }
-        mIterator.eval(e);
+        final Value result = mIterator.eval(new Exec(mStatements));
         if (sFinishLoop) {
             Environment.setDebugModeActive(true);
             Environment.setDebugFinishLoop(false);
         } else if (finishLoop) {
             Environment.setDebugFinishLoop(true);
         }
+        return result;
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs);
         result += "for (" + mIterator.toString(tabs) + ") ";
         result += mStatements.toString(tabs, true);
@@ -75,18 +75,18 @@ public class For extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mIterator.toTerm());
         result.addMember(mStatements.toTerm());
         return result;
     }
 
-    public static For termToStatement(Term term) throws TermConversionException {
+    public static For termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Iterator    iterator    = Iterator.valueToIterator(term.firstMember());
-            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            final Iterator  iterator    = Iterator.valueToIterator(term.firstMember());
+            final Block     block       = TermConverter.valueToBlock(term.lastMember());
             return new For(iterator, block);
         }
     }

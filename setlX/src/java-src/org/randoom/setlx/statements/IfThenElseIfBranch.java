@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -22,10 +23,10 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^ifThenElseIfBranch";
 
-    private Condition mCondition;
-    private Block     mStatements;
+    private final Condition mCondition;
+    private final Block     mStatements;
 
-    public IfThenElseIfBranch(Condition condition, Block statements){
+    public IfThenElseIfBranch(final Condition condition, final Block statements){
         mCondition  = condition;
         mStatements = statements;
     }
@@ -34,17 +35,17 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
         return mCondition.evalToBool();
     }
 
-    public void execute() throws SetlException {
-        mStatements.execute();
+    public Value execute() throws SetlException {
+        return mStatements.execute();
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = " else if (";
         result += mCondition.toString(tabs);
         result += ") ";
@@ -55,18 +56,18 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mCondition.toTerm());
         result.addMember(mStatements.toTerm());
         return result;
     }
 
-    public static IfThenElseIfBranch termToBranch(Term term) throws TermConversionException {
+    public static IfThenElseIfBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Condition   condition   = TermConverter.valueToCondition(term.firstMember());
-            Block       block       = TermConverter.valueToBlock(term.lastMember());
+            final Condition condition   = TermConverter.valueToCondition(term.firstMember());
+            final Block     block       = TermConverter.valueToBlock(term.lastMember());
             return new IfThenElseIfBranch(condition, block);
         }
     }

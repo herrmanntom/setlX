@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.TermConverter;
@@ -25,30 +26,31 @@ public class Assert extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String     FUNCTIONAL_CHARACTER    = "^assert";
 
-    private Condition mCondition;
-    private Expr      mMessage;
+    private final Condition mCondition;
+    private final Expr      mMessage;
 
-    public Assert(Condition condition, Expr message) {
+    public Assert(final Condition condition, final Expr message) {
         mCondition  = condition;
         mMessage    = message;
     }
 
-    protected void exec() throws SetlException {
+    protected Value exec() throws SetlException {
         if ( ! mCondition.evalToBool()) {
             throw new AssertException("Assertion failed: " + mMessage.eval().toString());
         }
+        return null;
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         return Environment.getLineStart(tabs) + "assert(" + mCondition.toString(tabs) + ", " + mMessage.toString(tabs) + ");";
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mCondition.toTerm());
         result.addMember(mMessage.toTerm());
         return result;
@@ -58,8 +60,8 @@ public class Assert extends Statement {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Condition   condition   = TermConverter.valueToCondition(term.firstMember());
-            Expr        message     = TermConverter.valueToExpr(term.lastMember());
+            final Condition condition   = TermConverter.valueToCondition(term.firstMember());
+            final Expr      message     = TermConverter.valueToExpr(term.lastMember());
             return new Assert(condition, message);
         }
     }

@@ -53,35 +53,28 @@ public class Call extends Expr {
                 "Identifier \"" + mLhs + "\" is undefined."
             );
         }
-        // evaluate all arguments
-        final List<Value> args = new ArrayList<Value>(mArgs.size());
-        for (final Expr arg: mArgs) {
-            args.add(arg.eval().clone());
-        }
+        boolean finishOuterFunction = sFinishOuterFunction;
         try {
             if (sBreakpointsEnabled && ! Environment.isDebugPromptActive()) {
                 if (Environment.isBreakpoint(mLhs.toString())) {
                     Environment.setDebugModeActive(true);
                 }
             }
-            boolean finishOuterFunction = sFinishOuterFunction;
             if (finishOuterFunction) { // unset, because otherwise it would be reset when this call returns
                 Environment.setDebugFinishFunction(false);
             }
-            try {
-                // also supply the original expressions (mArgs), which are needed for 'rw' parameters
-                return lhs.call(mArgs, args);
-            } finally {
-                if (finishOuterFunction) {
-                    Environment.setDebugFinishFunction(true);
-                }
-            }
+            // also supply the original expressions (mArgs), which are needed for 'rw' parameters
+            return lhs.call(mArgs);
         } catch (StackOverflowError e) {
             throw new JVMException(
                 "Stack overflow.\n" +
                 "Try preventing recursion and/or execute with larger stack size.\n" +
                 "(use '-Xss<size>' parameter for java loader, where <size> is like '32m')"
             );
+        } finally {
+            if (finishOuterFunction) {
+                Environment.setDebugFinishFunction(true);
+            }
         }
     }
 

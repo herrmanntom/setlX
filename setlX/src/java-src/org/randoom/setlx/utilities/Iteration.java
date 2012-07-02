@@ -46,7 +46,7 @@ public class Iteration extends Constructor {
             mCondition  = condition;
         }
 
-        public void execute(final Value lastIterationValue) throws SetlException {
+        public Value execute(final Value lastIterationValue) throws SetlException {
             if (mCondition == null || mCondition.evalToBool()) {
                 if (mExpr != null) {
                     mCollection.addMember(mExpr.eval());
@@ -54,6 +54,7 @@ public class Iteration extends Constructor {
                     mCollection.addMember(lastIterationValue);
                 }
             }
+            return null;
         }
     }
 

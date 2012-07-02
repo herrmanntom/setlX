@@ -46,12 +46,13 @@ public class Exists extends Expr {
             mScope     = null;
         }
 
-        public void execute(final Value lastIterationValue) throws SetlException {
+        public Value execute(final Value lastIterationValue) throws SetlException {
             mResult = mCondition.eval();
             if (mResult == SetlBoolean.TRUE) {
                 mScope = VariableScope.getScope();  // save state where result is true
                 throw new BreakException("exists"); // stop iteration
             }
+            return null;
         }
     }
 

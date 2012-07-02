@@ -46,12 +46,13 @@ public class Forall extends Expr {
             mScope     = null;
         }
 
-        public void execute(final Value lastIterationValue) throws SetlException {
+        public Value execute(final Value lastIterationValue) throws SetlException {
             mResult = mCondition.eval();
             if (mResult == SetlBoolean.FALSE) {
                 mScope = VariableScope.getScope();  // save state where result is true
                 throw new BreakException("forall"); // stop iteration
             }
+            return null;
         }
     }
 

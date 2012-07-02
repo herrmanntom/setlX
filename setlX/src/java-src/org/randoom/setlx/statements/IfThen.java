@@ -31,13 +31,13 @@ public class IfThen extends Statement {
         mBranchList = branchList;
     }
 
-    protected void exec() throws SetlException {
+    protected Value exec() throws SetlException {
         for (final IfThenAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool()) {
-                br.execute();
-                break;
+                return br.execute();
             }
         }
+        return null;
     }
 
     /* string operations */
@@ -53,7 +53,7 @@ public class IfThen extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        final Term     result     = new Term(FUNCTIONAL_CHARACTER);
+        final Term     result     = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final IfThenAbstractBranch br: mBranchList) {

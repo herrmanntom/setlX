@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;
 
 /*
@@ -21,9 +22,9 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^ifThenElseBranch";
 
-    private Block   mStatements;
+    private final Block mStatements;
 
-    public IfThenElseBranch(Block statements){
+    public IfThenElseBranch(final Block statements){
         mStatements = statements;
     }
 
@@ -31,17 +32,17 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
         return true;
     }
 
-    public void execute() throws SetlException {
-        mStatements.execute();
+    public Value execute() throws SetlException {
+        return mStatements.execute();
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = " else ";
         result += mStatements.toString(tabs, true);
         return result;
@@ -50,16 +51,16 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(mStatements.toTerm());
         return result;
     }
 
-    public static IfThenElseBranch termToBranch(Term term) throws TermConversionException {
+    public static IfThenElseBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Block block = TermConverter.valueToBlock(term.firstMember());
+            final Block block = TermConverter.valueToBlock(term.firstMember());
             return new IfThenElseBranch(block);
         }
     }

@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -22,9 +23,9 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^switchDefaultBranch";
 
-    private Block   mStatements;
+    private final Block   mStatements;
 
-    public SwitchDefaultBranch(Block statements) {
+    public SwitchDefaultBranch(final Block statements) {
         mStatements = statements;
     }
 
@@ -32,17 +33,17 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
         return true;
     }
 
-    public void execute() throws SetlException {
-        mStatements.execute();
+    public Value execute() throws SetlException {
+        return mStatements.execute();
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
+    public String toString(final int tabs) {
         String result = Environment.getLineStart(tabs);
         result += "default:" + Environment.getEndl();
         result += mStatements.toString(tabs + 1) + Environment.getEndl();
@@ -52,16 +53,16 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(mStatements.toTerm());
         return result;
     }
 
-    public static SwitchDefaultBranch termToBranch(Term term) throws TermConversionException {
+    public static SwitchDefaultBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Block block = TermConverter.valueToBlock(term.firstMember());
+            final Block block = TermConverter.valueToBlock(term.firstMember());
             return new SwitchDefaultBranch(block);
         }
     }

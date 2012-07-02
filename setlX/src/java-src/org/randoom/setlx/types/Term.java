@@ -25,7 +25,7 @@ public class Term extends CollectionValue {
     private SetlList    mBody;
 
     public Term(final String functionalCharacter) {
-        this(functionalCharacter, 3);
+        this(functionalCharacter, 4);
     }
 
     public Term(final String functionalCharacter, final int initialCapacity) {

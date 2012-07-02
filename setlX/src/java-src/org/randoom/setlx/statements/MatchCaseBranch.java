@@ -59,12 +59,12 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         return last;
     }
 
-    public void execute() throws SetlException {
-        mStatements.execute();
+    public Value execute() throws SetlException {
+        return mStatements.execute();
     }
 
-    protected void exec() throws SetlException {
-        execute();
+    protected Value exec() throws SetlException {
+        return execute();
     }
 
     /* string operations */
@@ -90,7 +90,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        final Term     result   = new Term(FUNCTIONAL_CHARACTER);
+        final Term     result   = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList termList = new SetlList(mTerms.size());
         for (final Value v: mTerms) {
@@ -103,7 +103,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         return result;
     }
 
-    public static MatchCaseBranch termToBranch(Term term) throws TermConversionException {
+    public static MatchCaseBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

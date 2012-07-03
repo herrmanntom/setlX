@@ -418,6 +418,10 @@ public abstract class Value implements Comparable<Value> {
 
     public abstract void appendString(final StringBuilder sb, final int tabs);
 
+    public void appendUnquotedString(final StringBuilder sb, final int tabs) {
+        appendString(sb, tabs);
+    }
+
     public void canonical(final StringBuilder sb) {
         appendString(sb, 0);
     }

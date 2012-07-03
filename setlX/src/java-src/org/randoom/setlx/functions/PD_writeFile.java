@@ -53,13 +53,13 @@ public class PD_writeFile extends PreDefinedFunction {
 
         final boolean verbose = Environment.isPrintVerbose();
         Environment.setPrintVerbose(true);
-        String        endl    = Environment.getEndl();
+        final String  endl    = Environment.getEndl();
         Environment.setPrintVerbose(verbose);
 
         // write file
         final StringBuilder sb = new StringBuilder();
         for (final Value v : content) {
-            sb.append(v.getUnquotedString());
+            v.appendUnquotedString(sb, 0);
             sb.append(endl);
         }
         DumpSetlX.dumpToFile(sb.toString(), fileName, append);

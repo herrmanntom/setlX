@@ -28,8 +28,8 @@ public class StringConstructor extends Expr {
         this(originalStr, new ArrayList<String>(), new ArrayList<Expr>());
 
         // Strip out double quotes which the parser left in
-        originalStr  = originalStr.substring(1, originalStr.length() - 1);
-        final int length   = originalStr.length();
+        originalStr = originalStr.substring(1, originalStr.length() - 1);
+        final int length = originalStr.length();
 
         if ( ! quoted) {
             final StringBuilder fragment  = new StringBuilder(); // buffer for string fragment
@@ -45,8 +45,8 @@ public class StringConstructor extends Expr {
                         // parse inner expr
                         try {
                             // SetlString parses escape characters properly
-                            final SetlString eStr = SetlString.createFromConstructor(expr.toString());
-                            final Expr exp = ParseSetlX.parseStringToExpr(eStr.getUnquotedString());
+                            final String eStr = SetlString.parseString(expr.toString());
+                            final Expr   exp  = ParseSetlX.parseStringToExpr(eStr);
                             // add inner expr to mExprs
                             mExprs.add(exp);
                         } catch (SetlException se) {
@@ -108,36 +108,39 @@ public class StringConstructor extends Expr {
     }
 
     protected SetlString evaluate() throws SetlException {
-        final Iterator<String>    fIter   = mFragments.iterator();
-        final Iterator<Expr>      eIter   = mExprs.iterator();
-        // there always is at least one fragment, even if empty
-              SetlString          result  = SetlString.createFromConstructor(fIter.next());
+        final Iterator<String>  fIter   = mFragments.iterator();
+        final Iterator<Expr>    eIter   = mExprs.iterator();
+        final StringBuilder     data    = new StringBuilder();
+
+        // there always is at least one fragment, even if empty; add it to data
+        SetlString.parseString(fIter.next(), data);
+
         while (eIter.hasNext() && fIter.hasNext()) {
-            final Expr    exp = eIter.next();
-                  Value   str = SetlString.createFromConstructor(fIter.next()); // string after expression
             // eval expression, but fail gracefully
-                  Value   v   = null;
+            final Expr    exp = eIter.next();
             try {
-                v   = exp.eval();
+                exp.eval().appendUnquotedString(data, 0);
             } catch (SetlException se) {
-                v   = new SetlString("$Error: " + se.getMessage() + "$");
+                data.append("$Error: ");
+                data.append(se.getMessage());
+                data.append("$");
             }
-            // add both values, which concatenates them
-            str    = (SetlString) v.str().sum(str);
-            // concatenate (again)
-            result = (SetlString) result.sum(str);
+
+            // append string fragment following expr
+            SetlString.parseString(fIter.next(), data);
         }
+
         // now expr-list should be empty in all cases
         if (eIter.hasNext()) {
             throw new UndefinedOperationException("Internal error in string construction!");
         }
+
         // however there might still be some fragments left
         while (fIter.hasNext()) {
-            final Value str = SetlString.createFromConstructor(fIter.next());
-            // concatenate (again)
-            result = (SetlString) result.sum(str);
+            SetlString.parseString(fIter.next(), data);
         }
-        return result;
+
+        return new SetlString(data.toString());
     }
 
     /* string operations */
@@ -176,7 +179,7 @@ public class StringConstructor extends Expr {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
                   boolean             quoted      = false;
-                  String              originalStr = "\"";
+            final StringBuilder       originalStr = new StringBuilder();
             final SetlList            frags       = (SetlList) term.firstMember();
             final SetlList            exps        = (SetlList) term.lastMember();
 
@@ -186,26 +189,30 @@ public class StringConstructor extends Expr {
             final Iterator<Value>     fIter       = frags.iterator();
             final Iterator<Value>     eIter       = exps.iterator();
 
+            originalStr.append("\"");
+
             while (fIter.hasNext()) {
                 final SetlString  sstring = (SetlString) fIter.next();
                 final String      string  = sstring.getUnquotedString();
                 if ( ! quoted && string.contains("$")) {
                     quoted = true;
                 }
-                originalStr += sstring.getEscapedString();
+                originalStr.append(sstring.getEscapedString());
                 fragments.add(string);
 
                 if (eIter.hasNext()) {
                     Expr expr = TermConverter.valueToExpr(eIter.next());
                     exprs.add(expr);
-                    originalStr += "$" + expr.toString().replace("$", "\\$") + "$";
+                    originalStr.append("$");
+                    originalStr.append(expr.toString().replace("$", "\\$"));
+                    originalStr.append("$");
                 }
             }
             if (eIter.hasNext()) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
-            originalStr += "\"";
-            final Expr result = new StringConstructor(originalStr, fragments, exprs);
+            originalStr.append("\"");
+            final Expr result = new StringConstructor(originalStr.toString(), fragments, exprs);
             if (quoted) {
                 return new Quote(result);
             } else {
@@ -218,15 +225,15 @@ public class StringConstructor extends Expr {
         if ( ! (value instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
-        SetlString          sstring     = (SetlString) value;
-        String              string      = sstring.getUnquotedString();
+        final SetlString        sstring     = (SetlString) value;
+        final String            string      = sstring.getUnquotedString();
         // string was quoted when it contains a $, otherwise it would have been split
-        boolean             quoted      = string.contains("$");
-        String              originalStr = "\"" + sstring.getEscapedString() + "\"";
-        ArrayList<String>   fragments   = new ArrayList<String>(1);
+              boolean           quoted      = string.contains("$");
+        final String            originalStr = "\"" + sstring.getEscapedString() + "\"";
+        final ArrayList<String> fragments   = new ArrayList<String>(1);
         fragments.add(string);
-        ArrayList<Expr>     exprs       = new ArrayList<Expr>(0);
-        Expr                result      = new StringConstructor(originalStr, fragments, exprs);
+        final ArrayList<Expr>   exprs       = new ArrayList<Expr>(0);
+        final Expr              result      = new StringConstructor(originalStr, fragments, exprs);
         if (quoted) {
             return new Quote(result);
         } else {

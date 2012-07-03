@@ -9,37 +9,42 @@ import java.util.List;
 
 public class SetlString extends Value {
 
-    public static SetlString createFromConstructor(final String s) {
+    // this method is used when creating strings from StringConstructor
+    public static String parseString(final String s) {
+        final StringBuilder out = new StringBuilder(s.length() + 8);
+        parseString(s, out);
+        return out.toString();
+    }
+
+    public static void parseString(final String s, final StringBuilder out) {
         // parse escape sequences
         final int           length    = s.length();
-        final StringBuilder sb        = new StringBuilder(length);
         for (int i = 0; i < length; ) {
             final char c = s.charAt(i);                          // current char
             final char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
             if (c == '\\') {
                 if (n == '\\') {
-                    sb.append('\\');
+                    out.append('\\');
                 } else if (n == 'n') {
-                    sb.append('\n');
+                    out.append('\n');
                 } else if (n == 'r') {
-                    sb.append('\r');
+                    out.append('\r');
                 } else if (n == 't') {
-                    sb.append('\t');
+                    out.append('\t');
                 } else if (n == '"') {
-                    sb.append('"');
+                    out.append('"');
                 } else if (n == '0') {
-                    sb.append('\0');
+                    out.append('\0');
                 } else {
                     // seems like not part of known escape sequence
-                    sb.append(n);
+                    out.append(n);
                 }
                 i += 2;
             } else {
-                sb.append(c);
+                out.append(c);
                 i += 1;
             }
         }
-        return new SetlString(sb.toString());
     }
 
     private String mString;
@@ -292,6 +297,10 @@ public class SetlString extends Value {
         sb.append("\"");
         sb.append(mString);
         sb.append("\"");
+    }
+
+    public void appendUnquotedString(final StringBuilder sb, final int tabs) {
+        sb.append(mString);
     }
 
     public String getEscapedString() {

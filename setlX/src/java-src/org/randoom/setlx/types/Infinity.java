@@ -142,11 +142,11 @@ public class Infinity extends NumberValue {
 
     /* string and char operations */
 
-    public String toString() {
+    public void appendString(final StringBuilder sb, final int tabs) {
         if (this == POSITIVE) {
-            return "oo";
+            sb.append("oo");
         } else { // this == NEGATIVE
-            return "-oo";
+            sb.append("-oo");
         }
     }
 

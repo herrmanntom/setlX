@@ -73,20 +73,24 @@ public class Exists extends Expr {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        return "exists (" + mIterator.toString(tabs) + " | " + mCondition.toString(tabs) +")";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("exists (");
+        mIterator.appendString(sb);
+        sb.append(" | ");
+        mCondition.appendString(sb, tabs);
+        sb.append(")");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mIterator.toTerm());
         result.addMember(mCondition.toTerm());
         return result;
     }
 
-    public static Exists termToExpr(Term term) throws TermConversionException {
+    public static Exists termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

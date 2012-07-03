@@ -457,23 +457,20 @@ public class SetlSet extends CollectionValue {
 
     /* string and char operations */
 
-    public String canonical() {
-        String result = "{";
-
-        final Iterator<Value> iter  = iterator();
-        while (iter.hasNext()) {
-            final Value member= iter.next();
-            result += member.canonical();
-            if (iter.hasNext()) {
-                result += ", ";
-            }
-        }
-
-        return result + "}";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        TermConverter.valueToCodeFragment(this, false).appendString(sb, 0);
     }
 
-    public String toString() {
-        return TermConverter.valueToCodeFragment(this, false).toString();
+    public void canonical(final StringBuilder sb) {
+        sb.append("{");
+        final Iterator<Value> iter  = iterator();
+        while (iter.hasNext()) {
+            iter.next().canonical(sb);
+            if (iter.hasNext()) {
+                sb.append(", ");
+            }
+        }
+        sb.append("}");
     }
 
     /* term operations */

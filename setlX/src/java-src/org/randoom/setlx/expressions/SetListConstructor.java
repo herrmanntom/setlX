@@ -48,17 +48,13 @@ public class SetListConstructor extends Expr {
                 mConstructor.fillCollection(set);
             }
             return set;
-        } else if (mType == LIST) {
+        } else /* if (mType == LIST) */ {
             final SetlList list = new SetlList();
             if (mConstructor != null) {
                 mConstructor.fillCollection(list);
             }
             list.compress();
             return list;
-        } else {
-            throw new UndefinedOperationException(
-                "This set/list constructor type is undefined."
-            );
         }
     }
 
@@ -81,24 +77,20 @@ public class SetListConstructor extends Expr {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String r;
+    public void appendString(final StringBuilder sb, final int tabs) {
         if (mType == SET) {
-            r = "{";
-        } else if (mType == LIST) {
-            r = "[";
-        } else {
-            r = "";
+            sb.append("{");
+        } else /* if (mType == LIST) */ {
+            sb.append("[");
         }
         if (mConstructor != null) {
-            r += mConstructor.toString(tabs);
+            mConstructor.appendString(sb);
         }
         if (mType == SET) {
-            r += "}";
-        } else if (mType == LIST) {
-            r += "]";
+            sb.append("}");
+        } else /* if (mType == LIST) */ {
+            sb.append("]");
         }
-        return r;
     }
 
     /* term operations */
@@ -107,10 +99,8 @@ public class SetListConstructor extends Expr {
         final CollectionValue result;
         if (mType == SET) {
             result = new SetlSet();
-        } else if (mType == LIST) {
+        } else /* if (mType == LIST) */ {
             result = new SetlList();
-        } else { // will not happen, but we can not throw an exception here
-            result = new Term("'undefindedSetListConstructor");
         }
         if (mConstructor != null) {
             mConstructor.addToTerm(result);

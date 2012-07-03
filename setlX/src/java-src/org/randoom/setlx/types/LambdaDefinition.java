@@ -8,6 +8,7 @@ import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 // This class represents a function definition
@@ -37,15 +38,22 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     /* string and char operations */
 
-    public String toString(final int tabs) {
-        String result = "";
+    public void appendString(final StringBuilder sb, final int tabs) {
         if (mParameters.size() == 1) {
-            result += mParameters.get(0);
+            mParameters.get(0).appendString(sb);
         } else {
-            result += mParameters;
+            sb.append("[");
+            final Iterator<ParameterDef> iter = mParameters.iterator();
+            while (iter.hasNext()) {
+                iter.next().appendString(sb);
+                if (iter.hasNext()) {
+                    sb.append(", ");
+                }
+            }
+            sb.append("]");
         }
-        result += " |-> " + mExpr.toString(tabs);
-        return result;
+        sb.append(" |-> ");
+        mExpr.appendString(sb, tabs);
     }
 
     /* term operations */

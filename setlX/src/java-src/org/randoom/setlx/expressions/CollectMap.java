@@ -25,16 +25,16 @@ public class CollectMap extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private Expr    mLhs;      // left hand side (Variable, other CollectMap, CollectionAccess, etc)
-    private Expr    mArg;      // argument
+    private final Expr  mLhs;      // left hand side (Variable, other CollectMap, CollectionAccess, etc)
+    private final Expr  mArg;      // argument
 
-    public CollectMap(Expr lhs, Expr arg) {
+    public CollectMap(final Expr lhs, final Expr arg) {
         mLhs = lhs;
         mArg = arg;
     }
 
     protected Value evaluate() throws SetlException {
-        Value lhs = mLhs.eval();
+        final Value lhs = mLhs.eval();
         if (lhs == Om.OM) {
             throw new UnknownFunctionException("\"" + mLhs + "\" is undefined.");
         }
@@ -43,35 +43,35 @@ public class CollectMap extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        String result = mLhs.toString(tabs) + "{";
-        result += mArg.toString(tabs);
-        result += "}";
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mLhs.appendString(sb, tabs);
+        sb.append("{");
+        mArg.appendString(sb, tabs);
+        sb.append("}");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mLhs.toTerm());
         result.addMember(mArg.toTerm());
         return result;
     }
 
     public Term toTermQuoted() throws SetlException {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mLhs.toTermQuoted());
         result.addMember(mArg.eval().toTerm());
         return result;
     }
 
-    public static CollectMap termToExpr(Term term) throws TermConversionException {
+    public static CollectMap termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            Expr arg = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            final Expr arg = TermConverter.valueToExpr(term.lastMember());
             return new CollectMap(lhs, arg);
         }
     }

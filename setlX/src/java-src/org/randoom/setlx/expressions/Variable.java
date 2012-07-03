@@ -37,14 +37,14 @@ public class Variable extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE                    = 9999;
 
-    private String  mId;
+    private final String mId;
 
-    public Variable(String id) {
+    public Variable(final String id) {
         mId = id;
     }
 
     protected Value evaluate() {
-        Value v = VariableScope.findValue(mId);
+        final Value v = VariableScope.findValue(mId);
         if (v == null) {
             return Om.OM;
         } else {
@@ -53,7 +53,7 @@ public class Variable extends Expr {
     }
 
     // sets this expression to the given value
-    public Value assign(Value v) {
+    public Value assign(final Value v) {
         VariableScope.putValue(mId, v.clone());
         return v.clone();
     }
@@ -65,29 +65,29 @@ public class Variable extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mId;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(mId);
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(new SetlString(mId));
         return result;
     }
 
     public Term toTermQuoted() {
-        Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL);
+        Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL, 1);
         result.addMember(new SetlString(mId));
         return result;
     }
 
-    public static Variable termToExpr(Term term) throws TermConversionException {
+    public static Variable termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            String  id     = ((SetlString) term.firstMember()).getUnquotedString();
+            final String id = ((SetlString) term.firstMember()).getUnquotedString();
             return new Variable(id);
         }
     }

@@ -28,8 +28,9 @@ public class Break extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        return Environment.getLineStart(tabs) + "break;";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("break;");
     }
 
     /* term operations */

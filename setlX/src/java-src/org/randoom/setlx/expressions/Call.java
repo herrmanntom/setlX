@@ -13,6 +13,7 @@ import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -36,14 +37,14 @@ public class Call extends Expr {
     // continue execution of function, which includes this call, in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sFinishOuterFunction = false;
 
-    private final Variable   mLhs;    // left hand side
-    private final List<Expr> mArgs;   // list of arguments
-    private final String     _this;   // pre-computed toString(), which has less stack penalty in case of stack overflow error...
+    private final Variable   mLhs;  // left hand side
+    private final List<Expr> mArgs; // list of arguments
+    private final String     _this; // pre-computed toString(), which has less stack penalty in case of stack overflow error...
 
     public Call(final Variable lhs, final List<Expr> args) {
         mLhs    = lhs;
         mArgs   = args;
-        _this   = _toString(0);
+        _this   = toString();
     }
 
     protected Value evaluate() throws SetlException {
@@ -80,34 +81,33 @@ public class Call extends Expr {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        if (tabs == 0 && ! Environment.isPrintVerbose()) {
-            return _this;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        if (_this != null && tabs == 0 && ! Environment.isPrintVerbose()) {
+            sb.append(_this);
         } else {
-            return _toString(tabs);
-        }
-    }
+            mLhs.appendString(sb, tabs);
+            sb.append("(");
 
-    public String _toString(final int tabs) {
-        String result = mLhs.toString(tabs) + "(";
-        for (int i = 0; i < mArgs.size(); ++i) {
-            if (i > 0) {
-                result += ", ";
+            final Iterator<Expr> iter = mArgs.iterator();
+            while (iter.hasNext()) {
+                iter.next().appendString(sb, 0);
+                if (iter.hasNext()) {
+                    sb.append(", ");
+                }
             }
-            result += mArgs.get(i).toString(tabs);
+
+            sb.append(")");
         }
-        result += ")";
-        return result;
     }
 
     /* term operations */
 
     public Term toTerm() {
-        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(new SetlString(mLhs.toString()));
 
-        final SetlList    arguments   = new SetlList(mArgs.size());
+        final SetlList  arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
             arguments.addMember(arg.toTerm());
         }
@@ -117,11 +117,11 @@ public class Call extends Expr {
     }
 
     public Term toTermQuoted() throws SetlException {
-        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(new SetlString(mLhs.toString()));
 
-        final SetlList    arguments   = new SetlList(mArgs.size());
+        final SetlList  arguments   = new SetlList(mArgs.size());
         for (Expr arg: mArgs) {
             arguments.addMember(arg.eval().toTerm());
         }
@@ -130,7 +130,7 @@ public class Call extends Expr {
         return result;
     }
 
-    public static Call termToExpr(Term term) throws TermConversionException {
+    public static Call termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlString && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

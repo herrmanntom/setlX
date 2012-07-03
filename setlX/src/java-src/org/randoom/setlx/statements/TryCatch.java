@@ -56,14 +56,13 @@ public class TryCatch extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "try ";
-        result += mBlockToTry.toString(tabs, true);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("try ");
+        mBlockToTry.appendString(sb, tabs, true);
         for (final TryCatchAbstractBranch br : mTryList) {
-            result += br.toString(tabs);
+            br.appendString(sb, tabs);
         }
-        return result;
     }
 
     /* term operations */

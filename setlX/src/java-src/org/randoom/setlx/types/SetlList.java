@@ -384,22 +384,30 @@ public class SetlList extends CollectionValue {
 
     /* string and char operations */
 
-    public String canonical() {
-        String result = "[";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        TermConverter.valueToCodeFragment(this, false).appendString(sb, 0);
+    }
 
-        final Iterator<Value> iter  = iterator();
+    public void canonical(final StringBuilder sb) {
+        canonical(sb, true);
+    }
+
+    public void canonical(final StringBuilder sb, boolean addBracktes) {
+        if (addBracktes) {
+            sb.append("[");
+        }
+
+        final Iterator<Value> iter = iterator();
         while (iter.hasNext()) {
-            result += iter.next().canonical();
+            iter.next().canonical(sb);
             if (iter.hasNext()) {
-                result += ", ";
+                sb.append(", ");
             }
         }
 
-        return result + "]";
-    }
-
-    public String toString() {
-        return TermConverter.valueToCodeFragment(this, false).toString();
+        if (addBracktes) {
+            sb.append("]");
+        }
     }
 
     /* term operations */

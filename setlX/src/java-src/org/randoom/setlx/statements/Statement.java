@@ -26,11 +26,7 @@ public abstract class Statement extends CodeFragment {
 
     /* string operations */
 
-    public abstract String toString(final int tabs);
-
-    public String toString() {
-        return toString(0);
-    }
+    public abstract void appendString(final StringBuilder sb, final int tabs);
 
     /* term operations */
 

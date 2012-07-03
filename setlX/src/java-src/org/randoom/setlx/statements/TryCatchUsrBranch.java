@@ -64,10 +64,11 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = " catchUsr (" + mErrorVar.toString(tabs) + ") ";
-        result += mBlockToRecover.toString(tabs, true);
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(" catchUsr (");
+        mErrorVar.appendString(sb, tabs);
+        sb.append(") ");
+        mBlockToRecover.appendString(sb, tabs, true);
     }
 
     /* term operations */

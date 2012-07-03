@@ -23,10 +23,10 @@ public class Power extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1800;
 
-    private Expr mLhs;
-    private Expr mExponent;
+    private final Expr mLhs;
+    private final Expr mExponent;
 
-    public Power(Expr lhs, Expr exponent) {
+    public Power(final Expr lhs, final Expr exponent) {
         mLhs      = lhs;
         mExponent = exponent;
     }
@@ -37,25 +37,27 @@ public class Power extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mLhs.toString(tabs) + " ** " + mExponent.toString(tabs);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mLhs.appendString(sb, tabs);
+        sb.append(" ** ");
+        mExponent.appendString(sb, tabs);
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mLhs.toTerm());
         result.addMember(mExponent.toTerm());
         return result;
     }
 
-    public static Power termToExpr(Term term) throws TermConversionException {
+    public static Power termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr lhs        = TermConverter.valueToExpr(PRECEDENCE, true , term.firstMember());
-            Expr exponent   = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr lhs        = TermConverter.valueToExpr(PRECEDENCE, true , term.firstMember());
+            final Expr exponent   = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
             return new Power(lhs, exponent);
         }
     }

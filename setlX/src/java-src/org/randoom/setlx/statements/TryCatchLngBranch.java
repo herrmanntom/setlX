@@ -65,10 +65,11 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = " catchLng (" + mErrorVar.toString(tabs) + ") ";
-        result += mBlockToRecover.toString(tabs, true);
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(" catchLng (");
+        mErrorVar.appendString(sb, tabs);
+        sb.append(") ");
+        mBlockToRecover.appendString(sb, tabs, true);
     }
 
     /* term operations */

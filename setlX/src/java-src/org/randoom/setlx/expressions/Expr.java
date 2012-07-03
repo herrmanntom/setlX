@@ -31,7 +31,7 @@ public abstract class Expr extends CodeFragment {
 
     /* sets this expression to the given value
        (only makes sense for variables and id-lists) */
-    public Value assign(Value v) throws SetlException {
+    public Value assign(final Value v) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "This expression can not be used as target for assignments."
@@ -40,11 +40,7 @@ public abstract class Expr extends CodeFragment {
 
     /* string operations */
 
-    public abstract String toString(int tabs);
-
-    public final String toString() {
-        return toString(0);
-    }
+    public abstract void appendString(final StringBuilder sb, final int tabs);
 
     /* term operations */
 

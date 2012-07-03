@@ -43,11 +43,12 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "default:" + Environment.getEndl();
-        result += mStatements.toString(tabs + 1) + Environment.getEndl();
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("default:");
+        sb.append(Environment.getEndl());
+        mStatements.appendString(sb, tabs + 1);
+        sb.append(Environment.getEndl());
     }
 
     /* term operations */

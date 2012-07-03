@@ -21,7 +21,13 @@ public abstract class Constructor {
 
     /* String operations */
 
-    public abstract String      toString(final int tabs);
+    public abstract void        appendString(final StringBuilder sb);
+
+    public final    String      toString() {
+        final StringBuilder sb = new StringBuilder();
+        appendString(sb);
+        return sb.toString();
+    }
 
     /* term operations */
 

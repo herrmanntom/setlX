@@ -48,18 +48,20 @@ public class Range extends Constructor {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String r = mStart.toString(tabs);
+    public void appendString(final StringBuilder sb) {
+        mStart.appendString(sb, 0);
         if (mSecond != null) {
-            r += ", " + mSecond.toString(tabs);
+            sb.append(", ");
+            mSecond.appendString(sb, 0);
         }
-        return r + " .. " + mStop.toString(tabs);
+        sb.append(" .. ");
+        mStop.appendString(sb, 0);
     }
 
     /* term operations */
 
     public void addToTerm(final CollectionValue collection) {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
         result.addMember(mStart.toTerm());
         if (mSecond != null) {
             result.addMember(mSecond.toTerm());

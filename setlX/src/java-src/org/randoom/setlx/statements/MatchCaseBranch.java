@@ -69,22 +69,22 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "case ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("case ");
 
         final Iterator<Expr> iter = mExprs.iterator();
         while (iter.hasNext()) {
-            Expr expr   = iter.next();
-            result += expr.toString(tabs);
+            iter.next().appendString(sb, tabs);
             if (iter.hasNext()) {
-                result += ", ";
+                sb.append(", ");
             }
         }
 
-        result += ":" + Environment.getEndl();
-        result += mStatements.toString(tabs + 1) + Environment.getEndl();
-        return result;
+        sb.append(":");
+        sb.append(Environment.getEndl());
+        mStatements.appendString(sb, tabs + 1);
+        sb.append(Environment.getEndl());
     }
 
     /* term operations */

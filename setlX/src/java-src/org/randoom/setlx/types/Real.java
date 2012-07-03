@@ -246,8 +246,8 @@ public class Real extends NumberValue {
 
     /* string and char operations */
 
-    public String toString() {
-        return mReal.toString();
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(mReal.toString());
     }
 
     /* comparisons */

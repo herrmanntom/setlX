@@ -241,7 +241,11 @@ public class SetlString extends Value {
                 "Upper bound '" + high + "' is larger as size '" + mString.length() + "' of string '" + mString + "'."
             );
         }
-        return new SetlString(mString.substring(low - 1, high));
+        if (high < low) {
+            return new SetlString("");
+        } else {
+            return new SetlString(mString.substring(low - 1, high));
+        }
     }
 
     public SetlString reverse() {
@@ -284,18 +288,16 @@ public class SetlString extends Value {
 
     /* string and char operations */
 
-    public SetlString str() {
-        return this;
-    }
-
-    public String getUnquotedString() {
-        return mString;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("\"");
+        sb.append(mString);
+        sb.append("\"");
     }
 
     public String getEscapedString() {
         // parse escape sequences
         final int           length  = mString.length();
-        final StringBuilder sb      = new StringBuilder(length);
+        final StringBuilder sb      = new StringBuilder(length + 8);
         for (int i = 0; i < length; i++) {
             final char c = mString.charAt(i);  // current char
             if (c == '\\') {
@@ -317,8 +319,12 @@ public class SetlString extends Value {
         return sb.toString();
     }
 
-    public String toString() {
-        return "\"" + mString + "\"";
+    public String getUnquotedString() {
+        return mString;
+    }
+
+    public SetlString str() {
+        return this;
     }
 
     /* comparisons */

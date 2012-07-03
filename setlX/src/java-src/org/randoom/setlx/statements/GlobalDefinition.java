@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -41,15 +42,19 @@ public class GlobalDefinition extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs) + "var ";
-        for (int i = 0; i < mVars.size(); i++) {
-            if (i > 0) {
-                result += ", ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("var ");
+
+        final Iterator<Variable> iter = mVars.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(sb, 0);
+            if (iter.hasNext()) {
+                sb.append(", ");
             }
-            result += mVars.get(i).toString(tabs);
         }
-        return result + ";";
+
+        sb.append(";");
     }
 
     /* term operations */

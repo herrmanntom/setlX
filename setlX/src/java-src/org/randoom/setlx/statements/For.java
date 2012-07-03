@@ -65,11 +65,12 @@ public class For extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "for (" + mIterator.toString(tabs) + ") ";
-        result += mStatements.toString(tabs, true);
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("for (");
+        mIterator.appendString(sb);
+        sb.append(") ");
+        mStatements.appendString(sb, tabs, true);
     }
 
     /* term operations */

@@ -12,6 +12,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -114,22 +115,25 @@ public class CollectionAccess extends Expr {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = mLhs.toString(tabs) + "[";
-        for (int i = 0; i < mArgs.size(); ++i) {
-            if (i > 0) {
-                result += " ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mLhs.appendString(sb, tabs);
+        sb.append("[");
+
+        final Iterator<Expr> iter = mArgs.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(sb, 0);
+            if (iter.hasNext()) {
+                sb.append(" ");
             }
-            result += mArgs.get(i).toString(tabs);
         }
-        result += "]";
-        return result;
+
+        sb.append("]");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(mLhs.toTerm());
 
@@ -143,7 +147,7 @@ public class CollectionAccess extends Expr {
     }
 
     public Term toTermQuoted() throws SetlException {
-        final Term        result      = new Term(FUNCTIONAL_CHARACTER);
+        final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(mLhs.toTermQuoted());
 

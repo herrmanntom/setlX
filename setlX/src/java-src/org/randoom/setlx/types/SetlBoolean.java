@@ -99,11 +99,11 @@ public class SetlBoolean extends Value {
 
     /* string and char operations */
 
-    public String toString() {
+    public void appendString(final StringBuilder sb, final int tabs) {
         if (this == TRUE) {
-            return "true";
+            sb.append("true");
         } else {
-            return "false";
+            sb.append("false");
         }
     }
 

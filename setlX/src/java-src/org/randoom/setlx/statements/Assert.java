@@ -43,8 +43,13 @@ public class Assert extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        return Environment.getLineStart(tabs) + "assert(" + mCondition.toString(tabs) + ", " + mMessage.toString(tabs) + ");";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("assert(");
+        mCondition.appendString(sb, tabs);
+        sb.append(", ");
+        mMessage.appendString(sb, tabs);
+        sb.append(");");
     }
 
     /* term operations */

@@ -42,12 +42,10 @@ public class IfThen extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = "";
+    public void appendString(final StringBuilder sb, final int tabs) {
         for (final IfThenAbstractBranch br : mBranchList) {
-            result += br.toString(tabs);
+            br.appendString(sb, tabs);
         }
-        return result;
     }
 
     /* term operations */

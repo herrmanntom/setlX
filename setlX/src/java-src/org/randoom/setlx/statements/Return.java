@@ -42,13 +42,14 @@ public class Return extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs) + "return";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("return");
         if (mResult != null){
-            result += " " + mResult;
+            sb.append(" ");
+            mResult.appendString(sb, 0);
         }
-        result += ";";
-        return result;
+        sb.append(";");
     }
 
     /* term operations */

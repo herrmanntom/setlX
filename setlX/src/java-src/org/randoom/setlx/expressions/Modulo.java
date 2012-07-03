@@ -23,10 +23,10 @@ public class Modulo extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
 
-    private Expr mLhs;
-    private Expr mRhs;
+    private final Expr mLhs;
+    private final Expr mRhs;
 
-    public Modulo(Expr lhs, Expr rhs) {
+    public Modulo(final Expr lhs, final Expr rhs) {
         mLhs = lhs;
         mRhs = rhs;
     }
@@ -37,25 +37,27 @@ public class Modulo extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mLhs.toString(tabs) + " % " + mRhs.toString(tabs);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mLhs.appendString(sb, tabs);
+        sb.append(" % ");
+        mRhs.appendString(sb, tabs);
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());
         return result;
     }
 
-    public static Modulo termToExpr(Term term) throws TermConversionException {
+    public static Modulo termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
             return new Modulo(lhs, rhs);
         }
     }

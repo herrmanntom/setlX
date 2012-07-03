@@ -30,17 +30,17 @@ public class CollectionAccessRangeDummy extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return " .. ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(" .. ");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        return new Term(FUNCTIONAL_CHARACTER);
+        return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
-    public static CollectionAccessRangeDummy termToExpr(Term term) {
+    public static CollectionAccessRangeDummy termToExpr(final Term term) {
         return CARD;
     }
 

@@ -62,13 +62,17 @@ public class ParameterDef {
 
     /* string operations */
 
-    public String toString() {
-        String result = "";
+    public void appendString(final StringBuilder sb) {
         if (mType == READ_WRITE) {
-            result += "rw ";
+            sb.append("rw ");
         }
-        result += mVar;
-        return result;
+        mVar.appendString(sb, 0);
+    }
+
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        appendString(sb);
+        return sb.toString();
     }
 
     /* term operations */

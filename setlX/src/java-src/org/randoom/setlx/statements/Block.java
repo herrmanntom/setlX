@@ -10,6 +10,7 @@ import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -80,32 +81,30 @@ public class Block extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        return toString(tabs, false);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        appendString(sb, tabs, false);
     }
 
-    public String toString(final int tabs, final boolean brackets) {
+    public void appendString(final StringBuilder sb, final int tabs, final boolean brackets) {
         final String endl      = Environment.getEndl();
               int    stmntTabs = tabs;
         if (brackets) {
             stmntTabs += 1;
+            sb.append("{");
+            sb.append(endl);
         }
-        String result = "";
-        if (brackets) {
-            result += "{" + endl;
-        }
-        int count = 1;
-        for (final Statement stmnt: mStatements) {
-            result += stmnt.toString(stmntTabs);
-            if (count < mStatements.size()) {
-                result += endl;
+        final Iterator<Statement> iter = mStatements.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(sb, stmntTabs);
+            if (iter.hasNext()) {
+                sb.append(endl);
             }
-            count++;
         }
         if (brackets) {
-            result += endl + Environment.getLineStart(tabs) + "}";
+            sb.append(endl);
+            Environment.getLineStart(sb, tabs);
+            sb.append("}");
         }
-        return result;
     }
 
     /* term operations */

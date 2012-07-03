@@ -24,9 +24,9 @@ public class Factorial extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private Expr mExpr;
+    private final Expr mExpr;
 
-    public Factorial(Expr expr) {
+    public Factorial(final Expr expr) {
         mExpr = expr;
     }
 
@@ -36,19 +36,20 @@ public class Factorial extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mExpr.toString(tabs) + "!";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mExpr.appendString(sb, tabs);
+        sb.append("!");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(mExpr.toTerm());
         return result;
     }
 
-    public static Factorial termToExpr(Term term) throws TermConversionException {
+    public static Factorial termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

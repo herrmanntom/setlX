@@ -46,11 +46,14 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "case " + mCondition.toString(tabs) + ":" + Environment.getEndl();
-        result += mStatements.toString(tabs + 1) + Environment.getEndl();
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("case ");
+        mCondition.appendString(sb, tabs);
+        sb.append(":");
+        sb.append(Environment.getEndl());
+        mStatements.appendString(sb, tabs + 1, false);
+        sb.append(Environment.getEndl());
     }
 
     /* term operations */

@@ -73,14 +73,18 @@ public class Forall extends Expr {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        return "forall (" + mIterator.toString(tabs) + " | " + mCondition.toString(tabs) + ")";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("forall (");
+        mIterator.appendString(sb);
+        sb.append(" | ");
+        mCondition.appendString(sb, tabs);
+        sb.append(")");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mIterator.toTerm());
         result.addMember(mCondition.toTerm());
         return result;

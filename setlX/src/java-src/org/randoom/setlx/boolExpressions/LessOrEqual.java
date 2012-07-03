@@ -25,10 +25,10 @@ public class LessOrEqual extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 
-    private Expr mLhs;
-    private Expr mRhs;
+    private final Expr mLhs;
+    private final Expr mRhs;
 
-    public LessOrEqual(Expr lhs, Expr rhs) {
+    public LessOrEqual(final Expr lhs, final Expr rhs) {
         mLhs    = lhs;
         mRhs    = rhs;
     }
@@ -61,32 +61,34 @@ public class LessOrEqual extends Expr {
      */
 
     protected SetlBoolean evaluate() throws SetlException {
-        Value lhs = mLhs.eval();
-        Value rhs = mRhs.eval();
+        final Value lhs = mLhs.eval();
+        final Value rhs = mRhs.eval();
         return SetlBoolean.get(lhs.isLessThan(rhs) == SetlBoolean.TRUE || lhs.isEqual(rhs) == SetlBoolean.TRUE);
     }
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mLhs.toString(tabs) + " <= " + mRhs.toString(tabs);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mLhs.appendString(sb, tabs);
+        sb.append(" <= ");
+        mRhs.appendString(sb, tabs);
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mLhs.toTerm());
         result.addMember(mRhs.toTerm());
         return result;
     }
 
-    public static LessOrEqual termToExpr(Term term) throws TermConversionException {
+    public static LessOrEqual termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true,  term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true,  term.lastMember());
             return new LessOrEqual(lhs, rhs);
         }
     }

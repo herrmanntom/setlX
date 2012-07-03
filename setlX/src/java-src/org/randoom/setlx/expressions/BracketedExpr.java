@@ -24,9 +24,9 @@ public class BracketedExpr extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private Expr mExpr;
+    private final Expr mExpr;
 
-    public BracketedExpr(Expr expr) {
+    public BracketedExpr(final Expr expr) {
         mExpr = expr;
     }
 
@@ -36,23 +36,25 @@ public class BracketedExpr extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return "(" + mExpr.toString(tabs) + ")";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("(");
+        mExpr.appendString(sb, tabs);
+        sb.append(")");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(mExpr.toTerm());
         return result;
     }
 
-    public static BracketedExpr termToExpr(Term term) throws TermConversionException {
+    public static BracketedExpr termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr expr = TermConverter.valueToExpr(term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(term.firstMember());
             return new BracketedExpr(expr);
         }
     }

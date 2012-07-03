@@ -82,16 +82,20 @@ public class Iterator {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = mAssignable.toString(tabs) + " in " + mCollection.toString(tabs);
+    public void appendString(final StringBuilder sb) {
+        mAssignable.appendString(sb, 0);
+        sb.append(" in ");
+        mCollection.appendString(sb, 0);
         if (mNext != null) {
-            result += ", " + mNext.toString(tabs);
+            sb.append(", ");
+            mNext.appendString(sb);
         }
-        return result;
     }
 
-    public String toString() {
-        return toString(0);
+    public final String toString() {
+        final StringBuilder sb = new StringBuilder();
+        appendString(sb);
+        return sb.toString();
     }
 
     /* term operations */

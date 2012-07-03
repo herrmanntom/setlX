@@ -14,6 +14,7 @@ import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public abstract class PreDefinedFunction extends ProcedureDefinition {
@@ -159,25 +160,31 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     /* string and char operations */
 
-    public final String toString(final int tabs) {
+    public final void appendString(final StringBuilder sb, final int tabs) {
         String endl = Environment.getEndl();
-        String result = "procedure (";
-        for (int i = 0; i < mParameters.size(); ++i) {
-            if (i > 0) {
-                result += ", ";
+        sb.append("procedure (");
+        final Iterator<ParameterDef> iter = mParameters.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(sb);
+            if (iter.hasNext()) {
+                sb.append(", ");
             }
-            result += mParameters.get(i);
         }
         if (mUnlimitedParameters) {
             if (mParameters.size() > 0) {
-                result += ", ";
+                sb.append(", ");
             }
-            result += "...";
+            sb.append("...");
         }
-        result += ") {" + endl;
-        result += Environment.getLineStart(tabs + 1) + "/* predefined procedure `" + mName + "' */" + endl;
-        result += Environment.getLineStart(tabs) + "}";
-        return result;
+        sb.append(") {");
+        sb.append(endl);
+        Environment.getLineStart(sb, tabs + 1);
+        sb.append("/* predefined procedure `");
+        sb.append(mName);
+        sb.append("' */");
+        sb.append(endl);
+        Environment.getLineStart(sb, tabs);
+        sb.append("}");
     }
 
     /* term operations */

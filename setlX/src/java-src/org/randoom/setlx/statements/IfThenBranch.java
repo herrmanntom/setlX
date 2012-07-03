@@ -46,13 +46,12 @@ public class IfThenBranch extends IfThenAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "if (";
-        result += mCondition.toString(tabs);
-        result += ") ";
-        result += mStatements.toString(tabs, true);
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("if (");
+        mCondition.appendString(sb, tabs);
+        sb.append(") ");
+        mStatements.appendString(sb, tabs, true);
     }
 
     /* term operations */

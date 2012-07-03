@@ -39,8 +39,14 @@ public class Condition {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        return mExpr.toString(tabs);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mExpr.appendString(sb, tabs);
+    }
+
+    public final String toString() {
+        final StringBuilder sb = new StringBuilder();
+        appendString(sb, 0);
+        return sb.toString();
     }
 
     /* term operations */

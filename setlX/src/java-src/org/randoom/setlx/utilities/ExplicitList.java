@@ -11,6 +11,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -65,15 +66,14 @@ public class ExplicitList extends Constructor {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        final StringBuilder sb = new StringBuilder(size() * 3); // reserve at least 3 chars per expression
-        for (final Expr e: mList) {
-            if (sb.length() > 0) {
+    public void appendString(final StringBuilder sb) {
+        final Iterator<Expr> iter = mList.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(sb, 0);
+            if (iter.hasNext()) {
                 sb.append(", ");
             }
-            sb.append(e.toString(tabs));
         }
-        return sb.toString();
     }
 
     /* term operations */

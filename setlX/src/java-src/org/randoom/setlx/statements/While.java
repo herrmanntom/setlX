@@ -65,11 +65,12 @@ public class While extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "while (" + mCondition.toString(tabs) + ") ";
-        result += mStatements.toString(tabs, true);
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("while (");
+        mCondition.appendString(sb, tabs);
+        sb.append(") ");
+        mStatements.appendString(sb, tabs, true);
     }
 
     /* term operations */

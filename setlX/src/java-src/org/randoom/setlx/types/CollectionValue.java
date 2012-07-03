@@ -105,7 +105,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     /* string and char operations */
 
-    public abstract String          canonical();
+    public abstract void            canonical(final StringBuilder sb);
 
     /* term operations */
 

@@ -11,8 +11,8 @@ public class RangeDummy extends Value {
         return this;
     }
 
-    public String toString() {
-        return " .. ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(" .. ");
     }
 
     public int compareTo(final Value v) {

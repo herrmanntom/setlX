@@ -366,21 +366,20 @@ public class Term extends CollectionValue {
 
     /* string and char operations */
 
-    public String canonical() {
-        String result = mBody.canonical();
-        result = "(" + result.substring(1, result.length() - 1) + ")";
-
-        if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
-            result = Variable.FUNCTIONAL_CHARACTER_EXTERNAL + result;
-        } else {
-            result = mFunctionalCharacter + result;
-        }
-
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        TermConverter.valueToCodeFragment(this, false).appendString(sb, 0);
     }
 
-    public String toString() {
-        return TermConverter.valueToCodeFragment(this, false).toString();
+    public void canonical(final StringBuilder sb) {
+        if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
+            sb.append(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
+        } else {
+            sb.append(mFunctionalCharacter);
+        }
+
+        sb.append("(");
+        mBody.canonical(sb, /* brackets = */ false);
+        sb.append(")");
     }
 
     /* term operations */

@@ -8,9 +8,9 @@ public class ValueExpr extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private Value mValue;
+    private final Value mValue;
 
-    public ValueExpr(Value value) {
+    public ValueExpr(final Value value) {
         mValue  = value;
     }
 
@@ -24,8 +24,8 @@ public class ValueExpr extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mValue.toString(tabs);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mValue.appendString(sb, tabs);
     }
 
     /* term operations */

@@ -416,8 +416,10 @@ public abstract class Value implements Comparable<Value> {
 
     /* string and char operations */
 
-    public String canonical() {
-        return toString();
+    public abstract void appendString(final StringBuilder sb, final int tabs);
+
+    public void canonical(final StringBuilder sb) {
+        appendString(sb, 0);
     }
 
     public SetlString charConvert() throws SetlException {
@@ -431,14 +433,14 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlString str() {
-        return new SetlString(this.toString());
+        return new SetlString(toString());
     }
 
-    public String toString(final int tabs) {
-        return toString();
+    public final String toString() {
+        final StringBuilder sb = new StringBuilder();
+        appendString(sb, 0);
+        return sb.toString();
     }
-
-    public abstract String toString();
 
     /* term operations */
 

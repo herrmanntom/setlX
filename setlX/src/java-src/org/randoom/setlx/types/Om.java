@@ -25,8 +25,8 @@ public class Om extends Value {
 
     /* string and char operations */
 
-    public String toString() {
-        return "om";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("om");
     }
 
     /* comparisons */

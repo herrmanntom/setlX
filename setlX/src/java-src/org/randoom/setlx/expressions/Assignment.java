@@ -46,7 +46,7 @@ public class Assignment extends Expr {
     private final Expr  mRhs;
     private final Expr  mExecutionRhs; // executed rhs, e.g. mLhs + mRhs, when type == "+="
 
-    public Assignment(Expr lhs, int type, Expr rhs) {
+    public Assignment(final Expr lhs, final int type, final Expr rhs) {
         mLhs  = lhs;
         mType = type;
         mRhs  = rhs;
@@ -91,32 +91,34 @@ public class Assignment extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        String result   = mLhs.toString(tabs) + " ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mLhs.appendString(sb, tabs);
+        sb.append(" ");
         switch (mType) {
             case DIRECT:
-                result += ":=";
+                sb.append(":=");
                 break;
             case SUM:
-                result += "+=";
+                sb.append("+=");
                 break;
             case DIFFERENCE:
-                result += "-=";
+                sb.append("-=");
                 break;
             case PRODUCT:
-                result += "*=";
+                sb.append("*=");
                 break;
             case DIVISION:
-                result += "/=";
+                sb.append("/=");
                 break;
             case MODULO:
-                result += "%=";
+                sb.append("%=");
                 break;
             default:
-                result += "??";
+                sb.append("??");
                 break;
         }
-        return result + " " + mRhs.toString(tabs);
+        sb.append(" ");
+        mRhs.appendString(sb, tabs);
     }
 
     /* term operations */
@@ -125,25 +127,25 @@ public class Assignment extends Expr {
         Term result = null;
         switch (mType) {
             case DIRECT:
-                result = new Term(FUNCTIONAL_CHARACTER_DIRECT);
+                result = new Term(FUNCTIONAL_CHARACTER_DIRECT, 2);
                 break;
             case SUM:
-                result = new Term(FUNCTIONAL_CHARACTER_SUM);
+                result = new Term(FUNCTIONAL_CHARACTER_SUM, 2);
                 break;
             case DIFFERENCE:
-                result = new Term(FUNCTIONAL_CHARACTER_DIFFERENCE);
+                result = new Term(FUNCTIONAL_CHARACTER_DIFFERENCE, 2);
                 break;
             case PRODUCT:
-                result = new Term(FUNCTIONAL_CHARACTER_PRODUCT);
+                result = new Term(FUNCTIONAL_CHARACTER_PRODUCT, 2);
                 break;
             case DIVISION:
-                result = new Term(FUNCTIONAL_CHARACTER_DIVISION);
+                result = new Term(FUNCTIONAL_CHARACTER_DIVISION, 2);
                 break;
             case MODULO:
-                result = new Term(FUNCTIONAL_CHARACTER_MODULO);
+                result = new Term(FUNCTIONAL_CHARACTER_MODULO, 2);
                 break;
             default:
-                result = new Term("'undefinedAssignment");
+                result = new Term("'undefinedAssignment", 2);
                 break;
         }
         result.addMember(mLhs.toTerm());

@@ -70,18 +70,16 @@ public class Iteration extends Constructor {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String r;
+    public void appendString(final StringBuilder sb) {
         if (mExpr != null) {
-            r = mExpr.toString(tabs) + " : ";
-        } else {
-            r = "";
+            mExpr.appendString(sb, 0);
+            sb.append(" : ");
         }
-        r += mIterator.toString(tabs);
+        mIterator.appendString(sb);
         if (mCondition != null) {
-            r += " | " + mCondition.toString(tabs);
+            sb.append(" | ");
+            mCondition.appendString(sb, 0);
         }
-        return r;
     }
 
     /* term operations */

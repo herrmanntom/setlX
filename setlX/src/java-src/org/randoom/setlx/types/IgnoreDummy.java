@@ -15,8 +15,8 @@ public class IgnoreDummy extends Value {
 
     /* string and char operations */
 
-    public String toString() {
-        return "_";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("_");
     }
 
     /* term operations */

@@ -142,8 +142,8 @@ public class StringConstructor extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mOriginalStr;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(mOriginalStr);
     }
 
     /* term operations */
@@ -153,7 +153,7 @@ public class StringConstructor extends Expr {
             // simple string without $-expression
             return new SetlString(mFragments.get(0));
         } else {
-            final Term result  = new Term(FUNCTIONAL_CHARACTER);
+            final Term result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
             final SetlList strList = new SetlList(mFragments.size());
             for (final String str: mFragments) {
@@ -214,7 +214,7 @@ public class StringConstructor extends Expr {
         }
     }
 
-    public static Expr valueToExpr(Value value) throws TermConversionException {
+    public static Expr valueToExpr(final Value value) throws TermConversionException {
         if ( ! (value instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }

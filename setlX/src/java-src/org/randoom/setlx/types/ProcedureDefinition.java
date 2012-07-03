@@ -13,6 +13,7 @@ import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 // This class represents a function definition
@@ -137,21 +138,17 @@ public class ProcedureDefinition extends Value {
 
     /* string and char operations */
 
-    public String toString(final int tabs) {
-        String result = "procedure (";
-        for (int i = 0; i < mParameters.size(); ++i) {
-            if (i > 0) {
-                result += ", ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("procedure (");
+        final Iterator<ParameterDef> iter = mParameters.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(sb);
+            if (iter.hasNext()) {
+                sb.append(", ");
             }
-            result += mParameters.get(i);
         }
-        result += ") ";
-        result += mStatements.toString(tabs, true);
-        return result;
-    }
-
-    public String toString() {
-        return toString(0);
+        sb.append(") ");
+        mStatements.appendString(sb, tabs, /* brackets = */ true);
     }
 
     /* term operations */

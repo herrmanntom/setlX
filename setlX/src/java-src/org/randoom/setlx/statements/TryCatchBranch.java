@@ -64,16 +64,17 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = " catch (" + mErrorVar.toString(tabs) + ") ";
-        result += mBlockToRecover.toString(tabs, true);
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(" catch (");
+        mErrorVar.appendString(sb, tabs);
+        sb.append(") ");
+        mBlockToRecover.appendString(sb, tabs, true);
     }
 
     /* term operations */
 
     public Term toTerm() {
-        final Term    result  = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mErrorVar.toTerm());
         result.addMember(mBlockToRecover.toTerm());
         return result;

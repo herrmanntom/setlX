@@ -22,10 +22,10 @@ public class MultiplyMembersBinary extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1850;
 
-    private Expr mNeutral;
-    private Expr mCollection;
+    private final Expr mNeutral;
+    private final Expr mCollection;
 
-    public MultiplyMembersBinary(Expr neutral, Expr collection) {
+    public MultiplyMembersBinary(final Expr neutral, final Expr collection) {
         mNeutral    = neutral;
         mCollection = collection;
     }
@@ -36,20 +36,22 @@ public class MultiplyMembersBinary extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return mNeutral.toString(tabs) + " */ " + mCollection.toString(tabs);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        mNeutral.appendString(sb, tabs);
+        sb.append(" */ ");
+        mCollection.appendString(sb, tabs);
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(mNeutral.toTerm());
         result.addMember(mCollection.toTerm());
         return result;
     }
 
-    public static MultiplyMembersBinary termToExpr(Term term) throws TermConversionException {
+    public static MultiplyMembersBinary termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

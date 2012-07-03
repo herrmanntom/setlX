@@ -25,9 +25,9 @@ public class Negation extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 2000;
 
-    private Expr mExpr;
+    private final Expr mExpr;
 
-    public Negation(Expr expr) {
+    public Negation(final Expr expr) {
         mExpr = expr;
     }
 
@@ -37,23 +37,24 @@ public class Negation extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return "!" + mExpr.toString(tabs);
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("!");
+        mExpr.appendString(sb, tabs);
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(mExpr.toTerm());
         return result;
     }
 
-    public static Negation termToExpr(Term term) throws TermConversionException {
+    public static Negation termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             return new Negation(expr);
         }
     }

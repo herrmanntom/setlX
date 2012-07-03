@@ -6,6 +6,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -23,18 +24,18 @@ public class TermConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private String     mFChar;     // functional character of the term
-    private List<Expr> mArgs;      // list of arguments
+    private final String     mFChar;     // functional character of the term
+    private final List<Expr> mArgs;      // list of arguments
 
-    public TermConstructor(String fChar, List<Expr> args) {
+    public TermConstructor(final String fChar, final List<Expr> args) {
         mFChar  = fChar;
         mArgs   = args;
     }
 
     protected Term evaluate() throws SetlException {
-        Term    result  = new Term(mFChar);
+        final Term result = new Term(mFChar, mArgs.size());
 
-        for (Expr arg: mArgs) {
+        for (final Expr arg: mArgs) {
             result.addMember(arg.eval().toTerm()); // evaluate arguments at runtime
         }
 
@@ -43,24 +44,27 @@ public class TermConstructor extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        String result = mFChar + "(";
-        for (int i = 0; i < mArgs.size(); ++i) {
-            if (i > 0) {
-                result += ", ";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(mFChar);
+        sb.append("(");
+
+        final Iterator<Expr> iter = mArgs.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(sb, 0);
+            if (iter.hasNext()) {
+                sb.append(", ");
             }
-            result += mArgs.get(i).toString(tabs);
         }
-        result += ")";
-        return result;
+
+        sb.append(")");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(mFChar);
+        final Term result = new Term(mFChar, mArgs.size());
 
-        for (Expr arg: mArgs) {
+        for (final Expr arg: mArgs) {
             result.addMember(arg.toTerm()); // do not evaluate here
         }
 
@@ -71,10 +75,10 @@ public class TermConstructor extends Expr {
         return this.evaluate();
     }
 
-    public static Expr termToExpr(Term term) {
-        String      functionalCharacter = term.functionalCharacter().getUnquotedString();
-        List<Expr>  args                = new ArrayList<Expr>(term.size());
-        for (Value v : term) {
+    public static Expr termToExpr(final Term term) {
+        final String        functionalCharacter = term.functionalCharacter().getUnquotedString();
+        final List<Expr>    args                = new ArrayList<Expr>(term.size());
+        for (final Value v : term) {
             args.add(TermConverter.valueToExpr(v));
         }
         return new TermConstructor(functionalCharacter, args);

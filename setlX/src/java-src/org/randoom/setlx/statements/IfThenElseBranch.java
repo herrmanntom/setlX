@@ -42,10 +42,9 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = " else ";
-        result += mStatements.toString(tabs, true);
-        return result;
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(" else ");
+        mStatements.appendString(sb, tabs, true);
     }
 
     /* term operations */

@@ -71,22 +71,24 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs);
-        result += "case [";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("case [");
 
         final Iterator<Variable> iter = mVars.iterator();
         while (iter.hasNext()) {
-            result += iter.next().toString(tabs);
+            iter.next().appendString(sb, 0);
             if (iter.hasNext()) {
-                result += ", ";
+                sb.append(", ");
             }
         }
 
-        result += " | " + mRest;
-        result += "] :" + Environment.getEndl();
-        result += mStatements.toString(tabs + 1) + Environment.getEndl();
-        return result;
+        sb.append(" | ");
+        mRest.appendString(sb, 0);
+        sb.append("] :");
+        sb.append(Environment.getEndl());
+        mStatements.appendString(sb, tabs + 1);
+        sb.append(Environment.getEndl());
     }
 
     /* term operations */

@@ -203,16 +203,13 @@ public class Environment {
         return sAssertsDisabled;
     }
 
-    public static String getLineStart(final int tabs) {
-        if (!sPrintVerbose || tabs <= 0) {
-            return "";
+    public static void getLineStart(final StringBuilder sb, final int tabs) {
+        if (sPrintVerbose && tabs > 0) {
+            final String tab = sEnvProvider.getTab();
+            for (int i = 0; i < tabs; i++) {
+                sb.append(tab);
+            }
         }
-        final String tab = sEnvProvider.getTab();
-              String r   = tab;
-        for (int i = 1; i < tabs; i++) {
-            r += tab;
-        }
-        return r;
     }
 
     public static String getEndl() {

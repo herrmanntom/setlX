@@ -43,13 +43,15 @@ public class Switch extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        String result = Environment.getLineStart(tabs) + "switch {" + Environment.getEndl();
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        sb.append("switch {");
+        sb.append(Environment.getEndl());
         for (final SwitchAbstractBranch br : mBranchList) {
-            result += br.toString(tabs + 1);
+            br.appendString(sb, tabs + 1);
         }
-        result += Environment.getLineStart(tabs) + "}";
-        return result;
+        Environment.getLineStart(sb, tabs);
+        sb.append("}");
     }
 
     /* term operations */

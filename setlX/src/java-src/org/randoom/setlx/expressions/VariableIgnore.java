@@ -34,17 +34,17 @@ public class VariableIgnore extends Expr {
 
     /* string operations */
 
-    public String toString(int tabs) {
-        return "_";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append("_");
     }
 
     /* term operations */
 
     public Term toTerm() {
-        return new Term(FUNCTIONAL_CHARACTER);
+        return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
-    public static VariableIgnore termToExpr(Term term) {
+    public static VariableIgnore termToExpr(final Term term) {
         return VI;
     }
 

@@ -417,6 +417,15 @@ public class Rational extends NumberValue {
     }
 
     /* string and char operations */
+
+    public void appendString(final StringBuilder sb, final int tabs) {
+        sb.append(mNominator.toString());
+        if ( ! mIsInteger) {
+            sb.append("/");
+            sb.append(mDenominator.toString());
+        }
+    }
+
     public SetlString charConvert() throws NumberToLargeException {
         if (mNominator.compareTo(BigInteger.valueOf(127)) <= 0 &&
             mNominator.compareTo(BigInteger.ZERO) >= 0         &&
@@ -430,17 +439,6 @@ public class Rational extends NumberValue {
                 " (it is > 127 or negative or has a denominator != 1)."
             );
         }
-    }
-
-    public String toString() {
-        if (mIsInteger) {
-            return mNominator.toString();
-        }
-        final StringBuilder sb = new StringBuilder();
-        sb.append(mNominator.toString());
-        sb.append("/");
-        sb.append(mDenominator.toString());
-        return sb.toString();
     }
 
     /* comparisons */

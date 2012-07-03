@@ -41,8 +41,10 @@ public class ExpressionStatement extends Statement {
 
     /* string operations */
 
-    public String toString(final int tabs) {
-        return Environment.getLineStart(tabs) + mExpr.toString(tabs) + ";";
+    public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
+        mExpr.appendString(sb, tabs);
+        sb.append(";");
     }
 
     /* term operations */

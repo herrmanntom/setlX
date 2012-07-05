@@ -69,7 +69,7 @@ public class ParameterDef {
         mVar.appendString(sb, 0);
     }
 
-    public String toString() {
+    public final String toString() {
         final StringBuilder sb = new StringBuilder();
         appendString(sb);
         return sb.toString();

@@ -20,9 +20,9 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         addParameter("n");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value   number  = args.get(0);
-        Value   nValue  = args.get(1);
+    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        final Value number  = args.get(0);
+        final Value nValue  = args.get(1);
         if ( ! (number instanceof Rational)) {
             throw new IncompatibleTypeException(
                 "rational-argument '" + number + "' is not a rational number."
@@ -33,25 +33,27 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
                 "n-argument '" + nValue + "' is not an integer >= 1."
             );
         }
-        int     n       = ((Rational) nValue).intValue();
+        final int           n       = ((Rational) nValue).intValue();
 
-        Value   rest    = number.modulo(new Rational(1));
-        Value   intPart = number.difference(rest);
+              Value         rest    = number.modulo(new Rational(1));
+        final Value         intPart = number.difference(rest);
 
-        String  result  = intPart.toString() + ".";
-        Value   digit   = null;
-        Value   restMod1= null;
+        final StringBuilder result  = new StringBuilder();
+              Value         digit   = null;
+              Value         restMod1= null;
 
+        intPart.appendString(result, 0);
+        result.append(".");
         for (int i = 1; i <= n; ++i) {
             rest    = rest.multiply(new Rational(10));
             restMod1= rest.modulo(new Rational(1));
             digit   = rest.difference(restMod1);
             rest    = restMod1;
 
-            result += digit.toString();
+            digit.appendString(result, 0);
         }
 
-        return new SetlString(result);
+        return new SetlString(result.toString());
     }
 }
 

@@ -75,7 +75,7 @@ public class SetlList extends CollectionValue {
      */
     private void separateFromOriginal() {
         if (isCloned) {
-            ArrayList<Value> original = mList;
+            final ArrayList<Value> original = mList;
             mList = new ArrayList<Value>(original.size());
             for (final Value v: original) {
                 mList.add(v.clone());
@@ -106,12 +106,16 @@ public class SetlList extends CollectionValue {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
         } else if (summand instanceof CollectionValue) {
-            final SetlList result = this.clone();
-            result.separateFromOriginal();
-            result.mList.ensureCapacity(this.size() + summand.size());
-            for (final Value v: (CollectionValue) summand) {
-                result.addMember(v.clone());
+            final ArrayList<Value> list = new ArrayList<Value>(mList.size() + summand.size());
+            for (final Value v: mList) {
+                list.add(v.clone());
             }
+            for (final Value v: (CollectionValue) summand) {
+                list.add(v.clone());
+            }
+            final SetlList result = new SetlList(list);
+            // we already cloned all values...
+            result.isCloned = false;
             return result;
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(this);

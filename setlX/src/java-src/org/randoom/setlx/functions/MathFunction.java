@@ -17,23 +17,23 @@ import java.util.List;
 public class MathFunction extends PreDefinedFunction {
     private Method mFunction;
 
-    public MathFunction(String name, Method function) {
+    public MathFunction(final String name, final Method function) {
         super(name);
         addParameter("x");
         mFunction = function;
     }
 
-    public Real execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Real execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (!(args.get(0) instanceof NumberValue)) {
             throw new IncompatibleTypeException(
                 "This function requires a single number as parameter."
             );
         }
-        Value  arg      = args.get(0).toReal();
+        final Value arg = args.get(0).toReal();
         if (arg != Om.OM) {
             try {
-                Object result   = mFunction.invoke(null, ((Real) arg).doubleValue());
-                return new Real(Double.valueOf(result.toString()));
+                Object result = mFunction.invoke(null, ((Real) arg).doubleValue());
+                return new Real(result.toString());
             } catch (NumberFormatException nfe) {
                 throw new NumberToLargeException(
                     "Involved numbers are to large or to small for this operation."

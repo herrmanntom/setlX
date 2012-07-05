@@ -24,8 +24,11 @@ public class PD_print extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
+        final StringBuilder out = new StringBuilder();
         for (final Value arg : args) {
-            print(arg.getUnquotedString());
+            arg.appendUnquotedString(out, 0);
+            print(out.toString());
+            out.setLength( 0 );
         }
         printEndl();
         return Om.OM;

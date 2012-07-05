@@ -73,7 +73,7 @@ public class SetlSet extends CollectionValue {
      */
     private void separateFromOriginal() {
         if (isCloned) {
-            TreeSet<Value> original = mSet;
+            final TreeSet<Value> original = mSet;
             mSet = new TreeSet<Value>();
             for (final Value v: original) {
                 mSet.add(v.clone());

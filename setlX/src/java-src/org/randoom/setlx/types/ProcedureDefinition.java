@@ -80,7 +80,12 @@ public class ProcedureDefinition extends Value {
 
         // put arguments into inner scope
         for (int i = 0; i < size; ++i) {
-            mParameters.get(i).assign(values.get(i).clone());
+            final ParameterDef param = mParameters.get(i);
+            if (param.getType() == ParameterDef.READ_WRITE) {
+                param.assign(values.get(i));
+            } else {
+                param.assign(values.get(i).clone());
+            }
         }
 
         // get rid of value-list

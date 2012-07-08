@@ -22,4 +22,10 @@ public class RangeDummy extends Value {
             return -1; // dummy is uncomparable to anything else
         }
     }
+
+    private final static int initHashCode = RangeDummy.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode;
+    }
 }

@@ -484,5 +484,11 @@ public class Term extends CollectionValue {
             return 1;
         }
     }
+
+    private final static int initHashCode = Term.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode + mFunctionalCharacter.hashCode() * 31 + mBody.hashCode();
+    }
 }
 

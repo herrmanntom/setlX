@@ -11,17 +11,17 @@ import org.randoom.setlx.utilities.TermConverter;
 /*
 grammar rule:
 assignment
-    : assignable (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
+    : assignable ('\\=' | [...] ) ((assignment)=> assignment | anyExpr)
     ;
 
 implemented here as:
-      ==========  ====---====---====---====---====---====   ===================================
-         mLhs                      mType                                  mRhs
+      ==========                  ===================================
+         mLhs                                    mRhs
 */
 
-public class Assignment extends Expr {
+public class IntegerDivisionAssignment extends Expr {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^assignment";
+    public  final static String     FUNCTIONAL_CHARACTER    = "^integerDivisionAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sTraceAssignments       = false;
 
@@ -31,13 +31,13 @@ public class Assignment extends Expr {
     private final Expr  mLhs;
     private final Expr  mRhs;
 
-    public Assignment(final Expr lhs, final Expr rhs) {
+    public IntegerDivisionAssignment(final Expr lhs, final Expr rhs) {
         mLhs  = lhs;
         mRhs  = rhs;
     }
 
     protected Value evaluate() throws SetlException {
-        final Value assigned = mLhs.assign(mRhs.eval().clone());
+        final Value assigned = mLhs.assign(mLhs.eval().divide(mRhs.eval().clone()).floor());
 
         if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
@@ -50,7 +50,7 @@ public class Assignment extends Expr {
 
     public void appendString(final StringBuilder sb, final int tabs) {
         mLhs.appendString(sb, tabs);
-        sb.append(" := ");
+        sb.append(" \\= ");
         mRhs.appendString(sb, tabs);
     }
 
@@ -63,13 +63,13 @@ public class Assignment extends Expr {
         return result;
     }
 
-    public static Assignment termToExpr(Term term) throws TermConversionException {
+    public static IntegerDivisionAssignment termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new Assignment(lhs, rhs);
+            return new IntegerDivisionAssignment(lhs, rhs);
         }
     }
 

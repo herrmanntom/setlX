@@ -200,30 +200,56 @@ exprList [boolean enableIgnore] returns [List<Expr> exprs]
     @init {
         exprs = new ArrayList<Expr>();
     }
-    : a1 = anyExpr[$enableIgnore]       { exprs.add($a1.ae);             }
+    : a1 = anyExpr[$enableIgnore]       { exprs.add($a1.ae); }
       (
-        ',' a2 = anyExpr[$enableIgnore] { exprs.add($a2.ae);             }
+        ',' a2 = anyExpr[$enableIgnore] { exprs.add($a2.ae); }
       )*
     ;
 
-assignment returns [Assignment assign]
+assignment returns [Expr assign]
     @init {
-        int           type  = -1;
+        int     type = -1;
+        Expr    rhs  = null;
     }
     : assignable[false]
       (
-         ':='                { type = Assignment.DIRECT;     }
-       | '+='                { type = Assignment.SUM;        }
-       | '-='                { type = Assignment.DIFFERENCE; }
-       | '*='                { type = Assignment.PRODUCT;    }
-       | '/='                { type = Assignment.DIVISION;   }
-       | '%='                { type = Assignment.MODULO;     }
+         ':='  { type = 0; }
+       | '+='  { type = 1; }
+       | '-='  { type = 2; }
+       | '*='  { type = 3; }
+       | '/='  { type = 4; }
+       | '\\=' { type = 5; }
+       | '%='  { type = 6; }
       )
       (
          ( assignment )=>
-         as = assignment     { $assign = new Assignment($assignable.a, type, $as.assign); }
-       | a2 = anyExpr[false] { $assign = new Assignment($assignable.a, type, $a2.ae);     }
+         as = assignment { rhs = $as.assign;  }
+       | anyExpr[false]  { rhs = $anyExpr.ae; }
       )
+      { switch (type) {
+            case 1:
+                $assign = new SumAssignment($assignable.a, rhs);
+                break;
+            case 2:
+                $assign = new DifferenceAssignment($assignable.a, rhs);
+                break;
+            case 3:
+                $assign = new MultiplyAssignment($assignable.a, rhs);
+                break;
+            case 4:
+                $assign = new DivideAssignment($assignable.a, rhs);
+                break;
+            case 5:
+                $assign = new IntegerDivisionAssignment($assignable.a, rhs);
+                break;
+            case 6:
+                $assign = new ModuloAssignment($assignable.a, rhs);
+                break;
+            default:
+                $assign = new Assignment($assignable.a, rhs);
+                break;
+        }
+      }
     ;
 
 assignList returns [SetListConstructor alc]

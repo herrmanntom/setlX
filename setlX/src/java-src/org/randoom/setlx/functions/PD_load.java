@@ -18,7 +18,6 @@ public class PD_load extends PreDefinedFunction {
     private PD_load() {
         super("load");
         addParameter("path_to_setlX_file");
-        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

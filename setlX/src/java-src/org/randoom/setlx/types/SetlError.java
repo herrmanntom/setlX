@@ -51,5 +51,11 @@ public class SetlError extends Value {
             return 1;
         }
     }
+
+    private final static int initHashCode = SetlError.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode * 31 + mMessage.hashCode();
+    }
 }
 

@@ -125,6 +125,10 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value differenceAssign(final Value subtrahend) throws SetlException {
+        return difference(subtrahend);
+    }
+
     public Value divide(final Value divisor) throws SetlException {
         if (divisor instanceof Term) {
             return ((Term) divisor).divideFlipped(this);
@@ -132,6 +136,10 @@ public abstract class Value implements Comparable<Value> {
         throw new UndefinedOperationException(
             "'" + this + " / " + divisor + "' is undefined."
         );
+    }
+
+    public Value divideAssign(final Value divisor) throws SetlException {
+        return divide(divisor);
     }
 
     public Value factorial() throws SetlException {
@@ -177,6 +185,10 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value moduloAssign(final Value modulo) throws SetlException {
+        return modulo(modulo);
+    }
+
     public Value multiply(final Value multiplier) throws SetlException {
         if (multiplier instanceof Term) {
             return ((Term) multiplier).multiplyFlipped(this);
@@ -184,6 +196,10 @@ public abstract class Value implements Comparable<Value> {
         throw new UndefinedOperationException(
             "'" + this + " * " + multiplier + "' is undefined."
         );
+    }
+
+    public Value multiplyAssign(final Value multiplier) throws SetlException {
+        return multiply(multiplier);
     }
 
     public Value negate() throws IncompatibleTypeException {
@@ -216,6 +232,10 @@ public abstract class Value implements Comparable<Value> {
         throw new UndefinedOperationException(
             "'" + this + " + " + summand + "' is undefined."
         );
+    }
+
+    public Value sumAssign(final Value summand) throws SetlException {
+        return sum(summand);
     }
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
@@ -482,6 +502,8 @@ public abstract class Value implements Comparable<Value> {
             return false;
         }
     }
+
+    public abstract int hashCode();
 
     public final SetlBoolean isEqual(final Value other) {
         return SetlBoolean.get(this.equals(other));

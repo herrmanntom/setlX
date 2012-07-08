@@ -51,7 +51,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
 
     public Value execute() throws SetlException {
         // assign directly
-        mErrorVar.assign(mException.getValue());
+        mErrorVar.assign(mException.getValue().clone());
         // remove stored exception
         mException = null;
         // execute

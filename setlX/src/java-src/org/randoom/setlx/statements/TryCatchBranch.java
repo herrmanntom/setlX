@@ -47,7 +47,7 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
     public Value execute() throws SetlException {
         if (mException instanceof ThrownInSetlXException) {
             // assign directly
-            mErrorVar.assign( ((ThrownInSetlXException) mException).getValue() );
+            mErrorVar.assign( ((ThrownInSetlXException) mException).getValue().clone() );
         } else {
             // wrap into error
             mErrorVar.assign(new SetlError(mException));

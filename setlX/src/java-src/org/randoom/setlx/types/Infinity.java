@@ -175,5 +175,13 @@ public class Infinity extends NumberValue {
             return -1;
         }
     }
+
+    public int hashCode() {
+        if (this == POSITIVE) {
+            return -1029009190;
+        } else {
+            return   968563318;
+        }
+    }
 }
 

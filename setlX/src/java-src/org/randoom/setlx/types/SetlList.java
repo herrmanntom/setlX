@@ -105,6 +105,8 @@ public class SetlList extends CollectionValue {
     public Value sum(final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
+        } else if (summand instanceof SetlString) {
+            return ((SetlString)summand).sumFlipped(this);
         } else if (summand instanceof CollectionValue) {
             final ArrayList<Value> list = new ArrayList<Value>(mList.size() + summand.size());
             for (final Value v: mList) {
@@ -117,11 +119,27 @@ public class SetlList extends CollectionValue {
             // we already cloned all values...
             result.isCloned = false;
             return result;
-        } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).sumFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " + " + summand + "' is not a list or string."
+            );
+        }
+    }
+
+    public Value sumAssign(final Value summand) throws SetlException {
+        if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else if (summand instanceof SetlString) {
+            return ((SetlString)summand).sumFlipped(this);
+        } else if (summand instanceof CollectionValue) {
+            separateFromOriginal();
+            for (final Value v: (CollectionValue) summand) {
+                mList.add(v.clone());
+            }
+            return this;
+        }else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " += " + summand + "' is not a list or string."
             );
         }
     }
@@ -465,8 +483,8 @@ public class SetlList extends CollectionValue {
      */
     public int compareTo(final Value v){
         if (v instanceof SetlList) {
-            final Iterator<Value> iterFirst  = iterator();
-            final Iterator<Value> iterSecond = ((SetlList) v).iterator();
+            final Iterator<Value> iterFirst  = mList.iterator();
+            final Iterator<Value> iterSecond = ((SetlList) v).mList.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
                 final int cmp = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp == 0) {
@@ -490,5 +508,14 @@ public class SetlList extends CollectionValue {
         }
     }
 
+    private final static int initHashCode = SetlList.class.hashCode();
+
+    public int hashCode() {
+        int hash = initHashCode;
+        for (final Value v : mList) {
+            hash = hash * 31 + v.hashCode();
+        }
+        return hash;
+    }
 }
 

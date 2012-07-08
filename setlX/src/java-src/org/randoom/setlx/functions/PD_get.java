@@ -18,7 +18,6 @@ public class PD_get extends PreDefinedFunction {
         addParameter("message");
         enableUnlimitedParameters();
         allowFewerParameters();
-        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {

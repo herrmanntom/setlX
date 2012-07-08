@@ -276,5 +276,11 @@ public class Real extends NumberValue {
             return -1;
         }
     }
+
+    private final static int initHashCode = Real.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode + mReal.hashCode();
+    }
 }
 

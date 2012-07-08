@@ -55,7 +55,7 @@ public class ExplicitList extends Constructor {
                 v = list.getMember(new Rational(i + 1));
             } catch (SetlException se) { /* this can not fail at this point */};
 
-            e.assign(v);
+            e.assign(v.clone());
         }
         return list.clone();
     }

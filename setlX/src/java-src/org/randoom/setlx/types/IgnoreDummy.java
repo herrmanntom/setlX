@@ -34,4 +34,10 @@ public class IgnoreDummy extends Value {
             return -1; // dummy is uncomparable to anything else
         }
     }
+
+    private final static int initHashCode = IgnoreDummy.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode;
+    }
 }

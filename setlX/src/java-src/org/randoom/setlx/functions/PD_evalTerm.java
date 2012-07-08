@@ -10,7 +10,7 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-// evalTerm(term)            : execute a term which represents SetlX statements and/or expressions
+// evalTerm(term)                : execute a term which represents SetlX statements and/or expressions
 
 public class PD_evalTerm extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_evalTerm();
@@ -18,7 +18,6 @@ public class PD_evalTerm extends PreDefinedFunction {
     private PD_evalTerm() {
         super("evalTerm");
         addParameter("term");
-        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

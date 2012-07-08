@@ -20,7 +20,6 @@ public class PD_read extends PreDefinedFunction {
         addParameter("message");
         enableUnlimitedParameters();
         allowFewerParameters();
-        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {

@@ -155,7 +155,7 @@ public class Iterator {
                 VariableScope.setScope(innerScope);
                 innerScope.setWriteThrough(false); // force iteration variables to be local to this block
                 // assign value from collection
-                mAssignable.assign(v);
+                mAssignable.assign(v.clone());
 
                 if (sTraceAssignments) {
                     Environment.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");

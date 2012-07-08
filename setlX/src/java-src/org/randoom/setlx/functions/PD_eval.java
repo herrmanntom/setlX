@@ -9,7 +9,7 @@ import org.randoom.setlx.utilities.ParseSetlX;
 
 import java.util.List;
 
-// eval(expr)              : evaluate a String of a SetlX expression
+// eval(expr)                    : evaluate a String of a SetlX expression
 
 public class PD_eval extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_eval();
@@ -17,7 +17,6 @@ public class PD_eval extends PreDefinedFunction {
     private PD_eval() {
         super("eval");
         addParameter("setlX_expr");
-        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

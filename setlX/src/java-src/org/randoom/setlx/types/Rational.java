@@ -479,4 +479,11 @@ public class Rational extends NumberValue {
             return -1;
         }
     }
+
+    private final static int initHashCode = Rational.class.hashCode();
+
+    public int hashCode() {
+        return (initHashCode + mNominator.hashCode()) * 31 + mDenominator.hashCode();
+    }
 }
+

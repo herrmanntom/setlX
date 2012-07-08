@@ -80,7 +80,7 @@ public class ProcedureDefinition extends Value {
 
         // put arguments into inner scope
         for (int i = 0; i < size; ++i) {
-            mParameters.get(i).assign(values.get(i));
+            mParameters.get(i).assign(values.get(i).clone());
         }
 
         // get rid of value-list
@@ -215,6 +215,12 @@ public class ProcedureDefinition extends Value {
             // everything else is smaller
             return 1;
         }
+    }
+
+    private final static int initHashCode = ProcedureDefinition.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode;
     }
 }
 

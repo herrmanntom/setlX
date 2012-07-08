@@ -10,7 +10,7 @@ import org.randoom.setlx.utilities.ParseSetlX;
 
 import java.util.List;
 
-// execute(stmnts)            : execute a String of SetlX statements
+// execute(stmnts)               : execute a String of SetlX statements
 
 public class PD_execute extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_execute();
@@ -18,7 +18,6 @@ public class PD_execute extends PreDefinedFunction {
     private PD_execute() {
         super("execute");
         addParameter("setlX_statements");
-        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

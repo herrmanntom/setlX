@@ -34,7 +34,7 @@ public class WriteBackAgent {
     public void writeBack() {
         for (int i = 0; i < mExpressions.size(); ++i) {
             try {
-                mExpressions.get(i).assign(mValues.get(i));
+                mExpressions.get(i).assign(mValues.get(i).clone());
             } catch (SetlException se) {
                 // assignment failed => just ignore it
             }

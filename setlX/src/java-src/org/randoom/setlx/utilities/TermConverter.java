@@ -100,15 +100,6 @@ public class TermConverter {
                         }
                     }
                     // special cases
-                    // non-generic expressions
-                    else if (fc.equals(Assignment.FUNCTIONAL_CHARACTER_SUM)        ||
-                             fc.equals(Assignment.FUNCTIONAL_CHARACTER_DIFFERENCE) ||
-                             fc.equals(Assignment.FUNCTIONAL_CHARACTER_PRODUCT)    ||
-                             fc.equals(Assignment.FUNCTIONAL_CHARACTER_DIVISION)   ||
-                             fc.equals(Assignment.FUNCTIONAL_CHARACTER_MODULO)
-                    ) {
-                        return Assignment.termToExpr(term);
-                    }
                     // non-generic values
                     else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
                         return new ValueExpr(LambdaDefinition.termToValue(term));

@@ -358,4 +358,11 @@ public class SetlString extends Value {
             return 1;
         }
     }
+
+    private final static int initHashCode = SetlString.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode + mString.hashCode();
+    }
 }
+

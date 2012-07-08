@@ -18,7 +18,6 @@ public class PD_loadLibrary extends PreDefinedFunction {
     private PD_loadLibrary() {
         super("loadLibrary");
         addParameter("name");
-        doNotChangeScope();
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {

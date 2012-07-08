@@ -12,7 +12,7 @@ public abstract class Constructor {
     public abstract void        fillCollection(final CollectionValue collection) throws SetlException;
 
     // sets the variables used to construct this list to the variables from the list given as a parameter
-    public Value assign(final SetlList list) throws SetlException {
+    public          Value       assign(final SetlList list) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "Only explicit lists can be used as targets for list assignments."

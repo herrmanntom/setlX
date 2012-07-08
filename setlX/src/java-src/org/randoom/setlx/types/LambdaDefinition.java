@@ -85,5 +85,11 @@ public class LambdaDefinition extends ProcedureDefinition {
             return new LambdaDefinition(parameters, expr);
         }
     }
+
+    private final static int initHashCode = LambdaDefinition.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode;
+    }
 }
 

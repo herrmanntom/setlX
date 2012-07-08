@@ -2,6 +2,12 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.expressions.Assignment;
+import org.randoom.setlx.expressions.DifferenceAssignment;
+import org.randoom.setlx.expressions.DivideAssignment;
+import org.randoom.setlx.expressions.IntegerDivisionAssignment;
+import org.randoom.setlx.expressions.ModuloAssignment;
+import org.randoom.setlx.expressions.MultiplyAssignment;
+import org.randoom.setlx.expressions.SumAssignment;
 import org.randoom.setlx.expressions.Call;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
@@ -185,10 +191,18 @@ public class Environment {
     }
 
     public static void setTraceAssignments(final boolean traceAssignments) {
-        sTraceAssignments               = traceAssignments;
-        Assignment.sTraceAssignments    = traceAssignments;
-        Iterator.sTraceAssignments      = traceAssignments;
-        MatchResult.sTraceAssignments   = traceAssignments;
+        sTraceAssignments                           = traceAssignments;
+
+        Assignment.sTraceAssignments                = traceAssignments;
+        DifferenceAssignment.sTraceAssignments      = traceAssignments;
+        DivideAssignment.sTraceAssignments          = traceAssignments;
+        IntegerDivisionAssignment.sTraceAssignments = traceAssignments;
+        ModuloAssignment.sTraceAssignments          = traceAssignments;
+        MultiplyAssignment.sTraceAssignments        = traceAssignments;
+        SumAssignment.sTraceAssignments             = traceAssignments;
+
+        Iterator.sTraceAssignments                  = traceAssignments;
+        MatchResult.sTraceAssignments               = traceAssignments;
     }
 
     public static boolean isTraceAssignments() {

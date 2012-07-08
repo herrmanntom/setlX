@@ -132,5 +132,13 @@ public class SetlBoolean extends Value {
             return -1;
         }
     }
+
+    public int hashCode() {
+        if (this == TRUE) {
+            return 2015404846;
+        } else {
+            return -117843451;
+        }
+    }
 }
 

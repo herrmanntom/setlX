@@ -51,5 +51,11 @@ public class Om extends Value {
             return -1;
         }
     }
+
+    private final static int initHashCode = Om.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode;
+    }
 }
 

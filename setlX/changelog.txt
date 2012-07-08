@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.0.3--- 2012-07-xx
+ + fixed performance issue with building lists/strings in loops
+ + added integer division assingment ( '\=' )
+
 ---v1.0.2--- 2012-07-03
  + fixed performance issue with return statements
 
@@ -7,7 +11,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  * adding om to a string (e.g. "" + om) will now result in an error
  * +/[] and */[] return om, not 0 or 1 respectively
  + added binary forms of +/ and */ operators to specify neutral element
- + fixed parsing rules for reals and ranges
+ # fixed parsing rules for reals and ranges
  + added compare(valueA, valueB) function
  + added strSplit(string, pattern) function
  + added reverse(collectionValue) function

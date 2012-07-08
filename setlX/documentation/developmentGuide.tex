@@ -166,14 +166,6 @@ These have to occur in \emph{the same order and number} as read-write parameters
 
 \includeListing[e]{../src/java-src/org/randoom/setlx/functions/PD_from.java}{language=java}{lblPDFunctionRW}{}{Predefined Function `\command{from()}' using a read-write parameter}
 
-\nonSubsubsection{Prevent Introduction of new Scope}
-
-For some functions it is desirable to execute then without introducing a new scope.
-To this effect, the following method can be inside the constructor after parameter definitions:
-\begin{lstlisting}[frame=none,numbers=none]
-doNotChangeScope();
-\end{lstlisting}
-
 \nonSubsubsection{Predefined Math Functions}
 
 When an identifier can not be found, after searching for predefined functions, a query for a matching Java Math method, with a single double as parameter, is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{org/randoom/setlx/functions/MathFunction.java}). This class behaves as any other predefined function and converts the \setlX{} value type `Real' into a standard java double, which can used with Java's Math functions.

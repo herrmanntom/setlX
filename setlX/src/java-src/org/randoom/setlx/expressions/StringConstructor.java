@@ -140,7 +140,7 @@ public class StringConstructor extends Expr {
             SetlString.parseString(fIter.next(), data);
         }
 
-        return new SetlString(data.toString());
+        return SetlString.newSetlStringFromSB(data);
     }
 
     /* string operations */

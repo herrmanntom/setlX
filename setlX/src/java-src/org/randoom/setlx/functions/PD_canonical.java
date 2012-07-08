@@ -18,7 +18,7 @@ public class PD_canonical extends PreDefinedFunction {
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         final StringBuilder sb = new StringBuilder();
         args.get(0).canonical(sb);
-        return new SetlString(sb.toString());
+        return SetlString.newSetlStringFromSB(sb);
     }
 }
 

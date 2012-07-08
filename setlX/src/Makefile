@@ -40,7 +40,9 @@ build:                                                      \
 bin/org/randoom/setlxUI/pc/SetlX.class :                    \
         java-src/org/randoom/setlxUI/pc/SetlX.java                              \
         java-src/org/randoom/setlx/exceptions/*.java                            \
+        java-src/org/randoom/setlx/types/Om.java                                \
         java-src/org/randoom/setlx/types/Real.java                              \
+        java-src/org/randoom/setlx/types/Value.java                             \
         java-src/org/randoom/setlx/utilities/*.java                             \
         java-src/org/randoom/setlx/statements/Block.java
 	javac -cp $(CLASSPATH) -d bin -sourcepath java-src java-src/org/randoom/setlxUI/pc/SetlX.java

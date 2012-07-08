@@ -1,8 +1,11 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.0.3--- 2012-07-xx
- + fixed performance issue with building lists/strings in loops
+---v1.1.0--- 2012-07-xx
+ + fixed performance issue with building lists in loops
+ + fixed performance issue with break and continue statements
+ + fixed performance issue with some assignment types (`+=', `-=', `*=')
  + added integer division assingment ( '\=' )
+ + strings are collections now ( try `for(c in "foo") {..}' or `first("foo")')
 
 ---v1.0.2--- 2012-07-03
  + fixed performance issue with return statements

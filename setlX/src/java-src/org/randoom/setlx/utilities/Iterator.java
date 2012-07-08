@@ -1,13 +1,13 @@
 package org.randoom.setlx.utilities;
 
-import org.randoom.setlx.exceptions.ContinueException;
-import org.randoom.setlx.exceptions.BreakException;
+
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -31,6 +31,10 @@ implemented here as:
 public class Iterator {
     // functional character used in terms
     private final static String     FUNCTIONAL_CHARACTER = "^iterator";
+    // Trace all assignments. MAY ONLY BE SET BY CONTINUE CLASS!
+    public        static boolean    sContinue            = false;
+    // Trace all assignments. MAY ONLY BE SET BY BREAK CLASS!
+    public        static boolean    sBreak               = false;
     // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sStopExecution       = false;
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
@@ -70,14 +74,16 @@ public class Iterator {
     public Value eval(final IteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = VariableScope.getScope();
         try {
-            return evaluate(exec);
-        } catch (BreakException ee) {
-            // throwing the exception already broke the loop
-            // nothing to be done, not a real error
+            final Value result = evaluate(exec);
+
+            if (result == Om.OM && Om.OM.isBreak()) {
+                return null; // remove break message
+            }
+
+            return result;
         } finally { // make sure scope is always reset
             VariableScope.setScope(outerScope);
         }
-        return null;
     }
 
     /* string operations */
@@ -165,20 +171,22 @@ public class Iterator {
                 innerScope.setWriteThrough(true);
                 /* Starts iteration of next iterator or execution if this is the
                    last iterator.
-                   Stops iteration if requested by execution.
-                   Note: BreakException breaks the loop and is handled by eval() */
-                try {
-                    Value result = null;
-                    if (mNext != null) {
-                        result = mNext.evaluate(exec);
-                    } else {
-                        result = exec.execute(v);
+                   Stops iteration if requested by execution.                 */
+                Value result = null;
+                if (mNext != null) {
+                    result = mNext.evaluate(exec);
+                } else {
+                    result = exec.execute(v);
+                }
+                if (result != null) {
+                    if (result == Om.OM) {
+                        if (Om.OM.isContinue()) {
+                            continue;
+                        } else if (Om.OM.isBreak()) {
+                            return Om.OM.setBreak(); // also break next iterator
+                        }
                     }
-                    if (result != null) {
-                        return result;
-                    }
-                } catch (ContinueException ce) {
-                    continue;
+                    return result;
                 }
             }
             return null;

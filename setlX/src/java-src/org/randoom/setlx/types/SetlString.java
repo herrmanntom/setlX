@@ -4,10 +4,23 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.MatchResult;
 
+import java.util.Iterator;
 import java.util.List;
 
-public class SetlString extends Value {
+public class SetlString extends CollectionValue {
+    /* To allow initially `free' cloning, by only marking a clone without
+     * actually doing any cloning, this SetlString carries a isClone flag.
+     *
+     * If the contents of this SetlString is modified `separateFromOriginal()'
+     * MUST be called before the modification, which then performs the real cloning,
+     * if required.
+     *
+     * Main benefit of this technique is to perform the real cloning only
+     * when a clone is actually modified, thus not performing a time consuming
+     * cloning, when the clone is only used read-only, which it is in most cases.
+     */
 
     // this method is used when creating strings from StringConstructor
     public static String parseString(final String s) {
@@ -47,15 +60,91 @@ public class SetlString extends Value {
         }
     }
 
-    private String mString;
+    private StringBuilder mContent;
+    // is this strings a clone
+    private boolean       mIsCloned;
+
+    public SetlString(){
+        mContent    = new StringBuilder();
+        mIsCloned   = false; // new strings are not a clone
+    }
+
+    public SetlString(final char c){
+        mContent    = new StringBuilder();
+        mContent.append(c);
+        mIsCloned   = false; // new strings are not a clone
+    }
 
     public SetlString(final String string){
-        mString = string;
+        mContent    = new StringBuilder();
+        mContent.append(string);
+        mIsCloned   = false; // new strings are not a clone
+    }
+
+    private SetlString(final StringBuilder content){
+        mContent  = content;
+        mIsCloned = true;  // strings created from another string ARE a clone (most of the time)
+    }
+
+    public static SetlString newSetlStringFromSB(final StringBuilder content){
+        final SetlString result = new SetlString(content);
+        result.mIsCloned = false; // strings created from a StringBuilder can possibly be not a clone as well
+        return result;
     }
 
     public SetlString clone() {
-        // this value is more or less atomic and can not be changed once set
-        return this;
+        /* When cloning, THIS string is marked to be a clone as well.
+         *
+         * This is done, because even though THIS is the original, it must also be
+         * cloned upon modification, otherwise clones which carry the same
+         * member characters of THIS string would not notice, e.g.
+         * modifications of THIS original would bleed through to the clones.
+         */
+        mIsCloned = true;
+        return new SetlString(mContent);
+    }
+
+    /* If the contents of THIS string is modified, the following function MUST
+     * be called before the modification. It performs the real cloning,
+     * if THIS is actually marked as a clone.
+     */
+    private void separateFromOriginal() {
+        if (mIsCloned) {
+            final StringBuilder original = mContent;
+            mContent = new StringBuilder();
+            mContent.append(original);
+            mIsCloned = false;
+        }
+    }
+
+    private class SetlStringIterator implements Iterator<Value> {
+        private final SetlString content;
+        private       int        size;
+        private       int        position;
+
+        /*package*/ SetlStringIterator(final SetlString content) {
+            this.content  = content;
+            this.size     = content.mContent.length();
+            this.position = 0;
+        }
+
+        public boolean hasNext() {
+            return position < size;
+        }
+
+        public Value next() {
+            return new SetlString(content.mContent.charAt(position++));
+        }
+
+        public void remove() {
+            content.separateFromOriginal();
+            content.mContent.deleteCharAt(position);
+            size = content.mContent.length();
+        }
+    }
+
+    public Iterator<Value> iterator() {
+        return new SetlStringIterator(this);
     }
 
     /* type checks (sort of boolean operation) */
@@ -68,7 +157,7 @@ public class SetlString extends Value {
 
     public Value toInteger() {
         try {
-            final Rational result = new Rational(mString);
+            final Rational result = new Rational(mContent.toString());
             if (result.isInteger() == SetlBoolean.TRUE) {
                 return result;
             } else {
@@ -81,7 +170,7 @@ public class SetlString extends Value {
 
     public Value toRational() {
         try {
-            return new Rational(mString);
+            return new Rational(mContent.toString());
         } catch (NumberFormatException nfe) {
             return Om.OM;
         }
@@ -89,7 +178,7 @@ public class SetlString extends Value {
 
     public Value toReal() {
         try {
-            return new Real(mString);
+            return new Real(mContent.toString());
         } catch (NumberFormatException nfe) {
             return Om.OM;
         }
@@ -98,8 +187,8 @@ public class SetlString extends Value {
     /* arithmetic operations */
 
     public Rational absoluteValue() throws IncompatibleTypeException {
-        if (mString.length() == 1) {
-            return new Rational((int) mString.charAt(0));
+        if (mContent.length() == 1) {
+            return new Rational((int) mContent.charAt(0));
         } else {
             throw new IncompatibleTypeException(
                 "Operand of 'abs(" + this + ")' is not a singe character."
@@ -110,11 +199,32 @@ public class SetlString extends Value {
     public Value multiply(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int           m   = ((Rational) multiplier).intValue();
-            final StringBuilder sb  = new StringBuilder(mString.length() * m);
+            final StringBuilder sb  = new StringBuilder(mContent.length() * m);
             for (int i = 0; i < m; ++i) {
-                sb.append(mString);
+                sb.append(mContent);
             }
-            return new SetlString(sb.toString());
+            return newSetlStringFromSB(sb);
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "String multiplier '" + multiplier + "' is not an integer."
+            );
+        }
+    }
+
+    public Value multiplyAssign(final Value multiplier) throws SetlException {
+        if (multiplier instanceof Rational) {
+            separateFromOriginal();
+            final int    m       = ((Rational) multiplier).intValue();
+            final String current = mContent.toString();
+            // clear builder
+            mContent.setLength(0);
+            mContent.ensureCapacity(current.length() * m);
+            for (int i = 0; i < m; ++i) {
+                mContent.append(current);
+            }
+            return this;
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).multiplyFlipped(this);
         } else {
@@ -125,30 +235,53 @@ public class SetlString extends Value {
     }
 
     public Value sum(final Value summand) throws IncompatibleTypeException {
-        if (summand instanceof SetlString) {
-            return new SetlString(mString.concat(((SetlString) summand).mString));
-        } else if (summand instanceof Term) {
+        if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
-        } else if (summand != Om.OM) {
-            return new SetlString(mString.concat(summand.toString()));
-        } else {
+        } else if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " + " + summand + "' is undefined."
             );
+        } else  {
+            final SetlString result = clone();
+            result.separateFromOriginal();
+            summand.appendUnquotedString(result.mContent, 0);
+            return result;
+        }
+    }
+
+    public Value sumAssign(final Value summand) throws IncompatibleTypeException {
+        if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(this);
+        } else if (summand == Om.OM) {
+            throw new IncompatibleTypeException(
+                "'" + this + " += " + summand + "' is undefined."
+            );
+        } else  {
+            separateFromOriginal();
+            summand.appendUnquotedString(mContent, 0);
+            return this;
         }
     }
 
     public SetlString sumFlipped(final Value summand) throws IncompatibleTypeException {
-        if (summand != Om.OM) {
-            return new SetlString(summand.toString().concat(mString));
-        } else {
+        if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " + " + summand + "' is undefined."
             );
+        } else {
+            final SetlString result = new SetlString();
+            summand.appendUnquotedString(result.mContent, 0);
+            result.mContent.append(mContent);
+            return result;
         }
     }
 
     /* operations on collection values (Lists, Sets [, Strings]) */
+
+    public void addMember(final Value element) {
+        separateFromOriginal();
+        element.appendString(mContent, 0);
+    }
 
     public Value collectionAccess(final List<Value> args) throws SetlException {
         final int   aSize   = args.size();
@@ -181,15 +314,18 @@ public class SetlString extends Value {
     }
 
     public SetlBoolean containsMember(final Value element) throws IncompatibleTypeException {
-        if ( ! (element instanceof SetlString)) {
-            throw new IncompatibleTypeException(
-                "Left-hand-side of '" + element  + " in " + this + "' is not a string."
-            );
-        }
-        if (mString.contains(((SetlString) element).mString)) {
+        if (mContent.indexOf(element.getUnquotedString()) >= 0) {
             return SetlBoolean.TRUE;
         } else {
             return SetlBoolean.FALSE;
+        }
+    }
+
+    public Value firstMember() {
+        if (size() > 0) {
+            return new SetlString(mContent.charAt(0));
+        } else {
+            return new SetlString();
         }
     }
 
@@ -202,9 +338,9 @@ public class SetlString extends Value {
                 "Index '" + vIndex + "' is not an integer."
             );
         }
-        if (index > mString.length()) {
+        if (index > mContent.length()) {
             throw new NumberToLargeException(
-                "Index '" + index + "' is larger as size '" + mString.length() + "' of string '" + mString + "'."
+                "Index '" + index + "' is larger as size '" + mContent.length() + "' of string '" + mContent.toString() + "'."
             );
         }
         if (index < 1) {
@@ -212,7 +348,7 @@ public class SetlString extends Value {
                 "Index '" + index + "' is lower as 1."
             );
         }
-        return new SetlString(mString.substring(index - 1, index));
+        return new SetlString(mContent.substring(index - 1, index));
     }
 
     public Value getMembers(final Value vLow, final Value vHigh) throws SetlException {
@@ -241,24 +377,66 @@ public class SetlString extends Value {
                 "Lower bound '" + low + "' is larger as list size '" + size() + "'."
             );
         }
-        if (high > mString.length()) {
+        if (high > mContent.length()) {
             throw new NumberToLargeException(
-                "Upper bound '" + high + "' is larger as size '" + mString.length() + "' of string '" + mString + "'."
+                "Upper bound '" + high + "' is larger as size '" + mContent.length() + "' of string '" + mContent.toString() + "'."
             );
         }
         if (high < low) {
-            return new SetlString("");
+            return new SetlString();
         } else {
-            return new SetlString(mString.substring(low - 1, high));
+            return new SetlString(mContent.substring(low - 1, high));
         }
     }
 
+    public Value lastMember() {
+        if (size() > 0) {
+            return new SetlString(mContent.charAt(size() - 1));
+        } else {
+            return new SetlString();
+        }
+    }
+
+    public Value maximumMember() throws SetlException {
+        throw new UndefinedOperationException(
+            "'max(" + this + ")' is undefined."
+        );
+    }
+
+    public Value minimumMember() throws SetlException {
+        throw new UndefinedOperationException(
+            "'min(" + this + ")' is undefined."
+        );
+    }
+
+    public void removeMember(final Value element) throws IncompatibleTypeException {
+        final String needle = element.getUnquotedString();
+        final int    pos    = mContent.indexOf(needle);
+        if (pos >= 0) {
+            separateFromOriginal();
+            mContent.delete(pos, needle.length());
+        }
+    }
+
+    public void removeFirstMember() {
+        separateFromOriginal();
+        mContent.deleteCharAt(0);
+    }
+
+    public void removeLastMember() {
+        separateFromOriginal();
+        mContent.deleteCharAt(size() - 1);
+    }
+
     public SetlString reverse() {
-        return new SetlString((new StringBuilder(mString)).reverse().toString());
+        final SetlString result = clone();
+        result.separateFromOriginal();
+        result.mContent.reverse();
+        return result;
     }
 
     public int size() {
-        return mString.length();
+        return mContent.length();
     }
 
     public SetlList split(final Value pattern) throws IncompatibleTypeException {
@@ -268,7 +446,7 @@ public class SetlString extends Value {
             );
         }
         final String    p       = pattern.getUnquotedString();
-        final String[]  strings = mString.split(p);
+        final String[]  strings = mContent.toString().split(p);
         final SetlList  result  = new SetlList(strings.length);
         for (final String str : strings) {
             result.addMember(new SetlString(str));
@@ -279,13 +457,13 @@ public class SetlString extends Value {
             result.removeFirstMember();
         }
         // fix split(";", ";") => [], should be ["", ""]
-        else if (mString.equals(p)) {
-            result.addMember(new SetlString(""));
-            result.addMember(new SetlString(""));
+        else if (mContent.toString().equals(p)) {
+            result.addMember(new SetlString());
+            result.addMember(new SetlString());
         }
         // fix split(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
-        else if (mString.endsWith(p)) {
-            result.addMember(new SetlString(""));
+        else if (mContent.toString().endsWith(p)) {
+            result.addMember(new SetlString());
         }
 
         return result;
@@ -295,20 +473,24 @@ public class SetlString extends Value {
 
     public void appendString(final StringBuilder sb, final int tabs) {
         sb.append("\"");
-        sb.append(mString);
+        sb.append(mContent);
         sb.append("\"");
     }
 
     public void appendUnquotedString(final StringBuilder sb, final int tabs) {
-        sb.append(mString);
+        sb.append(mContent);
+    }
+
+    public void canonical(final StringBuilder sb) {
+        appendString(sb, 0);
     }
 
     public String getEscapedString() {
         // parse escape sequences
-        final int           length  = mString.length();
+        final int           length  = mContent.length();
         final StringBuilder sb      = new StringBuilder(length + 8);
         for (int i = 0; i < length; i++) {
-            final char c = mString.charAt(i);  // current char
+            final char c = mContent.charAt(i);  // current char
             if (c == '\\') {
                 sb.append("\\\\");
             } else if (c == '\n') {
@@ -329,11 +511,21 @@ public class SetlString extends Value {
     }
 
     public String getUnquotedString() {
-        return mString;
+        return mContent.toString();
     }
 
     public SetlString str() {
         return this;
+    }
+
+    /* term operations */
+
+    public MatchResult matchesTerm(final Value other) {
+        if (other == IgnoreDummy.ID || this.equals(other)) {
+            return new MatchResult(true);
+        } else {
+            return new MatchResult(false);
+        }
     }
 
     /* comparisons */
@@ -349,7 +541,7 @@ public class SetlString extends Value {
      */
     public int compareTo(final Value v){
         if (v instanceof SetlString) {
-            return mString.compareTo(((SetlString) v).mString);
+            return mContent.toString().compareTo(((SetlString) v).mContent.toString());
         } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof Term ||
                    v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
             // SetlSet, SetlList, Term, ProcedureDefinition and +Infinity are bigger
@@ -362,7 +554,7 @@ public class SetlString extends Value {
     private final static int initHashCode = SetlString.class.hashCode();
 
     public int hashCode() {
-        return initHashCode + mString.hashCode();
+        return initHashCode + mContent.toString().hashCode();
     }
 }
 

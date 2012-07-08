@@ -1,9 +1,8 @@
 package org.randoom.setlx.statements;
 
-import org.randoom.setlx.exceptions.BreakException;
-import org.randoom.setlx.exceptions.ContinueException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
@@ -43,15 +42,16 @@ public class While extends Statement {
         }
         Value result = null;
         while (mCondition.evalToBool()) {
-            try{
-                result = mStatements.execute();
-                if (result != null) {
-                    return result;
+            result = mStatements.execute();
+            if (result != null) {
+                if (result == Om.OM) {
+                    if (Om.OM.isContinue()) {
+                        continue;
+                    } else if (Om.OM.isBreak()) {
+                        break;
+                    }
                 }
-            } catch (ContinueException e) {
-                continue;
-            } catch (BreakException e) {
-                break;
+                return result;
             }
         }
         if (sFinishLoop) {

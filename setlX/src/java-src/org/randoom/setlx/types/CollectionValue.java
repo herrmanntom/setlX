@@ -27,7 +27,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
     }
 
-    public abstract SetlBoolean     containsMember(final Value element);
+    public abstract SetlBoolean     containsMember(final Value element) throws IncompatibleTypeException;
 
     // compare not only own members, but also all members contained in own members
     public          SetlBoolean     containsMemberRecursive(final Value element) {
@@ -83,7 +83,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         }
     }
 
-    public abstract void            removeMember(final Value element);
+    public abstract void            removeMember(final Value element) throws IncompatibleTypeException;
 
     public abstract void            removeFirstMember();
 

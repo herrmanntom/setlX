@@ -432,7 +432,7 @@ public class Rational extends NumberValue {
             mIsInteger
            )
         {
-            return new SetlString("" + (char) mNominator.intValue());
+            return new SetlString((char) mNominator.intValue());
         } else {
             throw new NumberToLargeException(
                 "'" + this + "' is not usable for ASCII conversation" +

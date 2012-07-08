@@ -53,7 +53,7 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
             digit.appendString(result, 0);
         }
 
-        return new SetlString(result.toString());
+        return SetlString.newSetlStringFromSB(result);
     }
 }
 

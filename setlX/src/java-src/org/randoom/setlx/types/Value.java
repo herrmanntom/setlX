@@ -337,13 +337,13 @@ public abstract class Value implements Comparable<Value> {
 
     public Value maximumMember() throws SetlException {
         throw new IncompatibleTypeException(
-            "Right-hand-side of 'max/ " + this + "' is not a collection value."
+            "Argument of 'max(" + this + "') is not a collection value."
         );
     }
 
     public Value minimumMember() throws SetlException {
         throw new IncompatibleTypeException(
-            "Right-hand-side of 'min/ " + this + "' is not a collection value."
+            "Argument of 'min(" + this + "') is not a collection value."
         );
     }
 
@@ -457,7 +457,9 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlString str() {
-        return new SetlString(toString());
+        final StringBuilder sb = new StringBuilder();
+        appendString(sb, 0);
+        return SetlString.newSetlStringFromSB(sb);
     }
 
     public final String toString() {

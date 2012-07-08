@@ -1,9 +1,8 @@
 package org.randoom.setlx.statements;
 
-import org.randoom.setlx.exceptions.ContinueException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 
 /*
@@ -22,8 +21,8 @@ public class Continue extends Statement {
 
     private Continue() {  }
 
-    protected Value exec() throws ContinueException {
-        throw new ContinueException("continue");
+    protected Om exec() {
+        return Om.OM.setContinue();
     }
 
     /* string operations */

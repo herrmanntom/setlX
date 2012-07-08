@@ -1,9 +1,9 @@
 package org.randoom.setlx.boolExpressions;
 
-import org.randoom.setlx.exceptions.BreakException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -50,7 +50,7 @@ public class Forall extends Expr {
             mResult = mCondition.eval();
             if (mResult == SetlBoolean.FALSE) {
                 mScope = VariableScope.getScope();  // save state where result is true
-                throw new BreakException("forall"); // stop iteration
+                return Om.OM.setBreak();            // stop iteration
             }
             return null;
         }

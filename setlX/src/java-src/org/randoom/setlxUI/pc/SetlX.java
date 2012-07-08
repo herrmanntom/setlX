@@ -1,8 +1,6 @@
 package org.randoom.setlxUI.pc;
 
 import org.randoom.setlx.exceptions.AbortException;
-import org.randoom.setlx.exceptions.BreakException;
-import org.randoom.setlx.exceptions.ContinueException;
 import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
@@ -12,7 +10,9 @@ import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.EnvironmentProvider;
@@ -27,7 +27,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "1.0.3";
+    private final static String     VERSION         = "1.1.0";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
@@ -366,20 +366,14 @@ public class SetlX {
         try {
 
             Environment.setDebugModeActive(false);
-            b.execute();
+            final Value result = b.execute();
+            if (result == Om.OM) {
+                Om.OM.isContinue();// reset continue outside of procedure
+                Om.OM.isBreak();   // reset break outside of procedure
+            }
 
         } catch (AbortException ae) { // code detected user did something wrong
             Environment.errWriteLn(ae.getMessage());
-            return EXEC_ERROR;
-        } catch (BreakException be) { // break outside of procedure
-            if (Environment.isInteractive()) {
-                Environment.outWriteLn(be.getMessage());
-            }
-            return EXEC_ERROR;
-        } catch (ContinueException ce) { // continue outside of procedure
-            if (Environment.isInteractive()) {
-                Environment.outWriteLn(ce.getMessage());
-            }
             return EXEC_ERROR;
         } catch (ExitException ee) { // user/code wants to quit
             if (Environment.isInteractive()) {

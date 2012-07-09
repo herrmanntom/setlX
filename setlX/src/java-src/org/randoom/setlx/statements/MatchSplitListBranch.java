@@ -4,8 +4,10 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
@@ -43,8 +45,8 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
     }
 
     public MatchResult matches(final Value term) throws IncompatibleTypeException {
-        if (term instanceof SetlList) {
-            final SetlList other = (SetlList) term.clone();
+        if (term instanceof SetlList || term instanceof SetlString) {
+            final CollectionValue other = (CollectionValue) term.clone();
             if (other.size() >= mVars.size()) {
                 final MatchResult result = new MatchResult(true);
                 for (final Variable var : mVars) {

@@ -2,15 +2,16 @@ matcher := procedure(t) {
     match(t) {
         case []:
             print("empty list");
-        case [x,y]:
-            print("lists only two: $x$, $y$");
-        case [x,y,z | r]:
-            print("lists first: $x$, $y$, $z$ rest: $r$");
-        
-        // also works with sets
-        
         case {}:
             print("empty set");
+        case "":
+            print("empty string");
+
+        case [x,y]:       // leaving out the rest does not work for strings
+            print("lists only two: $x$, $y$");
+        case [x,y,z | r]: // but the rest can be empty
+            print("lists/strings first: $x$, $y$, $z$ rest: $r$");
+
         case {x,y}:
             print("sets only two: $x$, $y$");
         case {x | r}:
@@ -26,4 +27,7 @@ matcher([1 .. 10]);
 matcher({});
 matcher({"a", [1 .. 5]});
 matcher({"a"});
+matcher("");
+matcher("abc");
+matcher("foobar");
 

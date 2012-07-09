@@ -6,6 +6,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added integer division assignment ( '\=' )
  - removed assignment chaining for everything but the direct assignment (i.e. `a := b := "foo"')
  + strings are collections now ( try `for(c in "foo") {..}' or `first("foo")')
+ + "prolog-style" list match works with strings
 
 ---v1.0.2--- 2012-07-03
  + fixed performance issue with return statements

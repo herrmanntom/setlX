@@ -12,18 +12,20 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.EnvironmentProvider;
 import org.randoom.setlx.utilities.ParseSetlX;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class SetlX {
 
@@ -142,16 +144,24 @@ public class SetlX {
             envProvider.sLibraryPath = "";
         }
 
-        for (int i = 0; i < args.length; i++) {
+        for (int i = 0; i < args.length; ++i) {
             String s = args[i];
             if (s.equals("--version")) {
                 Environment.outWriteLn(VERSION);
 
                 System.exit(EXIT_OK);
 
+            } else if (s.equals("--args")) {
+                // all remaining arguments are passed into the program
+                ++i; // set to next argument
+                SetlList arguments = new SetlList();
+                for (; i < args.length; ++i) {
+                    arguments.addMember(new SetlString(args[i]));
+                }
+                VariableScope.putValue("args", arguments);
             } else if (s.equals("--dump")) {
                 dump = true;
-                i++; // set to next argument
+                ++i; // set to next argument
                 if (i < args.length) {
                     dumpFile = args[i];
                 }
@@ -165,7 +175,7 @@ public class SetlX {
             } else if (s.equals("--help")) {
                 help = true;
             } else if (s.equals("--libraryPath")) {
-                i++; // set to next argument
+                ++i; // set to next argument
                 if (i < args.length) {
                     envProvider.sLibraryPath = args[i];
                 }
@@ -452,6 +462,8 @@ public class SetlX {
         printHelpInteractive();
         Environment.outWriteLn(
             "Additional parameters:\n" +
+            "  --args <argument> ...\n" +
+            "     passes all following arguments to the executed program via `args' variable\n" +
             "  --libraryPath <path>\n" +
             "     override SETLX_LIBRARY_PATH environment variable\n" +
             "  --multiLineMode\n" +

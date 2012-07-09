@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.1.0--- 2012-07-xx
+---v1.1.0--- 2012-07-09
  + fixed performance issue with break and continue statements
  + fixed performance issue with indirect assignment types (`+=', `-=', `*=')
  + added integer division assignment ( '\=' )
@@ -9,6 +9,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + "prolog-style" list match works with strings
  # faster 2nd+ time look-up of undefined variables
  # fixed precedence of power operator ( ** )
+ + add --args option, which passes all following options to the SetlX program (using variable `args')
 
 ---v1.0.2--- 2012-07-03
  + fixed performance issue with return statements

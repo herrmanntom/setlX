@@ -42,6 +42,8 @@ bin/org/randoom/setlxUI/pc/SetlX.class :                    \
         java-src/org/randoom/setlx/exceptions/*.java                            \
         java-src/org/randoom/setlx/types/Om.java                                \
         java-src/org/randoom/setlx/types/Real.java                              \
+        java-src/org/randoom/setlx/types/SetlList.java                          \
+        java-src/org/randoom/setlx/types/SetlString.java                        \
         java-src/org/randoom/setlx/types/Value.java                             \
         java-src/org/randoom/setlx/utilities/*.java                             \
         java-src/org/randoom/setlx/statements/Block.java

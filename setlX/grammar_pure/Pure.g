@@ -156,35 +156,28 @@ sum
     ;
 
 product
-    : power ('*' power | '/' power | '\\' power | '%' power)*
-    ;
-
-power
-    : reduce ('**' power)?
+    : reduce ('*' reduce | '/' reduce | '\\' reduce | '%' reduce)*
     ;
 
 reduce
-    : factor ('+/' factor | '*/' factor)*
-    ;
-
-factor
-    : prefixOperation
-    | simpleFactor '!'?
+    : prefixOperation ('+/' prefixOperation | '*/' prefixOperation)*
     ;
 
 prefixOperation
-    : '+/' factor
-    | '*/' factor
-    | '#' factor
-    | '-' factor
-    | '@' factor
+    : power
+    | '+/' prefixOperation
+    | '*/' prefixOperation
+    | '#' prefixOperation
+    | '-' prefixOperation
+    | '@' prefixOperation
     ;
 
-simpleFactor
-    : '(' expr ')'
-    | term
-    | call
-    | value
+power
+    : factor ('**' power)?
+    ;
+
+factor
+    : ('(' expr ')' | term | call | value) '!'?
     ;
 
 term

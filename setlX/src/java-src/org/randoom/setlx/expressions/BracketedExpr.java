@@ -22,7 +22,7 @@ public class BracketedExpr extends Expr {
     // functional character used in terms (MUST be classname starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^bracketedExpr";
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 1900;
+    private final static int    PRECEDENCE           = 2100;
 
     private final Expr mExpr;
 

@@ -6,7 +6,8 @@ precedences and associativity rules listed here:
 
 Precedence, Associativity, Operator(s)
 0000,       -,             reserved (explicit "do never bracket inner expression!")
-1000,       right,         :=, +=, -=, *=, /=, %=
+1000,       right,         :=
+1000,       -,             +=, -=, *=, /=, \=, %=
 1100,       left,          <==>, <!=>
 1200,       left,          =>
 1300,       left,          ||
@@ -14,12 +15,13 @@ Precedence, Associativity, Operator(s)
 1500,       left,          ==, !=, <, <=, >, >=, in, notin
 1600,       left,          +, -
 1700,       left,          *, /, \, %
-1800,       right,         **
-1850,       left,          binary +/, binary */
+1800,       left,          binary +/, binary */
 1900,       right,         - i.e. unary minus
-1900,       left,          ! i.e. factorial
-1900,       -,             (), other unary operators and expressions e.g. call etc
-2000,       right,         ! i.e. not
+1900,       -,             other unary operators
+2000,       right,         **
+2100,       left,          ! i.e. factorial
+2100,       -,             () and other unary expressions e.g. call etc
+2200,       right,         ! i.e. not
 9999,       -,             reserved (expressions with this precedence will never be bracketed.
                            This includes atoms like Values, Set-Constructors, String-Constructors, etc)
 

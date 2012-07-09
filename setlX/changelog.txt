@@ -7,6 +7,8 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  - removed assignment chaining for everything but the direct assignment (i.e. `a := b := "foo"')
  + strings are collections now ( try `for(c in "foo") {..}' or `first("foo")')
  + "prolog-style" list match works with strings
+ # faster 2nd+ time look-up of undefined variables
+ # fixed precedence of power operator ( ** )
 
 ---v1.0.2--- 2012-07-03
  + fixed performance issue with return statements

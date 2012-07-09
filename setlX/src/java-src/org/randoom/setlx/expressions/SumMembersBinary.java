@@ -21,7 +21,7 @@ public class SumMembersBinary extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^sumMembersBinary";
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 1850;
+    private final static int    PRECEDENCE           = 1800;
 
     private final Expr mNeutral;
     private final Expr mCollection;

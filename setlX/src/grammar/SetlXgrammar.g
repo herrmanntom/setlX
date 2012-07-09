@@ -406,51 +406,49 @@ sum [boolean enableIgnore] returns [Expr s]
     ;
 
 product [boolean enableIgnore] returns [Expr p]
-    : p1 = power[$enableIgnore]         { p = $p1.pow;                  }
+    : r1 = reduce[$enableIgnore]          { p = $r1.r;                         }
       (
-          '*'  p2 = power[$enableIgnore] { p = new Multiply(p, $p2.pow);        }
-        | '/'  p2 = power[$enableIgnore] { p = new Divide(p, $p2.pow);          }
-        | '\\' p2 = power[$enableIgnore] { p = new IntegerDivision(p, $p2.pow); }
-        | '%'  p2 = power[$enableIgnore] { p = new Modulo(p, $p2.pow);          }
+          '*'  r2 = reduce[$enableIgnore] { p = new Multiply       (p, $r2.r); }
+        | '/'  r2 = reduce[$enableIgnore] { p = new Divide         (p, $r2.r); }
+        | '\\' r2 = reduce[$enableIgnore] { p = new IntegerDivision(p, $r2.r); }
+        | '%'  r2 = reduce[$enableIgnore] { p = new Modulo         (p, $r2.r); }
       )*
-    ;
-
-power [boolean enableIgnore] returns [Expr pow]
-    : reduce[$enableIgnore]           { pow = $reduce.r;               }
-      (
-        '**' p = power[$enableIgnore] { pow = new Power (pow, $p.pow); }
-      )?
     ;
 
 reduce [boolean enableIgnore] returns [Expr r]
-    : f1 = factor[$enableIgnore, false]           { r = $f1.f;                               }
+    : p1 = prefixOperation[$enableIgnore, false]          { r = $p1.po;                               }
       (
-          '+/'  f2 = factor[$enableIgnore, false] { r = new SumMembersBinary(r, $f2.f);      }
-        | '*/'  f2 = factor[$enableIgnore, false] { r = new MultiplyMembersBinary(r, $f2.f); }
+          '+/' p2 = prefixOperation[$enableIgnore, false] { r = new SumMembersBinary     (r, $p2.po); }
+        | '*/' p2 = prefixOperation[$enableIgnore, false] { r = new MultiplyMembersBinary(r, $p2.po); }
       )*
     ;
 
-factor [boolean enableIgnore, boolean quoted] returns [Expr f]
-    : prefixOperation[$enableIgnore]       { f = $prefixOperation.po; }
-    | simpleFactor[$enableIgnore, $quoted] { f = $simpleFactor.sf;    }
+prefixOperation [boolean enableIgnore, boolean quoted] returns [Expr po]
+    :      power[$enableIgnore, $quoted]           { po = $power.pow;                         }
+    | '+/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new SumMembers     ($po2.po); }
+    | '*/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new MultiplyMembers($po2.po); }
+    | '#'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Cardinality    ($po2.po); }
+    | '-'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Negate         ($po2.po); }
+    | '@'  po2 = prefixOperation[$enableIgnore, true]    { po = new Quote          ($po2.po); }
+    ;
+
+power [boolean enableIgnore, boolean quoted] returns [Expr pow]
+    : factor[$enableIgnore, $quoted]           { pow = $factor.f;              }
       (
-        '!'                                { f = new Factorial(f);    }
+        '**' p = power[$enableIgnore, $quoted] { pow = new Power(pow, $p.pow); }
       )?
     ;
 
-prefixOperation [boolean enableIgnore] returns [Expr po]
-    : '+/'   factor[$enableIgnore, false] { po = new SumMembers($factor.f);      }
-    | '*/'   factor[$enableIgnore, false] { po = new MultiplyMembers($factor.f); }
-    | '#'    factor[$enableIgnore, false] { po = new Cardinality($factor.f);     }
-    | '-'    factor[$enableIgnore, false] { po = new Negate($factor.f);          }
-    | '@'    factor[$enableIgnore, true]  { po = new Quote($factor.f);           }
-    ;
-
-simpleFactor [boolean enableIgnore, boolean quoted] returns [Expr sf]
-    : '(' expr[$enableIgnore] ')'   { sf = new BracketedExpr($expr.ex); }
-    | term                          { sf = $term.t;                     }
-    | call[$enableIgnore]           { sf = $call.c;                     }
-    | value[$enableIgnore, $quoted] { sf = $value.v;                    }
+factor [boolean enableIgnore, boolean quoted] returns [Expr f]
+    : (
+          '(' expr[$enableIgnore] ')'   { f = new BracketedExpr($expr.ex); }
+        | term                          { f = $term.t;                     }
+        | call[$enableIgnore]           { f = $call.c;                     }
+        | value[$enableIgnore, $quoted] { f = $value.v;                    }
+      )
+      (
+        '!'                             { f = new Factorial(f);            }
+      )?
     ;
 
 term returns [Expr t]

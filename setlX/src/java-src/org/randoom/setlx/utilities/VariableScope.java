@@ -178,7 +178,7 @@ public class VariableScope {
         final Value v = mVarBindings.get(var);
         if (v == null && mOriginalScope != null) {
             final SearchItem i = mOriginalScope.locateValue(var);
-            if (i.mV != null && (!mRestrictToFunctions || i.mV instanceof ProcedureDefinition)) {
+            if (i.mV != null && (!mRestrictToFunctions || i.mV == Om.OM || i.mV instanceof ProcedureDefinition)) {
                 if (i.mIsClone || mReadThrough) { // don't clone when already cloned or readThrough is true
                     if (mRestrictToFunctions) { // i.mV must be SetlDefinition be get here
                         mVarBindings.put(var, i.mV); // cache function definitions

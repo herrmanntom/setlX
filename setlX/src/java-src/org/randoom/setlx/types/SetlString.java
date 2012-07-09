@@ -436,6 +436,45 @@ public class SetlString extends CollectionValue {
         return result;
     }
 
+    public void setMember(final Value vIndex, final Value v) throws SetlException {
+        separateFromOriginal();
+        int index = 0;
+        if (vIndex.isInteger() == SetlBoolean.TRUE) {
+            index = ((Rational)vIndex).intValue();
+        } else {
+            throw new IncompatibleTypeException(
+                "Index '" + vIndex + "' is not a integer."
+            );
+        }
+        if (index < 1) {
+            throw new NumberToLargeException(
+                "Index '" + index + "' is lower as '1'."
+            );
+        }
+        if (v == Om.OM) {
+            throw new IncompatibleTypeException(
+                "Target value is undefined (om)."
+            );
+        }
+
+        String value = v.getUnquotedString();
+
+        // in java the index is one lower
+        index--;
+
+        if (index >= mContent.length()) {
+            mContent.ensureCapacity(index + value.length());
+            // fill gap from size to index with banks, if necessary
+            while (index >= mContent.length()) {
+                mContent.append(" ");
+            }
+        }
+        // remove char at index
+        mContent.deleteCharAt(index);
+        // insert value at index
+        mContent.insert(index, value);
+    }
+
     public int size() {
         return mContent.length();
     }

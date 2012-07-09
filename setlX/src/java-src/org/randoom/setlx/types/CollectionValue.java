@@ -58,7 +58,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
             if (product == null) {
                 product = v.clone();
             } else {
-                product = product.multiply(v);
+                product = product.multiplyAssign(v);
             }
         }
         return (product != null)? product : neutral;
@@ -97,7 +97,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
             if (sum == null) {
                 sum = v.clone();
             } else {
-                sum = sum.sum(v);
+                sum = sum.sumAssign(v);
             }
         }
         return (sum != null)? sum : neutral;

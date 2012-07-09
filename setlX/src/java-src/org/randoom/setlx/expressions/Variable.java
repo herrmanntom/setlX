@@ -44,12 +44,7 @@ public class Variable extends Expr {
     }
 
     protected Value evaluate() {
-        final Value v = VariableScope.findValue(mId);
-        if (v == null) {
-            return Om.OM;
-        } else {
-            return v;
-        }
+        return VariableScope.findValue(mId);
     }
 
     // sets this expression to the given value

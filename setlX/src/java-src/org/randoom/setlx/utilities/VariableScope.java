@@ -77,14 +77,16 @@ public class VariableScope {
                        But return value already is null, no change necessary.     */
                 }
             }
-            if (i.mV != null) {
-                /* Store result to initial scope to speed up search next time.
-
-                   Initial scope is chosen, because it is at the end of every
-                   currently existing and all future scopes search paths.
-                */
-                sInitial.mVarBindings.put(var, i.mV);
+            if (i.mV == null) {
+                i.mV = Om.OM;
+                // identifier could not be looked up...
+                // return Om.OM and store it into intial scope to prevent reflection lookup next time
             }
+            /* Store result to initial scope to speed up search next time.
+
+               Initial scope is chosen, because it is at the end of every
+               currently existing and all future scopes search paths.         */
+            sInitial.mVarBindings.put(var, i.mV);
         }
         return i.mV;
     }

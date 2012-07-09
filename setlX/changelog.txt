@@ -2,8 +2,9 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.1.0--- 2012-07-xx
  + fixed performance issue with break and continue statements
- + fixed performance issue with some assignment types (`+=', `-=', `*=')
- + added integer division assingment ( '\=' )
+ + fixed performance issue with indirect assignment types (`+=', `-=', `*=')
+ + added integer division assignment ( '\=' )
+ - removed assignment chaining for everything but the direct assignment (i.e. `a := b := "foo"')
  + strings are collections now ( try `for(c in "foo") {..}' or `first("foo")')
 
 ---v1.0.2--- 2012-07-03

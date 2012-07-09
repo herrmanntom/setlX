@@ -421,7 +421,7 @@ public class Rational extends NumberValue {
     public void appendString(final StringBuilder sb, final int tabs) {
         sb.append(mNominator.toString());
         if ( ! mIsInteger) {
-            sb.append("/");
+            sb.append('/');
             sb.append(mDenominator.toString());
         }
     }

@@ -1,8 +1,9 @@
-package org.randoom.setlx.expressions;
+package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
@@ -10,18 +11,18 @@ import org.randoom.setlx.utilities.TermConverter;
 
 /*
 grammar rule:
-assignment
-    : assignable ('*=' | [...] ) ((assignment)=> assignment | anyExpr)
+assignmentOther
+    : assignable ('+=' | [...] ) anyExpr
     ;
 
 implemented here as:
-      ==========                  ===================================
-         mLhs                                    mRhs
+      ==========                 =======
+         mLhs                     mRhs
 */
 
-public class MultiplyAssignment extends Expr {
+public class SumAssignment extends Statement {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^multiplyAssignment";
+    public  final static String     FUNCTIONAL_CHARACTER    = "^sumAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sTraceAssignments       = false;
 
@@ -31,26 +32,30 @@ public class MultiplyAssignment extends Expr {
     private final Expr  mLhs;
     private final Expr  mRhs;
 
-    public MultiplyAssignment(final Expr lhs, final Expr rhs) {
+    public SumAssignment(final Expr lhs, final Expr rhs) {
         mLhs  = lhs;
         mRhs  = rhs;
     }
 
-    protected Value evaluate() throws SetlException {
-        final Value assigned = mLhs.assign(mLhs.eval().multiplyAssign(mRhs.eval().clone()));
+    protected Value exec() throws SetlException {
+        final Value lhs      = mLhs.eval();
+        final Value assigned = lhs.sumAssign(mRhs.eval().clone());
+        if (lhs != assigned) {
+            mLhs.assign(assigned);
+        }
 
         if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         }
 
-        return assigned;
+        return null;
     }
 
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {
         mLhs.appendString(sb, tabs);
-        sb.append(" *= ");
+        sb.append(" += ");
         mRhs.appendString(sb, tabs);
     }
 
@@ -63,13 +68,13 @@ public class MultiplyAssignment extends Expr {
         return result;
     }
 
-    public static MultiplyAssignment termToExpr(final Term term) throws TermConversionException {
+    public static SumAssignment termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new MultiplyAssignment(lhs, rhs);
+            return new SumAssignment(lhs, rhs);
         }
     }
 

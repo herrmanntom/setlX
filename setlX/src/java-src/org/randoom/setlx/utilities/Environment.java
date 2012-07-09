@@ -2,18 +2,18 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.expressions.Assignment;
-import org.randoom.setlx.expressions.DifferenceAssignment;
-import org.randoom.setlx.expressions.DivideAssignment;
-import org.randoom.setlx.expressions.IntegerDivisionAssignment;
-import org.randoom.setlx.expressions.ModuloAssignment;
-import org.randoom.setlx.expressions.MultiplyAssignment;
-import org.randoom.setlx.expressions.SumAssignment;
 import org.randoom.setlx.expressions.Call;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.statements.DifferenceAssignment;
+import org.randoom.setlx.statements.DivideAssignment;
 import org.randoom.setlx.statements.For;
+import org.randoom.setlx.statements.IntegerDivisionAssignment;
+import org.randoom.setlx.statements.ModuloAssignment;
+import org.randoom.setlx.statements.MultiplyAssignment;
 import org.randoom.setlx.statements.Statement;
+import org.randoom.setlx.statements.SumAssignment;
 import org.randoom.setlx.statements.While;
 import org.randoom.setlx.types.ProcedureDefinition;
 

@@ -1,8 +1,9 @@
-package org.randoom.setlx.expressions;
+package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
@@ -10,18 +11,18 @@ import org.randoom.setlx.utilities.TermConverter;
 
 /*
 grammar rule:
-assignment
-    : assignable ('/=' | [...] ) ((assignment)=> assignment | anyExpr)
+assignmentOther
+    : assignable ('\\=' | [...] ) anyExpr
     ;
 
 implemented here as:
-      ==========                  ===================================
-         mLhs                                    mRhs
+      ==========                  =======
+         mLhs                      mRhs
 */
 
-public class DivideAssignment extends Expr {
+public class IntegerDivisionAssignment extends Statement {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^divideAssignment";
+    public  final static String     FUNCTIONAL_CHARACTER    = "^integerDivisionAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sTraceAssignments       = false;
 
@@ -31,26 +32,30 @@ public class DivideAssignment extends Expr {
     private final Expr  mLhs;
     private final Expr  mRhs;
 
-    public DivideAssignment(final Expr lhs, final Expr rhs) {
+    public IntegerDivisionAssignment(final Expr lhs, final Expr rhs) {
         mLhs  = lhs;
         mRhs  = rhs;
     }
 
-    protected Value evaluate() throws SetlException {
-        final Value assigned = mLhs.assign(mLhs.eval().divideAssign(mRhs.eval().clone()));
+    protected Value exec() throws SetlException {
+        final Value lhs      = mLhs.eval();
+        final Value assigned = lhs.divideAssign(mRhs.eval().clone()).floor();
+        if (lhs != assigned) {
+            mLhs.assign(assigned);
+        }
 
         if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         }
 
-        return assigned;
+        return null;
     }
 
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {
         mLhs.appendString(sb, tabs);
-        sb.append(" /= ");
+        sb.append(" \\= ");
         mRhs.appendString(sb, tabs);
     }
 
@@ -63,13 +68,13 @@ public class DivideAssignment extends Expr {
         return result;
     }
 
-    public static DivideAssignment termToExpr(final Term term) throws TermConversionException {
+    public static IntegerDivisionAssignment termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new DivideAssignment(lhs, rhs);
+            return new IntegerDivisionAssignment(lhs, rhs);
         }
     }
 

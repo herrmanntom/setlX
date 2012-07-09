@@ -108,6 +108,7 @@ public class SetlString extends CollectionValue {
      * be called before the modification. It performs the real cloning,
      * if THIS is actually marked as a clone.
      */
+
     private void separateFromOriginal() {
         if (mIsCloned) {
             final StringBuilder original = mContent;

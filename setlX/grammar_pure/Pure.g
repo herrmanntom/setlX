@@ -25,7 +25,8 @@ statement
     | 'break' ';'
     | 'exit' ';'
     | 'assert' '(' condition ',' anyExpr ')' ';'
-    | (assignment)=> assignment ';'
+    | (assignmentOther)=> assignmentOther ';'
+    | (assignmentDirect)=> assignmentDirect ';'
     | anyExpr ';'
     ;
 
@@ -45,8 +46,12 @@ exprList
     : anyExpr (',' anyExpr)*
     ;
 
-assignment
-    : assignable (':=' | '+=' | '-=' | '*=' | '/=' | '%=') ((assignment)=> assignment | anyExpr)
+assignmentOther
+    : assignable ('+=' anyExpr | '-=' anyExpr | '*=' anyExpr | '/=' anyExpr | '\\=' anyExpr | '%=' anyExpr)
+    ;
+
+assignmentDirect
+    : assignable ':=' ((assignmentDirect)=> assignmentDirect | anyExpr)
     ;
 
 assignList

@@ -174,7 +174,8 @@ statement returns [Statement stmnt]
                                                                                :
                                                                                    new Assert($condition.cnd, $anyExpr.ae);
                                                                                ;                                                     }
-    | ( assignment )=> assignment ';'                                { stmnt = new ExpressionStatement($assignment.assign);          }
+    | ( assignmentOther )=> assignmentOther   ';'                    { stmnt = $assignmentOther.assign;                             }
+    | ( assignmentDirect )=> assignmentDirect ';'                    { stmnt = new ExpressionStatement($assignmentDirect.assign);    }
     | anyExpr[false] ';'                                             { stmnt = new ExpressionStatement($anyExpr.ae);                 }
     ;
 
@@ -206,50 +207,29 @@ exprList [boolean enableIgnore] returns [List<Expr> exprs]
       )*
     ;
 
-assignment returns [Expr assign]
-    @init {
-        int     type = -1;
-        Expr    rhs  = null;
-    }
+assignmentOther returns [Statement assign]
     : assignable[false]
       (
-         ':='  { type = 0; }
-       | '+='  { type = 1; }
-       | '-='  { type = 2; }
-       | '*='  { type = 3; }
-       | '/='  { type = 4; }
-       | '\\=' { type = 5; }
-       | '%='  { type = 6; }
+         '+='  ae = anyExpr[false] { $assign = new SumAssignment            ($assignable.a, $ae.ae); }
+       | '-='  ae = anyExpr[false] { $assign = new DifferenceAssignment     ($assignable.a, $ae.ae); }
+       | '*='  ae = anyExpr[false] { $assign = new MultiplyAssignment       ($assignable.a, $ae.ae); }
+       | '/='  ae = anyExpr[false] { $assign = new DivideAssignment         ($assignable.a, $ae.ae); }
+       | '\\=' ae = anyExpr[false] { $assign = new IntegerDivisionAssignment($assignable.a, $ae.ae); }
+       | '%='  ae = anyExpr[false] { $assign = new ModuloAssignment         ($assignable.a, $ae.ae); }
       )
+    ;
+
+assignmentDirect returns [Expr assign]
+    @init {
+        Expr    rhs  = null;
+    }
+    : assignable[false] ':='
       (
-         ( assignment )=>
-         as = assignment { rhs = $as.assign;  }
-       | anyExpr[false]  { rhs = $anyExpr.ae; }
+         ( assignmentDirect )=>
+         as = assignmentDirect { rhs = $as.assign;  }
+       | anyExpr[false]        { rhs = $anyExpr.ae; }
       )
-      { switch (type) {
-            case 1:
-                $assign = new SumAssignment($assignable.a, rhs);
-                break;
-            case 2:
-                $assign = new DifferenceAssignment($assignable.a, rhs);
-                break;
-            case 3:
-                $assign = new MultiplyAssignment($assignable.a, rhs);
-                break;
-            case 4:
-                $assign = new DivideAssignment($assignable.a, rhs);
-                break;
-            case 5:
-                $assign = new IntegerDivisionAssignment($assignable.a, rhs);
-                break;
-            case 6:
-                $assign = new ModuloAssignment($assignable.a, rhs);
-                break;
-            default:
-                $assign = new Assignment($assignable.a, rhs);
-                break;
-        }
-      }
+      { $assign = new Assignment($assignable.a, rhs); }
     ;
 
 assignList returns [SetListConstructor alc]

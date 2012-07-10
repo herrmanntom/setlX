@@ -31,7 +31,15 @@ public abstract class Expr extends CodeFragment {
 
     /* sets this expression to the given value
        (only makes sense for variables and id-lists) */
-    public Value assign(final Value v) throws SetlException {
+    public final Value assign(final Value v) throws SetlException {
+        assignUncloned(v);
+        return v.clone();
+    }
+
+    /* Sets this expression to the given value
+       (only makes sense for variables and id-lists)
+       Does not clone v and does not return if for chained assignment */
+    public void assignUncloned(final Value v) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "This expression can not be used as target for assignments."

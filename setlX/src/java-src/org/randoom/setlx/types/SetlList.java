@@ -393,7 +393,7 @@ public class SetlList extends CollectionValue {
         }
 
         // set index to value
-        mList.set(index, v.clone());
+        mList.set(index, v);
 
         if (v == Om.OM) {
             compress();

@@ -7,7 +7,6 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Constructor;
 
@@ -59,10 +58,10 @@ public class SetListConstructor extends Expr {
     }
 
     // sets this expression to the given value
-    public Value assign(final Value v) throws SetlException {
+    public void assignUncloned(final Value v) throws SetlException {
         if (v instanceof SetlList) {
             if (mType == LIST && mConstructor != null) {
-                return mConstructor.assign((SetlList) v);
+                mConstructor.assignUncloned((SetlList) v);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."

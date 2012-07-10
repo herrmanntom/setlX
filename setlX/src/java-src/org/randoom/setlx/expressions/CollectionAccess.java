@@ -91,7 +91,7 @@ public class CollectionAccess extends Expr {
     }
 
     // sets this expression to the given value
-    public Value assign(final Value v) throws SetlException {
+    public void assignUncloned(final Value v) throws SetlException {
         Value lhs = null;
         if (mLhs instanceof Variable) {
             lhs = mLhs.eval();
@@ -104,8 +104,7 @@ public class CollectionAccess extends Expr {
             lhs = ((CollectionAccess) mLhs).evaluateUnCloned();
         }
         if (lhs != null && lhs instanceof CollectionValue && mArgs.size() == 1) {
-            lhs.setMember(mArgs.get(0).eval(), v); // no v.clone() here, because setMember() already clones
-            return v.clone();
+            lhs.setMember(mArgs.get(0).eval(), v);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + mLhs + " := " + v + "\" is unusable for list assignment."

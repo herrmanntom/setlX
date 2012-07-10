@@ -384,3 +384,20 @@ matchSets := procedure() {
 };
 matchSets();
 
+complexIndirectAssignment := procedure() {
+    testNumber += 1;
+
+    s := { ["a", 1], ["b", [1]]};
+    s["a"] += 2;
+    s["b"] += [2];
+
+    correct := s == { ["a", 3], ["b", [1, 2]] };
+
+    if (correct) {
+        printErr("test $testNumber$ successful (complexIndirectAssignment)");
+    } else {
+        printErr("test $testNumber$ failed (complexIndirectAssignment)");
+    }
+};
+complexIndirectAssignment();
+

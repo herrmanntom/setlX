@@ -2,7 +2,6 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -38,11 +37,8 @@ public class IntegerDivisionAssignment extends Statement {
     }
 
     protected Value exec() throws SetlException {
-        final Value lhs      = mLhs.eval();
-        final Value assigned = lhs.divideAssign(mRhs.eval().clone()).floor();
-        if (lhs != assigned) {
-            mLhs.assign(assigned);
-        }
+        final Value assigned = mLhs.eval().divideAssign(mRhs.eval().clone()).floor();
+        mLhs.assignUncloned(assigned);
 
         if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");

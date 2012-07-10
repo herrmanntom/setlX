@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.1.1--- 2012-07-10
+ # fixed bug with indirect assignments not working in all cases
+
 ---v1.1.0--- 2012-07-09
  + fixed performance issue with break and continue statements
  + fixed performance issue with indirect assignment types (`+=', `-=', `*=')

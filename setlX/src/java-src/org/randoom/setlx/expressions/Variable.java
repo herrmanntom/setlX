@@ -1,7 +1,6 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -48,9 +47,8 @@ public class Variable extends Expr {
     }
 
     // sets this expression to the given value
-    public Value assign(final Value v) {
+    public void assignUncloned(final Value v) {
         VariableScope.putValue(mId, v);
-        return v.clone();
     }
 
     // sets this expression to the given value

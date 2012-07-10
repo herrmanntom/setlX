@@ -2,7 +2,6 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.boolExpressions.Equal;
-import org.randoom.setlx.expressions.Assignment;
 import org.randoom.setlx.expressions.BracketedExpr;
 import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
 import org.randoom.setlx.expressions.Expr;

@@ -130,7 +130,7 @@ setlX
 The `file execution mode' will be started if one or more paths to code files are supplied as parameters for this program. These files will then be parsed and executed in the order in which they are listed as parameters. When executing multiple files, they share the outermost scope.
 
 When no paths are supplied, the `interactive mode' will be started.\\
-Note that input will be executed after entering an additional empty line. Hereby multiple lines of input can be parsed and evaluated. Executing the `\command{exit;}' statement will terminate the interpreter.
+Executing the `\command{exit;}' statement will terminate the interpreter.
 
 \nonSubsection{Additional parameters}
 
@@ -233,6 +233,14 @@ Due to its implementation and execution by the Java Virtual Machine (JVM), a `st
 The JVM is unable to dynamically increase its internal stack size at all and the heap space only in very limited bounds, no matter how much free memory is available.
 
 To work around these problems, edit the used launching script (`\command{setlX}' or `\command{setlX.cmd}') with a text editor and follow the directions given at the top of the script.
+
+\subsection{Subpar Parsing Errors}
+
+Parsing errors are subpar, which make root cause of syntax errors sometimes hard to detect in a slew of messages.
+
+\subsection{Input in Interactive Mode on Unix}
+
+On UNIX systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java Limitation an all workarounds are not platform independent. You may use the `rlwrap' program to work around this issue.
 
 %\section{Known Bugs}
 %The following bugs are known to be present in this version of the interpreter:

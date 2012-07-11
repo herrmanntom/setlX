@@ -27,7 +27,7 @@ public class ExpressionStatement extends Statement {
         mPrintAfterEval = false;
     }
 
-    public void setPrintAfterEval() {
+    /*package*/ void setPrintAfterEval() {
         mPrintAfterEval = true;
     }
 

@@ -84,12 +84,6 @@ boolFollowToken
     ;
 
 boolExpr
-    : 'forall' '(' iteratorChain '|' condition ')'
-    | 'exists' '(' iteratorChain '|' condition ')'
-    | equivalence
-    ;
-
-equivalence
     : implication ('<==>' implication | '<!=>' implication)?
     ;
 
@@ -109,6 +103,8 @@ boolFactor
     : (comparison)=> comparison
     | '(' boolExpr ')'
     | '!' boolFactor
+    | 'forall' '(' iteratorChain '|' condition ')'
+    | 'exists' '(' iteratorChain '|' condition ')'
     | call
     | boolValue
     | '_'

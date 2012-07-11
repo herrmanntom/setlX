@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.1.2--- 2012-07-xx
+ # fixed minor bugs in string-representation of some statements
+ # forall and exist can be used in combinations with other Boolean expressions
+
 ---v1.1.1--- 2012-07-10
  # fixed bug with indirect assignments not working in all cases
 

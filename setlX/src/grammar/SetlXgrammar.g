@@ -278,18 +278,10 @@ boolFollowToken
     ;
 
 boolExpr [boolean enableIgnore] returns [Expr bex]
-    : 'forall' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
-      { bex = new Forall($iteratorChain.ic, $condition.cnd); }
-    | 'exists' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
-      { bex = new Exists($iteratorChain.ic, $condition.cnd); }
-    | equivalence[$enableIgnore]    { bex = $equivalence.eq; }
-    ;
-
-equivalence [boolean enableIgnore] returns [Expr eq]
-    : i1 = implication[$enableIgnore]              { eq = $i1.i;              }
+    : i1 = implication[$enableIgnore]           { bex = $i1.i;                       }
       (
-         '<==>' i2 = implication[$enableIgnore] { eq = new BoolEqual  (eq, $i2.i); }
-       | '<!=>' i2 = implication[$enableIgnore] { eq = new BoolUnEqual(eq, $i2.i); }
+         '<==>' i2 = implication[$enableIgnore] { bex = new BoolEqual  (bex, $i2.i); }
+       | '<!=>' i2 = implication[$enableIgnore] { bex = new BoolUnEqual(bex, $i2.i); }
       )?
     ;
 
@@ -321,6 +313,10 @@ boolFactor [boolean enableIgnore] returns [Expr bf]
       comparison[$enableIgnore]         { bf = $comparison.comp;                 }
     | '(' boolExpr[$enableIgnore] ')'   { bf = new BracketedExpr($boolExpr.bex); }
     | '!' b = boolFactor[$enableIgnore] { bf = new Negation($b.bf);              }
+    | 'forall' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
+      { bf = new Forall($iteratorChain.ic, $condition.cnd); }
+    | 'exists' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
+      { bf = new Exists($iteratorChain.ic, $condition.cnd); }
     | call[$enableIgnore]               { bf = $call.c;                          }
     | boolValue                         { bf = new ValueExpr($boolValue.bv);     }
     | '_'                               { if ($enableIgnore) {

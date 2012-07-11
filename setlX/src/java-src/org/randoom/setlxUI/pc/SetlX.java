@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
-import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -17,19 +16,15 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.Environment;
-import org.randoom.setlx.utilities.EnvironmentProvider;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.VariableScope;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "1.1.1";
+    private final static String     VERSION         = "1.1.2";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
@@ -47,86 +42,6 @@ public class SetlX {
     private       static boolean    unhideExceptions= false;
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
-
-    // This interface class provides access to the I/O mechanisms of the target platform etc
-    private static class PcEnvProvider implements EnvironmentProvider {
-
-        private final static String         sTAB            = "\t";
-        private       static String         sENDL           = null;
-
-      /*package*/     static String         sLibraryPath    = "";
-
-        // buffered reader for stdin
-        private       static BufferedReader sStdInReader    = null;
-
-        private static BufferedReader getStdIn() {
-            if (sStdInReader == null) {
-                sStdInReader = new BufferedReader(new InputStreamReader(System.in));
-            }
-            return sStdInReader;
-        }
-
-        /* interface functions */
-
-        // read from input
-        public boolean  inReady() throws JVMIOException {
-            try {
-                return getStdIn().ready();
-            } catch (IOException ioe) {
-                throw new JVMIOException("Unable to open stdIn!");
-            }
-        }
-        public String   inReadLine() throws JVMIOException {
-            try {
-                       // line is read and returned without termination character(s)
-                return getStdIn().readLine();
-            } catch (IOException ioe) {
-                throw new JVMIOException("Unable to open stdIn!");
-            }
-        }
-
-        // write to standard output
-        public void     outWrite(String msg) {
-            System.out.print(msg);
-        }
-
-        // write to standard error
-        public void     errWrite(String msg) {
-            System.err.print(msg);
-        }
-
-        // prompt for user input
-        public void    promptForInput(String msg) {
-            System.out.print(msg);
-            System.out.flush();
-        }
-
-        // some text format stuff
-        public String   getTab() {
-            return sTAB;
-        }
-        public String   getEndl() {
-            if (sENDL == null) {
-                sENDL = System.getProperty("line.separator");
-            }
-            return sENDL;
-        }
-
-        // allow modification of fileName/path when reading files
-        public String   filterFileName(String fileName) {
-            return fileName; // not required on PC
-        }
-
-        // allow modification of library name
-        public String   filterLibraryName(String name) {
-            name = name.trim();
-            if (name.length() < 1 || name.charAt(0) == '/') {
-                return name;
-            } else {
-                return sLibraryPath + name;
-            }
-        }
-    }
 
     public static void main(String[] args) throws Exception {
         boolean         dump        = false; // writes loaded code into a file

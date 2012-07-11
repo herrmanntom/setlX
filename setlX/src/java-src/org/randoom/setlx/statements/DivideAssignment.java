@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
@@ -28,12 +29,18 @@ public class DivideAssignment extends Statement {
     // precedence level in SetlX-grammar
     private final static int        PRECEDENCE              = 1000;
 
-    private final Expr  mLhs;
-    private final Expr  mRhs;
+    private final Expr    mLhs;
+    private final Expr    mRhs;
+    private       boolean mPrintAfterEval;
 
     public DivideAssignment(final Expr lhs, final Expr rhs) {
-        mLhs  = lhs;
-        mRhs  = rhs;
+        mLhs            = lhs;
+        mRhs            = rhs;
+        mPrintAfterEval = false;
+    }
+
+    /*package*/ void setPrintAfterEval() {
+        mPrintAfterEval = true;
     }
 
     protected Value exec() throws SetlException {
@@ -42,6 +49,8 @@ public class DivideAssignment extends Statement {
 
         if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
+        } else if (mPrintAfterEval && (assigned != Om.OM || !Om.OM.isHidden()) ) {
+            Environment.outWriteLn("~< Result: " + assigned + " >~");
         }
 
         return null;
@@ -50,9 +59,11 @@ public class DivideAssignment extends Statement {
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {
+        Environment.getLineStart(sb, tabs);
         mLhs.appendString(sb, tabs);
         sb.append(" /= ");
         mRhs.appendString(sb, tabs);
+        sb.append(";");
     }
 
     /* term operations */

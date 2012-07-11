@@ -21,11 +21,12 @@ public class PD_from extends PreDefinedFunction {
         addParameter("collectionValue", ParameterDef.READ_WRITE);
     }
 
-    public Value execute(List<Value> args,
-                         List<Value> writeBackVars
+    public Value execute(final List<Value> args,
+                         final List<Value> writeBackVars
     ) throws SetlException {
-        Value collection = args.get(0);
-        Value element    = collection.arbitraryMember();
+        final Value collection = args.get(0);
+        // throws exception when `collection' is not a collection
+        final Value element    = collection.arbitraryMember();
         if (element != Om.OM) {
             collection.removeMember(element);
         }

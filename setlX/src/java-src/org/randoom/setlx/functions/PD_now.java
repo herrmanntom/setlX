@@ -16,10 +16,10 @@ public class PD_now extends PreDefinedFunction {
         super("now");
     }
 
-    public Value execute(List<Value> args,
-                         List<Value> writeBackVars
+    public Value execute(final List<Value> args,
+                         final List<Value> writeBackVars
     ) {
-        return new Rational("" + Environment.currentTimeMillis());
+        return new Rational(Environment.currentTimeMillis());
     }
 }
 

@@ -37,6 +37,10 @@ public class Rational extends NumberValue {
         this(BigInteger.valueOf(number));
     }
 
+    public Rational(final long number) {
+        this(BigInteger.valueOf(number));
+    }
+
     public Rational(final BigInteger number) {
         mNominator      = number;
         mDenominator    = BigInteger.ONE;

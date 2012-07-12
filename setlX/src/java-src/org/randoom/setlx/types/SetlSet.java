@@ -153,6 +153,61 @@ public class SetlSet extends CollectionValue {
         }
     }
 
+    // modulo => symmetric difference, e.g. {1,2} % {1,3} = {2,3}
+    //                                        a       b       c
+    // compute as follows:
+    //  tmp = b - a
+    //  c   = tmp + (a - b)
+    public Value modulo(final Value modulo) throws SetlException {
+        if (modulo instanceof SetlSet) {
+
+            final SetlSet mClone = (SetlSet) modulo.clone();
+            mClone.separateFromOriginal();
+            mClone.mSortedSet.removeAll(this.mSortedSet);
+
+            final SetlSet result = clone();
+            result.separateFromOriginal();
+            result.mSortedSet.removeAll(((SetlSet) modulo).mSortedSet);
+
+            result.mSortedSet.addAll(mClone.mSortedSet);
+            return result;
+        } else if (modulo instanceof Term) {
+            return ((Term) modulo).multiplyFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
+            );
+        }
+    }
+
+    // modulo => symmetric difference, e.g. {1,2} % {1,3} = {2,3}
+    //                                        a       b       a*
+    // compute as follows:
+    //  tmp = b - a
+    //  a  -= b
+    //  a  += tmp
+    public Value moduloAssign(final Value modulo) throws SetlException {
+        if (modulo instanceof SetlSet) {
+            separateFromOriginal();
+
+            final SetlSet mClone = (SetlSet) modulo.clone();
+            mClone.separateFromOriginal();
+            mClone.mSortedSet.removeAll(this.mSortedSet);
+
+            this.mSortedSet.removeAll(((SetlSet) modulo).mSortedSet);
+
+            this.mSortedSet.addAll(mClone.mSortedSet);
+
+            return this;
+        } else if (modulo instanceof Term) {
+            return ((Term) modulo).multiplyFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
+            );
+        }
+    }
+
     public Value multiply(final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
             final SetlSet result = clone();

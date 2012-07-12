@@ -102,6 +102,57 @@ public class SetlList extends CollectionValue {
 
     /* arithmetic operations */
 
+    public Value multiply(final Value multiplier) throws SetlException {
+        if (multiplier instanceof Rational) {
+            final int      m      = ((Rational) multiplier).intValue();
+            if (m < 0) {
+                throw new IncompatibleTypeException(
+                    "List multiplier '" + multiplier + "' is negative."
+                );
+            }
+            final SetlList result = new SetlList(size() * m);
+            for (int i = 0; i < m; ++i) {
+                for(final Value v : this) {
+                    result.addMember(v.clone());
+                }
+            }
+            return result;
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "List multiplier '" + multiplier + "' is not an integer."
+            );
+        }
+    }
+
+    public Value multiplyAssign(final Value multiplier) throws SetlException {
+        if (multiplier instanceof Rational) {
+            final int m = ((Rational) multiplier).intValue();
+            if (m < 0) {
+                throw new IncompatibleTypeException(
+                    "List multiplier '" + multiplier + "' is negative."
+                );
+            }
+            separateFromOriginal();
+
+            final ArrayList<Value> content = mList;
+            mList = new ArrayList<Value>(content.size() * m);
+            for (int i = 0; i < m; ++i) {
+                for(final Value v : content) {
+                    mList.add(v.clone());
+                }
+            }
+            return this;
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).multiplyFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "List multiplier '" + multiplier + "' is not an integer."
+            );
+        }
+    }
+
     public Value sum(final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);

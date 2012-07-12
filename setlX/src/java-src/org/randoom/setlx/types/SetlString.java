@@ -200,6 +200,11 @@ public class SetlString extends CollectionValue {
     public Value multiply(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int           m   = ((Rational) multiplier).intValue();
+            if (m < 0) {
+                throw new IncompatibleTypeException(
+                    "String multiplier '" + multiplier + "' is negative."
+                );
+            }
             final StringBuilder sb  = new StringBuilder(mContent.length() * m);
             for (int i = 0; i < m; ++i) {
                 sb.append(mContent);
@@ -218,6 +223,11 @@ public class SetlString extends CollectionValue {
         if (multiplier instanceof Rational) {
             separateFromOriginal();
             final int    m       = ((Rational) multiplier).intValue();
+            if (m < 0) {
+                throw new IncompatibleTypeException(
+                    "String multiplier '" + multiplier + "' is negative."
+                );
+            }
             final String current = mContent.toString();
             // clear builder
             mContent.setLength(0);

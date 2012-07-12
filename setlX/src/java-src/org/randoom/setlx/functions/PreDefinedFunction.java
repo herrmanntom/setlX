@@ -93,7 +93,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(argsSize);
         for (final Expr arg : args) {
-            values.add(arg.eval());
+            values.add(arg.eval().clone());
         }
 
         // List of writeBack-values, which should be stored into the outer scope

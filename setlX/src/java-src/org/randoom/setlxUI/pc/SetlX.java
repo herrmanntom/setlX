@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "1.1.2";
+    private final static String     VERSION         = "1.2.0";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
@@ -54,6 +54,8 @@ public class SetlX {
 
         // initialize Environment
         Environment.setEnvironmentProvider(envProvider);
+        SetlList parameters = new SetlList(); // can/will be filled later
+        VariableScope.putValue("params", parameters);
 
         if ((envProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
             envProvider.sLibraryPath = "";
@@ -66,14 +68,6 @@ public class SetlX {
 
                 System.exit(EXIT_OK);
 
-            } else if (s.equals("--args")) {
-                // all remaining arguments are passed into the program
-                ++i; // set to next argument
-                SetlList arguments = new SetlList();
-                for (; i < args.length; ++i) {
-                    arguments.addMember(new SetlString(args[i]));
-                }
-                VariableScope.putValue("args", arguments);
             } else if (s.equals("--dump")) {
                 dump = true;
                 ++i; // set to next argument
@@ -109,6 +103,12 @@ public class SetlX {
                 Environment.setAssertsDisabled(true);
             } else if (s.equals("--noExecution")) {
                 noExecution = true;
+            } else if (s.equals("--params")) {
+                // all remaining arguments are passed into the program
+                ++i; // set to next argument
+                for (; i < args.length; ++i) {
+                    parameters.addMember(new SetlString(args[i]));
+                }
             } else if (s.equals("--predictableRandom")) { // easier debugging
                 Environment.setPredictableRandoom();
             } else if (s.equals("--real32")) {
@@ -377,8 +377,6 @@ public class SetlX {
         printHelpInteractive();
         Environment.outWriteLn(
             "Additional parameters:\n" +
-            "  --args <argument> ...\n" +
-            "     passes all following arguments to the executed program via `args' variable\n" +
             "  --libraryPath <path>\n" +
             "     override SETLX_LIBRARY_PATH environment variable\n" +
             "  --multiLineMode\n" +
@@ -387,6 +385,8 @@ public class SetlX {
             "      disables all assert functions\n" +
             "  --noExecution\n" +
             "      load and check code for syntax errors, but do not execute it\n" +
+            "  --params <argument> ...\n" +
+            "     passes all following arguments to executed program via `params' variable\n" +
             "  --predictableRandom\n" +
             "      always use same random sequence (debugging)\n" +
             "  --real32\n" +

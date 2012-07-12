@@ -4,8 +4,8 @@ initBlock
     : statement+ EOF
     ;
 
-initAnyExpr
-    : anyExpr EOF
+initExpr
+    : expr EOF
     ;
 
 block
@@ -16,18 +16,18 @@ statement
     : 'var' listOfVariables ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
-    | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block | 'case' '[' listOfVariables '|' variable ']' ':' block | 'case' '{' listOfVariables '|' variable '}' ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('case' exprList ':' block | 'case' '[' listOfVariables '|' variable ']' ':' block | 'case' '{' listOfVariables '|' variable '}' ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'try' '{' block '}' ('catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')* ('catch' '(' variable ')' '{' block '}')?
-    | 'return' anyExpr? ';'
+    | 'return' expr? ';'
     | 'continue' ';'
     | 'break' ';'
     | 'exit' ';'
-    | 'assert' '(' condition ',' anyExpr ')' ';'
+    | 'assert' '(' condition ',' expr ')' ';'
     | (assignmentOther)=> assignmentOther ';'
     | (assignmentDirect)=> assignmentDirect ';'
-    | anyExpr ';'
+    | expr ';'
     ;
 
 listOfVariables
@@ -39,19 +39,19 @@ variable
     ;
 
 condition
-    : boolExpr
+    : expr
     ;
 
 exprList
-    : anyExpr (',' anyExpr)*
+    : expr (',' expr)*
     ;
 
 assignmentOther
-    : assignable ('+=' anyExpr | '-=' anyExpr | '*=' anyExpr | '/=' anyExpr | '\\=' anyExpr | '%=' anyExpr)
+    : assignable ('+=' expr | '-=' expr | '*=' expr | '/=' expr | '\\=' expr | '%=' expr)
     ;
 
 assignmentDirect
-    : assignable ':=' ((assignmentDirect)=> assignmentDirect | anyExpr)
+    : assignable ':=' ((assignmentDirect)=> assignmentDirect | expr)
     ;
 
 assignList
@@ -63,60 +63,14 @@ explicitAssignList
     ;
 
 assignable
-    : variable ('[' anyExpr ']')*
+    : variable ('[' expr ']')*
     | assignList
     | '_'
     ;
 
-anyExpr
-    : (boolExpr boolFollowToken)=> boolExpr
-    | expr
-    ;
-
-boolFollowToken
-    : ')'
-    | '}'
-    | ']'
-    | ';'
-    | ':'
-    | ','
-    | EOF
-    ;
-
-boolExpr
-    : implication ('<==>' implication | '<!=>' implication)?
-    ;
-
-implication
-    : disjunction ('=>' implication)?
-    ;
-
-disjunction
-    : conjunction ('||' conjunction)*
-    ;
-
-conjunction
-    : boolFactor ('&&' boolFactor)*
-    ;
-
-boolFactor
-    : (comparison)=> comparison
-    | '(' boolExpr ')'
-    | '!' boolFactor
-    | 'forall' '(' iteratorChain '|' condition ')'
-    | 'exists' '(' iteratorChain '|' condition ')'
-    | call
-    | boolValue
-    | '_'
-    ;
-
-comparison
-    : expr ('==' expr | '!=' expr | '<' expr | '<=' expr | '>' expr | '>=' expr | 'in' expr | 'notin' expr)
-    ;
-
 expr
     : definition
-    | sum
+    | equation
     ;
 
 definition
@@ -125,7 +79,7 @@ definition
     ;
 
 lambdaDefinition
-    : lambdaParameters '|->' sum
+    : lambdaParameters '|->' expr
     ;
 
 lambdaParameters
@@ -145,6 +99,26 @@ procedureParameters
 procedureParameter
     : 'rw' variable
     | variable
+    ;
+
+equation
+    : implication ('<==>' implication | '<!=>' implication)?
+    ;
+
+implication
+    : disjunction ('=>' implication)?
+    ;
+
+disjunction
+    : conjunction ('||' conjunction)*
+    ;
+
+conjunction
+    : comparison ('&&' comparison)*
+    ;
+
+comparison
+    : sum ('==' sum | '!=' sum | '<' sum | '<=' sum | '>' sum | '>=' sum | 'in' sum | 'notin' sum)?
     ;
 
 sum
@@ -173,7 +147,11 @@ power
     ;
 
 factor
-    : ('(' expr ')' | term | call | value) '!'?
+    : '!' factor
+    | term
+    | 'forall' '(' iteratorChain '|' condition ')'
+    | 'exists' '(' iteratorChain '|' condition ')'
+    | ('(' expr ')' | call | value) '!'?
     ;
 
 term
@@ -186,7 +164,7 @@ termArguments
     ;
 
 call
-    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
+    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' expr '}')*
     ;
 
 callParameters
@@ -236,7 +214,7 @@ iterator
     ;
 
 iterate
-    : anyExpr ':' iteratorChain ('|' condition)?
+    : expr ':' iteratorChain ('|' condition)?
     ;
 
 iteratorChain
@@ -247,15 +225,12 @@ explicitList
     : exprList
     ;
 
-boolValue
-    : 'true'
-    | 'false'
-    ;
-
 atomicValue
     : NUMBER
     | REAL
     | 'om'
+    | 'true'
+    | 'false'
     ;
 
 

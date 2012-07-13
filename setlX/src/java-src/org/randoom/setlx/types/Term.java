@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.*;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -395,19 +396,21 @@ public class Term extends CollectionValue {
             // 'this' is a variable, which match anything (except ignore of course)
             final MatchResult result  = new MatchResult(true);
             // get name of variable
-            final Value       idStr   = mBody.iterator().next();
-            if ( ! (idStr instanceof SetlString)) { // wrong 'variable term
+            final Value       idStr   = mBody.firstMember();
+            if ( ! (idStr instanceof SetlString)) { // this is a wrong ^variable term
                 return new MatchResult(false);
             }
-                  String      id      = idStr.toString();
-            if (id.length() <= 2) { // wrong 'variable term (name is to short)
-                return new MatchResult(false);
+            final String      id      = idStr.getUnquotedString();
+
+            // look up if this variable is currently defined
+            final Value       thisVal = VariableScope.findValue(id);
+            if (thisVal != Om.OM) {
+                return thisVal.matchesTerm(other);
+            } else {
+                // this undefined variable will be set to the value of `other' upon complete match
+                result.addBinding(id, other);
+                return result;
             }
-            // remove quotes
-            id = id.substring(1, id.length() - 1);
-            //store other to be stored into this variable upon complete match
-            result.addBinding(id, other);
-            return result;
         } else if ( ! (other instanceof Term)) {
             return new MatchResult(false);
         }

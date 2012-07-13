@@ -11,6 +11,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added toUpperCase(string) and toLowerCase(string) functions
  # fixed handling of Boolean expressions by the parser
  + added UNSUPPORTED profiling script to development distribution
+ + match conditions respect preset variables
 
 ---v1.1.1--- 2012-07-10
  # fixed bug with indirect assignments not working in all cases

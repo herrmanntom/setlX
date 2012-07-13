@@ -1,9 +1,10 @@
-package org.randoom.setlx.functions;
+package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;

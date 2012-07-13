@@ -94,7 +94,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
         final SetlList termList = new SetlList(mTerms.size());
         for (final Value v: mTerms) {
-            termList.addMember(v);
+            termList.addMember(v.clone());
         }
         result.addMember(termList);
 

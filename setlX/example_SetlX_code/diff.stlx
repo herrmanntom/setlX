@@ -17,12 +17,10 @@ diff := procedure(t, x) {
             return diff(a, x) * @exp(a);
         case (t) :
             return diff(t, x);
-        case ^variable(t) :
-            if (t == x) {
-                return 1;
-            } else {
-                return 0;
-            }
+        case ^variable(x) : // x is defined above, therefore must be equal to match
+            return 1;
+        case ^variable(y) : // y is undefined, therefore matches any other variable
+            return 0;
         default:
             if (isInteger(t) || isReal(t)) {
                 return 0;

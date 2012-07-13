@@ -35,12 +35,19 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchSplitListBranch";
 
     private final List<Variable> mVars;       // variables which are to be extracted
+    private final List<Value>    mVarTerms;   // terms of variables which are to be extracted
     private final Variable       mRest;       // variable for the rest of the list
+    private final Value          mRestTerm;   // term of variable for the rest of the list
     private final Block          mStatements; // block to execute after match
 
     public MatchSplitListBranch(final List<Variable> vars, final Variable rest, final Block statements){
         mVars       = vars;
+        mVarTerms   = new ArrayList<Value>(vars.size());
+        for (final Variable var : vars) {
+            mVarTerms.add(var.toTerm());
+        }
         mRest       = rest;
+        mRestTerm   = rest.toTerm();
         mStatements = statements;
     }
 
@@ -49,12 +56,22 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
             final CollectionValue other = (CollectionValue) term.clone();
             if (other.size() >= mVars.size()) {
                 final MatchResult result = new MatchResult(true);
-                for (final Variable var : mVars) {
-                    result.addBinding(var.toString(), other.firstMember());
-                    other.removeFirstMember();
+                for (final Value varTerm : mVarTerms) {
+                    final MatchResult subResult = varTerm.matchesTerm(other.firstMember());
+                    if (subResult.isMatch()) {
+                        result.addBindings(subResult);
+                        other.removeFirstMember();
+                    } else {
+                        return new MatchResult(false);
+                    }
                 }
-                result.addBinding(mRest.toString(), other);
-                return result;
+                final MatchResult subResult = mRestTerm.matchesTerm(other);
+                if (subResult.isMatch()) {
+                    result.addBindings(subResult);
+                    return result;
+                } else {
+                    return new MatchResult(false);
+                }
             } else {
                 return new MatchResult(false);
             }
@@ -99,8 +116,8 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
         final Term     result  = new Term(FUNCTIONAL_CHARACTER, 3);
 
         final SetlList varList = new SetlList(mVars.size());
-        for (final Variable var: mVars) {
-            varList.addMember(var.toTerm());
+        for (final Value varTerm: mVarTerms) {
+            varList.addMember(varTerm.clone());
         }
         result.addMember(varList);
 

@@ -2,10 +2,10 @@
 match: a = 55 * 99, b = 123, c = 14 - 2
 
 [1, 99, 7]
-match: a = 1, b = 99, c = 7
+match: d = 1, e = 99, f = 7
 
 [1, "foo", 7]
-match: a = 1, b = 7
+match: g = 1, h = 7
 
 [1, "foo", 7]
 failed to match
@@ -14,8 +14,8 @@ failed to match
 match: sqrt: x = a ** 2, y = 2
 
 ^call("sqrt", [^sum(^power(^variable("a"), 2), ^power(^variable("b"), 2))])
-match: fnc = sqrt, x = a ** 2, y = 2
+match: fnc = sqrt, u = a ** 2, v = 2
 
 ^variable("u")
-match: x = u
+match: z = u
 

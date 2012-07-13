@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.randoom.setlx.functions.MathFunction;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;

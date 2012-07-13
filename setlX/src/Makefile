@@ -111,7 +111,6 @@ bin/org/randoom/setlx/utilities/*.class :                   \
         java-src/org/randoom/setlx/statements/For.java                          \
         java-src/org/randoom/setlx/statements/Statement.java                    \
         java-src/org/randoom/setlx/statements/While.java                        \
-        java-src/org/randoom/setlx/functions/MathFunction.java                  \
         java-src/org/randoom/setlx/functions/PreDefinedFunction.java            \
         java-src/org/randoom/setlx/grammar/SetlXgrammar*.java                   \
         java-src/org/randoom/setlx/exceptions/*.java                            \

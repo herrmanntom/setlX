@@ -20,8 +20,8 @@ exprTerm   := parse(exprString);
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case [a, b, c] :
-        print("match: a = $a$, b = $b$, c = $c$");
+    case [d, e, f] :
+        print("match: d = $d$, e = $e$, f = $f$");
     default :
         print("failed to match");
 }
@@ -33,8 +33,8 @@ list    := [1, "foo", 7];
 print(canonical(list));
 
 match (list) {
-    case [a, "foo", b] :
-        print("match: a = $a$, b = $b$");
+    case [g, "foo", h] :
+        print("match: g = $g$, h = $h$");
     default :
         print("failed to match");
 }
@@ -46,8 +46,8 @@ list    := [1, "foo", 7];
 print(canonical(list));
 
 match (list) {
-    case [a, "bar", b] : // MUST NOT match
-        print("match: a = $a$, b = $b$");
+    case [i, "bar", i] : // MUST NOT match
+        print("match: i = $i$, j = $j$");
     default :
         print("failed to match");
 }
@@ -74,10 +74,10 @@ exprTerm   := parse(exprString);
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case fnc(x + _ ** y): // MUST NOT match, because it matches only a call to `fnc'
-        print("match: fnc: x = $x$, y = $y$");
-    case ^call(fnc, [x + _ ** y]): // matches all function calls with matching arguments
-        print("match: fnc = $fnc$, x = $x$, y = $y$");
+    case fnc(u + _ ** v): // MUST NOT match, because it matches only a call to `fnc'
+        print("match: fnc: u = $u$, v = $v$");
+    case ^call(fnc, [u + _ ** v]): // matches all function calls with matching arguments
+        print("match: fnc = $fnc$, u = $u$, v = $v$");
     default :
         print("failed to match");
 }
@@ -90,8 +90,8 @@ exprTerm   := parse(exprString);
 print(canonical(exprTerm));
 
 match (exprTerm) {
-    case ^variable(x) :
-        print("match: x = $x$");
+    case ^variable(z) :
+        print("match: z = $z$");
     default :
         print("failed to match");
 }

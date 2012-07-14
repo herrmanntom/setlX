@@ -67,5 +67,8 @@ SetlX <-> XlteS
 ["from", "hell", "", "I", "come"]
 from hell i come
 FROM HELL I COME
+false
+true
+this is a test
 
 Assertion failed: "assert function works"

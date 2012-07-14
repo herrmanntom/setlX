@@ -96,9 +96,10 @@ echo "done"
 
 # create examples zip
 echo -n "=> Creating example code distribution ... "
-mkdir -p zipContents zipContents/converted_Setl2_code
+mkdir -p zipContents zipContents/converted_Setl2_code zipContents/performance_test_code
 cp example_SetlX_code/*.stlx zipContents/.
 cp example_SetlX_code/converted_Setl2_code/*.stlx zipContents/converted_Setl2_code/.
+cp example_SetlX_code/performance_test_code/*.stlx zipContents/performance_test_code/.
 cd zipContents; zip -qr "../$examples.zip" . ; cd ..
 rm -rf zipContents
 echo "done"
@@ -110,3 +111,4 @@ cd src;make dist-clean;cd ..
 echo -n "=> Creating development kit ... "
 zip -qr "$devel.zip" . -x \*.zip
 echo "done"
+

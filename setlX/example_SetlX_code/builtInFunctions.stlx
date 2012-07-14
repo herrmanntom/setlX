@@ -123,6 +123,7 @@ print();
   nPrint(value, ...)            // same as print, but does not add a new line
   nPrintErr(value, ...)         // same as nPrint, but prints into stderr
 */
+
 test := "21_test_12";
 print    ( "This is a $test$");
 print    (@"This is a $test$");
@@ -138,6 +139,7 @@ print();
   parse(expr)                   // parse string of a SetlX expression into a term
   parseStatements(stmnts)       // parse string of SetlX statements into a term
 */
+
 print("{throwACoin, print} = " + canonical(getTerm({throwACoin, print})));
 print("a + 10 * b % 4 = " + canonical(parse("a + 10 * b % 4")));
 print("\"print(parseStatements(\\\"print(\\\\\"that is crazy!\\\\\");\\\"));\" = " + canonical(parseStatements("print(parseStatements(\"print(\\\"that is crazy!\\\");\"));")));
@@ -146,6 +148,7 @@ print();
 /*******************************************************************************
   evalTerm(term)                // execute a term which represents SetlX statements and/or expressions
 */
+
 print( evalTerm(parse("1 + 5")) ); // 6
 evalTerm(parseStatements("print(\"foo\");a := 99 * 2;b:= sin(1);")); // prints foo and sets a, b
 print(a); // 198
@@ -155,12 +158,14 @@ print();
 /*******************************************************************************
   permutations(collectionValue) // computes all permutations of the element in `collectionValue'
 */
+
 print("All permutations of $[1,2,2,3]$ are $permutations([1,2,2,3])$.");
 print();
 
 /*******************************************************************************
   reverse(collectionValue)      : reverse the order of members in `collectionValue'
 */
+
 l := [1..10];
 print("$l$ <-> $reverse(l)$");
 l := [[x,y] : x in [1..3], y in [2..4]];
@@ -170,18 +175,26 @@ print("$l$ <-> $reverse(l)$");
 print();
 
 /*******************************************************************************
-  strSplit(string, pattern)     // splits string at pattern into a list of strings
+  split(string, pattern)        // splits string at pattern into a list of strings
   toLowerCase(string)           // returns String in lower case letters
   toUpperCase(string)           // returns String in upper case letters
+  endsWith(string, suffix)      // return true if string ends with prefix
+  startsWith(string, prefix)    // return true if string starts with prefix
+  trim(string)                  // return a trimmed string
 */
-print(strSplit("from;hell;;I;come", ";"));
+
+print(split("from;hell;;I;come", ";"));
 print(toLowerCase("from hell I come"));
 print(toUpperCase("from hell I come"));
+print(endsWith("this is a test", "not a test"));
+print(startsWith("this is a test", "this is"));
+print(trim("    this is a test  "));
 print();
 
 /*******************************************************************************
   assert(condition , message)   // stop execution and display message, if condition evaluates to false
 */
+
 foo := [1 .. 10];
 assert(foo == [1,2,3,4,5,6,7,8,9], "assert function works"); // assertion will fail
 

@@ -52,7 +52,7 @@ while IFS= read path
         echo -e " successful!\n"
     fi
 
-done < <( find -L example_SetlX_code -name "*.stlx" )
+done < <( find -L example_SetlX_code -name "*.stlx" ! -path "*/performance_test_code/*" )
 
 rm -f diff.result
 

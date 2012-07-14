@@ -1,0 +1,35 @@
+#!/bin/bash
+
+tmpFile=$(mktemp)
+
+cd src;
+
+time (
+    # loop through all SetlX files, execute them and compare to reference result
+    while IFS= read path
+      do
+        filename="${path#example_SetlX_code/}"
+
+        echo "executing file '$filename' ..."
+
+        time (
+            # execute with setlX
+            ./setlX --predictableRandom $path > /dev/null 2>&1
+        ) 2> "$tmpFile"
+
+        cat "$tmpFile"
+
+        echo
+
+    done < <( find -L "../example_SetlX_code/performance_test_code" -name "*.stlx" )
+) 2> "$tmpFile"
+
+cd ..
+
+echo "overall time:"
+
+cat "$tmpFile"
+echo
+
+rm -f "$tmpFile"
+

@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.2.0--- 2012-07-14
+---v1.2.0--- 2012-07-15
  # fixed minor bugs in string-representation of some statements
  # forall and exist can be used in combinations with other Boolean expressions
  # renamed --args option to --params, to avoid conflicts with args() function
@@ -14,6 +14,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  # fixed handling of Boolean expressions by the parser
  + match conditions respect preset variables
  + added UNSUPPORTED profiling script to development distribution
+ + added perfomance tests stub
 
 ---v1.1.1--- 2012-07-10
  # fixed bug with indirect assignments not working in all cases

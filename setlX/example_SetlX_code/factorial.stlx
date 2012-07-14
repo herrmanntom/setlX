@@ -32,6 +32,14 @@ if (n <= 100000) {
     if (fSS != f) {
         abort("SetlX set factorial computation is wrong!");
     }
+
+    beginCompSetlXList := now();
+    fSL2 := */ [1 .. n];
+    endCompSetlXList := now();
+
+    if (fSL2 != f) {
+        abort("SetlX list factorial computation is wrong!");
+    }
 }
 
 beginPrint := now();
@@ -42,8 +50,10 @@ if (printStats) {
     print();
     print("Computing the factorial of ", n, " took \t", (endCompNative  - beginCompNative  - 0.0)/1000, " seconds (using multithreaded native implementation).");
     if (beginCompSetlXLoop != om) {
-        print("Computing the factorial of ", n, " took \t", (endCompSetlXLoop  - beginCompSetlXLoop  - 0.0)/1000, " seconds (using SetlX loop).");
+        print("Computing the factorial of ", n, " took \t", (endCompSetlXLoop - beginCompSetlXLoop - 0.0)/1000, " seconds (using SetlX loop).");
         print("Computing the factorial of ", n, " took \t", (endCompSetlXSet  - beginCompSetlXSet  - 0.0)/1000, " seconds (using a SetlX set).");
+        print("Computing the factorial of ", n, " took \t", (endCompSetlXList - beginCompSetlXList - 0.0)/1000, " seconds (using a SetlX list).");
     }
     print("Printing the factorial of  ", n, " took \t", (endPrint - beginPrint - 0.0)/1000, " seconds.");
 }
+

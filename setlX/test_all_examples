@@ -47,6 +47,8 @@ while read -r -d $'\0' path
     if [ $? -eq 1 ]
       then
         echo " failed ... (see diff.result)"
+        
+        rm -f "$tmpFile"
         exit 2
     else
         echo -e " successful!\n"

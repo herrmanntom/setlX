@@ -29,7 +29,9 @@ javaParameters="$javaParameters -Xss16m"
 if [ -f "$setlXJarLocation" ]
   then
     java -cp "$setlXJarLocation:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
+    exit $?
 else
     echo "The setlX.jar file can not be found!"
+    exit 1
 fi
 

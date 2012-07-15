@@ -22,7 +22,6 @@
 // This SETL program was created by Hakan Kjellerstrand (hakank@bonetmail.com).
 // See also my SETL page: http://www.hakank.org/setl/
 
-
 sum_divisors := procedure(n) {
     d := floor(sqrt(n));
     sum := 1;
@@ -40,30 +39,22 @@ sum_divisors := procedure(n) {
 
 problem23 := procedure() {
 
-    print("problem23");
+  print("problem23");
 
-    n := 28123;
-
-    abundant := [a : a in [1.. n] | sum_divisors(a) > a];
-    hash := {};
-    for (a in abundant) {
-        for (b in abundant) {
-            if (a >= b && a+b <= n) {
-                hash[a+b] := 1;
-            } else {
-                break;
-            }
-        }
+  n := 28123;
+  abundant := [a : a in [1.. n] | sum_divisors(a) > a];
+  hash := {};
+  for (a in abundant) {
+    for (b in abundant) {
+      if (a >= b && a+b <= n) {
+        hash[a+b] := 1;
+      } else {
+        break;
+      }
     }
+  }
 
-    sum := 0;
-    for (a in [1..n]) {
-        if (hash[a] == om) {
-            sum += a;
-        }
-    }
-
-    print(sum);
+  print(+/[a : a in [1..n] | hash[a] == om]);
 
 };
 
@@ -73,65 +64,50 @@ problem23 := procedure() {
 //
 problem23b := procedure() {
 
-    print("problem23b");
+  print("problem23b");
 
-    n := 28123;
-    abundant := [a : a in [1.. n] | sum_divisors(a) > a];
+  n := 28123;
+  abundant := [a : a in [1.. n] | sum_divisors(a) > a];
 
-    vec := [1..n];
-    for (a in abundant) {
-        for (b in abundant) {
-             if (a >= b && a+b <= n) {
-                 vec[a+b] := 1;
-             } else {
-                 break;
-             }
-        }
+  vec := [0 : i in [1..n]];
+  for (a in abundant) {
+    for (b in abundant) {
+      if (a >= b && a+b <= n) {
+        vec[a+b] := 1;
+      } else {
+        break;
+      }
     }
+  }
 
-    sum := 0;
-    for (a in [1..n]) {
-        if (vec[a] != 1) {
-            sum += a;
-        }
-    }
-
-    print(sum);
+  print(+/[a : a in [1..n] | vec[a] != 1]);
 
 };
-
 
 //
 // Using vector for abundant
+//
 problem23c := procedure() {
 
-    print("problem23c");
+  print("problem23c");
 
-    n := 28123;
-    abundant := [a : a in [1.. n] | sum_divisors(a) > a];
+  n := 28123;
+  abundant := [a : a in [1.. n] | sum_divisors(a) > a];
 
-    vec := [1..n];
-    alen := #abundant;
-    for (i in [1..alen]) {
-        for (j in [i..alen]) {
-            c := abundant[i]+abundant[j];
-            if (c <= n) {
-                vec[c] := 1;
-            }
-        }
+  vec := [0 : i in [1..n]];
+  alen := #abundant;
+  for (i in [1..alen]) {
+    for (j in [i..alen]) {
+      c := abundant[i]+abundant[j];
+      if (c <= n) {
+        vec[c] := 1;
+      }
     }
+  }
 
-    sum := 0;
-    for (a in [1..n]) {
-        if (vec[a] != 1) {
-            sum += a;
-        }
-    }
-
-    print(sum);
+  print(+/[a : a in [1..n] | vec[a] != 1]);
 
 };
-
 
 problem23();
 problem23b();

@@ -1,45 +1,93 @@
 #!/bin/bash
 
-resultFile=$(mktemp)
-timeFile=$(mktemp)
+testFile=$(mktemp)
 
 cd src;
 
-time (
-    # loop through all SetlX files, execute them and compare to reference result
-    while read -r -d $'\0' path
-      do
-        filename="${path#example_SetlX_code/}"
+./setlX --version > "$testFile"
+if [ $? -ne 0 ]
+  then
+    cat "$testFile"
 
-        echo "executing file '$filename' ..."
+    rm -f "$testFile"
+    exit 1
+fi
 
-        time (
+resultFileName="../example_SetlX_code/performance_test_code/results/$(hostname | tr '.' '-')_v$(cat $testFile | tr '.' '-')"
+
+resultFileNameReal="$resultFileName.real.csv"
+resultFileNameUser="$resultFileName.user.csv"
+resultFileNameSys="$resultFileName.sys.csv"
+
+rm -f "$resultFileNameReal" "$resultFileNameUser" "$resultFileNameSys"
+
+sumRealTime=0.0
+sumUserTime=0.0
+sumSysTime=0.0
+
+# loop through all SetlX files, execute them and compare to reference result
+while read -r -d $'\0' path
+  do
+    filename="${path#../example_SetlX_code/performance_test_code/}"
+
+    echo "executing file '$filename' ..."
+
+    execTime=$(
+        time -p (
             # execute with setlX
-            ./setlX --predictableRandom "$path" > "$resultFile"
-        ) 2> "$timeFile"
+            ./setlX --predictableRandom "$path" > "$testFile"
+        ) 2>&1
+    )
 
-        cat "$timeFile"
+    diff "$path.reference" "$testFile" > /dev/null
+    if [ $? -eq 1 ]
+      then
+        echo $execTime
+        echo "executing file '$filename' failed!"
 
-        diff "$path.reference" "$timeFile" > /dev/null
-        if [ $? -eq 1 ]
-          then
-            echo "executing file '$filename' failed!"
-            exit 1
-        fi
+        rm -f "$testFile"
+        exit 2
+    else
+        read -a timeArray <<<$execTime
+        realTime=${timeArray[1]}
+        userTime=${timeArray[3]}
+        sysTime=${timeArray[5]}
+
+        echo "$filename,$realTime" >> "$resultFileNameReal"
+        echo "$filename,$userTime" >> "$resultFileNameUser"
+        echo "$filename,$sysTime"  >> "$resultFileNameSys"
+
+        echo "real: $realTime, user: $userTime, sys: $sysTime"
+
+        sumRealTime=$(bc <<< "$sumRealTime + $realTime")
+        sumUserTime=$(bc <<< "$sumUserTime + $userTime")
+        sumSysTime=$(bc <<< "$sumSysTime + $sysTime")
 
         echo
+    fi
 
-    done < <( find -L "../example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
-) 2> "$timeFile"
+done < <( find -L "../example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
 
-cd ..
+cat "$resultFileNameReal" | sort > "$testFile"
+echo "code example,time in seconds (real)" > "$resultFileNameReal"
+cat "$testFile" >> "$resultFileNameReal"
+echo "overall,$sumRealTime" >> "$resultFileNameReal"
 
-echo "overall time:"
+cat "$resultFileNameUser" | sort > "$testFile"
+echo "code example,time in seconds (user)" > "$resultFileNameUser"
+cat "$testFile" >> "$resultFileNameUser"
+echo "overall,$sumUserTime" >> "$resultFileNameUser"
 
-cat "$timeFile"
+cat "$resultFileNameSys" | sort > "$testFile"
+echo "code example,time in seconds (sys)" > "$resultFileNameSys"
+cat "$testFile" >> "$resultFileNameSys"
+echo "overall,$sumSysTime" >> "$resultFileNameSys"
+
+rm -f "$testFile"
+
+echo "overall execution time:"
+echo "real: $sumRealTime, user: $sumUserTime, sys: $sumSysTime"
 echo
-
-rm -f "$tmpFile" "$timeFile"
 
 exit 0
 

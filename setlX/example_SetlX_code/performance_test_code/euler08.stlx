@@ -1,14 +1,25 @@
-// 
+//
 // Project Euler problem 8 in SETL
 //
-// 
+//
 // Problem 8:
 // """
-// Find the greatest product of five consecutive digits in the 
+// Find the greatest product of five consecutive digits in the
 // 1000-digit number.
 // ...
 // """
-// 
+//
+
+// fix for version < 1.2.0
+if (split == om) {
+    if (strSplit != om) {
+        split := strSplit;
+    } else {
+        split := procedure(s, p) {
+            return [ s[i] : i in [1..#s] ];
+        };
+    }
+}
 
 problem8 := procedure() {
 

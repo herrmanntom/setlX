@@ -1,12 +1,12 @@
-// 
+//
 // Project Euler problem 37 in SETL
 //
 // """
-// The number 3797 has an interesting property. Being prime itself, it is possible to 
-// continuously remove digits from left to right, and remain prime at each stage: 
+// The number 3797 has an interesting property. Being prime itself, it is possible to
+// continuously remove digits from left to right, and remain prime at each stage:
 // 3797, 797, 97, and 7. Similarly we can work from right to left: 3797, 379, 37, and 3.
 //
-// Find the sum of the only eleven primes that are both truncatable from left to right 
+// Find the sum of the only eleven primes that are both truncatable from left to right
 // and right to left.
 //
 // NOTE: 2, 3, 5, and 7 are not considered to be truncatable primes.
@@ -16,6 +16,14 @@
 // This SETL program was created by Hakan Kjellerstrand (hakank@bonetmail.com)
 // Also see my SETL page: http://www.hakank.org/setl/
 //
+
+// fix for version < 1.2.0
+if (reverse == om) {
+    reverse := procedure(a) {
+        ll := #a;
+        return [ a[i] : i in [ll,ll-1..1] ];
+    };
+}
 
 var prime_hash;
 
@@ -83,7 +91,7 @@ problem37 := procedure() {
     // init the prime hash
     prime_hash := {[1,false],[2,true],[3,true]};
 
-    p := 7+2; 
+    p := 7+2;
     sum := 0;
     c := 0;
     ps := [];

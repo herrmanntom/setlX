@@ -16,6 +16,14 @@
 // Also see my SETL page: http://www.hakank.org/setl/
 //
 
+// fix for version < 1.2.0
+if (reverse == om) {
+    reverse := procedure(a) {
+        ll := #a;
+        return [ a[i] : i in [ll,ll-1..1] ];
+    };
+}
+
 problem36 := procedure() {
    res := 0;
    for (n in [1..999999]) {         

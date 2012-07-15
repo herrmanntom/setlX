@@ -16,18 +16,18 @@ okCount=$(grep -c "successful" $tmpFile)
 if [ $failedCount -gt 0 -o $okCount -lt 22 ] # <=  "22" is number of tests in `make test'
   then
     echo "the initial testfile '$simpleTest' failed!"
-    rm -f $tmpFile
+    rm -f "$tmpFile"
     exit 1
 else
     echo -e "executing file '$simpleTest' successful!\n"
 fi
 
 # loop through all SetlX files, execute them and compare to reference result
-while IFS= read path
+while read -r -d $'\0' path
   do
     filename="${path#example_SetlX_code/}"
 
-    if [ ! -e $path.reference ]
+    if [ ! -e "$path.reference" ]
       then
         manualTestFiles="$manualTestFiles$filename, "
         continue
@@ -36,28 +36,30 @@ while IFS= read path
     echo -n "executing file '$filename' ..."
 
     # execute with setlX
-    if [ -e $path.input ]
+    if [ -e "$path.input" ]
       then
-        cd src; cat ../$path.input | ./setlX --predictableRandom ../$path > $tmpFile 2>&1; cd ..
+        cd src; cat "../$path.input" | ./setlX --predictableRandom "../$path" > "$tmpFile" 2>&1; cd ..
     else
-        cd src; ./setlX --predictableRandom ../$path > $tmpFile 2>&1; cd ..
+        cd src; ./setlX --predictableRandom "../$path" > "$tmpFile" 2>&1; cd ..
     fi
 
-    diff $path.reference $tmpFile > diff.result
+    diff "$path.reference" "$tmpFile" > diff.result
     if [ $? -eq 1 ]
       then
         echo " failed ... (see diff.result)"
-        exit 0
+        exit 2
     else
         echo -e " successful!\n"
     fi
 
-done < <( find -L example_SetlX_code -name "*.stlx" ! -path "*/performance_test_code/*" )
+done < <( find -L example_SetlX_code -name "*.stlx" ! -path "*/ignored/*" -print0 )
 
 rm -f diff.result
 
-rm -f $tmpFile
+rm -f "$tmpFile"
 
 manualTestFiles="${manualTestFiles%, }"
 echo "The following files need user input and can only be tested manually: $manualTestFiles"
+
+exit 0
 

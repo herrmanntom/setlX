@@ -216,10 +216,10 @@ make dist-clean
 
 \section{Semi Automatic Testing}\label{testing}
 
-As a sorry excuse for quality assurance and control a simple \command{test\_all} script is included with the interpreters source. This script should be run after every functional change, but at least before creating a new version, by executing
+As a sorry excuse for quality assurance and control a simple \command{test\_all\_examples} script is included with the interpreters source. This script should be run before creating a new version, by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
-./test_all
+./test_all_examples
 \end{lstlisting}
 
 The logic of the script is as follows:
@@ -232,6 +232,12 @@ The logic of the script is as follows:
 	\item When the resulting diff is empty, the next source file is executed.
 	\item Should the resulting diff file not be empty, the script stops. The diff result should then be examined.
 \end{itemize}
+
+Because this script can take a long time, the \command{test\_fast\_examples} version is available as well. It works in the same manor as \command{test\_all\_examples} but does not test the files in the \command{example\_SetX\_code/performance\_test\_code} folder. This version of the script should be run after every functional change, by executing
+
+\begin{lstlisting}[frame=none,numbers=none]
+./test_fast_examples
+\end{lstlisting}
 
 \section{Undocumented Features}
 
@@ -262,7 +268,7 @@ The automated distribution creation script can be launched by executing
 ./createDistributions
 \end{lstlisting}
 
-Note that this process will `clean' the source (e.g. remove all automatically created files), rebuild the interpreter and its documentation and finally cleans the source again. It is advisable to run the \command{test\_all} script before creating a new version (see section \ref{testing}).
+Note that this process will `clean' the source (e.g. remove all automatically created files), rebuild the interpreter and its documentation and finally cleans the source again. It is advisable to run the \command{test\_all\_examples} script before creating a new version (see section \ref{testing}).
 
 \subsection{Distributing setlX}
 

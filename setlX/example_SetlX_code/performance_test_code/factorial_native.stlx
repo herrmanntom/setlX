@@ -1,6 +1,3 @@
 // this program can be used to test the performance of the factorial implementation
 
 f := 100000!;
-
-print(f);
-

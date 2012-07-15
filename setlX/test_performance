@@ -1,12 +1,13 @@
 #!/bin/bash
 
-tmpFile=$(mktemp)
+resultFile=$(mktemp)
+timeFile=$(mktemp)
 
 cd src;
 
 time (
     # loop through all SetlX files, execute them and compare to reference result
-    while IFS= read path
+    while read -r -d $'\0' path
       do
         filename="${path#example_SetlX_code/}"
 
@@ -14,22 +15,31 @@ time (
 
         time (
             # execute with setlX
-            ./setlX --predictableRandom $path > /dev/null 2>&1
-        ) 2> "$tmpFile"
+            ./setlX --predictableRandom "$path" > "$resultFile"
+        ) 2> "$timeFile"
 
-        cat "$tmpFile"
+        cat "$timeFile"
+
+        diff "$path.reference" "$timeFile" > /dev/null
+        if [ $? -eq 1 ]
+          then
+            echo "executing file '$filename' failed!"
+            exit 1
+        fi
 
         echo
 
-    done < <( find -L "../example_SetlX_code/performance_test_code" -name "*.stlx" )
-) 2> "$tmpFile"
+    done < <( find -L "../example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
+) 2> "$timeFile"
 
 cd ..
 
 echo "overall time:"
 
-cat "$tmpFile"
+cat "$timeFile"
 echo
 
-rm -f "$tmpFile"
+rm -f "$tmpFile" "$timeFile"
+
+exit 0
 

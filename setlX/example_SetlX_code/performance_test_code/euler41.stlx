@@ -1,0 +1,93 @@
+// 
+// Project Euler problem 41 in SETL
+//
+// """
+// We shall say that an n-digit number is pandigital if it makes use of all 
+// the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital 
+// and is also prime.
+//
+// What is the largest n-digit pandigital prime that exists?
+// """
+//
+// This SETL program was created by Hakan Kjellerstrand (hakank@bonetmail.com)
+// Also see my SETL page: http://www.hakank.org/setl/
+//
+
+var prime_hash;
+
+is_prime := procedure(n) {
+
+    pp := prime_hash[n];
+    if (pp != om) {
+        return pp;
+    }
+
+    if (n == 1) {
+      prime_hash[n] := false;
+      return false;
+    }
+
+    if (n == 2 || n == 3) {
+        prime_hash[n] := true;
+        return(true);
+    }
+
+    if (n % 2 == 0) {
+        prime_hash[n] := false;
+        return(false);
+    }
+
+    for (i in [3, 5..round(sqrt(n))+1]) {
+        if (n % i == 0) {
+            prime_hash[n] := false;
+            return(false);
+        }
+    }
+
+    prime_hash[n] := true;
+    return(true);
+
+};
+
+problem41 := procedure() {
+    // Simplification (from on2e of the answers)
+    // n=9 is not possible since 1+2+3+4+5+6+7+8+9=45 is divisible by 3
+    // n=8 is not possible since 1+2+3+4+5+6+7+8=36 is divisible by 3
+    n := 7;
+    m := 0;
+    prime_hash := {};
+    while (m == 0 && n >= 4) {
+        p := [];
+        for (i in [n,n-1..1]) {
+            p := p + [i];
+        }
+        // note: it's reversed sorted so we stop at first prime
+        perms := reverse(perms2(p));
+        for (p in perms) {
+          v := int(+/[str(i) : i in p]);
+          if (is_prime(v)) {
+              m := v; // found it
+              quit;
+          }
+          
+        }
+        n -= 1;
+
+    }
+
+    print(m);
+
+};
+
+// Permutation (exhaustive)
+perms2 := procedure(s) {
+  if (s == []) {
+    return [[]];
+  } else {
+    return [ [a]+b : a in s, b in perms2([ p in s | p != a]) ];
+  }
+
+};
+
+
+problem41();

@@ -19,7 +19,7 @@ public class PD_toLowerCase extends PreDefinedFunction {
     public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value string  = args.get(0);
         if ( ! (string instanceof SetlString)) {
-            throw new IncompatibleTypeException("string-argument '" + string + "' is not a string.");
+            throw new IncompatibleTypeException("String-argument '" + string + "' is not a string.");
         }
 
         return new SetlString(string.getUnquotedString().toLowerCase());

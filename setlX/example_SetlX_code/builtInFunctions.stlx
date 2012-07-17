@@ -156,6 +156,19 @@ print(b); // ~0.84
 print();
 
 /*******************************************************************************
+  isProbablePrime(integer)      // returns true if `integer' is probably prime, false if it's definitely not prime.
+                                // If true, the probability that `integer' is prime exceeds 0.999 999 999.
+                                // In other words less than 1 in 1 000 000 000 probable primes is not a prime.
+  nextProbablePrime(integer)    // returns the next probable prime greater as `integer'.
+                                // The probability that the returned number is not a prime does
+                                // not exceed 2**-100.
+*/
+n := 10123124191203;
+print("Could $n$ be prime? $isProbablePrime(n)$.");
+print("What is next prime after $n$? $nextProbablePrime(n)$.");
+print();
+
+/*******************************************************************************
   permutations(collectionValue) // computes all permutations of the element in `collectionValue'
 */
 

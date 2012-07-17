@@ -21,7 +21,7 @@ public class PD_sleep extends PreDefinedFunction {
     public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
         if (args.get(0).isInteger() == SetlBoolean.FALSE || args.get(0).compareTo(new Rational(0)) < 1 ) {
             throw new IncompatibleTypeException(
-                "time_in_ms-argument '" + args.get(0) + "' is not an integer >= 1."
+                "Time_in_ms-argument '" + args.get(0) + "' is not an integer >= 1."
             );
         }
 

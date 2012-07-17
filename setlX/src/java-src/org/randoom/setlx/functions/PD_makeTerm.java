@@ -25,7 +25,7 @@ public class PD_makeTerm extends PreDefinedFunction {
         Value arg1 = args.get(1);
         if ( ! (arg0 instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "functionalCharacter '" + arg0 + "' is not a string."
+                "FunctionalCharacter '" + arg0 + "' is not a string."
             );
         }
         if ( ! (arg1 instanceof SetlList)) {
@@ -45,7 +45,7 @@ public class PD_makeTerm extends PreDefinedFunction {
             return new Term(fct, (SetlList) arg1);
         } else {
             throw new IncompatibleTypeException(
-                "functionalCharacter '" + fct + "' must start with an upper case letter or a hat ('^')."
+                "FunctionalCharacter '" + fct + "' must start with an upper case letter or a hat ('^')."
             );
         }
     }

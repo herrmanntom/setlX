@@ -23,13 +23,13 @@ public class PD_startsWith extends PreDefinedFunction {
         final Value prefix = args.get(1);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "string-argument '" + string + "' is not a string."
+                "String-argument '" + string + "' is not a string."
             );
         }
 
         if ( ! (prefix instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "string-argument '" + prefix + "' is not a string."
+                "Prefix-argument '" + prefix + "' is not a string."
             );
         }
 

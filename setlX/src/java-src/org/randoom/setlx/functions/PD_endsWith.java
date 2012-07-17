@@ -23,13 +23,13 @@ public class PD_endsWith extends PreDefinedFunction {
         final Value suffix = args.get(1);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "string-argument '" + string + "' is not a string."
+                "String-argument '" + string + "' is not a string."
             );
         }
 
         if ( ! (suffix instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "string-argument '" + suffix + "' is not a string."
+                "Suffix-argument '" + suffix + "' is not a string."
             );
         }
 

@@ -1,12 +1,12 @@
-// 
+//
 // Project Euler problem 35 in SETL
 //
 // Problem 35
 // """
-// The number, 197, is called a circular prime because all rotations 
+// The number, 197, is called a circular prime because all rotations
 // of the digits: 197, 971, and 719, are themselves prime.
 //
-// There are thirteen such primes below 100: 
+// There are thirteen such primes below 100:
 // 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
 //
 // How many circular primes are there below one million?
@@ -27,7 +27,7 @@ problem35 := procedure() {
         num_circular_primes += 1;
      }
    }
-  
+
    print(num_circular_primes);
 
 };
@@ -43,7 +43,7 @@ problem35b := procedure() {
         num_circular_primes += 1;
      }
    }
-  
+
    print(num_circular_primes);
 
 };
@@ -60,7 +60,7 @@ problem35c := procedure() {
         num_circular_primes += 1;
      }
    }
-  
+
    print(num_circular_primes);
 
 };
@@ -92,14 +92,14 @@ prime_sieve := procedure(n) {
     res := {};
     for (i in [2 .. n \ 2]) {
         // print("i: ", i);
-	if (primes[i] == 0) {
+        if (primes[i] == 0) {
             continue;
-	}
-	j := i;
-	while (i * j <= n) {
-	   primes[i * j] := 0;
-	   j += 1;
-	}
+        }
+        j := i;
+        while (i * j <= n) {
+           primes[i * j] := 0;
+           j += 1;
+        }
     }
 
     res := {i : i in [2..n] | primes[i] > 0};
@@ -113,7 +113,7 @@ gen_primes := procedure(n) {
   while (p <= n) {
     if (is_prime(p)) {
        primes += [p];
-    } 
+    }
     p += 2;
   }
 
@@ -122,7 +122,7 @@ gen_primes := procedure(n) {
 
 
 is_prime := procedure(n) {
-    
+
     if (n == 2 || n == 3) {
         return(true);
     }
@@ -141,3 +141,4 @@ is_prime := procedure(n) {
 problem35();
 problem35b();
 problem35c();
+

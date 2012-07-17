@@ -25,12 +25,12 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         final Value nValue  = args.get(1);
         if ( ! (number instanceof Rational)) {
             throw new IncompatibleTypeException(
-                "rational-argument '" + number + "' is not a rational number."
+                "Rational-argument '" + number + "' is not a rational number."
             );
         }
         if (nValue.isInteger() == SetlBoolean.FALSE || nValue.compareTo(new Rational(0)) < 1 ) {
             throw new IncompatibleTypeException(
-                "n-argument '" + nValue + "' is not an integer >= 1."
+                "N-argument '" + nValue + "' is not an integer >= 1."
             );
         }
         final int           n       = ((Rational) nValue).intValue();

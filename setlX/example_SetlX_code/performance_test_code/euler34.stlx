@@ -29,11 +29,10 @@ problem34 := procedure() {
   // }
 
   // using comprehension
-  res := 0+/[ n : n in [10..100000] | n == +/[int(i)! : i in str(n)] ];
+  res := /*0*/ +/[ n : n in [10..100000] | n == +/[int(i)! : i in str(n)] ];
   print(res);
 
 };
 
-
-
 problem34();
+

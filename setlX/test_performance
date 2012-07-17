@@ -8,12 +8,15 @@ cd src;
 if [ $? -ne 0 ]
   then
     cat "$testFile"
+    echo "Please make sure the interpreter is already compiled and executable."
 
     rm -f "$testFile"
     exit 1
 fi
 
-resultFileName="../example_SetlX_code/performance_test_code/results/$(hostname | tr '.' '-')_v$(cat $testFile | tr '.' '-')"
+version="v$(cat "$testFile" | tr '.' '-')"
+
+resultFileName="../example_SetlX_code/performance_test_code/results/$(hostname | tr '.' '-')_$version"
 
 resultFileNameReal="$resultFileName.real.csv"
 resultFileNameUser="$resultFileName.user.csv"
@@ -21,6 +24,7 @@ resultFileNameSys="$resultFileName.sys.csv"
 
 rm -f "$resultFileNameReal" "$resultFileNameUser" "$resultFileNameSys"
 
+nSkipped=0
 sumRealTime=0.0
 sumUserTime=0.0
 sumSysTime=0.0
@@ -35,18 +39,21 @@ while read -r -d $'\0' path
     execTime=$(
         time -p (
             # execute with setlX
-            ./setlX --predictableRandom "$path" > "$testFile"
+            ./setlX --predictableRandom "$path" > "$testFile" 2>&1
         ) 2>&1
     )
 
     diff "$path.reference" "$testFile" > /dev/null
     if [ $? -eq 1 ]
       then
-        echo $execTime
-        echo "executing file '$filename' failed!"
 
-        rm -f "$testFile"
-        exit 2
+        cat $testFile
+        echo "executing file '$filename' failed, skipping this test."
+
+        nSkipped=$(bc <<< "$nSkipped + 1")
+
+        echo
+
     else
         read -a timeArray <<<$execTime
         realTime=${timeArray[1]}
@@ -69,23 +76,23 @@ while read -r -d $'\0' path
 done < <( find -L "../example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
 
 cat "$resultFileNameReal" | sort > "$testFile"
-echo "code example,time in seconds (real)" > "$resultFileNameReal"
+echo "code example,$version - time in seconds (real)" > "$resultFileNameReal"
 cat "$testFile" >> "$resultFileNameReal"
 echo "overall,$sumRealTime" >> "$resultFileNameReal"
 
 cat "$resultFileNameUser" | sort > "$testFile"
-echo "code example,time in seconds (user)" > "$resultFileNameUser"
+echo "code example,$version - time in seconds (user)" > "$resultFileNameUser"
 cat "$testFile" >> "$resultFileNameUser"
 echo "overall,$sumUserTime" >> "$resultFileNameUser"
 
 cat "$resultFileNameSys" | sort > "$testFile"
-echo "code example,time in seconds (sys)" > "$resultFileNameSys"
+echo "code example,$version - time in seconds (sys)" > "$resultFileNameSys"
 cat "$testFile" >> "$resultFileNameSys"
 echo "overall,$sumSysTime" >> "$resultFileNameSys"
 
 rm -f "$testFile"
 
-echo "overall execution time:"
+echo "overall execution time (skipped $nSkipped tests):"
 echo "real: $sumRealTime, user: $sumUserTime, sys: $sumSysTime"
 echo
 

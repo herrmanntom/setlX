@@ -30,7 +30,7 @@ public class PD_readFile extends PreDefinedFunction {
         final Value fileArg = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Expression-argument '" + fileArg + "' is not a string."
+                "FileName-argument '" + fileArg + "' is not a string."
             );
         }
 

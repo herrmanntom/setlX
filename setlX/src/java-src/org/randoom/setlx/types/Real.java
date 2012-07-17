@@ -52,6 +52,10 @@ public class Real extends NumberValue {
         return this;
     }
 
+    public BigDecimal getBigDecimalValue() {
+        return mReal;
+    }
+
     public double doubleValue() throws NumberToLargeException {
         if ( mReal.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0 ||
              (

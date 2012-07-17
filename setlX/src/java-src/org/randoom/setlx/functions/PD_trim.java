@@ -20,7 +20,7 @@ public class PD_trim extends PreDefinedFunction {
         final Value string  = args.get(0);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "string-argument '" + string + "' is not a string."
+                "String-argument '" + string + "' is not a string."
             );
         }
         return new SetlString(string.getUnquotedString().trim());

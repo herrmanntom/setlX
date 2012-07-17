@@ -22,7 +22,7 @@ public class PD_deleteFile extends PreDefinedFunction {
         Value   filePath    = args.get(0);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Path-argument '" + filePath + "' is not a string."
+                "FileName-argument '" + filePath + "' is not a string."
             );
         }
 

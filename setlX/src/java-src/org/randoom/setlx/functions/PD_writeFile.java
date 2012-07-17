@@ -36,7 +36,7 @@ public class PD_writeFile extends PreDefinedFunction {
     protected Value exec(final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
         final Value           fileArg     = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
-            throw new IncompatibleTypeException("Expression-argument '" + fileArg + "' is not a string.");
+            throw new IncompatibleTypeException("FileName-argument '" + fileArg + "' is not a string.");
         }
         final Value           contentArg  = args.get(1);
 

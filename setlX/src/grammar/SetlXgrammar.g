@@ -393,9 +393,9 @@ prefixOperation [boolean enableIgnore, boolean quoted] returns [Expr po]
     ;
 
 power [boolean enableIgnore, boolean quoted] returns [Expr pow]
-    : factor[$enableIgnore, $quoted]           { pow = $factor.f;              }
+    : factor[$enableIgnore, $quoted]                     { pow = $factor.f;             }
       (
-        '**' p = power[$enableIgnore, $quoted] { pow = new Power(pow, $p.pow); }
+        '**' p = prefixOperation[$enableIgnore, $quoted] { pow = new Power(pow, $p.po); }
       )?
     ;
 

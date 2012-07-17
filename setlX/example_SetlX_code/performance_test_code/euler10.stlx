@@ -50,17 +50,15 @@ problem10b := procedure() {
   
 };
 
-
-// From Herrman, Tom 
 problem10c := procedure() {
   print("Problem 10c: ");
   n := 2000000;
   primes := [1 .. n];
-  for (i in [2 .. n/2]) {
+  for (i in [2 .. n/2]) { // Here is a change vs problem10
     if (primes[i] == 0) {
       continue;
     }
-    j := i; // Here is the change vs problem10
+    j := i; // Here is a change vs problem10
     while (i * j <= n) {
       primes[i * j] := 0;
       j := j + 1;
@@ -73,5 +71,5 @@ problem10c := procedure() {
 
 problem10();
 problem10b();
-problem10c(); // Tom's solution 7.3s with SetlX 1.0.1
+problem10c();
 

@@ -21,7 +21,7 @@ public class PD_trace extends PreDefinedFunction {
         Value   toggle  = args.get(0);
         if ( ! (toggle instanceof SetlBoolean)) {
             throw new IncompatibleTypeException(
-                "toggle-argument '" + toggle + "' is not a Boolean value."
+                "Toggle-argument '" + toggle + "' is not a Boolean value."
             );
         }
 

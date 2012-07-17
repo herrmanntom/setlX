@@ -13,23 +13,10 @@
 // Also see my SETL page: http://www.hakank.org/setl/
 //
 
-// fix for version < 1.2.0
-if (split == om) {
-    if (strSplit != om) {
-        split := strSplit;
-    } else {
-        split := procedure(s, p) {
-            return [ s[i] : i in [1..#s] ];
-        };
-    }
-}
-
 problem16 := procedure() {
     print("Problem 16: ");
-    // ss := str(2**1000);
-    // print(+/[int(ss[i]) : i in [1..#ss] ]);
-    // print(+/[int(i) : i in strSplit(str(2**1000),"") ]);
     print(+/[int(i) : i in str(2**1000) ]);
 };
 
 problem16();
+

@@ -24,7 +24,7 @@ public class PD_loadLibrary extends PreDefinedFunction {
         Value   nameArg = args.get(0);
         if ( ! (nameArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "name-argument '" + nameArg + "' is not a string."
+                "Name-argument '" + nameArg + "' is not a string."
             );
         }
 

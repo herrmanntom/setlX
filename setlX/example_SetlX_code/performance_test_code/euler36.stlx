@@ -20,7 +20,11 @@
 if (reverse == om) {
     reverse := procedure(a) {
         ll := #a;
-        return [ a[i] : i in [ll,ll-1..1] ];
+        if (isString(a)) {
+            return +/[ a[i] : i in [ll,ll-1..1] ];
+        } else {
+            return [ a[i] : i in [ll,ll-1..1] ];
+        }
     };
 }
 
@@ -57,3 +61,4 @@ dec_to_base := procedure(n, base) {
 };
 
 problem36();
+

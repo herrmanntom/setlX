@@ -17,7 +17,10 @@ public class Rational extends NumberValue {
     private final           BigInteger  mDenominator;
     private final           boolean     mIsInteger;
 
-    private final static    Rational    ZERO            = new Rational(0);
+    public  final static    Rational    ZERO            = new Rational(0);
+    public  final static    Rational    ONE             = new Rational(1);
+    public  final static    Rational    TWO             = new Rational(1);
+    public  final static    Rational    TEN             = new Rational(10);
 
     public Rational(final String s) {
         // yes... _this_ must be the first statement
@@ -69,6 +72,14 @@ public class Rational extends NumberValue {
         return this;
     }
 
+    public BigInteger getNominatorValue() {
+        return mNominator;
+    }
+
+    public BigInteger getDenominatorValue() {
+        return mDenominator;
+    }
+
     public boolean intConvertable() {
         return (mIsInteger &&
                 mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0 &&
@@ -93,6 +104,19 @@ public class Rational extends NumberValue {
         } else {
             return mNominator.intValue();
         }
+    }
+
+    public boolean isProbablePrime() {
+        return mIsInteger && mNominator.isProbablePrime(30);
+    }
+
+    public Rational nextProbablePrime() throws NotAnIntegerException {
+        if ( ! mIsInteger || mNominator.compareTo(BigInteger.ZERO) <= 0) {
+            throw new NotAnIntegerException(
+                "'" + this + "' is not an integer >= 1."
+            );
+        }
+        return new Rational(mNominator.nextProbablePrime());
     }
 
     /* type check (sort of Boolean operation) */

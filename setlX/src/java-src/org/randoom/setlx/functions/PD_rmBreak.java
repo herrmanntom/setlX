@@ -21,7 +21,7 @@ public class PD_rmBreak extends PreDefinedFunction {
     public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
         Value   id  = args.get(0);
         if ( ! (id instanceof SetlString)) {
-            throw new IncompatibleTypeException("id-argument '" + id + "' is not a string.");
+            throw new IncompatibleTypeException("Id-argument '" + id + "' is not a string.");
         }
 
         if (id.equals(new SetlString("*"))) {

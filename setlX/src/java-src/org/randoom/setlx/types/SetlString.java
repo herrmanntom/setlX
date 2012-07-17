@@ -520,7 +520,7 @@ public class SetlString extends CollectionValue {
     }
 
     public SetlString shuffle() throws IncompatibleTypeException {
-        final List shuffled = Arrays.asList(mContent.toString().split(""));
+        final List<String> shuffled = Arrays.asList(mContent.toString().split(""));
 
         Collections.shuffle(shuffled, Environment.getRandom());
 
@@ -547,15 +547,15 @@ public class SetlString extends CollectionValue {
                 "Pattern '" + pattern  + "' is not a string."
             );
         }
-        final String    p       = pattern.getUnquotedString();
-        final String[]  strings = mContent.toString().split(p);
-        final SetlList  result  = new SetlList(strings.length);
+        final String       p       = pattern.getUnquotedString();
+        final List<String> strings = Arrays.asList(mContent.toString().split(p));
+        final SetlList     result  = new SetlList(strings.size());
         for (final String str : strings) {
             result.addMember(new SetlString(str));
         }
 
         // fix split("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
-        if (strings.length >= 1 && strings[0].equals("") && p.equals("")) {
+        if (strings.size() >= 1 && strings.get(0).equals("") && p.equals("")) {
             result.removeFirstMember();
         }
         // fix split(";", ";") => [], should be ["", ""]

@@ -353,6 +353,12 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value nextPermutation() throws SetlException {
+        throw new IncompatibleTypeException(
+            "Operand '" + this + "' is not a list."
+        );
+    }
+
     public SetlSet permutations() throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a collection value."

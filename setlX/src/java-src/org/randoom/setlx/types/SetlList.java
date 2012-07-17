@@ -360,6 +360,38 @@ public class SetlList extends CollectionValue {
         return min.clone();
     }
 
+    public Value nextPermutation() throws SetlException {
+        ArrayList<Value> p = new ArrayList<Value>(mList);
+
+        // Inspired by permutation from
+        // http://code.google.com/p/algorithms-java/source/browse/trunk/src/main/java/com/google/code/Permutations.java?r=3
+        int a = p.size() - 2;
+        while (a >= 0 && p.get(a).compareTo(p.get(a + 1)) >= 0) {
+            a--;
+        }
+
+        if (a == -1) {
+            // this is already the last permutation
+            return Om.OM;
+        }
+
+        int b = p.size() - 1;
+        while (p.get(b).compareTo(p.get(a)) <= 0) {
+            b--;
+        }
+
+        Value tmp = p.get(a);
+        p.set(a, p.get(b));
+        p.set(b, tmp);
+        for (int i = a + 1, j = p.size() - 1; i < j; i++, j--) {
+            tmp = p.get(i);
+            p.set(i,p.get(j));
+            p.set(j,tmp);
+        }
+
+        return new SetlList(p);
+    }
+
     public SetlSet permutations() throws SetlException {
         if (size() == 0) {
             final SetlSet permutations = new SetlSet();

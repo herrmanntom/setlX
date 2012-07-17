@@ -170,9 +170,11 @@ print();
 
 /*******************************************************************************
   permutations(collectionValue) // computes all permutations of the element in `collectionValue'
+  nextPermutation(list)         // returns the next permutation of the list, om if there `list' already is the last permutation
 */
 
 print("All permutations of $[1,2,2,3]$ are $permutations([1,2,2,3])$.");
+print("Next permutation after $[3,1,2,2]$ is $nextPermutation([3,1,2,2])$.");
 print();
 
 /*******************************************************************************

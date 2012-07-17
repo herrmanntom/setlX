@@ -620,19 +620,20 @@ public class SetlSet extends CollectionValue {
         // copy remaining members into a new list
         final SetlList  thisList            = new SetlList(new ArrayList<Value>(thisCopy));
         // permutate remaining members from `other'
-              SetlSet   otherPermutations   = null;
-        try {
-            otherPermutations   = (new SetlList(new ArrayList<Value>(otherCopy))).permutations();
-        } catch (SetlException se) {
-            // will not happen
-        }
+              Value     otherPermutation    = new SetlList(new ArrayList<Value>(otherCopy));
 
         // both set match, when (at least) one permutation matches
         MatchResult match = null;
-        for (final Value permutation : otherPermutations) {
-            match = thisList.matchesTerm(permutation);
+        while (otherPermutation != Om.OM) {
+            match = thisList.matchesTerm(otherPermutation);
             if (match.isMatch()) {
                 return match;
+            }
+            try {
+                otherPermutation = otherPermutation.nextPermutation();
+            } catch (final SetlException se) {
+                // will never happen
+                otherPermutation = Om.OM;
             }
         }
 

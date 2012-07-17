@@ -9,7 +9,7 @@ import org.randoom.setlx.utilities.ParseSetlX;
 
 import java.util.List;
 
-// parseStatements(stmnts) : parse SetlX statements into a term
+// parseStatements(stmnts)       : parse SetlX statements into a term
 
 public class PD_parseStatements extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_parseStatements();

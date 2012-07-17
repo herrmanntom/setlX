@@ -12,6 +12,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    startsWith(string, prefix), endsWith(string, suffix) functions
  * renamed strSplit() to split();
  + added isProbablePrime(int) and nextProbablePrime(int) functions
+ + added nextPermuatione(list) function
  # fixed handling of Boolean expressions by the parser
  + match conditions respect preset variables
  + added perfomance test

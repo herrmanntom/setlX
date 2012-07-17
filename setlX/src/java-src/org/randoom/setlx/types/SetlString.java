@@ -136,7 +136,7 @@ public class SetlString extends CollectionValue {
             return position < size;
         }
 
-        public Value next() {
+        public SetlString next() {
             return new SetlString(content.mContent.charAt(position++));
         }
 
@@ -170,6 +170,14 @@ public class SetlString extends CollectionValue {
         } catch (NumberFormatException nfe) {
             return Om.OM;
         }
+    }
+
+    /*package*/ SetlList toList() {
+        SetlList result = new SetlList(size());
+        for (Value str : this) {
+            result.addMember(str);
+        }
+        return result;
     }
 
     public Value toRational() {
@@ -294,7 +302,7 @@ public class SetlString extends CollectionValue {
 
     public void addMember(final Value element) {
         separateFromOriginal();
-        element.appendString(mContent, 0);
+        element.appendUnquotedString(mContent, 0);
     }
 
     public Value collectionAccess(final List<Value> args) throws SetlException {
@@ -423,6 +431,29 @@ public class SetlString extends CollectionValue {
         );
     }
 
+    public Value nextPermutation() throws SetlException {
+        final Value p = toList().nextPermutation();
+        if (p == Om.OM) {
+            return p;
+        } else {
+            return p.sumMembers(new SetlString());
+        }
+    }
+
+    public SetlSet permutations() throws SetlException {
+        final SetlSet p = toList().permutations();
+        if (p.size() == 0) {
+            return p;
+        } else {
+            SetlString neutral = new SetlString();
+            SetlSet    result  = new SetlSet();
+            for (final Value v : p) {
+                result.addMember(v.sumMembers(neutral));
+            }
+            return result;
+        }
+    }
+
     public void removeMember(final Value element) throws IncompatibleTypeException {
         final String needle = element.getUnquotedString();
         final int    pos    = mContent.indexOf(needle);
@@ -489,11 +520,11 @@ public class SetlString extends CollectionValue {
     }
 
     public SetlString shuffle() throws IncompatibleTypeException {
-        List shuffled = Arrays.asList(mContent.toString().split(""));
+        final List shuffled = Arrays.asList(mContent.toString().split(""));
 
         Collections.shuffle(shuffled, Environment.getRandom());
 
-        SetlString result = new SetlString();
+        final SetlString result = new SetlString();
         for (int i = 0; i < shuffled.size(); i++) {
             result.mContent.append(shuffled.get(i));
         }
@@ -505,7 +536,7 @@ public class SetlString extends CollectionValue {
     }
 
     public SetlString sort() throws IncompatibleTypeException {
-        char[] chars = mContent.toString().toCharArray();
+        final char[] chars = mContent.toString().toCharArray();
         Arrays.sort(chars);
         return new SetlString(new String(chars));
     }

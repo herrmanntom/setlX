@@ -8,8 +8,8 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added nPrint() and nPrintErr() functions, which do not add a new line
  + support % operator for sets, computing the symmetric difference, e.g. {1,2} % {1,3} = {2,3}
  + support * for lists, multiplying their contents
- + added toUpperCase(string), toLowerCase(string), trim(string),
-   startsWith(string, prefix), endsWith(string, suffix) functions
+ + added toUpperCase(string), toLowerCase(string), startsWith(string, prefix),
+   endsWith(string, suffix), trim(string) and join(collection, separator) functions
  * renamed strSplit() to split();
  + added isProbablePrime(int) and nextProbablePrime(int) functions
  + added nextPermutation(list), sort(listOrString), shuffle(listOrString) functions

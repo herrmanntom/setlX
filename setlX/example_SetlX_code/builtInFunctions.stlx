@@ -197,6 +197,7 @@ print();
 
 /*******************************************************************************
   split(string, pattern)        // splits string at pattern into a list of strings
+  join(collection, separator)   // returns a string with all the members in `collection' separated by `separator'.
   toLowerCase(string)           // returns String in lower case letters
   toUpperCase(string)           // returns String in upper case letters
   endsWith(string, suffix)      // return true if string ends with prefix
@@ -204,7 +205,9 @@ print();
   trim(string)                  // return a trimmed string
 */
 
-print(split("from;hell;;I;come", ";"));
+temp := split("from;hell;;I;come", ";");
+print(temp);
+print(join(temp,";"));
 print(toLowerCase("from hell I come"));
 print(toUpperCase("from hell I come"));
 print(endsWith("this is a test", "not a test"));

@@ -329,6 +329,12 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value join(final Value separator) throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Argument '" + this + "' not a collection value."
+        );
+    }
+
     public Value lastMember() throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get last member from operand; '" + this + "' is not a collection value."
@@ -355,7 +361,7 @@ public abstract class Value implements Comparable<Value> {
 
     public Value nextPermutation() throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a list."
+            "Operand '" + this + "' is not a list or string."
         );
     }
 

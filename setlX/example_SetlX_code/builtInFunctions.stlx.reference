@@ -73,6 +73,7 @@ shuffled `this is a test' is `t s htissta ie'.
 SetlX <-> XlteS
 
 ["from", "hell", "", "I", "come"]
+from;hell;;I;come
 from hell i come
 FROM HELL I COME
 false

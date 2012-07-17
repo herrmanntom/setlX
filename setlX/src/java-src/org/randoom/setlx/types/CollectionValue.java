@@ -46,6 +46,20 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Value           firstMember();
 
+    public          SetlString      join(final Value separator) {
+        final SetlString      sep    = separator.str();
+        final SetlString      result = new SetlString();
+
+        final Iterator<Value> iter   = iterator();
+        while (iter.hasNext()) {
+            result.addMember(iter.next());
+            if (iter.hasNext()) {
+                result.addMember(sep);
+            }
+        }
+        return result;
+    }
+
     public abstract Value           lastMember();
 
     public abstract Value           maximumMember() throws SetlException;

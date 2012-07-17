@@ -363,7 +363,11 @@ public class SetlList extends CollectionValue {
     }
 
     public Value nextPermutation() throws SetlException {
-        ArrayList<Value> p = new ArrayList<Value>(mList);
+        if (size() < 2) {
+            return Om.OM;
+        }
+
+        final ArrayList<Value> p = new ArrayList<Value>(mList);
 
         // Inspired by permutation from
         // http://code.google.com/p/algorithms-java/source/browse/trunk/src/main/java/com/google/code/Permutations.java?r=3
@@ -486,7 +490,7 @@ public class SetlList extends CollectionValue {
     }
 
     public SetlList shuffle() {
-        ArrayList<Value> list = new ArrayList<Value>(mList);
+        final ArrayList<Value> list = new ArrayList<Value>(mList);
         Collections.shuffle(list, Environment.getRandom());
         return new SetlList(list);
     }
@@ -496,7 +500,7 @@ public class SetlList extends CollectionValue {
     }
 
     public SetlList sort() {
-        ArrayList<Value> list = new ArrayList<Value>(mList);
+        final ArrayList<Value> list = new ArrayList<Value>(mList);
         Collections.sort(list);
         return new SetlList(list);
     }

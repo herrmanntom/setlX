@@ -143,7 +143,7 @@ prefixOperation
     ;
 
 power
-    : factor ('**' power)?
+    : factor ('**' prefixOperation)?
     ;
 
 factor

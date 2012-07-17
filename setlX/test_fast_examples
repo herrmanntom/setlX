@@ -1,11 +1,7 @@
 #!/bin/bash
 
-mv example_SetlX_code/performance_test_code example_SetlX_code/ignored
-
-./test_all_examples
+./test_all_examples "no_performance"
 exitCode=$?
-
-mv example_SetlX_code/ignored example_SetlX_code/performance_test_code
 
 exit $exitCode
 

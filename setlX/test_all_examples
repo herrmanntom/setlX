@@ -26,6 +26,11 @@ fi
 while read -r -d $'\0' path
   do
     filename="${path#example_SetlX_code/}"
+    
+    if [ "$1" == "no_performance" -a "$(dirname $filename)" == "performance_test_code" ]
+      then
+        continue
+    fi
 
     if [ ! -e "$path.reference" ]
       then
@@ -54,7 +59,7 @@ while read -r -d $'\0' path
         echo -e " successful!\n"
     fi
 
-done < <( find -L example_SetlX_code -name "*.stlx" ! -path "*/ignored/*" -print0 )
+done < <( find -L example_SetlX_code -name "*.stlx" -print0 )
 
 rm -f diff.result
 

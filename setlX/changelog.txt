@@ -10,7 +10,8 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + support * for lists, multiplying their contents
  + added toUpperCase(string), toLowerCase(string), startsWith(string, prefix),
    endsWith(string, suffix), trim(string) and join(collection, separator) functions
- * renamed strSplit() to split();
+ * renamed strSplit() to split()
+ + split() now also works for lists
  + added isProbablePrime(int) and nextProbablePrime(int) functions
  + added nextPermutation(list), sort(listOrString), shuffle(listOrString) functions
  # fixed handling of Boolean expressions by the parser

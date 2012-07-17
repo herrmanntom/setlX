@@ -74,6 +74,7 @@ SetlX <-> XlteS
 
 ["from", "hell", "", "I", "come"]
 from;hell;;I;come
+[["foo", "bar"], ["ding", "dong"]]
 from hell i come
 FROM HELL I COME
 false

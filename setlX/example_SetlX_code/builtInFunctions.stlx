@@ -208,6 +208,7 @@ print();
 temp := split("from;hell;;I;come", ";");
 print(temp);
 print(join(temp,";"));
+print(split(["foo","bar","blub","ding","dong"],"blub"));
 print(toLowerCase("from hell I come"));
 print(toUpperCase("from hell I come"));
 print(endsWith("this is a test", "not a test"));

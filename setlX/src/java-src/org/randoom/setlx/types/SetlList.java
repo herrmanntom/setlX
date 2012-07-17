@@ -505,6 +505,23 @@ public class SetlList extends CollectionValue {
         return new SetlList(list);
     }
 
+    public SetlList split(final Value pattern) throws IncompatibleTypeException {
+        final SetlList  result    = new SetlList();
+              SetlList  subResult = new SetlList();
+        for (final Value v : mList) {
+            if (v.equals(pattern)) {
+                result.addMember(subResult);
+                subResult = new SetlList();
+            } else {
+                subResult.addMember(v.clone());
+            }
+        }
+
+        result.addMember(subResult);
+
+        return result;
+    }
+
     /* string and char operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {

@@ -4,8 +4,11 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -485,8 +488,26 @@ public class SetlString extends CollectionValue {
         mContent.insert(index, value);
     }
 
+    public SetlString shuffle() throws IncompatibleTypeException {
+        List shuffled = Arrays.asList(mContent.toString().split(""));
+
+        Collections.shuffle(shuffled, Environment.getRandom());
+
+        SetlString result = new SetlString();
+        for (int i = 0; i < shuffled.size(); i++) {
+            result.mContent.append(shuffled.get(i));
+        }
+        return result;
+    }
+
     public int size() {
         return mContent.length();
+    }
+
+    public SetlString sort() throws IncompatibleTypeException {
+        char[] chars = mContent.toString().toCharArray();
+        Arrays.sort(chars);
+        return new SetlString(new String(chars));
     }
 
     public SetlList split(final Value pattern) throws IncompatibleTypeException {

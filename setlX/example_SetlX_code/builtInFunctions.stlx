@@ -171,10 +171,16 @@ print();
 /*******************************************************************************
   permutations(collectionValue) // computes all permutations of the element in `collectionValue'
   nextPermutation(list)         // returns the next permutation of the list, om if there `list' already is the last permutation
+  shuffle(collectionValue)      // returns a randomly shuffled version of the collectionValue.
+  sort(collectionValue)         // returns a sorted version of collectionValue.
 */
 
 print("All permutations of $[1,2,2,3]$ are $permutations([1,2,2,3])$.");
 print("Next permutation after $[3,1,2,2]$ is $nextPermutation([3,1,2,2])$.");
+print("sorted $[31,1,2,7,99]$ is $sort([31,1,2,7,99])$.");
+print("sorted `$\"asdaf22341ad1\"$' is `$sort(\"asdaf22341ad1\")$'.");
+print("shuffled [1 .. 5] is $shuffle([1 .. 5])$.");
+print("shuffled `$\"this is a test\"$' is `$shuffle(\"this is a test\")$'.");
 print();
 
 /*******************************************************************************

@@ -414,9 +414,21 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value shuffle() throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Argument '" + this + "' is not a list or string."
+        );
+    }
+
     public int size() throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Operand of '#" + this + "' is not a collection value."
+        );
+    }
+
+    public Value sort() throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Argument '" + this + "' is not a list or string."
         );
     }
 

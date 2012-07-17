@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.2.0--- 2012-07-15
+---v1.2.0--- 2012-07-17
  # fixed minor bugs in string-representation of some statements
  # forall and exist can be used in combinations with other Boolean expressions
  # renamed --args option to --params, to avoid conflicts with args() function
@@ -12,7 +12,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    startsWith(string, prefix), endsWith(string, suffix) functions
  * renamed strSplit() to split();
  + added isProbablePrime(int) and nextProbablePrime(int) functions
- + added nextPermuatione(list) function
+ + added nextPermutation(list), sort(listOrString), shuffle(listOrString) functions
  # fixed handling of Boolean expressions by the parser
  + match conditions respect preset variables
  + added perfomance test

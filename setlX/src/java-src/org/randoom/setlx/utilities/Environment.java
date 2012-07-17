@@ -156,6 +156,13 @@ public class Environment {
         return sRandoom.nextDouble();
     }
 
+    public static Random getRandom() {
+        if (sRandoom == null) {
+            sRandoom = new Random();
+        }
+        return sRandoom;
+    }
+
     public static void stopExecution(final boolean stopExecution) {
         sStopExecution          = stopExecution;
         Block.sStopExecution    = stopExecution;

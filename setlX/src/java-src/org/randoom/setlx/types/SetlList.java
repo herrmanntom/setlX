@@ -4,9 +4,11 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -483,8 +485,20 @@ public class SetlList extends CollectionValue {
         }
     }
 
+    public SetlList shuffle() {
+        ArrayList<Value> list = new ArrayList<Value>(mList);
+        Collections.shuffle(list, Environment.getRandom());
+        return new SetlList(list);
+    }
+
     public int size() {
         return mList.size();
+    }
+
+    public SetlList sort() {
+        ArrayList<Value> list = new ArrayList<Value>(mList);
+        Collections.sort(list);
+        return new SetlList(list);
     }
 
     /* string and char operations */

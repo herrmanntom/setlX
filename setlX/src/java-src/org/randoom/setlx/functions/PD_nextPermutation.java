@@ -1,15 +1,9 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlString;
 
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 // nextPermutation(list)         : returns the next permutation of the list, om if there `list' already is the last permutation
 

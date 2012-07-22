@@ -69,8 +69,7 @@ problem43 := procedure() {
     for (i in [1..7]) {
       if (int(s2[1+i..3+i]) % pp[i] != 0) {
         c := false;
-        break; // much faster with break than quit; 41.600s
-               // quit; // 1:11.47minutes
+        break;
       }
     }
 
@@ -109,8 +108,6 @@ problem43b := procedure() {
       print("\t", s2);
       sum := sum+int(s2);
     }
-    
-    // s := next_permutation(s);
     
   }
   

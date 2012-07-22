@@ -217,6 +217,13 @@ print(trim("    this is a test  "));
 print();
 
 /*******************************************************************************
+  run(command)                  // executes a system command and returns the result as a list of output and error messages
+*/
+
+print(run("ls"));
+print();
+
+/*******************************************************************************
   assert(condition , message)   // stop execution and display message, if condition evaluates to false
 */
 

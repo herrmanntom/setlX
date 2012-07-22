@@ -1,5 +1,10 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.2.1--- 2012-07-22
+ + improved performance of forall/exist when used in loops
+ + added run command
+
+
 ---v1.2.0--- 2012-07-17
  # fixed minor bugs in string-representation of some statements
  # forall and exist can be used in combinations with other Boolean expressions

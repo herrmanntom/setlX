@@ -48,58 +48,68 @@ public class VariableScope {
     }
 
     public static Value findValue(final String var) {
-        final Value v = sGlobals.locateValue(var).mV;
+        Value v = sGlobals.locateValue(var);
         if (v != null) {
             return v;
         }
-        final SearchItem i = sVariableScope.locateValue(var);
-        if (i.mIsClone) { // will never be clone when sVariableScope.mReadThrough is true
-            sVariableScope.storeValue(var, i.mV); // store values found in outer scope into current scope
-        } else if (i.mV == null) {
+        v = sVariableScope.locateValue(var);
+        if (v == null) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedFunction.class.getPackage().getName();
             final String className   = "PD_" + var;
             try {
                 final Class<?> c = Class.forName(packageName + '.' + className);
-                i.mV             = (PreDefinedFunction) c.getField("DEFINITION").get(null);
+                v                = (PreDefinedFunction) c.getField("DEFINITION").get(null);
             } catch (Exception e) {
                 /* Name does not match predefined function.
                    But return value already is null, no change necessary.     */
             }
-            if (i.mV == null && var.toLowerCase().equals(var)) {
+            if (v == null && var.toLowerCase().equals(var)) {
                // search if name matches a java Math.x function (which are all lower case)
                 try {
                     Method f = Math.class.getMethod(var, double.class);
-                    i.mV     = new MathFunction(var, f);
+                    v        = new MathFunction(var, f);
                 } catch (Exception e) {
                     /* Name also does not match java Math.x function.
                        But return value already is null, no change necessary.     */
                 }
             }
-            if (i.mV == null) {
-                i.mV = Om.OM;
+            if (v == null) {
+                v = Om.OM;
                 // identifier could not be looked up...
                 // return Om.OM and store it into intial scope to prevent reflection lookup next time
             }
-            /* Store result to initial scope to speed up search next time.
+            /* Store result of reflection lookup to initial scope to speed up search next time.
 
                Initial scope is chosen, because it is at the end of every
                currently existing and all future scopes search paths.         */
-            sInitial.mVarBindings.put(var, i.mV);
+            sInitial.mVarBindings.put(var, v);
         }
-        return i.mV;
+        return v;
     }
 
     public static void putValue(final String var, final Value value) {
-        if (sGlobals.locateValue(var).mV != null) {
+        if (sGlobals.locateValue(var) != null) {
             sGlobals.storeValue(var, value);
         } else {
             sVariableScope.storeValue(var, value);
         }
     }
 
+    // Add bindings stored in `scope' into current scope.
+    // This also adds vars in outer scopes of `scope' until reaching the
+    // current scope.
+    public static void putAllValues(final VariableScope scope) {
+        for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
+            putValue(entry.getKey(), entry.getValue());
+        }
+        if (scope.mOriginalScope != null && scope.mOriginalScope != sVariableScope) {
+            putAllValues(scope.mOriginalScope);
+        }
+    }
+
     public static void makeGlobal(final String var) {
-        if (sGlobals.locateValue(var).mV == null) {
+        if (sGlobals.locateValue(var) == null) {
             sGlobals.storeValue(var, Om.OM);
         }
     }
@@ -122,16 +132,6 @@ public class VariableScope {
        (e.g. iteration do not introduce an inner scope!).                     */
     private         boolean             mReadThrough;
     private         boolean             mWriteThrough;
-
-    private class SearchItem {
-        /*package*/ Value   mV;
-        /*package*/ boolean mIsClone;
-
-        SearchItem(final Value v, final boolean isClone) {
-            mV       = v;
-            mIsClone = isClone;
-        }
-    }
 
     // scopes have to be cloned from current one, therefore don't use from outside!
     private VariableScope() {
@@ -167,30 +167,33 @@ public class VariableScope {
         mWriteThrough = writeThrough;
     }
 
-    private SearchItem locateValue(final String var) {
+    private Value locateValue(final String var) {
         if (this == sGlobals     && var.length()  == 3   &&
             var.charAt(1) == 97  && var.charAt(2) == 114 && var.charAt(0) == 119
         ) {
             final char[] v = {87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
-            return new SearchItem(new SetlString(new String(v)), false);
+            return new SetlString(new String(v));
         }
-        final Value v = mVarBindings.get(var);
-        if (v == null && mOriginalScope != null) {
-            final SearchItem i = mOriginalScope.locateValue(var);
-            if (i.mV != null && (!mRestrictToFunctions || i.mV == Om.OM || i.mV instanceof ProcedureDefinition)) {
-                if (i.mIsClone || mReadThrough) { // don't clone when already cloned or readThrough is true
-                    if (mRestrictToFunctions) { // i.mV must be SetlDefinition be get here
-                        mVarBindings.put(var, i.mV); // cache function definitions
-                    }
-                    return i;
-                }
-                if (mRestrictToFunctions) { // i.mV must be ProcedureDefinition be get here
-                    mVarBindings.put(var, i.mV.clone()); // cache clones of function definitions
-                }
-                return new SearchItem(i.mV.clone(), true);
+        Value v = mVarBindings.get(var);
+        if (v != null) {
+            return v;
+        }
+        if (mOriginalScope != null && (v = mOriginalScope.locateValue(var)) != null) {
+            // found some value in outer scope
+
+            // return nothing, if value is not allowed to be read from outer scopes
+            if (v != Om.OM && mRestrictToFunctions && ! (v instanceof ProcedureDefinition)) {
+                return null;
             }
+
+            // cache result, if this is allowed
+            if ( ! mReadThrough) {
+                mVarBindings.put(var, v);
+            }
+
+            return v;
         }
-        return new SearchItem(v, false);
+        return null;
     }
 
     // collect all bindings reachable from current scope (except global variables!)
@@ -209,12 +212,12 @@ public class VariableScope {
     }
 
     private void storeValue(final String var, final Value value) {
-        if (!mWriteThrough || mVarBindings.get(var) != null) {
+        if ( ! mWriteThrough || mVarBindings.get(var) != null) {
             // this scope does not allow write through or variable is stored here
             mVarBindings.put(var, value);
         } else if (mWriteThrough          && // allowed to write into mOriginalScope
                    mOriginalScope != null && // mOriginalScope exists
-                   (!mRestrictToFunctions || value instanceof ProcedureDefinition) // not restricted
+                   ( ! mRestrictToFunctions || value instanceof ProcedureDefinition) // not restricted
         ) {
             mOriginalScope.storeValue(var, value);
         }

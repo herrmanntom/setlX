@@ -66,7 +66,7 @@ public class Exists extends Expr {
         mIterator.eval(e);
         if (e.mResult == SetlBoolean.TRUE && e.mScope != null) {
             // restore state in which mCondition is true
-            VariableScope.setScope(e.mScope);
+            VariableScope.putAllValues(e.mScope);
         }
         return e.mResult;
     }

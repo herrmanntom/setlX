@@ -65,8 +65,8 @@ public class Forall extends Expr {
         final Exec e = new Exec(mCondition);
         mIterator.eval(e);
         if (e.mResult == SetlBoolean.FALSE && e.mScope != null) {
-            // retore state in which mBoolExpr is false
-            VariableScope.setScope(e.mScope);
+            // restore state in which mBoolExpr is false
+            VariableScope.putAllValues(e.mScope);
         }
         return e.mResult;
     }

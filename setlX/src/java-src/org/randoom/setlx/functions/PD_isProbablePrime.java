@@ -10,6 +10,9 @@ import java.util.List;
 // isProbablePrime(integer)      : returns true if `integer' is probably prime, false if it's definitely not prime.
 //                                 If true, the probability that `integer' is prime exceeds 0.999 999 999.
 //                                 In other words less than 1 in 1 000 000 000 probable primes is not a prime.
+//                                 Unlike isPrime() this functions is not deterministic, but has only
+//                                 constant complexity.
+
 
 public class PD_isProbablePrime extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isProbablePrime();

@@ -1,9 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.2.1--- 2012-07-22
+---v1.2.1--- 2012-07-23
  + improved performance of forall/exist when used in loops
- + added run command
-
+ + added run(command) function
+ + added isPrime(integer) function
 
 ---v1.2.0--- 2012-07-17
  # fixed minor bugs in string-representation of some statements

@@ -19,7 +19,8 @@ public class Rational extends NumberValue {
 
     public  final static    Rational    ZERO            = new Rational(0);
     public  final static    Rational    ONE             = new Rational(1);
-    public  final static    Rational    TWO             = new Rational(1);
+    public  final static    Rational    TWO             = new Rational(2);
+    public  final static    Rational    THREE           = new Rational(3);
     public  final static    Rational    TEN             = new Rational(10);
 
     public Rational(final String s) {
@@ -106,8 +107,34 @@ public class Rational extends NumberValue {
         }
     }
 
+    public boolean isPrime() {
+        final BigInteger two = BigInteger.valueOf(2);
+        if ( ! mIsInteger || mNominator.compareTo(BigInteger.ONE) <= 0) {
+            return false;
+        } else if (mNominator.compareTo(two) == 0) {
+            return true;
+        } else if (mNominator.mod(two).compareTo(BigInteger.ZERO) == 0) {
+            return false;
+        }
+
+        BigInteger i = BigInteger.valueOf(3);
+        while ( i.multiply(i).compareTo(mNominator) <= 0) {
+            if (mNominator.mod(i).compareTo(BigInteger.ZERO) == 0) {
+                return false;
+            }
+            i = i.add(two);
+        }
+
+        return true;
+    }
+
     public boolean isProbablePrime() {
-        return mIsInteger && mNominator.isProbablePrime(30);
+        if ( ! mIsInteger ) {
+            return false;
+        } else if (mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0) {
+            return mNominator.isProbablePrime(15);
+        }
+        return mNominator.isProbablePrime(30);
     }
 
     public Rational nextProbablePrime() throws NotAnIntegerException {

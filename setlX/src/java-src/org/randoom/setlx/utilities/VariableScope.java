@@ -21,6 +21,7 @@ public class VariableScope {
 
     // this scope stores all global variables
     private final   static  VariableScope   sGlobals                        = new VariableScope();
+    private         static  boolean         sGlobalsPresent                 = false;
 
     /* This variable stores the initial VariableScope:
        Predefined functions are dynamically loaded into this VariableScope,
@@ -42,15 +43,19 @@ public class VariableScope {
     }
 
     public static void resetScope() {
-        sVariableScope = sInitial.clone();
+        sVariableScope  = sInitial.clone();
         sGlobals.mVarBindings.clear();
+        sGlobalsPresent = false;
         ParseSetlX.clearLoadedLibraries();
     }
 
     public static Value findValue(final String var) {
-        Value v = sGlobals.locateValue(var);
-        if (v != null) {
-            return v;
+        Value v = null;
+        if (sGlobalsPresent) {
+            v = sGlobals.locateValue(var);
+            if (v != null) {
+                return v;
+            }
         }
         v = sVariableScope.locateValue(var);
         if (v == null) {
@@ -89,7 +94,7 @@ public class VariableScope {
     }
 
     public static void putValue(final String var, final Value value) {
-        if (sGlobals.locateValue(var) != null) {
+        if (sGlobalsPresent && sGlobals.locateValue(var) != null) {
             sGlobals.storeValue(var, value);
         } else {
             sVariableScope.storeValue(var, value);
@@ -112,6 +117,7 @@ public class VariableScope {
         if (sGlobals.locateValue(var) == null) {
             sGlobals.storeValue(var, Om.OM);
         }
+        sGlobalsPresent = true;
     }
 
     /*========================== end static ==========================*/
@@ -168,8 +174,8 @@ public class VariableScope {
     }
 
     private Value locateValue(final String var) {
-        if (this == sGlobals     && var.length()  == 3   &&
-            var.charAt(1) == 97  && var.charAt(2) == 114 && var.charAt(0) == 119
+        if ( ((sGlobalsPresent && this == sGlobals) || ( ! sGlobalsPresent && this == sVariableScope)) &&
+             var.length() == 3 && var.charAt(1) == 97 && var.charAt(2) == 114 && var.charAt(0) == 119
         ) {
             final char[] v = {87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
             return new SetlString(new String(v));
@@ -213,7 +219,7 @@ public class VariableScope {
 
     private void storeValue(final String var, final Value value) {
         if ( ! mWriteThrough || mVarBindings.get(var) != null) {
-            // this scope does not allow write through or variable is stored here
+            // this scope does not allow write through or variable is actually stored here
             mVarBindings.put(var, value);
         } else if (mWriteThrough          && // allowed to write into mOriginalScope
                    mOriginalScope != null && // mOriginalScope exists

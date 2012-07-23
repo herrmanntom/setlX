@@ -22,7 +22,7 @@ public class PD_compare extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) {
-        return new Rational(args.get(0).compareTo(args.get(1)));
+        return Rational.valueOf(args.get(0).compareTo(args.get(1)));
     }
 }
 

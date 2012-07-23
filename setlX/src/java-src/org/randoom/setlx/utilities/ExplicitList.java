@@ -52,7 +52,7 @@ public class ExplicitList extends Constructor {
             }
             Value v = null;
             try {
-                v = list.getMember(new Rational(i + 1));
+                v = list.getMember(i + 1);
             } catch (SetlException se) { /* this can not fail at this point */};
 
             e.assign(v);

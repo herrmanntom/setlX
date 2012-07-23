@@ -161,7 +161,7 @@ public class SetlString extends CollectionValue {
 
     public Value toInteger() {
         try {
-            final Rational result = new Rational(mContent.toString());
+            final Rational result = Rational.valueOf(mContent.toString());
             if (result.isInteger() == SetlBoolean.TRUE) {
                 return result;
             } else {
@@ -182,7 +182,7 @@ public class SetlString extends CollectionValue {
 
     public Value toRational() {
         try {
-            return new Rational(mContent.toString());
+            return Rational.valueOf(mContent.toString());
         } catch (NumberFormatException nfe) {
             return Om.OM;
         }
@@ -200,7 +200,7 @@ public class SetlString extends CollectionValue {
 
     public Rational absoluteValue() throws IncompatibleTypeException {
         if (mContent.length() == 1) {
-            return new Rational((int) mContent.charAt(0));
+            return Rational.valueOf((long) mContent.charAt(0));
         } else {
             throw new IncompatibleTypeException(
                 "Operand of 'abs(" + this + ")' is not a singe character."
@@ -311,11 +311,11 @@ public class SetlString extends CollectionValue {
         if (args.contains(RangeDummy.RD)) {
             if (aSize == 2 && vFirst == RangeDummy.RD) {
                 // everything up to high boundary: this(  .. y);
-                return getMembers(new Rational(1), args.get(1));
+                return getMembers(Rational.ONE, args.get(1));
 
             } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
                 // everything from low boundary:   this(x ..  );
-                return getMembers(vFirst, new Rational(size()));
+                return getMembers(vFirst, Rational.valueOf(size()));
 
             } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
                 // full range spec:                this(x .. y);

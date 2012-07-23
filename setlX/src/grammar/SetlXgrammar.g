@@ -539,11 +539,11 @@ explicitList [boolean enableIgnore] returns [ExplicitList el]
     ;
 
 atomicValue returns [Value av]
-    : NUMBER     { av = new Rational($NUMBER.text); }
-    | REAL       { av = new Real($REAL.text);       }
-    | 'om'       { av = Om.OM;                      }
-    | 'true'     { av = SetlBoolean.TRUE;           }
-    | 'false'    { av = SetlBoolean.FALSE;          }
+    : NUMBER     { av = Rational.valueOf($NUMBER.text); }
+    | REAL       { av = new Real($REAL.text);           }
+    | 'om'       { av = Om.OM;                          }
+    | 'true'     { av = SetlBoolean.TRUE;               }
+    | 'false'    { av = SetlBoolean.FALSE;              }
     ;
 
 TERM            : ('^'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;

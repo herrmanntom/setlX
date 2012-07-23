@@ -21,31 +21,23 @@ public class Rational extends NumberValue {
     public  final static    Rational    ONE             = new Rational(1);
     public  final static    Rational    TWO             = new Rational(2);
     public  final static    Rational    THREE           = new Rational(3);
+    public  final static    Rational    FOUR            = new Rational(4);
+    public  final static    Rational    FIVE            = new Rational(5);
+    public  final static    Rational    SIX             = new Rational(6);
+    public  final static    Rational    SEVEN           = new Rational(7); // of nine?
+    public  final static    Rational    EIGHT           = new Rational(8);
+    public  final static    Rational    NINE            = new Rational(9);
     public  final static    Rational    TEN             = new Rational(10);
 
-    public Rational(final String s) {
-        // yes... _this_ must be the first statement
-        this(   (s.indexOf('/') == -1)?
-                    new BigInteger(s)
-                :
-                    new BigInteger(s.substring(0, s.indexOf('/')))
-            ,
-                (s.indexOf('/') == -1)?
-                    BigInteger.ONE
-                :
-                    new BigInteger(s.substring(s.indexOf('/') + 1))
-        );
-    }
+    private final static    Rational[]  NUMBERS         = {ZERO, ONE, TWO, THREE,
+                                                           FOUR, FIVE, SIX, SEVEN,
+                                                           EIGHT, NINE, TEN};
 
-    public Rational(final int number) {
+    private Rational(final long number) {
         this(BigInteger.valueOf(number));
     }
 
-    public Rational(final long number) {
-        this(BigInteger.valueOf(number));
-    }
-
-    public Rational(final BigInteger number) {
+    private Rational(final BigInteger number) {
         mNominator      = number;
         mDenominator    = BigInteger.ONE;
         mIsInteger      = true;
@@ -54,7 +46,7 @@ public class Rational extends NumberValue {
     // This constructor creates a new rational number with nominator n and
     // denominator d.  Care is taken, that the denominator is always positive
     // and that the rational number is in lowest terms.
-    /*package*/ Rational(BigInteger n, BigInteger d) {
+    private Rational(BigInteger n, BigInteger d) {
         if (d.signum() == -1) {
             n = n.negate();
             d = d.negate();
@@ -66,6 +58,37 @@ public class Rational extends NumberValue {
         if (mDenominator.compareTo(BigInteger.ZERO) == 0) {
             throw new NumberFormatException("new Rational: Devision by zero!");
         }
+    }
+
+    public static Rational valueOf(final long number) {
+        if (number >= 0 && number <= 10) {
+            return NUMBERS[(int) number];
+        }
+        return new Rational(number);
+    }
+
+    public static Rational valueOf(final String string) {
+        final int pos = string.indexOf('/');
+        if (pos == -1) { // does not include '/'
+            try {
+                return valueOf(Long.parseLong(string));
+            } catch (final NumberFormatException nfe) {
+                return new Rational(new BigInteger(string));
+            }
+        } else {
+            return new Rational(
+                new BigInteger(string.substring(0, pos)),
+                new BigInteger(string.substring(pos + 1))
+            );
+        }
+    }
+
+    public static Rational valueOf(final BigInteger number) {
+        return new Rational(number);
+    }
+
+    public static Rational valueOf(final BigInteger nominator, final BigInteger denominator) {
+        return new Rational(nominator, denominator);
     }
 
     public Rational clone() {
@@ -241,10 +264,8 @@ public class Rational extends NumberValue {
                 }
         } else if (divisor instanceof Real) {
             return ((Real) divisor).divideFlipped(this);
-        } else if (divisor == Infinity.POSITIVE) {
-            return new Rational(0);
-        } else if (divisor == Infinity.NEGATIVE) {
-            return new Rational(-0);
+        } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
+            return Rational.ZERO;
         } else if (divisor instanceof Term) {
             return ((Term) divisor).divideFlipped(this);
         } else {

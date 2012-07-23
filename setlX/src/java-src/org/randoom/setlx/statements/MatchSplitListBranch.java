@@ -142,8 +142,8 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
                     }
                 }
                 Variable        rest    = null;
-                if (term.getMember(new Rational(2)) instanceof Term) {
-                    rest = Variable.termToExpr((Term) term.getMember(new Rational(2)));
+                if (term.getMember(2) instanceof Term) {
+                    rest = Variable.termToExpr((Term) term.getMember(2));
                 } else {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }

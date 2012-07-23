@@ -259,7 +259,7 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public Value cardinality() throws IncompatibleTypeException {
-        return new Rational(this.size());
+        return Rational.valueOf(this.size());
     }
 
     public Value collectionAccess(final List<Value> args) throws SetlException {

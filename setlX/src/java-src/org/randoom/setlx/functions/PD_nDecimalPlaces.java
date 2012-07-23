@@ -28,14 +28,14 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
                 "Rational-argument '" + number + "' is not a rational number."
             );
         }
-        if (nValue.isInteger() == SetlBoolean.FALSE || nValue.compareTo(new Rational(0)) < 1 ) {
+        if (nValue.isInteger() == SetlBoolean.FALSE || nValue.compareTo(Rational.ZERO) < 1 ) {
             throw new IncompatibleTypeException(
                 "N-argument '" + nValue + "' is not an integer >= 1."
             );
         }
         final int           n       = ((Rational) nValue).intValue();
 
-              Value         rest    = number.modulo(new Rational(1));
+              Value         rest    = number.modulo(Rational.ONE);
         final Value         intPart = number.difference(rest);
 
         final StringBuilder result  = new StringBuilder();
@@ -45,8 +45,8 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         intPart.appendString(result, 0);
         result.append(".");
         for (int i = 1; i <= n; ++i) {
-            rest    = rest.multiply(new Rational(10));
-            restMod1= rest.modulo(new Rational(1));
+            rest    = rest.multiply(Rational.TEN);
+            restMod1= rest.modulo(Rational.ONE);
             digit   = rest.difference(restMod1);
             rest    = restMod1;
 

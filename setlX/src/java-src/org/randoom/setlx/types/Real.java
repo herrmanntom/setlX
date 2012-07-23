@@ -81,15 +81,15 @@ public class Real extends NumberValue {
     /* type conversions */
 
     public Rational toInteger() {
-        return new Rational(mReal.toBigInteger());
+        return Rational.valueOf(mReal.toBigInteger());
     }
 
     public Value toRational() {
         final int scale = mReal.scale();
         if (scale >= 0) {
-            return new Rational(mReal.unscaledValue(), BigInteger.TEN.pow(scale));
+            return Rational.valueOf(mReal.unscaledValue(), BigInteger.TEN.pow(scale));
         } else /* (scale < 0) */ { // real is in fact an integer
-            return new Rational(mReal.unscaledValue().multiply(BigInteger.TEN.pow(scale * -1)));
+            return Rational.valueOf(mReal.unscaledValue().multiply(BigInteger.TEN.pow(scale * -1)));
         }
     }
 
@@ -105,9 +105,9 @@ public class Real extends NumberValue {
 
     public Rational ceil() {
         if (mReal.compareTo(BigDecimal.ZERO) > 0) {
-            return new Rational(mReal.toBigInteger().add(BigInteger.ONE));
+            return Rational.valueOf(mReal.toBigInteger().add(BigInteger.ONE));
         } else {
-            return new Rational(mReal.toBigInteger());
+            return Rational.valueOf(mReal.toBigInteger());
         }
     }
 
@@ -172,9 +172,9 @@ public class Real extends NumberValue {
 
     public Rational floor() {
         if (mReal.compareTo(BigDecimal.ZERO) < 0) {
-            return new Rational(mReal.toBigInteger().subtract(BigInteger.ONE));
+            return Rational.valueOf(mReal.toBigInteger().subtract(BigInteger.ONE));
         } else {
-            return new Rational(mReal.toBigInteger());
+            return Rational.valueOf(mReal.toBigInteger());
         }
     }
 
@@ -221,7 +221,7 @@ public class Real extends NumberValue {
     }
 
     public Rational round() {
-        return new Rational(mReal.setScale(0, mathContext.getRoundingMode()).toBigInteger());
+        return Rational.valueOf(mReal.setScale(0, mathContext.getRoundingMode()).toBigInteger());
     }
 
     public Value sum(final Value summand) throws IncompatibleTypeException {

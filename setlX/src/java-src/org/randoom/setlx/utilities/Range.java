@@ -41,7 +41,7 @@ public class Range extends Constructor {
         if (mSecond != null) {
             step = mSecond.eval().difference(start);
         } else {
-            step = new Rational(1);
+            step = Rational.ONE;
         }
         start.fillCollectionWithinRange(step, mStop.eval(), collection);
     }
@@ -80,8 +80,8 @@ public class Range extends Constructor {
                 final Expr start  = TermConverter.valueToExpr(term.firstMember());
 
                       Expr second = null;
-                if (! term.getMember(new Rational(2)).equals(new SetlString("nil"))) {
-                    second  = TermConverter.valueToExpr(term.getMember(new Rational(2)));
+                if (! term.getMember(2).equals(new SetlString("nil"))) {
+                    second  = TermConverter.valueToExpr(term.getMember(2));
                 }
 
                 final Expr stop   = TermConverter.valueToExpr(term.lastMember());

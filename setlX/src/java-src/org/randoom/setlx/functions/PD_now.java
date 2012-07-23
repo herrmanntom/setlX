@@ -19,7 +19,7 @@ public class PD_now extends PreDefinedFunction {
     public Value execute(final List<Value> args,
                          final List<Value> writeBackVars
     ) {
-        return new Rational(Environment.currentTimeMillis());
+        return Rational.valueOf(Environment.currentTimeMillis());
     }
 }
 

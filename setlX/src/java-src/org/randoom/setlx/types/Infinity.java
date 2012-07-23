@@ -59,9 +59,9 @@ public class Infinity extends NumberValue {
                 "'" + this + " / " + divisor + "' is undefined."
             );
         } else if (divisor instanceof NumberValue) {
-            if (divisor.compareTo(new Rational(0)) < 0) {
+            if (divisor.compareTo(Rational.ZERO) < 0) {
                 return this.negate();
-            } else if (divisor.compareTo(new Rational(0)) == 0) {
+            } else if (divisor.compareTo(Rational.ZERO) == 0) {
                 throw new UndefinedOperationException(
                     "'" + this + " / 0' is undefined."
                 );
@@ -83,9 +83,9 @@ public class Infinity extends NumberValue {
                 return POSITIVE;
             } else if (this == multiplier.negate()) {
                 return NEGATIVE;
-            } else if (multiplier.compareTo(new Rational(0)) < 0) {
+            } else if (multiplier.compareTo(Rational.ZERO) < 0) {
                 return this.negate();
-            } else if (multiplier.compareTo(new Rational(0)) == 0) {
+            } else if (multiplier.compareTo(Rational.ZERO) == 0) {
                 throw new UndefinedOperationException(
                     "'" + this + " * 0' is undefined."
                 );

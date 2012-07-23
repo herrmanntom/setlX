@@ -108,8 +108,8 @@ public class Iteration extends Constructor {
                 final Expr        expr        = TermConverter.valueToExpr(term.firstMember());
 
                       Iterator    iterator    = null;
-                if (! term.getMember(new Rational(2)).equals(new SetlString("nil"))) {
-                    iterator  = Iterator.valueToIterator(term.getMember(new Rational(2)));
+                if (! term.getMember(2).equals(new SetlString("nil"))) {
+                    iterator  = Iterator.valueToIterator(term.getMember(2));
                 }
 
                       Condition   cond        = null;

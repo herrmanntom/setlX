@@ -210,11 +210,11 @@ public class SetlList extends CollectionValue {
         if (args.contains(RangeDummy.RD)) {
             if (aSize == 2 && vFirst == RangeDummy.RD) {
                 // everything up to high boundary: this(  .. y);
-                return getMembers(new Rational(1), args.get(1));
+                return getMembers(Rational.ONE, args.get(1));
 
             } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
                 // everything from low boundary:   this(x ..  );
-                return getMembers(vFirst, new Rational(size()));
+                return getMembers(vFirst, Rational.valueOf(size()));
 
             } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
                 // full range spec:                this(x .. y);
@@ -263,8 +263,17 @@ public class SetlList extends CollectionValue {
         return mList.get(0).clone();
     }
 
+    public Value getMember(final int index) throws SetlException {
+        return getMemberZZZInternal(index).clone();
+    }
+
     public Value getMember(final Value index) throws SetlException {
         return getMemberZZZInternal(index).clone();
+    }
+
+    public Value getMemberUnCloned(final int index) throws SetlException {
+        separateFromOriginal();
+        return getMemberZZZInternal(index);
     }
 
     public Value getMemberUnCloned(final Value index) throws SetlException {
@@ -281,6 +290,10 @@ public class SetlList extends CollectionValue {
                 "Index '" + vIndex + "' is not a integer."
             );
         }
+        return getMemberZZZInternal(index);
+    }
+
+    private Value getMemberZZZInternal(final int index) throws NumberToLargeException {
         if (index < 1) {
             throw new NumberToLargeException(
                 "Index '" + index + "' is lower as '1'."

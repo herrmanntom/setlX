@@ -116,7 +116,7 @@ public class PD_logo extends PreDefinedFunction {
             } else {
                 Environment.outWriteLn("Too bad... here's a `penny' for your thoughts.");
             }
-            return new Rational(0);
+            return Rational.ZERO;
         } else if (payUp == 1) {
             Environment.outWriteLn("  ...cheap bastard...  ");
             logo = LOGO_SMALL;
@@ -148,7 +148,7 @@ public class PD_logo extends PreDefinedFunction {
 
         Environment.outWriteLn("Please come again.");
 
-        return new Rational(timeSum);
+        return Rational.valueOf(timeSum);
     }
 }
 

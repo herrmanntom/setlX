@@ -282,8 +282,16 @@ public class Term extends CollectionValue {
         }
     }
 
+    public Value getMember(final int index) throws SetlException {
+        return mBody.getMember(index);
+    }
+
     public Value getMember(final Value index) throws SetlException {
         return mBody.getMember(index);
+    }
+
+    public Value getMemberUnCloned(final int index) throws SetlException {
+        return mBody.getMemberUnCloned(index);
     }
 
     public Value getMemberUnCloned(final Value index) throws SetlException {

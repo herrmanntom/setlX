@@ -131,7 +131,7 @@ public class Iterator {
 
                 final Expr      assignable  = TermConverter.valueToExpr(term.firstMember());
 
-                final Expr      collection  = TermConverter.valueToExpr(term.getMember(new Rational(2)));
+                final Expr      collection  = TermConverter.valueToExpr(term.getMember(2));
 
                       Iterator  iterator    = null;
                 if (! term.lastMember().equals(new SetlString("nil"))) {

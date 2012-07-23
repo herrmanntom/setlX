@@ -641,8 +641,10 @@ public class SetlString extends CollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(final Value v){
-        if (v instanceof SetlString) {
+    public int compareTo(final Value v) {
+        if (this == v) {
+            return 0;
+        } else if (v instanceof SetlString) {
             return mContent.toString().compareTo(((SetlString) v).mContent.toString());
         } else if (v instanceof SetlSet || v instanceof SetlList || v instanceof Term ||
                    v instanceof ProcedureDefinition || v == Infinity.POSITIVE) {
@@ -650,6 +652,21 @@ public class SetlString extends CollectionValue {
             return -1;
         } else {
             return 1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof SetlString) {
+            StringBuilder other = ((SetlString) v).mContent;
+            if (mContent.length() == other.length()) {
+                return mContent.toString().equals(other.toString());
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 

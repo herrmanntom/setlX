@@ -74,6 +74,14 @@ public class Om extends Value {
         }
     }
 
+    public boolean equalTo(final Value v) {
+        if (v == OM) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private final static int initHashCode = Om.class.hashCode();
 
     public int hashCode() {

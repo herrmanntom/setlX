@@ -466,8 +466,10 @@ public class Term extends CollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(final Value v){
-        if (v instanceof Term) {
+    public int compareTo(final Value v) {
+        if (this == v) {
+            return 0;
+        } else if (v instanceof Term) {
             final Term other = (Term) v;
                   int  cmp   = mFunctionalCharacter.compareTo(other.mFunctionalCharacter);
             if (cmp != 0 && (
@@ -493,6 +495,29 @@ public class Term extends CollectionValue {
         } else {
             // everything else is smaller
             return 1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof Term) {
+            final Term other = (Term) v;
+            if (mFunctionalCharacter.equals(other.mFunctionalCharacter)
+                  || (
+                    mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
+                    other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
+                ) || (
+                    mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
+                    other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
+                )
+            ) {
+                return mBody.equalTo(other.mBody);
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 

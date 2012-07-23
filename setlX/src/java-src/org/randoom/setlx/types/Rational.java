@@ -54,8 +54,8 @@ public class Rational extends NumberValue {
         final BigInteger ggt = n.gcd(d);
         mNominator           = n.divide(ggt);
         mDenominator         = d.divide(ggt);
-        mIsInteger           = mDenominator.compareTo(BigInteger.ONE) == 0;
-        if (mDenominator.compareTo(BigInteger.ZERO) == 0) {
+        mIsInteger           = mDenominator.equals(BigInteger.ONE);
+        if (mDenominator.equals(BigInteger.ZERO)) {
             throw new NumberFormatException("new Rational: Devision by zero!");
         }
     }
@@ -136,13 +136,13 @@ public class Rational extends NumberValue {
             return false;
         } else if (mNominator.compareTo(two) == 0) {
             return true;
-        } else if (mNominator.mod(two).compareTo(BigInteger.ZERO) == 0) {
+        } else if (mNominator.mod(two).equals(BigInteger.ZERO)) {
             return false;
         }
 
         BigInteger i = BigInteger.valueOf(3);
         while ( i.multiply(i).compareTo(mNominator) <= 0) {
-            if (mNominator.mod(i).compareTo(BigInteger.ZERO) == 0) {
+            if (mNominator.mod(i).equals(BigInteger.ZERO)) {
                 return false;
             }
             i = i.add(two);
@@ -251,13 +251,13 @@ public class Rational extends NumberValue {
                 final Rational d = (Rational) divisor;
                 if (mIsInteger && d.mIsInteger) {
                     // (mNominator/1) / (d.mNominator/1)  <==>  mNominator / d.mNominator
-                    if (d.mNominator.compareTo(BigInteger.ZERO) == 0) {
+                    if (d.mNominator.equals(BigInteger.ZERO)) {
                         throw new UndefinedOperationException("'" + this + " / 0' is undefined.");
                     }
                     return new Rational(mNominator, d.mNominator);
                 } else {
                     // (mNominator/mDenominator) / (d.mNominator/d.mDenominator) = (mNominator * d.mDenominator) / (mDenominator * d.mNominator)
-                    if (d.mNominator.compareTo(BigInteger.ZERO) == 0) {
+                    if (d.mNominator.equals(BigInteger.ZERO)) {
                         throw new UndefinedOperationException("'(" + this + ") / 0' is undefined.");
                     }
                     return new Rational(mNominator.multiply(d.mDenominator), mDenominator.multiply(d.mNominator));
@@ -295,9 +295,9 @@ public class Rational extends NumberValue {
     }
 
     public Rational factorial() throws SetlException {
-        if (mNominator.compareTo(BigInteger.ZERO) < 0 ||
-            mDenominator.compareTo(BigInteger.ONE) != 0)
-        {
+        if ( ! mIsInteger ||
+               mNominator.compareTo(BigInteger.ZERO) < 0
+        ) {
             throw new UndefinedOperationException(
                 "'(" + this + ")!' is undefined."
             );
@@ -528,8 +528,10 @@ public class Rational extends NumberValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(final Value v){
-        if (v instanceof Rational) {
+    public int compareTo(final Value v) {
+        if (this == v) {
+            return 0;
+        } else if (v instanceof Rational) {
             final Rational r = (Rational) v;
             if (mIsInteger && r.mIsInteger) {
                 // a/1 == p/1  <==>  a == p
@@ -541,7 +543,7 @@ public class Rational extends NumberValue {
                 return aq.compareTo(bp);
             }
         } else if (v instanceof Real) {
-            return (new Real(mNominator, mDenominator)).compareTo(v);
+            return toReal().compareTo(v);
         } else if (v instanceof SetlError ||
                    v == Om.OM             ||
                    v == Infinity.NEGATIVE ||
@@ -553,6 +555,27 @@ public class Rational extends NumberValue {
             return 1;
         } else {
             return -1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof Rational) {
+            final Rational r = (Rational) v;
+            if (mIsInteger && r.mIsInteger) {
+                // a/1 == p/1  <==>  a == p
+                return mNominator.equals(r.mNominator);
+            } else {
+                // a/b == p/q  <==>  a * q == b * p
+                final BigInteger aq = mNominator.multiply(r.mDenominator);
+                final BigInteger bp = mDenominator.multiply(r.mNominator);
+                return aq.equals(bp);
+            }
+        } else if (v instanceof Real) {
+            return toReal().equalTo(v);
+        } else {
+            return false;
         }
     }
 

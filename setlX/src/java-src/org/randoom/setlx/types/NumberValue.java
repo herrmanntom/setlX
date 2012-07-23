@@ -46,7 +46,9 @@ public abstract class NumberValue extends Value {
     /* comparisons */
 
     public final    SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
-        if (other instanceof NumberValue) {
+        if (this == other) {
+            return SetlBoolean.FALSE;
+        } else if (other instanceof NumberValue) {
             return SetlBoolean.valueOf(this.compareTo(other) < 0);
         } else {
             throw new IncompatibleTypeException(

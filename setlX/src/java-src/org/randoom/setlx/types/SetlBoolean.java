@@ -133,6 +133,15 @@ public class SetlBoolean extends Value {
         }
     }
 
+    public boolean equalTo(final Value v){
+        if (this == v) {
+            // as only exacly one FALSE and TRUE object exist, we can compare by reference
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public int hashCode() {
         if (this == TRUE) {
             return 2015404846;

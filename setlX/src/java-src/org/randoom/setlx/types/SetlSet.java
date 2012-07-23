@@ -660,10 +660,12 @@ public class SetlSet extends CollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(final Value v){
-        if (v instanceof SetlSet) {
-            final Iterator<Value> iterFirst  = iterator();               // also calls sort()
-            final Iterator<Value> iterSecond = ((SetlSet) v).iterator(); // also calls sort()
+    public int compareTo(final Value v) {
+        if (this == v) {
+            return 0;
+        } else if (v instanceof SetlSet) {
+            final Iterator<Value> iterFirst  = iterator();
+            final Iterator<Value> iterSecond = ((SetlSet) v).iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
                 int     cmp    = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp == 0) {
@@ -684,6 +686,28 @@ public class SetlSet extends CollectionValue {
             return -1;
         } else {
             return 1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof SetlSet) {
+            final TreeSet<Value> other = ((SetlSet) v).mSortedSet;
+            if (mSortedSet.size() == other.size()) {
+                final Iterator<Value> iterFirst  = mSortedSet.iterator();
+                final Iterator<Value> iterSecond = other.iterator();
+                while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                    if ( ! iterFirst.next().equalTo(iterSecond.next())) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 

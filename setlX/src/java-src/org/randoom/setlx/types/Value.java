@@ -517,13 +517,15 @@ public abstract class Value implements Comparable<Value> {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public abstract int compareTo(final Value v);
+    public abstract int     compareTo(final Value v);
+
+    public abstract boolean equalTo  (final Value v);
 
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
         } else if (o instanceof Value) {
-            return this.compareTo((Value) o) == 0;
+            return this.equalTo((Value) o);
         } else {
             return false;
         }
@@ -532,7 +534,7 @@ public abstract class Value implements Comparable<Value> {
     public abstract int hashCode();
 
     public final SetlBoolean isEqual(final Value other) {
-        return SetlBoolean.valueOf(this.equals(other));
+        return SetlBoolean.valueOf(this.equalTo(other));
     }
 
     /* this comparison is different than `this.compareTo(other) < 0' and should

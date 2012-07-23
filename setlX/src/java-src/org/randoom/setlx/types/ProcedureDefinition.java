@@ -198,7 +198,7 @@ public class ProcedureDefinition extends Value {
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(final Value v){
-        if (this == v) { // from using clone()
+        if (this == v) {
             return 0;
         } else if (v instanceof ProcedureDefinition) {
             final ProcedureDefinition other = (ProcedureDefinition) v;
@@ -207,11 +207,11 @@ public class ProcedureDefinition extends Value {
                 final PreDefinedFunction _other = (PreDefinedFunction) other;
                 return _this.getName().compareTo(_other.getName());
             } else {
-                int cmp = mParameters.toString().compareTo(other.mParameters.toString());
+                final int cmp = mParameters.toString().compareTo(other.mParameters.toString());
                 if (cmp != 0) {
                     return cmp;
                 }
-                return cmp = mStatements.toString().compareTo(other.mStatements.toString());
+                return mStatements.toString().compareTo(other.mStatements.toString());
             }
         } else if (v == Infinity.POSITIVE) {
             // only +Infinity is bigger
@@ -219,6 +219,29 @@ public class ProcedureDefinition extends Value {
         } else {
             // everything else is smaller
             return 1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof PreDefinedFunction) {
+            if (this instanceof PreDefinedFunction) {
+                final PreDefinedFunction _this  = (PreDefinedFunction) this;
+                final PreDefinedFunction _other = (PreDefinedFunction) v;
+                return _this.getName().equals(_other.getName());
+            } else {
+                return false;
+            }
+        } else if (v instanceof ProcedureDefinition) {
+            final ProcedureDefinition other = (ProcedureDefinition) v;
+            if (mParameters.toString().equals(other.mParameters.toString())) {
+                return mStatements.toString().equals(other.mStatements.toString());
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 

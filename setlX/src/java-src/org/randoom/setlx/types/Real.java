@@ -266,7 +266,9 @@ public class Real extends NumberValue {
      * This ranking is necessary to allow sets and lists of different types.
      */
     public int compareTo(final Value v) {
-        if (v instanceof Real) {
+        if (this == v) {
+            return 0;
+        } else if (v instanceof Real) {
             final Real nr = (Real) v;
             return mReal.compareTo(nr.mReal);
         } else if (v instanceof Rational) {
@@ -278,6 +280,18 @@ public class Real extends NumberValue {
             return 1;
         } else {
             return -1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof Real) {
+            return mReal.compareTo(((Real) v).mReal) == 0;
+        } else if (v instanceof Rational) {
+            return mReal.compareTo(((Rational) v).toReal().mReal) == 0;
+        } else {
+            return false;
         }
     }
 

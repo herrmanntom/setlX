@@ -23,6 +23,14 @@ public class RangeDummy extends Value {
         }
     }
 
+    public boolean equalTo(final Value v) {
+        if (v == RD) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private final static int initHashCode = RangeDummy.class.hashCode();
 
     public int hashCode() {

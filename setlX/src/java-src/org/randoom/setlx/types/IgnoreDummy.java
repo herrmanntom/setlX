@@ -35,6 +35,14 @@ public class IgnoreDummy extends Value {
         }
     }
 
+    public boolean equalTo(final Value v) {
+        if (v == ID) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     private final static int initHashCode = IgnoreDummy.class.hashCode();
 
     public int hashCode() {

@@ -61,7 +61,7 @@ public class Infinity extends NumberValue {
         } else if (divisor instanceof NumberValue) {
             if (divisor.compareTo(Rational.ZERO) < 0) {
                 return this.negate();
-            } else if (divisor.compareTo(Rational.ZERO) == 0) {
+            } else if (divisor.equalTo(Rational.ZERO)) {
                 throw new UndefinedOperationException(
                     "'" + this + " / 0' is undefined."
                 );
@@ -85,7 +85,7 @@ public class Infinity extends NumberValue {
                 return NEGATIVE;
             } else if (multiplier.compareTo(Rational.ZERO) < 0) {
                 return this.negate();
-            } else if (multiplier.compareTo(Rational.ZERO) == 0) {
+            } else if (multiplier.equalTo(Rational.ZERO)) {
                 throw new UndefinedOperationException(
                     "'" + this + " * 0' is undefined."
                 );
@@ -173,6 +173,15 @@ public class Infinity extends NumberValue {
         } else {
             // everything in between is bigger
             return -1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        // as only exactly two object ever exist, we can get away with comparing the reference
+        if (this == v) {
+            return true;
+        } else {
+            return false;
         }
     }
 

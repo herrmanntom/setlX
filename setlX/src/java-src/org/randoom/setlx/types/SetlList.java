@@ -612,8 +612,10 @@ public class SetlList extends CollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(final Value v){
-        if (v instanceof SetlList) {
+    public int compareTo(final Value v) {
+        if (this == v) {
+            return 0;
+        } else if (v instanceof SetlList) {
             final Iterator<Value> iterFirst  = mList.iterator();
             final Iterator<Value> iterSecond = ((SetlList) v).mList.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
@@ -636,6 +638,28 @@ public class SetlList extends CollectionValue {
         } else {
             // everything else is smaller
             return 1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof SetlList) {
+            final ArrayList<Value> other = ((SetlList) v).mList;
+            if (mList.size() == other.size()) {
+                final Iterator<Value> iterFirst  = mList.iterator();
+                final Iterator<Value> iterSecond = other.iterator();
+                while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                    if ( ! iterFirst.next().equalTo(iterSecond.next())) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
         }
     }
 

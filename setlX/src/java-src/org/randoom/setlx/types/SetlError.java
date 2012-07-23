@@ -42,13 +42,25 @@ public class SetlError extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
-    public int compareTo(final Value v){
-        if (v instanceof SetlError) {
+    public int compareTo(final Value v) {
+        if (this == v) {
+            return 0;
+        } else if (v instanceof SetlError) {
             final SetlError error = (SetlError) v;
             return mMessage.compareTo(error.mMessage);
         } else {
             // everything is bigger
             return 1;
+        }
+    }
+
+    public boolean equalTo(final Value v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof SetlError) {
+            return mMessage.equals(((SetlError) v).mMessage);
+        } else {
+            return false;
         }
     }
 

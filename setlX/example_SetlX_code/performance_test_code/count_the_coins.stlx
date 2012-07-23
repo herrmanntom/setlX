@@ -42,19 +42,13 @@ changes := procedure(amount, coins) {
 };
 
 print("m:", 100, " using:", [25,10,5,1]);
-t1 := now();
 print(changes(100,[25,10,5,1]));
-t2 := now();
-print("It took ", t2-t1, "ms");
 
 print();
 for (p in [[100,50,25,10,5,1], [200, 100,50,25,10,5,1]]) {
   for (m in [100, 10000, 100000, 1000000]) {
      print("m: ", m, " using ", p);
-     t2 := now();
      print(changes(m,[100,50,25,10,5,1]));
-     t3 := now();
-     print("It took ", t3-t2, "ms");
   }
 }
 

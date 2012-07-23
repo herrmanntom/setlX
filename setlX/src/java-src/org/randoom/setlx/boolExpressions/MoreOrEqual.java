@@ -64,7 +64,7 @@ public class MoreOrEqual extends Expr {
         final Value lhs = mLhs.eval();
         final Value rhs = mRhs.eval();
         // note: rhs and lhs swapped!
-        return SetlBoolean.get(rhs.isLessThan(lhs) == SetlBoolean.TRUE || rhs.isEqual(lhs) == SetlBoolean.TRUE);
+        return SetlBoolean.valueOf(rhs.isLessThan(lhs) == SetlBoolean.TRUE || rhs.isEqual(lhs) == SetlBoolean.TRUE);
     }
 
     /* string operations */

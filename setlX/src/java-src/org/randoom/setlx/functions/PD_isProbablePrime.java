@@ -28,7 +28,7 @@ public class PD_isProbablePrime extends PreDefinedFunction {
             throw new IncompatibleTypeException("Argument '" + integer + "' is not an integer.");
         }
 
-        return SetlBoolean.get( ((Rational) integer).isProbablePrime() );
+        return SetlBoolean.valueOf( ((Rational) integer).isProbablePrime() );
     }
 }
 

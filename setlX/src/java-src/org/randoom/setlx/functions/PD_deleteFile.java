@@ -30,7 +30,7 @@ public class PD_deleteFile extends PreDefinedFunction {
 
         File file = new File(fileName);
 
-        return SetlBoolean.get(file.delete());
+        return SetlBoolean.valueOf(file.delete());
     }
 }
 

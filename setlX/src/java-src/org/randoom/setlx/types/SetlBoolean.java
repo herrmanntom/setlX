@@ -16,7 +16,7 @@ public class SetlBoolean extends Value {
         return this;
     }
 
-    public static SetlBoolean get(final boolean value){
+    public static SetlBoolean valueOf(final boolean value){
         if (value) {
             return TRUE;
         } else {

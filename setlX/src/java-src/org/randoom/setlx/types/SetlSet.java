@@ -89,7 +89,7 @@ public class SetlSet extends CollectionValue {
     public SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
         if (other instanceof SetlSet) {
             final SetlSet otr = (SetlSet) other;
-            return SetlBoolean.get((otr.mSortedSet.containsAll(mSortedSet)) && this.compareTo(otr) != 0);
+            return SetlBoolean.valueOf((otr.mSortedSet.containsAll(mSortedSet)) && this.isEqual(otr) == SetlBoolean.FALSE);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " < " + other + "' is not a set."
@@ -354,7 +354,7 @@ public class SetlSet extends CollectionValue {
     }
 
     public SetlBoolean containsMember(Value element) {
-        return SetlBoolean.get(mSortedSet.contains(element));
+        return SetlBoolean.valueOf(mSortedSet.contains(element));
     }
 
     public SetlSet domain() throws SetlException {

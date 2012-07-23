@@ -28,7 +28,7 @@ public class PD_rmBreak extends PreDefinedFunction {
             Environment.removeAllBreakpoints();
             return SetlBoolean.TRUE;
         } else {
-            return SetlBoolean.get(Environment.removeBreakpoint(((SetlString) id).getUnquotedString()));
+            return SetlBoolean.valueOf(Environment.removeBreakpoint(((SetlString) id).getUnquotedString()));
         }
     }
 }

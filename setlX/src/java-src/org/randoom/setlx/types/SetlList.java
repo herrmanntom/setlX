@@ -253,7 +253,7 @@ public class SetlList extends CollectionValue {
     }
 
     public SetlBoolean containsMember(final Value element) {
-        return SetlBoolean.get(mList.contains(element));
+        return SetlBoolean.valueOf(mList.contains(element));
     }
 
     public Value firstMember() {

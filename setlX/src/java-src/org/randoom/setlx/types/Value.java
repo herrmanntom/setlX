@@ -532,7 +532,7 @@ public abstract class Value implements Comparable<Value> {
     public abstract int hashCode();
 
     public final SetlBoolean isEqual(final Value other) {
-        return SetlBoolean.get(this.equals(other));
+        return SetlBoolean.valueOf(this.equals(other));
     }
 
     /* this comparison is different than `this.compareTo(other) < 0' and should

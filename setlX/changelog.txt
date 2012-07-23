@@ -4,6 +4,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + improved performance of forall/exist when used in loops
  + added run(command) function
  + added isPrime(integer) function
+ + much faster rnd() function (when used on lists or strings)
 
 ---v1.2.0--- 2012-07-17
  # fixed minor bugs in string-representation of some statements

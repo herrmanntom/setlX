@@ -14,7 +14,7 @@ public abstract class IndexedCollectionValue extends CollectionValue {
             return Om.OM;
         } else {
             try {
-                return getMember(Environment.getRandomInt(this.size()));
+                return getMember(Environment.getRandomInt(this.size()) +1);
             } catch (final SetlException se) {
                 return Om.OM;
             }

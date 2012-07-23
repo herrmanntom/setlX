@@ -46,6 +46,8 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Value           firstMember();
 
+    public abstract Value           getMember(final Value index) throws SetlException;
+
     public          SetlString      join(final Value separator) {
         final SetlString      sep    = separator.str();
         final SetlString      result = new SetlString();
@@ -78,7 +80,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         return (product != null)? product : neutral;
     }
 
-    public final    Value           randomMember() throws NumberToLargeException {
+    public          Value           randomMember() throws NumberToLargeException {
         if (this.size() < 1) {
             return Om.OM;
         } else {

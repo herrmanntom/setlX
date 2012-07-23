@@ -19,7 +19,7 @@ import java.util.List;
 
 */
 
-public class Term extends CollectionValue {
+public class Term extends IndexedCollectionValue {
     // functional character of the term;    e.g. f
     private String      mFunctionalCharacter;
     // arguments in inner body of the term; e.g. e1, e2, ..., en

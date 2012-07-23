@@ -25,7 +25,7 @@ import java.util.List;
  *   interpreter.utilities.Range
  */
 
-public class SetlList extends CollectionValue {
+public class SetlList extends IndexedCollectionValue {
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this list carries a isClone flag.
      *

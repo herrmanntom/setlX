@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class SetlString extends CollectionValue {
+public class SetlString extends IndexedCollectionValue {
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this SetlString carries a isClone flag.
      *
@@ -351,15 +351,7 @@ public class SetlString extends CollectionValue {
         }
     }
 
-    public SetlString getMember(final Value vIndex) throws SetlException {
-        int index = 0;
-        if (vIndex.isInteger() == SetlBoolean.TRUE) {
-            index = ((Rational)vIndex).intValue();
-        } else {
-            throw new IncompatibleTypeException(
-                "Index '" + vIndex + "' is not an integer."
-            );
-        }
+    public SetlString getMember(final int index) throws SetlException {
         if (index > mContent.length()) {
             throw new NumberToLargeException(
                 "Index '" + index + "' is larger as size '" + mContent.length() + "' of string '" + mContent.toString() + "'."
@@ -371,6 +363,18 @@ public class SetlString extends CollectionValue {
             );
         }
         return new SetlString(mContent.substring(index - 1, index));
+    }
+
+    public SetlString getMember(final Value vIndex) throws SetlException {
+        int index = 0;
+        if (vIndex.isInteger() == SetlBoolean.TRUE) {
+            index = ((Rational)vIndex).intValue();
+        } else {
+            throw new IncompatibleTypeException(
+                "Index '" + vIndex + "' is not an integer."
+            );
+        }
+        return getMember(index);
     }
 
     public Value getMembers(final Value vLow, final Value vHigh) throws SetlException {

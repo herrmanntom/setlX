@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.Environment;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -84,7 +85,7 @@ public class Real extends NumberValue {
         return Rational.valueOf(mReal.toBigInteger());
     }
 
-    public Value toRational() {
+    public Rational toRational() {
         final int scale = mReal.scale();
         if (scale >= 0) {
             return Rational.valueOf(mReal.unscaledValue(), BigInteger.TEN.pow(scale));
@@ -218,6 +219,14 @@ public class Real extends NumberValue {
 
         // a ** exponent = exp(ln(a ** exponent) = exp(exponent * ln(a))
         return new Real(Math.exp(exponent * Math.log(a)));
+    }
+
+    public Real random() {
+        if (mReal.compareTo(BigDecimal.ZERO) == 0) {
+            return this;
+        } else {
+            return new Real(mReal.multiply(new BigDecimal(Environment.getRandomDouble())));
+        }
     }
 
     public Rational round() {

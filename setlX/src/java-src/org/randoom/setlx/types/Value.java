@@ -217,6 +217,12 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value random() throws SetlException {
+        throw new IncompatibleTypeException(
+            "Argument '" + this + "' is not a number or collection value."
+        );
+    }
+
     public Value round() throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a number."
@@ -374,12 +380,6 @@ public abstract class Value implements Comparable<Value> {
     public SetlSet powerSet() throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a set."
-        );
-    }
-
-    public Value randomMember() throws SetlException {
-        throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a collection value."
         );
     }
 

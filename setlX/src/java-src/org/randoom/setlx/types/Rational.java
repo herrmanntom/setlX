@@ -455,6 +455,31 @@ public class Rational extends NumberValue {
         return toReal().power(exponent);
     }
 
+    public Rational random() {
+        if (mIsInteger) {
+            if (intConvertable()) {
+                int intVal = 0;
+                try {
+                    intVal = intValue();
+                } catch (final SetlException se) {
+                    // was checked before, will not happen
+                }
+                final int boundary = Math.abs(intVal) + 1;
+                if (intVal > 0) {
+                    return Rational.valueOf(Environment.getRandomInt(boundary));
+                } else if (intVal < 0) {
+                    return Rational.valueOf(Environment.getRandomInt(boundary)).negate();
+                } else {
+                    return Rational.ZERO;
+                }
+            } else {
+                return toReal().random().round();
+            }
+        } else {
+            return toReal().random().toRational();
+        }
+    }
+
     public Rational round() throws SetlException {
         if (mIsInteger) {
             return this;

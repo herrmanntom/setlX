@@ -12,7 +12,24 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Iterator<Value> iterator();
 
-    /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
+    public          Value           random() throws NumberToLargeException {
+        if (this.size() < 1) {
+            return Om.OM;
+        } else {
+            final int needle = Environment.getRandomInt(this.size());
+                  int pos    = 0;
+            for (final Value v: this) {
+                if (pos == needle) {
+                    return v.clone();
+                }
+                pos++;
+            }
+            // this should never be reached
+            throw new NumberToLargeException(
+                "Collection index '" + pos + "' into '" + this + "' is out of bounds."
+            );
+        }
+    }
 
     public abstract void            addMember(final Value element);
 
@@ -78,25 +95,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
             }
         }
         return (product != null)? product : neutral;
-    }
-
-    public          Value           randomMember() throws NumberToLargeException {
-        if (this.size() < 1) {
-            return Om.OM;
-        } else {
-            final int needle = Environment.getRandomInt(this.size());
-                  int pos    = 0;
-            for (final Value v: this) {
-                if (pos == needle) {
-                    return v.clone();
-                }
-                pos++;
-            }
-            // this should never be reached
-            throw new NumberToLargeException(
-                "Collection index '" + pos + "' into '" + this + "' is out of bounds."
-            );
-        }
     }
 
     public abstract void            removeMember(final Value element) throws IncompatibleTypeException;

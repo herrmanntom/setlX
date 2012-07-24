@@ -16,7 +16,7 @@ public class PD_rnd extends PreDefinedFunction {
     }
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
-        return args.get(0).randomMember();
+        return args.get(0).random();
     }
 }
 

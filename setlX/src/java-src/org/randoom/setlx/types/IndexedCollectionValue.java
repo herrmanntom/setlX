@@ -5,11 +5,7 @@ import org.randoom.setlx.utilities.Environment;
 
 public abstract class IndexedCollectionValue extends CollectionValue {
 
-    /* operations on collection values (Lists/Tuples, Sets, Strings) */
-
-    public abstract Value           getMember(final int index) throws SetlException;
-
-    public final    Value           randomMember() {
+    public final    Value           random() {
         if (this.size() < 1) {
             return Om.OM;
         } else {
@@ -20,6 +16,8 @@ public abstract class IndexedCollectionValue extends CollectionValue {
             }
         }
     }
+
+    public abstract Value           getMember(final int index) throws SetlException;
 
 }
 

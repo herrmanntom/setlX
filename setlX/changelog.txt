@@ -2,10 +2,11 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.2.1--- 2012-07-23
  + improved performance of forall/exist when used in loops
+ + somewhat improved performance of variable look-ups
  + added run(command) function
  + added isPrime(integer) function
  + rnd() now also takes number as argument, returning a random number between
-   0 and the argument (inclusive). This works for negative number as well.
+   0 and the argument (inclusive) -- works for negative numbers as well
 
 ---v1.2.0--- 2012-07-17
  # fixed minor bugs in string-representation of some statements

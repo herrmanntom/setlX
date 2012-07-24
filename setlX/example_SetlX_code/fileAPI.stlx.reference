@@ -1,27 +1,46 @@
 /*1*/	// this program demonstrates the simple file API of SetlX
 /*2*/	
-/*3*/	
-/*4*/	// readFile(fileName)            : reads file and returns list of strings, each
-/*5*/	//                                 representing a single line of the file read
-/*6*/	fileContent := readFile("../example_SetlX_code/fileAPI.stlx");  // will fail if relative path is wrong...
-/*7*/	
-/*8*/	for (x in [1 .. #fileContent]) {
-/*9*/	    print("/*$x$*/\t" + fileContent[x]);
-/*10*/	}
-/*11*/	
-/*12*/	// writeFile(fileName, content)  : writes a list of strings into a file, each
-/*13*/	//                                 string representing a single line
-/*14*/	writeFile("test.tmp", fileContent[1 .. (#fileContent \ 2)]);
-/*15*/	
-/*16*/	// appendFile(fileName, content) : appends a list of strings to a file, each
-/*17*/	//                                 string representing a single line
-/*18*/	appendFile("test.tmp", fileContent[(#fileContent \ 2 + 1) .. #fileContent]);
-/*19*/	
-/*20*/	// deleteFile(fileName)          : delete a file, return true on success
-/*21*/	success := deleteFile("test.tmp");
-/*22*/	
-/*23*/	if (success) {
-/*24*/	    print("tmp file deleted!");
-/*25*/	}
-/*26*/	
+/*3*/	// readFile(fileName [, listOfLineNumbers]):
+/*4*/	//                                 Reads a file and returns list of strings, each
+/*5*/	//                                 representing a single line of the file read.
+/*6*/	//                                 When the optional parameter `listOfLineNumbers/
+/*7*/	//                                 is used, only lines in this list will be read.
+/*8*/	fileContent := readFile("../example_SetlX_code/fileAPI.stlx");  // will fail if relative path is wrong...
+/*9*/	
+/*10*/	for (x in [1 .. #fileContent]) {
+/*11*/	    print("/*$x$*/\t" + fileContent[x]);
+/*12*/	}
+/*13*/	
+/*14*/	// To prevent setlX running out of memory when reading huge files, only specific lines can be read:
+/*15*/	// lines 1 to 10 (inclusive)
+/*16*/	tmp := readFile("../example_SetlX_code/fileAPI.stlx", [1..10]);
+/*17*/	// line number which are not present in the file are simply ignored
+/*18*/	tmp := readFile("../example_SetlX_code/fileAPI.stlx", [7,39,1000]);
+/*19*/	// when the number of lines is unknown, read in slices and check if the result is empty:
+/*20*/	i := 1;
+/*21*/	while(true) {
+/*22*/	    tmp := readFile("../example_SetlX_code/fileAPI.stlx", [i .. i + 999]);
+/*23*/	    if (#tmp > 0) {
+/*24*/	        // do something with the data here
+/*25*/	    } else {
+/*26*/	        break;
+/*27*/	    }
+/*28*/	    i += 1000;
+/*29*/	}
+/*30*/	
+/*31*/	// writeFile(fileName, content)  : writes a list of strings into a file, each
+/*32*/	//                                 string representing a single line
+/*33*/	writeFile("test.tmp", fileContent[1 .. (#fileContent \ 2)]);
+/*34*/	
+/*35*/	// appendFile(fileName, content) : appends a list of strings to a file, each
+/*36*/	//                                 string representing a single line
+/*37*/	appendFile("test.tmp", fileContent[(#fileContent \ 2 + 1) .. #fileContent]);
+/*38*/	
+/*39*/	// deleteFile(fileName)          : delete a file, return true on success
+/*40*/	success := deleteFile("test.tmp");
+/*41*/	
+/*42*/	if (success) {
+/*43*/	    print("tmp file deleted!");
+/*44*/	}
+/*45*/	
 tmp file deleted!

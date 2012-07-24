@@ -1,4 +1,4 @@
-// this program computes pi using a monte carlo algorithm which uses random()
+// this program computes pi using a monte carlo algorithm which uses rnd()
 //==============================================================================
 // Essentially it creates random points in a coordinate system,
 // with 0 <= x <=1 and 0 <= y <=1 and computes if they are within a unit circle
@@ -14,8 +14,8 @@ n := 50000;
 inCircle := 0;
 
 for (x in [1 .. n]) {
-    // is point(random(), random()) in circle?
-    if ( sqrt(random() ** 2 + random() ** 2) <= 1) {
+    // is this random point in circle?
+    if ( sqrt(rnd(1.0) ** 2 + rnd(1.0) ** 2) <= 1) {
         inCircle += 1;
     }
 }

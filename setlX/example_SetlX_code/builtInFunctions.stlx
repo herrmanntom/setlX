@@ -93,17 +93,17 @@ print();
                                 // between 0 and the argument (inclusive).
                                 // Otherwise if the argument is a collectionValue,
                                 // a randomly selected member will be returned.
-
-  random()                      // get random Real between 0.0 and 1.0 (inclusive)
 */
+
+// note: these test will only be the same when interpreter is started with --predictableRandom
 
 throwACoin := [] |-> rnd({"heads", "tails"});
 l := [];
 for (i in [1 .. 100]) {
     l += [throwACoin()];
 }
-print(l); // will only be the same when interpreter is started with --predictableRandom
-print("Chance of SetlX being executed in space: $random()$");
+print(l);
+print("Chance of SetlX being executed in space: $rnd(1.0)$");
 print();
 
 /*******************************************************************************

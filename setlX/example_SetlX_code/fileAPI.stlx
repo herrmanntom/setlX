@@ -1,12 +1,31 @@
 // this program demonstrates the simple file API of SetlX
 
-
-// readFile(fileName)            : reads file and returns list of strings, each
-//                                 representing a single line of the file read
+// readFile(fileName [, listOfLineNumbers]):
+//                                 Reads a file and returns list of strings, each
+//                                 representing a single line of the file read.
+//                                 When the optional parameter `listOfLineNumbers/
+//                                 is used, only lines in this list will be read.
 fileContent := readFile("../example_SetlX_code/fileAPI.stlx");  // will fail if relative path is wrong...
 
 for (x in [1 .. #fileContent]) {
     print("/*$x$*/\t" + fileContent[x]);
+}
+
+// To prevent setlX running out of memory when reading huge files, only specific lines can be read:
+// lines 1 to 10 (inclusive)
+tmp := readFile("../example_SetlX_code/fileAPI.stlx", [1..10]);
+// line number which are not present in the file are simply ignored
+tmp := readFile("../example_SetlX_code/fileAPI.stlx", [7,39,1000]);
+// when the number of lines is unknown, read in slices and check if the result is empty:
+i := 1;
+while(true) {
+    tmp := readFile("../example_SetlX_code/fileAPI.stlx", [i .. i + 999]);
+    if (#tmp > 0) {
+        // do something with the data here
+    } else {
+        break;
+    }
+    i += 1000;
 }
 
 // writeFile(fileName, content)  : writes a list of strings into a file, each

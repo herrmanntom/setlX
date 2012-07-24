@@ -5,7 +5,10 @@ import org.randoom.setlx.types.Value;
 
 import java.util.List;
 
-// rnd(collectionValue)    : randomly selects a member from `collectionValue'; different from arb, as arb is deterministic and rnd is not
+// rnd(numberOrCollectionValue)  : If argument is a number, returns a random number
+//                                 between 0 and the argument (inclusive).
+//                                 Otherwise if the argument is a collectionValue,
+//                                 a randomly selected member will be returned.
 
 public class PD_rnd extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_rnd();

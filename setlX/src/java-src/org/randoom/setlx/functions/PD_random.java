@@ -6,7 +6,7 @@ import org.randoom.setlx.utilities.Environment;
 
 import java.util.List;
 
-// random()                : get random Real between 0.0 and 1.0 (inclusive)
+// random()                      : get random Real between 0.0 and 1.0 (inclusive)
 
 public class PD_random extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_random();

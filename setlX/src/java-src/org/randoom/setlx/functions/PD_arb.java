@@ -5,7 +5,8 @@ import org.randoom.setlx.types.Value;
 
 import java.util.List;
 
-// arb(collectionValue)    : selects an arbitrary member from `collectionValue'
+// arb(collectionValue)          : Selects an arbitrary member from `collectionValue'.
+//                                 Note that 'arb' is deterministic, while rnd is not.
 
 public class PD_arb extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_arb();

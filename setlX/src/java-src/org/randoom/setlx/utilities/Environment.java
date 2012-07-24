@@ -148,6 +148,14 @@ public class Environment {
         return sRandoom.nextInt(upperBoundary);
     }
 
+    // get random number (all int values are possible)
+    public static int getRandomInt() {
+        if (sRandoom == null) {
+            sRandoom = new Random();
+        }
+        return sRandoom.nextInt();
+    }
+
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
     public static double getRandomDouble() {
         if (sRandoom == null) {

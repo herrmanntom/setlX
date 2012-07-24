@@ -4,7 +4,8 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + improved performance of forall/exist when used in loops
  + added run(command) function
  + added isPrime(integer) function
- + much faster rnd() function (when used on lists or strings)
+ + rnd() now also takes number as argument, returning a random number between
+   0 and the argument (inclusive). This works for negative number as well.
 
 ---v1.2.0--- 2012-07-17
  # fixed minor bugs in string-representation of some statements

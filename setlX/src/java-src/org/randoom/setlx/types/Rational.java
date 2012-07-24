@@ -473,7 +473,14 @@ public class Rational extends NumberValue {
                     return Rational.ZERO;
                 }
             } else {
-                return toReal().random().round();
+                BigInteger rnd;
+                do {
+                    rnd = new BigInteger(mNominator.bitLength(), Environment.getRandom());
+                } while (rnd.compareTo(mNominator.abs()) > 0);
+                if (mNominator.compareTo(BigInteger.ZERO) < 0) {
+                    rnd = rnd.negate();
+                }
+                return new Rational(rnd);
             }
         } else {
             return toReal().random().toRational();

@@ -89,7 +89,12 @@ for (i in userinput) {
 print();
 
 /*******************************************************************************
-  rnd(collectionValue);         // randomly selects a member from `collectionValue'; different from arb, as arb is deterministic and rnd is not
+  rnd(numberOrCollectionValue)  // If argument is a number, returns a random number
+                                // between 0 and the argument (inclusive).
+                                // Otherwise if the argument is a collectionValue,
+                                // a randomly selected member will be returned.
+
+  random()                      // get random Real between 0.0 and 1.0 (inclusive)
 */
 
 throwACoin := [] |-> rnd({"heads", "tails"});
@@ -98,6 +103,7 @@ for (i in [1 .. 100]) {
     l += [throwACoin()];
 }
 print(l); // will only be the same when interpreter is started with --predictableRandom
+print("Chance of SetlX being executed in space: $random()$");
 print();
 
 /*******************************************************************************

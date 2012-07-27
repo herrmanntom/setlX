@@ -83,6 +83,6 @@ false
 true
 this is a test
 
-[["antlr", "bin", "grammar", "java-src", "make.cmd", "Makefile", "setlX", "setlX.cmd", "setlX.jar", "setlXprof", "simpleTest"], []]
+[["setlX", "setlX.cmd", "setlX.jar", "setlXprof", "simpleTest"], []]
 
 Assertion failed: "assert function works"

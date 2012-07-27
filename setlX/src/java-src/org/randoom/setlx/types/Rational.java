@@ -451,7 +451,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    protected Real power(final double exponent) throws SetlException {
+    protected NumberValue power(final double exponent) throws SetlException {
         return toReal().power(exponent);
     }
 

@@ -209,7 +209,7 @@ public class Real extends NumberValue {
         return new Real(mReal.pow(exponent, mathContext));
     }
 
-    protected Real power(final double exponent) throws NumberToLargeException, IncompatibleTypeException {
+    protected NumberValue power(final double exponent) throws NumberToLargeException, IncompatibleTypeException {
         if (mReal.compareTo(BigDecimal.ZERO) < 0) {
             throw new IncompatibleTypeException(
                 "Left-hand-side of '" + this + " ** " + exponent + "' is negative."
@@ -218,7 +218,13 @@ public class Real extends NumberValue {
         final double a = doubleValue(); // may throw exception
 
         // a ** exponent = exp(ln(a ** exponent) = exp(exponent * ln(a))
-        return new Real(Math.exp(exponent * Math.log(a)));
+        final double r = Math.exp(exponent * Math.log(a));
+        if (r == Double.POSITIVE_INFINITY) {
+            return Infinity.POSITIVE;
+        } else if (r == Double.NEGATIVE_INFINITY) {
+            return Infinity.NEGATIVE;
+        }
+        return new Real(r);
     }
 
     public Real random() {

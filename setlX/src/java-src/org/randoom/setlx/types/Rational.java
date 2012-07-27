@@ -29,9 +29,9 @@ public class Rational extends NumberValue {
     public  final static    Rational    NINE            = new Rational(9);
     public  final static    Rational    TEN             = new Rational(10);
 
-    private final static    Rational[]  NUMBERS         = {ZERO, ONE, TWO, THREE,
-                                                           FOUR, FIVE, SIX, SEVEN,
-                                                           EIGHT, NINE, TEN};
+    private final static    Rational[]  NUMBERS         = {ZERO,  ONE,  TWO, THREE,
+                                                           FOUR,  FIVE, SIX, SEVEN,
+                                                           EIGHT, NINE, TEN };
 
     private Rational(final long number) {
         this(BigInteger.valueOf(number));
@@ -130,18 +130,41 @@ public class Rational extends NumberValue {
         }
     }
 
+    // some constants to speed up isPrime()
+    private final static    int[]           SOME_INT_PRIMES     = {
+          2,   3,   5,   7,  11,  13,  17,  19,  23,  29,  31,  37,  41,  43,  47,
+         53,  59,  61,  67,  71,  73,  79,  83,  89,  97, 101, 103, 107, 109, 113,
+        127, 131, 137, 139, 149, 151, 157, 163, 167, 173, 179, 181, 191, 193, 197,
+        199, 211, 223, 227, 229, 233, 239, 241, 251, 257, 263, 269, 271, 277, 281
+    };
+    private final static    BigInteger[]    SOME_PRIMES         = new BigInteger[SOME_INT_PRIMES.length];
+    private final static    BigInteger[]    SOME_PRIMES_SQUARED = new BigInteger[SOME_INT_PRIMES.length];
+    static {
+        for (int i = 0; i < SOME_PRIMES.length; ++i) {
+            SOME_PRIMES[i]         = BigInteger.valueOf(SOME_INT_PRIMES[i]);
+            SOME_PRIMES_SQUARED[i] = SOME_PRIMES[i].multiply(SOME_PRIMES[i]);
+        }
+    }
+
     public boolean isPrime() {
-        final BigInteger two = BigInteger.valueOf(2);
         if ( ! mIsInteger || mNominator.compareTo(BigInteger.ONE) <= 0) {
             return false;
-        } else if (mNominator.compareTo(two) == 0) {
-            return true;
-        } else if (mNominator.mod(two).equals(BigInteger.ZERO)) {
-            return false;
+        }
+        for (int i = 0; i < SOME_PRIMES.length; ++i) {
+            if (mNominator.mod(SOME_PRIMES[i]).equals(BigInteger.ZERO)) {
+                if (mNominator.equals(SOME_PRIMES[i])) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (SOME_PRIMES_SQUARED[i].compareTo(mNominator) >= 0) {
+                return true;
+            }
         }
 
-        BigInteger i = BigInteger.valueOf(3);
-        while ( i.multiply(i).compareTo(mNominator) <= 0) {
+        final BigInteger two = SOME_PRIMES[0]; // == BigInteger.valueOf(2)
+              BigInteger i   = SOME_PRIMES[SOME_PRIMES.length -1].add(two);
+        while (i.multiply(i).compareTo(mNominator) <= 0) {
             if (mNominator.mod(i).equals(BigInteger.ZERO)) {
                 return false;
             }
@@ -457,31 +480,14 @@ public class Rational extends NumberValue {
 
     public Rational random() {
         if (mIsInteger) {
-            if (intConvertable()) {
-                int intVal = 0;
-                try {
-                    intVal = intValue();
-                } catch (final SetlException se) {
-                    // was checked before, will not happen
-                }
-                final int boundary = Math.abs(intVal) + 1;
-                if (intVal > 0) {
-                    return Rational.valueOf(Environment.getRandomInt(boundary));
-                } else if (intVal < 0) {
-                    return Rational.valueOf(Environment.getRandomInt(boundary)).negate();
-                } else {
-                    return Rational.ZERO;
-                }
-            } else {
-                BigInteger rnd;
-                do {
-                    rnd = new BigInteger(mNominator.bitLength(), Environment.getRandom());
-                } while (rnd.compareTo(mNominator.abs()) > 0);
-                if (mNominator.compareTo(BigInteger.ZERO) < 0) {
-                    rnd = rnd.negate();
-                }
-                return new Rational(rnd);
+            BigInteger rnd;
+            do {
+                rnd = new BigInteger(mNominator.bitLength(), Environment.getRandom());
+            } while (rnd.compareTo(mNominator.abs()) > 0);
+            if (mNominator.compareTo(BigInteger.ZERO) < 0) {
+                rnd = rnd.negate();
             }
+            return new Rational(rnd);
         } else {
             return toReal().random().toRational();
         }

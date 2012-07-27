@@ -231,7 +231,7 @@ public class Real extends NumberValue {
         if (mReal.compareTo(BigDecimal.ZERO) == 0) {
             return this;
         } else {
-            return new Real(mReal.multiply(new BigDecimal(Environment.getRandomDouble())));
+            return new Real(mReal.multiply(new BigDecimal(Environment.getRandomDouble(), mathContext)));
         }
     }
 

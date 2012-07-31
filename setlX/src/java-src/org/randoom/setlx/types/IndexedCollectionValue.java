@@ -5,7 +5,7 @@ import org.randoom.setlx.utilities.Environment;
 
 public abstract class IndexedCollectionValue extends CollectionValue {
 
-    public final    Value           random() {
+    public final    Value           rnd() {
         if (this.size() < 1) {
             return Om.OM;
         } else {

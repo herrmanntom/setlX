@@ -89,10 +89,19 @@ for (i in userinput) {
 print();
 
 /*******************************************************************************
-  rnd(numberOrCollectionValue)  // If argument is a number, returns a random number
-                                // between 0 and the argument (inclusive).
-                                // Otherwise if the argument is a collectionValue,
-                                // a randomly selected member will be returned.
+   rnd(numberOrCollectionValue [, numberOfChoices]) :
+                                // a) If argument is an integer, returns a random number
+                                //    between 0 and the argument (inclusive).
+                                // b) If the argument is a rational number or real,
+                                //    the `numberOfChoices' MUST be used and
+                                //    a random number between 0 and the argument
+                                //    (inclusive) will be returned. The number of
+                                //    possible values in this range will equal
+                                //    `numberOfChoices' which MUST be an integer >= 2.
+                                // c) If the argument is a collectionValue,
+                                //    a randomly selected member will be returned.
+
+  random()                      // get random Real between 0.0 and 1.0 (inclusive)
 */
 
 // note: these test will only be the same when interpreter is started with --predictableRandom
@@ -103,7 +112,11 @@ for (i in [1 .. 100]) {
     l += [throwACoin()];
 }
 print(l);
-print("Chance of SetlX being executed in space: $rnd(1.0)$");
+print("Random number   between 0 and 999                : $rnd(999)$");
+print("Random fraction between 0 and 999, 42     choices: $rnd(999, 42)$");
+print("Random fraction between 0 and 1/2, 10     choices: $rnd(1/2, 10)$");
+print("Random fraction between 0 and 5/4, 10**10 choices: $rnd(5/4, 10**10)$");
+print("Chance of SetlX being executed in space: $random()$");
 print();
 
 /*******************************************************************************

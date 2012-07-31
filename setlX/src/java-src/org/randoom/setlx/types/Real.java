@@ -227,11 +227,26 @@ public class Real extends NumberValue {
         return new Real(r);
     }
 
-    public Real random() {
-        if (mReal.compareTo(BigDecimal.ZERO) == 0) {
+    public Real rnd() throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Number of choices argument missing."
+        );
+    }
+
+    public Real rnd(final Value numberOfChoices) throws SetlException {
+        if (numberOfChoices.isInteger() != SetlBoolean.TRUE ||
+            numberOfChoices.compareTo(Rational.TWO) < 0
+        ) {
+            throw new IncompatibleTypeException(
+                "Number of choices '" + numberOfChoices + "' is not an integer >= 2."
+            );
+        } else if (mReal.compareTo(BigDecimal.ZERO) == 0) {
             return this;
         } else {
-            return new Real(mReal.multiply(new BigDecimal(Environment.getRandomDouble(), mathContext)));
+            Rational choices = (Rational) numberOfChoices.difference(Rational.ONE);
+            Real     n       = choices.rnd().toReal();
+            Real     d       = choices.toReal();
+            return new Real(mReal.multiply(n.mReal, mathContext).divide(d.mReal, mathContext));
         }
     }
 

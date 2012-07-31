@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.2.2--- 2012-07-27
+ + changed rnd() to require second `numberOfChoices' parameter when used with rationals or reals
+
 ---v1.2.1--- 2012-07-23
  + improved performance of forall/exist when used in loops
  + somewhat improved performance of variable look-ups

@@ -217,9 +217,15 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value random() throws SetlException {
+    public Value rnd() throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a number or collection value."
+        );
+    }
+
+    public Value rnd(final Value numberOfChoices) throws SetlException {
+        throw new IncompatibleTypeException(
+            "Argument '" + this + "' is not a real or a rational."
         );
     }
 

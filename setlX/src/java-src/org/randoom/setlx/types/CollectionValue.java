@@ -12,7 +12,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Iterator<Value> iterator();
 
-    public          Value           random() throws NumberToLargeException {
+    public          Value           rnd() throws NumberToLargeException {
         if (this.size() < 1) {
             return Om.OM;
         } else {

@@ -478,7 +478,7 @@ public class Rational extends NumberValue {
         return toReal().power(exponent);
     }
 
-    public Rational random() {
+    public Rational rnd() throws IncompatibleTypeException {
         if (mIsInteger) {
             BigInteger rnd;
             do {
@@ -489,9 +489,26 @@ public class Rational extends NumberValue {
             }
             return new Rational(rnd);
         } else {
-            return toReal().random().toRational();
+            throw new IncompatibleTypeException(
+                "Number of choices argument missing."
+            );
         }
     }
+
+    public Rational rnd(final Value numberOfChoices) throws SetlException {
+        if (numberOfChoices.isInteger() != SetlBoolean.TRUE ||
+            numberOfChoices.compareTo(Rational.TWO) < 0
+        ) {
+            throw new IncompatibleTypeException(
+                "Number of choices '" + numberOfChoices + "' is not an integer >= 2."
+            );
+        } else {
+            Rational choices = (Rational) numberOfChoices.difference(Rational.ONE);
+            Rational r       = choices.rnd();
+            return new Rational(mNominator.multiply(r.mNominator), mDenominator.multiply(choices.mNominator));
+        }
+    }
+
 
     public Rational round() throws SetlException {
         if (mIsInteger) {

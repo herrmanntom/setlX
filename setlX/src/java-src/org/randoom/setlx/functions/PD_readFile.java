@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
-// readFile(fileName [, listOfLineNumbers]):
+// readFile(fileName [, listOfLineNumbers]) :
 //                                 Reads a file and returns list of strings, each
 //                                 representing a single line of the file read.
 //                                 When the optional parameter `listOfLineNumbers/

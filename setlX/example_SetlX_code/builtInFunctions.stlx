@@ -92,7 +92,7 @@ print();
    rnd(numberOrCollectionValue [, numberOfChoices]) :
                                 // a) If argument is an integer, returns a random number
                                 //    between 0 and the argument (inclusive).
-                                // b) If the argument is a rational number or real,
+                                // b) If the argument is a rational number,
                                 //    the `numberOfChoices' MUST be used and
                                 //    a random number between 0 and the argument
                                 //    (inclusive) will be returned. The number of
@@ -101,7 +101,8 @@ print();
                                 // c) If the argument is a collectionValue,
                                 //    a randomly selected member will be returned.
 
-  random()                      // get random Real between 0.0 and 1.0 (inclusive)
+  random([real])                // Get random Real between 0.0 and argument (inclusive).
+                                // If no argument is used, 1.0 is implied.
 */
 
 // note: these test will only be the same when interpreter is started with --predictableRandom

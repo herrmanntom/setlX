@@ -9,7 +9,7 @@ import java.util.List;
 // rnd(numberOrCollectionValue [, numberOfChoices]) :
 //                              a) If argument is an integer, returns a random number
 //                                 between 0 and the argument (inclusive).
-//                              b) If the argument is a rational number or real,
+//                              b) If the argument is a rational number,
 //                                 the `numberOfChoices' MUST be used and
 //                                 a random number between 0 and the argument
 //                                 (inclusive) will be returned. The number of

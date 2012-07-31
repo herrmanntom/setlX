@@ -219,7 +219,7 @@ public abstract class Value implements Comparable<Value> {
 
     public Value rnd() throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a number or collection value."
+            "Argument '" + this + "' is not a rational, integer or collection value."
         );
     }
 

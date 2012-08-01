@@ -1,0 +1,86 @@
+//
+// Project Euler problem 35 in SETL
+//
+// Problem 35
+// """
+// The number, 197, is called a circular prime because all rotations
+// of the digits: 197, 971, and 719, are themselves prime.
+//
+// There are thirteen such primes below 100:
+// 2, 3, 5, 7, 11, 13, 17, 31, 37, 71, 73, 79, and 97.
+//
+// How many circular primes are there below one million?
+// """
+//
+// This SETL program was created by Hakan Kjellerstrand (hakank@bonetmail.com)
+// Also see my SETL page: http://www.hakank.org/setl/
+//
+
+problem35d := procedure() {
+   print("Problem 35d: ");
+
+   num_circular_primes := 0;
+   //primes := prime_sieve(1000000);
+   primes := gen_primes(1000000);
+   for (n in primes) {
+     if (is_circular_prime(n)) {
+        num_circular_primes += 1;
+     }
+   }
+
+   print(num_circular_primes);
+
+};
+
+problem35e := procedure() {
+   print("Problem 35e: ");
+
+   num_circular_primes := 0;
+   for (n in [2..1000000]) {
+     if (!isPrime(n)) {
+       continue;
+     }
+     if (is_circular_prime(n)) {
+        num_circular_primes += 1;
+     }
+   }
+
+   print(num_circular_primes);
+
+};
+
+
+//
+// check is a number (a prime) is a circular prime
+//
+is_circular_prime := procedure(p) {
+   s := str(p);
+   size := #s;
+   for (i in [2..#s]) {
+      ss := s[i..size] + s[1..i-1];
+      v:= int(ss);
+      if (!isPrime(v)) {
+        return false;
+      }
+   }
+
+   return true;
+
+};
+
+gen_primes := procedure(n) {
+  primes := {2};
+  p := 3;
+  while (p <= n) {
+    if (isPrime(p)) {
+       primes += [p];
+    }
+    p += 2;
+  }
+
+  return primes;
+};
+
+problem35d();
+problem35e();
+

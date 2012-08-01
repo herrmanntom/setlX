@@ -225,7 +225,7 @@ public abstract class Value implements Comparable<Value> {
 
     public Value rnd(final Value numberOfChoices) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a real or a rational."
+            "Argument '" + this + "' is not a rational or integer."
         );
     }
 

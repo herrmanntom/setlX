@@ -204,6 +204,23 @@ public class SetlList extends IndexedCollectionValue {
         mList.add(element.clone());
     }
 
+    public SetlSet collect() {
+        final SetlSet result = new SetlSet();
+        try {
+            for (final Value v : mList) {
+                final Value occurences = result.getMember(v);
+                if (occurences == Om.OM) {
+                    result.setMember(v, Rational.ONE);
+                } else {
+                        result.setMember(v, occurences.sum(Rational.ONE));
+                }
+            }
+        } catch (final SetlException se) {
+            // will not happen
+        }
+        return result;
+    }
+
     public Value collectionAccess(final List<Value> args) throws SetlException {
         final int   aSize  = args.size();
         final Value vFirst = (aSize >= 1)? args.get(0) : null;

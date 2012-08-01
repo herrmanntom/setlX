@@ -43,6 +43,7 @@ public class StringConstructor extends Expr {
                         // end of inner expr
                         innerExpr = false;
                         // parse inner expr
+                        final int errCount = ParseSetlX.getErrorCount();
                         try {
                             // SetlString parses escape characters properly
                             final String eStr = SetlString.parseString(expr.toString());
@@ -55,9 +56,11 @@ public class StringConstructor extends Expr {
                              * error count and (later) halt.
                              * However we can at least provide the user with some feedback.
                              */
-                            Environment.errWriteLn(
-                                "Parsing-Error in string " + this + ": " + se.getMessage()
-                            );
+                            if (ParseSetlX.getErrorCount() > errCount) {
+                                Environment.errWriteLn(
+                                    "Parsing-Error in string " + this + ": " + se.getMessage()
+                                );
+                            }
                         }
                         // clear expression
                         expr.setLength(0);

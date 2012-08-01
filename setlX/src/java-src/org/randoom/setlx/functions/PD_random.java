@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
@@ -22,7 +23,12 @@ public class PD_random extends PreDefinedFunction {
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
         Real random = new Real(Environment.getRandomDouble());
         if (args.size() == 1) {
-            return args.get(0).multiply(random);
+            Value arg = args.get(0);
+            if (arg.equalTo(Rational.ZERO)) {
+                return new Real(0.0);
+            } else {
+                return arg.multiply(random);
+            }
         } else {
             return random;
         }

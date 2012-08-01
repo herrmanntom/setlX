@@ -421,7 +421,7 @@ public class SetlSet extends CollectionValue {
             if (v instanceof SetlList) {
                 if (v.size() == 2) {
                     if (result == Om.OM) {
-                        result = v.getMemberUnCloned(Rational.TWO);
+                        result = ((SetlList) v).getMemberUnCloned(2);
                     } else {
                         // double match!
                         result = Om.OM;

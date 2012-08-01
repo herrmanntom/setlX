@@ -99,6 +99,10 @@ public class ParseSetlX {
         }
     }
 
+    public static int getErrorCount() {
+        return errors;
+    }
+
     public static void resetErrorCount() {
         errors = 0;
     }

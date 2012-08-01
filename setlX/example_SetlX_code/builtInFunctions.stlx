@@ -103,6 +103,9 @@ print();
 
   random([real])                // Get random Real between 0.0 and argument (inclusive).
                                 // If no argument is used, 1.0 is implied.
+                                
+  collect(list)                 // Collects multiple occurences of the same value in
+                                // `list' into a map of [value, nOccurences].
 */
 
 // note: these test will only be the same when interpreter is started with --predictableRandom
@@ -118,6 +121,7 @@ print("Random fraction between 0 and 999, 42     choices: $rnd(999, 42)$");
 print("Random fraction between 0 and 1/2, 10     choices: $rnd(1/2, 10)$");
 print("Random fraction between 0 and 5/4, 10**10 choices: $rnd(5/4, 10**10)$");
 print("Chance of SetlX being executed in space: $random()$");
+print("Distribution of randomness in setlX: $collect([rnd(2/9,7): x in [1..100000]])$");
 print();
 
 /*******************************************************************************

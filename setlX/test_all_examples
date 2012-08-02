@@ -6,11 +6,11 @@ manualTestFiles=""
 
 # prepare the interpreter
 simpleTest=simpleTest/test.stlx
-cd src; make test >/dev/null 2>$tmpFile; cd ..
+cd src; make test >/dev/null 2>"$tmpFile"; cd ..
 
 # check for failed tests
-failedCount=$(grep -c "failed" $tmpFile)
-okCount=$(grep -c "successful" $tmpFile)
+failedCount=$(grep -c "failed" "$tmpFile")
+okCount=$(grep -c "successful" "$tmpFile")
 
 # alert the user and stop
 if [ $failedCount -gt 0 -o $okCount -lt 23 ] # <=  "23" is number of tests in `make test'
@@ -26,7 +26,7 @@ fi
 while read -r -d $'\0' path
   do
     filename="${path#example_SetlX_code/}"
-    
+
     if [ "$1" == "no_performance" -a "$(dirname $filename)" == "performance_test_code" ]
       then
         continue
@@ -52,7 +52,7 @@ while read -r -d $'\0' path
     if [ $? -eq 1 ]
       then
         echo " failed ... (see diff.result)"
-        
+
         rm -f "$tmpFile"
         exit 2
     else

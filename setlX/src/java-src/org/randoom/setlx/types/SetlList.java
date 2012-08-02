@@ -10,8 +10,10 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.Collections;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /* This class implements a list of arbitrary SetlX values.
  * It will most likely be created and filled by an SetListConstructor
@@ -205,18 +207,22 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     public SetlSet collect() {
-        final SetlSet result = new SetlSet();
-        try {
-            for (final Value v : mList) {
-                final Value occurences = result.getMember(v);
-                if (occurences == Om.OM) {
-                    result.setMember(v, Rational.ONE);
-                } else {
-                        result.setMember(v, occurences.sum(Rational.ONE));
-                }
+        final HashMap<Value, Integer> map        = new HashMap<Value, Integer>();
+              Integer                 occurences = null;
+        for (final Value v : mList) {
+            occurences = map.get(v);
+            if (occurences == null) {
+                map.put(v, 1);
+            } else {
+                map.put(v, ++occurences);
             }
-        } catch (final SetlException se) {
-            // will not happen
+        }
+        final SetlSet result = new SetlSet();
+        for (final Map.Entry<Value, Integer> entry : map.entrySet()) {
+            SetlList member = new SetlList(2);
+            member.addMember(entry.getKey());
+            member.addMember(Rational.valueOf(entry.getValue()));
+            result.addMember(member);
         }
         return result;
     }

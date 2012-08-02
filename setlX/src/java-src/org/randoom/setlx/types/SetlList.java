@@ -585,19 +585,19 @@ public class SetlList extends IndexedCollectionValue {
     public MatchResult matchesTerm(final Value other) throws IncompatibleTypeException {
         if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
-        } else if ( ! (other instanceof SetlList)) {
+        } else if ( ! (other instanceof SetlList || other instanceof SetlString)) {
             return new MatchResult(false);
         }
-        final SetlList otherList = (SetlList) other;
+        final IndexedCollectionValue otherCollection = (IndexedCollectionValue) other;
 
-        if (mList.size() != otherList.mList.size()) {
+        if (mList.size() != otherCollection.size()) {
             return new MatchResult(false);
         }
 
         // match all members
         final MatchResult       result      = new MatchResult(true);
         final Iterator<Value>   thisIter    = iterator();
-        final Iterator<Value>   otherIter   = otherList.iterator();
+        final Iterator<Value>   otherIter   = otherCollection.iterator();
         while (thisIter.hasNext() && otherIter.hasNext()) {
             final MatchResult   subResult   = thisIter.next().matchesTerm(otherIter.next());
             if (subResult.isMatch()) {

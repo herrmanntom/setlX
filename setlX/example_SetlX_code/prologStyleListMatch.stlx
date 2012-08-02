@@ -1,14 +1,12 @@
 matcher := procedure(t) {
     match(t) {
         case []:
-            print("empty list");
+            print("empty list/string");
         case {}:
             print("empty set");
-        case "":
-            print("empty string");
 
-        case [x,y]:       // leaving out the rest does not work for strings
-            print("lists only two: $x$, $y$");
+        case [x,y]:
+            print("lists/strings only two: $x$, $y$");
         case [x,y,z | r]: // but the rest can be empty
             print("lists/strings first: $x$, $y$, $z$ rest: $r$");
 
@@ -24,10 +22,10 @@ matcher := procedure(t) {
 matcher([]);
 matcher([1, 5]);
 matcher([1 .. 10]);
+matcher("");
+matcher("ab");
+matcher("foobar");
 matcher({});
 matcher({"a", [1 .. 5]});
 matcher({"a"});
-matcher("");
-matcher("abc");
-matcher("foobar");
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tmpFile=$(mktemp)
+tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 manualTestFiles=""
 

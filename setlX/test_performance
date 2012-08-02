@@ -1,6 +1,6 @@
 #!/bin/bash
 
-testFile=$(mktemp)
+testFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 cd src;
 

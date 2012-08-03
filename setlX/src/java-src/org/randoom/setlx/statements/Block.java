@@ -73,20 +73,8 @@ public class Block extends Statement {
     public void markLastExprStatement() {
         if (mStatements.size() > 0) {
             final Statement stmnt = mStatements.get(mStatements.size() - 1);
-            if (stmnt instanceof ExpressionStatement) {
-                ((ExpressionStatement) stmnt).setPrintAfterEval();
-            } else if (stmnt instanceof DifferenceAssignment) {
-                ((DifferenceAssignment) stmnt).setPrintAfterEval();
-            } else if (stmnt instanceof DivideAssignment) {
-                ((DivideAssignment) stmnt).setPrintAfterEval();
-            } else if (stmnt instanceof IntegerDivisionAssignment) {
-                ((IntegerDivisionAssignment) stmnt).setPrintAfterEval();
-            } else if (stmnt instanceof ModuloAssignment) {
-                ((ModuloAssignment) stmnt).setPrintAfterEval();
-            } else if (stmnt instanceof ProductAssignment) {
-                ((ProductAssignment) stmnt).setPrintAfterEval();
-            } else if (stmnt instanceof SumAssignment) {
-                ((SumAssignment) stmnt).setPrintAfterEval();
+            if (stmnt instanceof StatementWithPrintableResult) {
+                ((StatementWithPrintableResult) stmnt).setPrintAfterEval();
             }
         }
     }

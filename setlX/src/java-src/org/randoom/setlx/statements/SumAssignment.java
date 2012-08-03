@@ -20,7 +20,7 @@ implemented here as:
          mLhs                     mRhs
 */
 
-public class SumAssignment extends Statement {
+public class SumAssignment extends StatementWithPrintableResult {
     // functional character used in terms
     public  final static String     FUNCTIONAL_CHARACTER    = "^sumAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!

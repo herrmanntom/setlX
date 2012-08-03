@@ -12,7 +12,7 @@ import org.randoom.setlx.utilities.TermConverter;
 /*
 grammar rule:
 assignmentOther
-    : assignable ('-=' | [...] ) anyExpr
+    : assignable ('/=' | [...] ) anyExpr
     ;
 
 implemented here as:
@@ -20,9 +20,9 @@ implemented here as:
          mLhs                     mRhs
 */
 
-public class DifferenceAssignment extends StatementWithPrintableResult {
+public class QuotientAssignment extends StatementWithPrintableResult {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^differenceAssignment";
+    public  final static String     FUNCTIONAL_CHARACTER    = "^divideAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sTraceAssignments       = false;
 
@@ -33,7 +33,7 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
     private final Expr    mRhs;
     private       boolean mPrintAfterEval;
 
-    public DifferenceAssignment(final Expr lhs, final Expr rhs) {
+    public QuotientAssignment(final Expr lhs, final Expr rhs) {
         mLhs            = lhs;
         mRhs            = rhs;
         mPrintAfterEval = false;
@@ -44,7 +44,7 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
     }
 
     protected Value exec() throws SetlException {
-        final Value assigned = mLhs.eval().differenceAssign(mRhs.eval().clone());
+        final Value assigned = mLhs.eval().quotientAssign(mRhs.eval().clone());
         mLhs.assignUncloned(assigned);
 
         if (sTraceAssignments) {
@@ -61,7 +61,7 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
     public void appendString(final StringBuilder sb, final int tabs) {
         Environment.getLineStart(sb, tabs);
         mLhs.appendString(sb, tabs);
-        sb.append(" -= ");
+        sb.append(" /= ");
         mRhs.appendString(sb, tabs);
         sb.append(";");
     }
@@ -75,13 +75,13 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
         return result;
     }
 
-    public static DifferenceAssignment termToStatement(final Term term) throws TermConversionException {
+    public static QuotientAssignment termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new DifferenceAssignment(lhs, rhs);
+            return new QuotientAssignment(lhs, rhs);
         }
     }
 

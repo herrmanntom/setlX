@@ -11,8 +11,6 @@ public abstract class NumberValue extends Value {
 
     public abstract Value       difference(final Value subtrahend) throws SetlException;
 
-    public abstract Value       divide(final Value divisor) throws SetlException;
-
     public abstract NumberValue negate() throws IncompatibleTypeException;
 
     public          Value       power(final Value exponent) throws SetlException {
@@ -40,6 +38,8 @@ public abstract class NumberValue extends Value {
     protected abstract NumberValue power(final double exponent) throws SetlException;
 
     public    abstract Value       product(final Value multiplier) throws SetlException;
+
+    public    abstract Value       quotient(final Value divisor) throws SetlException;
 
     public    abstract Value       sum(final Value summand) throws SetlException;
 

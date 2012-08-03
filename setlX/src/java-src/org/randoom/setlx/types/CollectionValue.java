@@ -105,7 +105,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract int             size();
 
-    public          Value           sumMembers(final Value neutral) throws SetlException {
+    public          Value           sumOfMembers(final Value neutral) throws SetlException {
         Value sum = null;
         for (final Value v: this) {
             if (sum == null) {

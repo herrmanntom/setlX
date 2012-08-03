@@ -440,7 +440,7 @@ public class SetlString extends IndexedCollectionValue {
         if (p == Om.OM) {
             return p;
         } else {
-            return p.sumMembers(new SetlString());
+            return p.sumOfMembers(new SetlString());
         }
     }
 
@@ -452,7 +452,7 @@ public class SetlString extends IndexedCollectionValue {
             SetlString neutral = new SetlString();
             SetlSet    result  = new SetlSet();
             for (final Value v : p) {
-                result.addMember(v.sumMembers(neutral));
+                result.addMember(v.sumOfMembers(neutral));
             }
             return result;
         }

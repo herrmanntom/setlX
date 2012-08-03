@@ -7,7 +7,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.DifferenceAssignment;
-import org.randoom.setlx.statements.DivideAssignment;
+import org.randoom.setlx.statements.QuotientAssignment;
 import org.randoom.setlx.statements.For;
 import org.randoom.setlx.statements.IntegerDivisionAssignment;
 import org.randoom.setlx.statements.ModuloAssignment;
@@ -210,7 +210,7 @@ public class Environment {
 
         Assignment.sTraceAssignments                = traceAssignments;
         DifferenceAssignment.sTraceAssignments      = traceAssignments;
-        DivideAssignment.sTraceAssignments          = traceAssignments;
+        QuotientAssignment.sTraceAssignments          = traceAssignments;
         IntegerDivisionAssignment.sTraceAssignments = traceAssignments;
         ModuloAssignment.sTraceAssignments          = traceAssignments;
         ProductAssignment.sTraceAssignments         = traceAssignments;

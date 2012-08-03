@@ -20,7 +20,7 @@ implemented here as:
          mLhs                     mRhs
 */
 
-public class DivideAssignment extends Statement {
+public class DivideAssignment extends StatementWithPrintableResult {
     // functional character used in terms
     public  final static String     FUNCTIONAL_CHARACTER    = "^divideAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!

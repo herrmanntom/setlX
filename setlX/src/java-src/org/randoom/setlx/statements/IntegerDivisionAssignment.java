@@ -20,7 +20,7 @@ implemented here as:
          mLhs                      mRhs
 */
 
-public class IntegerDivisionAssignment extends Statement {
+public class IntegerDivisionAssignment extends StatementWithPrintableResult {
     // functional character used in terms
     public  final static String     FUNCTIONAL_CHARACTER    = "^integerDivisionAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
@@ -44,7 +44,7 @@ public class IntegerDivisionAssignment extends Statement {
     }
 
     protected Value exec() throws SetlException {
-        final Value assigned = mLhs.eval().divideAssign(mRhs.eval().clone()).floor();
+        final Value assigned = mLhs.eval().quotientAssign(mRhs.eval().clone()).floor();
         mLhs.assignUncloned(assigned);
 
         if (sTraceAssignments) {

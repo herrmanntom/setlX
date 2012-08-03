@@ -53,30 +53,6 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public Value divide(final Value divisor) throws SetlException {
-        if (divisor == POSITIVE || divisor == NEGATIVE) {
-            throw new UndefinedOperationException(
-                "'" + this + " / " + divisor + "' is undefined."
-            );
-        } else if (divisor instanceof NumberValue) {
-            if (divisor.compareTo(Rational.ZERO) < 0) {
-                return this.negate();
-            } else if (divisor.equalTo(Rational.ZERO)) {
-                throw new UndefinedOperationException(
-                    "'" + this + " / 0' is undefined."
-                );
-            } else {
-                return this;
-            }
-        } else if (divisor instanceof Term) {
-            return ((Term) divisor).divideFlipped(this);
-        } else {
-            throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
-            );
-        }
-    }
-
     public Infinity negate() {
         if (this == POSITIVE) {
             return NEGATIVE;
@@ -117,6 +93,30 @@ public class Infinity extends NumberValue {
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
+            );
+        }
+    }
+
+    public Value quotient(final Value divisor) throws SetlException {
+        if (divisor == POSITIVE || divisor == NEGATIVE) {
+            throw new UndefinedOperationException(
+                "'" + this + " / " + divisor + "' is undefined."
+            );
+        } else if (divisor instanceof NumberValue) {
+            if (divisor.compareTo(Rational.ZERO) < 0) {
+                return this.negate();
+            } else if (divisor.equalTo(Rational.ZERO)) {
+                throw new UndefinedOperationException(
+                    "'" + this + " / 0' is undefined."
+                );
+            } else {
+                return this;
+            }
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).quotientFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
             );
         }
     }

@@ -18,7 +18,7 @@ implemented here as:
        mExpr
 */
 
-public class ExpressionStatement extends Statement {
+public class ExpressionStatement extends StatementWithPrintableResult {
     private final Expr    mExpr;
     private       boolean mPrintAfterEval;
 

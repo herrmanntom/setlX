@@ -128,22 +128,6 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
-    public Term divide(final Value divisor) {
-        return (    new Divide(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(divisor)
-                    )
-               ).toTerm();
-    }
-    public Term divideFlipped(final Value divisor) {
-        return (    new Divide(
-                        TermConverter.valueToExpr(divisor),
-                        TermConverter.valueToExpr(this)
-                    )
-               ).toTerm();
-    }
-
-    // viral operation
     public Value factorial() {
         return (    new Factorial(
                         TermConverter.valueToExpr(this)
@@ -202,6 +186,22 @@ public class Term extends IndexedCollectionValue {
     public Term productFlipped(final Value multiplier) {
         return (    new Product(
                         TermConverter.valueToExpr(multiplier),
+                        TermConverter.valueToExpr(this)
+                    )
+               ).toTerm();
+    }
+
+    // viral operation
+    public Term quotient(final Value divisor) {
+        return (    new Quotient(
+                        TermConverter.valueToExpr(this),
+                        TermConverter.valueToExpr(divisor)
+                    )
+               ).toTerm();
+    }
+    public Term quotientFlipped(final Value divisor) {
+        return (    new Quotient(
+                        TermConverter.valueToExpr(divisor),
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm();
@@ -344,7 +344,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     public Term sumMembers() {
-        return (    new SumMembers(
+        return (    new SumOfMembers(
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm();

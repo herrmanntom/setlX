@@ -19,20 +19,20 @@ implemented here as:
            mExpr
 */
 
-public class SumMembers extends Expr {
+public class SumOfMembers extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^sumMembers";
+    private final static String FUNCTIONAL_CHARACTER = "^sumOfMembers";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
     private final Expr mExpr;
 
-    public SumMembers(final Expr expr) {
+    public SumOfMembers(final Expr expr) {
         mExpr = expr;
     }
 
     protected Value evaluate() throws SetlException {
-        return mExpr.eval().sumMembers(Om.OM);
+        return mExpr.eval().sumOfMembers(Om.OM);
     }
 
     /* string operations */
@@ -50,12 +50,12 @@ public class SumMembers extends Expr {
         return result;
     }
 
-    public static SumMembers termToExpr(final Term term) throws TermConversionException {
+    public static SumOfMembers termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            return new SumMembers(expr);
+            return new SumOfMembers(expr);
         }
     }
 

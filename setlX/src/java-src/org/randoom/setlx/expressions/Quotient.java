@@ -9,7 +9,7 @@ import org.randoom.setlx.utilities.TermConverter;
 /*
 grammar rule:
 product
-    : power ([...] | '\\' power)*
+    : power ([...] | '/' power)*
     ;
 
 implemented here as:
@@ -17,29 +17,29 @@ implemented here as:
       mLhs               mRhs
 */
 
-public class IntegerDivision extends Expr {
+public class Quotient extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^integerDivision";
+    private final static String FUNCTIONAL_CHARACTER = "^divide";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
 
     private final Expr mLhs;
     private final Expr mRhs;
 
-    public IntegerDivision(final Expr lhs, final Expr rhs) {
+    public Quotient(final Expr lhs, final Expr rhs) {
         mLhs = lhs;
         mRhs = rhs;
     }
 
     protected Value evaluate() throws SetlException {
-        return mLhs.eval().quotient(mRhs.eval()).floor();
+        return mLhs.eval().quotient(mRhs.eval());
     }
 
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {
         mLhs.appendString(sb, tabs);
-        sb.append(" \\ ");
+        sb.append(" / ");
         mRhs.appendString(sb, tabs);
     }
 
@@ -52,13 +52,13 @@ public class IntegerDivision extends Expr {
         return result;
     }
 
-    public static IntegerDivision termToExpr(final Term term) throws TermConversionException {
+    public static Quotient termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
-            return new IntegerDivision(lhs, rhs);
+            return new Quotient(lhs, rhs);
         }
     }
 

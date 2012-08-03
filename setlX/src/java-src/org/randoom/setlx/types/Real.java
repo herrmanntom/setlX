@@ -137,37 +137,8 @@ public class Real extends NumberValue {
         return minuend.toReal().difference(this);
     }
 
-    public Value divide(final Value divisor) throws SetlException {
-        if (divisor instanceof NumberValue) {
-            BigDecimal right = null;
-            if (divisor instanceof Real) {
-                right = ((Real) divisor).mReal;
-            } else if (divisor == Infinity.POSITIVE) {
-                return new Real(0.0);
-            } else if (divisor == Infinity.NEGATIVE) {
-                return new Real(-0.0);
-            } else {
-                Rational d = (Rational) divisor;
-                right = d.toReal().mReal;
-            }
-            try {
-                return new Real(mReal.divide(right, mathContext));
-            } catch (ArithmeticException ae) {
-                throw new UndefinedOperationException(
-                    "'" + this + " / " + divisor + "' is undefined."
-                );
-            }
-        } else if (divisor instanceof Term) {
-            return ((Term) divisor).divideFlipped(this);
-        } else {
-            throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
-            );
-        }
-    }
-
     public Value divideFlipped(final Rational dividend) throws SetlException {
-        return dividend.toReal().divide(this);
+        return dividend.toReal().quotient(this);
     }
 
     public Rational floor() {
@@ -222,6 +193,35 @@ public class Real extends NumberValue {
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
+            );
+        }
+    }
+
+    public Value quotient(final Value divisor) throws SetlException {
+        if (divisor instanceof NumberValue) {
+            BigDecimal right = null;
+            if (divisor instanceof Real) {
+                right = ((Real) divisor).mReal;
+            } else if (divisor == Infinity.POSITIVE) {
+                return new Real(0.0);
+            } else if (divisor == Infinity.NEGATIVE) {
+                return new Real(-0.0);
+            } else {
+                Rational d = (Rational) divisor;
+                right = d.toReal().mReal;
+            }
+            try {
+                return new Real(mReal.divide(right, mathContext));
+            } catch (ArithmeticException ae) {
+                throw new UndefinedOperationException(
+                    "'" + this + " / " + divisor + "' is undefined."
+                );
+            }
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).quotientFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
             );
         }
     }

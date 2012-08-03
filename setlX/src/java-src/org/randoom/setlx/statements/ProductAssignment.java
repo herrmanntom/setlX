@@ -20,7 +20,7 @@ implemented here as:
          mLhs                     mRhs
 */
 
-public class ProductAssignment extends Statement {
+public class ProductAssignment extends StatementWithPrintableResult {
     // functional character used in terms
     public  final static String     FUNCTIONAL_CHARACTER    = "^productAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!

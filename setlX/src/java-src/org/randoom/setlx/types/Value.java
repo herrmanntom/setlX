@@ -129,19 +129,6 @@ public abstract class Value implements Comparable<Value> {
         return difference(subtrahend);
     }
 
-    public Value divide(final Value divisor) throws SetlException {
-        if (divisor instanceof Term) {
-            return ((Term) divisor).divideFlipped(this);
-        }
-        throw new UndefinedOperationException(
-            "'" + this + " / " + divisor + "' is undefined."
-        );
-    }
-
-    public Value divideAssign(final Value divisor) throws SetlException {
-        return divide(divisor);
-    }
-
     public Value factorial() throws SetlException {
         throw new UndefinedOperationException(
             "'" + this + "!' is undefined."
@@ -215,6 +202,19 @@ public abstract class Value implements Comparable<Value> {
 
     public Value productAssign(final Value multiplier) throws SetlException {
         return product(multiplier);
+    }
+
+    public Value quotient(final Value divisor) throws SetlException {
+        if (divisor instanceof Term) {
+            return ((Term) divisor).quotientFlipped(this);
+        }
+        throw new UndefinedOperationException(
+            "'" + this + " / " + divisor + "' is undefined."
+        );
+    }
+
+    public Value quotientAssign(final Value divisor) throws SetlException {
+        return quotient(divisor);
     }
 
     public Value rnd() throws SetlException {
@@ -450,7 +450,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value sumMembers(final Value neutral) throws SetlException {
+    public Value sumOfMembers(final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '+/ " + this + "' is not a collection value."
         );

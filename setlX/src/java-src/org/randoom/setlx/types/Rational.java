@@ -269,35 +269,6 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Value divide(final Value divisor) throws SetlException {
-        if (divisor instanceof Rational) {
-                final Rational d = (Rational) divisor;
-                if (mIsInteger && d.mIsInteger) {
-                    // (mNominator/1) / (d.mNominator/1)  <==>  mNominator / d.mNominator
-                    if (d.mNominator.equals(BigInteger.ZERO)) {
-                        throw new UndefinedOperationException("'" + this + " / 0' is undefined.");
-                    }
-                    return new Rational(mNominator, d.mNominator);
-                } else {
-                    // (mNominator/mDenominator) / (d.mNominator/d.mDenominator) = (mNominator * d.mDenominator) / (mDenominator * d.mNominator)
-                    if (d.mNominator.equals(BigInteger.ZERO)) {
-                        throw new UndefinedOperationException("'(" + this + ") / 0' is undefined.");
-                    }
-                    return new Rational(mNominator.multiply(d.mDenominator), mDenominator.multiply(d.mNominator));
-                }
-        } else if (divisor instanceof Real) {
-            return ((Real) divisor).divideFlipped(this);
-        } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
-            return Rational.ZERO;
-        } else if (divisor instanceof Term) {
-            return ((Term) divisor).divideFlipped(this);
-        } else {
-            String msg = "Right-hand-side of '(" + this + ") / (" + divisor +
-                         ")' is not a number.";
-            throw new IncompatibleTypeException(msg);
-        }
-    }
-
     // subclass for threaded factorial computation
     class Factorial extends Thread {
         private final int        from;
@@ -425,7 +396,7 @@ public class Rational extends NumberValue {
             if (mIsInteger && b.mIsInteger) {
                 return new Rational(mNominator.mod(b.mNominator));
             } else {
-                final Rational ab = (Rational) this.divide(b);
+                final Rational ab = (Rational) this.quotient(b);
                 return this.difference(ab.floor().product(b));
             }
         } else if (modulo instanceof Term) {
@@ -475,6 +446,35 @@ public class Rational extends NumberValue {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a number or string."
             );
+        }
+    }
+
+    public Value quotient(final Value divisor) throws SetlException {
+        if (divisor instanceof Rational) {
+                final Rational d = (Rational) divisor;
+                if (mIsInteger && d.mIsInteger) {
+                    // (mNominator/1) / (d.mNominator/1)  <==>  mNominator / d.mNominator
+                    if (d.mNominator.equals(BigInteger.ZERO)) {
+                        throw new UndefinedOperationException("'" + this + " / 0' is undefined.");
+                    }
+                    return new Rational(mNominator, d.mNominator);
+                } else {
+                    // (mNominator/mDenominator) / (d.mNominator/d.mDenominator) = (mNominator * d.mDenominator) / (mDenominator * d.mNominator)
+                    if (d.mNominator.equals(BigInteger.ZERO)) {
+                        throw new UndefinedOperationException("'(" + this + ") / 0' is undefined.");
+                    }
+                    return new Rational(mNominator.multiply(d.mDenominator), mDenominator.multiply(d.mNominator));
+                }
+        } else if (divisor instanceof Real) {
+            return ((Real) divisor).divideFlipped(this);
+        } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
+            return Rational.ZERO;
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).quotientFlipped(this);
+        } else {
+            String msg = "Right-hand-side of '(" + this + ") / (" + divisor +
+                         ")' is not a number.";
+            throw new IncompatibleTypeException(msg);
         }
     }
 

@@ -17,22 +17,22 @@ implemented here as:
      mNeutral           mCollection
 */
 
-public class SumMembersBinary extends Expr {
+public class SumOfMembersBinary extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^sumMembersBinary";
+    private final static String FUNCTIONAL_CHARACTER = "^sumOfMembersBinary";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1800;
 
     private final Expr mNeutral;
     private final Expr mCollection;
 
-    public SumMembersBinary(final Expr neutral, final Expr collection) {
+    public SumOfMembersBinary(final Expr neutral, final Expr collection) {
         mNeutral    = neutral;
         mCollection = collection;
     }
 
     protected Value evaluate() throws SetlException {
-        return mCollection.eval().sumMembers(mNeutral.eval());
+        return mCollection.eval().sumOfMembers(mNeutral.eval());
     }
 
     /* string operations */
@@ -52,13 +52,13 @@ public class SumMembersBinary extends Expr {
         return result;
     }
 
-    public static SumMembersBinary termToExpr(final Term term) throws TermConversionException {
+    public static SumOfMembersBinary termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr neutral    = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             final Expr collection = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new SumMembersBinary(neutral, collection);
+            return new SumOfMembersBinary(neutral, collection);
         }
     }
 

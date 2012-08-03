@@ -458,7 +458,7 @@ public class Term extends IndexedCollectionValue {
         final MatchResult     result      = new MatchResult(true);
         final Iterator<Value> thisIter    = iterator();
         final Iterator<Value> otherIter   = otherTerm.iterator();
-        while (thisIter.hasNext() && otherIter.hasNext()) {
+        while (thisIter.hasNext() && otherIter.hasNext() && result.isMatch()) {
             MatchResult subResult   = thisIter.next().matchesTerm(otherIter.next());
             if (subResult.isMatch()) {
                 result.addBindings(subResult);
@@ -467,7 +467,6 @@ public class Term extends IndexedCollectionValue {
             }
         }
 
-        // all members match
         return result;
     }
 

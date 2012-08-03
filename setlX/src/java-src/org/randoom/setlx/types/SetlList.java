@@ -604,7 +604,7 @@ public class SetlList extends IndexedCollectionValue {
         final MatchResult       result      = new MatchResult(true);
         final Iterator<Value>   thisIter    = iterator();
         final Iterator<Value>   otherIter   = otherCollection.iterator();
-        while (thisIter.hasNext() && otherIter.hasNext()) {
+        while (thisIter.hasNext() && otherIter.hasNext() && result.isMatch()) {
             final MatchResult   subResult   = thisIter.next().matchesTerm(otherIter.next());
             if (subResult.isMatch()) {
                 result.addBindings(subResult);

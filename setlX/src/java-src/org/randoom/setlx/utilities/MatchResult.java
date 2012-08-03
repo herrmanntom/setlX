@@ -19,10 +19,6 @@ public class MatchResult {
         mResetBindings  = new HashMap<String, Value>();
     }
 
-    public void setMatches(final boolean matches) {
-        mMatches = matches;
-    }
-
     public boolean isMatch() {
         return mMatches;
     }
@@ -32,12 +28,17 @@ public class MatchResult {
     }
 
     public void addBinding(final String id, final Value value) {
-        mVarBindings.put(id, value);
+        Value pre = mVarBindings.get(id);
+        if (pre == null) {
+            mVarBindings.put(id, value);
+        } else if ( ! pre.equalTo(value)) {
+            mMatches = false;
+        }
     }
 
     public void addBindings(final MatchResult otherResult) {
-        if (otherResult.mMatches) {
-            mVarBindings.putAll(otherResult.mVarBindings);
+        for (final Map.Entry<String, Value> entry : otherResult.mVarBindings.entrySet()) {
+            addBinding(entry.getKey(), entry.getValue());
         }
     }
 

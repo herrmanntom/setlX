@@ -83,7 +83,7 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public SetlBoolean not() {
+    public SetlBoolean negation() {
         if (this == TRUE) {
             return FALSE;
         } else {

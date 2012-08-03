@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.2.4--- unreleased
+ + lots of refactoring
+
 ---v1.2.3--- unreleased
  + fixed matching strings using lists of variables
  + improved performance of collect

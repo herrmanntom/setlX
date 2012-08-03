@@ -96,8 +96,8 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
-    public Term not() {
-        return (    new Not(
+    public Term negation() {
+        return (    new Negation(
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm();
@@ -152,6 +152,14 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    public Term minus() {
+        return (    new Minus(
+                        TermConverter.valueToExpr(this)
+                    )
+               ).toTerm();
+    }
+
+    // viral operation
     public Term modulo(final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(this),
@@ -162,14 +170,6 @@ public class Term extends IndexedCollectionValue {
     public Term moduloFlipped(final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(modulo),
-                        TermConverter.valueToExpr(this)
-                    )
-               ).toTerm();
-    }
-
-    // viral operation
-    public Term negation() {
-        return (    new Negation(
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm();

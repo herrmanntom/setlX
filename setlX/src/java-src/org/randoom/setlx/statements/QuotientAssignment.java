@@ -22,7 +22,7 @@ implemented here as:
 
 public class QuotientAssignment extends StatementWithPrintableResult {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^divideAssignment";
+    public  final static String     FUNCTIONAL_CHARACTER    = "^quotientAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sTraceAssignments       = false;
 

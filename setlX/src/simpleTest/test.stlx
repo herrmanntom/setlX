@@ -306,15 +306,18 @@ formatedString();
 precedences := procedure() {
     testNumber += 1;
 
-    a := str(   ^conjunction(^disjunction(^disjunction(^variable("a"), ^variable("b")),
-                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b")))),
-                             ^disjunction(^disjunction(^variable("a"), ^variable("b")),
-                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b")))))
+    a := str(   ^conjunction(^disjunction(^disjunction(          ^variable("a"),            ^variable("b")   ),
+                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b"))  ) 
+                                         ),
+                             ^disjunction(^disjunction(          ^variable("a"),            ^variable("b")   ),
+                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b"))  ) 
+                                         )
+                            )
             );
     if (a == "(a || b || !a && !b) && (a || b || !a && !b)") {
         printErr("test $testNumber$ successful (precedences)");
     } else {
-        printErr("test $testNumber$ failed (precedences)");
+        printErr("test $testNumber$ failed (precedences) $a$");
     }
 };
 precedences();

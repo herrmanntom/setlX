@@ -32,7 +32,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value not() throws SetlException {
+    public Value negation() throws SetlException {
         throw new IncompatibleTypeException(
             "Operand of '!" + this + "' is not a Boolean value."
         );
@@ -176,6 +176,12 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
+    public Value minus() throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Operand '" + this + "' is not a number."
+        );
+    }
+
     public Value modulo(final Value modulo) throws SetlException {
         if (modulo instanceof Term) {
             return ((Term) modulo).moduloFlipped(this);
@@ -187,12 +193,6 @@ public abstract class Value implements Comparable<Value> {
 
     public Value moduloAssign(final Value modulo) throws SetlException {
         return modulo(modulo);
-    }
-
-    public Value negation() throws IncompatibleTypeException {
-        throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a number."
-        );
     }
 
     public Value power(final Value exponent) throws SetlException {

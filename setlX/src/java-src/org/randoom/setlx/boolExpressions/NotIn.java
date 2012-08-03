@@ -34,7 +34,7 @@ public class NotIn extends Expr {
 
     protected SetlBoolean evaluate() throws SetlException {
         // note: rhs and lhs swapped!
-        return mRhs.eval().containsMember(mLhs.eval()).not();
+        return mRhs.eval().containsMember(mLhs.eval()).negation();
     }
 
     /* string operations */

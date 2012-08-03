@@ -259,7 +259,7 @@ public class Rational extends NumberValue {
         } else if (subtrahend == Infinity.POSITIVE ||
                    subtrahend == Infinity.NEGATIVE)
         {
-            return (Infinity) subtrahend.negation();
+            return (Infinity) subtrahend.minus();
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(this);
         } else {
@@ -400,6 +400,10 @@ public class Rational extends NumberValue {
         }
     }
 
+    public Rational minus() {
+        return new Rational(mNominator.negate(), mDenominator);
+    }
+
     // The mathematical specification of the modulo function is:
     //     a % b = a - floor(a/b) * b
     public Value modulo(final Value modulo) throws IncompatibleTypeException, SetlException {
@@ -418,10 +422,6 @@ public class Rational extends NumberValue {
                 "Right-hand-side of '" + this + " % " + modulo + "' is not a rational number."
             );
         }
-    }
-
-    public Rational negation() {
-        return new Rational(mNominator.negate(), mDenominator);
     }
 
     protected Rational power(final int exponent) throws NumberToLargeException {

@@ -53,7 +53,7 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public Infinity negate() {
+    public Infinity negation() {
         if (this == POSITIVE) {
             return NEGATIVE;
         } else { // this == NEGATIVE
@@ -77,10 +77,10 @@ public class Infinity extends NumberValue {
         if (multiplier instanceof NumberValue) {
             if (this == multiplier) {
                 return POSITIVE;
-            } else if (this == multiplier.negate()) {
+            } else if (this == multiplier.negation()) {
                 return NEGATIVE;
             } else if (multiplier.compareTo(Rational.ZERO) < 0) {
-                return this.negate();
+                return this.negation();
             } else if (multiplier.equalTo(Rational.ZERO)) {
                 throw new UndefinedOperationException(
                     "'" + this + " * 0' is undefined."
@@ -104,7 +104,7 @@ public class Infinity extends NumberValue {
             );
         } else if (divisor instanceof NumberValue) {
             if (divisor.compareTo(Rational.ZERO) < 0) {
-                return this.negate();
+                return this.negation();
             } else if (divisor.equalTo(Rational.ZERO)) {
                 throw new UndefinedOperationException(
                     "'" + this + " / 0' is undefined."
@@ -123,7 +123,7 @@ public class Infinity extends NumberValue {
 
     public Value sum(final Value summand) throws SetlException {
         if (summand instanceof NumberValue) {
-            if (this == summand.negate()) {
+            if (this == summand.negation()) {
                 throw new UndefinedOperationException(
                     "'" + this + " + " + summand + "' is undefined."
                 );

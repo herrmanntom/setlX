@@ -11,7 +11,7 @@ public abstract class NumberValue extends Value {
 
     public abstract Value       difference(final Value subtrahend) throws SetlException;
 
-    public abstract NumberValue negate() throws IncompatibleTypeException;
+    public abstract NumberValue negation() throws IncompatibleTypeException;
 
     public          Value       power(final Value exponent) throws SetlException {
         if (exponent.isInteger() == SetlBoolean.TRUE && ((Rational) exponent).intConvertable()) {

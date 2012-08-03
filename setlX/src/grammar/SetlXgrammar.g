@@ -388,7 +388,7 @@ prefixOperation [boolean enableIgnore, boolean quoted] returns [Expr po]
     | '+/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new SumOfMembers    ($po2.po); }
     | '*/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new ProductOfMembers($po2.po); }
     | '#'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Cardinality     ($po2.po); }
-    | '-'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Negate          ($po2.po); }
+    | '-'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Negation        ($po2.po); }
     | '@'  po2 = prefixOperation[$enableIgnore, true]    { po = new Quote           ($po2.po); }
     ;
 
@@ -400,7 +400,7 @@ power [boolean enableIgnore, boolean quoted] returns [Expr pow]
     ;
 
 factor [boolean enableIgnore, boolean quoted] returns [Expr f]
-    : '!' f2 = factor[$enableIgnore, $quoted] { f = new Negation($f2.f);         }
+    : '!' f2 = factor[$enableIgnore, $quoted] { f = new Not($f2.f);              }
     | term                                    { f = $term.t;                     }
     | 'forall' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
       { f = new Forall($iteratorChain.ic, $condition.cnd); }

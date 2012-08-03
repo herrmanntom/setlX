@@ -49,14 +49,14 @@ public class Term extends IndexedCollectionValue {
     /* Boolean operations */
 
     // viral operation
-    public Term and(final Expr other) throws SetlException {
+    public Term conjunction(final Expr other) throws SetlException {
         return (    new Conjunction(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(other.eval())
                     )
                ).toTerm();
     }
-    public Term andFlipped(final Value other) {
+    public Term conjunctionFlipped(final Value other) {
         return (    new Conjunction(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this)
@@ -65,14 +65,29 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
-    public Term implies(final Expr other) throws SetlException {
+    public Term disjunction(final Expr other) throws SetlException {
+        return (    new Disjunction(
+                        TermConverter.valueToExpr(this),
+                        TermConverter.valueToExpr(other.eval())
+                    )
+               ).toTerm();
+    }
+    public Term disjunctionFlipped(final Value other) {
+        return (    new Disjunction(
+                        TermConverter.valueToExpr(other),
+                        TermConverter.valueToExpr(this))
+               ).toTerm();
+    }
+
+    // viral operation
+    public Term implication(final Expr other) throws SetlException {
         return (    new Implication(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(other.eval())
                     )
                ).toTerm();
     }
-    public Term impliesFlipped(final Value other) {
+    public Term implicationFlipped(final Value other) {
         return (    new Implication(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this)
@@ -82,24 +97,9 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     public Term not() {
-        return (    new Negation(
+        return (    new Not(
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
-    }
-
-    // viral operation
-    public Term or(final Expr other) throws SetlException {
-        return (    new Disjunction(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other.eval())
-                    )
-               ).toTerm();
-    }
-    public Term orFlipped(final Value other) {
-        return (    new Disjunction(
-                        TermConverter.valueToExpr(other),
-                        TermConverter.valueToExpr(this))
                ).toTerm();
     }
 
@@ -152,8 +152,8 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
-    public Term negate() {
-        return (    new Negate(
+    public Term negation() {
+        return (    new Negation(
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm();

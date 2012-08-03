@@ -114,7 +114,7 @@ public class Real extends NumberValue {
     public Value difference(final Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof NumberValue) {
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
-                return (Infinity) subtrahend.negate();
+                return (Infinity) subtrahend.negation();
             }
             BigDecimal right = null;
             if (subtrahend instanceof Real) {
@@ -149,7 +149,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Real negate() {
+    public Real negation() {
         return new Real(mReal.negate(mathContext));
     }
 

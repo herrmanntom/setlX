@@ -33,7 +33,7 @@ public class Implication extends Expr {
     }
 
     protected Value evaluate() throws SetlException {
-        return mLhs.eval().implies(mRhs);
+        return mLhs.eval().implication(mRhs);
     }
 
     /* string operations */

@@ -33,7 +33,7 @@ public class Disjunction extends Expr {
     }
 
     protected Value evaluate() throws SetlException {
-        return mLhs.eval().or(mRhs);
+        return mLhs.eval().disjunction(mRhs);
     }
 
     /* string operations */

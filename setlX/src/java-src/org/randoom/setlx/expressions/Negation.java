@@ -1,29 +1,28 @@
-package org.randoom.setlx.boolExpressions;
+package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;
 
 /*
 grammar rule:
-boolFactor
+prefixOperation
     : [...]
-    | '!' boolFactor
+    | '-' factor
     ;
 
 implemented here as:
-          ==========
-            mExpr
+          ======
+          mExpr
 */
 
 public class Negation extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^negation";
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 2200;
+    private final static int    PRECEDENCE           = 1900;
 
     private final Expr mExpr;
 
@@ -32,13 +31,13 @@ public class Negation extends Expr {
     }
 
     protected Value evaluate() throws SetlException {
-        return mExpr.eval().not();
+        return mExpr.eval().negation();
     }
 
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {
-        sb.append("!");
+        sb.append("-");
         mExpr.appendString(sb, tabs);
     }
 

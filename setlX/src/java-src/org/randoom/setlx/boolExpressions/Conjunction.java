@@ -33,7 +33,7 @@ public class Conjunction extends Expr {
     }
 
     protected Value evaluate() throws SetlException {
-        return mLhs.eval().and(mRhs);
+        return mLhs.eval().conjunction(mRhs);
     }
 
     /* string operations */

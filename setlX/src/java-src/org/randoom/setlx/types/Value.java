@@ -14,13 +14,19 @@ public abstract class Value implements Comparable<Value> {
 
     /* Boolean operations */
 
-    public Value and(final Expr other) throws SetlException {
+    public Value conjunction(final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " && " + other + "' is not a Boolean value."
         );
     }
 
-    public Value implies(final Expr other) throws SetlException {
+    public Value disjunction(final Expr other) throws SetlException {
+        throw new IncompatibleTypeException(
+            "Left-hand-side of '" + this + " || " + other + "' is not a Boolean value."
+        );
+    }
+
+    public Value implication(final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " => " + other + "' is not a Boolean value."
         );
@@ -29,12 +35,6 @@ public abstract class Value implements Comparable<Value> {
     public Value not() throws SetlException {
         throw new IncompatibleTypeException(
             "Operand of '!" + this + "' is not a Boolean value."
-        );
-    }
-
-    public Value or(final Expr other) throws SetlException {
-        throw new IncompatibleTypeException(
-            "Left-hand-side of '" + this + " || " + other + "' is not a Boolean value."
         );
     }
 
@@ -176,7 +176,7 @@ public abstract class Value implements Comparable<Value> {
         return modulo(modulo);
     }
 
-    public Value negate() throws IncompatibleTypeException {
+    public Value negation() throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a number."
         );

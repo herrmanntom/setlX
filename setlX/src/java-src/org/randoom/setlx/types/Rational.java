@@ -259,7 +259,7 @@ public class Rational extends NumberValue {
         } else if (subtrahend == Infinity.POSITIVE ||
                    subtrahend == Infinity.NEGATIVE)
         {
-            return (Infinity) subtrahend.negate();
+            return (Infinity) subtrahend.negation();
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(this);
         } else {
@@ -408,7 +408,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Rational negate() {
+    public Rational negation() {
         return new Rational(mNominator.negate(), mDenominator);
     }
 

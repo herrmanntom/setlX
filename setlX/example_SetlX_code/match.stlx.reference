@@ -19,3 +19,6 @@ match: fnc = sqrt, u = a ** 2, v = 2
 ^variable("u")
 match: z = u
 
+^sum(1, ^product(2, 3))
+match (b): j = 1, k = 2, l = 3
+

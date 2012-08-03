@@ -46,7 +46,7 @@ list    := [1, "foo", 7];
 print(canonical(list));
 
 match (list) {
-    case [i, "bar", i] : // MUST NOT match
+    case [i, "bar", j] : // MUST NOT match
         print("match: i = $i$, j = $j$");
     default :
         print("failed to match");
@@ -92,6 +92,24 @@ print(canonical(exprTerm));
 match (exprTerm) {
     case ^variable(z) :
         print("match: z = $z$");
+    default :
+        print("failed to match");
+}
+
+print();
+
+// it is also possible to use condition in match!
+
+exprString := "1 + 2 * 3";
+exprTerm   := parse(exprString);
+
+print(canonical(exprTerm));
+
+match (exprTerm) {
+    case j + k * l | j == l : // MUST NOT match, because 1 != 3
+        print("match (a): j = $j$, k = $k$, l = $l$");
+    case j + k * l | j + k == l:
+        print("match (b): j = $j$, k = $k$, l = $l$");
     default :
         print("failed to match");
 }

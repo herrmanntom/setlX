@@ -1,6 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v1.2.4--- unreleased
+ + added optional conditions to match branches
  + lots of refactoring
 
 ---v1.2.3--- unreleased

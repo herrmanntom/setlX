@@ -16,7 +16,7 @@ statement
     : 'var' listOfVariables ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
-    | 'match' '(' expr ')' '{' ('case' exprList ':' block | 'case' '[' listOfVariables '|' variable ']' ':' block | 'case' '{' listOfVariables '|' variable '}' ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | 'case' '[' listOfVariables '|' variable ']' ('|' condition)? ':' block | 'case' '{' listOfVariables '|' variable '}' ('|' condition)? ':' block)* ('default' ':' block)? '}'
     | 'for' '(' iteratorChain ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'try' '{' block '}' ('catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')* ('catch' '(' variable ')' '{' block '}')?

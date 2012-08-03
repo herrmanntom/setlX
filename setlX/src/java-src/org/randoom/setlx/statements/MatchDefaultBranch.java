@@ -34,6 +34,10 @@ public class MatchDefaultBranch extends MatchAbstractBranch {
         return new MatchResult(true);
     }
 
+    public boolean evalConditionToBool() throws SetlException {
+        return true;
+    }
+
     public Value execute() throws SetlException {
         return mStatements.execute();
     }

@@ -17,12 +17,12 @@ import java.util.List;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block | 'case' '[' listOfVariables '|' variable ']' ':' block | 'case' '{' listOfVariables '|' variable '}' ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | 'case' '[' listOfVariables '|' variable ']' ('|' condition)? ':' block | 'case' '{' listOfVariables '|' variable '}' ('|' condition)? ':' block)* ('default' ':' block)? '}'
     ;
 
 implemented with different classes which inherit from BranchMatchAbstract:
-                  ====          =========================      =====================================================   =====================================================    ===================
-                  mExpr              MatchCaseBranch                         MatchSplitListBranch                                     MatchSplitSetBranch                       MatchDefaultBranch
+                  ====          ==========================================   ======================================================================   ======================================================================    ===================
+                  mExpr                      MatchCaseBranch                                          MatchSplitListBranch                                                     MatchSplitSetBranch                              MatchDefaultBranch
 */
 
 public class Match extends Statement {
@@ -44,8 +44,12 @@ public class Match extends Statement {
             if (result.isMatch()) {
                 // put all matching variables into current scope
                 result.setAllBindings();
-                // execute statements
-                return br.execute();
+                if (br.evalConditionToBool()) {
+                    // execute statements
+                    return br.execute();
+                } else {
+                    result.restoreAllBindings();
+                }
             }
         }
         return null;

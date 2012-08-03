@@ -1,9 +1,9 @@
 empty list/string
-lists/strings only two: 1, 5
-lists/strings first: 1, 2, 3 rest: [4, 5, 6, 7, 8, 9, 10]
+lists only two: 1, 5
+lists first: 1, 2, 3 rest: [4, 5, 6, 7, 8, 9, 10]
 empty list/string
-lists/strings only two: a, b
-lists/strings first: f, o, o rest: bar
+strings only two: a, b
+strings first: f, o, o rest: bar
 empty set
 sets only two: a, [1, 2, 3, 4, 5]
 sets first: a rest: {}

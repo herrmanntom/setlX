@@ -126,6 +126,7 @@ statement returns [Statement stmnt]
         List<SwitchAbstractBranch>      caseList   = new ArrayList<SwitchAbstractBranch>();
         List<MatchAbstractBranch>       matchList  = new ArrayList<MatchAbstractBranch>();
         List<TryCatchAbstractBranch>    tryList    = new ArrayList<TryCatchAbstractBranch>();
+        Condition                       condition  = null;
     }
     : 'var' listOfVariables ';'                                      { stmnt = new GlobalDefinition($listOfVariables.lov);           }
     | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));               }
@@ -146,9 +147,12 @@ statement returns [Statement stmnt]
       '}' { stmnt = new Switch(caseList); }
     | 'match' '(' expr[false] ')' '{'
       (
-         'case'  exprList[true]                                ':' b1 = block  { matchList.add(new MatchCaseBranch($exprList.exprs, $b1.blk));     }
-       | 'case' '[' l1 = listOfVariables '|' v1 = variable ']' ':' b2 = block  { matchList.add(new MatchSplitListBranch($l1.lov, $v1.v, $b2.blk)); }
-       | 'case' '{' l2 = listOfVariables '|' v2 = variable '}' ':' b3 = block  { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, $b3.blk)); }
+         'case'  exprList[true]                                ('|' c1 = condition[false] {condition = $c1.cnd;})? ':' b1 = block
+             { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk));     condition = null; }
+       | 'case' '[' l1 = listOfVariables '|' v1 = variable ']' ('|' c2 = condition[false] {condition = $c2.cnd;})? ':' b2 = block
+             { matchList.add(new MatchSplitListBranch($l1.lov, $v1.v, condition, $b2.blk)); condition = null; }
+       | 'case' '{' l2 = listOfVariables '|' v2 = variable '}' ('|' c3 = condition[false] {condition = $c3.cnd;})? ':' b3 = block
+             { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, condition, $b3.blk)); condition = null; }
       )*
       (
         'default'             ':' b4 = block                         { matchList.add(new MatchDefaultBranch($b4.blk));               }

@@ -1,14 +1,19 @@
 matcher := procedure(t) {
     match(t) {
-        case []:
+        case []: // note that strings are a special kind of list
             print("empty list/string");
         case {}:
             print("empty set");
 
-        case [x,y]:
-            print("lists/strings only two: $x$, $y$");
-        case [x,y,z | r]: // but the rest can be empty
-            print("lists/strings first: $x$, $y$, $z$ rest: $r$");
+        case [x,y] | isList(t):
+            print("lists only two: $x$, $y$");
+        case [x,y,z | r] | isList(t):
+            print("lists first: $x$, $y$, $z$ rest: $r$");
+
+        case [x,y] | isString(t):
+            print("strings only two: $x$, $y$");
+        case [x,y,z | r] | isString(t):
+            print("strings first: $x$, $y$, $z$ rest: $r$");
 
         case {x,y}:
             print("sets only two: $x$, $y$");

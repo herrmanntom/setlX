@@ -6,8 +6,10 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
@@ -20,12 +22,12 @@ import java.util.List;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' anyExpr ')' '{' ('case' exprList ':' block | 'case' '[' listOfVariables '|' variable ']' ':' block | 'case' '{' listOfVariables '|' variable '}' ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('case' '{' listOfVariables '|' variable '}' ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
     ;
 
 implemented here as:
-                                                                          ===============     ========         =====
-                                                                               mVars           mRest        mStatements
+                                           ===============     ========          =========       =====
+                                                mVars           mRest            mCondition   mStatements
 */
 
 public class MatchSplitSetBranch extends MatchAbstractBranch {
@@ -36,9 +38,10 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
     private final List<Value>    mVarTerms;   // terms of variables which are to be extracted
     private final Variable       mRest;       // variable for the rest of the list
     private final Value          mRestTerm;   // term of variable for the rest of the list
+    private final Condition      mCondition;  // optional condition to confirm match
     private final Block          mStatements; // block to execute after match
 
-    public MatchSplitSetBranch(final List<Variable> vars, final Variable rest, final Block statements){
+    public MatchSplitSetBranch(final List<Variable> vars, final Variable rest, final Condition condition, final Block statements){
         mVars       = vars;
         mVarTerms   = new ArrayList<Value>(vars.size());
         for (final Variable var : vars) {
@@ -46,6 +49,7 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
         }
         mRest       = rest;
         mRestTerm   = rest.toTerm();
+        mCondition  = condition;
         mStatements = statements;
     }
 
@@ -78,6 +82,14 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
         }
     }
 
+    public boolean evalConditionToBool() throws SetlException {
+        if (mCondition != null) {
+            return mCondition.evalToBool();
+        } else {
+            return true;
+        }
+    }
+
     public Value execute() throws SetlException {
         return mStatements.execute();
     }
@@ -102,7 +114,14 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
 
         sb.append(" | ");
         mRest.appendString(sb, 0);
-        sb.append("} :");
+        sb.append("} ");
+
+        if (mCondition != null) {
+            sb.append("| ");
+            mCondition.appendString(sb, tabs);
+        }
+
+        sb.append(":");
         sb.append(Environment.getEndl());
         mStatements.appendString(sb, tabs + 1);
         sb.append(Environment.getEndl());
@@ -111,7 +130,7 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
     /* term operations */
 
     public Term toTerm() {
-        final Term     result  = new Term(FUNCTIONAL_CHARACTER, 3);
+        final Term     result  = new Term(FUNCTIONAL_CHARACTER, 4);
 
         final SetlList varList = new SetlList(mVars.size());
         for (final Value varTerm: mVarTerms) {
@@ -120,13 +139,20 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
         result.addMember(varList);
 
         result.addMember(mRest.toTerm());
+
+        if (mCondition != null) {
+            result.addMember(mCondition.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
+
         result.addMember(mStatements.toTerm());
 
         return result;
     }
 
     public static MatchSplitListBranch termToBranch(final Term term) throws TermConversionException {
-        if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
+        if (term.size() != 4 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
@@ -139,14 +165,18 @@ public class MatchSplitSetBranch extends MatchAbstractBranch {
                         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                     }
                 }
-                      Variable        rest    = null;
+                Variable rest = null;
                 if (term.getMember(2) instanceof Term) {
                     rest = Variable.termToExpr((Term) term.getMember(2));
                 } else {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
-                final Block           block   = TermConverter.valueToBlock(term.lastMember());
-                return new MatchSplitListBranch(vars, rest, block);
+                Condition condition = null;
+                if (! term.getMember(3).equals(new SetlString("nil"))) {
+                    condition = TermConverter.valueToCondition(term.getMember(3));
+                }
+                final Block block = TermConverter.valueToBlock(term.lastMember());
+                return new MatchSplitListBranch(vars, rest, condition, block);
             } catch (SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }

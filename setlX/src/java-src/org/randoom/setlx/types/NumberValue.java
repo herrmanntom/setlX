@@ -8,8 +8,12 @@ public abstract class NumberValue extends Value {
     /* arithmetic operations */
 
     public abstract NumberValue absoluteValue();
+    
+    public abstract NumberValue ceil();
 
     public abstract Value       difference(final Value subtrahend) throws SetlException;
+
+    public abstract NumberValue floor();
 
     public abstract NumberValue negation() throws IncompatibleTypeException;
 
@@ -40,6 +44,8 @@ public abstract class NumberValue extends Value {
     public    abstract Value       product(final Value multiplier) throws SetlException;
 
     public    abstract Value       quotient(final Value divisor) throws SetlException;
+
+    public    abstract NumberValue round() throws SetlException;
 
     public    abstract Value       sum(final Value summand) throws SetlException;
 

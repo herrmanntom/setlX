@@ -147,6 +147,19 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
+    public Value integerDivision(final Value divisor) throws SetlException {
+        if (divisor instanceof Term) {
+            return ((Term) divisor).integerDivisionFlipped(this);
+        }
+        throw new UndefinedOperationException(
+            "'" + this + " \\ " + divisor + "' is undefined."
+        );
+    }
+
+    public Value integerDivisionAssign(final Value divisor) throws SetlException {
+        return integerDivision(divisor);
+    }
+
     public final Value maximum(final Value other) throws SetlException {
         if(other != Om.OM && this.isLessThan(other) == SetlBoolean.TRUE){
             return other.clone();

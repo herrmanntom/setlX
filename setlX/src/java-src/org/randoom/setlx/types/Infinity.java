@@ -36,6 +36,10 @@ public class Infinity extends NumberValue {
         return POSITIVE;
     }
 
+    public Infinity ceil() {
+        return this;
+    }
+
     public Value difference(final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
             if (this == subtrahend) {
@@ -51,6 +55,10 @@ public class Infinity extends NumberValue {
                 "Right-hand-side of '" + this + " - " + subtrahend + "' is not a number."
             );
         }
+    }
+
+    public Infinity floor() {
+        return this;
     }
 
     public Infinity negation() {
@@ -119,6 +127,10 @@ public class Infinity extends NumberValue {
                 "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
             );
         }
+    }
+
+    public Infinity round() {
+        return this;
     }
 
     public Value sum(final Value summand) throws SetlException {

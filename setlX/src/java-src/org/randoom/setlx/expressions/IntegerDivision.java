@@ -32,7 +32,7 @@ public class IntegerDivision extends Expr {
     }
 
     protected Value evaluate() throws SetlException {
-        return mLhs.eval().quotient(mRhs.eval()).floor();
+        return mLhs.eval().integerDivision(mRhs.eval());
     }
 
     /* string operations */

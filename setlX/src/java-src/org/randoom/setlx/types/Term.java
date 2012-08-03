@@ -136,6 +136,22 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    public Term integerDivision(final Value divisor) {
+        return (    new IntegerDivision(
+                        TermConverter.valueToExpr(this),
+                        TermConverter.valueToExpr(divisor)
+                    )
+               ).toTerm();
+    }
+    public Term integerDivisionFlipped(final Value divisor) {
+        return (    new IntegerDivision(
+                        TermConverter.valueToExpr(divisor),
+                        TermConverter.valueToExpr(this)
+                    )
+               ).toTerm();
+    }
+
+    // viral operation
     public Term modulo(final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(this),

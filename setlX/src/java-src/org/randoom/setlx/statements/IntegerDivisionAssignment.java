@@ -44,7 +44,7 @@ public class IntegerDivisionAssignment extends StatementWithPrintableResult {
     }
 
     protected Value exec() throws SetlException {
-        final Value assigned = mLhs.eval().quotientAssign(mRhs.eval().clone()).floor();
+        final Value assigned = mLhs.eval().integerDivisionAssign(mRhs.eval().clone());
         mLhs.assignUncloned(assigned);
 
         if (sTraceAssignments) {

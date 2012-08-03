@@ -149,6 +149,18 @@ public class Real extends NumberValue {
         }
     }
 
+    public Value integerDivision(final Value divisor) throws SetlException {
+        if (divisor instanceof NumberValue) {
+            return this.quotient(divisor).floor();
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).integerDivisionFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " \\ " + divisor + "' is not a number."
+            );
+        }
+    }
+
     public Real negation() {
         return new Real(mReal.negate(mathContext));
     }

@@ -388,6 +388,18 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.divide(mDenominator));
     }
 
+    public Value integerDivision(final Value divisor) throws SetlException {
+        if (divisor instanceof NumberValue) {
+            return this.quotient(divisor).floor();
+        } else if (divisor instanceof Term) {
+            return ((Term) divisor).integerDivisionFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " \\ " + divisor + "' is not a number."
+            );
+        }
+    }
+
     // The mathematical specification of the modulo function is:
     //     a % b = a - floor(a/b) * b
     public Value modulo(final Value modulo) throws IncompatibleTypeException, SetlException {
@@ -451,20 +463,20 @@ public class Rational extends NumberValue {
 
     public Value quotient(final Value divisor) throws SetlException {
         if (divisor instanceof Rational) {
-                final Rational d = (Rational) divisor;
-                if (mIsInteger && d.mIsInteger) {
-                    // (mNominator/1) / (d.mNominator/1)  <==>  mNominator / d.mNominator
-                    if (d.mNominator.equals(BigInteger.ZERO)) {
-                        throw new UndefinedOperationException("'" + this + " / 0' is undefined.");
-                    }
-                    return new Rational(mNominator, d.mNominator);
-                } else {
-                    // (mNominator/mDenominator) / (d.mNominator/d.mDenominator) = (mNominator * d.mDenominator) / (mDenominator * d.mNominator)
-                    if (d.mNominator.equals(BigInteger.ZERO)) {
-                        throw new UndefinedOperationException("'(" + this + ") / 0' is undefined.");
-                    }
-                    return new Rational(mNominator.multiply(d.mDenominator), mDenominator.multiply(d.mNominator));
+            final Rational d = (Rational) divisor;
+            if (mIsInteger && d.mIsInteger) {
+                // (mNominator/1) / (d.mNominator/1)  <==>  mNominator / d.mNominator
+                if (d.mNominator.equals(BigInteger.ZERO)) {
+                    throw new UndefinedOperationException("'" + this + " / 0' is undefined.");
                 }
+                return new Rational(mNominator, d.mNominator);
+            } else {
+                // (mNominator/mDenominator) / (d.mNominator/d.mDenominator) = (mNominator * d.mDenominator) / (mDenominator * d.mNominator)
+                if (d.mNominator.equals(BigInteger.ZERO)) {
+                    throw new UndefinedOperationException("'(" + this + ") / 0' is undefined.");
+                }
+                return new Rational(mNominator.multiply(d.mDenominator), mDenominator.multiply(d.mNominator));
+            }
         } else if (divisor instanceof Real) {
             return ((Real) divisor).divideFlipped(this);
         } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
@@ -472,9 +484,9 @@ public class Rational extends NumberValue {
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(this);
         } else {
-            String msg = "Right-hand-side of '(" + this + ") / (" + divisor +
-                         ")' is not a number.";
-            throw new IncompatibleTypeException(msg);
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '(" + this + ") / (" + divisor + ")' is not a number."
+            );
         }
     }
 

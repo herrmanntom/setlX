@@ -426,38 +426,13 @@ public class Rational extends NumberValue {
                 return new Rational(mNominator.mod(b.mNominator));
             } else {
                 final Rational ab = (Rational) this.divide(b);
-                return this.difference(ab.floor().multiply(b));
+                return this.difference(ab.floor().product(b));
             }
         } else if (modulo instanceof Term) {
             return ((Term) modulo).moduloFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " % " + modulo + "' is not a rational number."
-            );
-        }
-    }
-
-    public Value multiply(final Value multiplier) throws SetlException {
-        if (multiplier instanceof Rational) {
-            final Rational r = (Rational) multiplier;
-            if (mIsInteger && r.mIsInteger) {
-                // mNominator/1 * r.mNominator/1  <==>  mNominator * r.mNominator
-                return new Rational(mNominator.multiply(r.mNominator));
-            } else {
-                // mNominator/mDenominator * r.mNominator/r.mDenominator = (mNominator * r.mNominator) / (mDenominator * r.mDenominator)
-                return new Rational(mNominator.multiply(r.mNominator), mDenominator.multiply(r.mDenominator));
-            }
-        } else if (multiplier instanceof Real       ||
-                   multiplier instanceof SetlString ||
-                   multiplier == Infinity.POSITIVE  ||
-                   multiplier == Infinity.NEGATIVE)
-        {
-            return multiplier.multiply(this);
-        } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
-        } else {
-            throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number or string."
             );
         }
     }
@@ -476,6 +451,31 @@ public class Rational extends NumberValue {
 
     protected NumberValue power(final double exponent) throws SetlException {
         return toReal().power(exponent);
+    }
+
+    public Value product(final Value multiplier) throws SetlException {
+        if (multiplier instanceof Rational) {
+            final Rational r = (Rational) multiplier;
+            if (mIsInteger && r.mIsInteger) {
+                // mNominator/1 * r.mNominator/1  <==>  mNominator * r.mNominator
+                return new Rational(mNominator.multiply(r.mNominator));
+            } else {
+                // mNominator/mDenominator * r.mNominator/r.mDenominator = (mNominator * r.mNominator) / (mDenominator * r.mDenominator)
+                return new Rational(mNominator.multiply(r.mNominator), mDenominator.multiply(r.mDenominator));
+            }
+        } else if (multiplier instanceof Real       ||
+                   multiplier instanceof SetlString ||
+                   multiplier == Infinity.POSITIVE  ||
+                   multiplier == Infinity.NEGATIVE)
+        {
+            return multiplier.product(this);
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).productFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number or string."
+            );
+        }
     }
 
     public Rational rnd() throws IncompatibleTypeException {

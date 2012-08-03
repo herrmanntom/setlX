@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.VariableIgnore;
 import org.randoom.setlx.types.CollectionValue;
-import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 

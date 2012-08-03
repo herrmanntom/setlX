@@ -27,7 +27,7 @@ public class PD_random extends PreDefinedFunction {
             if (arg.equalTo(Rational.ZERO)) {
                 return new Real(0.0);
             } else {
-                return arg.multiply(random);
+                return arg.product(random);
             }
         } else {
             return random;

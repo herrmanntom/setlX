@@ -11,7 +11,7 @@ import org.randoom.setlx.statements.DivideAssignment;
 import org.randoom.setlx.statements.For;
 import org.randoom.setlx.statements.IntegerDivisionAssignment;
 import org.randoom.setlx.statements.ModuloAssignment;
-import org.randoom.setlx.statements.MultiplyAssignment;
+import org.randoom.setlx.statements.ProductAssignment;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.statements.SumAssignment;
 import org.randoom.setlx.statements.While;
@@ -213,7 +213,7 @@ public class Environment {
         DivideAssignment.sTraceAssignments          = traceAssignments;
         IntegerDivisionAssignment.sTraceAssignments = traceAssignments;
         ModuloAssignment.sTraceAssignments          = traceAssignments;
-        MultiplyAssignment.sTraceAssignments        = traceAssignments;
+        ProductAssignment.sTraceAssignments         = traceAssignments;
         SumAssignment.sTraceAssignments             = traceAssignments;
 
         Iterator.sTraceAssignments                  = traceAssignments;

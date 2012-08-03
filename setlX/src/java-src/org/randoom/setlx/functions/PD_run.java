@@ -7,7 +7,6 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Om;
 
 import java.util.List;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 

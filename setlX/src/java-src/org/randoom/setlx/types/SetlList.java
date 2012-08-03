@@ -106,7 +106,7 @@ public class SetlList extends IndexedCollectionValue {
 
     /* arithmetic operations */
 
-    public Value multiply(final Value multiplier) throws SetlException {
+    public Value product(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int      m      = ((Rational) multiplier).intValue();
             if (m < 0) {
@@ -122,7 +122,7 @@ public class SetlList extends IndexedCollectionValue {
             }
             return result;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
+            return ((Term) multiplier).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "List multiplier '" + multiplier + "' is not an integer."
@@ -130,7 +130,7 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
-    public Value multiplyAssign(final Value multiplier) throws SetlException {
+    public Value productAssign(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int m = ((Rational) multiplier).intValue();
             if (m < 0) {
@@ -149,7 +149,7 @@ public class SetlList extends IndexedCollectionValue {
             }
             return this;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
+            return ((Term) multiplier).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "List multiplier '" + multiplier + "' is not an integer."

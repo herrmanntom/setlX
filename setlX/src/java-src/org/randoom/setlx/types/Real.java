@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.utilities.Environment;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -179,28 +178,6 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value multiply(final Value multiplier) throws IncompatibleTypeException {
-        if (multiplier instanceof NumberValue) {
-            if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
-                return (Infinity) multiplier;
-            }
-            BigDecimal right = null;
-            if (multiplier instanceof Real) {
-                right = ((Real) multiplier).mReal;
-            } else {
-                Rational m = (Rational) multiplier;
-                right = m.toReal().mReal;
-            }
-            return new Real(mReal.multiply(right, mathContext));
-        } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
-        } else {
-            throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
-            );
-        }
-    }
-
     public Real negate() {
         return new Real(mReal.negate(mathContext));
     }
@@ -225,6 +202,28 @@ public class Real extends NumberValue {
             return Infinity.NEGATIVE;
         }
         return new Real(r);
+    }
+
+    public Value product(final Value multiplier) throws IncompatibleTypeException {
+        if (multiplier instanceof NumberValue) {
+            if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
+                return (Infinity) multiplier;
+            }
+            BigDecimal right = null;
+            if (multiplier instanceof Real) {
+                right = ((Real) multiplier).mReal;
+            } else {
+                Rational m = (Rational) multiplier;
+                right = m.toReal().mReal;
+            }
+            return new Real(mReal.multiply(right, mathContext));
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).productFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
+            );
+        }
     }
 
     public Rational round() {

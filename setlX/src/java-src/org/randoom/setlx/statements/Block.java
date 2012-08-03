@@ -83,8 +83,8 @@ public class Block extends Statement {
                 ((IntegerDivisionAssignment) stmnt).setPrintAfterEval();
             } else if (stmnt instanceof ModuloAssignment) {
                 ((ModuloAssignment) stmnt).setPrintAfterEval();
-            } else if (stmnt instanceof MultiplyAssignment) {
-                ((MultiplyAssignment) stmnt).setPrintAfterEval();
+            } else if (stmnt instanceof ProductAssignment) {
+                ((ProductAssignment) stmnt).setPrintAfterEval();
             } else if (stmnt instanceof SumAssignment) {
                 ((SumAssignment) stmnt).setPrintAfterEval();
             }

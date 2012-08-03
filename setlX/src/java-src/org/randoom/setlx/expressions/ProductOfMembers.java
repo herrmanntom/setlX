@@ -17,20 +17,20 @@ import org.randoom.setlx.utilities.TermConverter;
 //             ======
 //             mExpr
 
-public class MultiplyMembers extends Expr {
+public class ProductOfMembers extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^multiplyMembers";
+    private final static String FUNCTIONAL_CHARACTER = "^productOfMembers";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
     private final Expr mExpr;
 
-    public MultiplyMembers(final Expr expr) {
+    public ProductOfMembers(final Expr expr) {
         mExpr = expr;
     }
 
     protected Value evaluate() throws SetlException {
-        return mExpr.eval().multiplyMembers(Om.OM);
+        return mExpr.eval().productOfMembers(Om.OM);
     }
 
     /* string operations */
@@ -48,12 +48,12 @@ public class MultiplyMembers extends Expr {
         return result;
     }
 
-    public static MultiplyMembers termToExpr(final Term term) throws TermConversionException {
+    public static ProductOfMembers termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            return new MultiplyMembers(expr);
+            return new ProductOfMembers(expr);
         }
     }
 

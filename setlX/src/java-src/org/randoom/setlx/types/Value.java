@@ -189,19 +189,6 @@ public abstract class Value implements Comparable<Value> {
         return modulo(modulo);
     }
 
-    public Value multiply(final Value multiplier) throws SetlException {
-        if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
-        }
-        throw new UndefinedOperationException(
-            "'" + this + " * " + multiplier + "' is undefined."
-        );
-    }
-
-    public Value multiplyAssign(final Value multiplier) throws SetlException {
-        return multiply(multiplier);
-    }
-
     public Value negate() throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a number."
@@ -215,6 +202,19 @@ public abstract class Value implements Comparable<Value> {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " ** " + exponent + "' is not a number."
         );
+    }
+
+    public Value product(final Value multiplier) throws SetlException {
+        if (multiplier instanceof Term) {
+            return ((Term) multiplier).productFlipped(this);
+        }
+        throw new UndefinedOperationException(
+            "'" + this + " * " + multiplier + "' is undefined."
+        );
+    }
+
+    public Value productAssign(final Value multiplier) throws SetlException {
+        return product(multiplier);
     }
 
     public Value rnd() throws SetlException {
@@ -365,7 +365,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value multiplyMembers(final Value neutral) throws SetlException {
+    public Value productOfMembers(final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '*/ " + this + "' is not a collection value."
         );

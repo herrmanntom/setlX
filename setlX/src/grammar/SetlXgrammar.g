@@ -212,7 +212,7 @@ assignmentOther returns [Statement assign]
       (
          '+='  e = expr[false] { $assign = new SumAssignment            ($assignable.a, $e.ex); }
        | '-='  e = expr[false] { $assign = new DifferenceAssignment     ($assignable.a, $e.ex); }
-       | '*='  e = expr[false] { $assign = new MultiplyAssignment       ($assignable.a, $e.ex); }
+       | '*='  e = expr[false] { $assign = new ProductAssignment        ($assignable.a, $e.ex); }
        | '/='  e = expr[false] { $assign = new DivideAssignment         ($assignable.a, $e.ex); }
        | '\\=' e = expr[false] { $assign = new IntegerDivisionAssignment($assignable.a, $e.ex); }
        | '%='  e = expr[false] { $assign = new ModuloAssignment         ($assignable.a, $e.ex); }
@@ -368,7 +368,7 @@ sum [boolean enableIgnore] returns [Expr s]
 product [boolean enableIgnore] returns [Expr p]
     : r1 = reduce[$enableIgnore]          { p = $r1.r;                         }
       (
-          '*'  r2 = reduce[$enableIgnore] { p = new Multiply       (p, $r2.r); }
+          '*'  r2 = reduce[$enableIgnore] { p = new Product        (p, $r2.r); }
         | '/'  r2 = reduce[$enableIgnore] { p = new Divide         (p, $r2.r); }
         | '\\' r2 = reduce[$enableIgnore] { p = new IntegerDivision(p, $r2.r); }
         | '%'  r2 = reduce[$enableIgnore] { p = new Modulo         (p, $r2.r); }
@@ -378,18 +378,18 @@ product [boolean enableIgnore] returns [Expr p]
 reduce [boolean enableIgnore] returns [Expr r]
     : p1 = prefixOperation[$enableIgnore, false]          { r = $p1.po;                               }
       (
-          '+/' p2 = prefixOperation[$enableIgnore, false] { r = new SumMembersBinary     (r, $p2.po); }
-        | '*/' p2 = prefixOperation[$enableIgnore, false] { r = new MultiplyMembersBinary(r, $p2.po); }
+          '+/' p2 = prefixOperation[$enableIgnore, false] { r = new SumMembersBinary      (r, $p2.po); }
+        | '*/' p2 = prefixOperation[$enableIgnore, false] { r = new ProductOfMembersBinary(r, $p2.po); }
       )*
     ;
 
 prefixOperation [boolean enableIgnore, boolean quoted] returns [Expr po]
     :      power[$enableIgnore, $quoted]           { po = $power.pow;                         }
-    | '+/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new SumMembers     ($po2.po); }
-    | '*/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new MultiplyMembers($po2.po); }
-    | '#'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Cardinality    ($po2.po); }
-    | '-'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Negate         ($po2.po); }
-    | '@'  po2 = prefixOperation[$enableIgnore, true]    { po = new Quote          ($po2.po); }
+    | '+/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new SumMembers      ($po2.po); }
+    | '*/' po2 = prefixOperation[$enableIgnore, $quoted] { po = new ProductOfMembers($po2.po); }
+    | '#'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Cardinality     ($po2.po); }
+    | '-'  po2 = prefixOperation[$enableIgnore, $quoted] { po = new Negate          ($po2.po); }
+    | '@'  po2 = prefixOperation[$enableIgnore, true]    { po = new Quote           ($po2.po); }
     ;
 
 power [boolean enableIgnore, boolean quoted] returns [Expr pow]

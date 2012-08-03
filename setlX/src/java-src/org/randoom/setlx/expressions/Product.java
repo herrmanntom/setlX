@@ -17,22 +17,22 @@ implemented here as:
       mLhs       mRhs
 */
 
-public class Multiply extends Expr {
+public class Product extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^multiply";
+    private final static String FUNCTIONAL_CHARACTER = "^product";
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
 
     private final Expr mLhs;
     private final Expr mRhs;
 
-    public Multiply(final Expr lhs, final Expr rhs) {
+    public Product(final Expr lhs, final Expr rhs) {
         mLhs = lhs;
         mRhs = rhs;
     }
 
     protected Value evaluate() throws SetlException {
-        return mLhs.eval().multiply(mRhs.eval());
+        return mLhs.eval().product(mRhs.eval());
     }
 
     /* string operations */
@@ -52,13 +52,13 @@ public class Multiply extends Expr {
         return result;
     }
 
-    public static Multiply termToExpr(final Term term) throws TermConversionException {
+    public static Product termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
-            return new Multiply(lhs, rhs);
+            return new Product(lhs, rhs);
         }
     }
 

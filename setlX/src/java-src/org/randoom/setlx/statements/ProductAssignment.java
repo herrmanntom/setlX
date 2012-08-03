@@ -20,9 +20,9 @@ implemented here as:
          mLhs                     mRhs
 */
 
-public class MultiplyAssignment extends Statement {
+public class ProductAssignment extends Statement {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^multiplyAssignment";
+    public  final static String     FUNCTIONAL_CHARACTER    = "^productAssignment";
     // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sTraceAssignments       = false;
 
@@ -33,7 +33,7 @@ public class MultiplyAssignment extends Statement {
     private final Expr    mRhs;
     private       boolean mPrintAfterEval;
 
-    public MultiplyAssignment(final Expr lhs, final Expr rhs) {
+    public ProductAssignment(final Expr lhs, final Expr rhs) {
         mLhs            = lhs;
         mRhs            = rhs;
         mPrintAfterEval = false;
@@ -44,7 +44,7 @@ public class MultiplyAssignment extends Statement {
     }
 
     protected Value exec() throws SetlException {
-        final Value assigned = mLhs.eval().multiplyAssign(mRhs.eval().clone());
+        final Value assigned = mLhs.eval().productAssign(mRhs.eval().clone());
         mLhs.assignUncloned(assigned);
 
         if (sTraceAssignments) {
@@ -75,13 +75,13 @@ public class MultiplyAssignment extends Statement {
         return result;
     }
 
-    public static MultiplyAssignment termToStatement(final Term term) throws TermConversionException {
+    public static ProductAssignment termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new MultiplyAssignment(lhs, rhs);
+            return new ProductAssignment(lhs, rhs);
         }
     }
 

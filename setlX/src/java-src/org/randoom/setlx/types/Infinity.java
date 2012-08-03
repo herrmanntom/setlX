@@ -77,30 +77,6 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public Value multiply(final Value multiplier) throws SetlException {
-        if (multiplier instanceof NumberValue) {
-            if (this == multiplier) {
-                return POSITIVE;
-            } else if (this == multiplier.negate()) {
-                return NEGATIVE;
-            } else if (multiplier.compareTo(Rational.ZERO) < 0) {
-                return this.negate();
-            } else if (multiplier.equalTo(Rational.ZERO)) {
-                throw new UndefinedOperationException(
-                    "'" + this + " * 0' is undefined."
-                );
-            } else {
-                return this;
-            }
-        } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
-        } else {
-            throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
-            );
-        }
-    }
-
     public Infinity negate() {
         if (this == POSITIVE) {
             return NEGATIVE;
@@ -119,6 +95,30 @@ public class Infinity extends NumberValue {
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );
+    }
+
+    public Value product(final Value multiplier) throws SetlException {
+        if (multiplier instanceof NumberValue) {
+            if (this == multiplier) {
+                return POSITIVE;
+            } else if (this == multiplier.negate()) {
+                return NEGATIVE;
+            } else if (multiplier.compareTo(Rational.ZERO) < 0) {
+                return this.negate();
+            } else if (multiplier.equalTo(Rational.ZERO)) {
+                throw new UndefinedOperationException(
+                    "'" + this + " * 0' is undefined."
+                );
+            } else {
+                return this;
+            }
+        } else if (multiplier instanceof Term) {
+            return ((Term) multiplier).productFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
+            );
+        }
     }
 
     public Value sum(final Value summand) throws SetlException {

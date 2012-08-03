@@ -208,7 +208,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public Value multiply(final Value multiplier) throws SetlException {
+    public Value product(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int           m   = ((Rational) multiplier).intValue();
             if (m < 0) {
@@ -222,7 +222,7 @@ public class SetlString extends IndexedCollectionValue {
             }
             return newSetlStringFromSB(sb);
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
+            return ((Term) multiplier).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "String multiplier '" + multiplier + "' is not an integer."
@@ -230,7 +230,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public Value multiplyAssign(final Value multiplier) throws SetlException {
+    public Value productAssign(final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             separateFromOriginal();
             final int    m       = ((Rational) multiplier).intValue();
@@ -248,7 +248,7 @@ public class SetlString extends IndexedCollectionValue {
             }
             return this;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
+            return ((Term) multiplier).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "String multiplier '" + multiplier + "' is not an integer."

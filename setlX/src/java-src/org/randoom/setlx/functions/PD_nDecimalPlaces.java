@@ -45,7 +45,7 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         intPart.appendString(result, 0);
         result.append(".");
         for (int i = 1; i <= n; ++i) {
-            rest    = rest.multiply(Rational.TEN);
+            rest    = rest.product(Rational.TEN);
             restMod1= rest.modulo(Rational.ONE);
             digit   = rest.difference(restMod1);
             rest    = restMod1;

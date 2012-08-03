@@ -85,13 +85,13 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract Value           minimumMember() throws SetlException;
 
-    public          Value           multiplyMembers(final Value neutral) throws SetlException {
+    public          Value           productOfMembers(final Value neutral) throws SetlException {
         Value product = null;
         for (final Value v: this) {
             if (product == null) {
                 product = v.clone();
             } else {
-                product = product.multiplyAssign(v);
+                product = product.productAssign(v);
             }
         }
         return (product != null)? product : neutral;

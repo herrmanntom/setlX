@@ -168,22 +168,6 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
-    public Term multiply(final Value multiplier) {
-        return (    new Multiply(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(multiplier)
-                    )
-               ).toTerm();
-    }
-    public Term multiplyFlipped(final Value multiplier) {
-        return (    new Multiply(
-                        TermConverter.valueToExpr(multiplier),
-                        TermConverter.valueToExpr(this)
-                    )
-               ).toTerm();
-    }
-
-    // viral operation
     public Term negate() {
         return (    new Negate(
                         TermConverter.valueToExpr(this)
@@ -202,6 +186,22 @@ public class Term extends IndexedCollectionValue {
     public Term powerFlipped(final Value exponent) {
         return (    new Power(
                         TermConverter.valueToExpr(exponent),
+                        TermConverter.valueToExpr(this)
+                    )
+               ).toTerm();
+    }
+
+    // viral operation
+    public Term product(final Value multiplier) {
+        return (    new Product(
+                        TermConverter.valueToExpr(this),
+                        TermConverter.valueToExpr(multiplier)
+                    )
+               ).toTerm();
+    }
+    public Term productFlipped(final Value multiplier) {
+        return (    new Product(
+                        TermConverter.valueToExpr(multiplier),
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm();
@@ -308,7 +308,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     public Term multiplyMembers() throws SetlException {
-        return (    new MultiplyMembers(
+        return (    new ProductOfMembers(
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm();

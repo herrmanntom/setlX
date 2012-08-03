@@ -172,7 +172,7 @@ public class SetlSet extends CollectionValue {
             result.mSortedSet.addAll(mClone.mSortedSet);
             return result;
         } else if (modulo instanceof Term) {
-            return ((Term) modulo).multiplyFlipped(this);
+            return ((Term) modulo).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
@@ -200,7 +200,7 @@ public class SetlSet extends CollectionValue {
 
             return this;
         } else if (modulo instanceof Term) {
-            return ((Term) modulo).multiplyFlipped(this);
+            return ((Term) modulo).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
@@ -208,14 +208,14 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value multiply(final Value multiplier) throws IncompatibleTypeException {
+    public Value product(final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
             final SetlSet result = clone();
             result.separateFromOriginal();
             result.mSortedSet.retainAll(((SetlSet) multiplier).mSortedSet);
             return result;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
+            return ((Term) multiplier).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a set."
@@ -223,13 +223,13 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value multiplyAssign(final Value multiplier) throws IncompatibleTypeException {
+    public Value productAssign(final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
             separateFromOriginal();
             mSortedSet.retainAll(((SetlSet) multiplier).mSortedSet);
             return this;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).multiplyFlipped(this);
+            return ((Term) multiplier).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a set."

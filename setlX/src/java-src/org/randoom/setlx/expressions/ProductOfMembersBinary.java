@@ -16,7 +16,7 @@ import org.randoom.setlx.utilities.TermConverter;
 //       ======              ======
 //      mNeutral           mCollection
 
-public class MultiplyMembersBinary extends Expr {
+public class ProductOfMembersBinary extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^multiplyMembersBinary";
     // precedence level in SetlX-grammar
@@ -25,13 +25,13 @@ public class MultiplyMembersBinary extends Expr {
     private final Expr mNeutral;
     private final Expr mCollection;
 
-    public MultiplyMembersBinary(final Expr neutral, final Expr collection) {
+    public ProductOfMembersBinary(final Expr neutral, final Expr collection) {
         mNeutral    = neutral;
         mCollection = collection;
     }
 
     protected Value evaluate() throws SetlException {
-        return mCollection.eval().multiplyMembers(mNeutral.eval());
+        return mCollection.eval().productOfMembers(mNeutral.eval());
     }
 
     /* string operations */
@@ -51,13 +51,13 @@ public class MultiplyMembersBinary extends Expr {
         return result;
     }
 
-    public static MultiplyMembersBinary termToExpr(final Term term) throws TermConversionException {
+    public static ProductOfMembersBinary termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Expr neutral    = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             Expr collection = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new MultiplyMembersBinary(neutral, collection);
+            return new ProductOfMembersBinary(neutral, collection);
         }
     }
 

@@ -28,10 +28,8 @@ public class MatchResult {
     }
 
     public void addBinding(final String id, final Value value) {
-        Value pre = mVarBindings.get(id);
-        if (pre == null) {
-            mVarBindings.put(id, value);
-        } else if ( ! pre.equalTo(value)) {
+        Value pre = mVarBindings.put(id, value);
+        if (pre != null && ! pre.equalTo(value)) {
             mMatches = false;
         }
     }

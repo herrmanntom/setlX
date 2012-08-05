@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.2.5--- unreleased
+ + added isNumber() function, which is equal to (isRational() || isReal())
+ 
 ---v1.2.4--- unreleased
  + added optional Boolean conditions to match branches
  # match correctly when using the same variable multiple times in a single match branch

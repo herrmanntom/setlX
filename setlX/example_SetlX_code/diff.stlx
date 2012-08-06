@@ -15,8 +15,6 @@ diff := procedure(t, x) {
             return diff(a, x) / a;
         case exp(a) :
             return diff(a, x) * @exp(a);
-        case (a) :
-            return diff(a, x);
         case a | isNumber(a) :
             return 0;
         case ^variable(x) : // x is defined above, therefore must be equal to match

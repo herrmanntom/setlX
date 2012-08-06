@@ -13,6 +13,7 @@ import org.randoom.setlx.expressions.VariableIgnore;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
+import org.randoom.setlx.types.CachedProcedureDefinition;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.ProcedureDefinition;
@@ -100,7 +101,9 @@ public class TermConverter {
                     }
                     // special cases
                     // non-generic values
-                    else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
+                    else if (fc.equals(CachedProcedureDefinition.FUNCTIONAL_CHARACTER)) {
+                        return new ValueExpr(CachedProcedureDefinition.termToValue(term));
+                    } else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
                         return new ValueExpr(LambdaDefinition.termToValue(term));
                     } else if (fc.equals(ProcedureDefinition.FUNCTIONAL_CHARACTER)) {
                         return new ValueExpr(ProcedureDefinition.termToValue(term));

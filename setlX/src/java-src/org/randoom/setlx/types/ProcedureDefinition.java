@@ -68,18 +68,22 @@ public class ProcedureDefinition extends Value {
         }
 
         // evaluate arguments
-        ArrayList<Value> values = new ArrayList<Value>(size);
+        final ArrayList<Value> values = new ArrayList<Value>(size);
         for (final Expr arg : args) {
             values.add(arg.eval());
         }
 
+        return callAfterEval(args, values);
+    }
+
+    protected Value callAfterEval(final List<Expr> args, final List<Value> values) throws SetlException {
         // save old scope
         final VariableScope oldScope = VariableScope.getScope();
         // create new scope used for the function call
         VariableScope.setScope(oldScope.cloneFunctions());
 
         // put arguments into inner scope
-        for (int i = 0; i < size; ++i) {
+        for (int i = 0; i < values.size(); ++i) {
             final ParameterDef param = mParameters.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
                 param.assign(values.get(i));
@@ -88,8 +92,8 @@ public class ProcedureDefinition extends Value {
             }
         }
 
-        // get rid of value-list
-        values = null;
+        // get rid of value-list to potentionally free some memory
+        values.clear();
 
         // results of call to procedure
               Value           result      = null;
@@ -144,7 +148,7 @@ public class ProcedureDefinition extends Value {
     /* string and char operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {
-        sb.append("procedure (");
+        sb.append("procedure(");
         final Iterator<ParameterDef> iter = mParameters.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(sb);

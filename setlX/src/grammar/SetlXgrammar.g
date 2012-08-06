@@ -297,6 +297,8 @@ lambdaParameters returns [List<ParameterDef> paramList]
 procedureDefinition returns [ProcedureDefinition pd]
     : 'procedure' '(' procedureParameters ')' '{' block '}'
       { pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk); }
+    | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
+      { pd = new CachedProcedureDefinition($procedureParameters.paramList, $block.blk); }
     ;
 
 procedureParameters returns [List<ParameterDef> paramList]

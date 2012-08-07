@@ -3,6 +3,8 @@
 tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 manualTestFiles=""
+skippedTestFiles=""
+nSkipped=0
 
 # prepare the interpreter
 simpleTest=simpleTest/test.stlx
@@ -21,6 +23,8 @@ if [ $failedCount -gt 0 -o $okCount -lt 23 ] # <=  "23" is number of tests in `m
 else
     echo -e "executing file '$simpleTest' successful!\n"
 fi
+
+rm -f diff.*.result
 
 # loop through all SetlX files, execute them and compare to reference result
 while read -r -d $'\0' path
@@ -48,13 +52,17 @@ while read -r -d $'\0' path
         cd src; ./setlX --predictableRandom "../$path" > "$tmpFile" 2>&1; cd ..
     fi
 
-    diff "$path.reference" "$tmpFile" > diff.result
+    diff "$path.reference" "$tmpFile" > "diff.result"
     if [ $? -eq 1 ]
       then
-        echo " failed ... (see diff.result)"
 
-        rm -f "$tmpFile"
-        exit 2
+        skippedTestFiles="$skippedTestFiles$filename, "
+        nSkipped=$(bc <<< "$nSkipped + 1")
+
+        filename="$(basename "$filename")";
+        mv "diff.result" "diff.$filename.result"
+        echo -e " failed ... (see diff.$filename.result)\n"
+
     else
         echo -e " successful!\n"
     fi
@@ -66,7 +74,16 @@ rm -f diff.result
 rm -f "$tmpFile"
 
 manualTestFiles="${manualTestFiles%, }"
-echo "The following files need user input and can only be tested manually: $manualTestFiles"
+echo "The following examples need user input and can only be tested manually: $manualTestFiles"
+
+if [ $nSkipped -gt 0 ]
+  then
+    skippedTestFiles="${skippedTestFiles%, }"
+    echo
+    echo "The following examples failed: $skippedTestFiles"
+    echo
+    echo "!! $nSkipped examples did fail this test !!"
+fi
 
 exit 0
 

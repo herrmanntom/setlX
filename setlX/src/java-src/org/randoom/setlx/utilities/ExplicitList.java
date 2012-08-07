@@ -46,9 +46,6 @@ public class ExplicitList extends Constructor {
         }
         for (int i = 0; i < mList.size(); ++i) {
             final Expr  e = mList.get(i);
-            if (e == VariableIgnore.VI) {
-                continue; // ignore this position e.g. 2nd position in `[x, _, y]'
-            }
             Value v = null;
             try {
                 v = list.getMember(i + 1);

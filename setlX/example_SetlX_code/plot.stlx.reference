@@ -1,4 +1,4 @@
-f(x)	:= procedure (x) { /* predefined procedure `sin' */ }
+f(x)	:= procedure(x) { /* predefined procedure `sin' */ }
 
 f(-5)	:= 0.9589242746631385
 f(-4)	:= 0.7568024953079282

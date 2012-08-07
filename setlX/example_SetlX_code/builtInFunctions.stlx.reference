@@ -2,9 +2,9 @@ The circumference of a circle with radius 10 is: 62.83185307179586.
 100 is approximately 99.99999999999999.
 
 variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")]})
-variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure () { secretVariable := 42; print("variables in inner scope: ", getScope()); }]})
-variables in inner scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure () { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["secretVariable", 42]})
-variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure () { secretVariable := 42; print("variables in inner scope: ", getScope()); }]})
+variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }]})
+variables in inner scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["secretVariable", 42]})
+variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }]})
 
 Arrr("said", "the", "pirate")
 Arrr("said", "the", "pirate")
@@ -30,8 +30,8 @@ direct:    real     : 99.999
 converted: int      : 99
 direct:    ??       : 'om'
 converted: string   : "om"
-direct:    ??       : 'procedure (value) { /* predefined procedure `abs' */ }'
-converted: string   : "procedure (value) { /* predefined procedure `abs' */ }"
+direct:    ??       : 'procedure(value) { /* predefined procedure `abs' */ }'
+converted: string   : "procedure(value) { /* predefined procedure `abs' */ }"
 direct:    rational : 1/3
 converted: int      : 0
 direct:    string   : "99/100"

@@ -1,8 +1,9 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.IgnoreDummy;
+import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 
 /*
 grammar rules:
@@ -30,6 +31,11 @@ public class VariableIgnore extends Expr {
 
     protected IgnoreDummy evaluate() throws UndefinedOperationException {
         return IgnoreDummy.ID;
+    }
+
+    // sets this expression to the given value
+    public void assignUncloned(final Value v) {
+        // or maybe it just does nothing
     }
 
     /* string operations */

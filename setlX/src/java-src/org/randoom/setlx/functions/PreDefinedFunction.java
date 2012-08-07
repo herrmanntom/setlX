@@ -132,7 +132,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     public final void appendString(final StringBuilder sb, final int tabs) {
         String endl = Environment.getEndl();
-        sb.append("procedure (");
+        sb.append("procedure(");
         final Iterator<ParameterDef> iter = mParameters.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(sb);

@@ -14,14 +14,12 @@ aStar := procedure(s, t) {
             printPath(s, t, x, fx, predecessor);
             return;
         }
-        for ( [y, yCost] in transition(x) ) {
-            if (g[y] == om || g[x] + yCost < g[y]) {
-                predecessor[y]  := x;
-                g[y]            := g[x] + yCost;
-                openQueue       -= { [f[y], y] };
-                f[y]            := g[y] + h(y);
-                openQueue       += { [f[y], y] };
-            }
+        for ( [y, yCost] in transition(x) | g[y] == om || g[x] + yCost < g[y]) {
+            predecessor[y]  := x;
+            g[y]            := g[x] + yCost;
+            openQueue       -= { [f[y], y] };
+            f[y]            := g[y] + h(y);
+            openQueue       += { [f[y], y] };
         }
     }
     print("path $s$ -> $t$: no solution");

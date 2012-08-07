@@ -4,6 +4,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added cached procedures (Keyword: cachedProcedure instead of just procedure)
  + added cacheStats(cachedProcedure) function
  + fixed issues with matching negative numbers
+ + allow conditions in for-loops
 
 ---v1.2.5--- unreleased
  + added isNumber() function, which is equal to (isRational() || isReal())

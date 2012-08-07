@@ -128,21 +128,21 @@ statement returns [Statement stmnt]
         List<TryCatchAbstractBranch>    tryList    = new ArrayList<TryCatchAbstractBranch>();
         Condition                       condition  = null;
     }
-    : 'var' listOfVariables ';'                                      { stmnt = new GlobalDefinition($listOfVariables.lov);           }
-    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));               }
+    : 'var' listOfVariables ';'                                      { stmnt = new GlobalDefinition($listOfVariables.lov);             }
+    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));                 }
       (
-        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));         }
+        'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));           }
       )*
       (
-        'else'                                    '{' b3 = block '}' { ifList.add(new IfThenElseBranch($b3.blk));                    }
+        'else'                                    '{' b3 = block '}' { ifList.add(new IfThenElseBranch($b3.blk));                      }
       )?
       { stmnt = new IfThen(ifList); }
     | 'switch' '{'
       (
-        'case' c1 = condition[false] ':' b1 = block                  { caseList.add(new SwitchCaseBranch($c1.cnd, $b1.blk));         }
+        'case' c1 = condition[false] ':' b1 = block                  { caseList.add(new SwitchCaseBranch($c1.cnd, $b1.blk));           }
       )*
       (
-        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));               }
+        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));                }
       )?
       '}' { stmnt = new Switch(caseList); }
     | 'match' '(' expr[false] ')' '{'
@@ -155,32 +155,33 @@ statement returns [Statement stmnt]
              { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, condition, $b3.blk)); condition = null; }
       )*
       (
-        'default'             ':' b4 = block                         { matchList.add(new MatchDefaultBranch($b4.blk));               }
+        'default'             ':' b4 = block                         { matchList.add(new MatchDefaultBranch($b4.blk));                 }
       )?
-      '}' { stmnt = new Match($expr.ex, matchList); }
-    | 'for'   '(' iteratorChain[false] ')' '{' block '}'             { stmnt = new For($iteratorChain.ic, $block.blk);               }
-    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);                }
+      '}'                                                            { stmnt = new Match($expr.ex, matchList);                         }
+    | 'for' '(' iteratorChain[false] ('|' condition[false] {condition = $condition.cnd;} )? ')' '{' block '}'
+                                                        { stmnt = new For($iteratorChain.ic, condition, $block.blk); condition = null; }
+    | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);                  }
     | 'try'                                '{' b1 = block '}'
       (
-         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));           }
-       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));           }
+         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));             }
+       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));             }
       )*
       (
-         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));           }
+         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));             }
       )?
       { stmnt = new TryCatch($b1.blk, tryList); }
-    | 'return' expr[false]? ';'                                      { stmnt = new Return($expr.ex);                                 }
-    | 'continue' ';'                                                 { stmnt = Continue.C;                                           }
-    | 'break' ';'                                                    { stmnt = Break.B;                                              }
-    | 'exit' ';'                                                     { stmnt = Exit.E;                                               }
+    | 'return' expr[false]? ';'                                      { stmnt = new Return($expr.ex);                                   }
+    | 'continue' ';'                                                 { stmnt = Continue.C;                                             }
+    | 'break' ';'                                                    { stmnt = Break.B;                                                }
+    | 'exit' ';'                                                     { stmnt = Exit.E;                                                 }
     | 'assert' '(' condition[false] ',' expr[false] ')' ';'          { stmnt = (Environment.areAssertsDisabled())?
                                                                                    null
                                                                                :
                                                                                    new Assert($condition.cnd, $expr.ex);
-                                                                               ;                                                     }
-    | ( assignmentOther )=> assignmentOther   ';'                    { stmnt = $assignmentOther.assign;                              }
-    | ( assignmentDirect )=> assignmentDirect ';'                    { stmnt = new ExpressionStatement($assignmentDirect.assign);    }
-    | expr[false] ';'                                                { stmnt = new ExpressionStatement($expr.ex);                    }
+                                                                               ;                                                       }
+    | ( assignmentOther )=> assignmentOther   ';'                    { stmnt = $assignmentOther.assign;                                }
+    | ( assignmentDirect )=> assignmentDirect ';'                    { stmnt = new ExpressionStatement($assignmentDirect.assign);      }
+    | expr[false] ';'                                                { stmnt = new ExpressionStatement($expr.ex);                      }
     ;
 
 listOfVariables returns [List<Variable> lov]
@@ -566,10 +567,10 @@ RANGE_SIGN      : '..';
 // fix parsing `list[2..]' by emitting two tokens for one rule. Otherwise ANTLR
 // gets confused and want's to parse a REAL and runs into an unexpected second dot.
 NUMBER_RANGE    : (
-                     n = NUMBER     { $n.setType(NUMBER);     emit($n); }
-                   | n = NEG_NUMBER { $n.setType(NEG_NUMBER); emit($n); }
+                     n1 = NUMBER     { $n1.setType(NUMBER);     emit($n1); }
+                   | n2 = NEG_NUMBER { $n2.setType(NEG_NUMBER); emit($n2); }
                   )
-                  r = RANGE_SIGN    { $r.setType(RANGE_SIGN); emit($r); }
+                  r = RANGE_SIGN     { $r.setType(RANGE_SIGN);  emit($r); }
                 ;
 STRING          : '"' ('\\"'|~('"'))* '"';
 

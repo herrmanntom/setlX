@@ -46,6 +46,10 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
     public int getCacheSize() {
         return cache.size();
     }
+    public void clearCache() {
+        cache.clear();
+        cacheHits = 0;
+    }
 
     /* function call */
 

@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.2.7--- unreleased
+ + added clearCache(cachedProcedure) function
+
 ---v1.2.6--- unreleased
  + added cached procedures (Keyword: cachedProcedure instead of just procedure)
  + added cacheStats(cachedProcedure) function

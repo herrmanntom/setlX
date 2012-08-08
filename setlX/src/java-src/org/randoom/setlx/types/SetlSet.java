@@ -714,9 +714,13 @@ public class SetlSet extends CollectionValue {
     private final static int initHashCode = SetlSet.class.hashCode();
 
     public int hashCode() {
-        int hash = initHashCode;
-        for (final Value v : mSortedSet) {
-            hash = hash * 31 + v.hashCode();
+        int size = mSortedSet.size();
+        int hash = initHashCode + size;
+        if (size >= 1) {
+            hash = hash * 31 + mSortedSet.first().hashCode();
+            if (size >= 2) {
+                hash = hash * 31 + mSortedSet.last().hashCode();
+            }
         }
         return hash;
     }

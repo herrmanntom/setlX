@@ -689,9 +689,13 @@ public class SetlList extends IndexedCollectionValue {
     private final static int initHashCode = SetlList.class.hashCode();
 
     public int hashCode() {
-        int hash = initHashCode;
-        for (final Value v : mList) {
-            hash = hash * 31 + v.hashCode();
+        int size = mList.size();
+        int hash = initHashCode + size;
+        if (size >= 1) {
+            hash = hash * 31 + mList.get(0).hashCode();
+            if (size >= 2) {
+                hash = hash * 31 + mList.get(size-1).hashCode();
+            }
         }
         return hash;
     }

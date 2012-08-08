@@ -1,0 +1,38 @@
+// This program demonstrates using cached procedures for improving the computation
+// of Fibonacci numbers
+
+// The Fibonacci numbers are computed as follows:
+// f(0) := 0;
+// f(1) := 1;
+// f(n) := f(n-1) + f(n-2);
+
+var ticks;
+
+// first the uncached version:
+fibonacci_1 := procedure(n) {
+    ticks += 1;
+    if (n in [0,1]) {
+        return n;
+    }
+    return fibonacci_1(n-1) + fibonacci_1(n-2);
+};
+
+start := now(); ticks := 0;
+print("Fibonacci Sequence: $[fibonacci_1(n) : n in [0..25]]$");
+//nPrint("Computation took $0.001 * (now() - start)$seconds. ");
+print("($ticks$ ticks)");
+
+// second the cached version:
+fibonacci_2 := cachedProcedure(n) {
+    ticks += 1;
+    if (n in [0,1]) {
+        return n;
+    }
+    return fibonacci_2(n-1) + fibonacci_2(n-2);
+};
+
+start := now(); ticks := 0;
+print("Fibonacci Sequence: $[fibonacci_2(n) : n in [0..25]]$");
+//nPrint("Computation took $0.001 * (now() - start)$seconds. ");
+print("($ticks$ ticks, $cacheStats(fibonacci_2)$)");
+

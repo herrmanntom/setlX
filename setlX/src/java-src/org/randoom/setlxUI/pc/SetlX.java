@@ -241,7 +241,8 @@ public class SetlX {
         // print and/or dump programs if needed
         if (verbose || dump) {
             Environment.setPrintVerbose(true); // enables correct indentation etc
-            for (int i = 0; i < programs.size(); i++) {
+            final int size = programs.size();
+            for (int i = 0; i < size; ++i) {
                 // get program text
                 String program = programs.get(i).toString() + '\n';
 

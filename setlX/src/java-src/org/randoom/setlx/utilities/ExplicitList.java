@@ -39,18 +39,15 @@ public class ExplicitList extends Constructor {
 
     // sets the variables used to form this list to the variables from the list given as a parameter
     public void assignUncloned(final SetlList list) throws SetlException {
-        if (list.size() != mList.size()) {
+        final int size = mList.size();
+        if (list.size() != size) {
             throw new IncompatibleTypeException(
                 "Members of '" + list + "' are unusable for list assignment."
             );
         }
-        for (int i = 0; i < mList.size(); ++i) {
+        for (int i = 0; i < size; ++i) {
             final Expr  e = mList.get(i);
-            Value v = null;
-            try {
-                v = list.getMember(i + 1);
-            } catch (SetlException se) { /* this can not fail at this point */};
-
+            final Value v = list.getMember(i + 1);
             e.assign(v);
         }
     }

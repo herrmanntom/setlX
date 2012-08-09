@@ -32,7 +32,8 @@ public class WriteBackAgent {
        If the expressions used are more complex or it is otherwise not possible
        to write the values back, the current pair of expr+value is ignored. */
     public void writeBack() {
-        for (int i = 0; i < mExpressions.size(); ++i) {
+        final int size = mExpressions.size();
+        for (int i = 0; i < size; ++i) {
             try {
                 mExpressions.get(i).assign(mValues.get(i).clone());
             } catch (SetlException se) {

@@ -50,30 +50,28 @@ solve := procedure(l, n) {
     if (#l == n) {
         return l;
     }
-    for (x in [1 .. n ]) {
-        try {
-            check(l, x);
+    for (x in {1 .. n} - ({} + l)) {
+        check {
+            checkBoard(l, x);
             // if this works, try to add more queens
             return solve(l + [x], n);
-        } catchUsr (error) {
-            // do nothing, next value of x is tried automatically
         }
     }
     // if we haven't found a solution so far, there is none
-    throw("no solution");
+    backtrack; // no solution
 };
 
 // Check whether it is safe to add a queen in row x in the column that
 // follows those columns that are already specified in the list l of
 // queens already placed.  It is assumed that the queens already
 // placed cannot attack each other.
-check := procedure(l, x) {
+checkBoard := procedure(l, x) {
     if (x in l) {
-        throw("same row");
+        backtrack; // same row
     }
     m := #l;
     if (exists (i in {1 .. m} | i-l[i] == m+1-x || i+l[i] == m+1+x)) {
-        throw("same diagonal");
+        backtrack; // same diagonal
     }
 };
 
@@ -108,11 +106,11 @@ printBoard := procedure(l) {
 
 // Try to solve the n-queens puzzle and print the solution.
 solveAndPrint := procedure(n) {
-    try {
+    check {
         l := solve([], n);
         print(l);
         printBoard(l);
-    } catchUsr (error) {
+    } afterBacktrack {
         print("There is no solution for n = $n$.");
     }
 };

@@ -2,29 +2,26 @@
 
 test := procedure(n) {
     print("n = $n$");
-    try {
+    check {
         // we do something here
 
-            /* but not in this simple example */
+        a := n ** n;
 
         // and then check if the result is correct
-        check(n == 5);
+        checkResult(a);
+
+        // we only get here, when the result is indeed correct
         print("done!");
-
-    } catchUsr (error) {
-        // Only catch e here when it was thrown using throw() and not when
-        // it was thrown by different semantic or syntactic error .
-        // If we don't do this, debugging will be a nightmare, because errors are hidden!
-
+    } afterBacktrack {
         // try next one
         test(n + 1);
     }
 };
 
-// throw an exception if condition is false
-check := procedure(condition) {
-    if (!condition) {
-        throw("backtrack");
+// backtrack if result is not as expected
+checkResult := procedure(a) {
+    if (a != 3125) {
+        backtrack;
     }
 };
 

@@ -365,7 +365,7 @@ public class SetlList extends IndexedCollectionValue {
         // in java the index is one lower
         low--;
         final SetlList result = new SetlList(high - low);
-        for (int i = low; i < high; i++) {
+        for (int i = low; i < high; ++i) {
             result.addMember(mList.get(i).clone());
         }
         return result;
@@ -425,7 +425,7 @@ public class SetlList extends IndexedCollectionValue {
         Value tmp = p.get(a);
         p.set(a, p.get(b));
         p.set(b, tmp);
-        for (int i = a + 1, j = p.size() - 1; i < j; i++, j--) {
+        for (int i = a + 1, j = p.size() - 1; i < j; ++i, --j) {
             tmp = p.get(i);
             p.set(i,p.get(j));
             p.set(j,tmp);
@@ -446,7 +446,8 @@ public class SetlList extends IndexedCollectionValue {
         final SetlSet   permutatateRest = rest.permutations();
         final SetlSet   permutations    = new SetlSet();
         for (final Value permutation : permutatateRest) {
-            for (int i = 0; i <= permutation.size(); i++) {
+            final int size = permutation.size();
+            for (int i = 0; i <= size; i++) {
                 final SetlList  perm    = (SetlList) permutation.clone();
                 perm.separateFromOriginal();
                 perm.mList.add(i, last.clone());

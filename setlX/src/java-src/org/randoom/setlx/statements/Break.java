@@ -35,8 +35,7 @@ public class Break extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        Term result = new Term(FUNCTIONAL_CHARACTER, 0);
-        return result;
+        return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
     public static Break termToStatement(final Term term) throws TermConversionException {

@@ -235,7 +235,7 @@ public class Environment {
     public static void getLineStart(final StringBuilder sb, final int tabs) {
         if (sPrintVerbose && tabs > 0) {
             final String tab = sEnvProvider.getTab();
-            for (int i = 0; i < tabs; i++) {
+            for (int i = 0; i < tabs; ++i) {
                 sb.append(tab);
             }
         }

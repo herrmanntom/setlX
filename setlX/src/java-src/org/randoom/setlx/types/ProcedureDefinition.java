@@ -83,7 +83,8 @@ public class ProcedureDefinition extends Value {
         VariableScope.setScope(oldScope.cloneFunctions());
 
         // put arguments into inner scope
-        for (int i = 0; i < values.size(); ++i) {
+        final int size = values.size();
+        for (int i = 0; i < size; ++i) {
             final ParameterDef param = mParameters.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
                 param.assign(values.get(i));

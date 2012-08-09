@@ -170,10 +170,13 @@ statement returns [Statement stmnt]
          'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));             }
       )?
       { stmnt = new TryCatch($b1.blk, tryList); }
-    | 'return' expr[false]? ';'                                      { stmnt = new Return($expr.ex);                                   }
-    | 'continue' ';'                                                 { stmnt = Continue.C;                                             }
+    | 'check' '{' b1 = block '}' ('afterBacktrack' '{' b2 = block '}')?
+                                                                     { stmnt = new Check($b1.blk, $b2.blk);                            }
+    | 'backtrack' ';'                                                { stmnt = Backtrack.BT;                                           }
     | 'break' ';'                                                    { stmnt = Break.B;                                                }
+    | 'continue' ';'                                                 { stmnt = Continue.C;                                             }
     | 'exit' ';'                                                     { stmnt = Exit.E;                                                 }
+    | 'return' expr[false]? ';'                                      { stmnt = new Return($expr.ex);                                   }
     | 'assert' '(' condition[false] ',' expr[false] ')' ';'          { stmnt = (Environment.areAssertsDisabled())?
                                                                                    null
                                                                                :

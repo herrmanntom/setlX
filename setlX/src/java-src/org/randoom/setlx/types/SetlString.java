@@ -529,8 +529,8 @@ public class SetlString extends IndexedCollectionValue {
         Collections.shuffle(shuffled, Environment.getRandom());
 
         final SetlString result = new SetlString();
-        for (int i = 0; i < shuffled.size(); i++) {
-            result.mContent.append(shuffled.get(i));
+        for (final String c : shuffled) {
+            result.mContent.append(c);
         }
         return result;
     }
@@ -595,7 +595,7 @@ public class SetlString extends IndexedCollectionValue {
         // parse escape sequences
         final int           length  = mContent.length();
         final StringBuilder sb      = new StringBuilder(length + 8);
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; ++i) {
             final char c = mContent.charAt(i);  // current char
             if (c == '\\') {
                 sb.append("\\\\");

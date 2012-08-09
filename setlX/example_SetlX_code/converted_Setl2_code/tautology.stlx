@@ -239,11 +239,11 @@ s := get();
 l := scanFormula(s);
 f := parse_formula(l);
 print(f);
-check := tautology(f);
-if ((check <==> true)) {
+checkResult := tautology(f);
+if ((checkResult <==> true)) {
 	print("Die Formel \"" + prettyPrint(f) + "\" ist eine Tautologie.");
 } else {
 	print("Die Formel \"" + prettyPrint(f) + "\" ist keine Tautologie.");
-	print("Gegenbeispiel: ", check);
+	print("Gegenbeispiel: ", checkResult);
 }
 

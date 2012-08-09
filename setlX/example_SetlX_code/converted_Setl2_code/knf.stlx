@@ -175,7 +175,7 @@ parse := procedure(s) {
 parseFormula := procedure() {
 	implicationLhs := parseImplication();
 	if (mIndex <= #mTokenList && mTokenList[mIndex] != ")") {
-		check("<->");
+		checkTokens("<->");
 		implicationRhs := parseImplication();
 		return [implicationLhs, "<->", implicationRhs];
 	} else {
@@ -186,7 +186,7 @@ parseFormula := procedure() {
 parseImplication := procedure() {
 	conjunction := parseConjunction();
 	if (mIndex <= #mTokenList && mTokenList[mIndex] notin {"<->", ")"}) {
-		check("->");
+		checkTokens("->");
 		implication := parseImplication();
 		return [conjunction, "->", implication];
 	} else {
@@ -200,7 +200,7 @@ parseConjunction := procedure() {
 };
 
 parseConjunctionRest := procedure(formula) {
-	if (check("*")) {
+	if (checkTokens("*")) {
 		disjunction := parseDisjunction();
 		return parseConjunctionRest([formula, "*", disjunction]);
 	}
@@ -213,7 +213,7 @@ parseDisjunction := procedure() {
 };
 
 parseDisjunctionRest := procedure(formula) {
-	if (check("+")) {
+	if (checkTokens("+")) {
 		negation := parseNegation();
 		return parseDisjunctionRest([formula, "+", negation]);
 	}
@@ -221,7 +221,7 @@ parseDisjunctionRest := procedure(formula) {
 };
 
 parseNegation := procedure() {
-	if (check("-")) {
+	if (checkTokens("-")) {
 		negation := parseNegation();
 		return ["-", negation];
 	}
@@ -229,9 +229,9 @@ parseNegation := procedure() {
 };
 
 parseAtomic := procedure() {
-	if (check("(")) {
+	if (checkTokens("(")) {
 		formula := parseFormula();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return formula;
@@ -244,7 +244,7 @@ parseAtomic := procedure() {
 	abort("Parse Error in parseFactor,");
 };
 
-check := procedure(token) {
+checkTokens := procedure(token) {
 	if (mIndex > #mTokenList) {
 		return false;
 	}

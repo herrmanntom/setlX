@@ -122,11 +122,11 @@ parseExpr := procedure() {
 };
 
 parseExprRest := procedure(sum) {
-	if (check("+")) {
+	if (checkTokens("+")) {
 		product := parseProduct();
 		return parseExprRest([sum, "+", product]);
 	}
-	if (check("-")) {
+	if (checkTokens("-")) {
 		product := parseProduct();
 		return parseExprRest([sum, "-", product]);
 	}
@@ -139,11 +139,11 @@ parseProduct := procedure() {
 };
 
 parseProductRest := procedure(product) {
-	if (check("*")) {
+	if (checkTokens("*")) {
 		power := parsePower();
 		return parseProductRest([product, "*", power]);
 	}
-	if (check("/")) {
+	if (checkTokens("/")) {
 		power := parsePower();
 		return parseProductRest([product, "/", power]);
 	}
@@ -152,7 +152,7 @@ parseProductRest := procedure(product) {
 
 parsePower := procedure() {
 	factor := parseFactor();
-	if (check("**")) {
+	if (checkTokens("**")) {
 		power := parsePower();
 		return [factor, "**", power];
 	}
@@ -160,79 +160,79 @@ parsePower := procedure() {
 };
 
 parseFactor := procedure() {
-	if (check("(")) {
+	if (checkTokens("(")) {
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return expr;
 	}
-	if (check("exp")) {
-		if (( ! (check("(")) )) {
+	if (checkTokens("exp")) {
+		if (( ! (checkTokens("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["exp", expr];
 	}
-	if (check("ln")) {
-		if (( ! (check("(")) )) {
+	if (checkTokens("ln")) {
+		if (( ! (checkTokens("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["ln", expr];
 	}
-	if (check("sqrt")) {
-		if (( ! (check("(")) )) {
+	if (checkTokens("sqrt")) {
+		if (( ! (checkTokens("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["sqrt", expr];
 	}
-	if (check("sin")) {
-		if (( ! (check("(")) )) {
+	if (checkTokens("sin")) {
+		if (( ! (checkTokens("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["sin", expr];
 	}
-	if (check("cos")) {
-		if (( ! (check("(")) )) {
+	if (checkTokens("cos")) {
+		if (( ! (checkTokens("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["cos", expr];
 	}
-	if (check("tan")) {
-		if (( ! (check("(")) )) {
+	if (checkTokens("tan")) {
+		if (( ! (checkTokens("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["tan", expr];
 	}
-	if (check("arctan")) {
-		if (( ! (check("(")) )) {
+	if (checkTokens("arctan")) {
+		if (( ! (checkTokens("(")) )) {
 			abort("Parse Error, '(' expected");
 		}
 		expr := parseExpr();
-		if (( ! (check(")")) )) {
+		if (( ! (checkTokens(")")) )) {
 			abort("Parse Error, ')' expected");
 		}
 		return ["arctan", expr];
@@ -250,7 +250,7 @@ parseFactor := procedure() {
 	abort("Parse Error in parseFactor,");
 };
 
-check := procedure(token) {
+checkTokens := procedure(token) {
 	if (mIndex > #mTokenList) {
 		return false;
 	}

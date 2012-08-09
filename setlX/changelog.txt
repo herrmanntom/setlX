@@ -2,6 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.2.7--- unreleased
  + added clearCache(cachedProcedure) function
+ + added check and backtrack statements
 
 ---v1.2.6--- unreleased
  + added cached procedures (Keyword: cachedProcedure instead of just procedure)

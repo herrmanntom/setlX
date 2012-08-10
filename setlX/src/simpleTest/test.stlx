@@ -173,10 +173,10 @@ scopeTests := procedure() {
 
     result := "";
     q := [[[1, 2, 3], [4, 5, 6]]];
-    for (q in q, q in q, q in q) {
-        result := result + " " + q;
-        q := "foo";
-        p := "test";
+    for (q1 in q, q2 in q1, q3 in q2) {
+        result := result + " " + q3;
+        q2 := "foo";
+        p  := "test";
     }
     while (p == "test") {
         p := p[2..];

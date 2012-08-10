@@ -6,12 +6,25 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.VariableScope;
 
 public abstract class Constructor {
     public abstract void        fillCollection(final CollectionValue collection) throws SetlException;
 
     // sets the variables used to construct this list to the variables from the list given as a parameter
     public          void        assignUncloned(final SetlList list) throws SetlException {
+        throw new UndefinedOperationException(
+            "Error in \"" + this + "\":\n" +
+            "Only explicit lists can be used as targets for list assignments."
+        );
+    }
+
+    /* Similar to assignUncloned(),
+       However, also checks if the variable is already defined in scopes up to
+       (but EXCLUDING) `outerScope'.
+       Returns true and sets `v' if variable is undefined or already equal to `v'.
+       Returns false, if variable is defined and different from `v'. */
+    public          boolean     assignUnclonedCheckUpTo(final SetlList list, final VariableScope outerScope) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "Only explicit lists can be used as targets for list assignments."

@@ -73,7 +73,7 @@ public class Iterator {
     public Value eval(final IteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = VariableScope.getScope();
         try {
-            final Value result = evaluate(exec);
+            final Value result = evaluate(exec, outerScope);
 
             if (result == Om.OM && Om.OM.isBreak()) {
                 return null; // remove break message
@@ -145,7 +145,7 @@ public class Iterator {
 
     /* private functions */
 
-    private Value evaluate(final IteratorExecutionContainer exec) throws SetlException {
+    private Value evaluate(final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
         if (sStopExecution) {
             throw new StopExecutionException("Interrupted");
         }
@@ -159,8 +159,13 @@ public class Iterator {
                 // restore inner scope
                 VariableScope.setScope(innerScope);
                 innerScope.setWriteThrough(false); // force iteration variables to be local to this block
+
                 // assign value from collection
-                mAssignable.assign(v.clone());
+                boolean successful = mAssignable.assignUnclonedCheckUpTo(v.clone(), outerScope);
+
+                if ( ! successful) {
+                    continue;
+                }
 
                 if (sTraceAssignments) {
                     Environment.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
@@ -173,7 +178,7 @@ public class Iterator {
                    Stops iteration if requested by execution.                 */
                 Value result = null;
                 if (mNext != null) {
-                    result = mNext.evaluate(exec);
+                    result = mNext.evaluate(exec, outerScope);
                 } else {
                     result = exec.execute(v);
                 }

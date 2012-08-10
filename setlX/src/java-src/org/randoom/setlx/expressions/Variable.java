@@ -51,6 +51,15 @@ public class Variable extends Expr {
         VariableScope.putValue(mId, v);
     }
 
+    /* Similar to assignUncloned(),
+       However, also checks if the variable is already defined in scopes up to
+       (but EXCLUDING) `outerScope'.
+       Returns true and sets `v' if variable is undefined or already equal to `v'.
+       Returns false, if variable is defined and different from `v' */
+    public boolean assignUnclonedCheckUpTo(final Value v, final VariableScope outerScope) {
+        return VariableScope.putValueCheckUpTo(mId, v, outerScope);
+    }
+
     // sets this expression to the given value
     public void makeGlobal() {
         VariableScope.makeGlobal(mId);

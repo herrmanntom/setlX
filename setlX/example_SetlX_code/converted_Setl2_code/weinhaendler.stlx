@@ -15,7 +15,7 @@ reachable := procedure(x, y, r) {
 };
 
 path_product := procedure(p, q) {
-	return {add(p, q): p in p, q in q | p[#p] == q[1] && not_cyclic(add(p, q))};
+	return {add(p1, q1): p1 in p, q1 in q | p1[#p1] == q1[1] && not_cyclic(add(p1, q1))};
 };
 
 not_cyclic := procedure(p) {

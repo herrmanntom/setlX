@@ -1,33 +1,33 @@
 
 problem := procedure(s) {
-	return ("Ziege" in s && "Kohl" in s) || ("Wolf" in s && "Ziege" in s);
+    return ("Ziege" in s && "Kohl" in s) || ("Wolf" in s && "Ziege" in s);
 };
 
 reachable := procedure(x, y, r) {
-	p := {[x]};
-	while (true) {
-		old_P := p;
-		p := p + path_product(p, r);
-		found := {p in p | p[#p] == y};
-		if (found != {}) {
-			return arb(found);
-		}
-		if (p == old_P) {
-			return;
-		}
-	}
+    p := {[x]};
+    while (true) {
+        old_P := p;
+        p := p + path_product(p, r);
+        found := {p in p | p[#p] == y};
+        if (found != {}) {
+            return arb(found);
+        }
+        if (p == old_P) {
+            return;
+        }
+    }
 };
 
 path_product := procedure(p, q) {
-	return {add(p, q): p in p, q in q | p[#p] == q[1] && ( ! (cyclic(add(p, q))) )};
+    return {add(p1, q1): p1 in p, q1 in q | p1[#p1] == q1[1] && ( ! (cyclic(add(p1, q1))) )};
 };
 
 cyclic := procedure(p) {
-	return #{x: x in p} < #p;
+    return #{x: x in p} < #p;
 };
 
 add := procedure(p, q) {
-	return p + q[2..];
+    return p + q[2..];
 };
 
 all := {"Bauer", "Wolf", "Ziege", "Kohl"};
@@ -39,18 +39,18 @@ start := [all, {}];
 goal := [{}, all];
 path := reachable(start, goal, r);
 for (i in [1 .. #path]) {
-	s1 := path[i][1];
-	s2 := path[i][2];
-	print(s1, 65 * " ", s2);
-	if (i == #path) {
-		break;
-	}
-	if ("Bauer" in s1) {
-		m := s1 - path[i + 1][1];
-		print("                                     >>>> ", m, " >>>> ");
-	} else {
-		m := s2 - path[i + 1][2];
-		print("                                     <<<< ", m, " <<<< ");
-	}
+    s1 := path[i][1];
+    s2 := path[i][2];
+    print(s1, 65 * " ", s2);
+    if (i == #path) {
+        break;
+    }
+    if ("Bauer" in s1) {
+        m := s1 - path[i + 1][1];
+        print("                                     >>>> ", m, " >>>> ");
+    } else {
+        m := s2 - path[i + 1][2];
+        print("                                     <<<< ", m, " <<<< ");
+    }
 }
 

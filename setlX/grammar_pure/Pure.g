@@ -20,10 +20,12 @@ statement
     | 'for' '(' iteratorChain ('|' condition)? ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'try' '{' block '}' ('catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')* ('catch' '(' variable ')' '{' block '}')?
-    | 'return' expr? ';'
-    | 'continue' ';'
+    | 'check' '{' block '}' ('afterBacktrack' '{' block '}')?
+    | 'backtrack' ';'
     | 'break' ';'
+    | 'continue' ';'
     | 'exit' ';'
+    | 'return' expr? ';'
     | 'assert' '(' condition ',' expr ')' ';'
     | (assignmentOther)=> assignmentOther ';'
     | (assignmentDirect)=> assignmentDirect ';'

@@ -104,10 +104,11 @@ public class Real extends NumberValue {
     }
 
     public Rational ceil() {
-        if (mReal.compareTo(BigDecimal.ZERO) > 0) {
-            return Rational.valueOf(mReal.toBigInteger().add(BigInteger.ONE));
-        } else {
-            return Rational.valueOf(mReal.toBigInteger());
+        BigInteger intValue = mReal.toBigInteger();
+        if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) < 0) {
+            return Rational.valueOf(intValue);
+        } else /* if (mReal.compareTo(BigDecimal.ZERO) > 0) */ {
+            return Rational.valueOf(intValue.add(BigInteger.ONE));
         }
     }
 
@@ -142,10 +143,11 @@ public class Real extends NumberValue {
     }
 
     public Rational floor() {
-        if (mReal.compareTo(BigDecimal.ZERO) < 0) {
-            return Rational.valueOf(mReal.toBigInteger().subtract(BigInteger.ONE));
-        } else {
-            return Rational.valueOf(mReal.toBigInteger());
+        BigInteger intValue = mReal.toBigInteger();
+        if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) > 0) {
+            return Rational.valueOf(intValue);
+        } else /* if (mReal.compareTo(BigDecimal.ZERO) < 0) */ {
+            return Rational.valueOf(intValue.subtract(BigInteger.ONE));
         }
     }
 

@@ -8,6 +8,7 @@ import org.randoom.setlx.expressions.VariableIgnore;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,10 +47,28 @@ public class ExplicitList extends Constructor {
             );
         }
         for (int i = 0; i < size; ++i) {
-            final Expr  e = mList.get(i);
-            final Value v = list.getMember(i + 1);
-            e.assign(v);
+            mList.get(i).assignUncloned(list.getMember(i + 1));
         }
+    }
+
+    /* Similar to assignUncloned(),
+       However, also checks if the variable is already defined in scopes up to
+       (but EXCLUDING) `outerScope'.
+       Returns true and sets `v' if variable is undefined or already equal to `v'.
+       Returns false, if variable is defined and different from `v'. */
+    public boolean assignUnclonedCheckUpTo(final SetlList list, final VariableScope outerScope) throws SetlException {
+        final int size = mList.size();
+        if (list.size() != size) {
+            throw new IncompatibleTypeException(
+                "Members of '" + list + "' are unusable for list assignment."
+            );
+        }
+        for (int i = 0; i < size; ++i) {
+            if ( ! mList.get(i).assignUnclonedCheckUpTo(list.getMember(i + 1), outerScope)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public int size() {

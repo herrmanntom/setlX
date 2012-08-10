@@ -101,6 +101,20 @@ public class VariableScope {
         }
     }
 
+    public static boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
+        if (sGlobalsPresent) {
+            final Value now = sGlobals.locateValue(var);
+            if (now != null) {
+                if (now.equalTo(value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        return sVariableScope.storeValueCheckUpTo(var, value, outerScope);
+    }
+
     // Add bindings stored in `scope' into current scope.
     // This also adds vars in outer scopes of `scope' until reaching the
     // current scope.
@@ -227,6 +241,25 @@ public class VariableScope {
         ) {
             mOriginalScope.storeValue(var, value);
         }
+    }
+
+    private boolean storeValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
+        VariableScope toCheck = mOriginalScope;
+        while (toCheck != null && toCheck != outerScope) {
+            final Value now = toCheck.mVarBindings.get(var);
+            if (now != null) { // already saved there
+                if (now.equalTo(value)) {
+                    return true;
+                } else if (now != Om.OM) {
+                    return false;
+                }
+            } else {
+                toCheck = toCheck.mOriginalScope;
+            }
+        }
+        // to get here, `var' is not stored in any scope up to outerScope
+        sVariableScope.mVarBindings.put(var, value);
+        return true;
     }
 
     /* term operations */

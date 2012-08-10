@@ -3,6 +3,12 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v1.2.7--- unreleased
  + added clearCache(cachedProcedure) function
  + added check and backtrack statements
+ + fixed ceil and floor for integer reals (e.g. 2.0, -2.0)
+ + iterations like:
+      for ([x,y] in s, [y,z] in t) {}
+   now work like
+      for ([x,y1] in s, [y2,z] in t | y1 == y2) {}
+   i.e. same variables must contain same values to execute the iteration block
 
 ---v1.2.6--- unreleased
  + added cached procedures (Keyword: cachedProcedure instead of just procedure)

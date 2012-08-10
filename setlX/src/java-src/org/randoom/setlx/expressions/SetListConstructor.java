@@ -9,6 +9,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Constructor;
+import org.randoom.setlx.utilities.VariableScope;
 
 
 /*
@@ -62,6 +63,27 @@ public class SetListConstructor extends Expr {
         if (v instanceof SetlList) {
             if (mType == LIST && mConstructor != null) {
                 mConstructor.assignUncloned((SetlList) v);
+            } else {
+                throw new UndefinedOperationException(
+                    "Only explicit lists can be used as targets for list assignments."
+                );
+            }
+        } else {
+            throw new IncompatibleTypeException(
+                "The value '" + v + "' is unusable for assignment to \"" + this + "\"."
+            );
+        }
+    }
+
+    /* Similar to assignUncloned(),
+       However, also checks if the variable is already defined in scopes up to
+       (but EXCLUDING) `outerScope'.
+       Returns true and sets `v' if variable is undefined or already equal to `v'.
+       Returns false, if variable is defined and different from `v'. */
+    public boolean assignUnclonedCheckUpTo(final Value v, final VariableScope outerScope) throws SetlException {
+        if (v instanceof SetlList) {
+            if (mType == LIST && mConstructor != null) {
+               return mConstructor.assignUnclonedCheckUpTo((SetlList) v, outerScope);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."

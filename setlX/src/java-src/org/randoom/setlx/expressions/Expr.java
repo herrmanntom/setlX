@@ -7,6 +7,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.VariableScope;
 
 public abstract class Expr extends CodeFragment {
     // step execution of this expr. MAY ONLY BE SET BY ENVIRONMENT CLASS!
@@ -38,8 +39,20 @@ public abstract class Expr extends CodeFragment {
 
     /* Sets this expression to the given value
        (only makes sense for variables and id-lists)
-       Does not clone v and does not return if for chained assignment */
+       Does not clone v and does not return value for chained assignment */
     public void assignUncloned(final Value v) throws SetlException {
+        throw new UndefinedOperationException(
+            "Error in \"" + this + "\":\n" +
+            "This expression can not be used as target for assignments."
+        );
+    }
+
+    /* Similar to assignUncloned(),
+       However, also checks if the variable is already defined in scopes up to
+       (but EXCLUDING) `outerScope'.
+       Returns true and sets `v' if variable is undefined or already equal to `v'.
+       Returns false, if variable is defined and different from `v'. */
+    public boolean assignUnclonedCheckUpTo(final Value v, final VariableScope outerScope) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "This expression can not be used as target for assignments."

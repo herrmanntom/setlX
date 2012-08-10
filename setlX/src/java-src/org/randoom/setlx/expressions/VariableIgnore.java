@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.VariableScope;
 
 /*
 grammar rules:
@@ -36,6 +37,15 @@ public class VariableIgnore extends Expr {
     // sets this expression to the given value
     public void assignUncloned(final Value v) {
         // or maybe it just does nothing
+    }
+
+    /* Similar to assignUncloned(),
+       However, also checks if the variable is already defined in scopes up to
+       (but EXCLUDING) `outerScope'.
+       Returns true and sets `v' if variable is undefined or already equal to `v'.
+       Returns false, if variable is defined and different from `v' */
+    public boolean assignUnclonedCheckUpTo(final Value v, final VariableScope outerScope) {
+        return true;
     }
 
     /* string operations */

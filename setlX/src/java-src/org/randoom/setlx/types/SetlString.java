@@ -463,7 +463,7 @@ public class SetlString extends IndexedCollectionValue {
         final int    pos    = mContent.indexOf(needle);
         if (pos >= 0) {
             separateFromOriginal();
-            mContent.delete(pos, needle.length());
+            mContent.delete(pos, pos + needle.length());
         }
     }
 

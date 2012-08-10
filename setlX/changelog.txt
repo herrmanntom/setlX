@@ -1,9 +1,12 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.2.8--- unreleased
+ # fixed from(string)
+
 ---v1.2.7--- unreleased
  + added clearCache(cachedProcedure) function
  + added check and backtrack statements
- + fixed ceil and floor for integer reals (e.g. 2.0, -2.0)
+ # fixed ceil and floor for integer reals (e.g. 2.0, -2.0)
  + iterations like:
       for ([x,y] in s, [y,z] in t) {}
    now work like
@@ -26,7 +29,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + lots of refactoring
 
 ---v1.2.3--- unreleased
- + fixed matching strings using lists of variables
+ # fixed matching strings using lists of variables
  + improved performance of collect
 
 ---v1.2.2--- 2012-08-01

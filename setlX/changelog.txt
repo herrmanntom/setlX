@@ -2,6 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.2.8--- unreleased
  # fixed from(string)
+ # fix isMap()
 
 ---v1.2.7--- unreleased
  + added clearCache(cachedProcedure) function

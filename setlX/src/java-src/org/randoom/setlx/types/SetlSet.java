@@ -100,9 +100,10 @@ public class SetlSet extends CollectionValue {
     /* type checks (sort of boolean operation) */
 
     public SetlBoolean isMap() {
+        final TreeSet<Value> temp = new TreeSet<Value>();
         for (final Value v: mSortedSet) {
-            if (v instanceof SetlList) {
-                if (((SetlList) v).size() != 2) {
+            if (v instanceof SetlList && ((SetlList) v).size() == 2) {
+                if ( ! temp.add(((SetlList) v).firstMember())) {
                     return SetlBoolean.FALSE;
                 }
             } else {
@@ -336,14 +337,8 @@ public class SetlSet extends CollectionValue {
 
         final SetlSet result = new SetlSet();
         for (final Value v: subSet) {
-            if (v instanceof SetlList) {
-                if (v.size() == 2) {
-                    result.addMember(v.lastMember());
-                } else {
-                    throw new IncompatibleTypeException(
-                        "'" + this + "' is not a map."
-                    );
-                }
+            if (v instanceof SetlList && v.size() == 2) {
+                result.addMember(v.lastMember());
             } else {
                 throw new IncompatibleTypeException(
                     "'" + this + "' is not a map."
@@ -357,24 +352,18 @@ public class SetlSet extends CollectionValue {
         return SetlBoolean.valueOf(mSortedSet.contains(element));
     }
 
-    public SetlSet domain() throws SetlException {
-        final SetlSet result = new SetlSet();
+    public SetlSet domain() throws IncompatibleTypeException {
+        final TreeSet<Value> result = new TreeSet<Value>();
         for (final Value v: mSortedSet) {
-            if (v instanceof SetlList) {
-                if (v.size() == 2) {
-                    result.addMember(v.firstMember());
-                } else {
-                    throw new IncompatibleTypeException(
-                        "'" + this + "' is not a map."
-                    );
-                }
+            if (v instanceof SetlList && v.size() == 2) {
+                result.add(v.firstMember());
             } else {
                 throw new IncompatibleTypeException(
                     "'" + this + "' is not a map."
                 );
             }
         }
-        return result;
+        return new SetlSet(result);
     }
 
     public Value firstMember() {
@@ -418,19 +407,13 @@ public class SetlSet extends CollectionValue {
 
         Value                     result    = Om.OM;
         for (final Value v: subSet) {
-            if (v instanceof SetlList) {
-                if (v.size() == 2) {
-                    if (result == Om.OM) {
-                        result = ((SetlList) v).getMemberUnCloned(2);
-                    } else {
-                        // double match!
-                        result = Om.OM;
-                        break;
-                    }
+            if (v instanceof SetlList && v.size() == 2) {
+                if (result == Om.OM) {
+                    result = ((SetlList) v).getMemberUnCloned(2);
                 } else {
-                    throw new IncompatibleTypeException(
-                        "'" + this + "' is not a map."
-                    );
+                    // double match!
+                    result = Om.OM;
+                    break;
                 }
             } else {
                 throw new IncompatibleTypeException(
@@ -495,15 +478,8 @@ public class SetlSet extends CollectionValue {
     public SetlSet range() throws SetlException {
         final SetlSet result = new SetlSet();
         for (final Value v: mSortedSet) {
-            if (v instanceof SetlList) {
-                final SetlList list  = (SetlList) v;
-                if (list.size() == 2) {
-                    result.addMember(list.lastMember());
-                } else {
-                    throw new IncompatibleTypeException(
-                        "'" + this + "' is not a map."
-                    );
-                }
+            if (v instanceof SetlList && v.size() == 2) {
+                result.addMember(v.lastMember());
             } else {
                 throw new IncompatibleTypeException(
                     "'" + this + "' is not a map."

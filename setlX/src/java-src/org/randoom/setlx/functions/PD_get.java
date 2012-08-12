@@ -23,12 +23,17 @@ public class PD_get extends PreDefinedFunction {
     public Value execute(List<Value> args, List<Value> writeBackVars) {
         Value          inputValue = Om.OM;
         String         input      = null;
-        String         prompt     = "";
-        for (Value arg : args) {
-            prompt += arg.getUnquotedString();
+        String         prompt     = null;
+        if (args.size() == 0) {
+            prompt = ": ";
+        } else {
+            prompt = "";
+            for (Value arg : args) {
+                prompt += arg.getUnquotedString();
+            }
         }
         try {
-            Environment.prompt(prompt + ": ");
+            Environment.prompt(prompt);
             input = Environment.inReadLine();
         } catch (JVMIOException ioe) {
             Environment.errWriteLn("IO error trying to read from stdin!");

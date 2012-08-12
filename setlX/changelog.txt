@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.2.9--- unreleased
+ + get() and read() will not add anything extra when supplying a user defined prompt
+
 ---v1.2.8--- unreleased
  # fixed from(string)
  # fix isMap()

@@ -112,7 +112,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value difference(final Value subtrahend) throws IncompatibleTypeException {
+    public Value difference(final Value subtrahend) throws IncompatibleTypeException, UndefinedOperationException {
         if (subtrahend instanceof NumberValue) {
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
                 return (Infinity) subtrahend.minus();
@@ -124,7 +124,11 @@ public class Real extends NumberValue {
                 Rational s = ((Rational) subtrahend);
                 right = s.toReal().mReal;
             }
-            return new Real(mReal.subtract(right, mathContext));
+            try {
+                return new Real(mReal.subtract(right, mathContext));
+            } catch (final ArithmeticException ae) {
+                return handleArithmeticException(ae, this, "-", subtrahend);
+            }
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(this);
         } else {
@@ -189,7 +193,7 @@ public class Real extends NumberValue {
         return new Real(r);
     }
 
-    public Value product(final Value multiplier) throws IncompatibleTypeException {
+    public Value product(final Value multiplier) throws IncompatibleTypeException, UndefinedOperationException {
         if (multiplier instanceof NumberValue) {
             if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
                 return (Infinity) multiplier;
@@ -201,7 +205,11 @@ public class Real extends NumberValue {
                 Rational m = (Rational) multiplier;
                 right = m.toReal().mReal;
             }
-            return new Real(mReal.multiply(right, mathContext));
+            try {
+                return new Real(mReal.multiply(right, mathContext));
+            } catch (final ArithmeticException ae) {
+                return handleArithmeticException(ae, this, "*", multiplier);
+            }
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(this);
         } else {
@@ -226,10 +234,8 @@ public class Real extends NumberValue {
             }
             try {
                 return new Real(mReal.divide(right, mathContext));
-            } catch (ArithmeticException ae) {
-                throw new UndefinedOperationException(
-                    "'" + this + " / " + divisor + "' is undefined."
-                );
+            } catch (final ArithmeticException ae) {
+                return handleArithmeticException(ae, this, "/", divisor);
             }
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(this);
@@ -244,7 +250,7 @@ public class Real extends NumberValue {
         return Rational.valueOf(mReal.setScale(0, mathContext.getRoundingMode()).toBigInteger());
     }
 
-    public Value sum(final Value summand) throws IncompatibleTypeException {
+    public Value sum(final Value summand) throws IncompatibleTypeException, UndefinedOperationException {
         if (summand instanceof NumberValue) {
             if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
                 return (Infinity) summand;
@@ -256,7 +262,11 @@ public class Real extends NumberValue {
                 Rational s = (Rational) summand;
                 right = s.toReal().mReal;
             }
-            return new Real(mReal.add(right, mathContext));
+            try {
+                return new Real(mReal.add(right, mathContext));
+            } catch (final ArithmeticException ae) {
+                return handleArithmeticException(ae, this, "+", summand);
+            }
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(this);
         } else if (summand instanceof SetlString) {
@@ -319,6 +329,25 @@ public class Real extends NumberValue {
 
     public int hashCode() {
         return initHashCode + mReal.hashCode();
+    }
+
+    /* private */
+
+    public Infinity handleArithmeticException(final ArithmeticException ae, final Real t, final String op, final Value o) throws UndefinedOperationException {
+        final String message = ae.getMessage();
+        if (message.equalsIgnoreCase("Overflow")) {
+            return Infinity.POSITIVE;
+        } else if (message.equalsIgnoreCase("Underflow")) {
+            return Infinity.NEGATIVE;
+        } else if (message.equalsIgnoreCase("Division by zero")) {
+            throw new UndefinedOperationException(
+                "'" + t + " / " + o + "' is undefined (division by zero)."
+            );
+        } else {
+            throw new UndefinedOperationException(
+                "Error when computing '" + t + " " + op + " " + o + "' (" + message + ")."
+            );
+        }
     }
 }
 

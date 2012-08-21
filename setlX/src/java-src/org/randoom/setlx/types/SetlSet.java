@@ -527,14 +527,24 @@ public class SetlSet extends CollectionValue {
         mSortedSet.remove(element);
     }
 
-    public void removeFirstMember() {
+    public Value removeFirstMember() {
         separateFromOriginal();
-        mSortedSet.pollFirst();
+        final Value result = mSortedSet.pollFirst();
+        if (result != null) {
+            return result;
+        } else {
+            return Om.OM;
+        }
     }
 
-    public void removeLastMember() {
+    public Value removeLastMember() {
         separateFromOriginal();
-        mSortedSet.pollLast();
+        final Value result = mSortedSet.pollLast();
+        if (result != null) {
+            return result;
+        } else {
+            return Om.OM;
+        }
     }
 
     /* string and char operations */

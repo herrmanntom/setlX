@@ -467,17 +467,28 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public void removeFirstMember() {
+    public Value removeFirstMember() {
+        if (size() < 1) {
+            return Om.OM;
+        }
         separateFromOriginal();
+        final char result = mContent.charAt(0);
         mContent.deleteCharAt(0);
+        return new SetlString(result);
     }
 
-    public void removeLastMember() {
+    public Value removeLastMember() {
+        final int  index  = size() - 1;
+        if (index < 0) {
+            return Om.OM;
+        }
         separateFromOriginal();
-        mContent.deleteCharAt(size() - 1);
+        final char result = mContent.charAt(index);
+        mContent.deleteCharAt(index);
+        return new SetlString(result);
     }
 
-    public SetlString reverse() {
+    public Value reverse() {
         final SetlString result = clone();
         result.separateFromOriginal();
         result.mContent.reverse();

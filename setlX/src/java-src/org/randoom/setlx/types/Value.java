@@ -414,13 +414,13 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public void removeFirstMember() throws IncompatibleTypeException {
+    public Value removeFirstMember() throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Can not remove first member from operand; '" + this + "' is not a collection value."
         );
     }
 
-    public void removeLastMember() throws IncompatibleTypeException {
+    public Value removeLastMember() throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Can not remove last member from operand; '" + this + "' is not a collection value."
         );

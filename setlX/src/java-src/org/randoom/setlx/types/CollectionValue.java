@@ -99,9 +99,9 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     public abstract void            removeMember(final Value element) throws IncompatibleTypeException;
 
-    public abstract void            removeFirstMember();
+    public abstract Value           removeFirstMember();
 
-    public abstract void            removeLastMember();
+    public abstract Value           removeLastMember();
 
     public abstract int             size();
 

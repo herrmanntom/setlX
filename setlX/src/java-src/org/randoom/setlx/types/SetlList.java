@@ -463,16 +463,25 @@ public class SetlList extends IndexedCollectionValue {
         compress();
     }
 
-    public void removeFirstMember() {
+    public Value removeFirstMember() {
+        if (size() < 1) {
+            return Om.OM;
+        }
         separateFromOriginal();
-        mList.remove(0);
+        final Value result = mList.remove(0);
         compress();
+        return result;
     }
 
-    public void removeLastMember() {
+    public Value removeLastMember() {
+        final int index = mList.size() - 1;
+        if (index < 0) {
+            return Om.OM;
+        }
         separateFromOriginal();
-        mList.remove(mList.size() - 1);
+        final Value result = mList.remove(index);
         compress();
+        return result;
     }
 
     public SetlList reverse() {

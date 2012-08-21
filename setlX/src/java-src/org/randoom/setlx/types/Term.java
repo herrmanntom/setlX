@@ -342,12 +342,12 @@ public class Term extends IndexedCollectionValue {
         mBody.removeMember(element);
     }
 
-    public void removeFirstMember() {
-        mBody.removeFirstMember();
+    public Value removeFirstMember() {
+        return mBody.removeFirstMember();
     }
 
-    public void removeLastMember() {
-        mBody.removeLastMember();
+    public Value removeLastMember() {
+        return mBody.removeLastMember();
     }
 
     public void setMember(final Value index, final Value v) throws SetlException {

@@ -19,10 +19,7 @@ public class PD_fromB extends PreDefinedFunction {
 
     public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value collection = args.get(0);
-        Value element    = collection.firstMember();
-        if (element != Om.OM) {
-            collection.removeFirstMember();
-        }
+        Value element    = collection.removeFirstMember();
 
         // write the reduced collection back into the outer environment
         writeBackVars.add(collection);

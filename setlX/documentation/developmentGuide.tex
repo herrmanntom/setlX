@@ -164,15 +164,12 @@ writeBackVars.add(new SetlReal("1.0"));
 
 These have to occur in \emph{the same order and number} as read-write parameters are defined in the constructor. A predefined function using a single read-write parameter is shown in figure \ref{lblPDFunctionRW}.
 
-\includeListing[e]{../src/java-src/org/randoom/setlx/functions/PD_from.java}{language=java}{lblPDFunctionRW}{}{Predefined Function `\command{from()}' using a read-write parameter}
-
-\nonSubsubsection{Predefined Math Functions}
-
-When an identifier can not be found, after searching for predefined functions, a query for a matching Java Math method, with a single double as parameter, is performed. When found, the matching method is wrapped inside the `MathFunction' class\\ (\command{org/randoom/setlx/functions/MathFunction.java}). This class behaves as any other predefined function and converts the \setlX{} value type `Real' into a standard java double, which can used with Java's Math functions.
+\includeListing[e]{../src/java-src/org/randoom/setlx/functions/PD_from.java}{language=java,showstringspaces=false}{lblPDFunctionRW}{}{Predefined Function `\command{from()}' using a read-write parameter}
 
 \section{Build Targets}
 
-The interpreter can be intelligently (re)build using make. Even though the standard java compiler can resolve and compile dependencies, the rather complex make file is required for partial (re)builds, as files are not rebuild by this compiler when one of their dependencies was updated.
+The interpreter can be intelligently (re)build using make.
+Even though the standard java compiler can resolve and compile dependencies, the rather complex make file is required for partial (re)builds, as files are not rebuild by this compiler when one of their dependencies was updated.
 
 Make targets:
 
@@ -216,7 +213,8 @@ make dist-clean
 
 \section{Semi Automatic Testing}\label{testing}
 
-As a sorry excuse for quality assurance and control a simple \command{test\_all\_examples} script is included with the interpreters source. This script should be run before creating a new version, by executing
+As a sorry excuse for quality assurance and control a simple \command{test\_all\_examples} script is included with the interpreters source.
+This script should be run before creating a new version, by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
 ./test_all_examples
@@ -233,7 +231,9 @@ The logic of the script is as follows:
 	\item Should the resulting diff file not be empty, the script stops. The diff result should then be examined.
 \end{itemize}
 
-Because this script can take a long time, the \command{test\_fast\_examples} version is available as well. It works in the same manor as \command{test\_all\_examples} but does not test the files in the \command{example\_SetX\_code/performance\_test\_code} folder. This version of the script should be run after every functional change, by executing
+Because this script can take a long time, the \command{test\_fast\_examples} version is available as well.
+It works in the same manor as \command{test\_all\_examples} but does not test the files in the \command{example\_SetX\_code/performance\_test\_code} folder.
+This version of the script should be run after every functional change, by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
 ./test_fast_examples
@@ -247,7 +247,8 @@ In addition to the options documented in the manual, \setlX{} has a few `undocum
 	\param{--dump <file-name>}
 	      {Writes loaded code into a file (has no effect in interactive mode).}
 	\param{--unhideExceptions}
-	      {Exceptions, which may occur unexpectedly in the Java code (e.g. \command{NullPointerException}), are hidden from the user and instead display a generic error message. When setting this option, the interpreter will print the usual Java stack trace of all unexpected exceptions.}
+	      {Exceptions, which may occur unexpectedly in the Java code (e.g. \command{NullPointerException}), are hidden from the user and instead display a generic error message.
+		When setting this option, the interpreter will print the usual Java stack trace of all unexpected exceptions.}
 \end{itemize}
 
 \section{Distribution}
@@ -255,7 +256,9 @@ In addition to the options documented in the manual, \setlX{} has a few `undocum
 Two different `distributions' can be automatically created (on an Unix-like OS):
 
 \begin{enumerate}
-	\item A binary only distribution, which should work on all Unix-like OS and Windows \emph{without} the need of the full Java JDK. Any Java Runtime (JRE) installation which is newer or the same major version as the JDK which created the distribution should work. This distribution does \emph{not} include any \SetlX{} code.
+	\item A binary only distribution, which should work on all Unix-like OS and Windows \emph{without} the need of the full Java JDK.
+		Any Java Runtime (JRE) installation which is newer or the same major version as the JDK which created the distribution should work.
+		This distribution does \emph{not} include any \SetlX{} code.
 
 	\item The development kit, which includes everything used in the development of the interpreter itself: the full interpreter source, various \SetlX{} example programs, the grammar of the interpreter in `pure' form and the \LaTeX{} sources of the documentation.
 \end{enumerate}

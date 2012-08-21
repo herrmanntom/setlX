@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.types.Infinity;
 import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;
@@ -24,7 +25,7 @@ public class MathFunction extends PreDefinedFunction {
         mFunction = function;
     }
 
-    public Real execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public NumberValue execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (!(args.get(0) instanceof NumberValue)) {
             throw new IncompatibleTypeException(
                 "This function requires a single number as parameter."
@@ -33,8 +34,13 @@ public class MathFunction extends PreDefinedFunction {
         final Value arg = args.get(0).toReal();
         if (arg != Om.OM) {
             try {
-                Object result = mFunction.invoke(null, ((Real) arg).doubleValue());
-                return new Real(result.toString());
+                final double r = (Double) mFunction.invoke(null, ((Real) arg).doubleValue());
+                if (r == Double.POSITIVE_INFINITY) {
+                    return Infinity.POSITIVE;
+                } else if (r == Double.NEGATIVE_INFINITY) {
+                    return Infinity.NEGATIVE;
+                }
+                return new Real(String.valueOf(r));
             } catch (NumberFormatException nfe) {
                 throw new NumberToLargeException(
                     "Involved numbers are to large or to small for this operation."

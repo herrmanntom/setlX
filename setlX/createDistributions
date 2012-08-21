@@ -89,7 +89,7 @@ rm -f "diff.result"
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "
 mkdir -p zipContents
-cp changelog.txt manual.pdf src/setlX src/setlX.cmd src/setlX.jar zipContents/.
+cp changelog.txt manual.pdf tutorial.pdf src/setlX src/setlX.cmd src/setlX.jar zipContents/.
 cd zipContents; zip -qr "../$binOnly.zip" . ; cd ..
 rm -rf zipContents
 echo "done"

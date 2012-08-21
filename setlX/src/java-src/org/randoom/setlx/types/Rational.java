@@ -446,17 +446,18 @@ public class Rational extends NumberValue {
                 // mNominator/mDenominator * r.mNominator/r.mDenominator = (mNominator * r.mNominator) / (mDenominator * r.mDenominator)
                 return new Rational(mNominator.multiply(r.mNominator), mDenominator.multiply(r.mDenominator));
             }
-        } else if (multiplier instanceof Real       ||
-                   multiplier instanceof SetlString ||
-                   multiplier == Infinity.POSITIVE  ||
-                   multiplier == Infinity.NEGATIVE)
-        {
+        } else if (multiplier == Infinity.POSITIVE  ||
+                   multiplier == Infinity.NEGATIVE  ||
+                   multiplier instanceof Real       ||
+                   multiplier instanceof SetlList   ||
+                   multiplier instanceof SetlString
+        ) {
             return multiplier.product(this);
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number or string."
+                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number, list or string."
             );
         }
     }

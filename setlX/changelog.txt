@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.3.0--- unreleased
+ # fixed product of a number and a list
+
 ---v1.2.9--- unreleased
  + get() and read() will not add anything extra when supplying a user defined prompt
  # fixed errors during certain operations on reals

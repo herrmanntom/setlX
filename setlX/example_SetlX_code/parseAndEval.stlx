@@ -6,6 +6,7 @@ getInput := procedure() {
         try {
             return eval(get());
         } catch (error) {
+            print(error);
             print();
             print("Oh... you did that wrong... try again!");
             print();
@@ -26,6 +27,7 @@ getInput := procedure() {
             }
             return expr;
         } catch (error) {
+            print(error);
             print();
             print("Oh... you did that wrong... try again!");
             print();

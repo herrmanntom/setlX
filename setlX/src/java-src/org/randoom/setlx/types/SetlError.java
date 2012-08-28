@@ -28,7 +28,7 @@ public class SetlError extends Value {
     /* string and char operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {
-        sb.append("Error: ").append(mMessage);
+        sb.append(mMessage);
     }
 
     /* comparisons */

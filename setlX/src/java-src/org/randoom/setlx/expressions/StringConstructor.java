@@ -108,7 +108,11 @@ public class StringConstructor extends Expr {
                  */
                 ParseSetlX.addReportedError();
                 // However we can at least provide the user with some feedback.
-                Environment.errWriteLn("Parsing-Error in string " + this + ": closing '$' missing.");
+                Environment.errWriteLn(
+                    "Error(s) while parsing string " + this + " {\n"
+                  + "\tclosing '$' missing\n"
+                  + "}"
+                );
             }
             // outer string must always be appended, even if empty
             mFragments.add(fragment.toString());

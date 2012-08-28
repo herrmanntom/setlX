@@ -8,7 +8,7 @@ public class ThrownInSetlXException extends CatchableInSetlXException {
     private              Value  mValue;
 
     public ThrownInSetlXException(Value value) {
-        super("Error: " + value.toString());
+        super("Uncaught user exception: " + value.toString());
         mValue = value;
     }
 

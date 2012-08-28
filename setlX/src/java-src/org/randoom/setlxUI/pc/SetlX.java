@@ -175,7 +175,7 @@ public class SetlX {
                 break;
 
             } catch (ParserException pe) {
-                Environment.errWriteLn(pe.getMessage() + "\n\nLast input not executed due to errors in it.");
+                Environment.errWriteLn(pe.getMessage());
                 skipTest = true;
                 blk      = null;
             } catch (Exception e) { // this should never happen...
@@ -197,27 +197,24 @@ public class SetlX {
         // parsed programs
         List<Block> programs = new ArrayList<Block>(files.size());
 
-        if (verbose) {
-            Environment.outWriteLn(
-                "-================================Parser=Errors================================-\n"
-            );
-        }
-
         // parse content of all files (ANTLR will print its parser errors into stderr ...)
         try {
             for (String fileName : files) {
                 programs.add(ParseSetlX.parseFile(fileName));
             }
         } catch (ParserException pe) {
-            if (pe instanceof FileNotReadableException) {
-                Environment.errWriteLn(pe.getMessage());
+            if (verbose) {
+                Environment.outWriteLn(
+                    "-================================Parser=Errors================================-\n"
+                );
             }
+            Environment.errWriteLn(pe.getMessage());
             if (verbose) {
                 Environment.outWriteLn(
                     "\n-================================Parsing=Failed===============================-\n"
                 );
+                Environment.errWriteLn("Execution terminated due to errors in the input.");
             }
-            Environment.errWriteLn("Execution terminated due to errors in the input.");
 
             System.exit(EXIT_ERROR);
 
@@ -232,7 +229,6 @@ public class SetlX {
 
         // no parser errors when we get here
         if (verbose) {
-            Environment.outWriteLn("none\n");
             Environment.outWriteLn(
                 "-================================Parsed=Program===============================-\n"
             );

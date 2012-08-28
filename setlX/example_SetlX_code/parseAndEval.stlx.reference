@@ -1,5 +1,6 @@
 Please enter some SetlX value
 line 1:0 no viable alternative at input '%'
+1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!
 
@@ -8,6 +9,7 @@ value	:= om
 
 Please enter some SetlX expression using the 'value' variable
 line 1:0 no viable alternative at input '%'
+1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!
 
@@ -19,7 +21,7 @@ expr	:= ^sum(^variable("value"), ^variable("value"))
 
 No, No, No... that did not work out!
 Try again from the beginning, but don't make this error again:
-Error: 'om + om' is undefined.
+'om + om' is undefined.
 
 Please enter some SetlX value
 value	:= 5

@@ -7,10 +7,11 @@ public class SyntaxErrorException extends ParserException {
     private static final long serialVersionUID = -8624774595405955263L;
 
     public static SyntaxErrorException create(final LinkedList<String> errors, final String summary) {
-        String message = summary;
+        String message = "";
         for (final String s : errors) {
-            message = s + "\n" + message;
+            message += s + "\n";
         }
+        message += summary;
         return new SyntaxErrorException(message, errors);
     }
 

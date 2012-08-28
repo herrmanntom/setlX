@@ -58,7 +58,8 @@ public class StringConstructor extends Expr {
                              */
                             if (ParseSetlX.getErrorCount() > errCount) {
                                 Environment.errWriteLn(
-                                    "Parsing-Error in string " + this + ": " + se.getMessage()
+                                    "Parsing-Error in string " + this + ":\n"
+                                    + se.getMessage()
                                 );
                             }
                         }

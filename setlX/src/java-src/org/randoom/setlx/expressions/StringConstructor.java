@@ -1,6 +1,8 @@
 package org.randoom.setlx.expressions;
 
+import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlList;
@@ -50,7 +52,7 @@ public class StringConstructor extends Expr {
                             final Expr   exp  = ParseSetlX.parseStringToExpr(eStr);
                             // add inner expr to mExprs
                             mExprs.add(exp);
-                        } catch (SetlException se) {
+                        } catch (ParserException pe) {
                             /* Doing error handling here is futile, as outer parsing run,
                              * which called this constructor, will notice via the global
                              * error count and (later) halt.
@@ -58,8 +60,21 @@ public class StringConstructor extends Expr {
                              */
                             if (ParseSetlX.getErrorCount() > errCount) {
                                 Environment.errWriteLn(
-                                    "Parsing-Error in string " + this + ":\n"
-                                    + se.getMessage()
+                                    "Error(s) while parsing string " + this + " {"
+                                );
+                                if (pe instanceof SyntaxErrorException) {
+                                    for (final String err : ((SyntaxErrorException) pe).getErrors()) {
+                                        Environment.errWriteLn(
+                                            "\t" + err
+                                        );
+                                    }
+                                } else {
+                                    Environment.errWriteLn(
+                                        pe.getMessage()
+                                    );
+                                }
+                                Environment.errWriteLn(
+                                    "}"
                                 );
                             }
                         }

@@ -18,6 +18,7 @@ import org.randoom.setlx.statements.While;
 import org.randoom.setlx.types.ProcedureDefinition;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Random;
 
 // This class provides environment variables
@@ -25,6 +26,8 @@ import java.util.Random;
 public class Environment {
     // interface provider to the outer world
     private         static  EnvironmentProvider sEnvProvider                = null;
+
+    private         static  LinkedList<String>  sParserErrorCapture         = null;
 
     // number of CPUs/Cores in System
     private final   static  int                 sCORES                      = Runtime.getRuntime().availableProcessors();
@@ -89,6 +92,21 @@ public class Environment {
     }
     public static void errWriteLn() {
         sEnvProvider.errWrite(sEnvProvider.getEndl());
+    }
+
+    // capture/write parser errors
+    public static void writeParserErrLn(final String msg) {
+        if (sParserErrorCapture != null) {
+            sParserErrorCapture.add(msg);
+        } else {
+            errWriteLn(msg);
+        }
+    }
+    public static LinkedList<String> getParserErrorCapture() {
+        return sParserErrorCapture;
+    }
+    public static void setParserErrorCapture(final LinkedList<String> capture) {
+        sParserErrorCapture = capture;
     }
 
     public static boolean prompt(final String prompt) throws JVMIOException {

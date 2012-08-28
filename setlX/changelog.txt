@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.3.1--- 2012-08-28
+ # fixed error handling in nested parsing runs (e.g. $-expressions in strings, parse())
+
 ---v1.3.0--- 2012-08-22
  # fixed product of a number and a list
  + added tutorial.pdf

@@ -121,30 +121,22 @@ public class ParseSetlX {
         return (Expr) handleFragmentParsing(input, EXPR);
     }
 
-    private static CodeFragment parseFragment(final SetlXgrammarParser parser, final int type) throws RecognitionException {
-        switch (type) {
-            case EXPR:
-                return parser.initExpr();
-            case BLOCK:
-                return parser.initBlock();
-            default:
-                /* this should never be reached if surrounding code is correct */
-                return null;
-        }
-    }
-
     private static CodeFragment handleFragmentParsing(final ANTLRStringStream input, final int type) throws SyntaxErrorException {
-        SetlXgrammarLexer   lexer   = null;
-        SetlXgrammarParser  parser  = null;
+              SetlXgrammarLexer  lexer  = null;
+              SetlXgrammarParser parser = null;
+        final LinkedList<String> oldCap = Environment.getParserErrorCapture();
         try {
                                     lexer  = new SetlXgrammarLexer(input);
             final CommonTokenStream ts     = new CommonTokenStream(lexer);
                                     parser = new SetlXgrammarParser(ts);
 
+            // capture parser errors
+            Environment.setParserErrorCapture(new LinkedList<String>());
+
             // parse the input
             final CodeFragment      frag   = parseFragment(parser, type);
 
-            // now ANTLR will print its parser errors into stderr ...
+            // now ANTLR will add its parser errors into our capture ...
 
             /* check for unparsed syntax errors at the end of the input stream */
 
@@ -164,7 +156,7 @@ public class ParseSetlX {
                 // parse again to force displaying syntax error in remaining tokenStream
                 parseFragment(parser, type);
 
-                // now ANTLR will (again) print its parser errors into stderr ...
+                // now ANTLR will (again) add its parser errors into our capture ...
 
                 // check if parser moved the index
                 if (index == ts.index()) {
@@ -179,20 +171,22 @@ public class ParseSetlX {
                     String error  = "line " + t.getLine() + ":" + t.getCharPositionInLine();
                            error += " input '" + ts.toString(index, ts.size()) + "' includes unidentified errors";
                     // fake ANTLR like error message
-                    Environment.errWriteLn(error);
-                    // and stop parsing
-                    throw new SyntaxErrorException(error);
+                    errors++;
+                    parser.emitErrorMessage(error);
                 }
             }
 
             errors += parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors();
             if (errors > 0) {
-                throw new SyntaxErrorException("" + errors + " syntax error(s) encountered.");
+                throw SyntaxErrorException.create(
+                    Environment.getParserErrorCapture(),
+                    errors + " syntax error(s) encountered."
+                );
             }
 
             return frag;
         } catch (RecognitionException re) {
-            throw new SyntaxErrorException(re.getMessage());
+            throw SyntaxErrorException.create(Environment.getParserErrorCapture(), re.getMessage());
         } catch (NullPointerException npe) {
             if (lexer != null) {
                 errors += lexer.getNumberOfSyntaxErrors();
@@ -202,10 +196,28 @@ public class ParseSetlX {
             }
             if (errors > 0) {
                 // NullPointerException caused by syntax error(s)
-                throw new SyntaxErrorException("" + errors + " syntax error(s) encountered.");
+                throw SyntaxErrorException.create(
+                    Environment.getParserErrorCapture(),
+                    errors + " syntax error(s) encountered."
+                );
             } else { // NullPointer in parse tree itself
-                throw new SyntaxErrorException("Parsed tree contains nullpointer.");
+                throw SyntaxErrorException.create(new LinkedList<String>(),"Parsed tree contains nullpointer.");
             }
+        } finally {
+            // restore error capture
+            Environment.setParserErrorCapture(oldCap);
+        }
+    }
+
+    private static CodeFragment parseFragment(final SetlXgrammarParser parser, final int type) throws RecognitionException {
+        switch (type) {
+            case EXPR:
+                return parser.initExpr();
+            case BLOCK:
+                return parser.initBlock();
+            default:
+                /* this should never be reached if surrounding code is correct */
+                return null;
         }
     }
 }

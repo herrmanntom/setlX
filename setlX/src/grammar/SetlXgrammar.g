@@ -32,9 +32,11 @@ grammar SetlXgrammar;
             if (t.getText().equals(tokenTextToMatch)) {
                 String sourceName = getSourceName();
                 if (sourceName != null) {
-                    Environment.errWrite(sourceName + " ");
+                    sourceName += " ";
+                } else {
+                    sourceName = "";
                 }
-                Environment.errWriteLn("line " + t.getLine() + ":" + (t.getCharPositionInLine() + 1) + " " + message);
+                emitErrorMessage(sourceName + "line " + t.getLine() + ":" + (t.getCharPositionInLine() + 1) + " " + message);
                 break;
             }
         }
@@ -55,7 +57,7 @@ grammar SetlXgrammar;
         if (lastErrorMsg.equals(msg)) {
             state.syntaxErrors  = lastCount;
         } else {
-            Environment.errWriteLn(msg);
+            Environment.writeParserErrLn(msg);
             lastErrorMsg = msg;
             lastCount    = state.syntaxErrors;
         }
@@ -65,7 +67,7 @@ grammar SetlXgrammar;
 @lexer::members {
     // make error reporting platform independend
     public void emitErrorMessage(String msg) {
-        Environment.errWriteLn(msg);
+        Environment.writeParserErrLn(msg);
     }
 
     // fix parsing: list[2..]

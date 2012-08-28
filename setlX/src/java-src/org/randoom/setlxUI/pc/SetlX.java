@@ -24,7 +24,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "1.3.0";
+    private final static String     VERSION         = "1.3.1";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
@@ -175,7 +175,7 @@ public class SetlX {
                 break;
 
             } catch (ParserException pe) {
-                Environment.errWriteLn("\nLast input not executed due to errors in it.");
+                Environment.errWriteLn(pe.getMessage() + "\n\nLast input not executed due to errors in it.");
                 skipTest = true;
                 blk      = null;
             } catch (Exception e) { // this should never happen...

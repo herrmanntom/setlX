@@ -16,7 +16,7 @@ statement
     : 'var' listOfVariables ';'
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
-    | 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | 'case' '[' listOfVariables '|' variable ']' ('|' condition)? ':' block | 'case' '{' listOfVariables '|' variable '}' ('|' condition)? ':' block)* ('default' ':' block)? '}'
+    | match
     | 'for' '(' iteratorChain ('|' condition)? ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'try' '{' block '}' ('catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')* ('catch' '(' variable ')' '{' block '}')?
@@ -30,6 +30,10 @@ statement
     | (assignmentOther)=> assignmentOther ';'
     | (assignmentDirect)=> assignmentDirect ';'
     | expr ';'
+    ;
+
+match
+    : 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | 'case' '[' listOfVariables '|' variable ']' ('|' condition)? ':' block | 'case' '{' listOfVariables '|' variable '}' ('|' condition)? ':' block | 'regex' STRING ('->' assignable)? ('|' condition)? ':' block)* ('default' ':' block)? '}'
     ;
 
 listOfVariables

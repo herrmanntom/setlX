@@ -144,22 +144,10 @@ statement returns [Statement stmnt]
         'case' c1 = condition[false] ':' b1 = block                  { caseList.add(new SwitchCaseBranch($c1.cnd, $b1.blk));           }
       )*
       (
-        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));                }
+        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));                 }
       )?
       '}' { stmnt = new Switch(caseList); }
-    | 'match' '(' expr[false] ')' '{'
-      (
-         'case'  exprList[true]                                ('|' c1 = condition[false] {condition = $c1.cnd;})? ':' b1 = block
-             { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk));     condition = null; }
-       | 'case' '[' l1 = listOfVariables '|' v1 = variable ']' ('|' c2 = condition[false] {condition = $c2.cnd;})? ':' b2 = block
-             { matchList.add(new MatchSplitListBranch($l1.lov, $v1.v, condition, $b2.blk)); condition = null; }
-       | 'case' '{' l2 = listOfVariables '|' v2 = variable '}' ('|' c3 = condition[false] {condition = $c3.cnd;})? ':' b3 = block
-             { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, condition, $b3.blk)); condition = null; }
-      )*
-      (
-        'default'             ':' b4 = block                         { matchList.add(new MatchDefaultBranch($b4.blk));                 }
-      )?
-      '}'                                                            { stmnt = new Match($expr.ex, matchList);                         }
+    | match                                                          { stmnt = $match.m;                                               }
     | 'for' '(' iteratorChain[false] ('|' condition[false] {condition = $condition.cnd;} )? ')' '{' block '}'
                                                         { stmnt = new For($iteratorChain.ic, condition, $block.blk); condition = null; }
     | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);                  }
@@ -187,6 +175,30 @@ statement returns [Statement stmnt]
     | ( assignmentOther )=> assignmentOther   ';'                    { stmnt = $assignmentOther.assign;                                }
     | ( assignmentDirect )=> assignmentDirect ';'                    { stmnt = new ExpressionStatement($assignmentDirect.assign);      }
     | expr[false] ';'                                                { stmnt = new ExpressionStatement($expr.ex);                      }
+    ;
+
+match returns [Match m]
+    @init{
+        List<MatchAbstractBranch> matchList  = new ArrayList<MatchAbstractBranch>();
+        Expr                      assignable = null;
+        Condition                 condition  = null;
+    }
+    : 'match' '(' expr[false] ')' '{'
+      (
+         'case'  exprList[true]                                ('|' c1 = condition[false] {condition = $c1.cnd;})? ':' b1 = block
+             { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk));     condition = null; }
+       | 'case' '[' l1 = listOfVariables '|' v1 = variable ']' ('|' c2 = condition[false] {condition = $c2.cnd;})? ':' b2 = block
+             { matchList.add(new MatchSplitListBranch($l1.lov, $v1.v, condition, $b2.blk)); condition = null; }
+       | 'case' '{' l2 = listOfVariables '|' v2 = variable '}' ('|' c3 = condition[false] {condition = $c3.cnd;})? ':' b3 = block
+             { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, condition, $b3.blk)); condition = null; }
+       | 'regex' STRING ('->' assignable[false] {assignable = $assignable.a;})? ('|' c4 = condition[false] {condition = $c4.cnd;})? ':' b4 = block
+             { matchList.add(new MatchRegexBranch($STRING.text, assignable, condition, $b4.blk)); assignable = null; condition = null; }
+      )*
+      (
+        'default'             ':' b5 = block
+             { matchList.add(new MatchDefaultBranch($b5.blk));                                                }
+      )?
+      '}'    { m = new Match($expr.ex, matchList);                                                            }
     ;
 
 listOfVariables returns [List<Variable> lov]

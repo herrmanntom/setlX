@@ -24,6 +24,8 @@ public abstract class MatchAbstractBranch extends Statement {
                 return MatchSplitListBranch.termToBranch(term);
             } else if (fc.equals(MatchSplitSetBranch.FUNCTIONAL_CHARACTER)) {
                 return MatchSplitSetBranch.termToBranch(term);
+            } else if (fc.equals(MatchRegexBranch.FUNCTIONAL_CHARACTER)) {
+                return MatchRegexBranch.termToBranch(term);
             } else if (fc.equals(MatchDefaultBranch.FUNCTIONAL_CHARACTER)) {
                 return MatchDefaultBranch.termToBranch(term);
             } else {

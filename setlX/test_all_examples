@@ -74,7 +74,7 @@ rm -f diff.result
 rm -f "$tmpFile"
 
 manualTestFiles="${manualTestFiles%, }"
-echo "The following examples need user input and can only be tested manually: $manualTestFiles"
+echo "The following examples need to be tested manually: $manualTestFiles"
 
 if [ $nSkipped -gt 0 ]
   then

@@ -59,10 +59,9 @@ public class MatchSplitListBranch extends MatchAbstractBranch {
             if (other.size() >= mVars.size()) {
                 final MatchResult result = new MatchResult(true);
                 for (final Value varTerm : mVarTerms) {
-                    final MatchResult subResult = varTerm.matchesTerm(other.firstMember());
+                    final MatchResult subResult = varTerm.matchesTerm(other.removeFirstMember());
                     if (subResult.isMatch() && result.isMatch()) {
                         result.addBindings(subResult);
-                        other.removeFirstMember();
                     } else {
                         return new MatchResult(false);
                     }

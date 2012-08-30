@@ -197,7 +197,7 @@ public class SetlX {
         // parsed programs
         List<Block> programs = new ArrayList<Block>(files.size());
 
-        // parse content of all files (ANTLR will print its parser errors into stderr ...)
+        // parse content of all files
         try {
             for (String fileName : files) {
                 programs.add(ParseSetlX.parseFile(fileName));
@@ -407,7 +407,7 @@ public class SetlX {
 
     private static void printExecutionStart() {
         Environment.outWriteLn(
-            "\n-===============================Execution=Result==============================-\n"
+            "-===============================Execution=Result==============================-\n"
         );
     }
 

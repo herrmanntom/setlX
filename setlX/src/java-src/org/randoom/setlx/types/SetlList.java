@@ -440,9 +440,8 @@ public class SetlList extends IndexedCollectionValue {
             permutations.addMember(clone());
             return permutations;
         }
-        final Value     last            = lastMember();
         final SetlList  rest            = clone();
-        rest.removeLastMember();
+        final Value     last            = rest.removeLastMember();
         final SetlSet   permutatateRest = rest.permutations();
         final SetlSet   permutations    = new SetlSet();
         for (final Value permutation : permutatateRest) {

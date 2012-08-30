@@ -72,9 +72,9 @@ public class MatchRegexBranch extends MatchAbstractBranch {
             final Matcher  m      = mPattern.matcher(term.getUnquotedString());
             final boolean  r      = m.matches();
             if (r && mAssignTerm != null) {
-                final int      count  = m.groupCount();
+                final int      count  = m.groupCount() + 1;
                 final SetlList groups = new SetlList(count);
-                for (int i = 1; i <= count; ++i) {
+                for (int i = 0; i < count; ++i) {
                     groups.addMember(new SetlString(m.group(i)));
                 }
                 return mAssignTerm.matchesTerm(groups);

@@ -17,12 +17,12 @@ import java.util.List;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | 'case' '[' listOfVariables '|' variable ']' ('|' condition)? ':' block | 'case' '{' listOfVariables '|' variable '}' ('|' condition)? ':' block)* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' [...] '}'
     ;
 
-implemented with different classes which inherit from BranchMatchAbstract:
-                  ====          ==========================================   ======================================================================   ======================================================================    ===================
-                  mExpr                      MatchCaseBranch                                          MatchSplitListBranch                                                     MatchSplitSetBranch                              MatchDefaultBranch
+implemented with different classes which inherit from MatchAbstractBranch:
+                  ====          ====
+                  mExpr      mBranchList
 */
 
 public class Match extends Statement {
@@ -46,10 +46,14 @@ public class Match extends Statement {
                 result.setAllBindings();
                 if (br.evalConditionToBool()) {
                     // execute statements
-                    return br.execute();
-                } else {
+                    final Value execResult = br.execute();
+                    if (execResult != null) {
+                        return execResult;
+                    }
                     result.restoreAllBindings();
+                    break;
                 }
+                result.restoreAllBindings();
             }
         }
         return null;

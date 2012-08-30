@@ -2,6 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
@@ -20,9 +21,10 @@ implemented here as:
                                                        mStatements
 */
 
-public class MatchDefaultBranch extends MatchAbstractBranch {
+public class MatchDefaultBranch extends MatchAbstractScanBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchDefaultBranch";
+    /*package*/ final static int    END_OFFSET           = -2020202020;
 
     private final Block   mStatements;
 
@@ -44,6 +46,14 @@ public class MatchDefaultBranch extends MatchAbstractBranch {
 
     protected Value exec() throws SetlException {
         return execute();
+    }
+
+    public MatchResult scannes(final SetlString string) {
+        return new MatchResult(true);
+    }
+
+    public int getEndOffset() {
+        return END_OFFSET;
     }
 
     /* string operations */

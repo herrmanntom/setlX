@@ -148,6 +148,7 @@ statement returns [Statement stmnt]
       )?
       '}' { stmnt = new Switch(caseList); }
     | match                                                          { stmnt = $match.m;                                               }
+    | scan                                                           { stmnt = $scan.s;                                                }
     | 'for' '(' iteratorChain[false] ('|' condition[false] {condition = $condition.cnd;} )? ')' '{' block '}'
                                                         { stmnt = new For($iteratorChain.ic, condition, $block.blk); condition = null; }
     | 'while' '(' condition[false] ')' '{' block '}'                 { stmnt = new While($condition.cnd, $block.blk);                  }
@@ -180,7 +181,6 @@ statement returns [Statement stmnt]
 match returns [Match m]
     @init{
         List<MatchAbstractBranch> matchList  = new ArrayList<MatchAbstractBranch>();
-        Expr                      assignable = null;
         Condition                 condition  = null;
     }
     : 'match' '(' expr[false] ')' '{'
@@ -191,14 +191,45 @@ match returns [Match m]
              { matchList.add(new MatchSplitListBranch($l1.lov, $v1.v, condition, $b2.blk)); condition = null; }
        | 'case' '{' l2 = listOfVariables '|' v2 = variable '}' ('|' c3 = condition[false] {condition = $c3.cnd;})? ':' b3 = block
              { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, condition, $b3.blk)); condition = null; }
-       | 'regex' STRING ('->' assignable[false] {assignable = $assignable.a;})? ('|' c4 = condition[false] {condition = $c4.cnd;})? ':' b4 = block
-             { matchList.add(new MatchRegexBranch($STRING.text, assignable, condition, $b4.blk)); assignable = null; condition = null; }
-      )*
+       | regexBranch
+             { matchList.add($regexBranch.rb); }
+      )+
       (
-        'default'             ':' b5 = block
-             { matchList.add(new MatchDefaultBranch($b5.blk));                                                }
+        'default' ':' b4 = block
+             { matchList.add(new MatchDefaultBranch($b4.blk));                                                }
       )?
       '}'    { m = new Match($expr.ex, matchList);                                                            }
+    ;
+
+scan returns [Scan s]
+    @init{
+        List<MatchAbstractScanBranch> scanList  = new ArrayList<MatchAbstractScanBranch>();
+    }
+    : 'scan' '(' expr[false] ')' '{'
+      ( 
+        regexBranch         { scanList.add($regexBranch.rb);                    }
+      )+
+      (
+        'default' ':' block { scanList.add(new MatchDefaultBranch($block.blk)); }
+      )?
+      '}'                   { s = new Scan($expr.ex, scanList);                 }
+    ;
+
+regexBranch returns [MatchRegexBranch rb]
+    @init{
+        Expr      assignable = null;
+        Condition condition  = null;
+    }
+    : 'regex' STRING
+      (
+        '->' assignable[false]     {assignable = $assignable.a;}
+      )?
+      (
+        '|'  c4 = condition[false] {condition = $c4.cnd;       }
+      )?
+      ':' b4 = block
+      { rb = new MatchRegexBranch($STRING.text, assignable, condition, $b4.blk);
+        assignable = null; condition = null; }
     ;
 
 listOfVariables returns [List<Variable> lov]

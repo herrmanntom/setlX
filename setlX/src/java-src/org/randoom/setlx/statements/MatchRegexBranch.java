@@ -33,8 +33,8 @@ implemented here as:
                                         mPattern     mAssignable       mCondition   mStatements
 */
 
-public class MatchRegexBranch extends MatchAbstractBranch {
-    // functional character used in terms TODO
+public class MatchRegexBranch extends MatchAbstractScanBranch {
+    // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchRegexBranch";
 
     private       Pattern     mPattern;    // regex pattern to match
@@ -43,6 +43,7 @@ public class MatchRegexBranch extends MatchAbstractBranch {
     private final Value       mAssignTerm; // term of variable to store groups
     private final Condition   mCondition;  // optional condition to confirm match
     private final Block       mStatements; // block to execute after match
+    private       int         mEndOffset;  // Offset of last match operation (i.e. how far match progressed the input)
 
     public MatchRegexBranch(final String pattern, final Expr assignable, final Condition condition, final Block statements){
         try {
@@ -65,13 +66,25 @@ public class MatchRegexBranch extends MatchAbstractBranch {
         }
         mCondition  = condition;
         mStatements = statements;
+        mEndOffset  = -1;
     }
 
     public MatchResult matches(final Value term) throws IncompatibleTypeException {
         if (term instanceof SetlString) {
-            final Matcher  m      = mPattern.matcher(term.getUnquotedString());
-            final boolean  r      = m.matches();
-            if (r && mAssignTerm != null) {
+            final MatchResult result = scannes((SetlString) term);
+            if (result.isMatch() && term.size() == mEndOffset) {
+                return result;
+            }
+        }
+        return new MatchResult(false);
+    }
+
+    public MatchResult scannes(final SetlString string) throws IncompatibleTypeException {
+        final Matcher  m      = mPattern.matcher(string.getUnquotedString());
+        final boolean  r      = m.lookingAt();
+        if (r) {
+            mEndOffset = m.end();
+            if (mAssignTerm != null) {
                 final int      count  = m.groupCount() + 1;
                 final SetlList groups = new SetlList(count);
                 for (int i = 0; i < count; ++i) {
@@ -79,9 +92,10 @@ public class MatchRegexBranch extends MatchAbstractBranch {
                 }
                 return mAssignTerm.matchesTerm(groups);
             }
-            return new MatchResult(r);
+        } else {
+            mEndOffset = -1;
         }
-        return new MatchResult(false);
+        return new MatchResult(r);
     }
 
     public boolean evalConditionToBool() throws SetlException {
@@ -98,6 +112,10 @@ public class MatchRegexBranch extends MatchAbstractBranch {
 
     protected Value exec() throws SetlException {
         return execute();
+    }
+
+    public int getEndOffset() {
+        return mEndOffset;
     }
 
     /* string operations */

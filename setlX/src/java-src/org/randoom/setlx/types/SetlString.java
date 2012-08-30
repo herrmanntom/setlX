@@ -393,6 +393,11 @@ public class SetlString extends IndexedCollectionValue {
                 "Upper bound '" + vHigh + "' is not an integer."
             );
         }
+        return getMembers(low, high);
+    }
+
+	// getMembers, i.e. substring
+    public SetlString getMembers(final int low, final int high) throws SetlException {
         if (low < 1) {
             throw new NumberToLargeException(
                 "Lower bound '" + low + "' is lower as 1."
@@ -400,12 +405,12 @@ public class SetlString extends IndexedCollectionValue {
         }
         if (size() == 0) {
             throw new NumberToLargeException(
-                "Lower bound '" + low + "' is larger as list size '" + size() + "'."
+                "Lower bound '" + low + "' is larger as string size '" + size() + "'."
             );
         }
         if (high > mContent.length()) {
             throw new NumberToLargeException(
-                "Upper bound '" + high + "' is larger as size '" + mContent.length() + "' of string '" + mContent.toString() + "'."
+                "Upper bound '" + high + "' is larger as string size '" + size() + "'."
             );
         }
         if (high < low) {

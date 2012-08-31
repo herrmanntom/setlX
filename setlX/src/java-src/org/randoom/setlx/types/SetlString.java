@@ -63,6 +63,10 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    public static SetlString newLiteral(final String s) {
+        return new SetlString(s.substring(1, s.length() - 1));
+    }
+
     private StringBuilder mContent;
     // is this strings a clone
     private boolean       mIsCloned;
@@ -396,7 +400,7 @@ public class SetlString extends IndexedCollectionValue {
         return getMembers(low, high);
     }
 
-	// getMembers, i.e. substring
+    // getMembers, i.e. substring
     public SetlString getMembers(final int low, final int high) throws SetlException {
         if (low < 1) {
             throw new NumberToLargeException(

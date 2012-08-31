@@ -1,7 +1,13 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.3.1--- 2012-08-28
+---v1.3.1--- 2012-08-31
  # fixed error handling in nested parsing runs (e.g. $-expressions in strings, parse())
+ + added regex-branch to match
+ + added scan statement
+ + added literal strings enclosed in single straight quotes, which are transferred
+   from source into memory without parsing escape sequences or interpreting the content
+   in any way. While "\n" describes a string of one linebreak character, '\n' describes
+   a string of the two separate characters: backslash and n.
 
 ---v1.3.0--- 2012-08-22
  # fixed product of a number and a list

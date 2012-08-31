@@ -220,15 +220,15 @@ regexBranch returns [MatchRegexBranch rb]
         Expr      assignable = null;
         Condition condition  = null;
     }
-    : 'regex' STRING
+    : 'regex' LITERAL
       (
-        '->' assignable[false]     {assignable = $assignable.a;}
+        '->' assignable[false]     { assignable = $assignable.a; }
       )?
       (
-        '|'  c4 = condition[false] {condition = $c4.cnd;       }
+        '|'  c4 = condition[false] { condition = $c4.cnd;        }
       )?
       ':' b4 = block
-      { rb = new MatchRegexBranch($STRING.text, assignable, condition, $b4.blk);
+      { rb = new MatchRegexBranch($LITERAL.text, assignable, condition, $b4.blk);
         assignable = null; condition = null; }
     ;
 
@@ -596,13 +596,14 @@ explicitList [boolean enableIgnore] returns [ExplicitList el]
     ;
 
 atomicValue returns [Value av]
-    : NUMBER     { av = Rational.valueOf($NUMBER.text);     }
-    | NEG_NUMBER { av = Rational.valueOf($NEG_NUMBER.text); }
-    | REAL       { av = new Real($REAL.text);               }
-    | NEG_REAL   { av = new Real($NEG_REAL.text);           }
-    | 'om'       { av = Om.OM;                              }
-    | 'true'     { av = SetlBoolean.TRUE;                   }
-    | 'false'    { av = SetlBoolean.FALSE;                  }
+    : NUMBER     { av = Rational.valueOf($NUMBER.text);       }
+    | NEG_NUMBER { av = Rational.valueOf($NEG_NUMBER.text);   }
+    | REAL       { av = new Real($REAL.text);                 }
+    | NEG_REAL   { av = new Real($NEG_REAL.text);             }
+    | LITERAL    { av = SetlString.newLiteral($LITERAL.text); }
+    | 'om'       { av = Om.OM;                                }
+    | 'true'     { av = SetlBoolean.TRUE;                     }
+    | 'false'    { av = SetlBoolean.FALSE;                    }
     ;
 
 TERM            : ('^'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
@@ -621,6 +622,7 @@ NUMBER_RANGE    : (
                   r = RANGE_SIGN     { $r.setType(RANGE_SIGN);  emit($r); }
                 ;
 STRING          : '"' ('\\"'|~('"'))* '"';
+LITERAL         : '\'' ('\\\''|~('\''))* '\'';
 
 LINE_COMMENT    : '//' ~('\r\n' | '\n' | '\r')*             { skip(); } ;
 MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;

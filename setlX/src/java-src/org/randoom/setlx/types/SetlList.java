@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -604,6 +605,13 @@ public class SetlList extends IndexedCollectionValue {
             return new MatchResult(false);
         }
         final IndexedCollectionValue otherCollection = (IndexedCollectionValue) other;
+
+        if (mList.size() == 1 && mList.get(0) instanceof Term) {
+            final MatchResult result = ExplicitListWithRest.matchTerm((Term) mList.get(0), otherCollection);
+            if (result.isMatch()) {
+                return result;
+            }
+        }
 
         if (mList.size() != otherCollection.size()) {
             return new MatchResult(false);

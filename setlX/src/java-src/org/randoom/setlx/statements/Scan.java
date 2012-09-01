@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
@@ -48,7 +49,8 @@ public class Scan extends Statement {
         }
         Value      execResult = null;
         SetlString string     = (SetlString) value.clone();
-        while(string.size() > 0) {
+        int        lastSize   = string.size();
+        while(lastSize > 0) {
             for (final MatchAbstractScanBranch br : mBranchList) {
                 final MatchResult result = br.scannes(string);
                 if (result.isMatch()) {
@@ -72,6 +74,12 @@ public class Scan extends Statement {
                     }
                     result.restoreAllBindings();
                 }
+            }
+            // check if anything changed
+            if (lastSize != string.size()) {
+                lastSize = string.size();
+            } else {
+                throw new UndefinedOperationException("Infinite loop in scan-statement detected.");
             }
         }
         return null;

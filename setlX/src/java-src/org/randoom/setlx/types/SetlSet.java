@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -572,7 +573,14 @@ public class SetlSet extends CollectionValue {
             return new MatchResult(true);
         } else if ( ! (otr instanceof SetlSet)) {
             return new MatchResult(false);
-        } else if ( this.size() != otr.size()) {
+        } else if (mSortedSet.size() == 1 && mSortedSet.first() instanceof Term) {
+            final MatchResult result = ExplicitListWithRest.matchTerm((Term) mSortedSet.first(), (SetlSet) otr);
+            if (result.isMatch()) {
+                return result;
+            }
+        }
+
+        if ( this.size() != otr.size()) {
             return new MatchResult(false);
         }
 

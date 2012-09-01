@@ -69,6 +69,7 @@ public class Range extends Constructor {
             result.addMember(new SetlString("nil"));
         }
         result.addMember(mStop.toTerm());
+
         collection.addMember(result);
     }
 

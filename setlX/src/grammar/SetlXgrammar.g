@@ -185,20 +185,16 @@ match returns [Match m]
     }
     : 'match' '(' expr[false] ')' '{'
       (
-         'case'  exprList[true]                                ('|' c1 = condition[false] {condition = $c1.cnd;})? ':' b1 = block
-             { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk));     condition = null; }
-       | 'case' '[' l1 = listOfVariables '|' v1 = variable ']' ('|' c2 = condition[false] {condition = $c2.cnd;})? ':' b2 = block
-             { matchList.add(new MatchSplitListBranch($l1.lov, $v1.v, condition, $b2.blk)); condition = null; }
-       | 'case' '{' l2 = listOfVariables '|' v2 = variable '}' ('|' c3 = condition[false] {condition = $c3.cnd;})? ':' b3 = block
-             { matchList.add(new MatchSplitSetBranch ($l2.lov, $v2.v, condition, $b3.blk)); condition = null; }
+         'case'  exprList[true] ('|' c1 = condition[false] {condition = $c1.cnd;})? ':' b1 = block
+             { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk)); condition = null; }
        | regexBranch
-             { matchList.add($regexBranch.rb); }
+             { matchList.add($regexBranch.rb);                                                            }
       )+
       (
         'default' ':' b4 = block
-             { matchList.add(new MatchDefaultBranch($b4.blk));                                                }
+             { matchList.add(new MatchDefaultBranch($b4.blk));                                            }
       )?
-      '}'    { m = new Match($expr.ex, matchList);                                                            }
+      '}'    { m = new Match($expr.ex, matchList);                                                        }
     ;
 
 scan returns [Scan s]
@@ -206,7 +202,7 @@ scan returns [Scan s]
         List<MatchAbstractScanBranch> scanList  = new ArrayList<MatchAbstractScanBranch>();
     }
     : 'scan' '(' expr[false] ')' '{'
-      ( 
+      (
         regexBranch         { scanList.add($regexBranch.rb);                    }
       )+
       (
@@ -591,8 +587,11 @@ iteratorChain [boolean enableIgnore] returns [Iterator ic]
       )*
     ;
 
-explicitList [boolean enableIgnore] returns [ExplicitList el]
-    : exprList[$enableIgnore]  { el = new ExplicitList($exprList.exprs); }
+explicitList [boolean enableIgnore] returns [Constructor el]
+    : exprList[$enableIgnore] { el = new ExplicitList        ($exprList.exprs);           }
+      (
+        '|' expr[false]       { el = new ExplicitListWithRest($exprList.exprs, $expr.ex); }
+      )?
     ;
 
 atomicValue returns [Value av]

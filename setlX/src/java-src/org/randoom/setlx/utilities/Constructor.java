@@ -53,6 +53,8 @@ public abstract class Constructor {
                 return Iteration.termToIteration(term);
             } else if (fc.equals(Range.FUNCTIONAL_CHARACTER)) {
                 return Range.termToRange(term);
+            } else if (fc.equals(ExplicitListWithRest.FUNCTIONAL_CHARACTER)) {
+                return ExplicitListWithRest.termToExplicitListWithRest(term);
             } else {
                 // assume explicit list of a single term
                 return ExplicitList.collectionValueToExplicitList(value);

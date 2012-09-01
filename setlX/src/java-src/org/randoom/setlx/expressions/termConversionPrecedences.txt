@@ -14,7 +14,7 @@ Precedence, Associativity, Operator(s)
 1400,       left,          &&
 1500,       left,          ==, !=, <, <=, >, >=, in, notin
 1600,       left,          +, -
-1700,       left,          *, /, \, %
+1700,       left,          *, /, \, %, ><
 1800,       left,          binary +/, binary */
 1900,       right,         - i.e. unary minus
 1900,       -,             other unary operators

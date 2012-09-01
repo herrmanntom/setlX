@@ -419,12 +419,13 @@ sum [boolean enableIgnore] returns [Expr s]
     ;
 
 product [boolean enableIgnore] returns [Expr p]
-    : r1 = reduce[$enableIgnore]          { p = $r1.r;                         }
+    : r1 = reduce[$enableIgnore]          { p = $r1.r;                          }
       (
-          '*'  r2 = reduce[$enableIgnore] { p = new Product        (p, $r2.r); }
-        | '/'  r2 = reduce[$enableIgnore] { p = new Quotient       (p, $r2.r); }
-        | '\\' r2 = reduce[$enableIgnore] { p = new IntegerDivision(p, $r2.r); }
-        | '%'  r2 = reduce[$enableIgnore] { p = new Modulo         (p, $r2.r); }
+          '*'  r2 = reduce[$enableIgnore] { p = new Product         (p, $r2.r); }
+        | '/'  r2 = reduce[$enableIgnore] { p = new Quotient        (p, $r2.r); }
+        | '\\' r2 = reduce[$enableIgnore] { p = new IntegerDivision (p, $r2.r); }
+        | '%'  r2 = reduce[$enableIgnore] { p = new Modulo          (p, $r2.r); }
+        | '><' r2 = reduce[$enableIgnore] { p = new CartesianProduct(p, $r2.r); }
       )*
     ;
 

@@ -10,6 +10,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    a string of the two separate characters: backslash and n.
  + allow explicit lists/sets with rest as normal expression, not only in match
  + more powerful matching using explicit lists/sets with rest
+ + added >< operator to compute the Cartesian-Product of two sets
 
 ---v1.3.0--- 2012-08-22
  # fixed product of a number and a list

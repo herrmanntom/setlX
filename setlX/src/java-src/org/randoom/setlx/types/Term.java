@@ -258,6 +258,22 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    public Term cartesianProduct(final Value other) {
+        return (    new CartesianProduct(
+                        TermConverter.valueToExpr(this),
+                        TermConverter.valueToExpr(other)
+                    )
+               ).toTerm();
+    }
+    public Term cartesianProductFlipped(final Value other) {
+        return (    new CartesianProduct(
+                        TermConverter.valueToExpr(other),
+                        TermConverter.valueToExpr(this)
+                    )
+               ).toTerm();
+    }
+
+    // viral operation
     public Term collectionAccess(final List<Value> args) {
         final List<Expr> argExprs = new ArrayList<Expr>(args.size());
         for (final Value v : args) {

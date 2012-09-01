@@ -287,6 +287,15 @@ public abstract class Value implements Comparable<Value> {
         return Rational.valueOf(this.size());
     }
 
+    public Value cartesianProduct(final Value other) throws SetlException {
+        if (other instanceof Term) {
+            return ((Term) other).cartesianProductFlipped(this);
+        }
+        throw new UndefinedOperationException(
+            "'" + this + " >< " + other + "' is undefined."
+        );
+    }
+
     public Value collectionAccess(final List<Value> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not access elements using the arguments '" + args + "' on this operand-type;" +

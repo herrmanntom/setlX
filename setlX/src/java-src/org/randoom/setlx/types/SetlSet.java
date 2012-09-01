@@ -284,6 +284,30 @@ public class SetlSet extends CollectionValue {
         }
     }
 
+    public Value cartesianProduct(final Value other) throws SetlException {
+        if (other instanceof SetlSet) {
+
+            final SetlSet result = new SetlSet();
+
+            for (final Value first : mSortedSet) {
+                for (final Value second : (SetlSet) other) {
+                    final SetlList tuple = new SetlList(2);
+                    tuple.addMember(first);
+                    tuple.addMember(second);
+                    result.addMember(tuple);
+                }
+            }
+
+            return result;
+        } else if (other instanceof Term) {
+            return ((Term) other).cartesianProductFlipped(this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " >< " + other + "' is not a set."
+            );
+        }
+    }
+
     public Value collectionAccess(final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException(

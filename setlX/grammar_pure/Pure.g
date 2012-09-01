@@ -17,6 +17,7 @@ statement
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
     | match
+    | scan
     | 'for' '(' iteratorChain ('|' condition)? ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
     | 'try' '{' block '}' ('catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')* ('catch' '(' variable ')' '{' block '}')?
@@ -33,7 +34,15 @@ statement
     ;
 
 match
-    : 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | 'case' '[' listOfVariables '|' variable ']' ('|' condition)? ':' block | 'case' '{' listOfVariables '|' variable '}' ('|' condition)? ':' block | 'regex' STRING ('->' assignable)? ('|' condition)? ':' block)* ('default' ':' block)? '}'
+    : 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | regexBranch)+ ('default' ':' block)? '}'
+    ;
+
+scan
+    : 'scan' '(' expr ')' '{' regexBranch+ ('default' ':' block)? '}'
+    ;
+
+regexBranch
+    : 'regex' LITERAL ('->' assignable)? ('|' condition)? ':' block
     ;
 
 listOfVariables
@@ -133,7 +142,7 @@ sum
     ;
 
 product
-    : reduce ('*' reduce | '/' reduce | '\\' reduce | '%' reduce)*
+    : reduce ('*' reduce | '/' reduce | '\\' reduce | '%' reduce | '><' reduce)*
     ;
 
 reduce
@@ -229,7 +238,7 @@ iteratorChain
     ;
 
 explicitList
-    : exprList
+    : exprList ('|' expr)?
     ;
 
 atomicValue
@@ -237,6 +246,7 @@ atomicValue
     | NEG_NUMBER
     | REAL
     | NEG_REAL
+    | LITERAL
     | 'om'
     | 'true'
     | 'false'
@@ -253,6 +263,7 @@ NEG_REAL : NEG_NUMBER '.' ('0'..'9')+ (('e' | 'E') '-'? ('0'..'9')+)?;
 RANGE_SIGN : '..';
 NUMBER_RANGE : (NUMBER | NEG_NUMBER) RANGE_SIGN;
 STRING : '"' ('\\"' | ~('"'))* '"';
+LITERAL : '\'' ('\\\'' | ~('\''))* '\'';
 LINE_COMMENT : '//' (~('\r\n' | '\n' | '\r'))*;
 MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';
 

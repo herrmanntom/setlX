@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,24 +40,44 @@ public class Match extends Statement {
 
     protected Value exec() throws SetlException {
         final Value term = mExpr.eval().toTerm();
-        for (final MatchAbstractBranch br : mBranchList) {
-            final MatchResult result = br.matches(term);
-            if (result.isMatch()) {
-                // put all matching variables into current scope
-                result.setAllBindings();
-                if (br.evalConditionToBool()) {
-                    // execute statements
-                    final Value execResult = br.execute();
-                    if (execResult != null) {
-                        return execResult;
+        final VariableScope outerScope = VariableScope.getScope();
+        try {
+            for (final MatchAbstractBranch br : mBranchList) {
+                final MatchResult result = br.matches(term);
+                if (result.isMatch()) {
+                    // scope for execution
+                    final VariableScope innerScope = outerScope.createInteratorBlock();
+                    VariableScope.setScope(innerScope);
+
+                    // force match variables to be local to this block
+                    innerScope.setWriteThrough(false);
+                    // put all matching variables into current scope
+                    result.setAllBindings();
+                    // reset WriteThrough, because changes during execution are not strictly local
+                    innerScope.setWriteThrough(true);
+
+                    if (br.evalConditionToBool()) {
+                        // execute statements
+                        final Value execResult = br.execute();
+
+                        // reset scope
+                        VariableScope.setScope(outerScope);
+
+                        if (execResult != null) {
+                            return execResult;
+                        }
+
+                        break;
+                    } else {
+                        // reset scope
+                        VariableScope.setScope(outerScope);
                     }
-                    result.restoreAllBindings();
-                    break;
                 }
-                result.restoreAllBindings();
             }
+            return null;
+        } finally { // make sure scope is always reset
+            VariableScope.setScope(outerScope);
         }
-        return null;
     }
 
     /* string operations */

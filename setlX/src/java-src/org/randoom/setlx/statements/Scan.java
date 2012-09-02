@@ -12,9 +12,11 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 /*
 grammar rule:
@@ -47,42 +49,77 @@ public class Scan extends Statement {
                 "The value '" + value + "' is not a string and cannot be scaned."
             );
         }
-        Value      execResult = null;
-        SetlString string     = (SetlString) value.clone();
-        int        lastSize   = string.size();
-        while(lastSize > 0) {
-            for (final MatchAbstractScanBranch br : mBranchList) {
-                final MatchResult result = br.scannes(string);
-                if (result.isMatch()) {
-                    // put all matching variables into current scope
-                    result.setAllBindings();
-                    if (br.evalConditionToBool()) {
-                        // reduce string to scan
+        final VariableScope outerScope = VariableScope.getScope();
+        try {
+            SetlString string = (SetlString) value.clone();
+            while(string.size() > 0) {
+                int                     largestMatchSize   = Integer.MIN_VALUE;
+                MatchAbstractScanBranch largestMatchBranch = null;
+                MatchResult             largestMatchResult = null;
+                // find branch which matches largest string
+                for (final MatchAbstractScanBranch br : mBranchList) {
+                    final MatchResult result = br.scannes(string);
+                    if (result.isMatch()) {
                         final int offset = br.getEndOffset();
-                        if (offset >= 0) {
-                            string = string.getMembers(offset + 1, string.size());
+                        if (offset > largestMatchSize) {
+                            // scope for condition
+                            final VariableScope innerScope = outerScope.clone();
+                            VariableScope.setScope(innerScope);
+
+                            // put all matching variables into scope
+                            result.setAllBindings();
+
+                            // check conditon
+                            if (br.evalConditionToBool()) {
+                                largestMatchSize   = offset;
+                                largestMatchBranch = br;
+                                largestMatchResult = result;
+                            }
+
+                            // reset scope
+                            VariableScope.setScope(outerScope);
                         }
-                        // execute statements
-                        execResult = br.execute();
-                        if (execResult != null) {
-                            return execResult;
-                        } else if (offset == MatchDefaultBranch.END_OFFSET) {
-                            return null;
-                        }
-                        result.restoreAllBindings();
-                        break;
                     }
-                    result.restoreAllBindings();
+                }
+                // execute branch which matches largest string
+                if (largestMatchBranch != null && largestMatchResult != null) {
+                    if (largestMatchSize == MatchDefaultBranch.END_OFFSET) {
+                        // default branch was largest match, stop scan after its execution
+                        return largestMatchBranch.execute();
+                    }
+
+                    // scope for execution
+                    final VariableScope innerScope = outerScope.createInteratorBlock();
+                    VariableScope.setScope(innerScope);
+
+                    // force match variables to be local to this block
+                    innerScope.setWriteThrough(false);
+                    // put all matching variables into current scope
+                    largestMatchResult.setAllBindings();
+                    // reset WriteThrough, because changes during execution are not strictly local
+                    innerScope.setWriteThrough(true);
+
+                    // execute statements
+                    final Value execResult = largestMatchBranch.execute();
+
+                    // reset scope
+                    VariableScope.setScope(outerScope);
+
+                    if (execResult != null) {
+                        return execResult;
+                    }
+
+                    // reduce scanned string
+                    string = string.getMembers(largestMatchSize + 1, string.size());
+                } else {
+                    // nothing matched!
+                    throw new UndefinedOperationException("Infinite loop in scan-statement detected.");
                 }
             }
-            // check if anything changed
-            if (lastSize != string.size()) {
-                lastSize = string.size();
-            } else {
-                throw new UndefinedOperationException("Infinite loop in scan-statement detected.");
-            }
+            return null;
+        } finally { // make sure scope is always reset
+            VariableScope.setScope(outerScope);
         }
-        return null;
     }
 
     /* string operations */

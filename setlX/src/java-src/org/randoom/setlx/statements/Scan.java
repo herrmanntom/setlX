@@ -16,7 +16,6 @@ import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeMap;
 
 /*
 grammar rule:

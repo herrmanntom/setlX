@@ -53,7 +53,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                     ((LiteralConstructor) mPattern).eval().getUnquotedString()
                 );
             } catch (final PatternSyntaxException pse) {
-                Environment.errWriteLn(
+                Environment.writeParserErrLn(
                     "Error while parsing regex-pattern " + mPattern + " {\n"
                   + "\t" + pse.getDescription() + " near index " + pse.getIndex() + "\n"
                   + "}"

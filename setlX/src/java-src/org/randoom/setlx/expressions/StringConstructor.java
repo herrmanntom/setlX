@@ -59,21 +59,21 @@ public class StringConstructor extends Expr {
                              * However we can at least provide the user with some feedback.
                              */
                             if (ParseSetlX.getErrorCount() > errCount) {
-                                Environment.errWriteLn(
+                                Environment.writeParserErrLn(
                                     "Error(s) while parsing string " + this + " {"
                                 );
                                 if (pe instanceof SyntaxErrorException) {
                                     for (final String err : ((SyntaxErrorException) pe).getErrors()) {
-                                        Environment.errWriteLn(
+                                        Environment.writeParserErrLn(
                                             "\t" + err
                                         );
                                     }
                                 } else {
-                                    Environment.errWriteLn(
+                                    Environment.writeParserErrLn(
                                         pe.getMessage()
                                     );
                                 }
-                                Environment.errWriteLn(
+                                Environment.writeParserErrLn(
                                     "}"
                                 );
                             }
@@ -108,7 +108,7 @@ public class StringConstructor extends Expr {
                  */
                 ParseSetlX.addReportedError();
                 // However we can at least provide the user with some feedback.
-                Environment.errWriteLn(
+                Environment.writeParserErrLn(
                     "Error(s) while parsing string " + this + " {\n"
                   + "\tclosing '$' missing\n"
                   + "}"

@@ -1,6 +1,6 @@
 package org.randoom.setlx.statements;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -9,7 +9,7 @@ import org.randoom.setlx.utilities.MatchResult;
 
 public abstract class MatchAbstractScanBranch extends MatchAbstractBranch {
 
-    public abstract MatchResult scannes(SetlString string) throws IncompatibleTypeException;
+    public abstract MatchResult scannes(SetlString string) throws SetlException;
     public abstract int         getEndOffset();
 
     public static   MatchAbstractScanBranch valueToMatchAbstractScanBranch(Value value) throws TermConversionException {

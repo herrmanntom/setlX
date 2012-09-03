@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.3.2--- 2012-09-03
+ # fixed escaped single straight quote in literal strings (only handled escape sequence)
+ + allow pattern in regex-branch to be an expression
+ 
 ---v1.3.1--- 2012-09-01
  # fixed error handling in nested parsing runs (e.g. $-expressions in strings, parse())
  + added regex-branch to match

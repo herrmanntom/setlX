@@ -64,7 +64,21 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     public static SetlString newLiteral(final String s) {
-        return new SetlString(s.substring(1, s.length() - 1));
+        SetlString result = new SetlString();
+        // parse escape sequences (only \' is parsed in literals)
+        final int           length    = s.length();
+        for (int i = 1; i < length - 1; ) {
+            final char c = s.charAt(i);                          // current char
+            final char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
+            if (c == '\\' && n == '\'') {
+                result.mContent.append(n);
+                i += 2;
+            } else {
+                result.mContent.append(c);
+                i += 1;
+            }
+        }
+        return result;
     }
 
     private StringBuilder mContent;

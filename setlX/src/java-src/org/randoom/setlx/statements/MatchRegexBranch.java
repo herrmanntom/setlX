@@ -2,6 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.SetlList;
@@ -11,9 +12,9 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.LinkedList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -22,42 +23,30 @@ import java.util.regex.PatternSyntaxException;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' expr ')' '{' ('regex' STRING ('->' assignable)? ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('regex' expr ('->' expr)? ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
     ;
 
 implemented here as:
-                                        =======      ==========        =========       =====
-                                        mPattern     mAssignable       mCondition   mStatements
+                                        ====       ====        =========       =====
+                                      mPattern   mAssignTo     mCondition   mStatements
 */
 
 public class MatchRegexBranch extends MatchAbstractScanBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchRegexBranch";
 
-    private       Pattern     mPattern;    // regex pattern to match
-    private final String      mPatternStr; // pattern used in print
-    private final Expr        mAssignable; // variable to store groups
+    private final Expr        mPattern;    // pattern to match
+    private final Expr        mAssignTo;   // variable to store groups
     private final Value       mAssignTerm; // term of variable to store groups
     private final Condition   mCondition;  // optional condition to confirm match
     private final Block       mStatements; // block to execute after match
     private       int         mEndOffset;  // Offset of last match operation (i.e. how far match progressed the input)
 
-    public MatchRegexBranch(final String pattern, final Expr assignable, final Condition condition, final Block statements){
-        try {
-            mPattern = Pattern.compile(pattern.substring(1, pattern.length() -1));
-        } catch (final PatternSyntaxException pse) {
-            Environment.errWriteLn(
-                "Error while parsing regex-pattern " + pattern + " {\n"
-              + "\t" + pse.getDescription() + " near index " + pse.getIndex() + "\n"
-              + "}"
-            );
-            ParseSetlX.addReportedError();
-            mPattern = null;
-        }
-        mPatternStr = pattern;
-        mAssignable = assignable;
-        if (assignable != null) {
-            mAssignTerm = assignable.toTerm();
+    public MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
+        mPattern  = pattern;
+        mAssignTo = assignTo;
+        if (assignTo != null) {
+            mAssignTerm = assignTo.toTerm();
         } else {
             mAssignTerm = null;
         }
@@ -66,19 +55,42 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         mEndOffset  = -1;
     }
 
-    public MatchResult matches(final Value term) throws IncompatibleTypeException {
+    public MatchResult matches(final Value term) throws SetlException {
         if (term instanceof SetlString) {
             final MatchResult result = scannes((SetlString) term);
-            if (result.isMatch() && term.size() == mEndOffset) {
+            if (result.isMatch() && ((SetlString) term).size() == mEndOffset) {
                 return result;
             }
         }
         return new MatchResult(false);
     }
 
-    public MatchResult scannes(final SetlString string) throws IncompatibleTypeException {
-        final Matcher  m      = mPattern.matcher(string.getUnquotedString());
-        final boolean  r      = m.lookingAt();
+    public MatchResult scannes(final SetlString string) throws SetlException {
+        final Value patternStr = mPattern.eval();
+        if ( ! (patternStr instanceof SetlString)) {
+            throw new IncompatibleTypeException(
+                "Pattern argument '" + patternStr + "' is not a string."
+            );
+        }
+
+        // parse pattern
+        Pattern pattern = null;
+        try {
+            pattern = Pattern.compile(patternStr.getUnquotedString());
+        } catch (final PatternSyntaxException pse) {
+            LinkedList<String> errors = new LinkedList<String>();
+            errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
+            errors.add("\t" + pse.getDescription() + " near index " + pse.getIndex());
+            errors.add("}");
+            throw SyntaxErrorException.create(
+                errors,
+                "1 syntax error encountered."
+            );
+        }
+
+        // match pattern
+        final Matcher  m = pattern.matcher(string.getUnquotedString());
+        final boolean  r = m.lookingAt();
         if (r) {
             mEndOffset = m.end();
             if (mAssignTerm != null) {
@@ -121,11 +133,11 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         Environment.getLineStart(sb, tabs);
         sb.append("regex ");
 
-        sb.append(mPatternStr);
+        sb.append(mPattern);
 
-        if (mAssignable != null) {
+        if (mAssignTo != null) {
             sb.append(" -> ");
-            mAssignable.appendString(sb, tabs);
+            mAssignTo.appendString(sb, tabs);
         }
 
         if (mCondition != null) {
@@ -144,7 +156,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     public Term toTerm() {
         final Term     result   = new Term(FUNCTIONAL_CHARACTER, 4);
 
-        result.addMember(new SetlString(mPatternStr));
+        result.addMember(mPattern.toTerm());
 
         if (mAssignTerm != null) {
             result.addMember(mAssignTerm);
@@ -168,17 +180,17 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final String pattern = term.firstMember().getUnquotedString();
-                Expr assignable = null;
+                final Expr pattern = TermConverter.valueToExpr(term.firstMember());
+                Expr assignTo = null;
                 if (! term.getMember(2).equals(new SetlString("nil"))) {
-                    assignable = TermConverter.valueToExpr(term.getMember(2));
+                    assignTo = TermConverter.valueToExpr(term.getMember(2));
                 }
                 Condition condition = null;
                 if (! term.getMember(3).equals(new SetlString("nil"))) {
                     condition = TermConverter.valueToCondition(term.getMember(3));
                 }
                 final Block block = TermConverter.valueToBlock(term.lastMember());
-                return new MatchRegexBranch(pattern, assignable, condition, block);
+                return new MatchRegexBranch(pattern, assignTo, condition, block);
             } catch (SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }

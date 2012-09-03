@@ -213,19 +213,19 @@ scan returns [Scan s]
 
 regexBranch returns [MatchRegexBranch rb]
     @init{
-        Expr      assignable = null;
-        Condition condition  = null;
+        Expr      assignTo  = null;
+        Condition condition = null;
     }
-    : 'regex' LITERAL
+    : 'regex' pattern = expr[false]
       (
-        '->' assignable[false]     { assignable = $assignable.a; }
+        '->' assign = expr[true] { assignTo = $assign.ex;      }
       )?
       (
-        '|'  c4 = condition[false] { condition = $c4.cnd;        }
+        '|'  condition[false]    { condition = $condition.cnd; }
       )?
-      ':' b4 = block
-      { rb = new MatchRegexBranch($LITERAL.text, assignable, condition, $b4.blk);
-        assignable = null; condition = null; }
+      ':' block
+      { rb = new MatchRegexBranch($pattern.ex, assignTo, condition, $block.blk);
+        assignTo = null; condition = null; }
     ;
 
 listOfVariables returns [List<Variable> lov]
@@ -521,6 +521,7 @@ value [boolean enableIgnore, boolean quoted] returns [Expr v]
     : list[$enableIgnore] { v = $list.lc;                                     }
     | set[$enableIgnore]  { v = $set.sc;                                      }
     | STRING              { v = new StringConstructor($quoted, $STRING.text); }
+    | LITERAL             { v = new LiteralConstructor($LITERAL.text);        }
     | atomicValue         { v = new ValueExpr($atomicValue.av);               }
     | '_'                 { if ($enableIgnore){
                                 v = VariableIgnore.VI;
@@ -600,7 +601,6 @@ atomicValue returns [Value av]
     | NEG_NUMBER { av = Rational.valueOf($NEG_NUMBER.text);   }
     | REAL       { av = new Real($REAL.text);                 }
     | NEG_REAL   { av = new Real($NEG_REAL.text);             }
-    | LITERAL    { av = SetlString.newLiteral($LITERAL.text); }
     | 'om'       { av = Om.OM;                                }
     | 'true'     { av = SetlBoolean.TRUE;                     }
     | 'false'    { av = SetlBoolean.FALSE;                    }

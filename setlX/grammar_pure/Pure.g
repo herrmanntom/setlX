@@ -42,7 +42,7 @@ scan
     ;
 
 regexBranch
-    : 'regex' LITERAL ('->' assignable)? ('|' condition)? ':' block
+    : 'regex' expr ('->' expr)? ('|' condition)? ':' block
     ;
 
 listOfVariables
@@ -198,6 +198,7 @@ value
     : list
     | set
     | STRING
+    | LITERAL
     | atomicValue
     | '_'
     ;
@@ -246,7 +247,6 @@ atomicValue
     | NEG_NUMBER
     | REAL
     | NEG_REAL
-    | LITERAL
     | 'om'
     | 'true'
     | 'false'

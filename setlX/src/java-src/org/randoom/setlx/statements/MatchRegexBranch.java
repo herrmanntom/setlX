@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.LiteralConstructor;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -12,6 +13,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.LinkedList;
@@ -35,15 +37,33 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchRegexBranch";
 
-    private final Expr        mPattern;    // pattern to match
-    private final Expr        mAssignTo;   // variable to store groups
-    private final Value       mAssignTerm; // term of variable to store groups
-    private final Condition   mCondition;  // optional condition to confirm match
-    private final Block       mStatements; // block to execute after match
-    private       int         mEndOffset;  // Offset of last match operation (i.e. how far match progressed the input)
+    private final Expr        mPattern;        // pattern to match
+    private       Pattern     mRuntimePattern; // compiled pattern to match
+    private final Expr        mAssignTo;       // variable to store groups
+    private final Value       mAssignTerm;     // term of variable to store groups
+    private final Condition   mCondition;      // optional condition to confirm match
+    private final Block       mStatements;     // block to execute after match
+    private       int         mEndOffset;      // Offset of last match operation (i.e. how far match progressed the input)
 
     public MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
         mPattern  = pattern;
+        if (mPattern instanceof LiteralConstructor) {
+            try {
+                mRuntimePattern = Pattern.compile(
+                    ((LiteralConstructor) mPattern).eval().getUnquotedString()
+                );
+            } catch (final PatternSyntaxException pse) {
+                Environment.errWriteLn(
+                    "Error while parsing regex-pattern " + mPattern + " {\n"
+                  + "\t" + pse.getDescription() + " near index " + pse.getIndex() + "\n"
+                  + "}"
+                );
+                ParseSetlX.addReportedError();
+                mRuntimePattern = null;
+            }
+        } else {
+            mRuntimePattern = null;
+        }
         mAssignTo = assignTo;
         if (assignTo != null) {
             mAssignTerm = assignTo.toTerm();
@@ -66,26 +86,29 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     }
 
     public MatchResult scannes(final SetlString string) throws SetlException {
-        final Value patternStr = mPattern.eval();
-        if ( ! (patternStr instanceof SetlString)) {
-            throw new IncompatibleTypeException(
-                "Pattern argument '" + patternStr + "' is not a string."
-            );
-        }
-
-        // parse pattern
         Pattern pattern = null;
-        try {
-            pattern = Pattern.compile(patternStr.getUnquotedString());
-        } catch (final PatternSyntaxException pse) {
-            LinkedList<String> errors = new LinkedList<String>();
-            errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
-            errors.add("\t" + pse.getDescription() + " near index " + pse.getIndex());
-            errors.add("}");
-            throw SyntaxErrorException.create(
-                errors,
-                "1 syntax error encountered."
-            );
+
+        if (mRuntimePattern != null) {
+            pattern = mRuntimePattern;
+        } else {final Value patternStr = mPattern.eval();
+            if ( ! (patternStr instanceof SetlString)) {
+                throw new IncompatibleTypeException(
+                    "Pattern argument '" + patternStr + "' is not a string."
+                );
+            }
+            // parse pattern
+            try {
+                pattern = Pattern.compile(patternStr.getUnquotedString());
+            } catch (final PatternSyntaxException pse) {
+                LinkedList<String> errors = new LinkedList<String>();
+                errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
+                errors.add("\t" + pse.getDescription() + " near index " + pse.getIndex());
+                errors.add("}");
+                throw SyntaxErrorException.create(
+                    errors,
+                    "1 syntax error encountered."
+                );
+            }
         }
 
         // match pattern

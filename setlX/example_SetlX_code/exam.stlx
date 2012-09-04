@@ -1,0 +1,44 @@
+evalExam := procedure(data, maxPoints) {
+    state := "normal";
+    scan(data) {
+        regex '[a-zA-Z]+:.*\n': // skip header
+        regex '[A-Za-zäöüÄÖÜß]+\s[A-Za-zäöüÄÖÜß\-]+:' -> [ name ]:
+              nPrint(name);
+              state := "printBlanks";
+              sumPoints := 0;
+        regex '[ \t]+' -> [ whiteSpace ] | state == "printBlanks":
+              nPrint(whiteSpace);  
+              state := "normal";
+        regex '[ \t]+' | state == "normal": 
+              // skip white space between points
+        regex '0|[1-9][0-9]*' -> [ number ]:
+              sumPoints += int(number);
+        regex '-': 
+              // skip exercises that have not been done  
+        regex '\n' | sumPoints != om:
+              print(note(sumPoints, maxPoints));
+              sumPoints := om;
+        regex '[ \t]*\n' | sumPoints == om:
+              // skip empty lines
+        regex '.|\n' -> [ c ]:
+              print("unrecognized character: $c$");
+    }
+};
+
+note := procedure(p, m) {
+    return 7.0 - 6.0 * p / m;
+};
+
+data := "
+Klausur: Algorithmen und Datenstrukturen
+Kurs:    TIT07AIX
+
+Aufgaben:                 1. 2. 3. 4. 5. 6.
+Max Müller-Lüdenscheidt:  8  9  8  -  7  6
+Daniel Dumpfbacke:        4  4  2  0  -  -
+Susi Sorglos:             9 12 12  9  9  6
+Jacky Jeckle:             9 12 12  -  9  6
+";
+
+evalExam(data, 60);
+

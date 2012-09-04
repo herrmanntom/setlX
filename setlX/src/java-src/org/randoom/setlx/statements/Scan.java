@@ -5,7 +5,9 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -51,10 +53,32 @@ public class Scan extends Statement {
         final VariableScope outerScope = VariableScope.getScope();
         try {
             SetlString string = (SetlString) value.clone();
+            int        charNr   = 1;
+            int        lineNr   = 1;
+            int        columnNr = 1;
             while(string.size() > 0) {
                 int                     largestMatchSize   = Integer.MIN_VALUE;
                 MatchAbstractScanBranch largestMatchBranch = null;
                 MatchResult             largestMatchResult = null;
+
+                // map of current position in input-string
+                final SetlSet  position = new SetlSet();
+
+                final SetlList charEntry = new SetlList(2);
+                charEntry.addMember(new SetlString("char"));
+                charEntry.addMember(Rational.valueOf(charNr));
+                position.addMember(charEntry);
+
+                final SetlList line   = new SetlList(2);
+                line.addMember(new SetlString("line"));
+                line.addMember(Rational.valueOf(lineNr));
+                position.addMember(line);
+
+                final SetlList column   = new SetlList(2);
+                column.addMember(new SetlString("column"));
+                column.addMember(Rational.valueOf(columnNr));
+                position.addMember(column);
+
                 // find branch which matches largest string
                 for (final MatchAbstractScanBranch br : mBranchList) {
                     final MatchResult result = br.scannes(string);
@@ -64,6 +88,9 @@ public class Scan extends Statement {
                             // scope for condition
                             final VariableScope innerScope = outerScope.clone();
                             VariableScope.setScope(innerScope);
+
+                            // put current position into result
+                            result.addBinding("position", position);
 
                             // put all matching variables into scope
                             result.setAllBindings();
@@ -108,8 +135,35 @@ public class Scan extends Statement {
                         return execResult;
                     }
 
+                    // compute positions
+                    charNr   += largestMatchSize;
+                    columnNr += largestMatchSize;
+                    // find lineEndings
+                    String matched = string.getMembers(1, largestMatchSize).getUnquotedString();
+                    int pos  = 0;
+                    int tmp  = 0;
+                    int size = 0;
+                    while (true) {
+                        tmp  = matched.indexOf("\r\n", pos);
+                        size = 2;
+                        if (tmp < 0) {
+                            tmp  = matched.indexOf("\n", pos);
+                            size = 1;
+                        }
+                        if (tmp >= 0) {
+                            ++lineNr;
+                            pos = tmp + size;
+                        } else {
+                            break;
+                        }
+                    }
+                    if (pos > 0) {
+                        // reduce columnNr by last read lineEnding position
+                        columnNr = largestMatchSize - (pos - size);
+                    }
+
                     // reduce scanned string
-                    string = string.getMembers(largestMatchSize + 1, string.size());
+                    string  = string.getMembers(largestMatchSize + 1, string.size());
                 } else {
                     // nothing matched!
                     throw new UndefinedOperationException("Infinite loop in scan-statement detected.");

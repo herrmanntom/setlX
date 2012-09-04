@@ -21,7 +21,7 @@ evalExam := procedure(data, maxPoints) {
         regex '[ \t]*\n' | sumPoints == om:
               // skip empty lines
         regex '.|\n' -> [ c ]:
-              print("unrecognized character: $c$");
+              print(position["line"],":",position["column"]," unrecognized character '$c$'");
     }
 };
 

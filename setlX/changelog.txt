@@ -1,10 +1,11 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.3.2--- 2012-09-03
+---v1.3.2--- 2012-09-05
  # fixed escaped single straight quote in literal strings (only handled escape sequence)
  + allow pattern in regex-branch to be an expression
- + added map bound to `position' inside scan branches, which stores position
+ + added variable to scan statement, which stores a map of positions
    where first matched character is located inside the input-string
+ * replaced '->' with 'as' in regex branches
  
 ---v1.3.1--- 2012-09-01
  # fixed error handling in nested parsing runs (e.g. $-expressions in strings, parse())

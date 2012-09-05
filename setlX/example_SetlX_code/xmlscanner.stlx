@@ -6,22 +6,22 @@ str := "<abc/>< def foo=\"bar\" />";
 tokens := [];
 
 // create token list
-scan (str) {
+scan (str) using charPos {
     regex '<' :
         tokens += [OpenTag()];
     regex '/>' :
         tokens += [CloseTag()];
-    regex '\w+' -> [id]:
+    regex '\w+' as [id]:
         tokens += [Id(id)];
     regex '=':
         tokens += [Assign()];
-    regex '"(\S+)"' -> [_, text]:
+    regex '"(\S+)"' as [_, text]:
         tokens += [String(text)];
     regex '\s+':
         // skip whitespace
-    regex '.' -> x:
+    regex '.' as x:
         // match anything unknown
-        print("unrecognized character: $x[1]$");
+        print(charPos["line"],":",charPos["column"]," unrecognized character `$x[1]$'");
     default :
         print("xml-scanner-error!");
 }

@@ -25,7 +25,7 @@ import java.util.regex.PatternSyntaxException;
 grammar rule:
 statement
     : [...]
-    | 'match' '(' expr ')' '{' ('regex' expr ('->' expr)? ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
+    | 'match' '(' expr ')' '{' ('regex' expr ('as' expr)? ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
     ;
 
 implemented here as:
@@ -159,7 +159,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         sb.append(mPattern);
 
         if (mAssignTo != null) {
-            sb.append(" -> ");
+            sb.append(" as ");
             mAssignTo.appendString(sb, tabs);
         }
 
@@ -214,7 +214,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 }
                 final Block block = TermConverter.valueToBlock(term.lastMember());
                 return new MatchRegexBranch(pattern, assignTo, condition, block);
-            } catch (SetlException se) {
+            } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }

@@ -38,11 +38,11 @@ match
     ;
 
 scan
-    : 'scan' '(' expr ')' '{' regexBranch+ ('default' ':' block)? '}'
+    : 'scan' '(' expr ')' ('using' variable)? '{' regexBranch+ ('default' ':' block)? '}'
     ;
 
 regexBranch
-    : 'regex' expr ('->' expr)? ('|' condition)? ':' block
+    : 'regex' expr ('as' expr)? ('|' condition)? ':' block
     ;
 
 listOfVariables

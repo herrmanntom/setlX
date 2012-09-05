@@ -200,15 +200,16 @@ match returns [Match m]
 scan returns [Scan s]
     @init{
         List<MatchAbstractScanBranch> scanList  = new ArrayList<MatchAbstractScanBranch>();
+        Variable                      posVar    = null;
     }
-    : 'scan' '(' expr[false] ')' '{'
+    : 'scan' '(' expr[false] ')' ('using' variable {posVar = $variable.v;})? '{'
       (
         regexBranch         { scanList.add($regexBranch.rb);                    }
       )+
       (
         'default' ':' block { scanList.add(new MatchDefaultBranch($block.blk)); }
       )?
-      '}'                   { s = new Scan($expr.ex, scanList);                 }
+      '}'                   { s = new Scan($expr.ex, posVar, scanList); posVar = null;  }
     ;
 
 regexBranch returns [MatchRegexBranch rb]
@@ -218,7 +219,7 @@ regexBranch returns [MatchRegexBranch rb]
     }
     : 'regex' pattern = expr[false]
       (
-        '->' assign = expr[true] { assignTo = $assign.ex;      }
+        'as' assign = expr[true] { assignTo = $assign.ex;      }
       )?
       (
         '|'  condition[false]    { condition = $condition.cnd; }

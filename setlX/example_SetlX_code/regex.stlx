@@ -4,11 +4,11 @@ matchRegex := procedure(str) {
     match (str) {
         regex '.{4,5}' : // simple match
             print("match (a)");
-        regex '(fo(o))(.+)' -> [_, x,y,x] : // (optional) capture matched groups
+        regex '(fo(o))(.+)' as [_, x,y,x] : // (optional) capture matched groups
             print("match (b) $x$ $y$");
-        regex '.{9}' -> x :    // first group is always the entire matched string
+        regex '.{9}' as x :    // first group is always the entire matched string
             print("match (c) $x[1]$");
-        regex 'foo(.+)' -> x | x[2][2] == "a" : // (optional) use conditions
+        regex 'foo(.+)' as x | x[2][2] == "a" : // (optional) use conditions
             print("match (d) $x[1]$");
         default :
             print("no match");

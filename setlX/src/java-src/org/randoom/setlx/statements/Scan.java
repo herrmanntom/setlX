@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
@@ -23,12 +24,12 @@ import java.util.List;
 grammar rule:
 statement
     : [...]
-    | 'scan' '(' expr ')' '{' [...] '}'
+    | 'scan' '(' expr ')' ('using' variable)? '{' [...] '}'
     ;
 
 implemented with different classes which inherit from MatchAbstractScanBranch:
-                  ====        =====
-                  mExpr    mBranchList
+                  ====             ========       =====
+                  mExpr            mPosVarm    mBranchList
 */
 
 public class Scan extends Statement {
@@ -36,10 +37,12 @@ public class Scan extends Statement {
     private final static String FUNCTIONAL_CHARACTER = "^scan";
 
     private final Expr                          mExpr;
+    private final Variable                      mPosVar;
     private final List<MatchAbstractScanBranch> mBranchList;
 
-    public Scan(final Expr expr, final List<MatchAbstractScanBranch> branchList) {
+    public Scan(final Expr expr, final Variable posVar, final List<MatchAbstractScanBranch> branchList) {
         mExpr       = expr;
+        mPosVar     = posVar;
         mBranchList = branchList;
     }
 
@@ -89,8 +92,10 @@ public class Scan extends Statement {
                             final VariableScope innerScope = outerScope.clone();
                             VariableScope.setScope(innerScope);
 
-                            // put current position into result
-                            result.addBinding("position", position);
+                            // put current position into scope
+                            if (mPosVar != null) {
+                                mPosVar.assignUncloned(position);
+                            }
 
                             // put all matching variables into scope
                             result.setAllBindings();
@@ -120,6 +125,10 @@ public class Scan extends Statement {
 
                     // force match variables to be local to this block
                     innerScope.setWriteThrough(false);
+                    // put current position into scope
+                    if (mPosVar != null) {
+                        mPosVar.assignUncloned(position);
+                    }
                     // put all matching variables into current scope
                     largestMatchResult.setAllBindings();
                     // reset WriteThrough, because changes during execution are not strictly local
@@ -181,7 +190,12 @@ public class Scan extends Statement {
         Environment.getLineStart(sb, tabs);
         sb.append("scan (");
         mExpr.appendString(sb, 0);
-        sb.append(") {");
+        sb.append(") ");
+        if (mPosVar != null) {
+            sb.append("using ");
+            mPosVar.appendString(sb, 0);
+        }
+        sb.append("{");
         sb.append(Environment.getEndl());
         for (final MatchAbstractBranch br : mBranchList) {
             br.appendString(sb, tabs + 1);
@@ -193,7 +207,13 @@ public class Scan extends Statement {
     /* term operations */
 
     public Term toTerm() {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
+
+        if (mPosVar != null) {
+            result.addMember(mPosVar.toTerm());
+        } else {
+            result.addMember(new SetlString("nil"));
+        }
 
         result.addMember(mExpr.toTerm());
 
@@ -207,16 +227,27 @@ public class Scan extends Statement {
     }
 
     public static Scan termToStatement(final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
+        if (term.size() != 3 || ! (term.firstMember() instanceof Term || ! (term.lastMember() instanceof SetlList))) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr                          expr        = TermConverter.valueToExpr(term.firstMember());
-            final SetlList                      branches    = (SetlList) term.lastMember();
-            final List<MatchAbstractScanBranch> branchList  = new ArrayList<MatchAbstractScanBranch>(branches.size());
-            for (final Value v : branches) {
-                branchList.add(MatchAbstractScanBranch.valueToMatchAbstractScanBranch(v));
+            try {
+                Variable posVar = null;
+                if (! term.firstMember().equals(new SetlString("nil"))) {
+                    posVar = Variable.termToExpr((Term) term.firstMember());
+                }
+
+                final Expr                          expr        = TermConverter.valueToExpr(term.getMember(2));
+
+                final SetlList                      branches    = (SetlList) term.lastMember();
+                final List<MatchAbstractScanBranch> branchList  = new ArrayList<MatchAbstractScanBranch>(branches.size());
+                for (final Value v : branches) {
+                    branchList.add(MatchAbstractScanBranch.valueToMatchAbstractScanBranch(v));
+                }
+
+                return new Scan(expr, posVar, branchList);
+            } catch (final SetlException se) {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
-            return new Scan(expr, branchList);
         }
     }
 }

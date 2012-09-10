@@ -55,7 +55,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             } catch (final PatternSyntaxException pse) {
                 Environment.writeParserErrLn(
                     "Error while parsing regex-pattern " + mPattern + " {\n"
-                  + "\t" + pse.getDescription() + " near index " + pse.getIndex() + "\n"
+                  + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
                   + "}"
                 );
                 ParseSetlX.addReportedError();
@@ -102,7 +102,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             } catch (final PatternSyntaxException pse) {
                 LinkedList<String> errors = new LinkedList<String>();
                 errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
-                errors.add("\t" + pse.getDescription() + " near index " + pse.getIndex());
+                errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
                 errors.add("}");
                 throw SyntaxErrorException.create(
                     errors,

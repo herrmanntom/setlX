@@ -1,7 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v1.3.3--- 2012-09-10
- + added matches(string, pattern), .. and .. functions
+ + added matches(string, pattern) and replace(string, pattern, replacement) functions
 
 ---v1.3.2--- 2012-09-05
  # fixed escaped single straight quote in literal strings (only handled escape sequence)

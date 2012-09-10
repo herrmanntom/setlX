@@ -15,9 +15,16 @@ matchRegex := procedure(str) {
     }
 };
 
-matchRegex("test1");
-matchRegex("foofoo");
-matchRegex("regexTest");
-matchRegex("foobar");
-matchRegex("bob");
+matchRegex("test1");     // (a)
+matchRegex("foofoo");    // (b)
+matchRegex("regexTest"); // (c)
+matchRegex("foobar");    // (d)
+matchRegex("bob");       // no match
+
+// There are also some functions which work with regular expressions:
+
+print(replace("fooo", 'o$', "bar")); // foobar
+print(replace("foo", 'o', "bar"));   // fbarbar
+print(matches("foo",'f.+'));         // true
+print(matches("foo",'\s+'));         // false
 

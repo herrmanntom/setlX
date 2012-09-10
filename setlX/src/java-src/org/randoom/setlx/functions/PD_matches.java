@@ -19,8 +19,8 @@ public class PD_matches extends PreDefinedFunction {
     }
 
     public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        Value string  = args.get(0);
-        Value pattern = args.get(1);
+        final Value string  = args.get(0);
+        final Value pattern = args.get(1);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException (
                 "Input-argument '" + string + "' is not a string."

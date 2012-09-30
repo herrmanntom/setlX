@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v1.3.3--- 2012-09-30
  + added matches(string, pattern [, captureGroups]), replace(string, pattern, replacement),
    replaceFirst(string, pattern, replacement) functions
+ # better explanation of errors in comparisons
 
 ---v1.3.2--- 2012-09-05
  # fixed escaped single straight quote in literal strings (only handled escape sequence)

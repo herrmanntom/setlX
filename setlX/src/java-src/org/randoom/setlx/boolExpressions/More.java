@@ -60,8 +60,13 @@ public class More extends Expr {
      */
 
     protected SetlBoolean evaluate() throws SetlException {
-        // note: rhs and lhs swapped!
-        return mRhs.eval().isLessThan(mLhs.eval());
+        try {
+            // note: rhs and lhs swapped!
+            return mRhs.eval().isLessThan(mLhs.eval());
+        } catch (SetlException se) {
+            se.addToTrace("Error in substitute comparison \"" + mRhs + " < " + mLhs +  "\":");
+            throw se;
+        }
     }
 
     /* string operations */

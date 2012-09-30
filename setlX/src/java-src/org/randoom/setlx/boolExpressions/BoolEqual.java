@@ -33,7 +33,12 @@ public class BoolEqual extends Expr {
     }
 
     protected SetlBoolean evaluate() throws SetlException {
-        return mLhs.eval().isEqual(mRhs.eval());
+        try {
+            return mLhs.eval().isEqual(mRhs.eval());
+        } catch (SetlException se) {
+            se.addToTrace("Error in substitute comparison \"" + mLhs + " == " + mRhs + "\":");
+            throw se;
+        }
     }
 
     /* string operations */

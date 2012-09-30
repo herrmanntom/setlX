@@ -61,9 +61,14 @@ public class LessOrEqual extends Expr {
      */
 
     protected SetlBoolean evaluate() throws SetlException {
-        final Value lhs = mLhs.eval();
-        final Value rhs = mRhs.eval();
-        return SetlBoolean.valueOf(lhs.isLessThan(rhs) == SetlBoolean.TRUE || lhs.isEqual(rhs) == SetlBoolean.TRUE);
+        try {
+            final Value lhs = mLhs.eval();
+            final Value rhs = mRhs.eval();
+            return SetlBoolean.valueOf(lhs.isEqual(rhs) == SetlBoolean.TRUE || lhs.isLessThan(rhs) == SetlBoolean.TRUE);
+        } catch (SetlException se) {
+            se.addToTrace("Error in substitute comparison \"(" + mLhs + " == " + mRhs + ") || (" + mLhs + " < " + mRhs +  ")\":");
+            throw se;
+        }
     }
 
     /* string operations */

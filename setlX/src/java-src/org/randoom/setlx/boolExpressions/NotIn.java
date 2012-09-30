@@ -33,8 +33,13 @@ public class NotIn extends Expr {
     }
 
     protected SetlBoolean evaluate() throws SetlException {
-        // note: rhs and lhs swapped!
-        return mRhs.eval().containsMember(mLhs.eval()).negation();
+        try {
+            // note: rhs and lhs swapped!
+            return mRhs.eval().containsMember(mLhs.eval()).negation();
+        } catch (SetlException se) {
+            se.addToTrace("Error in substitute comparison \"!(" + mLhs + " in " + mRhs +  ")\":");
+            throw se;
+        }
     }
 
     /* string operations */

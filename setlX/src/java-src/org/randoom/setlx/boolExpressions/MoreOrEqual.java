@@ -61,10 +61,15 @@ public class MoreOrEqual extends Expr {
      */
 
     protected SetlBoolean evaluate() throws SetlException {
-        final Value lhs = mLhs.eval();
-        final Value rhs = mRhs.eval();
-        // note: rhs and lhs swapped!
-        return SetlBoolean.valueOf(rhs.isLessThan(lhs) == SetlBoolean.TRUE || rhs.isEqual(lhs) == SetlBoolean.TRUE);
+        try {
+            final Value lhs = mLhs.eval();
+            final Value rhs = mRhs.eval();
+            // note: rhs and lhs swapped!
+            return SetlBoolean.valueOf(rhs.isEqual(lhs) == SetlBoolean.TRUE || rhs.isLessThan(lhs) == SetlBoolean.TRUE);
+        } catch (SetlException se) {
+            se.addToTrace("Error in substitute comparison \"(" + mRhs + " == " + mLhs + ") || (" + mRhs + " < " + mLhs +  ")\":");
+            throw se;
+        }
     }
 
     /* string operations */

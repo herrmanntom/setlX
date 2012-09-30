@@ -33,7 +33,12 @@ public class UnEqual extends Expr {
     }
 
     protected SetlBoolean evaluate() throws SetlException {
-        return mLhs.eval().isEqual(mRhs.eval()).negation();
+        try {
+            return mLhs.eval().isEqual(mRhs.eval()).negation();
+        } catch (SetlException se) {
+            se.addToTrace("Error in substitute comparison \"!(" + mLhs + " == " + mRhs +  ")\":");
+            throw se;
+        }
     }
 
     /* string operations */

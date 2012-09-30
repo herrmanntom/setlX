@@ -1,6 +1,5 @@
 package org.randoom.setlx.expressions;
 
-import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.Value;
@@ -20,8 +19,6 @@ public abstract class Expr extends CodeFragment {
                 DebugPrompt.prompt(this);
             }
             return this.evaluate();
-        } catch (AbortException ae) {
-            throw ae;
         } catch (SetlException se) {
             se.addToTrace("Error in \"" + this + "\":");
             throw se;

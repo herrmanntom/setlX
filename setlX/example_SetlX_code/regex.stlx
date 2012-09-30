@@ -23,8 +23,12 @@ matchRegex("bob");       // no match
 
 // There are also some functions which work with regular expressions:
 
-print(replace("fooo", 'o$', "bar")); // foobar
-print(replace("foo", 'o', "bar"));   // fbarbar
-print(matches("foo",'f.+'));         // true
-print(matches("foo",'\s+'));         // false
+print(replace("fooo", 'o$', "bar"));            // foobar
+print(replace("foo", 'o', "bar"));              // fbarbar
+print(replaceFirst("fooo", 'o$', "bar"));       // foobar
+print(replaceFirst("foo", 'o', "bar"));         // fbaro
+print(matches("foo",'f.+'));                    // true
+print(matches("foo",'\s+'));                    // false
+print(matches("fobarabof",'f.+(bar).+',true));  // ["fobarabof", "bar"]
+print(matches("fobarabof",'\s+(bar)\s+',true)); // []  /* i.e. no match */
 

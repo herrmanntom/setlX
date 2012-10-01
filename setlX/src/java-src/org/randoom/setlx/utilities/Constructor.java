@@ -3,13 +3,29 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.VariableScope;
 
+import java.util.List;
+
 public abstract class Constructor {
     public abstract void        fillCollection(final CollectionValue collection) throws SetlException;
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public abstract void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    );
 
     // sets the variables used to construct this list to the variables from the list given as a parameter
     public          void        assignUncloned(final SetlList list) throws SetlException {

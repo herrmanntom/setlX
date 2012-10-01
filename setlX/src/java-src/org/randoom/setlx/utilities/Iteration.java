@@ -3,6 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -10,6 +11,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Iterator;
 import org.randoom.setlx.utilities.IteratorExecutionContainer;
 
+import java.util.List;
 
 /*
 grammar rules:
@@ -65,6 +67,29 @@ public class Iteration extends Constructor {
 
     public void fillCollection(final CollectionValue collection) throws SetlException {
         mIterator.eval(new Exec(collection, mExpr, mCondition));
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mIterator.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (mCondition != null) {
+            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+        if (mExpr != null) {
+            // add all found variables to bound by not suppliying unboundVariables
+            // as this expression is used in an assignment
+            mExpr.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+        }
     }
 
     /* string operations */

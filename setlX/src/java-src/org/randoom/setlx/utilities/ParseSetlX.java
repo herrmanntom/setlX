@@ -184,6 +184,9 @@ public class ParseSetlX {
                 );
             }
 
+			// Optimize fragment
+			frag.optimize();
+
             return frag;
         } catch (RecognitionException re) {
             throw SyntaxErrorException.create(Environment.getParserErrorCapture(), re.getMessage());

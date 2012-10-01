@@ -6,11 +6,14 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+
+import java.util.List;
 
 /*
 grammar rule:
@@ -82,6 +85,29 @@ public class Iterator {
             return result;
         } finally { // make sure scope is always reset
             VariableScope.setScope(outerScope);
+        }
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mCollection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+        // add all found variables to bound by not suppliying unboundVariables
+        // as this expression is used in an assignment
+        mAssignable.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+
+        if (mNext != null) {
+            mNext.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 

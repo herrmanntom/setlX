@@ -3,8 +3,11 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+
+import java.util.List;
 
 /*
 grammar rule:
@@ -35,6 +38,21 @@ public class Condition {
 
     public boolean evalToBool() throws SetlException {
         return eval() == SetlBoolean.TRUE;
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

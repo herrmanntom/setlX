@@ -15,6 +15,7 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class StringConstructor extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
@@ -164,6 +165,23 @@ public class StringConstructor extends Expr {
         }
 
         return SetlString.newSetlStringFromSB(data);
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        for (final Expr expr : mExprs) {
+            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
     }
 
     /* string operations */

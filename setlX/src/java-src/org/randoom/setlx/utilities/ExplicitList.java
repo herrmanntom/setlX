@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
@@ -34,6 +35,23 @@ public class ExplicitList extends Constructor {
     public void fillCollection(final CollectionValue collection) throws SetlException {
         for (final Expr e: mList) {
             collection.addMember(e.eval());
+        }
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        for (final Expr expr : mList) {
+            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 

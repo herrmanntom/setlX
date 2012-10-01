@@ -42,6 +42,23 @@ public class TermConstructor extends Expr {
         return result;
     }
 
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected /*abstract*/ void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        for (final Expr arg: mArgs) {
+            arg.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+    }
+
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {

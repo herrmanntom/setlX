@@ -3,11 +3,14 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+
+import java.util.List;
 
 /*
 grammar rule:
@@ -44,6 +47,25 @@ public class Range extends Constructor {
             step = Rational.ONE;
         }
         start.fillCollectionWithinRange(step, mStop.eval(), collection);
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mStart.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (mSecond != null) {
+            mSecond.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+        mStop.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

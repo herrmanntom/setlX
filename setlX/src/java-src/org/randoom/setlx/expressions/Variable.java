@@ -6,6 +6,8 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.VariableScope;
 
+import java.util.List;
+
 /*
 grammar rule:
 variable
@@ -44,6 +46,25 @@ public class Variable extends Expr {
 
     protected Value evaluate() {
         return VariableScope.findValue(mId);
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        if (boundVariables.contains(this)) {
+            usedVariables.add(this);
+        } else {
+            unboundVariables.add(this);
+        }
     }
 
     // sets this expression to the given value
@@ -97,6 +118,30 @@ public class Variable extends Expr {
     // precedence level in SetlX-grammar
     public int precedence() {
         return PRECEDENCE;
+    }
+
+    // methods used when inserted into HashSets etc
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof Variable) {
+            return mId.equals(((Variable) o).mId);
+        } else {
+            return false;
+        }
+    }
+    public final boolean equals(final Variable v) {
+        if (this == v) {
+            return true;
+        } else {
+            return mId.equals(v.mId);
+        }
+    }
+
+    private final static int initHashCode = Variable.class.hashCode();
+
+    public int hashCode() {
+        return initHashCode + mId.hashCode();
     }
 }
 

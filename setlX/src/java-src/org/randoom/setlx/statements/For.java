@@ -2,6 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -10,6 +11,8 @@ import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.Iterator;
 import org.randoom.setlx.utilities.IteratorExecutionContainer;
 import org.randoom.setlx.utilities.TermConverter;
+
+import java.util.List;
 
 /*
 grammar rule:
@@ -48,6 +51,24 @@ public class For extends Statement {
                 // ContinueException and BreakException are handled by outer iterator
             }
             return null;
+        }
+
+        /* Gather all bound and unbound variables in this expression and its siblings
+              - bound   means "assigned" in this expression
+              - unbound means "not present in bound set when used"
+              - used    means "present in bound set when used"
+           NOTE: Use optimizeAndCollectVariables() when adding variables from
+                 sub-expressions
+        */
+        public void collectVariablesAndOptimize (
+            final List<Variable> boundVariables,
+            final List<Variable> unboundVariables,
+            final List<Variable> usedVariables
+        ) {
+            if (mCondition != null) {
+                mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            }
+            // ... TODO
         }
     }
 

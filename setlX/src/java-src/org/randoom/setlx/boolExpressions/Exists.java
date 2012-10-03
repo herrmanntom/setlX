@@ -39,14 +39,14 @@ public class Exists extends Expr {
     private final Condition mCondition;
 
     private class Exec implements IteratorExecutionContainer {
-        private final Condition     mCondition;
-        public        SetlBoolean   mResult;
-        public        VariableScope mScope;
+        private final Condition      mCondition;
+        public        SetlBoolean    mResult;
+        public        VariableScope  mScope;
 
         public Exec (final Condition condition) {
-            mCondition = condition;
-            mResult    = SetlBoolean.FALSE;
-            mScope     = null;
+            mCondition      = condition;
+            mResult         = SetlBoolean.FALSE;
+            mScope          = null;
         }
 
         public Value execute(final Value lastIterationValue) throws SetlException {
@@ -56,6 +56,21 @@ public class Exists extends Expr {
                 return Om.OM.setBreak();            // stop iteration
             }
             return null;
+        }
+
+        /* Gather all bound and unbound variables in this expression and its siblings
+              - bound   means "assigned" in this expression
+              - unbound means "not present in bound set when used"
+              - used    means "present in bound set when used"
+           NOTE: Use optimizeAndCollectVariables() when adding variables from
+                 sub-expressions
+        */
+        public void collectVariablesAndOptimize (
+            final List<Variable> boundVariables,
+            final List<Variable> unboundVariables,
+            final List<Variable> usedVariables
+        ) {
+            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -86,8 +101,7 @@ public class Exists extends Expr {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
-        mIterator.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        mIterator.collectVariablesAndOptimize(new Exec(mCondition), boundVariables, unboundVariables, usedVariables);
 
         // add dummy variable to prevent optimization, sideeffect variables cant be optimized
         unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);

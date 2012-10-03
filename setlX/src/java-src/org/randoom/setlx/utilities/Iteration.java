@@ -11,6 +11,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Iterator;
 import org.randoom.setlx.utilities.IteratorExecutionContainer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -57,6 +58,26 @@ public class Iteration extends Constructor {
             }
             return null;
         }
+
+        /* Gather all bound and unbound variables in this expression and its siblings
+              - bound   means "assigned" in this expression
+              - unbound means "not present in bound set when used"
+              - used    means "present in bound set when used"
+           NOTE: Use optimizeAndCollectVariables() when adding variables from
+                 sub-expressions
+        */
+        public void collectVariablesAndOptimize (
+            final List<Variable> boundVariables,
+            final List<Variable> unboundVariables,
+            final List<Variable> usedVariables
+        ) {
+            if (mCondition != null) {
+                mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            }
+            if (mExpr != null) {
+                mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            }
+        }
     }
 
     public Iteration(final Expr expr, final Iterator iterator, final Condition condition) {
@@ -81,15 +102,7 @@ public class Iteration extends Constructor {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
-        mIterator.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        if (mCondition != null) {
-            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        }
-        if (mExpr != null) {
-            // add all found variables to bound by not suppliying unboundVariables
-            // as this expression is used in an assignment
-            mExpr.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
-        }
+        mIterator.collectVariablesAndOptimize(new Exec(null, mExpr, mCondition), boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

@@ -13,6 +13,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -96,18 +97,31 @@ public class Iterator {
              sub-expressions
     */
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final IteratorExecutionContainer container,
+        final List<Variable>             boundVariables,
+        final List<Variable>             unboundVariables,
+        final List<Variable>             usedVariables
     ) {
         mCollection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        // add all found variables to bound by not suppliying unboundVariables
-        // as this expression is used in an assignment
-        mAssignable.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+        /* Variables in this expression get assigned temporarily.
+           Collect them into a temporary list, add them to boundVariables and
+           remove them again before returning. */
+        final List<Variable> tempAssigned = new ArrayList<Variable>();
+        mAssignable.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
+
+        final int preIndex = boundVariables.size();
+        boundVariables.addAll(tempAssigned);
 
         if (mNext != null) {
-            mNext.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            mNext.collectVariablesAndOptimize(container, boundVariables, unboundVariables, usedVariables);
+        } else {
+            container.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+
+        // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
+        for (int i = 0; i < tempAssigned.size(); ++i) {
+            boundVariables.remove(preIndex + i);
         }
     }
 

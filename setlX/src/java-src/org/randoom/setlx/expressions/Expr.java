@@ -49,6 +49,7 @@ public abstract class Expr extends CodeFragment {
                 unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
             } finally {
                 VariableScope.setScope(outer);
+//System.out.println("replaced `" + this + "' by `" + mReplacement + "'");
             }
         }
     }
@@ -73,19 +74,25 @@ public abstract class Expr extends CodeFragment {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
+        if (mReplacement != null) {
+            // already optimized, no variables are needed during execution
+            return;
+        }
+
         final int preBoundSize   = boundVariables.size();
         final int preUnboundSize = unboundVariables.size();
         final int preUsedSize    = usedVariables.size();
 
         // collect variables in this expression
         collectVariables(boundVariables, unboundVariables, usedVariables);
+//System.out.println("collected in `" + this + "' :: `" + boundVariables + "'`" + unboundVariables + "'`" + usedVariables + "'");
 
         if (unboundVariables.size() == preUnboundSize) { // no new unbound vars
             // optimize when there where also no variables used at all
             if (usedVariables.size() == preUsedSize) {
                 calculateReplacement(unboundVariables);
             }
-            // or if all used variables where also bound in this expression
+            // or if all used variables are not prebound
             else {
                 final List<Variable> prebound     = boundVariables.subList(0, preBoundSize);
                 final List<Variable> usedHere     = new ArrayList<Variable>(usedVariables.subList(preUsedSize, usedVariables.size()));

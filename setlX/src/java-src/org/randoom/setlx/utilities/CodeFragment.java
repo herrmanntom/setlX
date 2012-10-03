@@ -18,7 +18,7 @@ public abstract class CodeFragment {
         final List<Variable> usedVariables
     );
 
-    public void optimize() {
+    public final void optimize() {
         final List<Variable> boundVariables   = new ArrayList<Variable>();
         final List<Variable> unboundVariables = new ArrayList<Variable>();
         final List<Variable> usedVariables    = new ArrayList<Variable>();

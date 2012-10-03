@@ -44,7 +44,7 @@ public class SumOfMembersBinary extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
-    protected /*abstract*/ void collectVariables (
+    protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables

@@ -6,6 +6,8 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.List;
+
 /*
 grammar rule:
 product
@@ -33,6 +35,22 @@ public class Quotient extends Expr {
 
     protected Value evaluate() throws SetlException {
         return mLhs.eval().quotient(mRhs.eval());
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

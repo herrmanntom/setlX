@@ -21,9 +21,9 @@ implemented here as:
 
 public class Variable extends Expr {
     // This functional character is used internally
-    public  final static String FUNCTIONAL_CHARACTER          = "^Variable";
+    public  final static String   FUNCTIONAL_CHARACTER          = "^Variable";
     // this one is used externally (e.g. during toString)
-    public  final static String FUNCTIONAL_CHARACTER_EXTERNAL = "^variable";
+    public  final static String   FUNCTIONAL_CHARACTER_EXTERNAL = "^variable";
     /* both are equal during matching and compare. However while terms with the
      * internal one always bind anything, terms with the external one only match
      * and do not bind.
@@ -35,8 +35,10 @@ public class Variable extends Expr {
      *      }
      */
 
+    public  final static Variable PREVENT_OPTIMIZATION_DUMMY    = new Variable("@123456789*%%");
+
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE                    = 9999;
+    private final static int      PRECEDENCE                    = 9999;
 
     private final String mId;
 

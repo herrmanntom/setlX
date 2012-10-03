@@ -3,6 +3,8 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.Term;
 
+import java.util.List;
+
 /*
 grammar rule:
 collectionAccessParams
@@ -27,6 +29,19 @@ public class CollectionAccessRangeDummy extends Expr {
     protected RangeDummy evaluate() {
         return RangeDummy.RD;
     }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) { /* nothing to collect */ }
 
     /* string operations */
 

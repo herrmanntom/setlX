@@ -4,6 +4,8 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 
+import java.util.List;
+
 public class LiteralConstructor extends Expr {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^literalConstructor";
@@ -29,6 +31,19 @@ public class LiteralConstructor extends Expr {
     protected SetlString evaluate() {
         return mRuntimeString;
     }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) { /* nothing to collect */ }
 
     /* string operations */
 

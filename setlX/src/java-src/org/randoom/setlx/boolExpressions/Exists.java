@@ -3,6 +3,7 @@ package org.randoom.setlx.boolExpressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
@@ -12,6 +13,8 @@ import org.randoom.setlx.utilities.Iterator;
 import org.randoom.setlx.utilities.IteratorExecutionContainer;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
+
+import java.util.List;
 
 
 /*
@@ -69,6 +72,25 @@ public class Exists extends Expr {
             VariableScope.putAllValues(e.mScope);
         }
         return e.mResult;
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mIterator.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+        // add dummy variable to prevent optimization, sideeffect variables cant be optimized
+        unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
     }
 
     /* string operations */

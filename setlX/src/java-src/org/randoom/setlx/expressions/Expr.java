@@ -8,6 +8,7 @@ import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.VariableScope;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Expr extends CodeFragment {
@@ -23,7 +24,6 @@ public abstract class Expr extends CodeFragment {
                 Environment.setDebugStepNextExpr(false);
                 DebugPrompt.prompt(this);
             } else if (mReplacement != null) {
-System.out.println("return optimized!!");
                 return mReplacement.clone();
             }
             return this.evaluate();
@@ -35,13 +35,20 @@ System.out.println("return optimized!!");
 
     protected abstract Value evaluate() throws SetlException;
 
-    protected void calculateReplacement() {
+    protected void calculateReplacement(final List<Variable> unboundVariables) {
         if (mReplacement == null) {
+            final VariableScope outer = VariableScope.getScope();
             try {
+                VariableScope.setBubbleScope();
                 mReplacement = evaluate();
             } catch (SetlException se) {
                 // ignore error
                 mReplacement = null;
+
+                // add dummy variable to prevent optimization at later point
+                unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
+            } finally {
+                VariableScope.setScope(outer);
             }
         }
     }
@@ -53,19 +60,15 @@ System.out.println("return optimized!!");
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
-    protected /*abstract*/ void collectVariables (
-        final List<Variable>  boundVariables,
+    protected abstract void collectVariables (
+        final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
-    )//;
-    {
-        // TODO: make abstract
-        unboundVariables.add(new Variable("@12345"));
-    }
+    );
 
     /* Gather variables and optimize this expression by setting replacement value
        for this expression, if this can be safely done */
-    public void collectVariablesAndOptimize(
+    public final void collectVariablesAndOptimize(
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
@@ -80,18 +83,19 @@ System.out.println("return optimized!!");
         if (unboundVariables.size() == preUnboundSize) { // no new unbound vars
             // optimize when there where also no variables used at all
             if (usedVariables.size() == preUsedSize) {
-                calculateReplacement();
-System.out.println("optimized (no variables used): " + mReplacement);
+                calculateReplacement(unboundVariables);
             }
             // or if all used variables where also bound in this expression
             else {
-                final List<Variable> boundHere = boundVariables.subList(preBoundSize, boundVariables.size());
-                final List<Variable> usedHere  = usedVariables.subList(preUsedSize, usedVariables.size());
+                final List<Variable> prebound     = boundVariables.subList(0, preBoundSize);
+                final List<Variable> usedHere     = new ArrayList<Variable>(usedVariables.subList(preUsedSize, usedVariables.size()));
+                final int            usedHereSize = usedHere.size();
 
-                usedHere.removeAll(boundHere);
-                if (usedHere.size() == 0) {
-                    calculateReplacement();
-System.out.println("optimized (own variables used): " + mReplacement);
+                // check if any prebound variables could have been used
+                usedHere.removeAll(prebound);
+                if (usedHere.size() == usedHereSize) {
+                    // definitely not, therefore safe to optimize
+                    calculateReplacement(unboundVariables);
                 }
             }
         }

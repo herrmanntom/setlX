@@ -79,6 +79,26 @@ public class Call extends Expr {
         }
     }
 
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        for (final Expr expr : mArgs) {
+            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+        // add dummy variable to prevent optimization, behavior of called function is unknown here!
+        unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
+    }
+
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {

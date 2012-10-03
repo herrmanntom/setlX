@@ -22,8 +22,8 @@ call
     ;
 
 implemented here as:
-      =========                               ======================
-         mLhs                                          mArgs
+      ==================================      ======================
+                  mLhs                                mArgs
 */
 
 public class CollectionAccess extends Expr {
@@ -88,6 +88,24 @@ public class CollectionAccess extends Expr {
         }
         // execute
         return lhs.collectionAccessUnCloned(args);
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    protected void collectVariables (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        for (final Expr expr : mArgs) {
+            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
     }
 
     // sets this expression to the given value

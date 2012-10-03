@@ -42,6 +42,11 @@ public class VariableScope {
         sVariableScope = newEnv;
     }
 
+    // set new scope, which is not connected to anything
+    public static void setBubbleScope() {
+        sVariableScope = new VariableScope();
+    }
+
     public static void resetScope() {
         sVariableScope  = sInitial.clone();
         sGlobals.mVarBindings.clear();

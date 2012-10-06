@@ -40,6 +40,10 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
         cacheHits = 0;
     }
 
+    public CachedProcedureDefinition createCopy() {
+        return new CachedProcedureDefinition(mParameters, mStatements);
+    }
+
     public int getCacheHits() {
         return cacheHits;
     }

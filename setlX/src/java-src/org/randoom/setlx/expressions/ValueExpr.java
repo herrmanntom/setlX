@@ -35,10 +35,7 @@ public class ValueExpr extends Expr {
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
-    ) {
-        /* nothing to collect */
-        mValue.optimize();
-    }
+    ) { /* nothing to collect */ }
 
     /* string operations */
 

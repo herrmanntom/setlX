@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.Environment;
@@ -13,8 +14,10 @@ import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 // This class represents a function definition
 
@@ -37,22 +40,65 @@ public class ProcedureDefinition extends Value {
     // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean sFinishFunction      = false;
 
-    protected final List<ParameterDef> mParameters;  // parameter list
-    protected final Block              mStatements;  // statements in the body of the definition
+    protected final List<ParameterDef>       mParameters;  // parameter list
+    protected final Block                    mStatements;  // statements in the body of the definition
+    protected       HashMap<Variable, Value> mClosure;     // variables and values used in closure
 
     public ProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
         mParameters = parameters;
         mStatements = statements;
+        mClosure    = null;
+    }
+
+    // only to be used by ProcedureConstructor
+    public ProcedureDefinition createCopy() {
+        return new ProcedureDefinition(mParameters, mStatements);
     }
 
     public ProcedureDefinition clone() {
-        // this value can not be changed once set => no harm in returning the original
+        // this value can not be change once "created"
         return this;
     }
 
-    public void optimize() {
-        // TODO improve by supplying parameters
-        mStatements.optimize();
+    public void addClosure(final HashMap<Variable, Value> closure) {
+        mClosure = closure;
+    }
+
+    /* Gather all bound and unbound variables in this value and its siblings
+          - bound   means "assigned" in this value
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        /* first collect and optimize the inside */
+        final List<Variable> innerBoundVariables   = new ArrayList<Variable>();
+        final List<Variable> innerUnboundVariables = new ArrayList<Variable>();
+        final List<Variable> innerUsedVariables    = new ArrayList<Variable>();
+
+        // add all parameters to bound
+        for (final ParameterDef def : mParameters) {
+            def.collectVariablesAndOptimize(innerBoundVariables, innerBoundVariables, innerBoundVariables);
+        }
+
+        mStatements.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+
+        /* compute variables as seen by the outside */
+
+        // upon defining this procedure, all variables which are unbound inside
+        // will be read to create the closure for this procedure
+        for (final Variable var : innerUnboundVariables) {
+            if (boundVariables.contains(var)) {
+                usedVariables.add(var);
+            } else {
+                unboundVariables.add(var);
+            }
+        }
     }
 
     /* type checks (sort of Boolean operation) */
@@ -86,6 +132,13 @@ public class ProcedureDefinition extends Value {
         final VariableScope oldScope = VariableScope.getScope();
         // create new scope used for the function call
         VariableScope.setScope(oldScope.cloneFunctions());
+
+        // assign closure contents
+        if (mClosure != null) {
+            for (final Map.Entry<Variable, Value> entry : mClosure.entrySet()) {
+                entry.getKey().assign(entry.getValue());
+            }
+        }
 
         // put arguments into inner scope
         final int size = values.size();

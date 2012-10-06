@@ -34,7 +34,7 @@ public abstract class Statement extends CodeFragment {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
-    protected abstract void collectVariablesAndOptimize (
+    public abstract void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables

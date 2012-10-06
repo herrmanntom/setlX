@@ -312,13 +312,13 @@ assignable [boolean enableIgnore] returns [Expr a]
     ;
 
 expr [boolean enableIgnore] returns [Expr ex]
-    : definition              { ex = new ValueExpr($definition.d); }
-    | equation[$enableIgnore] { ex = $equation.eq;                 }
+    : definition              { ex = $definition.d; }
+    | equation[$enableIgnore] { ex = $equation.eq;  }
     ;
 
-definition returns [Value d]
-    : lambdaDefinition    { d = $lambdaDefinition.ld;    }
-    | procedureDefinition { d = $procedureDefinition.pd; }
+definition returns [ProcedureConstructor d]
+    : lambdaDefinition    { d = new ProcedureConstructor($lambdaDefinition.ld);    }
+    | procedureDefinition { d = new ProcedureConstructor($procedureDefinition.pd); }
     ;
 
 lambdaDefinition returns [LambdaDefinition ld]

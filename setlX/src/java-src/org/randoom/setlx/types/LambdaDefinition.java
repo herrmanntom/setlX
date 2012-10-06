@@ -36,6 +36,10 @@ public class LambdaDefinition extends ProcedureDefinition {
         mStatements.add(new Return(mExpr));
     }
 
+    public LambdaDefinition createCopy() {
+        return new LambdaDefinition(mParameters, mExpr);
+    }
+
     /* string and char operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {

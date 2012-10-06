@@ -6,6 +6,8 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
+import java.util.List;
+
 // This class represents a single parameter of a function definition
 
 /*
@@ -46,6 +48,21 @@ public class ParameterDef {
 
     public ParameterDef(final String id) {
         this(id, READ_ONLY);
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    public void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mVar.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     public void assign(final Value v) throws SetlException {

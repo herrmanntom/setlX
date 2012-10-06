@@ -5,6 +5,7 @@ import org.randoom.setlx.boolExpressions.Equal;
 import org.randoom.setlx.expressions.BracketedExpr;
 import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.ProcedureConstructor;
 import org.randoom.setlx.expressions.SetListConstructor;
 import org.randoom.setlx.expressions.StringConstructor;
 import org.randoom.setlx.expressions.TermConstructor;
@@ -102,11 +103,11 @@ public class TermConverter {
                     // special cases
                     // non-generic values
                     else if (fc.equals(CachedProcedureDefinition.FUNCTIONAL_CHARACTER)) {
-                        return new ValueExpr(CachedProcedureDefinition.termToValue(term));
+                        return new ProcedureConstructor(CachedProcedureDefinition.termToValue(term));
                     } else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
-                        return new ValueExpr(LambdaDefinition.termToValue(term));
+                        return new ProcedureConstructor(LambdaDefinition.termToValue(term));
                     } else if (fc.equals(ProcedureDefinition.FUNCTIONAL_CHARACTER)) {
-                        return new ValueExpr(ProcedureDefinition.termToValue(term));
+                        return new ProcedureConstructor(ProcedureDefinition.termToValue(term));
                     }
                     // nothing matched
                     else {

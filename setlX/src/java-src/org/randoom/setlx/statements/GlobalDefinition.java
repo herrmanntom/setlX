@@ -47,7 +47,7 @@ public class GlobalDefinition extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
-    protected void collectVariablesAndOptimize (
+    public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables

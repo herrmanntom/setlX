@@ -12,6 +12,11 @@ public abstract class Value implements Comparable<Value> {
 
     public abstract Value   clone();
 
+    public void optimize() {
+        // Normal values need not be optimized.
+        // However, values containing statements (procedures) need to!
+    }
+
     /* Boolean operations */
 
     public Value conjunction(final Expr other) throws SetlException {

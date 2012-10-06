@@ -49,9 +49,12 @@ public abstract class Expr extends CodeFragment {
                 unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
             } finally {
                 VariableScope.setScope(outer);
-//System.out.println("replaced `" + this + "' by `" + mReplacement + "'");
             }
         }
+    }
+
+    public Value getReplacement() {
+        return mReplacement.clone();
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -85,9 +88,10 @@ public abstract class Expr extends CodeFragment {
 
         // collect variables in this expression
         collectVariables(boundVariables, unboundVariables, usedVariables);
-//System.out.println("collected in `" + this + "' :: `" + boundVariables + "'`" + unboundVariables + "'`" + usedVariables + "'");
 
-        if (unboundVariables.size() == preUnboundSize) { // no new unbound vars
+        // prerequisite for optimization is that not variables are provided for later
+        // expressions and that no used variables are unbound in this expression
+        if (boundVariables.size() == preBoundSize && unboundVariables.size() == preUnboundSize) {
             // optimize when there where also no variables used at all
             if (usedVariables.size() == preUsedSize) {
                 calculateReplacement(unboundVariables);

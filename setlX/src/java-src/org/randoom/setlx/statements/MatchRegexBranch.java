@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.LiteralConstructor;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -16,7 +16,9 @@ import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -47,10 +49,13 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     public MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
         mPattern  = pattern;
-        if (mPattern instanceof LiteralConstructor) {
+        // optimize pattern to see if it is static and can be compiled now
+        mPattern.optimize();
+        Value patternReplacement = mPattern.getReplacement();
+        if (patternReplacement != null) {
             try {
                 mRuntimePattern = Pattern.compile(
-                    ((LiteralConstructor) mPattern).eval().getUnquotedString()
+                    patternReplacement.getUnquotedString()
                 );
             } catch (final PatternSyntaxException pse) {
                 Environment.writeParserErrLn(
@@ -83,6 +88,14 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             }
         }
         return new MatchResult(false);
+    }
+
+    public boolean evalConditionToBool() throws SetlException {
+        if (mCondition != null) {
+            return mCondition.evalToBool();
+        } else {
+            return true;
+        }
     }
 
     public MatchResult scannes(final SetlString string) throws SetlException {
@@ -130,12 +143,8 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return new MatchResult(r);
     }
 
-    public boolean evalConditionToBool() throws SetlException {
-        if (mCondition != null) {
-            return mCondition.evalToBool();
-        } else {
-            return true;
-        }
+    public int getEndOffset() {
+        return mEndOffset;
     }
 
     public Value execute() throws SetlException {
@@ -146,8 +155,44 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return execute();
     }
 
-    public int getEndOffset() {
-        return mEndOffset;
+    /* Gather all bound and unbound variables in this statement and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
+       when adding variables from them.
+    */
+    protected void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mPattern.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+        /* Variables in this expression get assigned temporarily.
+           Collect them into a temporary list, add them to boundVariables and
+           remove them again before returning. */
+        final List<Variable> tempAssigned = new ArrayList<Variable>();
+        if (mAssignTo != null) {
+            mAssignTo.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
+        }
+
+        final int preIndex = boundVariables.size();
+        boundVariables.addAll(tempAssigned);
+
+        if (mCondition != null) {
+            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+
+        mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+
+        if (mAssignTo != null) {
+            // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
+            for (int i = tempAssigned.size(); i > 0; --i) {
+                boundVariables.remove(preIndex + (i - 1));
+            }
+        }
     }
 
     /* string operations */

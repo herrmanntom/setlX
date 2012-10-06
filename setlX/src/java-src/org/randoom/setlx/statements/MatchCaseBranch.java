@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -77,6 +78,41 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     protected Value exec() throws SetlException {
         return execute();
+    }
+
+    /* Gather all bound and unbound variables in this statement and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
+       when adding variables from them.
+    */
+    protected void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        /* Variables in these expressions get assigned temporarily.
+           Collect them into a temporary list, add them to boundVariables and
+           remove them again before returning. */
+        final List<Variable> tempAssigned = new ArrayList<Variable>();
+        for (final Expr expr : mExprs) {
+            expr.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
+        }
+
+        final int preIndex = boundVariables.size();
+        boundVariables.addAll(tempAssigned);
+
+        if (mCondition != null) {
+            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+
+        mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+        // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
+        for (int i = tempAssigned.size(); i > 0; --i) {
+            boundVariables.remove(preIndex + (i - 1));
+        }
     }
 
     /* string operations */

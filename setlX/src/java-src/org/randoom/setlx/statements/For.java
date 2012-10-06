@@ -35,6 +35,7 @@ public class For extends Statement {
     private final Iterator  mIterator;
     private final Condition mCondition;
     private final Block     mStatements;
+    private final Exec      mExec;
 
     private class Exec implements IteratorExecutionContainer {
         private final Condition mCondition;
@@ -68,7 +69,7 @@ public class For extends Statement {
             if (mCondition != null) {
                 mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
             }
-            // ... TODO
+            mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -76,6 +77,7 @@ public class For extends Statement {
         mIterator   = iterator;
         mCondition  = condition;
         mStatements = statements;
+        mExec       = new Exec(mCondition, mStatements);
     }
 
     protected Value exec() throws SetlException {
@@ -83,7 +85,7 @@ public class For extends Statement {
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             Environment.setDebugFinishLoop(false);
         }
-        final Value result = mIterator.eval(new Exec(mCondition, mStatements));
+        final Value result = mIterator.eval(mExec);
         if (sFinishLoop) {
             Environment.setDebugModeActive(true);
             Environment.setDebugFinishLoop(false);
@@ -91,6 +93,21 @@ public class For extends Statement {
             Environment.setDebugFinishLoop(true);
         }
         return result;
+    }
+
+    /* Gather all bound and unbound variables in this statement and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
+       when adding variables from them.
+    */
+    protected void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mIterator.collectVariablesAndOptimize(mExec, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

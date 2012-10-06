@@ -80,7 +80,7 @@ public class Forall extends Expr {
     }
 
     protected SetlBoolean evaluate() throws SetlException {
-        final Exec e = new Exec(mCondition);
+        Exec e = new Exec(mCondition);
         mIterator.eval(e);
         if (e.mResult == SetlBoolean.FALSE && e.mScope != null) {
             // restore state in which mBoolExpr is false

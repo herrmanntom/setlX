@@ -28,8 +28,8 @@ statement
     ;
 
 implemented with different classes which inherit from MatchAbstractScanBranch:
-                  ====             ========       =====
-                  mExpr            mPosVarm    mBranchList
+                 ====              ========       =====
+                 mExpr             mPosVarm    mBranchList
 */
 
 public class Scan extends Statement {
@@ -181,6 +181,43 @@ public class Scan extends Statement {
             return null;
         } finally { // make sure scope is always reset
             VariableScope.setScope(outerScope);
+        }
+    }
+
+    /* Gather all bound and unbound variables in this statement and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
+       when adding variables from them.
+    */
+    protected void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+        /* The Variable in this statement get assigned temporarily.
+           Collect it into a temporary list, add it to boundVariables and
+           remove it again before returning. */
+        final List<Variable> tempAssigned = new ArrayList<Variable>();
+        if (mPosVar != null) {
+            mPosVar.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
+        }
+
+        final int preIndex = boundVariables.size();
+        boundVariables.addAll(tempAssigned);
+
+        for (final MatchAbstractBranch br : mBranchList) {
+            br.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+
+        if (mPosVar != null) {
+            // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
+            for (int i = tempAssigned.size(); i > 0; --i) {
+                boundVariables.remove(preIndex + (i - 1));
+            }
         }
     }
 

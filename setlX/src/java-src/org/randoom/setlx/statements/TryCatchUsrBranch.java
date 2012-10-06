@@ -9,6 +9,8 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.List;
+
 /*
 
 This catchUsr block catches any exception, which was user created, e.g.
@@ -60,6 +62,25 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
 
     protected Value exec() throws SetlException {
         return execute();
+    }
+
+    /* Gather all bound and unbound variables in this statement and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
+       when adding variables from them.
+    */
+    protected void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) {
+        // add all variables found to bound by not suppliying unboundVariables
+        // as this expression is now used in an assignment
+        mErrorVar.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+
+        mBlockToRecover.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

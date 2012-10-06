@@ -33,19 +33,28 @@ public class Iteration extends Constructor {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^iteration";
 
-    private final   Expr      mExpr;
-    private final   Iterator  mIterator;
-    private final   Condition mCondition;
+    private final Expr      mExpr;
+    private final Iterator  mIterator;
+    private final Condition mCondition;
+    private final Exec      mExec;
 
     private class Exec implements IteratorExecutionContainer {
-        private final   Expr            mExpr;
-        private final   Condition       mCondition;
-        private final   CollectionValue mCollection;
+        private final Expr            mExpr;
+        private final Condition       mCondition;
+        private       CollectionValue mCollection;
 
-        public Exec (final CollectionValue collection, final Expr expr, final Condition condition) {
-            mCollection = collection;
+        public Exec (final Expr expr, final Condition condition) {
             mExpr       = expr;
             mCondition  = condition;
+            mCollection = null;
+        }
+
+        public void setCollection(final CollectionValue collection) {
+            mCollection = collection;
+        }
+
+        public CollectionValue getCollection() {
+            return mCollection;
         }
 
         public Value execute(final Value lastIterationValue) throws SetlException {
@@ -84,10 +93,14 @@ public class Iteration extends Constructor {
         mExpr      = expr;
         mIterator  = iterator;
         mCondition = condition;
+        mExec      = new Exec(expr, condition);
     }
 
     public void fillCollection(final CollectionValue collection) throws SetlException {
-        mIterator.eval(new Exec(collection, mExpr, mCondition));
+        CollectionValue tmp = mExec.getCollection();
+        mExec.setCollection(collection);
+        mIterator.eval(mExec);
+        mExec.setCollection(tmp);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -102,7 +115,7 @@ public class Iteration extends Constructor {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
-        mIterator.collectVariablesAndOptimize(new Exec(null, mExpr, mCondition), boundVariables, unboundVariables, usedVariables);
+        mIterator.collectVariablesAndOptimize(mExec, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

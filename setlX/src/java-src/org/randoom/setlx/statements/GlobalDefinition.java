@@ -40,6 +40,19 @@ public class GlobalDefinition extends Statement {
         return null;
     }
 
+    /* Gather all bound and unbound variables in this statement and its siblings
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
+       when adding variables from them.
+    */
+    protected void collectVariablesAndOptimize (
+        final List<Variable> boundVariables,
+        final List<Variable> unboundVariables,
+        final List<Variable> usedVariables
+    ) { /* nothing to collect */ }
+
     /* string operations */
 
     public void appendString(final StringBuilder sb, final int tabs) {

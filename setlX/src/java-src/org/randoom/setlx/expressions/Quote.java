@@ -47,7 +47,9 @@ public class Quote extends Expr {
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
-    ) { /* nothing to collect */ }
+    ) {
+        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+    }
 
     /* string operations */
 

@@ -50,6 +50,11 @@ public class ProcedureDefinition extends Value {
         return this;
     }
 
+    public void optimize() {
+        // TODO improve by supplying parameters
+        mStatements.optimize();
+    }
+
     /* type checks (sort of Boolean operation) */
 
     public SetlBoolean isProcedure() {

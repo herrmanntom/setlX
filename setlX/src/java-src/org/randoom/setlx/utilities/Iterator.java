@@ -120,8 +120,8 @@ public class Iterator {
         }
 
         // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
-        for (int i = 0; i < tempAssigned.size(); ++i) {
-            boundVariables.remove(preIndex + i);
+        for (int i = tempAssigned.size(); i > 0; --i) {
+            boundVariables.remove(preIndex + (i - 1));
         }
     }
 

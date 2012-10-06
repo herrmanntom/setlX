@@ -39,14 +39,14 @@ public class Exists extends Expr {
     private final Condition mCondition;
 
     private class Exec implements IteratorExecutionContainer {
-        private final Condition      mCondition;
-        public        SetlBoolean    mResult;
-        public        VariableScope  mScope;
+        private final Condition     mCondition;
+        public        SetlBoolean   mResult;
+        public        VariableScope mScope;
 
         public Exec (final Condition condition) {
-            mCondition      = condition;
-            mResult         = SetlBoolean.FALSE;
-            mScope          = null;
+            mCondition = condition;
+            mResult    = SetlBoolean.FALSE;
+            mScope     = null;
         }
 
         public Value execute(final Value lastIterationValue) throws SetlException {
@@ -80,7 +80,7 @@ public class Exists extends Expr {
     }
 
     protected SetlBoolean evaluate() throws SetlException {
-        final Exec e = new Exec(mCondition);
+        Exec e = new Exec(mCondition);
         mIterator.eval(e);
         if (e.mResult == SetlBoolean.TRUE && e.mScope != null) {
             // restore state in which mCondition is true

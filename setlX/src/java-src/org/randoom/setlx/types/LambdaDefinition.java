@@ -2,12 +2,14 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,9 +37,22 @@ public class LambdaDefinition extends ProcedureDefinition {
         mExpr = expr;
         mStatements.add(new Return(mExpr));
     }
+    protected LambdaDefinition(
+        final List<ParameterDef>       parameters,
+        final Block                    statements,
+        final HashMap<Variable, Value> closure,
+        final Expr                     expr
+    ) {
+        super(parameters, statements, closure);
+        mExpr = expr;
+    }
 
     public LambdaDefinition createCopy() {
         return new LambdaDefinition(mParameters, mExpr);
+    }
+
+    public LambdaDefinition clone() {
+        return new LambdaDefinition(mParameters, mStatements, mClosure, mExpr);
     }
 
     /* string and char operations */

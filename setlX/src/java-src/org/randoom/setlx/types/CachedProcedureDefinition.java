@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.TermConverter;
@@ -31,28 +32,43 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
     // functional character used in terms
     public  final static String                   FUNCTIONAL_CHARACTER = "^cachedProcedure";
 
-    private final        HashMap<SetlList, Value> cache;
-    private              int                      cacheHits;
+    private final        HashMap<SetlList, Value> mCache;
+    private              int                      mCacheHits;
 
     public CachedProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
         super(parameters, statements);
-        cache     = new HashMap<SetlList, Value>();
-        cacheHits = 0;
+        mCache     = new HashMap<SetlList, Value>();
+        mCacheHits = 0;
+    }
+    protected CachedProcedureDefinition(
+        final List<ParameterDef>       parameters,
+        final Block                    statements,
+        final HashMap<Variable, Value> closure,
+        final HashMap<SetlList, Value> cache,
+        final int                      cacheHits
+    ) {
+        super(parameters, statements, closure);
+        mCache     = cache;
+        mCacheHits = cacheHits;
     }
 
     public CachedProcedureDefinition createCopy() {
         return new CachedProcedureDefinition(mParameters, mStatements);
     }
 
+    public CachedProcedureDefinition clone() {
+        return new CachedProcedureDefinition(mParameters, mStatements, mClosure, mCache, mCacheHits);
+    }
+
     public int getCacheHits() {
-        return cacheHits;
+        return mCacheHits;
     }
     public int getCacheSize() {
-        return cache.size();
+        return mCache.size();
     }
     public void clearCache() {
-        cache.clear();
-        cacheHits = 0;
+        mCache.clear();
+        mCacheHits = 0;
     }
 
     /* function call */
@@ -81,18 +97,18 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
             }
         }
 
-        Value cachedResult = cache.get(key);
+        Value cachedResult = mCache.get(key);
 
         if (cachedResult != null) {
-            ++cacheHits;
+            ++mCacheHits;
             return cachedResult.clone();
         } else {
             // cache om to prevent recursion loop
-            cache.put(key, Om.OM);
+            mCache.put(key, Om.OM);
             // call function
             cachedResult = callAfterEval(args, values);
             // put value into cache
-            cache.put(key, cachedResult);
+            mCache.put(key, cachedResult);
             // return value
             return cachedResult.clone();
         }

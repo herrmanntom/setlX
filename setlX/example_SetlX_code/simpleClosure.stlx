@@ -1,11 +1,18 @@
 // This program demonstrates closures in setlX
 
+serialNumber := 0;
+
 factory := procedure(date, model, color, horsePower) {
+    serialNumber += 1;
+
     // all cars produced in this factory are rated in kW
     powerOutput := round(horsePower * 0.73549875);
 
+    // record how often a car stated its properties
+    nrOfCalls := 0;
     return procedure() {
-        return "$color$ $model$ with $powerOutput$ kW, produced on $date$";
+        nrOfCalls += 1;
+        return "$color$ $model$ with $powerOutput$ kW, produced on $date$, serial $serialNumber$; read $nrOfCalls$ times";
     };
 };
 
@@ -16,7 +23,17 @@ my2ndCar := factory("2001-11-30", "Fiat Seicento", "Yellow", 50);
 
 my3rdCar := factory("2009-07-08", "Audi A6 2.8 Quattro", "Black", 220);
 
-print("1st Car: " + my1stCar());
-print("2nd Car: " + my2ndCar());
-print("3rd Car: " + my3rdCar());
+// print cars
+print(my1stCar());
+
+print(my2ndCar());
+
+my3rdCar();
+copyOf3rdCar := my3rdCar;
+
+copyOf3rdCar();
+copyOf3rdCar();
+
+print(my3rdCar());
+print(copyOf3rdCar());
 

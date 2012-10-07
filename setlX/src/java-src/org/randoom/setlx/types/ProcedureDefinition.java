@@ -40,7 +40,7 @@ public class ProcedureDefinition extends Value {
     // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean sFinishFunction      = false;
 
-    protected final List<ParameterDef>       mParameters;  // parameter list
+    protected final List<ParameterDef>       mParameters;   // parameter list
     protected final Block                    mStatements;  // statements in the body of the definition
     protected       HashMap<Variable, Value> mClosure;     // variables and values used in closure
 
@@ -49,6 +49,11 @@ public class ProcedureDefinition extends Value {
         mStatements = statements;
         mClosure    = null;
     }
+    protected ProcedureDefinition(final List<ParameterDef> parameters, final Block statements, final HashMap<Variable, Value> closure) {
+        mParameters = parameters;
+        mStatements = statements;
+        mClosure    = new HashMap<Variable, Value>(closure);
+    }
 
     // only to be used by ProcedureConstructor
     public ProcedureDefinition createCopy() {
@@ -56,8 +61,7 @@ public class ProcedureDefinition extends Value {
     }
 
     public ProcedureDefinition clone() {
-        // this value can not be change once "created"
-        return this;
+        return new ProcedureDefinition(mParameters, mStatements, mClosure);
     }
 
     public void addClosure(final HashMap<Variable, Value> closure) {
@@ -181,6 +185,13 @@ public class ProcedureDefinition extends Value {
                     /* if possible the WriteBackAgent will set the variable used in this
                        expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);
+                }
+            }
+
+            // read closure variables and update their current state
+            if (mClosure != null) {
+                for (final Map.Entry<Variable, Value> entry : mClosure.entrySet()) {
+                    entry.setValue(entry.getKey().eval());
                 }
             }
 

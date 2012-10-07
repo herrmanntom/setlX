@@ -1,8 +1,11 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.4.1--- 2012-10-08
+ + improved closure detection
+
 ---v1.4.0--- 2012-10-06
- + added closure
- 
+ + added closures
+
 ---v1.3.3--- 2012-09-30
  + added matches(string, pattern [, captureGroups]), replace(string, pattern, replacement),
    replaceFirst(string, pattern, replacement) functions
@@ -14,7 +17,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added variable to scan statement, which stores a map of positions
    where first matched character is located inside the input-string
  * replaced '->' with 'as' in regex branches
- 
+
 ---v1.3.1--- 2012-09-01
  # fixed error handling in nested parsing runs (e.g. $-expressions in strings, parse())
  + added regex-branch to match

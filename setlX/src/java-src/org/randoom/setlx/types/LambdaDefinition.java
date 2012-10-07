@@ -52,7 +52,11 @@ public class LambdaDefinition extends ProcedureDefinition {
     }
 
     public LambdaDefinition clone() {
-        return new LambdaDefinition(mParameters, mStatements, mClosure, mExpr);
+        if (mClosure != null) {
+            return new LambdaDefinition(mParameters, mStatements, mClosure, mExpr);
+        } else {
+            return this;
+        }
     }
 
     /* string and char operations */

@@ -94,8 +94,24 @@ public class Match extends Statement {
         final List<Variable> usedVariables
     ) {
         mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+        // binding inside an match are only valid if present in all branches
+        // and last branch is an default-branch
+        final int      preBound  = boundVariables.size();
+        List<Variable> boundHere = null;
         for (final MatchAbstractBranch br : mBranchList) {
-            br.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            final List<Variable> boundTmp = new ArrayList<Variable>(boundVariables);
+
+            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+
+            if (boundHere == null) {
+                boundHere = new ArrayList<Variable>(boundTmp.subList(preBound, boundTmp.size()));
+            } else {
+                boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
+            }
+        }
+        if (mBranchList.get(mBranchList.size() - 1) instanceof MatchDefaultBranch) {
+            boundVariables.addAll(boundHere);
         }
     }
 

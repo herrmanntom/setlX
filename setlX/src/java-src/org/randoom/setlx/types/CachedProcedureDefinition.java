@@ -57,7 +57,11 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
     }
 
     public CachedProcedureDefinition clone() {
-        return new CachedProcedureDefinition(mParameters, mStatements, mClosure, mCache, mCacheHits);
+        if (mClosure != null) {
+            return new CachedProcedureDefinition(mParameters, mStatements, mClosure, mCache, mCacheHits);
+        } else {
+            return this;
+        }
     }
 
     public int getCacheHits() {

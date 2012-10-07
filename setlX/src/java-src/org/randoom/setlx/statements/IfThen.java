@@ -53,8 +53,23 @@ public class IfThen extends Statement {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
+        // binding inside an if-then-else are only valid if present in all branches
+        // and last branch is an else-branch
+        final int      preBound  = boundVariables.size();
+        List<Variable> boundHere = null;
         for (final IfThenAbstractBranch br : mBranchList) {
-            br.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            final List<Variable> boundTmp = new ArrayList<Variable>(boundVariables);
+
+            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+
+            if (boundHere == null) {
+                boundHere = new ArrayList<Variable>(boundTmp.subList(preBound, boundTmp.size()));
+            } else {
+                boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
+            }
+        }
+        if (mBranchList.get(mBranchList.size() - 1) instanceof IfThenElseBranch) {
+            boundVariables.addAll(boundHere);
         }
     }
 

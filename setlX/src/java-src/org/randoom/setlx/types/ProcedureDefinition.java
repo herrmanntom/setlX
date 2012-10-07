@@ -52,7 +52,11 @@ public class ProcedureDefinition extends Value {
     protected ProcedureDefinition(final List<ParameterDef> parameters, final Block statements, final HashMap<Variable, Value> closure) {
         mParameters = parameters;
         mStatements = statements;
-        mClosure    = new HashMap<Variable, Value>(closure);
+        if (closure != null) {
+            mClosure = new HashMap<Variable, Value>(closure);
+        } else {
+            mClosure = null;
+        }
     }
 
     // only to be used by ProcedureConstructor
@@ -61,7 +65,11 @@ public class ProcedureDefinition extends Value {
     }
 
     public ProcedureDefinition clone() {
-        return new ProcedureDefinition(mParameters, mStatements, mClosure);
+        if (mClosure != null) {
+            return new ProcedureDefinition(mParameters, mStatements, mClosure);
+        } else {
+            return this;
+        }
     }
 
     public void addClosure(final HashMap<Variable, Value> closure) {

@@ -54,8 +54,23 @@ public class Switch extends Statement {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
+        // binding inside an switch are only valid if present in all branches
+        // and last branch is a default-branch
+        final int      preBound  = boundVariables.size();
+        List<Variable> boundHere = null;
         for (final SwitchAbstractBranch br : mBranchList) {
-            br.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            final List<Variable> boundTmp = new ArrayList<Variable>(boundVariables);
+
+            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+
+            if (boundHere == null) {
+                boundHere = new ArrayList<Variable>(boundTmp.subList(preBound, boundTmp.size()));
+            } else {
+                boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
+            }
+        }
+        if (mBranchList.get(mBranchList.size() - 1) instanceof SwitchDefaultBranch) {
+            boundVariables.addAll(boundHere);
         }
     }
 

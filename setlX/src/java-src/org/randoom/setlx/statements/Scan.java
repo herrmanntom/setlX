@@ -199,25 +199,34 @@ public class Scan extends Statement {
         mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* The Variable in this statement get assigned temporarily.
-           Collect it into a temporary list, add it to boundVariables and
-           remove it again before returning. */
+           Collect it into a temporary list and remove it again before returning. */
         final List<Variable> tempAssigned = new ArrayList<Variable>();
         if (mPosVar != null) {
             mPosVar.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
         }
-
-        final int preIndex = boundVariables.size();
+        final int preBound = boundVariables.size();
         boundVariables.addAll(tempAssigned);
 
+        // binding inside an scan are only valid if present in all branches
+        // and last branch is an default-branch
+        List<Variable> boundHere = null;
         for (final MatchAbstractBranch br : mBranchList) {
-            br.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        }
+            final List<Variable> boundTmp = new ArrayList<Variable>(boundVariables);
 
-        if (mPosVar != null) {
-            // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
-            for (int i = tempAssigned.size(); i > 0; --i) {
-                boundVariables.remove(preIndex + (i - 1));
+            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+
+            if (boundHere == null) {
+                boundHere = new ArrayList<Variable>(boundTmp.subList(preBound, boundTmp.size()));
+            } else {
+                boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
+        }
+        while (boundVariables.size() > preBound) {
+            boundVariables.remove(boundVariables.size() - 1);
+        }
+        if (mBranchList.get(mBranchList.size() - 1) instanceof MatchDefaultBranch) {
+            boundHere.removeAll(tempAssigned);
+            boundVariables.addAll(boundHere);
         }
     }
 

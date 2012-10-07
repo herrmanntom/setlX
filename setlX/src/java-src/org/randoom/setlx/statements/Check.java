@@ -61,8 +61,14 @@ public class Check extends Statement {
         final List<Variable> usedVariables
     ) {
         mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+
+        // bindings inside the recovery block are not always valid --- ignore them
+        final int preBound = boundVariables.size();
         if (mRecovery != null) {
             mRecovery.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+        while (boundVariables.size() > preBound) {
+            boundVariables.remove(boundVariables.size() - 1);
         }
     }
 

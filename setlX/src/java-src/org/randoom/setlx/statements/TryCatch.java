@@ -68,8 +68,13 @@ public class TryCatch extends Statement {
         final List<Variable> usedVariables
     ) {
         mBlockToTry.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        // catch blocks cannot be trusted to assign anything in any case
+        final int preBound = boundVariables.size();
         for (final TryCatchAbstractBranch br : mTryList) {
             br.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+        while (boundVariables.size() > preBound) {
+            boundVariables.remove(boundVariables.size() - 1);
         }
     }
 

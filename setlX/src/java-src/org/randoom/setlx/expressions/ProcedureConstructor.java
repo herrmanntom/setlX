@@ -8,7 +8,6 @@ import org.randoom.setlx.types.ProcedureDefinition;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -82,7 +81,6 @@ public class ProcedureConstructor extends Expr {
         mClosureVariables = new HashSet<Variable>();
         mClosureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
         mClosureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
-        mClosureVariables.remove(Variable.PREVENT_OPTIMIZATION_DUMMY);
     }
 
     /* string operations */

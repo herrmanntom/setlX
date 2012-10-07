@@ -93,7 +93,9 @@ public class ProcedureDefinition extends Value {
         // upon defining this procedure, all variables which are unbound inside
         // will be read to create the closure for this procedure
         for (final Variable var : innerUnboundVariables) {
-            if (boundVariables.contains(var)) {
+            if (var == Variable.PREVENT_OPTIMIZATION_DUMMY) {
+                continue;
+            } else if (boundVariables.contains(var)) {
                 usedVariables.add(var);
             } else {
                 unboundVariables.add(var);

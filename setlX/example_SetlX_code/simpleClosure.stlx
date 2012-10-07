@@ -1,0 +1,22 @@
+// This program demonstrates closures in setlX
+
+factory := procedure(date, model, color, horsePower) {
+    // all cars produced in this factory are rated in kW
+    powerOutput := round(horsePower * 0.73549875);
+
+    return procedure() {
+        return "$color$ $model$ with $powerOutput$ kW, produced on $date$";
+    };
+};
+
+// create some cars, which store their own state
+my1stCar := factory("2008-09-12", "Lotus Elise", "Green", 190);
+
+my2ndCar := factory("2001-11-30", "Fiat Seicento", "Yellow", 50);
+
+my3rdCar := factory("2009-07-08", "Audi A6 2.8 Quattro", "Black", 220);
+
+print("1st Car: " + my1stCar());
+print("2nd Car: " + my2ndCar());
+print("3rd Car: " + my3rdCar());
+

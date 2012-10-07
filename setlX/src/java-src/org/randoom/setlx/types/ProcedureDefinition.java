@@ -136,7 +136,7 @@ public class ProcedureDefinition extends Value {
         // assign closure contents
         if (mClosure != null) {
             for (final Map.Entry<Variable, Value> entry : mClosure.entrySet()) {
-                entry.getKey().assign(entry.getValue());
+                entry.getKey().assignUnclonedCheckUpTo(entry.getValue(), oldScope);
             }
         }
 

@@ -4,10 +4,10 @@ createBelegung := procedure(m, a) {
 };
 
 evalSet := procedure(fS, i) {
-	return {eval(f, i): f in fS} == {true};
+	return {evalEquation(f, i): f in fS} == {true};
 };
 
-eval := procedure(f, i) {
+evalEquation := procedure(f, i) {
 	switch {
 		case f == 1 :
 			return true;
@@ -16,17 +16,17 @@ eval := procedure(f, i) {
 		case isString((f)) :
 			return i[f];
 		case f[1] == "-" :
-			return ( ! (eval(f[2], i)) );
+			return ( ! (evalEquation(f[2], i)) );
 		case f[2] == "*" :
-			return eval(f[1], i) && eval(f[3], i);
+			return evalEquation(f[1], i) && evalEquation(f[3], i);
 		case f[2] == "+" :
-			return eval(f[1], i) || eval(f[3], i);
+			return evalEquation(f[1], i) || evalEquation(f[3], i);
 		case f[2] == "->" :
-			return ( ! (eval(f[1], i)) ) || eval(f[3], i);
+			return ( ! (evalEquation(f[1], i)) ) || evalEquation(f[3], i);
 		case f[2] == "<->" :
-			return eval(f[1], i) == eval(f[3], i);
+			return evalEquation(f[1], i) == evalEquation(f[3], i);
 		default :
-			print("eval: Syntax-Fehler: ", f);
+			print("evalEquation: Syntax-Fehler: ", f);
 	}
 };
 

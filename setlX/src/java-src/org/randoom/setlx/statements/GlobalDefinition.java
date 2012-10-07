@@ -51,7 +51,10 @@ public class GlobalDefinition extends Statement {
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
-    ) { /* nothing to collect */ }
+    ) {
+        // add dummy variable to prevent optimization
+        unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
+    }
 
     /* string operations */
 

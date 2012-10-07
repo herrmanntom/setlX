@@ -1,14 +1,16 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.ProcedureDefinition;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /*
 grammar rule:
@@ -27,7 +29,7 @@ public class ProcedureConstructor extends Expr {
     private final static int          PRECEDENCE           = 9999;
 
     private final ProcedureDefinition mDefinition;
-    private       List<Variable>      mClosureVariables;
+    private       Set<Variable>       mClosureVariables;
 
     public ProcedureConstructor(final ProcedureDefinition definition) {
         mDefinition       = definition;
@@ -38,17 +40,25 @@ public class ProcedureConstructor extends Expr {
         if (mClosureVariables == null) {
             this.optimize();
         }
-        if (mClosureVariables.size() > 0) {
+        if (! mClosureVariables.isEmpty()) {
             final HashMap<Variable, Value> closure = new HashMap<Variable, Value>();
             for (final Variable var : mClosureVariables) {
                 final Value val = var.eval();
                 if (val != Om.OM) {
-                    closure.put(var, val);
+                    if (val instanceof PreDefinedFunction &&
+                       var.toString().equals(((PreDefinedFunction)val).getName())
+                    ) {
+                        // skip predefined Functions bound to their name
+                    } else {
+                        closure.put(var, val);
+                    }
                 }
             }
-            final ProcedureDefinition result = mDefinition.createCopy();
-            result.addClosure(closure);
-            return result;
+            if (! closure.isEmpty()) {
+                final ProcedureDefinition result = mDefinition.createCopy();
+                result.addClosure(closure);
+                return result;
+            }
         }
         return mDefinition;
     }
@@ -69,9 +79,10 @@ public class ProcedureConstructor extends Expr {
         final int preUsed    = usedVariables.size();
         mDefinition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        mClosureVariables = new ArrayList<Variable>();
+        mClosureVariables = new HashSet<Variable>();
         mClosureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
         mClosureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
+        mClosureVariables.remove(Variable.PREVENT_OPTIMIZATION_DUMMY);
     }
 
     /* string operations */

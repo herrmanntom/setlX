@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.4.0--- 2012-10-06
+ + added closure
+ 
 ---v1.3.3--- 2012-09-30
  + added matches(string, pattern [, captureGroups]), replace(string, pattern, replacement),
    replaceFirst(string, pattern, replacement) functions

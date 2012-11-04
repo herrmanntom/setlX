@@ -114,11 +114,6 @@ public class Scan extends Statement {
                 }
                 // execute branch which matches largest string
                 if (largestMatchBranch != null && largestMatchResult != null) {
-                    if (largestMatchSize == MatchDefaultBranch.END_OFFSET) {
-                        // default branch was largest match, stop scan after its execution
-                        return largestMatchBranch.execute();
-                    }
-
                     // scope for execution
                     final VariableScope innerScope = outerScope.createInteratorBlock();
                     VariableScope.setScope(innerScope);
@@ -140,7 +135,8 @@ public class Scan extends Statement {
                     // reset scope
                     VariableScope.setScope(outerScope);
 
-                    if (execResult != null) {
+                    // return if we got a valid return value, or if default branch was largest match
+                    if (execResult != null || largestMatchSize == MatchDefaultBranch.END_OFFSET) {
                         return execResult;
                     }
 

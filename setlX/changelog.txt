@@ -2,6 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.4.1--- 2012-11-03
  + improved closure detection
+ # fix char position variable in default branch of scan statement
 
 ---v1.4.0--- 2012-10-06
  + added closures

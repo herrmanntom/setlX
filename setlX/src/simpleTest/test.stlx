@@ -82,7 +82,11 @@ listAssignments := procedure() {
 
     [a, b, c] := [1, 2, 3];
     [[d, e], f] := [[4, 5], 6];
-    if (a == 1 && b == 2 && c == 3 && d == 4 && e == 5 && f == 6) {
+    [g, h, i] := "123";
+    [j, k, l] := Term("foobar", 99, sin);
+    if (a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
+        g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin)
+    ) {
         printErr("test $testNumber$ successful (list assignments)");
     } else {
         printErr("test $testNumber$ failed (list assignments)");
@@ -307,10 +311,10 @@ precedences := procedure() {
     testNumber += 1;
 
     a := str(   ^conjunction(^disjunction(^disjunction(          ^variable("a"),            ^variable("b")   ),
-                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b"))  ) 
+                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b"))  )
                                          ),
                              ^disjunction(^disjunction(          ^variable("a"),            ^variable("b")   ),
-                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b"))  ) 
+                                          ^conjunction(^negation(^variable("a")), ^negation(^variable("b"))  )
                                          )
                             )
             );

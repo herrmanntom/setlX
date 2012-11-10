@@ -4,6 +4,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + allow assignment of indexable collection values (e.g. lists, strings, terms) to
    lists of IDs (e.g.  [a,b,c] := Term("foobar",99,sin);  )
  + improved closure detection
+ + added --ev and --ex options to directly execute an expression or statement
  # fix char position variable in default branch of scan statement
 
 ---v1.4.0--- 2012-10-06

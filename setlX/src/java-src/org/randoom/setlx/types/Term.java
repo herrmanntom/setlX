@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.*;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.Iterator;

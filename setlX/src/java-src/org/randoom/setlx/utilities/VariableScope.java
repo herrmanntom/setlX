@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.SetlList;
@@ -9,7 +8,6 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,130 +15,6 @@ import java.util.Map;
 public class VariableScope {
     // functional characters used in terms
     private final   static  String          FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
-
-//    /*============================ static ============================*/
-
-//    // this scope stores all global variables
-//    private final   static  VariableScope   sGlobals                        = new VariableScope();
-//    private         static  boolean         sGlobalsPresent                 = false;
-
-//    /* This variable stores the initial VariableScope:
-//       Predefined functions are dynamically loaded into this VariableScope,
-//       not into the current one, to be accessible by any previous and future
-//       VariableScope clones.
-//       Predefined functions should not be put into sGlobals, to allow local
-//       overrides inside functions.                                            */
-//    private final   static  VariableScope   sInitial                        = new VariableScope();
-
-//    // this variable stores the variable assignment that is currently active
-//    private         static  VariableScope   sVariableScope                  = sInitial.clone();
-
-//    public static VariableScope getScope() {
-//        return sVariableScope;
-//    }
-
-//    public static void setScope(final VariableScope newEnv) {
-//        sVariableScope = newEnv;
-//    }
-
-//    // set new scope, which is not connected to anything
-//    public static void setBubbleScope() {
-//        sVariableScope = new VariableScope();
-//    }
-
-//    public static void resetScope() {
-//        sVariableScope  = sInitial.clone();
-//        sGlobals.mVarBindings.clear();
-//        sGlobalsPresent = false;
-//        ParseSetlX.clearLoadedLibraries();
-//    }
-
-//    public static Value findValue(final String var) {
-//        Value v = null;
-//        if (sGlobalsPresent) {
-//            v = sGlobals.locateValue(var);
-//            if (v != null) {
-//                return v;
-//            }
-//        }
-//        v = sVariableScope.locateValue(var);
-//        if (v == null) {
-//            // search if name matches a predefined function (which start with 'PD_')
-//            final String packageName = PreDefinedFunction.class.getPackage().getName();
-//            final String className   = "PD_" + var;
-//            try {
-//                final Class<?> c = Class.forName(packageName + '.' + className);
-//                v                = (PreDefinedFunction) c.getField("DEFINITION").get(null);
-//            } catch (Exception e) {
-//                /* Name does not match predefined function.
-//                   But return value already is null, no change necessary.     */
-//            }
-//            if (v == null && var.toLowerCase().equals(var)) {
-//               // search if name matches a java Math.x function (which are all lower case)
-//                try {
-//                    Method f = Math.class.getMethod(var, double.class);
-//                    v        = new MathFunction(var, f);
-//                } catch (Exception e) {
-//                    /* Name also does not match java Math.x function.
-//                       But return value already is null, no change necessary.     */
-//                }
-//            }
-//            if (v == null) {
-//                v = Om.OM;
-//                // identifier could not be looked up...
-//                // return Om.OM and store it into intial scope to prevent reflection lookup next time
-//            }
-//            /* Store result of reflection lookup to initial scope to speed up search next time.
-
-//               Initial scope is chosen, because it is at the end of every
-//               currently existing and all future scopes search paths.         */
-//            sInitial.mVarBindings.put(var, v);
-//        }
-//        return v;
-//    }
-
-//    public static void putValue(final String var, final Value value) {
-//        if (sGlobalsPresent && sGlobals.locateValue(var) != null) {
-//            sGlobals.storeValue(var, value);
-//        } else {
-//            sVariableScope.storeValue(var, value);
-//        }
-//    }
-
-//    public static boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
-//        if (sGlobalsPresent) {
-//            final Value now = sGlobals.locateValue(var);
-//            if (now != null) {
-//                if (now.equalTo(value)) {
-//                    return true;
-//                } else {
-//                    return false;
-//                }
-//            }
-//        }
-//        return sVariableScope.storeValueCheckUpTo(var, value, outerScope);
-//    }
-
-//    // Add bindings stored in `scope' into current scope.
-//    // This also adds vars in outer scopes of `scope' until reaching the
-//    // current scope inside scope.
-//    public static void putAllValues(final VariableScope scope) {
-//        for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
-//            putValue(entry.getKey(), entry.getValue());
-//        }
-//        if (scope.mOriginalScope != null && scope.mOriginalScope != sVariableScope) {
-//            putAllValues(scope.mOriginalScope);
-//        }
-//    }
-
-//    public static void makeGlobal(final String var) {
-//        if (sGlobals.locateValue(var) == null) {
-//            sGlobals.storeValue(var, Om.OM);
-//        }
-//        sGlobalsPresent = true;
-//    }
-
-//    /*========================== end static ==========================*/
 
     private final   Map<String, Value>  mVarBindings;
     // stores reference to original scope object upon cloning

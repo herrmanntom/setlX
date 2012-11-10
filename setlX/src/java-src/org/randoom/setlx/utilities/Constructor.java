@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
-import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.VariableScope;
 

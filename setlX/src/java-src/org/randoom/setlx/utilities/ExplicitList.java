@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
+import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.VariableScope;
@@ -56,15 +57,18 @@ public class ExplicitList extends Constructor {
     }
 
     // sets the variables used to form this list to the variables from the list given as a parameter
-    public void assignUncloned(final State state, final SetlList list) throws SetlException {
+    public void assignUncloned(
+        final State                  state,
+        final IndexedCollectionValue collection
+    ) throws SetlException {
         final int size = mList.size();
-        if (list.size() != size) {
+        if (collection.size() != size) {
             throw new IncompatibleTypeException(
-                "Members of '" + list + "' are unusable for list assignment."
+                "Members of '" + collection + "' are unusable for list assignment."
             );
         }
         for (int i = 0; i < size; ++i) {
-            mList.get(i).assignUncloned(state, list.getMember(i + 1));
+            mList.get(i).assignUncloned(state, collection.getMember(i + 1));
         }
     }
 
@@ -73,15 +77,19 @@ public class ExplicitList extends Constructor {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
-    public boolean assignUnclonedCheckUpTo(final State state, final SetlList list, final VariableScope outerScope) throws SetlException {
+    public boolean assignUnclonedCheckUpTo(
+        final State                  state,
+        final IndexedCollectionValue collection,
+        final VariableScope          outerScope
+    ) throws SetlException {
         final int size = mList.size();
-        if (list.size() != size) {
+        if (collection.size() != size) {
             throw new IncompatibleTypeException(
-                "Members of '" + list + "' are unusable for list assignment."
+                "Members of '" + collection + "' are unusable for list assignment."
             );
         }
         for (int i = 0; i < size; ++i) {
-            if ( ! mList.get(i).assignUnclonedCheckUpTo(state, list.getMember(i + 1), outerScope)) {
+            if ( ! mList.get(i).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope)) {
                 return false;
             }
         }

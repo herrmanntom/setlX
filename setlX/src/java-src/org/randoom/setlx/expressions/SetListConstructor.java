@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
+import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.Value;
@@ -79,9 +80,9 @@ public class SetListConstructor extends Expr {
 
     // sets this expression to the given value
     public void assignUncloned(final State state, final Value v) throws SetlException {
-        if (v instanceof SetlList) {
+        if (v instanceof IndexedCollectionValue) {
             if (mType == LIST && mConstructor != null) {
-                mConstructor.assignUncloned(state, (SetlList) v);
+                mConstructor.assignUncloned(state, (IndexedCollectionValue) v);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."
@@ -100,9 +101,9 @@ public class SetListConstructor extends Expr {
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
     public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) throws SetlException {
-        if (v instanceof SetlList) {
+        if (v instanceof IndexedCollectionValue) {
             if (mType == LIST && mConstructor != null) {
-               return mConstructor.assignUnclonedCheckUpTo(state, (SetlList) v, outerScope);
+               return mConstructor.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."

@@ -184,8 +184,8 @@ public class ParseSetlX {
                 );
             }
 
-			// Optimize fragment
-			frag.optimize();
+            // Optimize fragment
+            frag.optimize();
 
             return frag;
         } catch (RecognitionException re) {

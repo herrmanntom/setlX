@@ -9,6 +9,7 @@ import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlList;
@@ -50,6 +51,8 @@ public class SetlX {
         boolean         help        = false;
         boolean         interactive = false;
         boolean         noExecution = false;
+        String          expression  = null;  // expression to be evaluated using -ev option
+        String          statement   = null;  // code to be executed when using -ex option
         List<String>    files       = new ArrayList<String>();
         PcEnvProvider   envProvider = new PcEnvProvider();
         State           state       = new State();
@@ -82,6 +85,30 @@ public class SetlX {
                    ) {
                     help = true;
                     dump = false;
+                }
+            } else if (s.equals("--ev")) {
+                ++i; // set to next argument
+                if (i < args.length) {
+                    expression = args[i];
+                }
+                // check for incorrect expression content
+                if (  statement != null || expression.equals("") ||
+                     (expression.length() >= 2 && expression.substring(0,2).equals("--"))
+                   ) {
+                    help       = true;
+                    expression = null;
+                }
+            } else if (s.equals("--ex")) {
+                ++i; // set to next argument
+                if (i < args.length) {
+                    statement = args[i];
+                }
+                // check for incorrect statement content
+                if (  expression != null || statement.equals("") ||
+                     (statement.length() >= 2 && statement.substring(0,2).equals("--"))
+                   ) {
+                    help      = true;
+                    statement = null;
                 }
             } else if (s.equals("--help")) {
                 help = true;
@@ -131,7 +158,10 @@ public class SetlX {
                 files.add(s);
             }
         }
-        interactive = (files.size() == 0); // interactive == no files supplied as parameters
+
+        // interactive == no files and no code supplied as parameters
+        interactive = (files.size() == 0 && expression == null && statement == null);
+        help        = ! interactive && files.size() > 0 && (expression != null || statement != null);
 
         if (interactive || verbose || help) {
             printHeader();
@@ -142,8 +172,8 @@ public class SetlX {
         if (interactive && ! help) {
             printInteractiveBegin();
             parseAndExecuteInteractive(state);
-        } else if ( ! help) {
-            List<Block> programs = parseAndDumpFiles(files, dump, dumpFile);
+        } else if ( ! help ) {
+            List<Block> programs = parseAndDumpCode(expression, statement, files, dump, dumpFile);
             if ( ! noExecution) {
                 executeFiles(state, programs);
             }
@@ -193,16 +223,35 @@ public class SetlX {
         printExecutionFinished();
     }
 
-    private static List<Block> parseAndDumpFiles(List<String> files,
+    private static List<Block> parseAndDumpCode( String       expression,
+                                                 String       statement,
+                                                 List<String> files,
                                                  boolean      dump,
                                                  String       dumpFile) throws Exception {
         // parsed programs
-        List<Block> programs = new ArrayList<Block>(files.size());
+        int nPrograms = files.size();
+        if (expression != null) {
+            nPrograms += 1;
+        } else if (statement != null) {
+            nPrograms += 1;
+        }
+        List<Block> programs = new ArrayList<Block>(nPrograms);
 
         // parse content of all files
         try {
-            for (String fileName : files) {
-                programs.add(ParseSetlX.parseFile(fileName));
+            if (expression != null) {
+                final Block exp = new Block();
+                exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(expression)));
+                exp.markLastExprStatement();
+                programs.add(exp);
+            } else if (statement != null) {
+                final Block stmt = ParseSetlX.parseStringToBlock(statement);
+                stmt.markLastExprStatement();
+                programs.add(stmt);
+            } else {
+                for (String fileName : files) {
+                    programs.add(ParseSetlX.parseFile(fileName));
+                }
             }
         } catch (ParserException pe) {
             if (verbose) {
@@ -376,6 +425,10 @@ public class SetlX {
         printHelpInteractive();
         Environment.outWriteLn(
             "Additional parameters:\n" +
+            "  --ev <expression>\n" +
+            "     evaluates next argument as expression and exits\n" +
+            "  --ex <statement>\n" +
+            "     executes next argument as statement and exits\n" +
             "  --libraryPath <path>\n" +
             "     override SETLX_LIBRARY_PATH environment variable\n" +
             "  --multiLineMode\n" +

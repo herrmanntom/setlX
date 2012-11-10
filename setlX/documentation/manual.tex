@@ -137,6 +137,10 @@ Executing the `\command{exit;}' statement will terminate the interpreter.
 In addition to file-paths a number of options can be used when running \setlX{}:
 
 \begin{itemize}
+	\param{--ev <expression>}
+	      {evaluates next argument as expression and exits (cannot be combined with execution of a statement or files)}
+	\param{--ex <statement>}
+	      {executes next argument as statement and exits (cannot be combined with evaluation of an expression or execution of files)}
 	\param{--help}
 	      {displays some helpful information}
 	\param{--libraryPath <path>}

@@ -4,6 +4,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class PD_uStep extends PreDefinedFunction {
         super("uStep");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
         Environment.setDebugStepNextExpr(true);
         DebugPrompt.stopPrompt();
         return Om.OM.hide();

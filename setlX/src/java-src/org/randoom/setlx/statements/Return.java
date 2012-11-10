@@ -9,6 +9,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -35,9 +36,9 @@ public class Return extends Statement {
         mResult = result;
     }
 
-    protected Value exec() throws SetlException {
+    protected Value exec(final State state) throws SetlException {
         if (mResult != null) {
-            return mResult.eval();
+            return mResult.eval(state);
         } else {
             return Om.OM;
         }
@@ -74,10 +75,10 @@ public class Return extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         if (mResult != null) {
-            result.addMember(mResult.toTerm());
+            result.addMember(mResult.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }

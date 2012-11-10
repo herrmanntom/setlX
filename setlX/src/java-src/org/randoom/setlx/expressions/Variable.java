@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
@@ -46,8 +47,8 @@ public class Variable extends Expr {
         mId = id;
     }
 
-    protected Value evaluate() {
-        return VariableScope.findValue(mId);
+    protected Value evaluate(final State state) {
+        return state.findValue(mId);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -70,8 +71,8 @@ public class Variable extends Expr {
     }
 
     // sets this expression to the given value
-    public void assignUncloned(final Value v) {
-        VariableScope.putValue(mId, v);
+    public void assignUncloned(final State state, final Value v) {
+        state.putValue(mId, v);
     }
 
     /* Similar to assignUncloned(),
@@ -79,13 +80,13 @@ public class Variable extends Expr {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v' */
-    public boolean assignUnclonedCheckUpTo(final Value v, final VariableScope outerScope) {
-        return VariableScope.putValueCheckUpTo(mId, v, outerScope);
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) {
+        return state.putValueCheckUpTo(mId, v, outerScope);
     }
 
     // sets this expression to the given value
-    public void makeGlobal() {
-        VariableScope.makeGlobal(mId);
+    public void makeGlobal(final State state) {
+        state.makeGlobal(mId);
     }
 
     /* string operations */
@@ -96,13 +97,13 @@ public class Variable extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(new SetlString(mId));
         return result;
     }
 
-    public Term toTermQuoted() {
+    public Term toTermQuoted(final State state) {
         Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL, 1);
         result.addMember(new SetlString(mId));
         return result;

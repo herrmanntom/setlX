@@ -10,6 +10,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -47,8 +48,8 @@ public class Call extends Expr {
         _this   = toString();
     }
 
-    protected Value evaluate() throws SetlException {
-        final Value lhs = mLhs.eval();
+    protected Value evaluate(final State state) throws SetlException {
+        final Value lhs = mLhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
                 "Identifier \"" + mLhs + "\" is undefined."
@@ -65,7 +66,7 @@ public class Call extends Expr {
                 Environment.setDebugFinishFunction(false);
             }
             // also supply the original expressions (mArgs), which are needed for 'rw' parameters
-            return lhs.call(mArgs);
+            return lhs.call(state, mArgs);
         } catch (StackOverflowError e) {
             throw new JVMException(
                 "Stack overflow.\n" +
@@ -122,28 +123,28 @@ public class Call extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(new SetlString(mLhs.toString()));
 
         final SetlList  arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
-            arguments.addMember(arg.toTerm());
+            arguments.addMember(arg.toTerm(state));
         }
         result.addMember(arguments);
 
         return result;
     }
 
-    public Term toTermQuoted() throws SetlException {
+    public Term toTermQuoted(final State state) throws SetlException {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(new SetlString(mLhs.toString()));
 
         final SetlList  arguments   = new SetlList(mArgs.size());
         for (Expr arg: mArgs) {
-            arguments.addMember(arg.eval().toTerm());
+            arguments.addMember(arg.eval(state).toTerm(state));
         }
         result.addMember(arguments);
 

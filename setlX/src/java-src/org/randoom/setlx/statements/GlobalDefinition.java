@@ -6,6 +6,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,9 +34,9 @@ public class GlobalDefinition extends Statement {
         mVars = vars;
     }
 
-    protected Value exec() {
+    protected Value exec(final State state) {
         for (final Variable var : mVars) {
-            var.makeGlobal();
+            var.makeGlobal(state);
         }
         return null;
     }
@@ -75,12 +76,12 @@ public class GlobalDefinition extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList varList = new SetlList(mVars.size());
         for (final Variable var : mVars) {
-            varList.addMember(var.toTerm());
+            varList.addMember(var.toTerm(state));
         }
         result.addMember(varList);
 

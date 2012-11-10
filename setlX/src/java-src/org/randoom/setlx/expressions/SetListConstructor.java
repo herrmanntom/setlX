@@ -9,6 +9,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Constructor;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
@@ -42,17 +43,17 @@ public class SetListConstructor extends Expr {
         mConstructor = constructor;
     }
 
-    protected Value evaluate() throws SetlException {
+    protected Value evaluate(final State state) throws SetlException {
         if (mType == SET) {
             final SetlSet set = new SetlSet();
             if (mConstructor != null) {
-                mConstructor.fillCollection(set);
+                mConstructor.fillCollection(state, set);
             }
             return set;
         } else /* if (mType == LIST) */ {
             final SetlList list = new SetlList();
             if (mConstructor != null) {
-                mConstructor.fillCollection(list);
+                mConstructor.fillCollection(state, list);
             }
             list.compress();
             return list;
@@ -77,10 +78,10 @@ public class SetListConstructor extends Expr {
     }
 
     // sets this expression to the given value
-    public void assignUncloned(final Value v) throws SetlException {
+    public void assignUncloned(final State state, final Value v) throws SetlException {
         if (v instanceof SetlList) {
             if (mType == LIST && mConstructor != null) {
-                mConstructor.assignUncloned((SetlList) v);
+                mConstructor.assignUncloned(state, (SetlList) v);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."
@@ -98,10 +99,10 @@ public class SetListConstructor extends Expr {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
-    public boolean assignUnclonedCheckUpTo(final Value v, final VariableScope outerScope) throws SetlException {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) throws SetlException {
         if (v instanceof SetlList) {
             if (mType == LIST && mConstructor != null) {
-               return mConstructor.assignUnclonedCheckUpTo((SetlList) v, outerScope);
+               return mConstructor.assignUnclonedCheckUpTo(state, (SetlList) v, outerScope);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."
@@ -134,7 +135,7 @@ public class SetListConstructor extends Expr {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         final CollectionValue result;
         if (mType == SET) {
             result = new SetlSet();
@@ -142,7 +143,7 @@ public class SetListConstructor extends Expr {
             result = new SetlList();
         }
         if (mConstructor != null) {
-            mConstructor.addToTerm(result);
+            mConstructor.addToTerm(state, result);
         }
         return result;
     }

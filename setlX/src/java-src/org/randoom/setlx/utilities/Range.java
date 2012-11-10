@@ -37,16 +37,16 @@ public class Range extends Constructor {
         mStop   = stop;
     }
 
-    public void fillCollection(final CollectionValue collection) throws SetlException {
-        final Value start = mStart.eval();
+    public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
+        final Value start = mStart.eval(state);
               Value step  = null;
         // compute step
         if (mSecond != null) {
-            step = mSecond.eval().difference(start);
+            step = mSecond.eval(state).difference(state, start);
         } else {
             step = Rational.ONE;
         }
-        start.fillCollectionWithinRange(step, mStop.eval(), collection);
+        start.fillCollectionWithinRange(state, step, mStop.eval(state), collection);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -82,15 +82,15 @@ public class Range extends Constructor {
 
     /* term operations */
 
-    public void addToTerm(final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
-        result.addMember(mStart.toTerm());
+        result.addMember(mStart.toTerm(state));
         if (mSecond != null) {
-            result.addMember(mSecond.toTerm());
+            result.addMember(mSecond.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
-        result.addMember(mStop.toTerm());
+        result.addMember(mStop.toTerm(state));
 
         collection.addMember(result);
     }

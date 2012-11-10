@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Exit extends Statement {
 
     private Exit() { }
 
-    protected Value exec() throws ExitException {
+    protected Value exec(final State state) throws ExitException {
         throw new ExitException("Good Bye! (exit)");
     }
 
@@ -51,7 +52,7 @@ public class Exit extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         Term result = new Term(FUNCTIONAL_CHARACTER, 0);
         return result;
     }

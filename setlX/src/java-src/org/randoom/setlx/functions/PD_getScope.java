@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
@@ -15,8 +16,8 @@ public class PD_getScope extends PreDefinedFunction {
         super("getScope");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
-        return VariableScope.getScope().toTerm();
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+        return state.scopeToTerm();
     }
 }
 

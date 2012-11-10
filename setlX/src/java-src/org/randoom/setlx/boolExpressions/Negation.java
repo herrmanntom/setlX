@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -34,8 +35,8 @@ public class Negation extends Expr {
         mExpr = expr;
     }
 
-    protected Value evaluate() throws SetlException {
-        return mExpr.eval().negation();
+    protected Value evaluate(final State state) throws SetlException {
+        return mExpr.eval(state).negation(state);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -62,9 +63,9 @@ public class Negation extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mExpr.toTerm());
+        result.addMember(mExpr.toTerm(state));
         return result;
     }
 

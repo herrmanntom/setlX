@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -35,15 +36,15 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
         mStatements = statements;
     }
 
-    public MatchResult matches(final Value term) {
+    public MatchResult matches(final State state, final Value term) {
         return new MatchResult(true);
     }
 
-    public boolean evalConditionToBool() throws SetlException {
+    public boolean evalConditionToBool(final State state) throws SetlException {
         return true;
     }
 
-    public MatchResult scannes(final SetlString string) {
+    public MatchResult scannes(final State state, final SetlString string) {
         return new MatchResult(true);
     }
 
@@ -51,12 +52,12 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
         return END_OFFSET;
     }
 
-    public Value execute() throws SetlException {
-        return mStatements.execute();
+    public Value execute(final State state) throws SetlException {
+        return mStatements.execute(state);
     }
 
-    protected Value exec() throws SetlException {
-        return execute();
+    protected Value exec(final State state) throws SetlException {
+        return execute(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings
@@ -86,9 +87,9 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mStatements.toTerm());
+        result.addMember(mStatements.toTerm(state));
         return result;
     }
 

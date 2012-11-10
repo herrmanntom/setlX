@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.utilities.State;
 
 public class SetlBoolean extends Value {
 
@@ -26,17 +27,17 @@ public class SetlBoolean extends Value {
 
     /* Boolean operations */
 
-    public Value conjunction(final Expr other) throws SetlException {
+    public Value conjunction(final State state, final Expr other) throws SetlException {
         if (this == FALSE) {
             return FALSE;
         } else { // this == TRUE
-            final Value otr = other.eval();
+            final Value otr = other.eval(state);
             if (otr == TRUE) {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
             } else if (otr instanceof Term) {
-                return ((Term) otr).conjunctionFlipped(this);
+                return ((Term) otr).conjunctionFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
                     "Right-hand-side of '" + this + " && " + otr + "' is not a Boolean value."
@@ -45,17 +46,17 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public Value disjunction(final Expr other) throws SetlException {
+    public Value disjunction(final State state, final Expr other) throws SetlException {
         if (this == TRUE) {
             return TRUE;
         } else { // this == FALSE
-            final Value otr = other.eval();
+            final Value otr = other.eval(state);
             if (otr == TRUE) {
                 return TRUE;
             } else if (otr == FALSE) {
                 return FALSE;
             } else if (otr instanceof Term) {
-                return ((Term) otr).disjunctionFlipped(this);
+                return ((Term) otr).disjunctionFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
                     "Right-hand-side of '" + this + " || " + otr + "' is not a Boolean value."
@@ -64,17 +65,17 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public Value implication(final Expr other) throws SetlException {
+    public Value implication(final State state, final Expr other) throws SetlException {
         if (this == FALSE) {
             return TRUE;
         } else { // this == TRUE
-            final Value otr = other.eval();
+            final Value otr = other.eval(state);
             if (otr == TRUE) {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
             } else if (otr instanceof Term) {
-                return ((Term) otr).implicationFlipped(this);
+                return ((Term) otr).implicationFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
                     "Right-hand-side of '" + this + " => " + otr + "' is not a Boolean value."
@@ -83,7 +84,7 @@ public class SetlBoolean extends Value {
         }
     }
 
-    public SetlBoolean negation() {
+    public SetlBoolean negation(final State state) {
         if (this == TRUE) {
             return FALSE;
         } else {

@@ -2,6 +2,7 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -27,8 +28,8 @@ public class BracketedExpr extends Expr {
         mExpr = expr;
     }
 
-    protected Value evaluate() throws SetlException {
-        return mExpr.eval();
+    protected Value evaluate(final State state) throws SetlException {
+        return mExpr.eval(state);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -56,8 +57,8 @@ public class BracketedExpr extends Expr {
 
     /* term operations */
 
-    public Value toTerm() {
-        return mExpr.toTerm();
+    public Value toTerm(final State state) {
+        return mExpr.toTerm(state);
     }
 
     // precedence level in SetlX-grammar

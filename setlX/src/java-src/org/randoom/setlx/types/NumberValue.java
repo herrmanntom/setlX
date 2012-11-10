@@ -2,22 +2,23 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.utilities.State;
 
 public abstract class NumberValue extends Value {
 
     /* arithmetic operations */
 
     public abstract NumberValue absoluteValue();
-    
+
     public abstract NumberValue ceil();
 
-    public abstract Value       difference(final Value subtrahend) throws SetlException;
+    public abstract Value       difference(final State state, final Value subtrahend) throws SetlException;
 
     public abstract NumberValue floor();
 
-    public abstract NumberValue minus() throws IncompatibleTypeException;
+    public abstract NumberValue minus(final State state) throws IncompatibleTypeException;
 
-    public          Value       power(final Value exponent) throws SetlException {
+    public          Value       power(final State state, final Value exponent) throws SetlException {
         if (exponent.isInteger() == SetlBoolean.TRUE && ((Rational) exponent).intConvertable()) {
             return this.power(((Rational) exponent).intValue());
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
@@ -30,7 +31,7 @@ public abstract class NumberValue extends Value {
                 return this.power(((Real) exponent).doubleValue());
             }
         } else if (exponent instanceof Term) {
-            return ((Term) exponent).powerFlipped(this);
+            return ((Term) exponent).powerFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Exponent of '" + this + " ** " + exponent + "' is not a number."
@@ -41,13 +42,13 @@ public abstract class NumberValue extends Value {
     protected abstract NumberValue power(final int    exponent) throws SetlException;
     protected abstract NumberValue power(final double exponent) throws SetlException;
 
-    public    abstract Value       product(final Value multiplier) throws SetlException;
+    public    abstract Value       product(final State state, final Value multiplier) throws SetlException;
 
-    public    abstract Value       quotient(final Value divisor) throws SetlException;
+    public    abstract Value       quotient(final State state, final Value divisor) throws SetlException;
 
-    public    abstract NumberValue round() throws SetlException;
+    public    abstract NumberValue round(final State state) throws SetlException;
 
-    public    abstract Value       sum(final Value summand) throws SetlException;
+    public    abstract Value       sum(final State state, final Value summand) throws SetlException;
 
     /* comparisons */
 

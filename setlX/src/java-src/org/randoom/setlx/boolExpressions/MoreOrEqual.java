@@ -7,6 +7,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -63,10 +64,10 @@ public class MoreOrEqual extends Expr {
      * a >= b
      */
 
-    protected SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
-            final Value lhs = mLhs.eval();
-            final Value rhs = mRhs.eval();
+            final Value lhs = mLhs.eval(state);
+            final Value rhs = mRhs.eval(state);
             // note: rhs and lhs swapped!
             return SetlBoolean.valueOf(rhs.isEqual(lhs) == SetlBoolean.TRUE || rhs.isLessThan(lhs) == SetlBoolean.TRUE);
         } catch (SetlException se) {
@@ -101,10 +102,10 @@ public class MoreOrEqual extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm());
-        result.addMember(mRhs.toTerm());
+        result.addMember(mLhs.toTerm(state));
+        result.addMember(mRhs.toTerm(state));
         return result;
     }
 

@@ -5,6 +5,7 @@ import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.ProcedureDefinition;
+import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,14 +36,14 @@ public class ProcedureConstructor extends Expr {
         mClosureVariables = null;
     }
 
-    protected ProcedureDefinition evaluate() throws SetlException {
+    protected ProcedureDefinition evaluate(final State state) throws SetlException {
         if (mClosureVariables == null) {
             this.optimize();
         }
         if (! mClosureVariables.isEmpty()) {
             final HashMap<Variable, Value> closure = new HashMap<Variable, Value>();
             for (final Variable var : mClosureVariables) {
-                final Value val = var.eval();
+                final Value val = var.eval(state);
                 if (val != Om.OM) {
                     if (val instanceof PreDefinedFunction &&
                        var.toString().equals(((PreDefinedFunction)val).getName())
@@ -91,8 +92,8 @@ public class ProcedureConstructor extends Expr {
 
     /* term operations */
 
-    public Value toTerm() {
-        return mDefinition.toTerm();
+    public Value toTerm(final State state) {
+        return mDefinition.toTerm(state);
     }
 
     // precedence level in SetlX-grammar

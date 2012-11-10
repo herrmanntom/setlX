@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -35,8 +36,8 @@ public class Equal extends Expr {
         mRhs = rhs;
     }
 
-    protected SetlBoolean evaluate() throws SetlException {
-        return mLhs.eval().isEqual(mRhs.eval());
+    protected SetlBoolean evaluate(final State state) throws SetlException {
+        return mLhs.eval(state).isEqual(mRhs.eval(state));
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -65,10 +66,10 @@ public class Equal extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm());
-        result.addMember(mRhs.toTerm());
+        result.addMember(mLhs.toTerm(state));
+        result.addMember(mRhs.toTerm(state));
         return result;
     }
 

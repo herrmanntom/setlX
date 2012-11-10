@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class PD_throw extends PreDefinedFunction {
         addParameter("value");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws ThrownInSetlXException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws ThrownInSetlXException {
         throw new ThrownInSetlXException(args.get(0));
     }
 }

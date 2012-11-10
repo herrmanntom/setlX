@@ -7,6 +7,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PD_cacheStats extends PreDefinedFunction {
         addParameter("cachedProcedure");
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value function  = args.get(0);
         if ( ! (function instanceof CachedProcedureDefinition)) {
             throw new IncompatibleTypeException(

@@ -5,6 +5,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class PD_sleep extends PreDefinedFunction {
         addParameter("time_in_ms");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
         if (args.get(0).isInteger() == SetlBoolean.FALSE || args.get(0).compareTo(Rational.ZERO) < 1 ) {
             throw new IncompatibleTypeException(
                 "Time_in_ms-argument '" + args.get(0) + "' is not an integer >= 1."

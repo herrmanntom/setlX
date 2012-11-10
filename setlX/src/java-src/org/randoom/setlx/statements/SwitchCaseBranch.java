@@ -7,6 +7,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -35,16 +36,16 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
         mStatements = statements;
     }
 
-    public boolean evalConditionToBool() throws SetlException {
-        return mCondition.evalToBool();
+    public boolean evalConditionToBool(final State state) throws SetlException {
+        return mCondition.evalToBool(state);
     }
 
-    public Value execute() throws SetlException {
-        return mStatements.execute();
+    public Value execute(final State state) throws SetlException {
+        return mStatements.execute(state);
     }
 
-    protected Value exec() throws SetlException {
-        return execute();
+    protected Value exec(final State state) throws SetlException {
+        return execute(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings
@@ -77,10 +78,10 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mCondition.toTerm());
-        result.addMember(mStatements.toTerm());
+        result.addMember(mCondition.toTerm(state));
+        result.addMember(mStatements.toTerm(state));
         return result;
     }
 

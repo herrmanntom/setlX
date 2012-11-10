@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -21,7 +22,7 @@ public class PD_compare extends PreDefinedFunction {
         addParameter("valueB");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
         return Rational.valueOf(args.get(0).compareTo(args.get(1)));
     }
 }

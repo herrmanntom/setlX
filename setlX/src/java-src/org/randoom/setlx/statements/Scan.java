@@ -14,6 +14,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -46,14 +47,14 @@ public class Scan extends Statement {
         mBranchList = branchList;
     }
 
-    protected Value exec() throws SetlException {
-        final Value value = mExpr.eval();
+    protected Value exec(final State state) throws SetlException {
+        final Value value = mExpr.eval(state);
         if ( ! (value instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "The value '" + value + "' is not a string and cannot be scaned."
             );
         }
-        final VariableScope outerScope = VariableScope.getScope();
+        final VariableScope outerScope = state.getScope();
         try {
             SetlString string = (SetlString) value.clone();
             int        charNr   = 1;
@@ -84,31 +85,31 @@ public class Scan extends Statement {
 
                 // find branch which matches largest string
                 for (final MatchAbstractScanBranch br : mBranchList) {
-                    final MatchResult result = br.scannes(string);
+                    final MatchResult result = br.scannes(state, string);
                     if (result.isMatch()) {
                         final int offset = br.getEndOffset();
                         if (offset > largestMatchSize) {
                             // scope for condition
                             final VariableScope innerScope = outerScope.clone();
-                            VariableScope.setScope(innerScope);
+                            state.setScope(innerScope);
 
                             // put current position into scope
                             if (mPosVar != null) {
-                                mPosVar.assignUncloned(position);
+                                mPosVar.assignUncloned(state, position);
                             }
 
                             // put all matching variables into scope
-                            result.setAllBindings();
+                            result.setAllBindings(state);
 
                             // check conditon
-                            if (br.evalConditionToBool()) {
+                            if (br.evalConditionToBool(state)) {
                                 largestMatchSize   = offset;
                                 largestMatchBranch = br;
                                 largestMatchResult = result;
                             }
 
                             // reset scope
-                            VariableScope.setScope(outerScope);
+                            state.setScope(outerScope);
                         }
                     }
                 }
@@ -116,24 +117,24 @@ public class Scan extends Statement {
                 if (largestMatchBranch != null && largestMatchResult != null) {
                     // scope for execution
                     final VariableScope innerScope = outerScope.createInteratorBlock();
-                    VariableScope.setScope(innerScope);
+                    state.setScope(innerScope);
 
                     // force match variables to be local to this block
                     innerScope.setWriteThrough(false);
                     // put current position into scope
                     if (mPosVar != null) {
-                        mPosVar.assignUncloned(position);
+                        mPosVar.assignUncloned(state, position);
                     }
                     // put all matching variables into current scope
-                    largestMatchResult.setAllBindings();
+                    largestMatchResult.setAllBindings(state);
                     // reset WriteThrough, because changes during execution are not strictly local
                     innerScope.setWriteThrough(true);
 
                     // execute statements
-                    final Value execResult = largestMatchBranch.execute();
+                    final Value execResult = largestMatchBranch.execute(state);
 
                     // reset scope
-                    VariableScope.setScope(outerScope);
+                    state.setScope(outerScope);
 
                     // return if we got a valid return value, or if default branch was largest match
                     if (execResult != null || largestMatchSize == MatchDefaultBranch.END_OFFSET) {
@@ -176,7 +177,7 @@ public class Scan extends Statement {
             }
             return null;
         } finally { // make sure scope is always reset
-            VariableScope.setScope(outerScope);
+            state.setScope(outerScope);
         }
     }
 
@@ -248,20 +249,20 @@ public class Scan extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
         if (mPosVar != null) {
-            result.addMember(mPosVar.toTerm());
+            result.addMember(mPosVar.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
 
-        result.addMember(mExpr.toTerm());
+        result.addMember(mExpr.toTerm(state));
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final MatchAbstractBranch br: mBranchList) {
-            branchList.addMember(br.toTerm());
+            branchList.addMember(br.toTerm(state));
         }
         result.addMember(branchList);
 

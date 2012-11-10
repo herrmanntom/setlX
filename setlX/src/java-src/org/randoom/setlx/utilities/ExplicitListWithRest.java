@@ -37,11 +37,11 @@ public class ExplicitListWithRest extends Constructor {
         mRest = rest;
     }
 
-    public void fillCollection(final CollectionValue collection) throws SetlException {
+    public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
         for (final Expr e: mList) {
-            collection.addMember(e.eval());
+            collection.addMember(e.eval(state));
         }
-        final Value rest = mRest.eval();
+        final Value rest = mRest.eval(state);
         if (rest instanceof CollectionValue) {
             for (final Value v: (CollectionValue) rest) {
                 collection.addMember(v);
@@ -87,21 +87,21 @@ public class ExplicitListWithRest extends Constructor {
 
     /* term operations */
 
-    public void addToTerm(final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) {
         final Term     result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList members = new SetlList(mList.size());
         for (final Expr member: mList) {
-            members.addMember(member.toTerm());
+            members.addMember(member.toTerm(state));
         }
         result.addMember(members);
 
-        result.addMember(mRest.toTerm());
+        result.addMember(mRest.toTerm(state));
 
         collection.addMember(result);
     }
 
-    public static MatchResult matchTerm(final Term elwRTerm, final CollectionValue collection) throws IncompatibleTypeException {
+    public static MatchResult matchTerm(final State state, final Term elwRTerm, final CollectionValue collection) throws IncompatibleTypeException {
         final String fc = elwRTerm.functionalCharacter().getUnquotedString();
         if (fc.equals(FUNCTIONAL_CHARACTER) && elwRTerm.size() == 2 && elwRTerm.firstMember() instanceof SetlList) {
             final SetlList terms = (SetlList) elwRTerm.firstMember();
@@ -109,14 +109,14 @@ public class ExplicitListWithRest extends Constructor {
                 final CollectionValue other  = (CollectionValue) collection.clone();
                 final MatchResult     result = new MatchResult(true);
                 for (final Value term : terms) {
-                    final MatchResult subResult = term.matchesTerm(other.removeFirstMember());
+                    final MatchResult subResult = term.matchesTerm(state, other.removeFirstMember());
                     if (subResult.isMatch() && result.isMatch()) {
                         result.addBindings(subResult);
                     } else {
                         return new MatchResult(false);
                     }
                 }
-                final MatchResult subResult = elwRTerm.lastMember().matchesTerm(other);
+                final MatchResult subResult = elwRTerm.lastMember().matchesTerm(state, other);
                 if (subResult.isMatch()) {
                     result.addBindings(subResult);
                     return result;

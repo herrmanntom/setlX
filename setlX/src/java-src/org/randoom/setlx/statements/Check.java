@@ -8,6 +8,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -36,12 +37,12 @@ public class Check extends Statement {
         mRecovery   = recovery;
     }
 
-    protected Value exec() throws SetlException {
+    protected Value exec(final State state) throws SetlException {
         try {
-            return mStatements.execute();
+            return mStatements.execute(state);
         } catch (final BacktrackException bte) {
             if (mRecovery != null) {
-                return mRecovery.execute();
+                return mRecovery.execute(state);
             } else {
                 return null;
             }
@@ -86,11 +87,11 @@ public class Check extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mStatements.toTerm());
+        result.addMember(mStatements.toTerm(state));
         if (mRecovery != null) {
-            result.addMember(mRecovery.toTerm());
+            result.addMember(mRecovery.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }

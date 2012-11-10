@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class PD_abort extends PreDefinedFunction {
         enableUnlimitedParameters();
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws AbortException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws AbortException {
         String msg = "";
         for (Value arg : args) {
             msg += arg.getUnquotedString();

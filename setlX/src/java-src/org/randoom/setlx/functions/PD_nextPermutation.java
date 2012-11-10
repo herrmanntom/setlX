@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -15,9 +16,9 @@ public class PD_nextPermutation extends PreDefinedFunction {
         addParameter("list");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
 
-        return args.get(0).nextPermutation();
+        return args.get(0).nextPermutation(state);
 
     }
 

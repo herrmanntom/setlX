@@ -12,16 +12,16 @@ public class DebugPrompt {
     private static boolean continePrompt    = true;
     private static String  currentStatement = "";
 
-    public static void prompt(final Expr nextExpr) throws SetlException {
-        prompt("Next Expression:\n  " + nextExpr.toString() + "\nIn Statement:\n  " + currentStatement);
+    public static void prompt(final State state, final Expr nextExpr) throws SetlException {
+        prompt(state, "Next Expression:\n  " + nextExpr.toString() + "\nIn Statement:\n  " + currentStatement);
     }
 
-    public static void prompt(final Statement nextStatement) throws SetlException {
+    public static void prompt(final State state, final Statement nextStatement) throws SetlException {
         currentStatement = nextStatement.toString();
-        prompt("Next Statement:\n  " + currentStatement);
+        prompt(state, "Next Statement:\n  " + currentStatement);
     }
 
-    public static void prompt(final String message) throws SetlException {
+    public static void prompt(final State state, final String message) throws SetlException {
         continePrompt = true;
         if (firstPrompt) {
             Environment.outWriteLn(
@@ -47,7 +47,7 @@ public class DebugPrompt {
             if (blk != null) {
                 try {
                     Environment.setDebugPromptActive(true);
-                    blk.execute();
+                    blk.execute(state);
                 } finally {
                     Environment.setDebugPromptActive(false);
                 }

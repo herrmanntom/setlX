@@ -14,6 +14,7 @@ import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ParseSetlX;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     private final Expr        mPattern;        // pattern to match
     private       Pattern     mRuntimePattern; // compiled pattern to match
     private final Expr        mAssignTo;       // variable to store groups
-    private final Value       mAssignTerm;     // term of variable to store groups
+    private       Value       mAssignTerm;     // term of variable to store groups
     private final Condition   mCondition;      // optional condition to confirm match
     private final Block       mStatements;     // block to execute after match
     private       int         mEndOffset;      // Offset of last match operation (i.e. how far match progressed the input)
@@ -70,19 +71,15 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             mRuntimePattern = null;
         }
         mAssignTo = assignTo;
-        if (assignTo != null) {
-            mAssignTerm = assignTo.toTerm();
-        } else {
-            mAssignTerm = null;
-        }
+        mAssignTerm = null;
         mCondition  = condition;
         mStatements = statements;
         mEndOffset  = -1;
     }
 
-    public MatchResult matches(final Value term) throws SetlException {
+    public MatchResult matches(final State state, final Value term) throws SetlException {
         if (term instanceof SetlString) {
-            final MatchResult result = scannes((SetlString) term);
+            final MatchResult result = scannes(state, (SetlString) term);
             if (result.isMatch() && ((SetlString) term).size() == mEndOffset) {
                 return result;
             }
@@ -90,20 +87,20 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return new MatchResult(false);
     }
 
-    public boolean evalConditionToBool() throws SetlException {
+    public boolean evalConditionToBool(final State state) throws SetlException {
         if (mCondition != null) {
-            return mCondition.evalToBool();
+            return mCondition.evalToBool(state);
         } else {
             return true;
         }
     }
 
-    public MatchResult scannes(final SetlString string) throws SetlException {
+    public MatchResult scannes(final State state, final SetlString string) throws SetlException {
         Pattern pattern = null;
 
         if (mRuntimePattern != null) {
             pattern = mRuntimePattern;
-        } else {final Value patternStr = mPattern.eval();
+        } else {final Value patternStr = mPattern.eval(state);
             if ( ! (patternStr instanceof SetlString)) {
                 throw new IncompatibleTypeException(
                     "Pattern argument '" + patternStr + "' is not a string."
@@ -128,6 +125,9 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         final Matcher  m = pattern.matcher(string.getUnquotedString());
         final boolean  r = m.lookingAt();
         if (r) {
+            if (mAssignTo != null && mAssignTerm == null) {
+                mAssignTerm = mAssignTo.toTerm(state);
+            }
             mEndOffset = m.end();
             if (mAssignTerm != null) {
                 final int      count  = m.groupCount() + 1;
@@ -135,7 +135,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 for (int i = 0; i < count; ++i) {
                     groups.addMember(new SetlString(m.group(i)));
                 }
-                return mAssignTerm.matchesTerm(groups);
+                return mAssignTerm.matchesTerm(state, groups);
             }
         } else {
             mEndOffset = -1;
@@ -147,12 +147,12 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return mEndOffset;
     }
 
-    public Value execute() throws SetlException {
-        return mStatements.execute();
+    public Value execute(final State state) throws SetlException {
+        return mStatements.execute(state);
     }
 
-    protected Value exec() throws SetlException {
-        return execute();
+    protected Value exec(final State state) throws SetlException {
+        return execute(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings
@@ -221,24 +221,24 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term     result   = new Term(FUNCTIONAL_CHARACTER, 4);
 
-        result.addMember(mPattern.toTerm());
+        result.addMember(mPattern.toTerm(state));
 
-        if (mAssignTerm != null) {
-            result.addMember(mAssignTerm);
+        if (mAssignTo != null) {
+            result.addMember(mAssignTo.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
 
         if (mCondition != null) {
-            result.addMember(mCondition.toTerm());
+            result.addMember(mCondition.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
 
-        result.addMember(mStatements.toTerm());
+        result.addMember(mStatements.toTerm(state));
 
         return result;
     }

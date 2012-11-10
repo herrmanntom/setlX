@@ -65,12 +65,12 @@ public class ParameterDef {
         mVar.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
-    public void assign(final Value v) throws SetlException {
-        mVar.assign(v);
+    public void assign(final State state, final Value v) throws SetlException {
+        mVar.assign(state, v);
     }
 
-    public Value getValue() throws SetlException {
-        return mVar.eval();
+    public Value getValue(final State state) throws SetlException {
+        return mVar.eval(state);
     }
 
     public int getType() {
@@ -94,14 +94,14 @@ public class ParameterDef {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result;
         if (mType == READ_WRITE) {
             result = new Term(FUNCTIONAL_CHARACTER_RW);
         } else {
             result = new Term(FUNCTIONAL_CHARACTER);
         }
-        result.addMember(mVar.toTerm());
+        result.addMember(mVar.toTerm(state));
         return result;
     }
 

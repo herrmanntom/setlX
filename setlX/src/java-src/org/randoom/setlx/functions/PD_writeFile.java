@@ -10,6 +10,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -29,11 +30,11 @@ public class PD_writeFile extends PreDefinedFunction {
         addParameter("contents");
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
-        return exec(args, false);
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
+        return exec(state, args, false);
     }
 
-    protected Value exec(final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
+    protected Value exec(final State state, final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
         final Value           fileArg     = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
             throw new IncompatibleTypeException("FileName-argument '" + fileArg + "' is not a string.");

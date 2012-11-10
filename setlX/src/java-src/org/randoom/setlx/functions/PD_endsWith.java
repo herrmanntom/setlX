@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class PD_endsWith extends PreDefinedFunction {
         addParameter("suffix");
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value string = args.get(0);
         final Value suffix = args.get(1);
         if ( ! (string instanceof SetlString)) {

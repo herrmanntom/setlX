@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
@@ -34,13 +33,13 @@ implemented here as:
 public class Iterator {
     // functional character used in terms
     private final static String     FUNCTIONAL_CHARACTER = "^iterator";
-    // Trace all assignments. MAY ONLY BE SET BY CONTINUE CLASS!
+    // Trace all assignments.     MAY ONLY BE SET BY CONTINUE CLASS!
     public        static boolean    sContinue            = false;
-    // Trace all assignments. MAY ONLY BE SET BY BREAK CLASS!
+    // Trace all assignments.     MAY ONLY BE SET BY BREAK CLASS!
     public        static boolean    sBreak               = false;
     // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sStopExecution       = false;
-    // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // Trace all assignments.     MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sTraceAssignments    = false;
 
     private final Expr      mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
@@ -74,10 +73,10 @@ public class Iterator {
              variable to be local
        note: variables inside the whole iteration are not _not_ local
              all will be written `through' these inner scopes                 */
-    public Value eval(final IteratorExecutionContainer exec) throws SetlException {
-        final VariableScope outerScope = VariableScope.getScope();
+    public Value eval(final State state, final IteratorExecutionContainer exec) throws SetlException {
+        final VariableScope outerScope = state.getScope();
         try {
-            final Value result = evaluate(exec, outerScope);
+            final Value result = evaluate(state, exec, outerScope);
 
             if (result == Om.OM && Om.OM.isBreak()) {
                 return null; // remove break message
@@ -85,7 +84,7 @@ public class Iterator {
 
             return result;
         } finally { // make sure scope is always reset
-            VariableScope.setScope(outerScope);
+            state.setScope(outerScope);
         }
     }
 
@@ -145,12 +144,12 @@ public class Iterator {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
-        result.addMember(mAssignable.toTerm());
-        result.addMember(mCollection.toTerm());
+        result.addMember(mAssignable.toTerm(state));
+        result.addMember(mCollection.toTerm(state));
         if (mNext != null) {
-            result.addMember(mNext.toTerm());
+            result.addMember(mNext.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
@@ -185,23 +184,23 @@ public class Iterator {
 
     /* private functions */
 
-    private Value evaluate(final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
+    private Value evaluate(final State state, final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
         if (sStopExecution) {
             throw new StopExecutionException("Interrupted");
         }
-        final Value iterationValue = mCollection.eval(); // trying to iterate over this value
+        final Value iterationValue = mCollection.eval(state); // trying to iterate over this value
         if (iterationValue instanceof CollectionValue) {
             final CollectionValue   coll        = (CollectionValue) iterationValue;
             // scope for inner execution/next iterator
-            final VariableScope     innerScope  = VariableScope.getScope().createInteratorBlock();
+            final VariableScope     innerScope  = state.getScope().createInteratorBlock();
             // iterate over items
             for (final Value v: coll) {
                 // restore inner scope
-                VariableScope.setScope(innerScope);
+                state.setScope(innerScope);
                 innerScope.setWriteThrough(false); // force iteration variables to be local to this block
 
                 // assign value from collection
-                boolean successful = mAssignable.assignUnclonedCheckUpTo(v.clone(), outerScope);
+                boolean successful = mAssignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
 
                 if ( ! successful) {
                     continue;
@@ -218,9 +217,9 @@ public class Iterator {
                    Stops iteration if requested by execution.                 */
                 Value result = null;
                 if (mNext != null) {
-                    result = mNext.evaluate(exec, outerScope);
+                    result = mNext.evaluate(state, exec, outerScope);
                 } else {
-                    result = exec.execute(v);
+                    result = exec.execute(state, v);
                 }
                 if (result != null) {
                     if (result == Om.OM) {

@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -46,9 +47,9 @@ public class ModuloAssignment extends StatementWithPrintableResult {
         mPrintAfterEval = true;
     }
 
-    protected Value exec() throws SetlException {
-        final Value assigned = mLhs.eval().moduloAssign(mRhs.eval().clone());
-        mLhs.assignUncloned(assigned);
+    protected Value exec(final State state) throws SetlException {
+        final Value assigned = mLhs.eval(state).moduloAssign(state, mRhs.eval(state).clone());
+        mLhs.assignUncloned(state, assigned);
 
         if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
@@ -93,10 +94,10 @@ public class ModuloAssignment extends StatementWithPrintableResult {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm());
-        result.addMember(mRhs.toTerm());
+        result.addMember(mLhs.toTerm(state));
+        result.addMember(mRhs.toTerm(state));
         return result;
     }
 

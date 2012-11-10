@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class PD_print extends PreDefinedFunction {
         allowFewerParameters();
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
         final StringBuilder out = new StringBuilder();
         for (final Value arg : args) {
             arg.appendUnquotedString(out, 0);

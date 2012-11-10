@@ -25,7 +25,7 @@ public class MathFunction extends PreDefinedFunction {
         mFunction = function;
     }
 
-    public NumberValue execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public NumberValue execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (!(args.get(0) instanceof NumberValue)) {
             throw new IncompatibleTypeException(
                 "This function requires a single number as parameter."

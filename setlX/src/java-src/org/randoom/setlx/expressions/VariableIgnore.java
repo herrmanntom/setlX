@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
@@ -32,7 +33,7 @@ public class VariableIgnore extends Expr {
 
     private VariableIgnore() { }
 
-    protected IgnoreDummy evaluate() throws UndefinedOperationException {
+    protected IgnoreDummy evaluate(final State state) throws UndefinedOperationException {
         return IgnoreDummy.ID;
     }
 
@@ -50,7 +51,7 @@ public class VariableIgnore extends Expr {
     ) { /* nothing to collect */ }
 
     // sets this expression to the given value
-    public void assignUncloned(final Value v) {
+    public void assignUncloned(final State state, final Value v) {
         // or maybe it just does nothing
     }
 
@@ -59,7 +60,7 @@ public class VariableIgnore extends Expr {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v' */
-    public boolean assignUnclonedCheckUpTo(final Value v, final VariableScope outerScope) {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) {
         return true;
     }
 
@@ -71,7 +72,7 @@ public class VariableIgnore extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 

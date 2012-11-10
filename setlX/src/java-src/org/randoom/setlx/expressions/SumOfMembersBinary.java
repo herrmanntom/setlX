@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -33,8 +34,8 @@ public class SumOfMembersBinary extends Expr {
         mCollection = collection;
     }
 
-    protected Value evaluate() throws SetlException {
-        return mCollection.eval().sumOfMembers(mNeutral.eval());
+    protected Value evaluate(final State state) throws SetlException {
+        return mCollection.eval(state).sumOfMembers(state, mNeutral.eval(state));
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -63,10 +64,10 @@ public class SumOfMembersBinary extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mNeutral.toTerm());
-        result.addMember(mCollection.toTerm());
+        result.addMember(mNeutral.toTerm(state));
+        result.addMember(mCollection.toTerm(state));
         return result;
     }
 

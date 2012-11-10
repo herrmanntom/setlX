@@ -1,6 +1,7 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -16,12 +17,12 @@ public class ValueExpr extends Expr {
         mValue  = value;
     }
 
-    public Value eval() {
+    public Value eval(final State state) {
         return mValue;
     }
 
-    protected Value evaluate() {
-        return eval();
+    protected Value evaluate(final State state) {
+        return eval(state);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -45,8 +46,8 @@ public class ValueExpr extends Expr {
 
     /* term operations */
 
-    public Value toTerm() {
-        return mValue.toTerm();
+    public Value toTerm(final State state) {
+        return mValue.toTerm(state);
     }
 
     // precedence level in SetlX-grammar

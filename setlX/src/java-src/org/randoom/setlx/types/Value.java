@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -14,25 +15,25 @@ public abstract class Value implements Comparable<Value> {
 
     /* Boolean operations */
 
-    public Value conjunction(final Expr other) throws SetlException {
+    public Value conjunction(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " && " + other + "' is not a Boolean value."
         );
     }
 
-    public Value disjunction(final Expr other) throws SetlException {
+    public Value disjunction(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " || " + other + "' is not a Boolean value."
         );
     }
 
-    public Value implication(final Expr other) throws SetlException {
+    public Value implication(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " => " + other + "' is not a Boolean value."
         );
     }
 
-    public Value negation() throws SetlException {
+    public Value negation(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand of '!" + this + "' is not a Boolean value."
         );
@@ -116,26 +117,26 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value difference(final Value subtrahend) throws SetlException {
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof Term) {
-            return ((Term) subtrahend).differenceFlipped(this);
+            return ((Term) subtrahend).differenceFlipped(state, this);
         }
         throw new UndefinedOperationException(
             "'" + this + " - " + subtrahend + "' is undefined."
         );
     }
 
-    public Value differenceAssign(final Value subtrahend) throws SetlException {
-        return difference(subtrahend);
+    public Value differenceAssign(final State state, final Value subtrahend) throws SetlException {
+        return difference(state, subtrahend);
     }
 
-    public Value factorial() throws SetlException {
+    public Value factorial(final State state) throws SetlException {
         throw new UndefinedOperationException(
             "'" + this + "!' is undefined."
         );
     }
 
-    public void fillCollectionWithinRange(final Value step, final Value stop, final CollectionValue collection) throws SetlException {
+    public void fillCollectionWithinRange(final State state, final Value step, final Value stop, final CollectionValue collection) throws SetlException {
         throw new IncompatibleTypeException(
             "Start argument '" + this + "' is not a number."
         );
@@ -147,17 +148,17 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value integerDivision(final Value divisor) throws SetlException {
+    public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof Term) {
-            return ((Term) divisor).integerDivisionFlipped(this);
+            return ((Term) divisor).integerDivisionFlipped(state, this);
         }
         throw new UndefinedOperationException(
             "'" + this + " \\ " + divisor + "' is undefined."
         );
     }
 
-    public Value integerDivisionAssign(final Value divisor) throws SetlException {
-        return integerDivision(divisor);
+    public Value integerDivisionAssign(final State state, final Value divisor) throws SetlException {
+        return integerDivision(state, divisor);
     }
 
     public final Value maximum(final Value other) throws SetlException {
@@ -176,81 +177,81 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
-    public Value minus() throws IncompatibleTypeException {
+    public Value minus(final State state) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a number."
         );
     }
 
-    public Value modulo(final Value modulo) throws SetlException {
+    public Value modulo(final State state, final Value modulo) throws SetlException {
         if (modulo instanceof Term) {
-            return ((Term) modulo).moduloFlipped(this);
+            return ((Term) modulo).moduloFlipped(state, this);
         }
         throw new UndefinedOperationException(
             "'" + this + " % " + modulo + "' is undefined."
         );
     }
 
-    public Value moduloAssign(final Value modulo) throws SetlException {
-        return modulo(modulo);
+    public Value moduloAssign(final State state, final Value modulo) throws SetlException {
+        return modulo(state, modulo);
     }
 
-    public Value power(final Value exponent) throws SetlException {
+    public Value power(final State state, final Value exponent) throws SetlException {
         if (exponent instanceof Term) {
-            return ((Term) exponent).powerFlipped(this);
+            return ((Term) exponent).powerFlipped(state, this);
         }
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this + " ** " + exponent + "' is not a number."
         );
     }
 
-    public Value product(final Value multiplier) throws SetlException {
+    public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         }
         throw new UndefinedOperationException(
             "'" + this + " * " + multiplier + "' is undefined."
         );
     }
 
-    public Value productAssign(final Value multiplier) throws SetlException {
-        return product(multiplier);
+    public Value productAssign(final State state, final Value multiplier) throws SetlException {
+        return product(state, multiplier);
     }
 
-    public Value quotient(final Value divisor) throws SetlException {
+    public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof Term) {
-            return ((Term) divisor).quotientFlipped(this);
+            return ((Term) divisor).quotientFlipped(state, this);
         }
         throw new UndefinedOperationException(
             "'" + this + " / " + divisor + "' is undefined."
         );
     }
 
-    public Value quotientAssign(final Value divisor) throws SetlException {
-        return quotient(divisor);
+    public Value quotientAssign(final State state, final Value divisor) throws SetlException {
+        return quotient(state, divisor);
     }
 
-    public Value rnd() throws SetlException {
+    public Value rnd(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a rational, integer or collection value."
         );
     }
 
-    public Value rnd(final Value numberOfChoices) throws SetlException {
+    public Value rnd(final State state, final Value numberOfChoices) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a rational or integer."
         );
     }
 
-    public Value round() throws SetlException {
+    public Value round(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a number."
         );
     }
 
-    public Value sum(final Value summand) throws SetlException {
+    public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString && this != Om.OM) {
             return ((SetlString) summand).sumFlipped(this);
         }
@@ -259,8 +260,8 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value sumAssign(final Value summand) throws SetlException {
-        return sum(summand);
+    public Value sumAssign(final State state, final Value summand) throws SetlException {
+        return sum(state, summand);
     }
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
@@ -283,35 +284,32 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value cardinality() throws IncompatibleTypeException {
+    public Value cardinality(final State state) throws IncompatibleTypeException {
         return Rational.valueOf(this.size());
     }
 
-    public Value cartesianProduct(final Value other) throws SetlException {
+    public Value cartesianProduct(final State state, final Value other) throws SetlException {
         if (other instanceof Term) {
-            return ((Term) other).cartesianProductFlipped(this);
+            return ((Term) other).cartesianProductFlipped(state, this);
         }
         throw new UndefinedOperationException(
             "'" + this + " >< " + other + "' is undefined."
         );
     }
 
-    public Value collectionAccess(final List<Value> args) throws SetlException {
+    public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not access elements using the arguments '" + args + "' on this operand-type;" +
             " '" + this + "' is not a collection value."
         );
     }
 
-    public Value collectionAccessUnCloned(final List<Value> args) throws SetlException {
-        throw new IncompatibleTypeException(
-            "Can not access elements using the arguments '" + args + "' on this operand-type;" +
-            " '" + this + "' is not a collection value."
-        );
+    public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
+        return collectionAccessUnCloned(state, args);
     }
 
     // returns a set of all pairs which first element matches arg
-    public Value collectMap(final Value arg) throws SetlException {
+    public Value collectMap(final State state, final Value arg) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not collect values of members matching the key '" + arg + "' on this operand-type;" +
             " '" + this + "' is not a map."
@@ -387,25 +385,25 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value productOfMembers(final Value neutral) throws SetlException {
+    public Value productOfMembers(final State state, final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '*/ " + this + "' is not a collection value."
         );
     }
 
-    public Value nextPermutation() throws SetlException {
+    public Value nextPermutation(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a list or string."
         );
     }
 
-    public SetlSet permutations() throws SetlException {
+    public SetlSet permutations(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a collection value."
         );
     }
 
-    public SetlSet powerSet() throws SetlException {
+    public SetlSet powerSet(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a set."
         );
@@ -472,7 +470,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value sumOfMembers(final Value neutral) throws SetlException {
+    public Value sumOfMembers(final State state, final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '+/ " + this + "' is not a collection value."
         );
@@ -480,7 +478,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* function call */
 
-    public Value call(final List<Expr> args) throws SetlException {
+    public Value call(final State state, final List<Expr> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure."
         );
@@ -522,15 +520,15 @@ public abstract class Value implements Comparable<Value> {
 
     /* term operations */
 
-    public MatchResult matchesTerm(final Value other) throws IncompatibleTypeException {
-        if (other == IgnoreDummy.ID || this.equals(other)) {
+    public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
+        if (other == IgnoreDummy.ID || this.equalTo(other)) {
             return new MatchResult(true);
         } else {
             return new MatchResult(false);
         }
     }
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         return this.clone();
     }
 

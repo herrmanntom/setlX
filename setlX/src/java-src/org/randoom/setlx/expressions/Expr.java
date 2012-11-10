@@ -6,6 +6,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
@@ -18,37 +19,34 @@ public abstract class Expr extends CodeFragment {
     // value which is the result of this expression, iff expression is `static' (does not contain variables)
     protected Value mReplacement = null;
 
-    public Value eval() throws SetlException {
+    public Value eval(final State state) throws SetlException {
         try {
             if (sStepNext && Environment.isDebugModeActive() && ! Environment.isDebugPromptActive()) {
                 Environment.setDebugStepNextExpr(false);
-                DebugPrompt.prompt(this);
+                DebugPrompt.prompt(state, this);
             } else if (mReplacement != null) {
                 return mReplacement.clone();
             }
-            return this.evaluate();
+            return this.evaluate(state);
         } catch (SetlException se) {
             se.addToTrace("Error in \"" + this + "\":");
             throw se;
         }
     }
 
-    protected abstract Value evaluate() throws SetlException;
+    protected abstract Value evaluate(final State state) throws SetlException;
 
     protected void calculateReplacement(final List<Variable> unboundVariables) {
         if (mReplacement == null) {
-            final VariableScope outer = VariableScope.getScope();
             try {
-                VariableScope.setBubbleScope();
-                mReplacement = evaluate();
+                final State bubble = State.getBubbleState();
+                mReplacement = evaluate(bubble);
             } catch (SetlException se) {
                 // ignore error
                 mReplacement = null;
 
                 // add dummy variable to prevent optimization at later point
                 unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
-            } finally {
-                VariableScope.setScope(outer);
             }
         }
     }
@@ -114,15 +112,15 @@ public abstract class Expr extends CodeFragment {
 
     /* sets this expression to the given value
        (only makes sense for variables and id-lists) */
-    public final Value assign(final Value v) throws SetlException {
-        assignUncloned(v);
+    public final Value assign(final State state, final Value v) throws SetlException {
+        assignUncloned(state, v);
         return v.clone();
     }
 
     /* Sets this expression to the given value
        (only makes sense for variables and id-lists)
        Does not clone v and does not return value for chained assignment */
-    public void assignUncloned(final Value v) throws SetlException {
+    public void assignUncloned(final State state, final Value v) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "This expression can not be used as target for assignments."
@@ -135,7 +133,8 @@ public abstract class Expr extends CodeFragment {
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
     public boolean assignUnclonedCheckUpTo(
-        final Value v,
+        final State         state,
+        final Value         v,
         final VariableScope outerScope
     ) throws SetlException {
         throw new UndefinedOperationException(
@@ -150,11 +149,11 @@ public abstract class Expr extends CodeFragment {
 
     /* term operations */
 
-    public abstract Value toTerm();
+    public abstract Value toTerm(final State state);
 
     // toTerm when quoted ('@') expression is evaluated
-    public          Value toTermQuoted() throws SetlException  {
-        return toTerm();
+    public          Value toTermQuoted(final State state) throws SetlException  {
+        return toTerm(state);
     }
 
     // precedence level in SetlX-grammar

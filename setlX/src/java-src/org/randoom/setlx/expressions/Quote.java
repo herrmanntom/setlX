@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -32,8 +33,8 @@ public class Quote extends Expr {
         mExpr = expr;
     }
 
-    protected Value evaluate() throws SetlException {
-        return mExpr.toTermQuoted();
+    protected Value evaluate(final State state) throws SetlException {
+        return mExpr.toTermQuoted(state);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -60,13 +61,13 @@ public class Quote extends Expr {
 
     /* term operations */
 
-    public Value toTerm() {
-        return this.toTermQuoted();
+    public Value toTerm(final State state) {
+        return this.toTermQuoted(state);
     }
 
-    public Term toTermQuoted() {
+    public Term toTermQuoted(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mExpr.toTerm());
+        result.addMember(mExpr.toTerm(state));
         return result;
     }
 

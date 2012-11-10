@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.State;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -22,7 +23,7 @@ public class PD_replace extends PreDefinedFunction {
         addParameter("replacement");
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, SyntaxErrorException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, SyntaxErrorException {
         final Value string      = args.get(0);
         final Value pattern     = args.get(1);
         final Value replacement = args.get(2);

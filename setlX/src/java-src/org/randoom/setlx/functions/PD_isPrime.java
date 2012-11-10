@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Rational;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PD_isPrime extends PreDefinedFunction {
         addParameter("n");
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value integer  = args.get(0);
         if (integer.isInteger() != SetlBoolean.TRUE) {
             throw new IncompatibleTypeException("Argument '" + integer + "' is not an integer.");

@@ -31,11 +31,11 @@ public class WriteBackAgent {
          lists of (lists of) simple variables
        If the expressions used are more complex or it is otherwise not possible
        to write the values back, the current pair of expr+value is ignored. */
-    public void writeBack() {
+    public void writeBack(final State state) {
         final int size = mExpressions.size();
         for (int i = 0; i < size; ++i) {
             try {
-                mExpressions.get(i).assign(mValues.get(i).clone());
+                mExpressions.get(i).assign(state, mValues.get(i).clone());
             } catch (SetlException se) {
                 // assignment failed => just ignore it
             }

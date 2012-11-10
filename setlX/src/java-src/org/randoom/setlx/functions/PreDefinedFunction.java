@@ -10,6 +10,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
@@ -56,10 +57,10 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     }
 
     // this function is to be implemented by all predefined functions
-    protected abstract Value execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException;
+    protected abstract Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException;
 
     // this function is called from within SetlX
-    public Value call(final List<Expr> args) throws SetlException {
+    public Value call(final State state, final List<Expr> args) throws SetlException {
         final int paramSize = mParameters.size();
         final int argsSize  = args.size();
         if (paramSize < argsSize) {
@@ -93,7 +94,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(argsSize);
         for (final Expr arg : args) {
-            values.add(arg.eval().clone());
+            values.add(arg.eval(state).clone());
         }
 
         // List of writeBack-values, which should be stored into the outer scope
@@ -104,7 +105,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         }
 
         // call predefined function (which may add writeBack-values to List)
-        final Value result  = this.execute(values, writeBackVars);
+        final Value result  = this.execute(state, values, writeBackVars);
 
         // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
         if (writeBackVars.size() > 0) {
@@ -122,7 +123,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
                 }
             }
             // assign variables
-            wba.writeBack();
+            wba.writeBack(state);
         }
 
         return result;
@@ -159,7 +160,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         Term result = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(new SetlString(mName));

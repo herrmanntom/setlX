@@ -163,7 +163,7 @@ iterator := procedure() {
     if (u == [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]]) {
         printErr("test $testNumber$ successful (iterators)");
     } else {
-        printErr("test $testNumber$ failed (iterators)");
+        printErr("test $testNumber$ failed (iterators): $u$ != [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]]");
     }
 };
 iterator();

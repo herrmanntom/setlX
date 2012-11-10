@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -81,16 +82,16 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
         for (ParameterDef param: mParameters) {
-            paramList.addMember(param.toTerm());
+            paramList.addMember(param.toTerm(state));
         }
         result.addMember(paramList);
 
-        result.addMember(mExpr.toTerm());
+        result.addMember(mExpr.toTerm(state));
 
         return result;
     }

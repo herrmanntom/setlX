@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -45,8 +46,8 @@ public class CollectionAccess extends Expr {
         mArgs   = args;
     }
 
-    protected Value evaluate() throws SetlException {
-        final Value lhs = mLhs.eval();
+    protected Value evaluate(final State state) throws SetlException {
+        final Value lhs = mLhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
                 "Identifier \"" + mLhs + "\" is undefined."
@@ -56,19 +57,19 @@ public class CollectionAccess extends Expr {
         final List<Value> args = new ArrayList<Value>(mArgs.size());
         for (final Expr arg: mArgs) {
             if (arg != null) {
-                args.add(arg.eval().clone());
+                args.add(arg.eval(state).clone());
             }
         }
         // execute
-        return lhs.collectionAccess(args);
+        return lhs.collectionAccess(state, args);
     }
 
-    private Value evaluateUnCloned() throws SetlException {
+    private Value evaluateUnCloned(final State state) throws SetlException {
         Value lhs = null;
         if (mLhs instanceof Variable) {
-            lhs = mLhs.eval();
+            lhs = mLhs.eval(state);
         } else if (mLhs instanceof CollectionAccess) {
-            lhs = ((CollectionAccess) mLhs).evaluateUnCloned();
+            lhs = ((CollectionAccess) mLhs).evaluateUnCloned(state);
         } else {
             throw new IncompatibleTypeException(
                 "\"" + this + "\" is unusable for list assignment."
@@ -83,11 +84,11 @@ public class CollectionAccess extends Expr {
         final List<Value> args = new ArrayList<Value>(mArgs.size());
         for (final Expr arg: mArgs) {
             if (arg != null) {
-                args.add(arg.eval().clone());
+                args.add(arg.eval(state).clone());
             }
         }
         // execute
-        return lhs.collectionAccessUnCloned(args);
+        return lhs.collectionAccessUnCloned(state, args);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -109,20 +110,20 @@ public class CollectionAccess extends Expr {
     }
 
     // sets this expression to the given value
-    public void assignUncloned(final Value v) throws SetlException {
+    public void assignUncloned(final State state, final Value v) throws SetlException {
         Value lhs = null;
         if (mLhs instanceof Variable) {
-            lhs = mLhs.eval();
+            lhs = mLhs.eval(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
                     "Identifier \"" + mLhs + "\" is undefined."
                 );
             }
         } else if (mLhs instanceof CollectionAccess) {
-            lhs = ((CollectionAccess) mLhs).evaluateUnCloned();
+            lhs = ((CollectionAccess) mLhs).evaluateUnCloned(state);
         }
         if (lhs != null && lhs instanceof CollectionValue && mArgs.size() == 1) {
-            lhs.setMember(mArgs.get(0).eval(), v);
+            lhs.setMember(mArgs.get(0).eval(state), v);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + mLhs + " := " + v + "\" is unusable for list assignment."
@@ -149,28 +150,28 @@ public class CollectionAccess extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mLhs.toTerm());
+        result.addMember(mLhs.toTerm(state));
 
         final SetlList    arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
-            arguments.addMember(arg.toTerm());
+            arguments.addMember(arg.toTerm(state));
         }
         result.addMember(arguments);
 
         return result;
     }
 
-    public Term toTermQuoted() throws SetlException {
+    public Term toTermQuoted(final State state) throws SetlException {
         final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mLhs.toTermQuoted());
+        result.addMember(mLhs.toTermQuoted(state));
 
         final SetlList    arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
-            arguments.addMember(arg.eval().toTerm());
+            arguments.addMember(arg.eval(state).toTerm(state));
         }
         result.addMember(arguments);
 

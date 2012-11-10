@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -37,9 +38,9 @@ public class Assert extends Statement {
         mMessage    = message;
     }
 
-    protected Value exec() throws SetlException {
-        if ( ! mCondition.evalToBool()) {
-            throw new AssertException("Assertion failed: " + mMessage.eval().toString());
+    protected Value exec(final State state) throws SetlException {
+        if ( ! mCondition.evalToBool(state)) {
+            throw new AssertException("Assertion failed: " + mMessage.eval(state).toString());
         }
         return null;
     }
@@ -73,10 +74,10 @@ public class Assert extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mCondition.toTerm());
-        result.addMember(mMessage.toTerm());
+        result.addMember(mCondition.toTerm(state));
+        result.addMember(mMessage.toTerm(state));
         return result;
     }
 

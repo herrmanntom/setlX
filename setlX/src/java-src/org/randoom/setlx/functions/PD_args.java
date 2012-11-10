@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class PD_args extends PreDefinedFunction {
         addParameter("term");
     }
 
-    public SetlList execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public SetlList execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         return args.get(0).arguments();
     }
 }

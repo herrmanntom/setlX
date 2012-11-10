@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -62,10 +63,10 @@ public class More extends Expr {
      * a >= b
      */
 
-    protected SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
             // note: rhs and lhs swapped!
-            return mRhs.eval().isLessThan(mLhs.eval());
+            return mRhs.eval(state).isLessThan(mLhs.eval(state));
         } catch (SetlException se) {
             se.addToTrace("Error in substitute comparison \"" + mRhs + " < " + mLhs +  "\":");
             throw se;
@@ -98,10 +99,10 @@ public class More extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm());
-        result.addMember(mRhs.toTerm());
+        result.addMember(mLhs.toTerm(state));
+        result.addMember(mRhs.toTerm(state));
         return result;
     }
 

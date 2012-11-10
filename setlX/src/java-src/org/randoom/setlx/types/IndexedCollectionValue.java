@@ -2,10 +2,11 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 public abstract class IndexedCollectionValue extends CollectionValue {
 
-    public final    Value           rnd() {
+    public final    Value           rnd(final State state) {
         if (this.size() < 1) {
             return Om.OM;
         } else {

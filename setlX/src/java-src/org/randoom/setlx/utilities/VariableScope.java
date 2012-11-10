@@ -15,131 +15,132 @@ import java.util.Map;
 
 // This class collects the variable bindings and the function definitions in current scope.
 public class VariableScope {
-    /*============================ static ============================*/
     // functional characters used in terms
     private final   static  String          FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
 
-    // this scope stores all global variables
-    private final   static  VariableScope   sGlobals                        = new VariableScope();
-    private         static  boolean         sGlobalsPresent                 = false;
+//    /*============================ static ============================*/
 
-    /* This variable stores the initial VariableScope:
-       Predefined functions are dynamically loaded into this VariableScope,
-       not into the current one, to be accessible by any previous and future
-       VariableScope clones.
-       Predefined functions should not be put into sGlobals, to allow local
-       overrides inside functions.                                            */
-    private final   static  VariableScope   sInitial                        = new VariableScope();
+//    // this scope stores all global variables
+//    private final   static  VariableScope   sGlobals                        = new VariableScope();
+//    private         static  boolean         sGlobalsPresent                 = false;
 
-    // this variable stores the variable assignment that is currently active
-    private         static  VariableScope   sVariableScope                  = sInitial.clone();
+//    /* This variable stores the initial VariableScope:
+//       Predefined functions are dynamically loaded into this VariableScope,
+//       not into the current one, to be accessible by any previous and future
+//       VariableScope clones.
+//       Predefined functions should not be put into sGlobals, to allow local
+//       overrides inside functions.                                            */
+//    private final   static  VariableScope   sInitial                        = new VariableScope();
 
-    public static VariableScope getScope() {
-        return sVariableScope;
-    }
+//    // this variable stores the variable assignment that is currently active
+//    private         static  VariableScope   sVariableScope                  = sInitial.clone();
 
-    public static void setScope(final VariableScope newEnv) {
-        sVariableScope = newEnv;
-    }
+//    public static VariableScope getScope() {
+//        return sVariableScope;
+//    }
 
-    // set new scope, which is not connected to anything
-    public static void setBubbleScope() {
-        sVariableScope = new VariableScope();
-    }
+//    public static void setScope(final VariableScope newEnv) {
+//        sVariableScope = newEnv;
+//    }
 
-    public static void resetScope() {
-        sVariableScope  = sInitial.clone();
-        sGlobals.mVarBindings.clear();
-        sGlobalsPresent = false;
-        ParseSetlX.clearLoadedLibraries();
-    }
+//    // set new scope, which is not connected to anything
+//    public static void setBubbleScope() {
+//        sVariableScope = new VariableScope();
+//    }
 
-    public static Value findValue(final String var) {
-        Value v = null;
-        if (sGlobalsPresent) {
-            v = sGlobals.locateValue(var);
-            if (v != null) {
-                return v;
-            }
-        }
-        v = sVariableScope.locateValue(var);
-        if (v == null) {
-            // search if name matches a predefined function (which start with 'PD_')
-            final String packageName = PreDefinedFunction.class.getPackage().getName();
-            final String className   = "PD_" + var;
-            try {
-                final Class<?> c = Class.forName(packageName + '.' + className);
-                v                = (PreDefinedFunction) c.getField("DEFINITION").get(null);
-            } catch (Exception e) {
-                /* Name does not match predefined function.
-                   But return value already is null, no change necessary.     */
-            }
-            if (v == null && var.toLowerCase().equals(var)) {
-               // search if name matches a java Math.x function (which are all lower case)
-                try {
-                    Method f = Math.class.getMethod(var, double.class);
-                    v        = new MathFunction(var, f);
-                } catch (Exception e) {
-                    /* Name also does not match java Math.x function.
-                       But return value already is null, no change necessary.     */
-                }
-            }
-            if (v == null) {
-                v = Om.OM;
-                // identifier could not be looked up...
-                // return Om.OM and store it into intial scope to prevent reflection lookup next time
-            }
-            /* Store result of reflection lookup to initial scope to speed up search next time.
+//    public static void resetScope() {
+//        sVariableScope  = sInitial.clone();
+//        sGlobals.mVarBindings.clear();
+//        sGlobalsPresent = false;
+//        ParseSetlX.clearLoadedLibraries();
+//    }
 
-               Initial scope is chosen, because it is at the end of every
-               currently existing and all future scopes search paths.         */
-            sInitial.mVarBindings.put(var, v);
-        }
-        return v;
-    }
+//    public static Value findValue(final String var) {
+//        Value v = null;
+//        if (sGlobalsPresent) {
+//            v = sGlobals.locateValue(var);
+//            if (v != null) {
+//                return v;
+//            }
+//        }
+//        v = sVariableScope.locateValue(var);
+//        if (v == null) {
+//            // search if name matches a predefined function (which start with 'PD_')
+//            final String packageName = PreDefinedFunction.class.getPackage().getName();
+//            final String className   = "PD_" + var;
+//            try {
+//                final Class<?> c = Class.forName(packageName + '.' + className);
+//                v                = (PreDefinedFunction) c.getField("DEFINITION").get(null);
+//            } catch (Exception e) {
+//                /* Name does not match predefined function.
+//                   But return value already is null, no change necessary.     */
+//            }
+//            if (v == null && var.toLowerCase().equals(var)) {
+//               // search if name matches a java Math.x function (which are all lower case)
+//                try {
+//                    Method f = Math.class.getMethod(var, double.class);
+//                    v        = new MathFunction(var, f);
+//                } catch (Exception e) {
+//                    /* Name also does not match java Math.x function.
+//                       But return value already is null, no change necessary.     */
+//                }
+//            }
+//            if (v == null) {
+//                v = Om.OM;
+//                // identifier could not be looked up...
+//                // return Om.OM and store it into intial scope to prevent reflection lookup next time
+//            }
+//            /* Store result of reflection lookup to initial scope to speed up search next time.
 
-    public static void putValue(final String var, final Value value) {
-        if (sGlobalsPresent && sGlobals.locateValue(var) != null) {
-            sGlobals.storeValue(var, value);
-        } else {
-            sVariableScope.storeValue(var, value);
-        }
-    }
+//               Initial scope is chosen, because it is at the end of every
+//               currently existing and all future scopes search paths.         */
+//            sInitial.mVarBindings.put(var, v);
+//        }
+//        return v;
+//    }
 
-    public static boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
-        if (sGlobalsPresent) {
-            final Value now = sGlobals.locateValue(var);
-            if (now != null) {
-                if (now.equalTo(value)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return sVariableScope.storeValueCheckUpTo(var, value, outerScope);
-    }
+//    public static void putValue(final String var, final Value value) {
+//        if (sGlobalsPresent && sGlobals.locateValue(var) != null) {
+//            sGlobals.storeValue(var, value);
+//        } else {
+//            sVariableScope.storeValue(var, value);
+//        }
+//    }
 
-    // Add bindings stored in `scope' into current scope.
-    // This also adds vars in outer scopes of `scope' until reaching the
-    // current scope.
-    public static void putAllValues(final VariableScope scope) {
-        for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
-            putValue(entry.getKey(), entry.getValue());
-        }
-        if (scope.mOriginalScope != null && scope.mOriginalScope != sVariableScope) {
-            putAllValues(scope.mOriginalScope);
-        }
-    }
+//    public static boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
+//        if (sGlobalsPresent) {
+//            final Value now = sGlobals.locateValue(var);
+//            if (now != null) {
+//                if (now.equalTo(value)) {
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+//            }
+//        }
+//        return sVariableScope.storeValueCheckUpTo(var, value, outerScope);
+//    }
 
-    public static void makeGlobal(final String var) {
-        if (sGlobals.locateValue(var) == null) {
-            sGlobals.storeValue(var, Om.OM);
-        }
-        sGlobalsPresent = true;
-    }
+//    // Add bindings stored in `scope' into current scope.
+//    // This also adds vars in outer scopes of `scope' until reaching the
+//    // current scope inside scope.
+//    public static void putAllValues(final VariableScope scope) {
+//        for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
+//            putValue(entry.getKey(), entry.getValue());
+//        }
+//        if (scope.mOriginalScope != null && scope.mOriginalScope != sVariableScope) {
+//            putAllValues(scope.mOriginalScope);
+//        }
+//    }
 
-    /*========================== end static ==========================*/
+//    public static void makeGlobal(final String var) {
+//        if (sGlobals.locateValue(var) == null) {
+//            sGlobals.storeValue(var, Om.OM);
+//        }
+//        sGlobalsPresent = true;
+//    }
+
+//    /*========================== end static ==========================*/
 
     private final   Map<String, Value>  mVarBindings;
     // stores reference to original scope object upon cloning
@@ -159,7 +160,7 @@ public class VariableScope {
     private         boolean             mWriteThrough;
 
     // scopes have to be cloned from current one, therefore don't use from outside!
-    private VariableScope() {
+    /*package*/ VariableScope() {
         mVarBindings            = new HashMap<String, Value>();
         mOriginalScope          = null;
         mRestrictToFunctions    = false;
@@ -188,17 +189,15 @@ public class VariableScope {
         return newEnv;
     }
 
+    public void clear() {
+        mVarBindings.clear();
+    }
+
     public void setWriteThrough(final boolean writeThrough) {
         mWriteThrough = writeThrough;
     }
 
-    private Value locateValue(final String var) {
-        if ( ((sGlobalsPresent && this == sGlobals) || ( ! sGlobalsPresent && this == sVariableScope)) &&
-             var.length() == 3 && var.charAt(1) == 97 && var.charAt(2) == 114 && var.charAt(0) == 119
-        ) {
-            final char[] v = {87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
-            return new SetlString(new String(v));
-        }
+    /*package*/ Value locateValue(final String var) {
         Value v = mVarBindings.get(var);
         if (v != null) {
             return v;
@@ -236,7 +235,7 @@ public class VariableScope {
         }
     }
 
-    private void storeValue(final String var, final Value value) {
+    /*package*/ void storeValue(final String var, final Value value) {
         if ( ! mWriteThrough || mVarBindings.get(var) != null) {
             // this scope does not allow write through or variable is actually stored here
             mVarBindings.put(var, value);
@@ -248,7 +247,7 @@ public class VariableScope {
         }
     }
 
-    private boolean storeValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
+    /*package*/ boolean storeValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
         VariableScope toCheck = mOriginalScope;
         while (toCheck != null && toCheck != outerScope) {
             final Value now = toCheck.mVarBindings.get(var);
@@ -262,18 +261,34 @@ public class VariableScope {
                 toCheck = toCheck.mOriginalScope;
             }
         }
-        // to get here, `var' is not stored in any scope up to outerScope
-        sVariableScope.mVarBindings.put(var, value);
+        // to get here, `var' is not stored in any upper scope up to outerScope
+        mVarBindings.put(var, value);
         return true;
+    }
+
+    // Add bindings stored in `scope' into this scope or globals.
+    // This also adds vars in outer scopes of `scope' until reaching this as
+    // outer scope of `scope'.
+    public void storeAllValues(final boolean globalsPresent, final VariableScope globals, final VariableScope scope) {
+        for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
+            if (globalsPresent && globals.locateValue(entry.getKey()) != null) {
+                globals.storeValue(entry.getKey(), entry.getValue());
+            } else {
+                storeValue(entry.getKey(), entry.getValue());
+            }
+        }
+        if (scope.mOriginalScope != null && scope.mOriginalScope != this) {
+            storeAllValues(globalsPresent, globals, scope.mOriginalScope);
+        }
     }
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state, final VariableScope globals) {
         final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
-        sGlobals.collectBindings(allVars, false);
+        globals.collectBindings(allVars, false);
 
         // term which represents the scope
         final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
@@ -283,7 +298,7 @@ public class VariableScope {
         for (final Map.Entry<String, Value> entry : allVars.entrySet()) {
             final SetlList  binding = new SetlList(2);
             binding.addMember(new SetlString(entry.getKey()));
-            binding.addMember(entry.getValue().toTerm());
+            binding.addMember(entry.getValue().toTerm(state));
 
             bindings.addMember(binding);
         }

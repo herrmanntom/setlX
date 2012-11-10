@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.State;
 
 public class Infinity extends NumberValue {
 
@@ -40,7 +41,7 @@ public class Infinity extends NumberValue {
         return this;
     }
 
-    public Value difference(final Value subtrahend) throws SetlException {
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
             if (this == subtrahend) {
                 throw new UndefinedOperationException(
@@ -49,7 +50,7 @@ public class Infinity extends NumberValue {
             }
             return this;
         } else if (subtrahend instanceof Term) {
-            return ((Term) subtrahend).differenceFlipped(this);
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " - " + subtrahend + "' is not a number."
@@ -61,7 +62,7 @@ public class Infinity extends NumberValue {
         return this;
     }
 
-    public Infinity minus() {
+    public Infinity minus(final State state) {
         if (this == POSITIVE) {
             return NEGATIVE;
         } else { // this == NEGATIVE
@@ -81,14 +82,14 @@ public class Infinity extends NumberValue {
         );
     }
 
-    public Value product(final Value multiplier) throws SetlException {
+    public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof NumberValue) {
             if (this == multiplier) {
                 return POSITIVE;
-            } else if (this == multiplier.minus()) {
+            } else if (this == multiplier.minus(state)) {
                 return NEGATIVE;
             } else if (multiplier.compareTo(Rational.ZERO) < 0) {
-                return this.minus();
+                return this.minus(state);
             } else if (multiplier.equalTo(Rational.ZERO)) {
                 throw new UndefinedOperationException(
                     "'" + this + " * 0' is undefined."
@@ -97,7 +98,7 @@ public class Infinity extends NumberValue {
                 return this;
             }
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
@@ -105,14 +106,14 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public Value quotient(final Value divisor) throws SetlException {
+    public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor == POSITIVE || divisor == NEGATIVE) {
             throw new UndefinedOperationException(
                 "'" + this + " / " + divisor + "' is undefined."
             );
         } else if (divisor instanceof NumberValue) {
             if (divisor.compareTo(Rational.ZERO) < 0) {
-                return this.minus();
+                return this.minus(state);
             } else if (divisor.equalTo(Rational.ZERO)) {
                 throw new UndefinedOperationException(
                     "'" + this + " / 0' is undefined."
@@ -121,7 +122,7 @@ public class Infinity extends NumberValue {
                 return this;
             }
         } else if (divisor instanceof Term) {
-            return ((Term) divisor).quotientFlipped(this);
+            return ((Term) divisor).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
@@ -129,20 +130,20 @@ public class Infinity extends NumberValue {
         }
     }
 
-    public Infinity round() {
+    public Infinity round(final State state) {
         return this;
     }
 
-    public Value sum(final Value summand) throws SetlException {
+    public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof NumberValue) {
-            if (this == summand.minus()) {
+            if (this == summand.minus(state)) {
                 throw new UndefinedOperationException(
                     "'" + this + " + " + summand + "' is undefined."
                 );
             }
             return this;
         } else if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(this);
         } else {

@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.State;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -112,10 +113,10 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value difference(final Value subtrahend) throws IncompatibleTypeException, UndefinedOperationException {
+    public Value difference(final State state, final Value subtrahend) throws IncompatibleTypeException, UndefinedOperationException {
         if (subtrahend instanceof NumberValue) {
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
-                return (Infinity) subtrahend.minus();
+                return (Infinity) subtrahend.minus(state);
             }
             BigDecimal right = null;
             if (subtrahend instanceof Real) {
@@ -130,7 +131,7 @@ public class Real extends NumberValue {
                 return handleArithmeticException(ae, this, "-", subtrahend);
             }
         } else if (subtrahend instanceof Term) {
-            return ((Term) subtrahend).differenceFlipped(this);
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " - " + subtrahend + "' is not a number."
@@ -138,12 +139,8 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value differenceFlipped(final Rational minuend) throws SetlException {
-        return minuend.toReal().difference(this);
-    }
-
-    public Value divideFlipped(final Rational dividend) throws SetlException {
-        return dividend.toReal().quotient(this);
+    public Value differenceFlipped(final State state, final Rational minuend) throws SetlException {
+        return minuend.toReal().difference(state, this);
     }
 
     public Rational floor() {
@@ -155,11 +152,11 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value integerDivision(final Value divisor) throws SetlException {
+    public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
-            return this.quotient(divisor).floor();
+            return this.quotient(state, divisor).floor();
         } else if (divisor instanceof Term) {
-            return ((Term) divisor).integerDivisionFlipped(this);
+            return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " \\ " + divisor + "' is not a number."
@@ -167,7 +164,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Real minus() {
+    public Real minus(final State state) {
         return new Real(mReal.negate(mathContext));
     }
 
@@ -193,7 +190,7 @@ public class Real extends NumberValue {
         return new Real(r);
     }
 
-    public Value product(final Value multiplier) throws IncompatibleTypeException, UndefinedOperationException {
+    public Value product(final State state, final Value multiplier) throws IncompatibleTypeException, UndefinedOperationException {
         if (multiplier instanceof NumberValue) {
             if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
                 return (Infinity) multiplier;
@@ -211,7 +208,7 @@ public class Real extends NumberValue {
                 return handleArithmeticException(ae, this, "*", multiplier);
             }
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
@@ -219,7 +216,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value quotient(final Value divisor) throws SetlException {
+    public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
             BigDecimal right = null;
             if (divisor instanceof Real) {
@@ -238,7 +235,7 @@ public class Real extends NumberValue {
                 return handleArithmeticException(ae, this, "/", divisor);
             }
         } else if (divisor instanceof Term) {
-            return ((Term) divisor).quotientFlipped(this);
+            return ((Term) divisor).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
@@ -246,11 +243,15 @@ public class Real extends NumberValue {
         }
     }
 
-    public Rational round() {
+    public Value quotientFlipped(final State state, final Rational dividend) throws SetlException {
+        return dividend.toReal().quotient(state, this);
+    }
+
+    public Rational round(final State state) {
         return Rational.valueOf(mReal.setScale(0, mathContext.getRoundingMode()).toBigInteger());
     }
 
-    public Value sum(final Value summand) throws IncompatibleTypeException, UndefinedOperationException {
+    public Value sum(final State state, final Value summand) throws IncompatibleTypeException, UndefinedOperationException {
         if (summand instanceof NumberValue) {
             if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
                 return (Infinity) summand;
@@ -268,7 +269,7 @@ public class Real extends NumberValue {
                 return handleArithmeticException(ae, this, "+", summand);
             }
         } else if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(this);
         } else {

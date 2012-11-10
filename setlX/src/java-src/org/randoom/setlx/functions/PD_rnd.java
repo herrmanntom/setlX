@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -28,11 +29,11 @@ public class PD_rnd extends PreDefinedFunction {
         allowFewerParameters();
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         if (args.size() == 1) {
-            return args.get(0).rnd();
+            return args.get(0).rnd(state);
         } else if (args.size() == 2) {
-            return args.get(0).rnd(args.get(1));
+            return args.get(0).rnd(state, args.get(1));
         } else {
             String error = "Procedure is defined with a larger number of parameters ";
             error +=       "(1 or 2).";

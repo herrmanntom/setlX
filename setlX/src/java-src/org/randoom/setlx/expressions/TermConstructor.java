@@ -3,6 +3,7 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -32,11 +33,11 @@ public class TermConstructor extends Expr {
         mArgs   = args;
     }
 
-    protected Term evaluate() throws SetlException {
+    protected Term evaluate(final State state) throws SetlException {
         final Term result = new Term(mFChar, mArgs.size());
 
         for (final Expr arg: mArgs) {
-            result.addMember(arg.eval().toTerm()); // evaluate arguments at runtime
+            result.addMember(arg.eval(state).toTerm(state)); // evaluate arguments at runtime
         }
 
         return result;
@@ -78,18 +79,18 @@ public class TermConstructor extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(mFChar, mArgs.size());
 
         for (final Expr arg: mArgs) {
-            result.addMember(arg.toTerm()); // do not evaluate here
+            result.addMember(arg.toTerm(state)); // do not evaluate here
         }
 
         return result;
     }
 
-    public Term toTermQuoted() throws SetlException {
-        return this.evaluate();
+    public Term toTermQuoted(final State state) throws SetlException {
+        return this.evaluate(state);
     }
 
     public static Expr termToExpr(final Term term) {

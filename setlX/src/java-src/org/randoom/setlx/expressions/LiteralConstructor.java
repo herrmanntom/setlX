@@ -3,6 +3,7 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -24,11 +25,11 @@ public class LiteralConstructor extends Expr {
         mRuntimeString   = runtimeString;
     }
 
-    public SetlString eval() {
+    public SetlString eval(final State state) {
         return mRuntimeString;
     }
 
-    protected SetlString evaluate() {
+    protected SetlString evaluate(final State state) {
         return mRuntimeString;
     }
 
@@ -53,7 +54,7 @@ public class LiteralConstructor extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result  = new Term(FUNCTIONAL_CHARACTER, 1);
 
         result.addMember(mRuntimeString);

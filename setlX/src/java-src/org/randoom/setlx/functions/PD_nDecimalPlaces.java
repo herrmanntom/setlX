@@ -6,6 +6,7 @@ import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         addParameter("n");
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final Value number  = args.get(0);
         final Value nValue  = args.get(1);
         if ( ! (number instanceof Rational)) {
@@ -35,8 +36,8 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         }
         final int           n       = ((Rational) nValue).intValue();
 
-              Value         rest    = number.modulo(Rational.ONE);
-        final Value         intPart = number.difference(rest);
+              Value         rest    = number.modulo(state, Rational.ONE);
+        final Value         intPart = number.difference(state, rest);
 
         final StringBuilder result  = new StringBuilder();
               Value         digit   = null;
@@ -45,9 +46,9 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         intPart.appendString(result, 0);
         result.append(".");
         for (int i = 1; i <= n; ++i) {
-            rest    = rest.product(Rational.TEN);
-            restMod1= rest.modulo(Rational.ONE);
-            digit   = rest.difference(restMod1);
+            rest    = rest.product(state, Rational.TEN);
+            restMod1= rest.modulo(state, Rational.ONE);
+            digit   = rest.difference(state, restMod1);
             rest    = restMod1;
 
             digit.appendString(result, 0);

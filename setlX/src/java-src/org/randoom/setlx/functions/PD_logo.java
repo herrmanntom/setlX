@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -11,17 +12,36 @@ import java.util.List;
 
 
 
+
+
+
+
 /*                            CHEATING IS BAD!                                */
 /*                            CHEATING IS BAD!                                */
 /*                            CHEATING IS BAD!                                */
 /*                            CHEATING IS BAD!                                */
+
+
+
+
+
 
 /*                  Don't look at the source, execute it!                     */
 
+
+
+
+
+
+
 /*                            CHEATING IS BAD!                                */
 /*                            CHEATING IS BAD!                                */
 /*                            CHEATING IS BAD!                                */
 /*                            CHEATING IS BAD!                                */
+
+
+
+
 
 
 
@@ -85,7 +105,7 @@ public class PD_logo extends PreDefinedFunction {
         super("logo");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
         String  logo  = LOGO_SMALL;
         int     payUp = 0;
         while(payUp <= 0 && payUp > -3 && count < 3) {

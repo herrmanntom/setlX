@@ -6,6 +6,7 @@ import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -20,7 +21,7 @@ public class PD_evalTerm extends PreDefinedFunction {
         addParameter("term");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value   termArg             = args.get(0);
 
         // get code to be executed
@@ -31,9 +32,9 @@ public class PD_evalTerm extends PreDefinedFunction {
 
         // execute the contents
         if (fragment instanceof Expr) {
-            result  = ((Expr) fragment).eval();
+            result  = ((Expr) fragment).eval(state);
         } else /* if (fragment instanceof Statement) */ {
-            ((Statement) fragment).execute();
+            ((Statement) fragment).execute(state);
         }
 
         // everything seems fine

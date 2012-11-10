@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.*;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -46,61 +47,65 @@ public class Term extends IndexedCollectionValue {
         return mBody.iterator();
     }
 
+    public Iterator<Value> descendingIterator() {
+        return mBody.descendingIterator();
+    }
+
     /* Boolean operations */
 
     // viral operation
-    public Term conjunction(final Expr other) throws SetlException {
+    public Term conjunction(final State state, final Expr other) throws SetlException {
         return (    new Conjunction(
                         TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other.eval())
+                        TermConverter.valueToExpr(other.eval(state))
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term conjunctionFlipped(final Value other) {
+    public Term conjunctionFlipped(final State state, final Value other) {
         return (    new Conjunction(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term disjunction(final Expr other) throws SetlException {
+    public Term disjunction(final State state, final Expr other) throws SetlException {
         return (    new Disjunction(
                         TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other.eval())
+                        TermConverter.valueToExpr(other.eval(state))
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term disjunctionFlipped(final Value other) {
+    public Term disjunctionFlipped(final State state, final Value other) {
         return (    new Disjunction(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this))
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term implication(final Expr other) throws SetlException {
+    public Term implication(final State state, final Expr other) throws SetlException {
         return (    new Implication(
                         TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other.eval())
+                        TermConverter.valueToExpr(other.eval(state))
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term implicationFlipped(final Value other) {
+    public Term implicationFlipped(final State state, final Value other) {
         return (    new Implication(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term negation() {
+    public Term negation(final State state) {
         return (    new Negation(
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     /* type checks (sort of Boolean operation) */
@@ -112,131 +117,131 @@ public class Term extends IndexedCollectionValue {
     /* arithmetic operations */
 
     // viral operation
-    public Term difference(final Value subtrahend) {
+    public Term difference(final State state, final Value subtrahend) {
         return (    new Difference(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(subtrahend)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term differenceFlipped(final Value subtrahend) {
+    public Term differenceFlipped(final State state, final Value subtrahend) {
         return (    new Difference(
                         TermConverter.valueToExpr(subtrahend),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Value factorial() {
+    public Value factorial(final State state) {
         return (    new Factorial(
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term integerDivision(final Value divisor) {
+    public Term integerDivision(final State state, final Value divisor) {
         return (    new IntegerDivision(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(divisor)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term integerDivisionFlipped(final Value divisor) {
+    public Term integerDivisionFlipped(final State state, final Value divisor) {
         return (    new IntegerDivision(
                         TermConverter.valueToExpr(divisor),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term minus() {
+    public Term minus(final State state) {
         return (    new Minus(
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term modulo(final Value modulo) {
+    public Term modulo(final State state, final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(modulo)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term moduloFlipped(final Value modulo) {
+    public Term moduloFlipped(final State state, final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(modulo),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term power(final Value exponent) {
+    public Term power(final State state, final Value exponent) {
         return (    new Power(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(exponent)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term powerFlipped(final Value exponent) {
+    public Term powerFlipped(final State state, final Value exponent) {
         return (    new Power(
                         TermConverter.valueToExpr(exponent),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term product(final Value multiplier) {
+    public Term product(final State state, final Value multiplier) {
         return (    new Product(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(multiplier)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term productFlipped(final Value multiplier) {
+    public Term productFlipped(final State state, final Value multiplier) {
         return (    new Product(
                         TermConverter.valueToExpr(multiplier),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term quotient(final Value divisor) {
+    public Term quotient(final State state, final Value divisor) {
         return (    new Quotient(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(divisor)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term quotientFlipped(final Value divisor) {
+    public Term quotientFlipped(final State state, final Value divisor) {
         return (    new Quotient(
                         TermConverter.valueToExpr(divisor),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term sum(final Value summand) {
+    public Term sum(final State state, final Value summand) {
         return (    new Sum(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(summand)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term sumFlipped(final Value summand) {
+    public Term sumFlipped(final State state, final Value summand) {
         return (    new Sum(
                         TermConverter.valueToExpr(summand),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     /* operations on collection values (Lists, Sets [, Strings]) */
@@ -250,31 +255,31 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
-    public Term cardinality() {
+    public Term cardinality(final State state) {
         return (    new Cardinality(
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term cartesianProduct(final Value other) {
+    public Term cartesianProduct(final State state, final Value other) {
         return (    new CartesianProduct(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(other)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
-    public Term cartesianProductFlipped(final Value other) {
+    public Term cartesianProductFlipped(final State state, final Value other) {
         return (    new CartesianProduct(
                         TermConverter.valueToExpr(other),
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     // viral operation
-    public Term collectionAccess(final List<Value> args) {
+    public Term collectionAccess(final State state, final List<Value> args) {
         final List<Expr> argExprs = new ArrayList<Expr>(args.size());
         for (final Value v : args) {
             argExprs.add(TermConverter.valueToExpr(v));
@@ -282,19 +287,19 @@ public class Term extends IndexedCollectionValue {
         return (    new CollectionAccess(
                         TermConverter.valueToExpr(this),
                         argExprs)
-               ).toTerm();
+               ).toTerm(state);
     }
 
-    public Value collectionAccessUnCloned(final List<Value> args) throws SetlException {
-        return mBody.collectionAccessUnCloned(args);
+    public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
+        return mBody.collectionAccessUnCloned(state, args);
     }
 
     // viral operation
-    public Term collectMap(final Value arg) {
+    public Term collectMap(final State state, final Value arg) {
         return (    new CollectMap(
                         TermConverter.valueToExpr(this),
                         TermConverter.valueToExpr(arg))
-               ).toTerm();
+               ).toTerm(state);
     }
 
     public SetlBoolean containsMember(final Value element) {
@@ -338,20 +343,20 @@ public class Term extends IndexedCollectionValue {
         return mBody.lastMember();
     }
 
-    // viral operation
-    public Term multiplyMembers() throws SetlException {
-        return (    new ProductOfMembers(
-                        TermConverter.valueToExpr(this)
-                    )
-               ).toTerm();
-    }
-
     public Value maximumMember() throws SetlException {
         return mBody.maximumMember();
     }
 
     public Value minimumMember() throws SetlException {
         return mBody.minimumMember();
+    }
+
+    // viral operation
+    public Term productOfMembers(final State state) throws SetlException {
+        return (    new ProductOfMembers(
+                        TermConverter.valueToExpr(this)
+                    )
+               ).toTerm(state);
     }
 
     public void removeMember(Value element) {
@@ -375,17 +380,17 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
-    public Term sumMembers() {
+    public Term sumOfMembers(final State state) {
         return (    new SumOfMembers(
                         TermConverter.valueToExpr(this)
                     )
-               ).toTerm();
+               ).toTerm(state);
     }
 
     /* function call */
 
     // viral operation
-    public Term call(final List<Expr> exprs, final List<Value> args) throws IncompatibleTypeException {
+    public Term call(final State state, final List<Expr> exprs, final List<Value> args) throws IncompatibleTypeException {
         if (mFunctionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
             final List<Expr> argExprs = new ArrayList<Expr>(args.size());
             for (final Value v : args) {
@@ -397,7 +402,7 @@ public class Term extends IndexedCollectionValue {
                             ),
                             argExprs
                         )
-                   ).toTerm();
+                   ).toTerm(state);
         } else {
             throw new IncompatibleTypeException(
                 "Viral term expansion is only supported when performing a call on a term representing a variable."
@@ -425,7 +430,7 @@ public class Term extends IndexedCollectionValue {
 
     /* term operations */
 
-    public MatchResult matchesTerm(final Value other) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
         if ( mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) ||
                 ( other instanceof Term &&
                   ((Term) other).mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER)
@@ -443,9 +448,9 @@ public class Term extends IndexedCollectionValue {
             final String      id      = idStr.getUnquotedString();
 
             // look up if this variable is currently defined
-            final Value       thisVal = VariableScope.findValue(id);
+            final Value       thisVal = state.findValue(id);
             if (thisVal != Om.OM) {
-                return thisVal.matchesTerm(other);
+                return thisVal.matchesTerm(state, other);
             } else {
                 // this undefined variable will be set to the value of `other' upon complete match
                 result.addBinding(id, other);
@@ -475,7 +480,7 @@ public class Term extends IndexedCollectionValue {
         final Iterator<Value> thisIter    = iterator();
         final Iterator<Value> otherIter   = otherTerm.iterator();
         while (thisIter.hasNext() && otherIter.hasNext() && result.isMatch()) {
-            MatchResult subResult   = thisIter.next().matchesTerm(otherIter.next());
+            MatchResult subResult   = thisIter.next().matchesTerm(state, otherIter.next());
             if (subResult.isMatch()) {
                 result.addBindings(subResult);
             } else {

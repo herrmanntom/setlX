@@ -6,10 +6,11 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 
 public abstract class MatchAbstractScanBranch extends MatchAbstractBranch {
 
-    public abstract MatchResult scannes(SetlString string) throws SetlException;
+    public abstract MatchResult scannes(final State state, SetlString string) throws SetlException;
     public abstract int         getEndOffset();
 
     public static   MatchAbstractScanBranch valueToMatchAbstractScanBranch(Value value) throws TermConversionException {

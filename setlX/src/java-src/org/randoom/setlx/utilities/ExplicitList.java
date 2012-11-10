@@ -32,9 +32,9 @@ public class ExplicitList extends Constructor {
         mList = exprList;
     }
 
-    public void fillCollection(final CollectionValue collection) throws SetlException {
+    public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
         for (final Expr e: mList) {
-            collection.addMember(e.eval());
+            collection.addMember(e.eval(state));
         }
     }
 
@@ -56,7 +56,7 @@ public class ExplicitList extends Constructor {
     }
 
     // sets the variables used to form this list to the variables from the list given as a parameter
-    public void assignUncloned(final SetlList list) throws SetlException {
+    public void assignUncloned(final State state, final SetlList list) throws SetlException {
         final int size = mList.size();
         if (list.size() != size) {
             throw new IncompatibleTypeException(
@@ -64,7 +64,7 @@ public class ExplicitList extends Constructor {
             );
         }
         for (int i = 0; i < size; ++i) {
-            mList.get(i).assignUncloned(list.getMember(i + 1));
+            mList.get(i).assignUncloned(state, list.getMember(i + 1));
         }
     }
 
@@ -73,7 +73,7 @@ public class ExplicitList extends Constructor {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
-    public boolean assignUnclonedCheckUpTo(final SetlList list, final VariableScope outerScope) throws SetlException {
+    public boolean assignUnclonedCheckUpTo(final State state, final SetlList list, final VariableScope outerScope) throws SetlException {
         final int size = mList.size();
         if (list.size() != size) {
             throw new IncompatibleTypeException(
@@ -81,7 +81,7 @@ public class ExplicitList extends Constructor {
             );
         }
         for (int i = 0; i < size; ++i) {
-            if ( ! mList.get(i).assignUnclonedCheckUpTo(list.getMember(i + 1), outerScope)) {
+            if ( ! mList.get(i).assignUnclonedCheckUpTo(state, list.getMember(i + 1), outerScope)) {
                 return false;
             }
         }
@@ -106,9 +106,9 @@ public class ExplicitList extends Constructor {
 
     /* term operations */
 
-    public void addToTerm(final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) {
         for (final Expr member: mList) {
-            collection.addMember(member.toTerm());
+            collection.addMember(member.toTerm(state));
         }
     }
 

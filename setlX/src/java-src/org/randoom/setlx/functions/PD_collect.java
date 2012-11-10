@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class PD_collect extends PreDefinedFunction {
         addParameter("list");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value list = args.get(0);
         if ( ! (list instanceof SetlList)) {
             throw new IncompatibleTypeException(

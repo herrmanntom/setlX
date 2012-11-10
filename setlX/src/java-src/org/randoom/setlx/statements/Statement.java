@@ -7,6 +7,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -14,18 +15,18 @@ public abstract class Statement extends CodeFragment {
     // is debug mode active? MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public static   boolean sDebugModeActive = false;
 
-    public          Value execute() throws SetlException {
+    public          Value execute(final State state) throws SetlException {
         if (sDebugModeActive && ! Environment.isDebugPromptActive()) {
-            DebugPrompt.prompt(this);
-            final Value result = exec();
+            DebugPrompt.prompt(state, this);
+            final Value result = exec(state);
             Expr.sStepNext = false;
             return result;
         } else {
-            return exec();
+            return exec(state);
         }
     }
 
-    protected abstract Value exec() throws SetlException;
+    protected abstract Value exec(final State state) throws SetlException;
 
     /* Gather all bound and unbound variables in this statement and its siblings
           - bound   means "assigned" in this expression
@@ -46,6 +47,6 @@ public abstract class Statement extends CodeFragment {
 
     /* term operations */
 
-    public abstract Value toTerm();
+    public abstract Value toTerm(final State state);
 }
 

@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParseSetlX;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class PD_parse extends PreDefinedFunction {
         addParameter("setlX_expr");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value   exprArg = args.get(0);
         if ( ! (exprArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Expression-argument '" + exprArg + "' is not a string.");
@@ -31,7 +32,7 @@ public class PD_parse extends PreDefinedFunction {
         Expr expr = ParseSetlX.parseStringToExpr(exprStr);
 
         // return term of result
-        return expr.toTerm();
+        return expr.toTerm(state);
     }
 }
 

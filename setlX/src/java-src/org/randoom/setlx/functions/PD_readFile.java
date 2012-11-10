@@ -11,6 +11,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -37,7 +38,7 @@ public class PD_readFile extends PreDefinedFunction {
         allowFewerParameters();
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (args.size() < 1) {
             String error = "Procedure is defined with a larger number of parameters ";
             error +=       "(1 or 2).";

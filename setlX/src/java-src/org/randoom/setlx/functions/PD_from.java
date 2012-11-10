@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +21,8 @@ public class PD_from extends PreDefinedFunction {
         addParameter("collectionValue", ParameterDef.READ_WRITE);
     }
 
-    public Value execute(final List<Value> args,
+    public Value execute(final State       state,
+                         final List<Value> args,
                          final List<Value> writeBackVars
     ) throws IncompatibleTypeException {
         final Value collection = args.get(0);

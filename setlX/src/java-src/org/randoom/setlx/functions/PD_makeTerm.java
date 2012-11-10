@@ -6,6 +6,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PD_makeTerm extends PreDefinedFunction {
         addParameter("body");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
         Value arg0 = args.get(0);
         Value arg1 = args.get(1);
         if ( ! (arg0 instanceof SetlString)) {

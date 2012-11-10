@@ -5,6 +5,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class Break extends Statement {
 
     private Break() { }
 
-    protected Om exec() {
+    protected Om exec(final State state) {
         return Om.OM.setBreak();
     }
 
@@ -50,7 +51,7 @@ public class Break extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 

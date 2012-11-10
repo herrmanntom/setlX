@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -39,30 +40,30 @@ public class Match extends Statement {
         mBranchList = branchList;
     }
 
-    protected Value exec() throws SetlException {
-        final Value term = mExpr.eval().toTerm();
-        final VariableScope outerScope = VariableScope.getScope();
+    protected Value exec(final State state) throws SetlException {
+        final Value term = mExpr.eval(state).toTerm(state);
+        final VariableScope outerScope = state.getScope();
         try {
             for (final MatchAbstractBranch br : mBranchList) {
-                final MatchResult result = br.matches(term);
+                final MatchResult result = br.matches(state, term);
                 if (result.isMatch()) {
                     // scope for execution
                     final VariableScope innerScope = outerScope.createInteratorBlock();
-                    VariableScope.setScope(innerScope);
+                    state.setScope(innerScope);
 
                     // force match variables to be local to this block
                     innerScope.setWriteThrough(false);
                     // put all matching variables into current scope
-                    result.setAllBindings();
+                    result.setAllBindings(state);
                     // reset WriteThrough, because changes during execution are not strictly local
                     innerScope.setWriteThrough(true);
 
-                    if (br.evalConditionToBool()) {
+                    if (br.evalConditionToBool(state)) {
                         // execute statements
-                        final Value execResult = br.execute();
+                        final Value execResult = br.execute(state);
 
                         // reset scope
-                        VariableScope.setScope(outerScope);
+                        state.setScope(outerScope);
 
                         if (execResult != null) {
                             return execResult;
@@ -71,13 +72,13 @@ public class Match extends Statement {
                         break;
                     } else {
                         // reset scope
-                        VariableScope.setScope(outerScope);
+                        state.setScope(outerScope);
                     }
                 }
             }
             return null;
         } finally { // make sure scope is always reset
-            VariableScope.setScope(outerScope);
+            state.setScope(outerScope);
         }
     }
 
@@ -132,14 +133,14 @@ public class Match extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mExpr.toTerm());
+        result.addMember(mExpr.toTerm(state));
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final MatchAbstractBranch br: mBranchList) {
-            branchList.addMember(br.toTerm());
+            branchList.addMember(br.toTerm(state));
         }
         result.addMember(branchList);
 

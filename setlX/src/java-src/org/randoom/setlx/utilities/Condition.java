@@ -27,8 +27,8 @@ public class Condition {
         mExpr = expr;
     }
 
-    public SetlBoolean eval() throws SetlException {
-        final Value v = mExpr.eval();
+    public SetlBoolean eval(final State state) throws SetlException {
+        final Value v = mExpr.eval(state);
         if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) { // is Boolean value?
             return (SetlBoolean) v;
         } else {
@@ -36,8 +36,8 @@ public class Condition {
         }
     }
 
-    public boolean evalToBool() throws SetlException {
-        return eval() == SetlBoolean.TRUE;
+    public boolean evalToBool(final State state) throws SetlException {
+        return eval(state) == SetlBoolean.TRUE;
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -69,8 +69,8 @@ public class Condition {
 
     /* term operations */
 
-    public Value toTerm() {
-        return mExpr.toTerm();
+    public Value toTerm(final State state) {
+        return mExpr.toTerm(state);
     }
 }
 

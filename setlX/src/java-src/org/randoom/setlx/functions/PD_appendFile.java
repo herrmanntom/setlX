@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class PD_appendFile extends PD_writeFile {
         super("appendFile");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
-        return exec(args, true);
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
+        return exec(state, args, true);
     }
 }
 

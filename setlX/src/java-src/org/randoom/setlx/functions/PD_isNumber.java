@@ -2,6 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class PD_isNumber extends PreDefinedFunction {
         addParameter("value");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
         Value arg = args.get(0);
         if (arg.isRational() == SetlBoolean.TRUE || arg.isReal() == SetlBoolean.TRUE) {
             return SetlBoolean.TRUE;

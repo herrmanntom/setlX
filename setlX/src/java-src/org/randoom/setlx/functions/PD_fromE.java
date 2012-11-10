@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class PD_fromE extends PreDefinedFunction {
         addParameter("collectionValue", ParameterDef.READ_WRITE);
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value collection = args.get(0);
         Value element    = collection.removeLastMember();
 

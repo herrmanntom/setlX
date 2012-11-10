@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.State;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class PD_matches extends PreDefinedFunction {
         allowFewerParameters();
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (args.size() < 2) {
             throw new IncorrectNumberOfParametersException(
                 "Procedure is defined with a larger number of parameters (2 or 3)."

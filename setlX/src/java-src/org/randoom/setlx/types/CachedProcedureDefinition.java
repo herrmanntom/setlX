@@ -8,6 +8,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     /* function call */
 
-    public Value call(final List<Expr> args) throws SetlException {
+    public Value call(final State state, final List<Expr> args) throws SetlException {
         final int size = args.size();
         if (mParameters.size() != size) {
             throw new IncorrectNumberOfParametersException(
@@ -95,7 +96,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
                     "Procedures using read-write ('rw') parameters can not be cached."
                 );
             } else {
-                Value v = args.get(i).eval();
+                Value v = args.get(i).eval(state);
                 values.add(v);
                 key.addMember(v);
             }
@@ -110,7 +111,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
             // cache om to prevent recursion loop
             mCache.put(key, Om.OM);
             // call function
-            cachedResult = callAfterEval(args, values);
+            cachedResult = callAfterEval(state, args, values);
             // put value into cache
             mCache.put(key, cachedResult);
             // return value
@@ -135,16 +136,16 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
         for (final ParameterDef param: mParameters) {
-            paramList.addMember(param.toTerm());
+            paramList.addMember(param.toTerm(state));
         }
         result.addMember(paramList);
 
-        result.addMember(mStatements.toTerm());
+        result.addMember(mStatements.toTerm(state));
 
         return result;
     }

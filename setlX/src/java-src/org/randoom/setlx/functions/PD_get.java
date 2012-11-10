@@ -5,6 +5,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PD_get extends PreDefinedFunction {
         allowFewerParameters();
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
         Value          inputValue = Om.OM;
         String         input      = null;
         String         prompt     = null;

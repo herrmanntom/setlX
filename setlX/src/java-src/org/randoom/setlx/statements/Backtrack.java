@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class Backtrack extends Statement {
 
     private Backtrack() { }
 
-    protected Value exec() throws BacktrackException {
+    protected Value exec(final State state) throws BacktrackException {
         throw new BacktrackException("Backtrack-statement was executed outside of check-statement.");
     }
 
@@ -51,7 +52,7 @@ public class Backtrack extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 

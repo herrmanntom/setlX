@@ -17,6 +17,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParseSetlX;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
@@ -51,11 +52,12 @@ public class SetlX {
         boolean         noExecution = false;
         List<String>    files       = new ArrayList<String>();
         PcEnvProvider   envProvider = new PcEnvProvider();
+        State           state       = new State();
 
         // initialize Environment
         Environment.setEnvironmentProvider(envProvider);
         SetlList parameters = new SetlList(); // can/will be filled later
-        VariableScope.putValue("params", parameters);
+        state.putValue("params", parameters);
 
         if ((envProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
             envProvider.sLibraryPath = "";
@@ -139,11 +141,11 @@ public class SetlX {
         }
         if (interactive && ! help) {
             printInteractiveBegin();
-            parseAndExecuteInteractive();
+            parseAndExecuteInteractive(state);
         } else if ( ! help) {
             List<Block> programs = parseAndDumpFiles(files, dump, dumpFile);
             if ( ! noExecution) {
-                executeFiles(programs);
+                executeFiles(state, programs);
             }
         } else {
             printHelp();
@@ -153,7 +155,7 @@ public class SetlX {
 
     }
 
-    private static void parseAndExecuteInteractive() throws Exception {
+    private static void parseAndExecuteInteractive(final State state) throws Exception {
         Environment.setInteractive(true);
         Block   blk      = null;
         boolean skipTest = false;
@@ -187,7 +189,7 @@ public class SetlX {
                 break;
 
             }
-        } while (skipTest || (blk != null && execute(blk) != EXEC_EXIT));
+        } while (skipTest || (blk != null && execute(state, blk) != EXEC_EXIT));
         printExecutionFinished();
     }
 
@@ -265,7 +267,7 @@ public class SetlX {
         return programs;
     }
 
-    private static void executeFiles(List<Block> programs) throws Exception {
+    private static void executeFiles(final State state, List<Block> programs) throws Exception {
         Environment.setInteractive(false);
 
         if (verbose) {
@@ -274,7 +276,7 @@ public class SetlX {
 
         // run the parsed code
         for (Block blk : programs) {
-            if (execute(blk) != EXEC_OK) {
+            if (execute(state, blk) != EXEC_OK) {
                 break; // stop in case of error
             }
         }
@@ -284,11 +286,11 @@ public class SetlX {
         }
     }
 
-    private static int execute(Block b) {
+    private static int execute(final State state, final Block b) {
         try {
 
             Environment.setDebugModeActive(false);
-            final Value result = b.execute();
+            final Value result = b.execute(state);
             if (result == Om.OM) {
                 Om.OM.isContinue();// reset continue outside of procedure
                 Om.OM.isBreak();   // reset break outside of procedure

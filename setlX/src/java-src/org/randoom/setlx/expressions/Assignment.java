@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -37,8 +38,8 @@ public class Assignment extends Expr {
         mRhs  = rhs;
     }
 
-    protected Value evaluate() throws SetlException {
-        final Value assigned = mLhs.assign(mRhs.eval().clone());
+    protected Value evaluate(final State state) throws SetlException {
+        final Value assigned = mLhs.assign(state, mRhs.eval(state).clone());
 
         if (sTraceAssignments) {
             Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
@@ -76,10 +77,10 @@ public class Assignment extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm());
-        result.addMember(mRhs.toTerm());
+        result.addMember(mLhs.toTerm(state));
+        result.addMember(mRhs.toTerm(state));
         return result;
     }
 

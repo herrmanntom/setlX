@@ -11,6 +11,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Iterator;
 import org.randoom.setlx.utilities.IteratorExecutionContainer;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -49,11 +50,11 @@ public class Exists extends Expr {
             mScope     = null;
         }
 
-        public Value execute(final Value lastIterationValue) throws SetlException {
-            mResult = mCondition.eval();
+        public Value execute(final State state, final Value lastIterationValue) throws SetlException {
+            mResult = mCondition.eval(state);
             if (mResult == SetlBoolean.TRUE) {
-                mScope = VariableScope.getScope();  // save state where result is true
-                return Om.OM.setBreak();            // stop iteration
+                mScope = state.getScope();  // save state where result is true
+                return Om.OM.setBreak();    // stop iteration
             }
             return null;
         }
@@ -79,12 +80,12 @@ public class Exists extends Expr {
         mCondition = condition;
     }
 
-    protected SetlBoolean evaluate() throws SetlException {
+    protected SetlBoolean evaluate(final State state) throws SetlException {
         Exec e = new Exec(mCondition);
-        mIterator.eval(e);
+        mIterator.eval(state, e);
         if (e.mResult == SetlBoolean.TRUE && e.mScope != null) {
             // restore state in which mCondition is true
-            VariableScope.putAllValues(e.mScope);
+            state.putAllValues(e.mScope);
         }
         return e.mResult;
     }
@@ -119,10 +120,10 @@ public class Exists extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mIterator.toTerm());
-        result.addMember(mCondition.toTerm());
+        result.addMember(mIterator.toTerm(state));
+        result.addMember(mCondition.toTerm(state));
         return result;
     }
 

@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.CachedProcedureDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class PD_clearCache extends PreDefinedFunction {
         addParameter("cachedProcedure");
     }
 
-    public Value execute(final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value function  = args.get(0);
         if ( ! (function instanceof CachedProcedureDefinition)) {
             throw new IncompatibleTypeException(

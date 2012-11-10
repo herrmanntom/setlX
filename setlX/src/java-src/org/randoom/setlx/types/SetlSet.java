@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -87,6 +88,10 @@ public class SetlSet extends CollectionValue {
         return mSortedSet.iterator();
     }
 
+    public Iterator<Value> descendingIterator() {
+        return mSortedSet.descendingIterator();
+    }
+
     public SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
         if (other instanceof SetlSet) {
             final SetlSet otr = (SetlSet) other;
@@ -126,14 +131,14 @@ public class SetlSet extends CollectionValue {
 
     /* arithmetic operations */
 
-    public Value difference(final Value subtrahend) throws IncompatibleTypeException {
+    public Value difference(final State state, final Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof SetlSet) {
             final SetlSet result = clone();
             result.separateFromOriginal();
             result.mSortedSet.removeAll(((SetlSet) subtrahend).mSortedSet);
             return result;
         } else if (subtrahend instanceof Term) {
-            return ((Term) subtrahend).differenceFlipped(this);
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " - " + subtrahend + "' is not a set."
@@ -141,13 +146,13 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value differenceAssign(final Value subtrahend) throws IncompatibleTypeException {
+    public Value differenceAssign(final State state, final Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof SetlSet) {
             separateFromOriginal();
             mSortedSet.removeAll(((SetlSet) subtrahend).mSortedSet);
             return this;
         } else if (subtrahend instanceof Term) {
-            return ((Term) subtrahend).differenceFlipped(this);
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " -= " + subtrahend + "' is not a set."
@@ -160,7 +165,7 @@ public class SetlSet extends CollectionValue {
     // compute as follows:
     //  tmp = b - a
     //  c   = tmp + (a - b)
-    public Value modulo(final Value modulo) throws SetlException {
+    public Value modulo(final State state, final Value modulo) throws SetlException {
         if (modulo instanceof SetlSet) {
 
             final SetlSet mClone = (SetlSet) modulo.clone();
@@ -174,7 +179,7 @@ public class SetlSet extends CollectionValue {
             result.mSortedSet.addAll(mClone.mSortedSet);
             return result;
         } else if (modulo instanceof Term) {
-            return ((Term) modulo).productFlipped(this);
+            return ((Term) modulo).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
@@ -188,7 +193,7 @@ public class SetlSet extends CollectionValue {
     //  tmp = b - a
     //  a  -= b
     //  a  += tmp
-    public Value moduloAssign(final Value modulo) throws SetlException {
+    public Value moduloAssign(final State state, final Value modulo) throws SetlException {
         if (modulo instanceof SetlSet) {
             separateFromOriginal();
 
@@ -202,7 +207,7 @@ public class SetlSet extends CollectionValue {
 
             return this;
         } else if (modulo instanceof Term) {
-            return ((Term) modulo).productFlipped(this);
+            return ((Term) modulo).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
@@ -210,14 +215,14 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value product(final Value multiplier) throws IncompatibleTypeException {
+    public Value product(final State state, final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
             final SetlSet result = clone();
             result.separateFromOriginal();
             result.mSortedSet.retainAll(((SetlSet) multiplier).mSortedSet);
             return result;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a set."
@@ -225,13 +230,13 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value productAssign(final Value multiplier) throws IncompatibleTypeException {
+    public Value productAssign(final State state, final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
             separateFromOriginal();
             mSortedSet.retainAll(((SetlSet) multiplier).mSortedSet);
             return this;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a set."
@@ -239,9 +244,9 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value sum(final Value summand) throws IncompatibleTypeException {
+    public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(this);
         } else if(summand instanceof CollectionValue) {
@@ -257,9 +262,9 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value sumAssign(final Value summand) throws IncompatibleTypeException {
+    public Value sumAssign(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(this);
         } else if(summand instanceof CollectionValue) {
@@ -284,7 +289,7 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value cartesianProduct(final Value other) throws SetlException {
+    public Value cartesianProduct(final State state, final Value other) throws SetlException {
         if (other instanceof SetlSet) {
 
             final SetlSet result = new SetlSet();
@@ -300,7 +305,7 @@ public class SetlSet extends CollectionValue {
 
             return result;
         } else if (other instanceof Term) {
-            return ((Term) other).cartesianProductFlipped(this);
+            return ((Term) other).cartesianProductFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " >< " + other + "' is not a set."
@@ -308,7 +313,7 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    public Value collectionAccess(final List<Value> args) throws SetlException {
+    public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException(
                 "Range operations are unsupported on '" + this + "'."
@@ -322,7 +327,7 @@ public class SetlSet extends CollectionValue {
         return getMember(args.get(0));
     }
 
-    public Value collectionAccessUnCloned(final List<Value> args) throws SetlException {
+    public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException(
                 "Range operations are unsupported on '" + this + "'."
@@ -337,7 +342,7 @@ public class SetlSet extends CollectionValue {
     }
 
     // returns a set of all pairs which first element matches arg
-    public Value collectMap(final Value arg) throws SetlException {
+    public Value collectMap(final State state, final Value arg) throws SetlException {
         /* Extract the subset of all members, for which this is true
          * [arg] < subset <= [arg, +infinity]
          *
@@ -470,16 +475,16 @@ public class SetlSet extends CollectionValue {
         return firstMember();
     }
 
-    public SetlSet permutations() throws SetlException {
+    public SetlSet permutations(final State state) throws SetlException {
         // add all members to a new list, then permutate list and return result
-        return toList().permutations();
+        return toList().permutations(state);
     }
 
     // Compute the power set of this set according to the
     // following recursive equations:
     //     power({})      = { {} }
     //     power(A + {x}) = power(A) + { {x} + s : s in power(A) }
-    public SetlSet powerSet() throws SetlException {
+    public SetlSet powerSet(final State state) throws SetlException {
         if (size() == 0) {
             final SetlSet power = new SetlSet();
             power.addMember(clone());
@@ -490,14 +495,14 @@ public class SetlSet extends CollectionValue {
         final SetlSet    rest      = clone();
         rest.removeMember(arb);
         // create powerset of the rest
-        final SetlSet    powerRest = rest.powerSet();
+        final SetlSet    powerRest = rest.powerSet(state);
         final SetlSet    powerSet  = powerRest.clone();
         // add arbitrary element to every result
         powerRest.separateFromOriginal();
         for (final Value subSet : powerRest) {
             subSet.addMember(arb);
         }
-        return (SetlSet) powerSet.sum(powerRest);
+        return (SetlSet) powerSet.sum(state, powerRest);
     }
 
     public SetlSet range() throws SetlException {
@@ -592,13 +597,13 @@ public class SetlSet extends CollectionValue {
 
     /* term operations */
 
-    public MatchResult matchesTerm(final Value otr) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final State state, final Value otr) throws IncompatibleTypeException {
         if (otr == IgnoreDummy.ID) {
             return new MatchResult(true);
         } else if ( ! (otr instanceof SetlSet)) {
             return new MatchResult(false);
         } else if (mSortedSet.size() == 1 && mSortedSet.first() instanceof Term) {
-            final MatchResult result = ExplicitListWithRest.matchTerm((Term) mSortedSet.first(), (SetlSet) otr);
+            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) mSortedSet.first(), (SetlSet) otr);
             if (result.isMatch()) {
                 return result;
             }
@@ -619,7 +624,7 @@ public class SetlSet extends CollectionValue {
                 // b) it realy matches itself
                 // c) AND is a 'simple' match, i.e. does not include any variables
                 //        which must be set after the match
-                final MatchResult mr = v.matchesTerm(v);
+                final MatchResult mr = v.matchesTerm(state, v);
                 if (mr.isMatch() && ( ! mr.hasBindings())) {
                     thisCopy .remove(v);
                     otherCopy.remove(v);
@@ -643,12 +648,12 @@ public class SetlSet extends CollectionValue {
         // both set match, when (at least) one permutation matches
         MatchResult match = null;
         while (otherPermutation != Om.OM) {
-            match = thisList.matchesTerm(otherPermutation);
+            match = thisList.matchesTerm(state, otherPermutation);
             if (match.isMatch()) {
                 return match;
             }
             try {
-                otherPermutation = otherPermutation.nextPermutation();
+                otherPermutation = otherPermutation.nextPermutation(state);
             } catch (final SetlException se) {
                 // will never happen
                 otherPermutation = Om.OM;
@@ -659,10 +664,10 @@ public class SetlSet extends CollectionValue {
         return new MatchResult(false);
     }
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         final SetlSet termSet = new SetlSet();
         for (final Value v: mSortedSet) {
-            termSet.addMember(v.toTerm());
+            termSet.addMember(v.toTerm(state));
         }
         return termSet;
     }

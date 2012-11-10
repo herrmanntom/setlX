@@ -8,6 +8,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -53,13 +54,13 @@ public class Block extends Statement {
         mStatements.add(stmnt);
     }
 
-    public Value execute() throws SetlException {
+    public Value execute(final State state) throws SetlException {
         Value result = null;
         for (final Statement stmnt : mStatements) {
             if (sStopExecution) {
                 throw new StopExecutionException("Interrupted");
             }
-            result = stmnt.execute();
+            result = stmnt.execute(state);
             if (result != null) {
                 return result;
             }
@@ -67,8 +68,8 @@ public class Block extends Statement {
         return null;
     }
 
-    protected Value exec() throws SetlException {
-        return execute();
+    protected Value exec(final State state) throws SetlException {
+        return execute(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings
@@ -127,12 +128,12 @@ public class Block extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList stmntList = new SetlList(mStatements.size());
         for (Statement s: mStatements) {
-            stmntList.addMember(s.toTerm());
+            stmntList.addMember(s.toTerm(state));
         }
         result.addMember(stmntList);
 

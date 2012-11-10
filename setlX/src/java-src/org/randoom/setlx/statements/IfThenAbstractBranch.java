@@ -4,12 +4,13 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 public abstract class IfThenAbstractBranch extends Statement {
 
-    public abstract boolean                 evalConditionToBool() throws SetlException;
+    public abstract boolean                 evalConditionToBool(final State state) throws SetlException;
 
-    public static   IfThenAbstractBranch    valueToIfThenAbstractBranch(Value value) throws TermConversionException {
+    public static   IfThenAbstractBranch    valueToIfThenAbstractBranch(final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed IfThenAbstractBranch");
         } else {

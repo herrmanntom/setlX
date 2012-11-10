@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -38,14 +39,14 @@ public class While extends Statement {
         mStatements = statements;
     }
 
-    protected Value exec() throws SetlException {
+    protected Value exec(final State state) throws SetlException {
         final boolean finishLoop  = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             Environment.setDebugFinishLoop(false);
         }
         Value result = null;
-        while (mCondition.evalToBool()) {
-            result = mStatements.execute();
+        while (mCondition.evalToBool(state)) {
+            result = mStatements.execute(state);
             if (result != null) {
                 if (result == Om.OM) {
                     if (Om.OM.isContinue()) {
@@ -94,10 +95,10 @@ public class While extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mCondition.toTerm());
-        result.addMember(mStatements.toTerm());
+        result.addMember(mCondition.toTerm(state));
+        result.addMember(mStatements.toTerm(state));
         return result;
     }
 

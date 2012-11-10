@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
 
@@ -142,7 +143,7 @@ public class Rational extends NumberValue {
     static {
         for (int i = 0; i < SOME_PRIMES.length; ++i) {
             SOME_PRIMES[i]         = BigInteger.valueOf(SOME_INT_PRIMES[i]);
-            SOME_PRIMES_SQUARED[i] = SOME_PRIMES[i].multiply(SOME_PRIMES[i]);
+            SOME_PRIMES_SQUARED[i] = BigInteger.valueOf(SOME_INT_PRIMES[i] * SOME_INT_PRIMES[i]);
         }
     }
 
@@ -242,7 +243,7 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.divide(mDenominator));
     }
 
-    public Value difference(final Value subtrahend) throws SetlException {
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof Rational) {
             final Rational s = (Rational) subtrahend;
             if (mIsInteger && s.mIsInteger) {
@@ -255,13 +256,13 @@ public class Rational extends NumberValue {
                 return new Rational(n, d);
             }
         } else if (subtrahend instanceof Real) {
-            return ((Real) subtrahend).differenceFlipped(this);
+            return ((Real) subtrahend).differenceFlipped(state, this);
         } else if (subtrahend == Infinity.POSITIVE ||
                    subtrahend == Infinity.NEGATIVE)
         {
-            return (Infinity) subtrahend.minus();
+            return (Infinity) subtrahend.minus(state);
         } else if (subtrahend instanceof Term) {
-            return ((Term) subtrahend).differenceFlipped(this);
+            return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " - " + subtrahend + "' is not a number."
@@ -288,7 +289,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Rational factorial() throws SetlException {
+    public Rational factorial(final State state) throws SetlException {
         if ( ! mIsInteger ||
                mNominator.compareTo(BigInteger.ZERO) < 0
         ) {
@@ -333,7 +334,8 @@ public class Rational extends NumberValue {
         return new Rational(result);
     }
 
-    public void fillCollectionWithinRange(final Value step_,
+    public void fillCollectionWithinRange(final State state,
+                                          final Value step_,
                                           final Value stop_,
                                           final CollectionValue collection)
         throws SetlException
@@ -359,11 +361,11 @@ public class Rational extends NumberValue {
         // collect all elements in range
         Rational i = this;
         if (step.compareTo(Rational.ZERO) > 0) {
-            for (; i.compareTo(stop) <= 0; i = (Rational) i.sum(step)) {
+            for (; i.compareTo(stop) <= 0; i = (Rational) i.sum(state, step)) {
                 collection.addMember(i);
             }
         } else if (step.compareTo(Rational.ZERO) < 0) {
-            for (; i.compareTo(stop) >= 0; i = (Rational) i.sum(step)) {
+            for (; i.compareTo(stop) >= 0; i = (Rational) i.sum(state, step)) {
                 collection.addMember(i);
             }
         } else { // step == 0!
@@ -388,11 +390,11 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.divide(mDenominator));
     }
 
-    public Value integerDivision(final Value divisor) throws SetlException {
+    public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
-            return this.quotient(divisor).floor();
+            return this.quotient(state, divisor).floor();
         } else if (divisor instanceof Term) {
-            return ((Term) divisor).integerDivisionFlipped(this);
+            return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " \\ " + divisor + "' is not a number."
@@ -400,23 +402,23 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Rational minus() {
+    public Rational minus(final State state) {
         return new Rational(mNominator.negate(), mDenominator);
     }
 
     // The mathematical specification of the modulo function is:
     //     a % b = a - floor(a/b) * b
-    public Value modulo(final Value modulo) throws IncompatibleTypeException, SetlException {
+    public Value modulo(final State state, final Value modulo) throws IncompatibleTypeException, SetlException {
         if (modulo instanceof Rational) {
             final Rational b = (Rational) modulo;
             if (mIsInteger && b.mIsInteger) {
                 return new Rational(mNominator.mod(b.mNominator));
             } else {
-                final Rational ab = (Rational) this.quotient(b);
-                return this.difference(ab.floor().product(b));
+                final Rational ab = (Rational) this.quotient(state, b);
+                return this.difference(state, ab.floor().product(state, b));
             }
         } else if (modulo instanceof Term) {
-            return ((Term) modulo).moduloFlipped(this);
+            return ((Term) modulo).moduloFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " % " + modulo + "' is not a rational number."
@@ -436,7 +438,7 @@ public class Rational extends NumberValue {
         return toReal().power(exponent);
     }
 
-    public Value product(final Value multiplier) throws SetlException {
+    public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final Rational r = (Rational) multiplier;
             if (mIsInteger && r.mIsInteger) {
@@ -452,9 +454,9 @@ public class Rational extends NumberValue {
                    multiplier instanceof SetlList   ||
                    multiplier instanceof SetlString
         ) {
-            return multiplier.product(this);
+            return multiplier.product(state, this);
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " * " + multiplier + "' is not a number, list or string."
@@ -462,7 +464,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Value quotient(final Value divisor) throws SetlException {
+    public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof Rational) {
             final Rational d = (Rational) divisor;
             if (mIsInteger && d.mIsInteger) {
@@ -479,11 +481,11 @@ public class Rational extends NumberValue {
                 return new Rational(mNominator.multiply(d.mDenominator), mDenominator.multiply(d.mNominator));
             }
         } else if (divisor instanceof Real) {
-            return ((Real) divisor).divideFlipped(this);
+            return ((Real) divisor).quotientFlipped(state, this);
         } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
             return Rational.ZERO;
         } else if (divisor instanceof Term) {
-            return ((Term) divisor).quotientFlipped(this);
+            return ((Term) divisor).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '(" + this + ") / (" + divisor + ")' is not a number."
@@ -491,7 +493,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Rational rnd() throws IncompatibleTypeException {
+    public Rational rnd(final State state) throws IncompatibleTypeException {
         if (mIsInteger) {
             BigInteger rnd;
             do {
@@ -508,7 +510,7 @@ public class Rational extends NumberValue {
         }
     }
 
-    public Rational rnd(final Value numberOfChoices) throws SetlException {
+    public Rational rnd(final State state, final Value numberOfChoices) throws SetlException {
         if (numberOfChoices.isInteger() != SetlBoolean.TRUE ||
             numberOfChoices.compareTo(Rational.TWO) < 0
         ) {
@@ -516,23 +518,23 @@ public class Rational extends NumberValue {
                 "Number of choices '" + numberOfChoices + "' is not an integer >= 2."
             );
         } else {
-            Rational choices = (Rational) numberOfChoices.difference(Rational.ONE);
-            Rational r       = choices.rnd();
+            Rational choices = (Rational) numberOfChoices.difference(state, Rational.ONE);
+            Rational r       = choices.rnd(state);
             return new Rational(mNominator.multiply(r.mNominator), mDenominator.multiply(choices.mNominator));
         }
     }
 
 
-    public Rational round() throws SetlException {
+    public Rational round(final State state) throws SetlException {
         if (mIsInteger) {
             return this;
         } else {
-            final Rational roundPart = (Rational) this.difference(this.toInteger()).toReal().round();
-            return (Rational) this.toInteger().sum(roundPart);
+            final Rational roundPart = (Rational) this.difference(state, this.toInteger()).toReal().round(state);
+            return (Rational) this.toInteger().sum(state, roundPart);
         }
     }
 
-    public Value sum(final Value summand) throws SetlException {
+    public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof Rational) {
             final Rational r = (Rational) summand;
             if (mIsInteger && r.mIsInteger) {
@@ -545,11 +547,11 @@ public class Rational extends NumberValue {
                 return new Rational(n, d);
             }
         } else if (summand instanceof Real) {
-            return summand.sum(this);
+            return summand.sum(state, this);
         } else if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
             return summand;
         } else if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(this);
         } else {

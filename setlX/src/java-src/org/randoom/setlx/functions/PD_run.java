@@ -5,6 +5,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Om;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 import java.io.InputStreamReader;
@@ -20,7 +21,7 @@ public class PD_run extends PreDefinedFunction {
         addParameter("command");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
         if ( ! (args.get(0) instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Argument '" + args.get(0) + "' is not a string."

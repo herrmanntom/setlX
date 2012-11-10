@@ -12,7 +12,7 @@ import org.randoom.setlx.utilities.VariableScope;
 import java.util.List;
 
 public abstract class Constructor {
-    public abstract void        fillCollection(final CollectionValue collection) throws SetlException;
+    public abstract void        fillCollection(final State state, final CollectionValue collection) throws SetlException;
 
     /* Gather all bound and unbound variables in this expression and its siblings
           - bound   means "assigned" in this expression
@@ -28,7 +28,7 @@ public abstract class Constructor {
     );
 
     // sets the variables used to construct this list to the variables from the list given as a parameter
-    public          void        assignUncloned(final SetlList list) throws SetlException {
+    public          void        assignUncloned(final State state, final SetlList list) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "Only explicit lists can be used as targets for list assignments."
@@ -40,7 +40,7 @@ public abstract class Constructor {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
-    public          boolean     assignUnclonedCheckUpTo(final SetlList list, final VariableScope outerScope) throws SetlException {
+    public          boolean     assignUnclonedCheckUpTo(final State state, final SetlList list, final VariableScope outerScope) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
             "Only explicit lists can be used as targets for list assignments."
@@ -59,7 +59,7 @@ public abstract class Constructor {
 
     /* term operations */
 
-    public abstract void        addToTerm(final CollectionValue collection);
+    public abstract void        addToTerm(final State state, final CollectionValue collection);
 
     public static   Constructor CollectionValueToConstructor(final CollectionValue value) throws TermConversionException {
         if (value.size() == 1 && value.firstMember() instanceof Term) {

@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.UnknownFunctionException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -35,12 +36,12 @@ public class CollectMap extends Expr {
         mArg = arg;
     }
 
-    protected Value evaluate() throws SetlException {
-        final Value lhs = mLhs.eval();
+    protected Value evaluate(final State state) throws SetlException {
+        final Value lhs = mLhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException("\"" + mLhs + "\" is undefined.");
         }
-        return lhs.collectMap(mArg.eval().clone());
+        return lhs.collectMap(state, mArg.eval(state).clone());
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -70,17 +71,17 @@ public class CollectMap extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm());
-        result.addMember(mArg.toTerm());
+        result.addMember(mLhs.toTerm(state));
+        result.addMember(mArg.toTerm(state));
         return result;
     }
 
-    public Term toTermQuoted() throws SetlException {
+    public Term toTermQuoted(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTermQuoted());
-        result.addMember(mArg.eval().toTerm());
+        result.addMember(mLhs.toTermQuoted(state));
+        result.addMember(mArg.eval(state).toTerm(state));
         return result;
     }
 

@@ -8,6 +8,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -41,13 +42,13 @@ public class TryCatch extends Statement {
         mTryList    = tryList;
     }
 
-    protected Value exec() throws SetlException {
+    protected Value exec(final State state) throws SetlException {
         try{
-            return mBlockToTry.execute();
+            return mBlockToTry.execute(state);
         } catch (final CatchableInSetlXException cise) {
             for (final TryCatchAbstractBranch br : mTryList) {
-                if (br.catches(cise)) {
-                    return br.execute();
+                if (br.catches(state, cise)) {
+                    return br.execute(state);
                 }
             }
             // If we get here nothing matched. Re-throw as if nothing happened
@@ -91,14 +92,14 @@ public class TryCatch extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mBlockToTry.toTerm());
+        result.addMember(mBlockToTry.toTerm(state));
 
         final SetlList branchList = new SetlList(mTryList.size());
         for (final TryCatchAbstractBranch br: mTryList) {
-            branchList.addMember(br.toTerm());
+            branchList.addMember(br.toTerm(state));
         }
         result.addMember(branchList);
 

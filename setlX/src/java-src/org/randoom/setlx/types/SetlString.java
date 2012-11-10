@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,33 +141,53 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     private class SetlStringIterator implements Iterator<Value> {
-        private final SetlString content;
-        private       int        size;
-        private       int        position;
+        private final SetlString    stringShell;
+        private final StringBuilder content;
+        private final boolean       decending;
+        private       int           size;
+        private       int           position;
 
-        /*package*/ SetlStringIterator(final SetlString content) {
-            this.content  = content;
-            this.size     = content.mContent.length();
-            this.position = 0;
+        private SetlStringIterator(final SetlString stringShell, final boolean decending) {
+            this.stringShell = stringShell;
+            this.content     = stringShell.mContent;
+            this.decending   = decending;
+            this.size        = this.content.length();
+            if (decending) {
+                this.position  = this.size - 1;
+            } else {
+                this.position  = 0;
+            }
         }
 
         public boolean hasNext() {
-            return position < size;
+            return (decending && 0 < position) || ( ! decending && position < size);
         }
 
         public SetlString next() {
-            return new SetlString(content.mContent.charAt(position++));
+            if (decending) {
+                return new SetlString(content.charAt(position--));
+            } else {
+                return new SetlString(content.charAt(position++));
+            }
         }
 
         public void remove() {
-            content.separateFromOriginal();
-            content.mContent.deleteCharAt(position);
-            size = content.mContent.length();
+            stringShell.separateFromOriginal();
+            if (decending) {
+                content.deleteCharAt(position--);
+            } else {
+                content.deleteCharAt(position);
+            }
+            size = content.length();
         }
     }
 
     public Iterator<Value> iterator() {
-        return new SetlStringIterator(this);
+        return new SetlStringIterator(this, false /*decending*/);
+    }
+
+    public Iterator<Value> descendingIterator() {
+        return new SetlStringIterator(this, true  /*decending*/);
     }
 
     /* type checks (sort of boolean operation) */
@@ -226,7 +247,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public Value product(final Value multiplier) throws SetlException {
+    public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int           m   = ((Rational) multiplier).intValue();
             if (m < 0) {
@@ -240,7 +261,7 @@ public class SetlString extends IndexedCollectionValue {
             }
             return newSetlStringFromSB(sb);
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "String multiplier '" + multiplier + "' is not an integer."
@@ -248,7 +269,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public Value productAssign(final Value multiplier) throws SetlException {
+    public Value productAssign(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             separateFromOriginal();
             final int    m       = ((Rational) multiplier).intValue();
@@ -266,7 +287,7 @@ public class SetlString extends IndexedCollectionValue {
             }
             return this;
         } else if (multiplier instanceof Term) {
-            return ((Term) multiplier).productFlipped(this);
+            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "String multiplier '" + multiplier + "' is not an integer."
@@ -274,9 +295,9 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public Value sum(final Value summand) throws IncompatibleTypeException {
+    public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " + " + summand + "' is undefined."
@@ -289,9 +310,9 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public Value sumAssign(final Value summand) throws IncompatibleTypeException {
+    public Value sumAssign(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
-            return ((Term) summand).sumFlipped(this);
+            return ((Term) summand).sumFlipped(state, this);
         } else if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " += " + summand + "' is undefined."
@@ -323,7 +344,7 @@ public class SetlString extends IndexedCollectionValue {
         element.appendUnquotedString(mContent, 0);
     }
 
-    public Value collectionAccess(final List<Value> args) throws SetlException {
+    public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
         final int   aSize   = args.size();
         final Value vFirst  = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {
@@ -458,24 +479,24 @@ public class SetlString extends IndexedCollectionValue {
         );
     }
 
-    public Value nextPermutation() throws SetlException {
-        final Value p = toList().nextPermutation();
+    public Value nextPermutation(final State state) throws SetlException {
+        final Value p = toList().nextPermutation(state);
         if (p == Om.OM) {
             return p;
         } else {
-            return p.sumOfMembers(new SetlString());
+            return p.sumOfMembers(state, new SetlString());
         }
     }
 
-    public SetlSet permutations() throws SetlException {
-        final SetlSet p = toList().permutations();
+    public SetlSet permutations(final State state) throws SetlException {
+        final SetlSet p = toList().permutations(state);
         if (p.size() == 0) {
             return p;
         } else {
             SetlString neutral = new SetlString();
             SetlSet    result  = new SetlSet();
             for (final Value v : p) {
-                result.addMember(v.sumOfMembers(neutral));
+                result.addMember(v.sumOfMembers(state, neutral));
             }
             return result;
         }
@@ -660,7 +681,7 @@ public class SetlString extends IndexedCollectionValue {
 
     /* term operations */
 
-    public MatchResult matchesTerm(final Value other) {
+    public MatchResult matchesTerm(final State state, final Value other) {
         if (other == IgnoreDummy.ID || this.equals(other)) {
             return new MatchResult(true);
         } else {

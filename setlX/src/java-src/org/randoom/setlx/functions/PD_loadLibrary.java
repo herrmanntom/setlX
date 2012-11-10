@@ -7,6 +7,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParseSetlX;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class PD_loadLibrary extends PreDefinedFunction {
         addParameter("name");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value   nameArg = args.get(0);
         if ( ! (nameArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
@@ -36,7 +37,7 @@ public class PD_loadLibrary extends PreDefinedFunction {
         Block   blk     = ParseSetlX.parseLibrary(name);
 
         // execute the contents
-        blk.execute();
+        blk.execute(state);
 
         // everything is good
         return SetlBoolean.TRUE;

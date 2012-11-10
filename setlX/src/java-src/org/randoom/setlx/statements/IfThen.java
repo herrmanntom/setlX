@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +33,10 @@ public class IfThen extends Statement {
         mBranchList = branchList;
     }
 
-    protected Value exec() throws SetlException {
+    protected Value exec(final State state) throws SetlException {
         for (final IfThenAbstractBranch br : mBranchList) {
-            if (br.evalConditionToBool()) {
-                return br.execute();
+            if (br.evalConditionToBool(state)) {
+                return br.execute(state);
             }
         }
         return null;
@@ -83,12 +84,12 @@ public class IfThen extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term     result     = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final IfThenAbstractBranch br: mBranchList) {
-            branchList.addMember(br.toTerm());
+            branchList.addMember(br.toTerm(state));
         }
         result.addMember(branchList);
 

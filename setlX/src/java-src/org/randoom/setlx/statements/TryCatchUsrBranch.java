@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         mBlockToRecover = blockToRecover;
     }
 
-    public boolean catches(final CatchableInSetlXException cise) {
+    public boolean catches(final State state, final CatchableInSetlXException cise) {
         if (cise instanceof ThrownInSetlXException) {
             // store exception
             mException = (ThrownInSetlXException) cise;
@@ -51,17 +52,17 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         }
     }
 
-    public Value execute() throws SetlException {
+    public Value execute(final State state) throws SetlException {
         // assign directly
-        mErrorVar.assign(mException.getValue().clone());
+        mErrorVar.assign(state, mException.getValue().clone());
         // remove stored exception
         mException = null;
         // execute
-        return mBlockToRecover.execute();
+        return mBlockToRecover.execute(state);
     }
 
-    protected Value exec() throws SetlException {
-        return execute();
+    protected Value exec(final State state) throws SetlException {
+        return execute(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings
@@ -94,10 +95,10 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term    result  = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mErrorVar.toTerm());
-        result.addMember(mBlockToRecover.toTerm());
+        result.addMember(mErrorVar.toTerm(state));
+        result.addMember(mBlockToRecover.toTerm(state));
         return result;
     }
 

@@ -6,6 +6,7 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParseSetlX;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ public class PD_parseStatements extends PreDefinedFunction {
         addParameter("setlX_statements");
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         Value   stmntArg = args.get(0);
         if ( ! (stmntArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Statement-argument '" + stmntArg + "' is not a string.");
@@ -32,7 +33,7 @@ public class PD_parseStatements extends PreDefinedFunction {
         Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
 
         // return term of result
-        return blk.toTerm();
+        return blk.toTerm(state);
     }
 }
 

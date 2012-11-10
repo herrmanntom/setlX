@@ -2,6 +2,7 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class CollectionAccessRangeDummy extends Expr {
 
     private CollectionAccessRangeDummy() {}
 
-    protected RangeDummy evaluate() {
+    protected RangeDummy evaluate(final State state) {
         return RangeDummy.RD;
     }
 
@@ -51,7 +52,7 @@ public class CollectionAccessRangeDummy extends Expr {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 

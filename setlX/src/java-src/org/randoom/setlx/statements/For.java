@@ -10,6 +10,7 @@ import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.Iterator;
 import org.randoom.setlx.utilities.IteratorExecutionContainer;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -46,9 +47,9 @@ public class For extends Statement {
             mStatements = statements;
         }
 
-        public Value execute(final Value lastIterationValue) throws SetlException {
-            if (mCondition == null || mCondition.evalToBool()) {
-                return mStatements.execute();
+        public Value execute(final State state, final Value lastIterationValue) throws SetlException {
+            if (mCondition == null || mCondition.evalToBool(state)) {
+                return mStatements.execute(state);
                 // ContinueException and BreakException are handled by outer iterator
             }
             return null;
@@ -80,12 +81,12 @@ public class For extends Statement {
         mExec       = new Exec(mCondition, mStatements);
     }
 
-    protected Value exec() throws SetlException {
+    protected Value exec(final State state) throws SetlException {
         final boolean finishLoop = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             Environment.setDebugFinishLoop(false);
         }
-        final Value result = mIterator.eval(mExec);
+        final Value result = mIterator.eval(state, mExec);
         if (sFinishLoop) {
             Environment.setDebugModeActive(true);
             Environment.setDebugFinishLoop(false);
@@ -126,15 +127,15 @@ public class For extends Statement {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
-        result.addMember(mIterator.toTerm());
+        result.addMember(mIterator.toTerm(state));
         if (mCondition != null) {
-            result.addMember(mCondition.toTerm());
+            result.addMember(mCondition.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
-        result.addMember(mStatements.toTerm());
+        result.addMember(mStatements.toTerm(state));
         return result;
     }
 

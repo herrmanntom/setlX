@@ -9,6 +9,7 @@ import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
@@ -123,7 +124,7 @@ public class ProcedureDefinition extends Value {
 
     /* function call */
 
-    public Value call(final List<Expr> args) throws SetlException {
+    public Value call(final State state, final List<Expr> args) throws SetlException {
         final int size = args.size();
         if (mParameters.size() != size) {
             throw new IncorrectNumberOfParametersException(
@@ -135,22 +136,22 @@ public class ProcedureDefinition extends Value {
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(size);
         for (final Expr arg : args) {
-            values.add(arg.eval());
+            values.add(arg.eval(state));
         }
 
-        return callAfterEval(args, values);
+        return callAfterEval(state, args, values);
     }
 
-    protected Value callAfterEval(final List<Expr> args, final List<Value> values) throws SetlException {
+    protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values) throws SetlException {
         // save old scope
-        final VariableScope oldScope = VariableScope.getScope();
+        final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
-        VariableScope.setScope(oldScope.cloneFunctions());
+        state.setScope(oldScope.cloneFunctions());
 
         // assign closure contents
         if (mClosure != null) {
             for (final Map.Entry<Variable, Value> entry : mClosure.entrySet()) {
-                entry.getKey().assignUnclonedCheckUpTo(entry.getValue(), oldScope);
+                entry.getKey().assignUnclonedCheckUpTo(state, entry.getValue(), oldScope);
             }
         }
 
@@ -159,9 +160,9 @@ public class ProcedureDefinition extends Value {
         for (int i = 0; i < size; ++i) {
             final ParameterDef param = mParameters.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
-                param.assign(values.get(i));
+                param.assign(state, values.get(i));
             } else {
-                param.assign(values.get(i).clone());
+                param.assign(state, values.get(i).clone());
             }
         }
 
@@ -180,14 +181,14 @@ public class ProcedureDefinition extends Value {
             }
 
             // execute, e.g. perform real procedure call
-            result = mStatements.execute();
+            result = mStatements.execute(state);
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < mParameters.size(); ++i) {
                 final ParameterDef param = mParameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE) {
                     // value of parameter after execution
-                    final Value postValue = param.getValue();
+                    final Value postValue = param.getValue(state);
                     // expression used to fill parameter before execution
                     final Expr  preExpr   = args.get(i);
                     /* if possible the WriteBackAgent will set the variable used in this
@@ -199,16 +200,16 @@ public class ProcedureDefinition extends Value {
             // read closure variables and update their current state
             if (mClosure != null) {
                 for (final Map.Entry<Variable, Value> entry : mClosure.entrySet()) {
-                    entry.setValue(entry.getKey().eval());
+                    entry.setValue(entry.getKey().eval(state));
                 }
             }
 
         } finally { // make sure scope is always reset
             // restore old scope
-            VariableScope.setScope(oldScope);
+            state.setScope(oldScope);
 
             // write values in WriteBackAgent into restored scope
-            wba.writeBack();
+            wba.writeBack(state);
 
             if (stepThrough || sFinishFunction) {
                 Environment.setDebugModeActive(true);
@@ -242,16 +243,16 @@ public class ProcedureDefinition extends Value {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
         for (final ParameterDef param: mParameters) {
-            paramList.addMember(param.toTerm());
+            paramList.addMember(param.toTerm(state));
         }
         result.addMember(paramList);
 
-        result.addMember(mStatements.toTerm());
+        result.addMember(mStatements.toTerm(state));
 
         return result;
     }

@@ -37,6 +37,6 @@ public abstract class CodeFragment {
 
     /* term operations */
 
-    public abstract Value toTerm();
+    public abstract Value toTerm(final State state);
 }
 

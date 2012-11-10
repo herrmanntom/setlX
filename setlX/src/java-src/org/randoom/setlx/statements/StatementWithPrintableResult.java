@@ -5,3 +5,4 @@ package org.randoom.setlx.statements;
     /*package*/ abstract void setPrintAfterEval();
 
 }
+

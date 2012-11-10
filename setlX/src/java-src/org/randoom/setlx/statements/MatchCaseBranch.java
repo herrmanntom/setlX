@@ -12,6 +12,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Condition;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -41,9 +42,6 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     public MatchCaseBranch(final List<Expr> exprs, final Condition condition, final Block statements){
         this(exprs, new ArrayList<Value>(exprs.size()), condition, statements);
-        for (final Expr expr: exprs) {
-            mTerms.add(expr.toTerm());
-        }
     }
 
     private MatchCaseBranch(final List<Expr> exprs, final List<Value> terms, final Condition condition, final Block statements){
@@ -53,10 +51,16 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         mStatements = statements;
     }
 
-    public MatchResult matches(final Value term) throws IncompatibleTypeException {
+    public MatchResult matches(final State state, final Value term) throws IncompatibleTypeException {
+        if (mExprs.size() > mTerms.size()) {
+            for (final Expr expr: mExprs) {
+                mTerms.add(expr.toTerm(state));
+            }
+        }
+
         MatchResult last = new MatchResult(false);
         for (final Value v : mTerms) {
-            last = v.matchesTerm(term);
+            last = v.matchesTerm(state, term);
             if (last.isMatch()) {
                 return last;
             }
@@ -64,20 +68,20 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         return last;
     }
 
-    public boolean evalConditionToBool() throws SetlException {
+    public boolean evalConditionToBool(final State state) throws SetlException {
         if (mCondition != null) {
-            return mCondition.evalToBool();
+            return mCondition.evalToBool(state);
         } else {
             return true;
         }
     }
 
-    public Value execute() throws SetlException {
-        return mStatements.execute();
+    public Value execute(final State state) throws SetlException {
+        return mStatements.execute(state);
     }
 
-    protected Value exec() throws SetlException {
-        return execute();
+    protected Value exec(final State state) throws SetlException {
+        return execute(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings
@@ -142,22 +146,23 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     /* term operations */
 
-    public Term toTerm() {
+    public Term toTerm(final State state) {
         final Term     result   = new Term(FUNCTIONAL_CHARACTER, 3);
 
         final SetlList termList = new SetlList(mTerms.size());
-        for (final Value v: mTerms) {
-            termList.addMember(v.clone());
+
+        for (final Expr expr: mExprs) {
+            termList.addMember(expr.toTerm(state));
         }
         result.addMember(termList);
 
         if (mCondition != null) {
-            result.addMember(mCondition.toTerm());
+            result.addMember(mCondition.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
 
-        result.addMember(mStatements.toTerm());
+        result.addMember(mStatements.toTerm(state));
 
         return result;
     }

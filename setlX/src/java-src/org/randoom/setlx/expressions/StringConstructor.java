@@ -11,6 +11,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParseSetlX;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -131,7 +132,7 @@ public class StringConstructor extends Expr {
         mExprs          = exprs;
     }
 
-    protected SetlString evaluate() throws SetlException {
+    protected SetlString evaluate(final State state) throws SetlException {
         final Iterator<String>  fIter   = mFragments.iterator();
         final Iterator<Expr>    eIter   = mExprs.iterator();
         final StringBuilder     data    = new StringBuilder();
@@ -143,7 +144,7 @@ public class StringConstructor extends Expr {
             // eval expression, but fail gracefully
             final Expr    exp = eIter.next();
             try {
-                exp.eval().appendUnquotedString(data, 0);
+                exp.eval(state).appendUnquotedString(data, 0);
             } catch (SetlException se) {
                 data.append("$Error: ");
                 data.append(se.getMessage());
@@ -192,7 +193,7 @@ public class StringConstructor extends Expr {
 
     /* term operations */
 
-    public Value toTerm() {
+    public Value toTerm(final State state) {
         if (mFragments.size() == 1 && mExprs.size() == 0) {
             // simple string without $-expression
             return new SetlString(mFragments.get(0));
@@ -207,7 +208,7 @@ public class StringConstructor extends Expr {
 
             final SetlList expList = new SetlList(mExprs.size());
             for (final Expr expr: mExprs) {
-                expList.addMember(expr.toTerm());
+                expList.addMember(expr.toTerm(state));
             }
             result.addMember(expList);
 

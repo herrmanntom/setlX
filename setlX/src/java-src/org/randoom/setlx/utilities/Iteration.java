@@ -56,10 +56,10 @@ public class Iteration extends Constructor {
             return mCollection;
         }
 
-        public Value execute(final Value lastIterationValue) throws SetlException {
-            if (mCondition == null || mCondition.evalToBool()) {
+        public Value execute(final State state, final Value lastIterationValue) throws SetlException {
+            if (mCondition == null || mCondition.evalToBool(state)) {
                 if (mExpr != null) {
-                    mCollection.addMember(mExpr.eval());
+                    mCollection.addMember(mExpr.eval(state));
                 } else { // is simple iteration
                     mCollection.addMember(lastIterationValue);
                 }
@@ -95,10 +95,10 @@ public class Iteration extends Constructor {
         mExec      = new Exec(expr, condition);
     }
 
-    public void fillCollection(final CollectionValue collection) throws SetlException {
+    public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
         CollectionValue tmp = mExec.getCollection();
         mExec.setCollection(collection);
-        mIterator.eval(mExec);
+        mIterator.eval(state, mExec);
         mExec.setCollection(tmp);
     }
 
@@ -133,16 +133,16 @@ public class Iteration extends Constructor {
 
     /* term operations */
 
-    public void addToTerm(final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
         if (mExpr != null) {
-            result.addMember(mExpr.toTerm());
+            result.addMember(mExpr.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }
-        result.addMember(mIterator.toTerm());
+        result.addMember(mIterator.toTerm(state));
         if (mCondition != null) {
-            result.addMember(mCondition.toTerm());
+            result.addMember(mCondition.toTerm(state));
         } else {
             result.addMember(new SetlString("nil"));
         }

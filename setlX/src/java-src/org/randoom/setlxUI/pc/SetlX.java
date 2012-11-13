@@ -26,7 +26,7 @@ import java.util.List;
 
 public class SetlX {
 
-    private final static String     VERSION         = "1.4.1";
+    private final static String     VERSION         = "1.4.2";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
@@ -161,7 +161,8 @@ public class SetlX {
 
         // interactive == no files and no code supplied as parameters
         interactive = (files.size() == 0 && expression == null && statement == null);
-        help        = ! interactive && files.size() > 0 && (expression != null || statement != null);
+        // display help if options specify to execute both files and a single expression/statement
+        help        = help || (! interactive && files.size() > 0 && (expression != null || statement != null));
 
         if (interactive || verbose || help) {
             printHeader();

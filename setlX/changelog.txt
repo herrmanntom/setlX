@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.4.2--- 2012-11-13
+ + updated the tutorial
+ # fixed --help option
+
 ---v1.4.1--- 2012-11-10
  + allow assignment of indexable collection values (e.g. lists, strings, terms) to
    lists of IDs (e.g.  [a,b,c] := Term("foobar",99,sin);  )

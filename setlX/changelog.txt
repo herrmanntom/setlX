@@ -2,6 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.4.3--- 2012-11-22
  + updated the development documentation
+ + allow powerSet computation by using the set as exponent, e.g. 2 ** {1,2,3}
  # fix error message for calls
 
 ---v1.4.2--- 2012-11-13

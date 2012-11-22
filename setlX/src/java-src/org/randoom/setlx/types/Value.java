@@ -479,8 +479,10 @@ public abstract class Value implements Comparable<Value> {
     /* function call */
 
     public Value call(final State state, final List<Expr> args) throws SetlException {
+        String param = args.toString();
+        param = param.substring(1, param.length() - 1);
         throw new IncompatibleTypeException(
-            "Can not perform call with arguments '" + args + "' on this operand-type; '" + this + "' is not a procedure."
+            "Can not perform call with arguments '" + param + "' on this operand-type; '" + this + "' is not a procedure."
         );
     }
 

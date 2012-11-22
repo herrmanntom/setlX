@@ -2,7 +2,6 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -50,18 +49,14 @@ public class State {
     }
 
     public Value findValue(final String var) {
-        if (var.length()==3&&var.charAt(1)==97&&var.charAt(2)==114&&var.charAt(0)==119) {
-            final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
-            return new SetlString(new String(v));
-        }
         Value v = null;
         if (mGlobalsPresent) {
-            v = mGlobals.locateValue(var);
+            v = mGlobals.locateValue(var, true);
             if (v != null) {
                 return v;
             }
         }
-        v = mVariableScope.locateValue(var);
+        v = mVariableScope.locateValue(var, ! mGlobalsPresent);
         if (v == null) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedFunction.class.getPackage().getName();
@@ -98,7 +93,7 @@ public class State {
     }
 
     public void putValue(final String var, final Value value) {
-        if (mGlobalsPresent && mGlobals.locateValue(var) != null) {
+        if (mGlobalsPresent && mGlobals.locateValue(var, false) != null) {
             mGlobals.storeValue(var, value);
         } else {
             mVariableScope.storeValue(var, value);
@@ -107,7 +102,7 @@ public class State {
 
     public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
         if (mGlobalsPresent) {
-            final Value now = mGlobals.locateValue(var);
+            final Value now = mGlobals.locateValue(var, false);
             if (now != null) {
                 if (now.equalTo(value)) {
                     return true;
@@ -127,7 +122,7 @@ public class State {
     }
 
     public void makeGlobal(final String var) {
-        if (mGlobals.locateValue(var) == null) {
+        if (mGlobals.locateValue(var, false) == null) {
             mGlobals.storeValue(var, Om.OM);
         }
         mGlobalsPresent = true;

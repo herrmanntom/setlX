@@ -112,7 +112,7 @@ This section describes specific implementations, which are scattered into multip
 
 All predefined functions in \setlX{}, like `\command{read()}' and `\command{isSet(x)}', are dynamically loaded at runtime on their first invocation using Java's reflection API. This makes it relatively easy to create new functionality without the need of changing (or even completely understanding) the rest of the interpreter.
 
-These functions are dynamically loaded by the `VariableScope' class\\ (\command{org/randoom/setlx/utilities/VariableScope.java}):
+These functions are dynamically loaded by the `State' class\\ (\command{org/randoom/setlx/utilities/State.java}):
 
 When resolving an identifier the current and global scopes are searched. If no matching value is found, the predefined functions are searched for the same identifier. If still no value can be retrieved, Java's Math functions are queried.
 

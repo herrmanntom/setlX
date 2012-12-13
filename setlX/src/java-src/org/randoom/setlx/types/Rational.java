@@ -412,7 +412,11 @@ public class Rational extends NumberValue {
         if (modulo instanceof Rational) {
             final Rational b = (Rational) modulo;
             if (mIsInteger && b.mIsInteger) {
-                return new Rational(mNominator.mod(b.mNominator));
+                if (b.mNominator.equals(BigInteger.ZERO)) {
+                    throw new UndefinedOperationException("'" + this + " % 0' is undefined.");
+                } else {
+                    return new Rational(mNominator.mod(b.mNominator));
+                }
             } else {
                 final Rational ab = (Rational) this.quotient(state, b);
                 return this.difference(state, ab.floor().product(state, b));

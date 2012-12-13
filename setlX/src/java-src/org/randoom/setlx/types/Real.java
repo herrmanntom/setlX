@@ -113,7 +113,7 @@ public class Real extends NumberValue {
         }
     }
 
-    public Value difference(final State state, final Value subtrahend) throws IncompatibleTypeException, UndefinedOperationException {
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
                 return (Infinity) subtrahend.minus(state);
@@ -128,7 +128,7 @@ public class Real extends NumberValue {
             try {
                 return new Real(mReal.subtract(right, mathContext));
             } catch (final ArithmeticException ae) {
-                return handleArithmeticException(ae, this, "-", subtrahend);
+                return handleArithmeticException(ae, this + " - " + subtrahend);
             }
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
@@ -164,12 +164,20 @@ public class Real extends NumberValue {
         }
     }
 
-    public Real minus(final State state) {
-        return new Real(mReal.negate(mathContext));
+    public NumberValue minus(final State state) throws UndefinedOperationException {
+        try {
+            return new Real(mReal.negate(mathContext));
+        } catch (final ArithmeticException ae) {
+            return handleArithmeticException(ae, "-" + this);
+        }
     }
 
-    protected Real power(final int exponent) {
-        return new Real(mReal.pow(exponent, mathContext));
+    protected NumberValue power(final int exponent) throws UndefinedOperationException {
+        try {
+            return new Real(mReal.pow(exponent, mathContext));
+        } catch (final ArithmeticException ae) {
+            return handleArithmeticException(ae, this + " ** " + exponent);
+        }
     }
 
     protected NumberValue power(final double exponent) throws NumberToLargeException, IncompatibleTypeException {
@@ -205,7 +213,7 @@ public class Real extends NumberValue {
             try {
                 return new Real(mReal.multiply(right, mathContext));
             } catch (final ArithmeticException ae) {
-                return handleArithmeticException(ae, this, "*", multiplier);
+                return handleArithmeticException(ae, this + " * " + multiplier);
             }
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(state, this);
@@ -232,7 +240,7 @@ public class Real extends NumberValue {
             try {
                 return new Real(mReal.divide(right, mathContext));
             } catch (final ArithmeticException ae) {
-                return handleArithmeticException(ae, this, "/", divisor);
+                return handleArithmeticException(ae, this + " / " + divisor);
             }
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(state, this);
@@ -266,7 +274,7 @@ public class Real extends NumberValue {
             try {
                 return new Real(mReal.add(right, mathContext));
             } catch (final ArithmeticException ae) {
-                return handleArithmeticException(ae, this, "+", summand);
+                return handleArithmeticException(ae, this + " + " + summand);
             }
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
@@ -334,7 +342,7 @@ public class Real extends NumberValue {
 
     /* private */
 
-    public Infinity handleArithmeticException(final ArithmeticException ae, final Real t, final String op, final Value o) throws UndefinedOperationException {
+    public Infinity handleArithmeticException(final ArithmeticException ae, final String operation) throws UndefinedOperationException {
         final String message = ae.getMessage();
         if (message.equalsIgnoreCase("Overflow")) {
             return Infinity.POSITIVE;
@@ -342,11 +350,11 @@ public class Real extends NumberValue {
             return Infinity.NEGATIVE;
         } else if (message.equalsIgnoreCase("Division by zero")) {
             throw new UndefinedOperationException(
-                "'" + t + " / " + o + "' is undefined (division by zero)."
+                "'" + operation + "' is undefined (division by zero)."
             );
         } else {
             throw new UndefinedOperationException(
-                "Error when computing '" + t + " " + op + " " + o + "' (" + message + ")."
+                "Error when computing '" + operation + "' (" + message + ")."
             );
         }
     }

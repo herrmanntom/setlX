@@ -16,7 +16,7 @@ public abstract class NumberValue extends Value {
 
     public abstract NumberValue floor();
 
-    public abstract NumberValue minus(final State state) throws IncompatibleTypeException;
+    public abstract NumberValue minus(final State state) throws SetlException;
 
     public          Value       power(final State state, final Value exponent) throws SetlException {
         if (exponent.isInteger() == SetlBoolean.TRUE && ((Rational) exponent).intConvertable()) {

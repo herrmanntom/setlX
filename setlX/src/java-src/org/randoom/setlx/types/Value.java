@@ -177,7 +177,7 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
-    public Value minus(final State state) throws IncompatibleTypeException {
+    public Value minus(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a number."
         );

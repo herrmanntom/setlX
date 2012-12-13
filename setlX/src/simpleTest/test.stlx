@@ -1,102 +1,86 @@
-var testNumber;
+var testNumber, testsOK;
 
 testNumber := 0;
+testsOK    := 0;
 
-fromWithoutSideEffect := procedure() {
+tester := procedure(boolean, name) {
     testNumber += 1;
 
+    if (boolean) {
+        testsOK += 1;
+        printErr("test $testNumber$ successful ($name$)");
+    } else {
+        printErr("test $testNumber$ failed ($name$)");
+    }
+
+    return boolean;
+};
+
+// ************************************************************************** \\
+
+fromWithoutSideEffect := procedure() {
     a := {{1}, {2}};
     b := {{3}, {4}};
     c := a + b;
     d := from(c);
-    if (a == {{1}, {2}} && b == {{3}, {4}} && #c == 3) {
-        printErr("test $testNumber$ successful (side-effects in from)");
-    } else {
-        printErr("test $testNumber$ failed (side-effects in from)");
-    }
+
+    tester(a == {{1}, {2}} && b == {{3}, {4}} && #c == 3, "side-effects in from");
 };
 fromWithoutSideEffect();
 
 fromListWithoutSideEffect := procedure() {
-    testNumber += 1;
-
     a := [{1}, {2}];
     b := [{3}, {4}];
     c := a + b;
     d := from(c);
-    if (a == [{1}, {2}] && b == [{3}, {4}] && #c == 3) {
-        printErr("test $testNumber$ successful (side-effects in from lists)");
-    } else {
-        printErr("test $testNumber$ failed (side-effects in from lists)");
-    }
+
+    tester(a == [{1}, {2}] && b == [{3}, {4}] && #c == 3, "side-effects in from lists");
 };
 fromListWithoutSideEffect();
 
 fromVariable := procedure() {
-    testNumber += 1;
-
     a := {{1}, {2}};
     b := a;
     d := from(a);
-    if (#a == 1 && b == {{1}, {2}}) {
-        printErr("test $testNumber$ successful (from variable)");
-    } else {
-        printErr("test $testNumber$ failed (from variable)");
-    }
+
+    tester(#a == 1 && b == {{1}, {2}}, "from variable");
 };
 fromVariable();
 
 listIndex := procedure() {
-    testNumber += 1;
-
     a := [1];
     b := a[2..];
     c := [1, 2, 4];
     d := c[10];
     e := c[2..3][1];
-    if (b == [] && d == om && e == 2) {
-        printErr("test $testNumber$ successful (list index)");
-    } else {
-        printErr("test $testNumber$ failed (list index)");
-    }
+
+    tester(b == [] && d == om && e == 2, "list index");
 };
 listIndex();
 
 collectionsWithOm := procedure() {
-    testNumber += 1;
-
     a := [1, om];
     b := {1, om};
     c := [1, om, 3];
     d := {1, om, 3};
-    if (a == [1] && b == {1} && c == [1, om, 3] && d == {1, 3}) {
-        printErr("test $testNumber$ successful (collections with om)");
-    } else {
-        printErr("test $testNumber$ failed (collections with om)");
-    }
+
+    tester(a == [1] && b == {1} && c == [1, om, 3] && d == {1, 3}, "collections with om");
 };
 collectionsWithOm();
 
 listAssignments := procedure() {
-    testNumber += 1;
-
     [a, b, c] := [1, 2, 3];
     [[d, e], f] := [[4, 5], 6];
     [g, h, i] := "123";
     [j, k, l] := Term("foobar", 99, sin);
-    if (a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
-        g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin)
-    ) {
-        printErr("test $testNumber$ successful (list assignments)");
-    } else {
-        printErr("test $testNumber$ failed (list assignments)");
-    }
+
+    tester(a == 1   && b == 2   && c == 3   && d == 4        && e == 5  && f == 6            &&
+           g == "1" && h == "2" && i == "3" && j == "foobar" && k == 99 && l == getTerm(sin),
+           "list assignments");
 };
 listAssignments();
 
 innerListAssignments := procedure() {
-    testNumber += 1;
-
     a := [1, 2, 3];
     a[2] := 6;
     b := [[[1, 2, 3]], [[4, 5, 6]], [[7, 8, 9]]];
@@ -105,17 +89,13 @@ innerListAssignments := procedure() {
     c[6] := 10;
     d := c;
     d[6] := om;
-    if (a == [1, 6, 3] && b == [[[1, 2, 3]], [[4, 5, 6]], [[7, "t", 9]]] && c == [1, 2, 3, om, om, 10] && d == [1, 2, 3]) {
-        printErr("test $testNumber$ successful (assignments to list content)");
-    } else {
-        printErr("test $testNumber$ failed (assignments to list content)");
-    }
+
+    tester(a == [1, 6, 3] && b == [[[1, 2, 3]], [[4, 5, 6]], [[7, "t", 9]]] &&
+           c == [1, 2, 3, om, om, 10] && d == [1, 2, 3], "assignments to list content");
 };
 innerListAssignments();
 
 firstClassFunctions := procedure() {
-    testNumber += 1;
-
     test := procedure(m, am) {
         return 1 - m(0) == am(0);
     };
@@ -123,17 +103,12 @@ firstClassFunctions := procedure() {
     boxOfMystery := {cos, sin};
     mystery := arb(boxOfMystery);
     anotherMystery := +/ (boxOfMystery - {mystery});
-    if (test(mystery, anotherMystery)) {
-        printErr("test $testNumber$ successful (first class functions)");
-    } else {
-        printErr("test $testNumber$ failed (first class functions)");
-    }
+
+    tester(test(mystery, anotherMystery), "first class functions");
 };
 firstClassFunctions();
 
 nestedFunctions := procedure() {
-    testNumber += 1;
-
     callCopysOnlyFunctions := procedure() {
         return omTo42(y);
     };
@@ -152,29 +127,19 @@ nestedFunctions := procedure() {
 
     y := screwedSin(1);
     z := callCopysOnlyFunctions();
-    if (y > 0.8414 + 1 && y < 0.8415 + 1 && z == 42) {
-        printErr("test $testNumber$ successful (nested functions)");
-    } else {
-        printErr("test $testNumber$ failed (nested functions)");
-    }
+
+    tester(y > 0.8414 + 1 && y < 0.8415 + 1 && z == 42, "nested functions");
 };
 nestedFunctions();
 
 iterator := procedure() {
-    testNumber += 1;
-
     u := [[x, y, z, w]: x in {1, 2}, y in {1, 2}, [z, w] in [[x, y]]];
-    if (u == [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]]) {
-        printErr("test $testNumber$ successful (iterators)");
-    } else {
-        printErr("test $testNumber$ failed (iterators): $u$ != [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]]");
-    }
+
+    tester(u == [[1, 1, 1, 1], [1, 2, 1, 2], [2, 1, 2, 1], [2, 2, 2, 2]], "iterators");
 };
 iterator();
 
 scopeTests := procedure() {
-    testNumber += 1;
-
     result := "";
     q := [[[1, 2, 3], [4, 5, 6]]];
     for (q1 in q, q2 in q1, q3 in q2) {
@@ -187,49 +152,34 @@ scopeTests := procedure() {
     }
     v := "test";
     w := {v: w in q, v in w};
-    if (result == " 1 2 3 4 5 6" && q == [[[1, 2, 3], [4, 5, 6]]] && p == "est" && v == "test") {
-        printErr("test $testNumber$ successful (scope)");
-    } else {
-        printErr("test $testNumber$ failed (scope)");
-    }
+
+    tester(result == " 1 2 3 4 5 6" && q == [[[1, 2, 3], [4, 5, 6]]] && p == "est" && v == "test", "scope");
 };
 scopeTests();
 
 forallTests := procedure() {
-    testNumber += 1;
-
     a := b := c := d := "test";
     // none fails
     e := forall(a in [1 .. 5], b in [1 .. 5] | a * b <= 25);
     // first fail: c == 4, d == 4
     f := forall(c in [1 .. 5], d in [1 .. 5] | (c * d) < 16);
-    if (a == "test" && b == "test" && e && c == 4 && d == 4 && !f) {
-        printErr("test $testNumber$ successful (forall)");
-    } else {
-        printErr("test $testNumber$ failed (forall)");
-    }
+
+    tester(a == "test" && b == "test" && e && c == 4 && d == 4 && !f, "forall");
 };
 forallTests();
 
 existsTests := procedure() {
-    testNumber += 1;
-
     a := b := c := d := "test";
     // first exists: a == 4, b == 4
     e := exists(a in [1 .. 5], b in [1 .. 5] | a * b >= 16);
     // nothing exists
     f := exists(c in [1 .. 5], d in [1 .. 5] | c * d > 25);
-    if (a == 4 && b == 4 && e && c == "test" && d == "test" && !f) {
-        printErr("test $testNumber$ successful (exists)");
-    } else {
-        printErr("test $testNumber$ failed (exists)");
-    }
+
+    tester(a == 4 && b == 4 && e && c == "test" && d == "test" && !f, "exists");
 };
 existsTests();
 
 lazyChecking := procedure() {
-    testNumber += 1;
-
     correct := false;
     a := b := 1;
     increaseTrue := procedure (rw x) {
@@ -251,17 +201,11 @@ lazyChecking := procedure() {
     // now a should be 3, but b still 2, c should be false
     correct := correct && a == 3 && b == 2 && !c;
 
-    if (correct) {
-        printErr("test $testNumber$ successful (lazyChecking)");
-    } else {
-        printErr("test $testNumber$ failed (lazyChecking)");
-    }
+    tester(correct, "lazyChecking");
 };
 lazyChecking();
 
 relationExtension := procedure() {
-    testNumber += 1;
-
     correct := false;
 
     r := { [n, n*n] : n in {1..3} };
@@ -278,17 +222,11 @@ relationExtension := procedure() {
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9], [4, 5]};
 
-    if (correct) {
-        printErr("test $testNumber$ successful (relationExtension)");
-    } else {
-        printErr("test $testNumber$ failed (relationExtension)");
-    }
+    tester(correct, "relationExtension");
 };
 relationExtension();
 
 formatedString := procedure() {
-    testNumber += 1;
-
     correct := false;
 
     s := "";
@@ -299,17 +237,11 @@ formatedString := procedure() {
 
     correct := s == "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false";
 
-    if (correct) {
-        printErr("test $testNumber$ successful (formatedString)");
-    } else {
-        printErr("test $testNumber$ failed (formatedString)");
-    }
+    tester(correct, "formatedString");
 };
 formatedString();
 
 precedences := procedure() {
-    testNumber += 1;
-
     a := str(   ^conjunction(^disjunction(^disjunction(          ^variable("a"),            ^variable("b")   ),
                                           ^conjunction(^negation(^variable("a")), ^negation(^variable("b"))  )
                                          ),
@@ -318,33 +250,23 @@ precedences := procedure() {
                                          )
                             )
             );
-    if (a == "(a || b || !a && !b) && (a || b || !a && !b)") {
-        printErr("test $testNumber$ successful (precedences)");
-    } else {
-        printErr("test $testNumber$ failed (precedences) $a$");
-    }
+
+    tester(a == "(a || b || !a && !b) && (a || b || !a && !b)", "precedences");
 };
 precedences();
 
 complexLhsAssignment := procedure() {
-    testNumber += 1;
-
     a := [ [11, 12, 13], [21, 22, 23], [31, 32, 33] ];
     a[2][4] := 24;
     a[3][2] *= 10;
     [a[1], a[2]] := [a[2], a[1]];
     [a[1][1], a[2][2]] := [a[2][2], a[1][1]];
-    if (a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]]) {
-        printErr("test $testNumber$ successful (complexLhsAssignment)");
-    } else {
-        printErr("test $testNumber$ failed (complexLhsAssignment)");
-    }
+
+    tester(a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]], "complexLhsAssignment");
 };
 complexLhsAssignment();
 
 valueVsReference := procedure() {
-    testNumber += 1;
-
     l1 := [ 1, 2, 3 ];
     l2 := l1;
     l2[2] := 5;
@@ -363,17 +285,11 @@ valueVsReference := procedure() {
 
     correct := correct && l2 in s;
 
-    if (correct) {
-        printErr("test $testNumber$ successful (valueVsReference)");
-    } else {
-        printErr("test $testNumber$ failed (valueVsReference)");
-    }
+    tester(correct, "valueVsReference");
 };
 valueVsReference();
 
 matchSets := procedure() {
-    testNumber += 1;
-
     s := { "a", 1 };
 
     match(s) {
@@ -383,34 +299,22 @@ matchSets := procedure() {
             correct := false;
     }
 
-    if (correct) {
-        printErr("test $testNumber$ successful (matchSets)");
-    } else {
-        printErr("test $testNumber$ failed (matchSets)");
-    }
+    tester(correct, "matchSets");
 };
 matchSets();
 
 complexIndirectAssignment := procedure() {
-    testNumber += 1;
-
     s := { ["a", 1], ["b", [1]]};
     s["a"] += 2;
     s["b"] += [2];
 
     correct := s == { ["a", 3], ["b", [1, 2]] };
 
-    if (correct) {
-        printErr("test $testNumber$ successful (complexIndirectAssignment)");
-    } else {
-        printErr("test $testNumber$ failed (complexIndirectAssignment)");
-    }
+    tester(correct, "complexIndirectAssignment");
 };
 complexIndirectAssignment();
 
 forallCombinations := procedure() {
-    testNumber += 1;
-
     if (true && forall(x in [1..10] | x < 11) && 1 == 1) {
         correct := true;
     } else {
@@ -423,17 +327,11 @@ forallCombinations := procedure() {
         correct := correct && false;
     }
 
-    if (correct) {
-        printErr("test $testNumber$ successful (forallCombinations)");
-    } else {
-        printErr("test $testNumber$ failed (forallCombinations)");
-    }
+    tester(correct, "forallCombinations");
 };
 forallCombinations();
 
 equality := procedure() {
-    testNumber += 1;
-
     if (1.0 == 1.0 && 1 == 1 && 1/2 == 1/2) {
         correct := true;
     } else {
@@ -458,11 +356,14 @@ equality := procedure() {
         correct := correct && false;
     }
 
-    if (correct) {
-        printErr("test $testNumber$ successful (equality)");
-    } else {
-        printErr("test $testNumber$ failed (equality)");
-    }
+    tester(correct, "equality");
 };
 equality();
+
+// ************************************************************************** \\
+
+printErr("\n$testsOK$ / $testNumber$ successful");
+if (testsOK == testNumber) {
+    printErr("Everything is fine. Move along sir!");
+}
 

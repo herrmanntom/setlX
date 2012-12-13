@@ -12,10 +12,10 @@ cd src; make test >/dev/null 2>"$tmpFile"; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" "$tmpFile")
-okCount=$(grep -c "successful" "$tmpFile")
+everythingOkCount=$(grep -c "Everything is fine. Move along sir!" "$tmpFile")
 
 # alert the user and stop
-if [ $failedCount -gt 0 -o $okCount -lt 23 ] # <=  "23" is number of tests in `make test'
+if [ $failedCount -gt 0 -o $everythingOkCount -ne 1 ]
   then
     echo "the initial testfile '$simpleTest' failed!"
     rm -f "$tmpFile"

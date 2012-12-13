@@ -215,6 +215,22 @@ public class SetlSet extends CollectionValue {
         }
     }
 
+    public Value power(final State state, final Value exponent) throws SetlException {
+        if (exponent instanceof NumberValue && exponent.equalTo(Rational.TWO)) {
+            try {
+                return this.cartesianProduct(state, this);
+            } catch (SetlException se) {
+                se.addToTrace("Error in substitute operation \"" + this + " >< " + this +  "\":");
+                throw se;
+            }
+        } else if (exponent instanceof Term) {
+            return ((Term) exponent).powerFlipped(state, this);
+        }
+        throw new IncompatibleTypeException(
+            "Left-hand-side of '" + this + " ** " + exponent + "' is not a number."
+        );
+    }
+
     public Value product(final State state, final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
             final SetlSet result = clone();

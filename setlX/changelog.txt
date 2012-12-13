@@ -4,6 +4,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + updated the development documentation
  + allow powerSet computation by using the set as exponent, e.g. 2 ** {1,2,3}
  + added mathConst("Infinity")
+ + m ** 2 computes the cartesianProduct of m, if m is a set
  # fixed multiple "internal errors"
  # fix error message for calls
 
@@ -77,7 +78,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v1.2.5--- unreleased
  + added isNumber() function, which is equal to (isRational() || isReal())
  + brackets are transparent in terms
- 
+
 ---v1.2.4--- unreleased
  + added optional Boolean conditions to match branches
  # match correctly when using the same variable multiple times in a single match branch

@@ -30,7 +30,7 @@ public abstract class NumberValue extends Value {
             } else {
                 return this.power(((Real) exponent).doubleValue());
             }
-        } else if (exponent instanceof SetlSet && this.compareTo(Rational.TWO) == 0) {
+        } else if (exponent instanceof SetlSet && this.equalTo(Rational.TWO)) {
             return ((SetlSet) exponent).powerSet(state);
         } else if (exponent instanceof Term) {
             return ((Term) exponent).powerFlipped(state, this);

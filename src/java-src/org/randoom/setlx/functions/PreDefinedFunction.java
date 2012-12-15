@@ -68,7 +68,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
                 // unlimited means: at least the number of defined parameters or more
                 // no error
             } else {
-                String error = "Procedure is defined with a fewer number of parameters ";
+                String error = "Procedure is defined with fewer parameters ";
                 error +=       "(" + paramSize;
                 if (mAllowFewerParameters) {
                     error +=   " or less";
@@ -81,7 +81,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
                 // fewer parameters are allowed
                 // no error
             } else {
-                String error = "Procedure is defined with a larger number of parameters ";
+                String error = "Procedure is defined with more parameters ";
                 error +=       "(" + paramSize;
                 if (mUnlimitedParameters) {
                     error +=   " or more";

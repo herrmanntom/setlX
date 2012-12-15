@@ -9,7 +9,7 @@ Precedence, Associativity, Operator(s)
 1000,       right,         :=
 1000,       -,             +=, -=, *=, /=, \=, %=
 1100,       left,          <==>, <!=>
-1200,       left,          =>
+1200,       right,         =>
 1300,       left,          ||
 1400,       left,          &&
 1500,       left,          ==, !=, <, <=, >, >=, in, notin

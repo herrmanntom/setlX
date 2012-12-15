@@ -77,8 +77,8 @@ public class Implication extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, true , term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember() );
             return new Implication(lhs, rhs);
         }
     }

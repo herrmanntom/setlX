@@ -397,8 +397,13 @@ public class SetlList extends IndexedCollectionValue {
         }
 
         // in java the index is one lower
-        low--;
-        final SetlList result = new SetlList(high - low);
+        --low;
+
+        int size = high - low;
+        if (size < 0) {
+            size = 0;
+        }
+        final SetlList result = new SetlList(size);
         for (int i = low; i < high; ++i) {
             result.addMember(mList.get(i).clone());
         }

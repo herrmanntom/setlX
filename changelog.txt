@@ -1,5 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+ # fix range selection of lists, when range is out of bounds
+
 ---v1.4.4--- 2012-12-25
  + switched to BSD license
  # fixed associativity of => operator during term-conversion/print

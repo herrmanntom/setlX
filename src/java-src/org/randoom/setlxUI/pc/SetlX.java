@@ -3,7 +3,6 @@ package org.randoom.setlxUI.pc;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.ExitException;
-import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
@@ -19,7 +18,6 @@ import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +43,7 @@ public class SetlX {
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         boolean         dump        = false; // writes loaded code into a file
         String          dumpFile    = "";    // file to dump into
         boolean         help        = false;
@@ -53,21 +51,21 @@ public class SetlX {
         boolean         noExecution = false;
         String          expression  = null;  // expression to be evaluated using -ev option
         String          statement   = null;  // code to be executed when using -ex option
-        List<String>    files       = new ArrayList<String>();
-        PcEnvProvider   envProvider = new PcEnvProvider();
-        State           state       = new State();
+        final List<String>    files       = new ArrayList<String>();
+        final PcEnvProvider   envProvider = new PcEnvProvider();
+        final State           state       = new State();
 
         // initialize Environment
         Environment.setEnvironmentProvider(envProvider);
-        SetlList parameters = new SetlList(); // can/will be filled later
+        final SetlList parameters = new SetlList(); // can/will be filled later
         state.putValue("params", parameters);
 
-        if ((envProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
-            envProvider.sLibraryPath = "";
+        if ((PcEnvProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
+            PcEnvProvider.sLibraryPath = "";
         }
 
         for (int i = 0; i < args.length; ++i) {
-            String s = args[i];
+            final String s = args[i];
             if (s.equals("--version")) {
                 Environment.outWriteLn(VERSION);
 
@@ -115,13 +113,13 @@ public class SetlX {
             } else if (s.equals("--libraryPath")) {
                 ++i; // set to next argument
                 if (i < args.length) {
-                    envProvider.sLibraryPath = args[i];
+                    PcEnvProvider.sLibraryPath = args[i];
                 }
                 // check for incorrect contents
-                if (  envProvider.sLibraryPath.equals("") ||
+                if (  PcEnvProvider.sLibraryPath.equals("") ||
                       (
-                        envProvider.sLibraryPath.length() >= 2 &&
-                        envProvider.sLibraryPath.substring(0,2).equals("--")
+                        PcEnvProvider.sLibraryPath.length() >= 2 &&
+                        PcEnvProvider.sLibraryPath.substring(0,2).equals("--")
                       )
                    ) {
                     help = true;
@@ -174,7 +172,7 @@ public class SetlX {
             printInteractiveBegin();
             parseAndExecuteInteractive(state);
         } else if ( ! help ) {
-            List<Block> programs = parseAndDumpCode(expression, statement, files, dump, dumpFile);
+            final List<Block> programs = parseAndDumpCode(expression, statement, files, dump, dumpFile);
             if ( ! noExecution) {
                 executeFiles(state, programs);
             }
@@ -201,17 +199,17 @@ public class SetlX {
                 }
                 blk.markLastExprStatement();
                 skipTest    = false;
-            } catch (EndOfFileException eofe) {
+            } catch (final EndOfFileException eofe) {
                 // user wants to quit
                 Environment.outWriteLn("\n\nGood Bye! (EOF)");
 
                 break;
 
-            } catch (ParserException pe) {
+            } catch (final ParserException pe) {
                 Environment.errWriteLn(pe.getMessage());
                 skipTest = true;
                 blk      = null;
-            } catch (Exception e) { // this should never happen...
+            } catch (final Exception e) { // this should never happen...
                 printInternalError();
                 if (unhideExceptions) {
                     e.printStackTrace();
@@ -224,11 +222,11 @@ public class SetlX {
         printExecutionFinished();
     }
 
-    private static List<Block> parseAndDumpCode( String       expression,
-                                                 String       statement,
-                                                 List<String> files,
-                                                 boolean      dump,
-                                                 String       dumpFile) throws Exception {
+    private static List<Block> parseAndDumpCode( final String       expression,
+                                                 final String       statement,
+                                                 final List<String> files,
+                                                 final boolean      dump,
+                                                 final String       dumpFile) throws Exception {
         // parsed programs
         int nPrograms = files.size();
         if (expression != null) {
@@ -236,7 +234,7 @@ public class SetlX {
         } else if (statement != null) {
             nPrograms += 1;
         }
-        List<Block> programs = new ArrayList<Block>(nPrograms);
+        final List<Block> programs = new ArrayList<Block>(nPrograms);
 
         // parse content of all files
         try {
@@ -250,11 +248,11 @@ public class SetlX {
                 stmt.markLastExprStatement();
                 programs.add(stmt);
             } else {
-                for (String fileName : files) {
+                for (final String fileName : files) {
                     programs.add(ParseSetlX.parseFile(fileName));
                 }
             }
-        } catch (ParserException pe) {
+        } catch (final ParserException pe) {
             if (verbose) {
                 Environment.outWriteLn(
                     "-================================Parser=Errors================================-\n"
@@ -270,7 +268,7 @@ public class SetlX {
 
             System.exit(EXIT_ERROR);
 
-        } catch (Exception e) { // this should never happen...
+        } catch (final Exception e) { // this should never happen...
             printInternalError();
             if (unhideExceptions) {
                 e.printStackTrace();
@@ -292,7 +290,7 @@ public class SetlX {
             final int size = programs.size();
             for (int i = 0; i < size; ++i) {
                 // get program text
-                String program = programs.get(i).toString() + '\n';
+                final String program = programs.get(i).toString() + '\n';
 
                 //in verbose mode the parsed programs are echoed
                 if (verbose) {
@@ -303,7 +301,7 @@ public class SetlX {
                 if (dump) {
                     try {
                         DumpSetlX.dumpToFile(program, dumpFile, /* append = */ (i > 0) );
-                    } catch (FileNotWriteableException fnwe) {
+                    } catch (final FileNotWriteableException fnwe) {
                         Environment.errWriteLn(fnwe.getMessage());
 
                         System.exit(EXIT_ERROR);
@@ -317,7 +315,7 @@ public class SetlX {
         return programs;
     }
 
-    private static void executeFiles(final State state, List<Block> programs) throws Exception {
+    private static void executeFiles(final State state, final List<Block> programs) throws Exception {
         Environment.setInteractive(false);
 
         if (verbose) {
@@ -325,7 +323,7 @@ public class SetlX {
         }
 
         // run the parsed code
-        for (Block blk : programs) {
+        for (final Block blk : programs) {
             if (execute(state, blk) != EXEC_OK) {
                 break; // stop in case of error
             }
@@ -346,25 +344,25 @@ public class SetlX {
                 Om.OM.isBreak();   // reset break outside of procedure
             }
 
-        } catch (AbortException ae) { // code detected user did something wrong
+        } catch (final AbortException ae) { // code detected user did something wrong
             Environment.errWriteLn(ae.getMessage());
             return EXEC_ERROR;
-        } catch (ExitException ee) { // user/code wants to quit
+        } catch (final ExitException ee) { // user/code wants to quit
             if (Environment.isInteractive()) {
                 Environment.outWriteLn(ee.getMessage());
             }
 
             return EXEC_EXIT; // breaks loop while parsing interactively
 
-        } catch (ResetException re) { // user/code wants to quit debugging
+        } catch (final ResetException re) { // user/code wants to quit debugging
             if (Environment.isInteractive()) {
                 Environment.outWriteLn("Resetting to interactive prompt.");
             }
             return EXEC_OK;
-        } catch (SetlException se) { // user/code did something wrong
+        } catch (final SetlException se) { // user/code did something wrong
             printExceptionsTrace(se.getTrace());
             return EXEC_ERROR;
-        } catch (OutOfMemoryError oome) {
+        } catch (final OutOfMemoryError oome) {
             Environment.errWriteLn(
                 "The setlX interpreter has ran out of memory.\n" +
                 "Try improving the SetlX program and/or execute with larger maximum memory size.\n" +
@@ -373,7 +371,7 @@ public class SetlX {
                 "If that does not help get a better machine ;-)\n"
             );
             return EXEC_EXIT; // breaks loop while parsing interactively
-        } catch (Exception e) { // this should never happen...
+        } catch (final Exception e) { // this should never happen...
             printInternalError();
             if (unhideExceptions) {
                 e.printStackTrace();
@@ -385,7 +383,7 @@ public class SetlX {
 
     private static void printHeader() {
         // embed version number into header
-        int     versionSize = VERSION.length() + VERSION_PREFIX.length();
+        final int     versionSize = VERSION.length() + VERSION_PREFIX.length();
         String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 2) );
         header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 2);
         // print header
@@ -473,10 +471,10 @@ public class SetlX {
         );
     }
 
-    private static void printExceptionsTrace(List<String> trace) {
-        int end = trace.size();
-        int max = 40;
-        int m_2 = max / 2;
+    private static void printExceptionsTrace(final List<String> trace) {
+        final int end = trace.size();
+        final int max = 40;
+        final int m_2 = max / 2;
         for (int i = end - 1; i >= 0; --i) {
             // leave out some messages in the middle, which are most likely just clutter
             if (end > max && i > m_2 - 1 && i < end - (m_2 + 1)) {

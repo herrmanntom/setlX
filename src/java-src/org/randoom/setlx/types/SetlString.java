@@ -229,7 +229,7 @@ public class SetlString extends IndexedCollectionValue {
 
     public Value toReal() {
         try {
-            return new Real(mContent.toString());
+            return Real.valueOf(mContent.toString());
         } catch (NumberFormatException nfe) {
             return Om.OM;
         }

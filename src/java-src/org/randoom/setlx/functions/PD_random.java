@@ -22,11 +22,11 @@ public class PD_random extends PreDefinedFunction {
     }
 
     public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Real random = new Real(Environment.getRandomDouble());
+        Value random = Real.valueOf(Environment.getRandomDouble());
         if (args.size() == 1) {
             Value arg = args.get(0);
             if (arg.equalTo(Rational.ZERO)) {
-                return new Real(0.0);
+                return Real.valueOf(0.0);
             } else {
                 return arg.product(state, random);
             }

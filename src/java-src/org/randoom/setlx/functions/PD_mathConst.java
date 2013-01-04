@@ -24,11 +24,11 @@ public class PD_mathConst extends PreDefinedFunction {
         // create constants with max precision possible when --real256 option is used
         if (       name.getUnquotedString().equalsIgnoreCase( "e"        )) {
 
-            return new Real("2.718281828459045235360287471352662497757247093699959574966967627724077");
+            return Real.valueOf("2.718281828459045235360287471352662497757247093699959574966967627724077");
 
         } else if (name.getUnquotedString().equalsIgnoreCase( "pi"       )) {
 
-            return new Real("3.141592653589793238462643383279502884197169399375105820974944592307816");
+            return Real.valueOf("3.141592653589793238462643383279502884197169399375105820974944592307816");
 
         } else if (name.getUnquotedString().equalsIgnoreCase( "infinity" )) {
 

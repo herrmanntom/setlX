@@ -42,6 +42,7 @@ public class VariableScope {
         mWriteThrough           = false;
     }
 
+    @Override
     public VariableScope clone() {
         final VariableScope newEnv = new VariableScope();
         newEnv.mOriginalScope      = this;
@@ -175,6 +176,7 @@ public class VariableScope {
         final SetlSet   bindings    = new SetlSet();
         for (final Map.Entry<String, Value> entry : allVars.entrySet()) {
             final SetlList  binding = new SetlList(2);
+            binding.addMember(state, new SetlString(entry.getKey()));
             binding.addMember(state, entry.getValue().toTerm(state));
 
             bindings.addMember(state, binding);

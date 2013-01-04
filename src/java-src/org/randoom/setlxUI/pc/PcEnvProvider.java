@@ -28,42 +28,49 @@ import java.io.IOException;
     /* interface functions */
 
     // read from input
+    @Override
     public boolean  inReady() throws JVMIOException {
         try {
             return getStdIn().ready();
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new JVMIOException("Unable to open stdIn!");
         }
     }
+    @Override
     public String   inReadLine() throws JVMIOException {
         try {
                    // line is read and returned without termination character(s)
             return getStdIn().readLine();
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new JVMIOException("Unable to open stdIn!");
         }
     }
 
     // write to standard output
-    public void     outWrite(String msg) {
+    @Override
+    public void     outWrite(final String msg) {
         System.out.print(msg);
     }
 
     // write to standard error
-    public void     errWrite(String msg) {
+    @Override
+    public void     errWrite(final String msg) {
         System.err.print(msg);
     }
 
     // prompt for user input
-    public void    promptForInput(String msg) {
+    @Override
+    public void    promptForInput(final String msg) {
         System.out.print(msg);
         System.out.flush();
     }
 
     // some text format stuff
+    @Override
     public String   getTab() {
         return sTAB;
     }
+    @Override
     public String   getEndl() {
         if (sENDL == null) {
             sENDL = System.getProperty("line.separator");
@@ -72,11 +79,13 @@ import java.io.IOException;
     }
 
     // allow modification of fileName/path when reading files
-    public String   filterFileName(String fileName) {
+    @Override
+    public String   filterFileName(final String fileName) {
         return fileName; // not required on PC
     }
 
     // allow modification of library name
+    @Override
     public String   filterLibraryName(String name) {
         name = name.trim();
         if (name.length() < 1 || name.charAt(0) == '/') {

@@ -1,8 +1,9 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 

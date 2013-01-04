@@ -28,6 +28,7 @@ public class BracketedExpr extends Expr {
         mExpr = expr;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         return mExpr.eval(state);
     }
@@ -39,6 +40,7 @@ public class BracketedExpr extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -49,19 +51,22 @@ public class BracketedExpr extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("(");
-        mExpr.appendString(sb, tabs);
+        mExpr.appendString(state, sb, tabs);
         sb.append(")");
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         return mExpr.toTerm(state);
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

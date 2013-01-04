@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -16,11 +15,12 @@ public class PD_lsBreak extends PreDefinedFunction {
         super("lsBreak");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
         final String head    = "Debugger Breakpoints:\n";
         String       message = head;
 
-        for (String point : Environment.getAllBreakpoints()) {
+        for (final String point : state.getAllBreakpoints()) {
             message += "  " + point + "\n";
         }
 
@@ -28,7 +28,7 @@ public class PD_lsBreak extends PreDefinedFunction {
             message += " no breakpoints set\n";
         }
 
-        Environment.errWriteLn(message);
+        state.errWriteLn(message);
 
         return Om.OM;
     }

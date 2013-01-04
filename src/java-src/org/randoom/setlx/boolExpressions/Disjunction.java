@@ -36,6 +36,7 @@ public class Disjunction extends Expr {
         mRhs = rhs;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         return mLhs.eval(state).disjunction(state, mRhs);
     }
@@ -47,6 +48,7 @@ public class Disjunction extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -58,18 +60,20 @@ public class Disjunction extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mLhs.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mLhs.appendString(state, sb, tabs);
         sb.append(" || ");
-        mRhs.appendString(sb, tabs);
+        mRhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm(state));
-        result.addMember(mRhs.toTerm(state));
+        result.addMember(state, mLhs.toTerm(state));
+        result.addMember(state, mRhs.toTerm(state));
         return result;
     }
 
@@ -84,6 +88,7 @@ public class Disjunction extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

@@ -175,12 +175,11 @@ public class VariableScope {
         final SetlSet   bindings    = new SetlSet();
         for (final Map.Entry<String, Value> entry : allVars.entrySet()) {
             final SetlList  binding = new SetlList(2);
-            binding.addMember(new SetlString(entry.getKey()));
-            binding.addMember(entry.getValue().toTerm(state));
+            binding.addMember(state, entry.getValue().toTerm(state));
 
-            bindings.addMember(binding);
+            bindings.addMember(state, binding);
         }
-        result.addMember(bindings);
+        result.addMember(state, bindings);
 
         return result;
     }

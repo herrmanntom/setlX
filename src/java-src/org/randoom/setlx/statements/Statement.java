@@ -6,7 +6,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.DebugPrompt;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public abstract class Statement extends CodeFragment {
     public static   boolean sDebugModeActive = false;
 
     public          Value execute(final State state) throws SetlException {
-        if (sDebugModeActive && ! Environment.isDebugPromptActive()) {
+        if (sDebugModeActive && ! state.isDebugPromptActive()) {
             DebugPrompt.prompt(state, this);
             final Value result = exec(state);
             Expr.sStepNext = false;
@@ -35,6 +34,7 @@ public abstract class Statement extends CodeFragment {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public abstract void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -43,10 +43,12 @@ public abstract class Statement extends CodeFragment {
 
     /* string operations */
 
-    public abstract void appendString(final StringBuilder sb, final int tabs);
+    @Override
+    public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
     /* term operations */
 
+    @Override
     public abstract Value toTerm(final State state);
 }
 

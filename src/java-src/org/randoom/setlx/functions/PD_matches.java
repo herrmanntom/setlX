@@ -30,6 +30,7 @@ public class PD_matches extends PreDefinedFunction {
         allowFewerParameters();
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (args.size() < 2) {
             throw new IncorrectNumberOfParametersException(
@@ -69,7 +70,7 @@ public class PD_matches extends PreDefinedFunction {
                     final int      count  = matcher.groupCount() + 1;
                     final SetlList groups = new SetlList(count);
                     for (int i = 0; i < count; ++i) {
-                        groups.addMember(new SetlString(matcher.group(i)));
+                        groups.addMember(state, new SetlString(matcher.group(i)));
                     }
                     return groups;
                 } else {
@@ -79,7 +80,7 @@ public class PD_matches extends PreDefinedFunction {
                 return SetlBoolean.valueOf(string.getUnquotedString().matches(patternStr.getUnquotedString()));
             }
         } catch (final PatternSyntaxException pse) {
-            LinkedList<String> errors = new LinkedList<String>();
+            final LinkedList<String> errors = new LinkedList<String>();
             errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
             errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
             errors.add("}");

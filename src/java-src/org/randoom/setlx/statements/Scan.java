@@ -12,7 +12,6 @@ import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -47,6 +46,7 @@ public class Scan extends Statement {
         mBranchList = branchList;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         final Value value = mExpr.eval(state);
         if ( ! (value instanceof SetlString)) {
@@ -69,19 +69,19 @@ public class Scan extends Statement {
                 final SetlSet  position = new SetlSet();
 
                 final SetlList charEntry = new SetlList(2);
-                charEntry.addMember(new SetlString("char"));
-                charEntry.addMember(Rational.valueOf(charNr));
-                position.addMember(charEntry);
+                charEntry.addMember(state, new SetlString("char"));
+                charEntry.addMember(state, Rational.valueOf(charNr));
+                position.addMember(state, charEntry);
 
                 final SetlList line   = new SetlList(2);
-                line.addMember(new SetlString("line"));
-                line.addMember(Rational.valueOf(lineNr));
-                position.addMember(line);
+                line.addMember(state, new SetlString("line"));
+                line.addMember(state, Rational.valueOf(lineNr));
+                position.addMember(state, line);
 
                 final SetlList column   = new SetlList(2);
-                column.addMember(new SetlString("column"));
-                column.addMember(Rational.valueOf(columnNr));
-                position.addMember(column);
+                column.addMember(state, new SetlString("column"));
+                column.addMember(state, Rational.valueOf(columnNr));
+                position.addMember(state, column);
 
                 // find branch which matches largest string
                 for (final MatchAbstractScanBranch br : mBranchList) {
@@ -145,7 +145,7 @@ public class Scan extends Statement {
                     charNr   += largestMatchSize;
                     columnNr += largestMatchSize;
                     // find lineEndings
-                    String matched = string.getMembers(1, largestMatchSize).getUnquotedString();
+                    final String matched = string.getMembers(1, largestMatchSize).getUnquotedString();
                     int pos  = 0;
                     int tmp  = 0;
                     int size = 0;
@@ -188,6 +188,7 @@ public class Scan extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -229,42 +230,44 @@ public class Scan extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("scan (");
-        mExpr.appendString(sb, 0);
+        mExpr.appendString(state, sb, 0);
         sb.append(") ");
         if (mPosVar != null) {
             sb.append("using ");
-            mPosVar.appendString(sb, 0);
+            mPosVar.appendString(state, sb, 0);
         }
         sb.append("{");
-        sb.append(Environment.getEndl());
+        sb.append(state.getEndl());
         for (final MatchAbstractBranch br : mBranchList) {
-            br.appendString(sb, tabs + 1);
+            br.appendString(state, sb, tabs + 1);
         }
-        Environment.getLineStart(sb, tabs);
+        state.getLineStart(sb, tabs);
         sb.append("}");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
         if (mPosVar != null) {
-            result.addMember(mPosVar.toTerm(state));
+            result.addMember(state, mPosVar.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
 
-        result.addMember(mExpr.toTerm(state));
+        result.addMember(state, mExpr.toTerm(state));
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final MatchAbstractBranch br: mBranchList) {
-            branchList.addMember(br.toTerm(state));
+            branchList.addMember(state, br.toTerm(state));
         }
-        result.addMember(branchList);
+        result.addMember(state, branchList);
 
         return result;
     }

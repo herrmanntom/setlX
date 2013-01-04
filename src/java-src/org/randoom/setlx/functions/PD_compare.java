@@ -22,7 +22,8 @@ public class PD_compare extends PreDefinedFunction {
         addParameter("valueB");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
         return Rational.valueOf(args.get(0).compareTo(args.get(1)));
     }
 }

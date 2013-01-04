@@ -1,4 +1,4 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -9,6 +9,8 @@ import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -37,6 +39,7 @@ public class Range extends Constructor {
         mStop   = stop;
     }
 
+    @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
         final Value start = mStart.eval(state);
               Value step  = null;
@@ -56,6 +59,7 @@ public class Range extends Constructor {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -70,29 +74,31 @@ public class Range extends Constructor {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb) {
-        mStart.appendString(sb, 0);
+    @Override
+    public void appendString(final State state, final StringBuilder sb) {
+        mStart.appendString(state, sb, 0);
         if (mSecond != null) {
             sb.append(", ");
-            mSecond.appendString(sb, 0);
+            mSecond.appendString(state, sb, 0);
         }
         sb.append(" .. ");
-        mStop.appendString(sb, 0);
+        mStop.appendString(state, sb, 0);
     }
 
     /* term operations */
 
+    @Override
     public void addToTerm(final State state, final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
-        result.addMember(mStart.toTerm(state));
+        result.addMember(state, mStart.toTerm(state));
         if (mSecond != null) {
-            result.addMember(mSecond.toTerm(state));
+            result.addMember(state, mSecond.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
-        result.addMember(mStop.toTerm(state));
+        result.addMember(state, mStop.toTerm(state));
 
-        collection.addMember(result);
+        collection.addMember(state, result);
     }
 
     /*package*/ static Range termToRange(final Term term) throws TermConversionException {
@@ -109,7 +115,7 @@ public class Range extends Constructor {
 
                 final Expr stop   = TermConverter.valueToExpr(term.lastMember());
                 return new Range(start, second, stop);
-            } catch (SetlException se) {
+            } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }

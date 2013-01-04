@@ -32,14 +32,17 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
         mStatements = statements;
     }
 
+    @Override
     public boolean evalConditionToBool(final State state) {
         return true;
     }
 
+    @Override
     public Value execute(final State state) throws SetlException {
         return mStatements.execute(state);
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         return execute(state);
     }
@@ -51,6 +54,7 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -61,16 +65,18 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(" else ");
-        mStatements.appendString(sb, tabs, true);
+        mStatements.appendString(state, sb, tabs, true);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
         return result;
     }
 

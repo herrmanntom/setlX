@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -33,7 +32,7 @@ implemented here as:
 public class Block extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String     FUNCTIONAL_CHARACTER = "^block";
-    // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // Request execution to stop. MAY ONLY BE SET BY STATE CLASS!
     public        static boolean    sStopExecution       = false;
 
     private final List<Statement> mStatements;
@@ -54,6 +53,7 @@ public class Block extends Statement {
         mStatements.add(stmnt);
     }
 
+    @Override
     public Value execute(final State state) throws SetlException {
         Value result = null;
         for (final Statement stmnt : mStatements) {
@@ -68,6 +68,7 @@ public class Block extends Statement {
         return null;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         return execute(state);
     }
@@ -79,6 +80,7 @@ public class Block extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -100,12 +102,13 @@ public class Block extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        appendString(sb, tabs, false);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        appendString(state, sb, tabs, false);
     }
 
-    public void appendString(final StringBuilder sb, final int tabs, final boolean brackets) {
-        final String endl      = Environment.getEndl();
+    public void appendString(final State state, final StringBuilder sb, final int tabs, final boolean brackets) {
+        final String endl      = state.getEndl();
               int    stmntTabs = tabs;
         if (brackets) {
             stmntTabs += 1;
@@ -114,28 +117,29 @@ public class Block extends Statement {
         }
         final Iterator<Statement> iter = mStatements.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb, stmntTabs);
+            iter.next().appendString(state, sb, stmntTabs);
             if (iter.hasNext()) {
                 sb.append(endl);
             }
         }
         if (brackets) {
             sb.append(endl);
-            Environment.getLineStart(sb, tabs);
+            state.getLineStart(sb, tabs);
             sb.append("}");
         }
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList stmntList = new SetlList(mStatements.size());
-        for (Statement s: mStatements) {
-            stmntList.addMember(s.toTerm(state));
+        for (final Statement s: mStatements) {
+            stmntList.addMember(state, s.toTerm(state));
         }
-        result.addMember(stmntList);
+        result.addMember(state, stmntList);
 
         return result;
     }

@@ -27,6 +27,7 @@ public class CollectionAccessRangeDummy extends Expr {
 
     private CollectionAccessRangeDummy() {}
 
+    @Override
     protected RangeDummy evaluate(final State state) {
         return RangeDummy.RD;
     }
@@ -38,6 +39,7 @@ public class CollectionAccessRangeDummy extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -46,12 +48,14 @@ public class CollectionAccessRangeDummy extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(" .. ");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
@@ -61,6 +65,7 @@ public class CollectionAccessRangeDummy extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

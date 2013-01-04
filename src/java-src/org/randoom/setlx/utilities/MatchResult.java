@@ -26,7 +26,7 @@ public class MatchResult {
     }
 
     public void addBinding(final String id, final Value value) {
-        Value pre = mVarBindings.put(id, value);
+        final Value pre = mVarBindings.put(id, value);
         if (pre != null && ! pre.equalTo(value)) {
             mMatches = false;
         }
@@ -43,7 +43,7 @@ public class MatchResult {
             state.putValue(entry.getKey(), entry.getValue().clone());
 
             if (sTraceAssignments) {
-                Environment.outWriteLn("~< Trace (match): " + entry.getKey() + " := " + entry.getValue() + " >~");
+                state.outWriteLn("~< Trace (match): " + entry.getKey() + " := " + entry.getValue() + " >~");
             }
         }
     }

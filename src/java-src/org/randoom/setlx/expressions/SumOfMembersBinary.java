@@ -34,6 +34,7 @@ public class SumOfMembersBinary extends Expr {
         mCollection = collection;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         return mCollection.eval(state).sumOfMembers(state, mNeutral.eval(state));
     }
@@ -45,6 +46,7 @@ public class SumOfMembersBinary extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -56,18 +58,20 @@ public class SumOfMembersBinary extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mNeutral.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mNeutral.appendString(state, sb, tabs);
         sb.append(" +/ ");
-        mCollection.appendString(sb, tabs);
+        mCollection.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mNeutral.toTerm(state));
-        result.addMember(mCollection.toTerm(state));
+        result.addMember(state, mNeutral.toTerm(state));
+        result.addMember(state, mCollection.toTerm(state));
         return result;
     }
 
@@ -82,6 +86,7 @@ public class SumOfMembersBinary extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

@@ -3,12 +3,11 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.AssertException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Condition;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -38,6 +37,7 @@ public class Assert extends Statement {
         mMessage    = message;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         if ( ! mCondition.evalToBool(state)) {
             throw new AssertException("Assertion failed: " + mMessage.eval(state).toString());
@@ -52,6 +52,7 @@ public class Assert extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -63,25 +64,27 @@ public class Assert extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("assert(");
-        mCondition.appendString(sb, tabs);
+        mCondition.appendString(state, sb, tabs);
         sb.append(", ");
-        mMessage.appendString(sb, tabs);
+        mMessage.appendString(state, sb, tabs);
         sb.append(");");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mCondition.toTerm(state));
-        result.addMember(mMessage.toTerm(state));
+        result.addMember(state, mCondition.toTerm(state));
+        result.addMember(state, mMessage.toTerm(state));
         return result;
     }
 
-    public static Assert termToStatement(Term term) throws TermConversionException {
+    public static Assert termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

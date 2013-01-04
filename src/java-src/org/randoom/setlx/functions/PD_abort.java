@@ -17,9 +17,10 @@ public class PD_abort extends PreDefinedFunction {
         enableUnlimitedParameters();
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws AbortException {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws AbortException {
         String msg = "";
-        for (Value arg : args) {
+        for (final Value arg : args) {
             msg += arg.getUnquotedString();
         }
         throw new AbortException("abort: " + msg);

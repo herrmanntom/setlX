@@ -53,10 +53,12 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
         mCacheHits = cacheHits;
     }
 
+    @Override
     public CachedProcedureDefinition createCopy() {
         return new CachedProcedureDefinition(mParameters, mStatements);
     }
 
+    @Override
     public CachedProcedureDefinition clone() {
         if (mClosure != null) {
             return new CachedProcedureDefinition(mParameters, mStatements, mClosure, mCache, mCacheHits);
@@ -78,6 +80,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     /* function call */
 
+    @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         final int size = args.size();
         if (mParameters.size() != size) {
@@ -96,9 +99,9 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
                     "Procedures using read-write ('rw') parameters can not be cached."
                 );
             } else {
-                Value v = args.get(i).eval(state);
+                final Value v = args.get(i).eval(state);
                 values.add(v);
-                key.addMember(v);
+                key.addMember(state, v);
             }
         }
 
@@ -121,31 +124,33 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("cachedProcedure(");
         final Iterator<ParameterDef> iter = mParameters.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
         }
         sb.append(") ");
-        mStatements.appendString(sb, tabs, /* brackets = */ true);
+        mStatements.appendString(state, sb, tabs, /* brackets = */ true);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
         for (final ParameterDef param: mParameters) {
-            paramList.addMember(param.toTerm(state));
+            paramList.addMember(state, param.toTerm(state));
         }
-        result.addMember(paramList);
+        result.addMember(state, paramList);
 
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
 
         return result;
     }
@@ -166,6 +171,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     private final static int initHashCode = CachedProcedureDefinition.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode;
     }

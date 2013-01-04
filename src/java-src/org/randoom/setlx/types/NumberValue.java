@@ -8,16 +8,22 @@ public abstract class NumberValue extends Value {
 
     /* arithmetic operations */
 
+    @Override
     public abstract NumberValue absoluteValue();
 
+    @Override
     public abstract NumberValue ceil();
 
+    @Override
     public abstract Value       difference(final State state, final Value subtrahend) throws SetlException;
 
+    @Override
     public abstract NumberValue floor();
 
+    @Override
     public abstract NumberValue minus(final State state) throws SetlException;
 
+    @Override
     public          Value       power(final State state, final Value exponent) throws SetlException {
         if (exponent.isInteger() == SetlBoolean.TRUE && ((Rational) exponent).intConvertable()) {
             return this.power(((Rational) exponent).intValue());
@@ -44,16 +50,21 @@ public abstract class NumberValue extends Value {
     protected abstract NumberValue power(final int    exponent) throws SetlException;
     protected abstract NumberValue power(final double exponent) throws SetlException;
 
+    @Override
     public    abstract Value       product(final State state, final Value multiplier) throws SetlException;
 
+    @Override
     public    abstract Value       quotient(final State state, final Value divisor) throws SetlException;
 
+    @Override
     public    abstract NumberValue round(final State state) throws SetlException;
 
+    @Override
     public    abstract Value       sum(final State state, final Value summand) throws SetlException;
 
     /* comparisons */
 
+    @Override
     public final    SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
         if (this == other) {
             return SetlBoolean.FALSE;

@@ -6,11 +6,13 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.StateImplementation;
 
 import java.util.List;
 
 public abstract class Value implements Comparable<Value> {
 
+    @Override
     public abstract Value   clone();
 
     /* Boolean operations */
@@ -253,7 +255,7 @@ public abstract class Value implements Comparable<Value> {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString && this != Om.OM) {
-            return ((SetlString) summand).sumFlipped(this);
+            return ((SetlString) summand).sumFlipped(state, this);
         }
         throw new UndefinedOperationException(
             "'" + this + " + " + summand + "' is undefined."
@@ -266,7 +268,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 
-    public void addMember(final Value element) throws SetlException {
+    public void addMember(final State state, final Value element) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not add '" + element + "' into operand; '" + this + "' is not a collection value."
         );
@@ -340,28 +342,28 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public Value getMember(final Value index) throws SetlException {
+    public Value getMember(final State state, final Value index) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member with index '" + index + "' from operand;" +
             " '" + this + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
-    public Value getMemberUnCloned(final Value index) throws SetlException {
+    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member with index '" + index + "' from operand;" +
             " '" + this + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
-    public Value getMembers(final Value low, final Value high) throws SetlException {
+    public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member between index '" + low + "' and '" + high + "' from operand;" +
             " '" + this + "' is not a collection value or ranges are unsupported for this type."
         );
     }
 
-    public Value join(final Value separator) throws IncompatibleTypeException {
+    public Value join(final State state, final Value separator) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' not a collection value."
         );
@@ -409,7 +411,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public SetlSet range() throws SetlException {
+    public SetlSet range(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a set."
         );
@@ -439,14 +441,14 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public void setMember(final Value index, final Value v) throws SetlException {
+    public void setMember(final State state, final Value index, final Value v) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not set member with index '" + index + "' from operand;" +
             " '" + this + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
-    public Value shuffle() throws IncompatibleTypeException {
+    public Value shuffle(final State state) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a list or string."
         );
@@ -464,7 +466,7 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public SetlList split(final Value pattern) throws IncompatibleTypeException {
+    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a string."
         );
@@ -488,14 +490,14 @@ public abstract class Value implements Comparable<Value> {
 
     /* string and char operations */
 
-    public abstract void appendString(final StringBuilder sb, final int tabs);
+    public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
-    public void appendUnquotedString(final StringBuilder sb, final int tabs) {
-        appendString(sb, tabs);
+    public void appendUnquotedString(final State state, final StringBuilder sb, final int tabs) {
+        appendString(state, sb, tabs);
     }
 
-    public void canonical(final StringBuilder sb) {
-        appendString(sb, 0);
+    public void canonical(final State state, final StringBuilder sb) {
+        appendString(state, sb, 0);
     }
 
     public SetlString charConvert() throws SetlException {
@@ -509,14 +511,17 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public SetlString str() {
-        final StringBuilder sb = new StringBuilder();
-        appendString(sb, 0);
+        final State         bubble = new StateImplementation();
+        final StringBuilder sb     = new StringBuilder();
+        appendString(bubble, sb, 0);
         return SetlString.newSetlStringFromSB(sb);
     }
 
+    @Override
     public final String toString() {
-        final StringBuilder sb = new StringBuilder();
-        appendString(sb, 0);
+        final State         bubble = new StateImplementation();
+        final StringBuilder sb     = new StringBuilder();
+        appendString(bubble, sb, 0);
         return sb.toString();
     }
 
@@ -545,10 +550,12 @@ public abstract class Value implements Comparable<Value> {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public abstract int     compareTo(final Value v);
 
     public abstract boolean equalTo  (final Value v);
 
+    @Override
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;

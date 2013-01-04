@@ -7,7 +7,7 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// collect(list)                 : Collects multiple occurences of the same value in
+// collect(list)                 : Collects multiple occurrences of the same value in
 //                                 `list' into a map of [value, nOccurences].
 
 public class PD_collect extends PreDefinedFunction {
@@ -18,14 +18,15 @@ public class PD_collect extends PreDefinedFunction {
         addParameter("list");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value list = args.get(0);
         if ( ! (list instanceof SetlList)) {
             throw new IncompatibleTypeException(
                 "Argument '" + list + "' is not a list."
             );
         }
-        return ((SetlList) list).collect();
+        return ((SetlList) list).collect(state);
     }
 }
 

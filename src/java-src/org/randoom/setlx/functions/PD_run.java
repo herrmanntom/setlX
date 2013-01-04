@@ -8,6 +8,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
+import java.util.Locale;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
@@ -21,7 +22,8 @@ public class PD_run extends PreDefinedFunction {
         addParameter("command");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         if ( ! (args.get(0) instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Argument '" + args.get(0) + "' is not a string."
@@ -31,7 +33,7 @@ public class PD_run extends PreDefinedFunction {
         final String command = args.get(0).getUnquotedString();
 
         try {
-            final String   os      = System.getProperty("os.name").toLowerCase();
+            final String   os      = System.getProperty("os.name").toLowerCase(Locale.US);
                   String   shell   = null;
                   String   options = null;
             if (os.contains("nix") || os.contains("nux")) { // Unix/Linux
@@ -48,33 +50,33 @@ public class PD_run extends PreDefinedFunction {
                 options = "";
             }
 
-            Process p = Runtime.getRuntime().exec(new String[]{shell, options, command});
+            final Process p = Runtime.getRuntime().exec(new String[]{shell, options, command});
 
             p.waitFor();
 
-            BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            BufferedReader error  = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            final BufferedReader output = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            final BufferedReader error  = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-            SetlList       out    = new SetlList();
-            SetlList       err    = new SetlList();
+            final SetlList       out    = new SetlList();
+            final SetlList       err    = new SetlList();
 
             String         line   = null;
             while ((line = output.readLine()) != null) {
-                out.addMember(new SetlString(line));
+                out.addMember(state, new SetlString(line));
             }
             output.close();
 
             while ((line = error.readLine()) != null) {
-                err.addMember(new SetlString(line));
+                err.addMember(state, new SetlString(line));
             }
             error.close();
 
-            SetlList       result = new SetlList(2);
-            result.addMember(out);
-            result.addMember(err);
+            final SetlList       result = new SetlList(2);
+            result.addMember(state, out);
+            result.addMember(state, err);
 
             return result;
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return Om.OM;
         }
     }

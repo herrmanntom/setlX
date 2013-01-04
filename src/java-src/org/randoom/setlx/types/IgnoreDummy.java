@@ -1,6 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
 
 public class IgnoreDummy extends Value {
 
@@ -8,6 +9,7 @@ public class IgnoreDummy extends Value {
 
     private IgnoreDummy() {}
 
+    @Override
     public IgnoreDummy clone() {
         // this value is atomic and can not be changed
         return this;
@@ -15,18 +17,21 @@ public class IgnoreDummy extends Value {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("_");
     }
 
     /* term operations */
 
-    public MatchResult matchesTerm(final Value other) {
+    @Override
+    public MatchResult matchesTerm(final State state, final Value other) {
         return new MatchResult(true);
     }
 
     /* comparisons */
 
+    @Override
     public int compareTo(final Value v) {
         if (v == ID) {
             return 0;
@@ -35,6 +40,7 @@ public class IgnoreDummy extends Value {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (v == ID) {
             return true;
@@ -45,6 +51,7 @@ public class IgnoreDummy extends Value {
 
     private final static int initHashCode = IgnoreDummy.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode;
     }

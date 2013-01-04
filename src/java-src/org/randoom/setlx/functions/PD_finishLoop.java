@@ -3,7 +3,6 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DebugPrompt;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -17,9 +16,10 @@ public class PD_finishLoop extends PreDefinedFunction {
         super("finishLoop");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
-        Environment.setDebugFinishLoop(true);
-        Environment.setDebugModeActive(false);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
+        state.setDebugFinishLoop(true);
+        state.setDebugModeActive(false);
         DebugPrompt.stopPrompt();
         return Om.OM.hide();
     }

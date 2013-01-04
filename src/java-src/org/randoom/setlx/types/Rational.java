@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
@@ -92,6 +91,7 @@ public class Rational extends NumberValue {
         return new Rational(nominator, denominator);
     }
 
+    @Override
     public Rational clone() {
         // this value is immutable and can not be changed once set
         return this;
@@ -194,6 +194,7 @@ public class Rational extends NumberValue {
     }
 
     /* type check (sort of Boolean operation) */
+    @Override
     public SetlBoolean isInteger() {
         if (mIsInteger) {
             return SetlBoolean.TRUE;
@@ -202,11 +203,13 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public SetlBoolean isRational() {
         return SetlBoolean.TRUE;
     }
 
     /* type conversion */
+    @Override
     public Rational toInteger() {
         if (mIsInteger) {
             return this;
@@ -215,15 +218,18 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public Rational toRational() {
         return this;
     }
 
+    @Override
     public Real toReal() {
         return new Real(mNominator, mDenominator);
     }
 
     /* arithmetic operations */
+    @Override
     public Rational absoluteValue() {
         return new Rational(mNominator.abs(), mDenominator.abs());
     }
@@ -232,17 +238,19 @@ public class Rational extends NumberValue {
     // The calculation is rather complicated because the integer division of negative
     // numbers in Java does not satisfy the mathematical specification that
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
+    @Override
     public Rational ceil() {
         if (mNominator.compareTo(BigInteger.ZERO) > 0 &&
              ! mIsInteger
            )
         {
-            BigInteger q = mNominator.divide(mDenominator).add(BigInteger.ONE);
+            final BigInteger q = mNominator.divide(mDenominator).add(BigInteger.ONE);
             return new Rational(q);
         }
         return new Rational(mNominator.divide(mDenominator));
     }
 
+    @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof Rational) {
             final Rational s = (Rational) subtrahend;
@@ -282,6 +290,7 @@ public class Rational extends NumberValue {
             this.result = BigInteger.valueOf(from);
         }
 
+        @Override
         public void run() {
             for (int i = from + 1; i < to; ++i) {
                 result = result.multiply(BigInteger.valueOf(i));
@@ -289,6 +298,7 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public Rational factorial(final State state) throws SetlException {
         if ( ! mIsInteger ||
                mNominator.compareTo(BigInteger.ZERO) < 0
@@ -301,14 +311,14 @@ public class Rational extends NumberValue {
         // but wanting that is crazy talk
         final int        n      = intValue();
               BigInteger result = BigInteger.ONE;
-        final int        CORES  = Environment.getNumberOfCores();
-        // use simple implementation when computing small factorials or having
+        final int        CORES  = state.getNumberOfCores();
+        // use simple implementation when computing a small factorial or having
         // only one CPU (less overhead)
         if (n <= 512 || CORES <= 1) {
             for (int i = 2; i <= n; ++i) {
                 result = result.multiply(BigInteger.valueOf(i));
             }
-        } else { // use multiple threads for bigger factorials
+        } else { // use multiple threads for a bigger factorial
             // create as many threads as there are processors
             final Factorial threads[] = new Factorial[CORES];
             for (int i = 0; i < CORES; ++i) {
@@ -326,7 +336,7 @@ public class Rational extends NumberValue {
                 try {
                     threads[i].join();
                     result = result.multiply(threads[i].result);
-                } catch (InterruptedException ie) {
+                } catch (final InterruptedException ie) {
                     throw new StopExecutionException("Interrupted");
                 }
             }
@@ -334,6 +344,7 @@ public class Rational extends NumberValue {
         return new Rational(result);
     }
 
+    @Override
     public void fillCollectionWithinRange(final State state,
                                           final Value step_,
                                           final Value stop_,
@@ -362,11 +373,11 @@ public class Rational extends NumberValue {
         Rational i = this;
         if (step.compareTo(Rational.ZERO) > 0) {
             for (; i.compareTo(stop) <= 0; i = (Rational) i.sum(state, step)) {
-                collection.addMember(i);
+                collection.addMember(state, i);
             }
         } else if (step.compareTo(Rational.ZERO) < 0) {
             for (; i.compareTo(stop) >= 0; i = (Rational) i.sum(state, step)) {
-                collection.addMember(i);
+                collection.addMember(state, i);
             }
         } else { // step == 0!
             throw new UndefinedOperationException(
@@ -379,6 +390,7 @@ public class Rational extends NumberValue {
     // The calculation is rather complicated because the integer division of negative
     // numbers in Java does not satisfy the mathematical specification that
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
+    @Override
     public Rational floor() {
         if (mNominator.compareTo(BigInteger.ZERO) < 0 &&
              ! mIsInteger
@@ -390,6 +402,7 @@ public class Rational extends NumberValue {
         return new Rational(mNominator.divide(mDenominator));
     }
 
+    @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
             return this.quotient(state, divisor).floor();
@@ -402,12 +415,14 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public Rational minus(final State state) {
         return new Rational(mNominator.negate(), mDenominator);
     }
 
     // The mathematical specification of the modulo function is:
     //     a % b = a - floor(a/b) * b
+    @Override
     public Value modulo(final State state, final Value modulo) throws IncompatibleTypeException, SetlException {
         if (modulo instanceof Rational) {
             final Rational b = (Rational) modulo;
@@ -430,6 +445,7 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     protected Rational power(final int exponent) throws NumberToLargeException {
         if (exponent >= 0) {
             return new Rational(mNominator  .pow(exponent     ), mDenominator.pow(exponent     ));
@@ -438,10 +454,12 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     protected NumberValue power(final double exponent) throws SetlException {
         return toReal().power(exponent);
     }
 
+    @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final Rational r = (Rational) multiplier;
@@ -468,6 +486,7 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof Rational) {
             final Rational d = (Rational) divisor;
@@ -497,11 +516,12 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public Rational rnd(final State state) throws IncompatibleTypeException {
         if (mIsInteger) {
             BigInteger rnd;
             do {
-                rnd = new BigInteger(mNominator.bitLength(), Environment.getRandom());
+                rnd = new BigInteger(mNominator.bitLength(), state.getRandom());
             } while (rnd.compareTo(mNominator.abs()) > 0);
             if (mNominator.compareTo(BigInteger.ZERO) < 0) {
                 rnd = rnd.negate();
@@ -514,6 +534,7 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public Rational rnd(final State state, final Value numberOfChoices) throws SetlException {
         if (numberOfChoices.isInteger() != SetlBoolean.TRUE ||
             numberOfChoices.compareTo(Rational.TWO) < 0
@@ -522,13 +543,13 @@ public class Rational extends NumberValue {
                 "Number of choices '" + numberOfChoices + "' is not an integer >= 2."
             );
         } else {
-            Rational choices = (Rational) numberOfChoices.difference(state, Rational.ONE);
-            Rational r       = choices.rnd(state);
+            final Rational choices = (Rational) numberOfChoices.difference(state, Rational.ONE);
+            final Rational r       = choices.rnd(state);
             return new Rational(mNominator.multiply(r.mNominator), mDenominator.multiply(choices.mNominator));
         }
     }
 
-
+    @Override
     public Rational round(final State state) throws SetlException {
         if (mIsInteger) {
             return this;
@@ -538,6 +559,7 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof Rational) {
             final Rational r = (Rational) summand;
@@ -557,7 +579,7 @@ public class Rational extends NumberValue {
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).sumFlipped(this);
+            return ((SetlString)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " + " + summand +
@@ -568,7 +590,8 @@ public class Rational extends NumberValue {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mNominator.toString());
         if ( ! mIsInteger) {
             sb.append('/');
@@ -576,6 +599,7 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public SetlString charConvert() throws NumberToLargeException {
         if (mNominator.compareTo(BigInteger.valueOf(127)) <= 0 &&
             mNominator.compareTo(BigInteger.ZERO) >= 0         &&
@@ -602,6 +626,7 @@ public class Rational extends NumberValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
@@ -632,6 +657,7 @@ public class Rational extends NumberValue {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
@@ -655,6 +681,7 @@ public class Rational extends NumberValue {
 
     private final static int initHashCode = Rational.class.hashCode();
 
+    @Override
     public int hashCode() {
         return (initHashCode + mNominator.hashCode()) * 31 + mDenominator.hashCode();
     }

@@ -46,6 +46,7 @@ public class CollectionAccess extends Expr {
         mArgs   = args;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         final Value lhs = mLhs.eval(state);
         if (lhs == Om.OM) {
@@ -98,6 +99,7 @@ public class CollectionAccess extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -110,6 +112,7 @@ public class CollectionAccess extends Expr {
     }
 
     // sets this expression to the given value
+    @Override
     public void assignUncloned(final State state, final Value v) throws SetlException {
         Value lhs = null;
         if (mLhs instanceof Variable) {
@@ -123,7 +126,7 @@ public class CollectionAccess extends Expr {
             lhs = ((CollectionAccess) mLhs).evaluateUnCloned(state);
         }
         if (lhs != null && lhs instanceof CollectionValue && mArgs.size() == 1) {
-            lhs.setMember(mArgs.get(0).eval(state), v);
+            lhs.setMember(state, mArgs.get(0).eval(state), v);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + mLhs + " := " + v + "\" is unusable for list assignment."
@@ -133,13 +136,14 @@ public class CollectionAccess extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mLhs.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mLhs.appendString(state, sb, tabs);
         sb.append("[");
 
         final Iterator<Expr> iter = mArgs.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb, 0);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(" ");
             }
@@ -150,30 +154,32 @@ public class CollectionAccess extends Expr {
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mLhs.toTerm(state));
+        result.addMember(state, mLhs.toTerm(state));
 
         final SetlList    arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
-            arguments.addMember(arg.toTerm(state));
+            arguments.addMember(state, arg.toTerm(state));
         }
-        result.addMember(arguments);
+        result.addMember(state, arguments);
 
         return result;
     }
 
+    @Override
     public Term toTermQuoted(final State state) throws SetlException {
         final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mLhs.toTermQuoted(state));
+        result.addMember(state, mLhs.toTermQuoted(state));
 
         final SetlList    arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
-            arguments.addMember(arg.eval(state).toTerm(state));
+            arguments.addMember(state, arg.eval(state).toTerm(state));
         }
-        result.addMember(arguments);
+        result.addMember(state, arguments);
 
         return result;
     }
@@ -193,6 +199,7 @@ public class CollectionAccess extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

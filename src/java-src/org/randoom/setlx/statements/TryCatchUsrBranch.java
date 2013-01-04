@@ -41,6 +41,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         mBlockToRecover = blockToRecover;
     }
 
+    @Override
     public boolean catches(final State state, final CatchableInSetlXException cise) {
         if (cise instanceof ThrownInSetlXException) {
             // store exception
@@ -52,6 +53,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         }
     }
 
+    @Override
     public Value execute(final State state) throws SetlException {
         // assign directly
         mErrorVar.assign(state, mException.getValue().clone());
@@ -61,6 +63,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         return mBlockToRecover.execute(state);
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         return execute(state);
     }
@@ -72,6 +75,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -86,19 +90,21 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(" catchUsr (");
-        mErrorVar.appendString(sb, tabs);
+        mErrorVar.appendString(state, sb, tabs);
         sb.append(") ");
-        mBlockToRecover.appendString(sb, tabs, true);
+        mBlockToRecover.appendString(state, sb, tabs, true);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term    result  = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mErrorVar.toTerm(state));
-        result.addMember(mBlockToRecover.toTerm(state));
+        result.addMember(state, mErrorVar.toTerm(state));
+        result.addMember(state, mBlockToRecover.toTerm(state));
         return result;
     }
 

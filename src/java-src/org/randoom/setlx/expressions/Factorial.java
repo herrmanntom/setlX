@@ -33,6 +33,7 @@ public class Factorial extends Expr {
         mExpr = expr;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         return mExpr.eval(state).factorial(state);
     }
@@ -44,6 +45,7 @@ public class Factorial extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -54,16 +56,18 @@ public class Factorial extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mExpr.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mExpr.appendString(state, sb, tabs);
         sb.append("!");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mExpr.toTerm(state));
+        result.addMember(state, mExpr.toTerm(state));
         return result;
     }
 
@@ -71,12 +75,13 @@ public class Factorial extends Expr {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             return new Factorial(expr);
         }
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

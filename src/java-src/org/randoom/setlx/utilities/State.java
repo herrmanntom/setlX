@@ -1,136 +1,156 @@
 package org.randoom.setlx.utilities;
 
-import org.randoom.setlx.functions.PreDefinedFunction;
-import org.randoom.setlx.types.Om;
+import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
-import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.Random;
 
-// This class represents the current state of the interpreter.
-public class State {
-    /* This variable stores the root VariableScope:
-       Predefined functions are dynamically loaded into this VariableScope and
-       not only into the current one, to be accessible by any previous and future
-       VariableScope clones (results in faster lookup).                       */
-    private final   static  VariableScope   mRootScope = new VariableScope();
+// This interface provides access to the current state of the interpreter.
+public abstract class State {
 
-    // this scope stores all global variables
-    private final           VariableScope   mGlobals;
-    private                 boolean         mGlobalsPresent;
+    public abstract VariableScope       getScope();
 
-    // this variable stores the variable assignment that is currently active
-    private                 VariableScope   mVariableScope;
+    public abstract void                setScope(final VariableScope newEnv);
 
-    public State() {
-        mGlobals        = new VariableScope();
-        mGlobalsPresent = false;
-        mVariableScope  = mRootScope.clone();
-    }
+    public abstract void                resetState();
 
-    public VariableScope getScope() {
-        return mVariableScope;
-    }
+    public abstract void                setEnvironmentProvider(final EnvironmentProvider envProvider);
 
-    public void setScope(final VariableScope newEnv) {
-        mVariableScope = newEnv;
-    }
+    public abstract EnvironmentProvider getEnvironmentProvider();
 
-    // get new state, which is not connected to anything
-    public static State getBubbleState() {
-        return new State();
-    }
+    public abstract Value               findValue(final String var);
 
-    public void resetState() {
-        mVariableScope  = mRootScope.clone();
-        mGlobals.clear();
-        mGlobalsPresent = false;
-        ParseSetlX.clearLoadedLibraries();
-    }
+    public abstract void                putValue(final String var, final Value value);
 
-    public Value findValue(final String var) {
-        Value v = null;
-        if (mGlobalsPresent) {
-            v = mGlobals.locateValue(var, true);
-            if (v != null) {
-                return v;
-            }
-        }
-        v = mVariableScope.locateValue(var, ! mGlobalsPresent);
-        if (v == null) {
-            // search if name matches a predefined function (which start with 'PD_')
-            final String packageName = PreDefinedFunction.class.getPackage().getName();
-            final String className   = "PD_" + var;
-            try {
-                final Class<?> c = Class.forName(packageName + '.' + className);
-                v                = (PreDefinedFunction) c.getField("DEFINITION").get(null);
-            } catch (Exception e) {
-                /* Name does not match predefined function.
-                   But return value already is null, no change necessary.     */
-            }
-            if (v == null && var.toLowerCase().equals(var)) {
-               // search if name matches a java Math.x function (which are all lower case)
-                try {
-                    Method f = Math.class.getMethod(var, double.class);
-                    v        = new MathFunction(var, f);
-                } catch (Exception e) {
-                    /* Name also does not match java Math.x function.
-                       But return value already is null, no change necessary.     */
-                }
-            }
-            if (v == null) {
-                v = Om.OM;
-                // identifier could not be looked up...
-                // return Om.OM and store it into intial scope to prevent reflection lookup next time
-            }
-            /* Store result of reflection lookup to root scope to speed up search next time.
-
-               Root scope is chosen, because it is at the end of every
-               currently existing and all future scopes search paths.         */
-            mRootScope.storeValue(var, v);
-        }
-        return v;
-    }
-
-    public void putValue(final String var, final Value value) {
-        if (mGlobalsPresent && mGlobals.locateValue(var, false) != null) {
-            mGlobals.storeValue(var, value);
-        } else {
-            mVariableScope.storeValue(var, value);
-        }
-    }
-
-    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
-        if (mGlobalsPresent) {
-            final Value now = mGlobals.locateValue(var, false);
-            if (now != null) {
-                if (now.equalTo(value)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        }
-        return mVariableScope.storeValueCheckUpTo(var, value, outerScope);
-    }
+    public abstract boolean             putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope);
 
     // Add bindings stored in `scope' into current scope.
     // This also adds vars in outer scopes of `scope' until reaching the current
     // scope as outer scope of `scope'.
-    public void putAllValues(final VariableScope scope) {
-        mVariableScope.storeAllValues(mGlobalsPresent, mGlobals, scope);
-    }
+    public abstract void                putAllValues(final VariableScope scope);
 
-    public void makeGlobal(final String var) {
-        if (mGlobals.locateValue(var, false) == null) {
-            mGlobals.storeValue(var, Om.OM);
-        }
-        mGlobalsPresent = true;
-    }
+    public abstract void                makeGlobal(final String var);
 
-    public Term scopeToTerm() {
-        return mVariableScope.toTerm(this, mGlobals);
-    }
+    public abstract Term                scopeToTerm();
+
+    /* I/O */
+
+    public abstract String              inReadLine() throws JVMIOException;
+
+    // write to standard output
+    public abstract void                outWrite(final String msg);
+    public abstract void                outWriteLn(final String msg);
+    public abstract void                outWriteLn();
+
+    // write to standard error
+    public abstract void                errWrite(final String msg);
+    public abstract void                errWriteLn(final String msg);
+    public abstract void                errWriteLn();
+
+    // capture/write parser errors
+    public abstract void                writeParserErrLn(final String msg);
+    public abstract LinkedList<String>  getParserErrorCapture();
+    public abstract void                setParserErrorCapture(final LinkedList<String> capture);
+
+    public abstract boolean             prompt(final String prompt) throws JVMIOException;
+
+    public abstract void                promptUnchecked(final String prompt);
+
+    // allow modification of fileName/path when reading files
+    public abstract String              filterFileName(final String fileName);
+
+    // allow modification of library name
+    public abstract String              filterLibraryName(final String name);
+
+    /* other stuff */
+    public abstract int                 getNumberOfCores();
+
+    // current time in ms
+    public abstract long                currentTimeMillis();
+
+    public abstract void                setPredictableRandoom();
+
+    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
+    public abstract int                 getRandomInt(final int upperBoundary);
+
+    // get random number (all int values are possible)
+    public abstract int                 getRandomInt();
+
+    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
+    public abstract double              getRandomDouble();
+
+    public abstract Random              getRandom();
+
+    public abstract void                stopExecution(final boolean stopExecution);
+
+    public abstract boolean             isExecutionStopped();
+
+    public abstract void                setMultiLineMode(final boolean multiLineMode);
+
+    public abstract boolean             isMultiLineEnabled();
+
+    public abstract void                setInteractive(final boolean isInteractive);
+
+    public abstract boolean             isInteractive();
+
+    public abstract void                setPrintVerbose(final boolean printVerbose);
+
+    public abstract boolean             isPrintVerbose();
+
+    public abstract void                setTraceAssignments(final boolean traceAssignments);
+
+    public abstract boolean             isTraceAssignments();
+
+    public abstract void                setAssertsDisabled(final boolean assertsDisabled);
+
+    public abstract boolean             areAssertsDisabled();
+
+    public abstract void                getLineStart(final StringBuilder sb, final int tabs);
+
+    public abstract String              getEndl();
+    public abstract String              getTab();
+
+    /* -- Debugger -- */
+
+    public abstract void                setBreakpoint(final String id);
+
+    public abstract boolean             removeBreakpoint(final String id);
+
+    public abstract void                removeAllBreakpoints();
+
+    public abstract boolean             isBreakpoint(final String id);
+
+    public abstract String[]            getAllBreakpoints();
+
+    public abstract void                setBreakpointsEnabled(final boolean enabled);
+
+    public abstract boolean             areBreakpointsEnabled();
+
+    public abstract void                setDebugModeActive(final boolean active);
+
+    public abstract boolean             isDebugModeActive();
+
+    public abstract void                setDebugPromptActive(final boolean active);
+
+    public abstract boolean             isDebugPromptActive();
+
+    public abstract void                setDebugStepNextExpr(final boolean stepNextExpr);
+
+    public abstract boolean             isDebugStepNextExpr();
+
+    public abstract void                setDebugStepThroughFunction(final boolean stepThrough);
+
+    public abstract boolean             isDebugStepThroughFunction();
+
+    public abstract void                setDebugFinishFunction(final boolean finish);
+
+    public abstract boolean             isDebugFinishFunction();
+
+    public abstract void                setDebugFinishLoop(final boolean finish);
+
+    public abstract boolean             isDebugFinishLoop();
 
 }
 

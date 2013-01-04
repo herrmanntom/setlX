@@ -20,16 +20,17 @@ public class PD_eval extends PreDefinedFunction {
         addParameter("setlX_expr");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value   exprArg = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        final Value   exprArg  = args.get(0);
         if ( ! (exprArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Expression-argument '" + exprArg + "' is not a string.");
         }
         // get expression string to be parsed
-        String  exprStr = exprArg.getUnquotedString();
+        final String  exprStr = exprArg.getUnquotedString();
 
         ParseSetlX.resetErrorCount();
-        Expr expr = ParseSetlX.parseStringToExpr(exprStr);
+        final Expr    expr    = ParseSetlX.parseStringToExpr(state, exprStr);
 
         // eval and return result
         return expr.eval(state);

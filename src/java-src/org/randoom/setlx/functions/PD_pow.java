@@ -16,7 +16,8 @@ public class PD_pow extends PreDefinedFunction {
         addParameter("set");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         return args.get(0).powerSet(state);
     }
 }

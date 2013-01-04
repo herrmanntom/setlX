@@ -6,7 +6,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -36,26 +35,32 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
         mStatements = statements;
     }
 
+    @Override
     public MatchResult matches(final State state, final Value term) {
         return new MatchResult(true);
     }
 
+    @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
         return true;
     }
 
+    @Override
     public MatchResult scannes(final State state, final SetlString string) {
         return new MatchResult(true);
     }
 
+    @Override
     public int getEndOffset() {
         return END_OFFSET;
     }
 
+    @Override
     public Value execute(final State state) throws SetlException {
         return mStatements.execute(state);
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         return execute(state);
     }
@@ -67,6 +72,7 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -77,19 +83,21 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("default:");
-        sb.append(Environment.getEndl());
-        mStatements.appendString(sb, tabs + 1);
-        sb.append(Environment.getEndl());
+        sb.append(state.getEndl());
+        mStatements.appendString(state, sb, tabs + 1);
+        sb.append(state.getEndl());
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
         return result;
     }
 

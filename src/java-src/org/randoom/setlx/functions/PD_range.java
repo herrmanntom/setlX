@@ -16,8 +16,9 @@ public class PD_range extends PreDefinedFunction {
         addParameter("map");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        return args.get(0).range();
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        return args.get(0).range(state);
     }
 }
 

@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.boolExpressions.Equal;
+import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.BracketedExpr;
 import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
 import org.randoom.setlx.expressions.Expr;
@@ -27,6 +28,7 @@ import org.randoom.setlx.types.Value;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class TermConverter {
@@ -53,7 +55,7 @@ public class TermConverter {
                     // search via reflection, if method was not found in maps
                     if (converter == null) {
                         // string used for method look-up
-                        final String    needle              = fc.substring(1, 2).toUpperCase() + fc.substring(2);
+                        final String    needle              = fc.substring(1, 2).toUpperCase(Locale.US) + fc.substring(2);
                         // look it up in [bool]expression and statement packages
                         final String    packageNameBExpr    = Equal    .class.getPackage().getName();
                         final String    packageNameExpr     = Expr     .class.getPackage().getName();

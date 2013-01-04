@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -23,7 +22,8 @@ public class PD_read extends PreDefinedFunction {
         allowFewerParameters();
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
         Value          inputValue = Om.OM;
         String         input      = null;
         String         prompt     = null;
@@ -31,20 +31,20 @@ public class PD_read extends PreDefinedFunction {
             prompt = ": ";
         } else {
             prompt = "";
-            for (Value arg : args) {
+            for (final Value arg : args) {
                 prompt += arg.getUnquotedString();
             }
         }
         try {
             do {
-                Environment.prompt(prompt);
-                input = Environment.inReadLine();
+                state.prompt(prompt);
+                input = state.inReadLine();
                 if (input != null) {
                     input = input.trim();
                 }
             } while (input != null && input.equals(""));
-        } catch (JVMIOException ioe) {
-            Environment.errWriteLn("IO error trying to read from stdin!");
+        } catch (final JVMIOException ioe) {
+            state.errWriteLn("IO error trying to read from stdin!");
         }
 
         if (input != null) {

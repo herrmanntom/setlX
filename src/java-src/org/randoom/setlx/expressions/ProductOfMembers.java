@@ -32,6 +32,7 @@ public class ProductOfMembers extends Expr {
         mExpr = expr;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         return mExpr.eval(state).productOfMembers(state, Om.OM);
     }
@@ -43,6 +44,7 @@ public class ProductOfMembers extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -53,16 +55,18 @@ public class ProductOfMembers extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("*/");
-        mExpr.appendString(sb, tabs);
+        mExpr.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mExpr.toTerm(state));
+        result.addMember(state, mExpr.toTerm(state));
         return result;
     }
 
@@ -76,6 +80,7 @@ public class ProductOfMembers extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

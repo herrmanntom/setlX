@@ -33,6 +33,7 @@ public class IfThen extends Statement {
         mBranchList = branchList;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         for (final IfThenAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool(state)) {
@@ -49,6 +50,7 @@ public class IfThen extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -76,22 +78,24 @@ public class IfThen extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         for (final IfThenAbstractBranch br : mBranchList) {
-            br.appendString(sb, tabs);
+            br.appendString(state, sb, tabs);
         }
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term     result     = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final IfThenAbstractBranch br: mBranchList) {
-            branchList.addMember(br.toTerm(state));
+            branchList.addMember(state, br.toTerm(state));
         }
-        result.addMember(branchList);
+        result.addMember(state, branchList);
 
         return result;
     }

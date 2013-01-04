@@ -48,10 +48,12 @@ public class LambdaDefinition extends ProcedureDefinition {
         mExpr = expr;
     }
 
+    @Override
     public LambdaDefinition createCopy() {
         return new LambdaDefinition(mParameters, mExpr);
     }
 
+    @Override
     public LambdaDefinition clone() {
         if (mClosure != null) {
             return new LambdaDefinition(mParameters, mStatements, mClosure, mExpr);
@@ -62,14 +64,15 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         if (mParameters.size() == 1) {
-            mParameters.get(0).appendString(sb);
+            mParameters.get(0).appendString(state, sb, 0);
         } else {
             sb.append("[");
             final Iterator<ParameterDef> iter = mParameters.iterator();
             while (iter.hasNext()) {
-                iter.next().appendString(sb);
+                iter.next().appendString(state, sb, 0);
                 if (iter.hasNext()) {
                     sb.append(", ");
                 }
@@ -77,21 +80,22 @@ public class LambdaDefinition extends ProcedureDefinition {
             sb.append("]");
         }
         sb.append(" |-> ");
-        mExpr.appendString(sb, tabs);
+        mExpr.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
-        for (ParameterDef param: mParameters) {
-            paramList.addMember(param.toTerm(state));
+        for (final ParameterDef param: mParameters) {
+            paramList.addMember(state, param.toTerm(state));
         }
-        result.addMember(paramList);
+        result.addMember(state, paramList);
 
-        result.addMember(mExpr.toTerm(state));
+        result.addMember(state, mExpr.toTerm(state));
 
         return result;
     }
@@ -112,6 +116,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     private final static int initHashCode = LambdaDefinition.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode;
     }

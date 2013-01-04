@@ -33,6 +33,7 @@ public class VariableIgnore extends Expr {
 
     private VariableIgnore() { }
 
+    @Override
     protected IgnoreDummy evaluate(final State state) throws UndefinedOperationException {
         return IgnoreDummy.ID;
     }
@@ -44,6 +45,7 @@ public class VariableIgnore extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -51,6 +53,7 @@ public class VariableIgnore extends Expr {
     ) { /* nothing to collect */ }
 
     // sets this expression to the given value
+    @Override
     public void assignUncloned(final State state, final Value v) {
         // or maybe it just does nothing
     }
@@ -60,18 +63,21 @@ public class VariableIgnore extends Expr {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v' */
+    @Override
     public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) {
         return true;
     }
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("_");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
@@ -81,6 +87,7 @@ public class VariableIgnore extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

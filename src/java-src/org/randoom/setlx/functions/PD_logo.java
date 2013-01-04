@@ -3,7 +3,6 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -105,14 +104,15 @@ public class PD_logo extends PreDefinedFunction {
         super("logo");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
         String  logo  = LOGO_SMALL;
         int     payUp = 0;
         while(payUp <= 0 && payUp > -3 && count < 3) {
             try {
                 payUp--;
-                Environment.prompt("Insert USD-Coin: ");
-                String input = Environment.inReadLine();
+                state.prompt("Insert USD-Coin: ");
+                String input = state.inReadLine();
                 if (input != null) {
                     input = input.trim();
                 } else {
@@ -124,49 +124,49 @@ public class PD_logo extends PreDefinedFunction {
                         break;
                     }
                 }
-            } catch (JVMIOException ioe) { /* who cares? */}
+            } catch (final JVMIOException ioe) { /* who cares? */}
         }
         if (payUp <= 0) {
             if (++count == 3) {
-                Environment.outWriteLn("You got 2 pennies already and won't let one go? You are an ass.");
+                state.outWriteLn("You got 2 pennies already and won't let one go? You are an ass.");
             } else if (count > 3) {
-                Environment.outWriteLn("You are an ass.");
+                state.outWriteLn("You are an ass.");
             } else if (count > 1) {
-                Environment.outWriteLn("Too bad... here's another `penny' for your thoughts.");
+                state.outWriteLn("Too bad... here's another `penny' for your thoughts.");
             } else {
-                Environment.outWriteLn("Too bad... here's a `penny' for your thoughts.");
+                state.outWriteLn("Too bad... here's a `penny' for your thoughts.");
             }
             return Rational.ZERO;
         } else if (payUp == 1) {
-            Environment.outWriteLn("  ...cheap bastard...  ");
+            state.outWriteLn("  ...cheap bastard...  ");
             logo = LOGO_SMALL;
         } else if (payUp == 2) {
-            Environment.outWriteLn("  ...well... never mind...  ");
+            state.outWriteLn("  ...well... never mind...  ");
             logo = LOGO_SMALL;
         }  else if (payUp == 3) {
-            Environment.outWriteLn("  ...you can do one better...  ");
+            state.outWriteLn("  ...you can do one better...  ");
             logo = LOGO_BIG;
         } else {
-            Environment.outWriteLn("Thank you!");
+            state.outWriteLn("Thank you!");
             logo = LOGO_BIG;
         }
 
         count = 0;
         int timeSum = 0;
         for (int i = 0; i < logo.length(); i++) {
-            Environment.outWrite("" + logo.charAt(i));
+            state.outWrite("" + logo.charAt(i));
             try {
                 int time = (i / (10 * payUp)) +1;
                 if (time > 125) {
                     time = 125;
                 }
-                time = Environment.getRandomInt(time);
+                time = state.getRandomInt(time);
                 timeSum += time;
                 Thread.sleep(time);
-            } catch (InterruptedException ie) { /* who cares? */}
+            } catch (final InterruptedException ie) { /* who cares? */}
         }
 
-        Environment.outWriteLn("Please come again.");
+        state.outWriteLn("Please come again.");
 
         return Rational.valueOf(timeSum);
     }

@@ -16,7 +16,8 @@ public class PD_throw extends PreDefinedFunction {
         addParameter("value");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws ThrownInSetlXException {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws ThrownInSetlXException {
         throw new ThrownInSetlXException(args.get(0));
     }
 }

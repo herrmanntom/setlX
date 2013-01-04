@@ -12,6 +12,7 @@ public class Infinity extends NumberValue {
 
     private Infinity() {  }
 
+    @Override
     public Infinity clone() {
         // this value is more or less atomic and can not be changed once set
         return this;
@@ -27,20 +28,24 @@ public class Infinity extends NumberValue {
 
     /* type checks (sort of Boolean operation) */
 
+    @Override
     public SetlBoolean isInfinity() {
         return SetlBoolean.TRUE;
     }
 
     /* arithmetic operations */
 
+    @Override
     public Infinity absoluteValue() {
         return POSITIVE;
     }
 
+    @Override
     public Infinity ceil() {
         return this;
     }
 
+    @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
             if (this == subtrahend) {
@@ -58,10 +63,12 @@ public class Infinity extends NumberValue {
         }
     }
 
+    @Override
     public Infinity floor() {
         return this;
     }
 
+    @Override
     public Infinity minus(final State state) {
         if (this == POSITIVE) {
             return NEGATIVE;
@@ -70,18 +77,21 @@ public class Infinity extends NumberValue {
         }
     }
 
+    @Override
     protected NumberValue power(final int exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );
     }
 
+    @Override
     protected NumberValue power(final double exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );
     }
 
+    @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof NumberValue) {
             if (this == multiplier) {
@@ -106,6 +116,7 @@ public class Infinity extends NumberValue {
         }
     }
 
+    @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor == POSITIVE || divisor == NEGATIVE) {
             throw new UndefinedOperationException(
@@ -130,10 +141,12 @@ public class Infinity extends NumberValue {
         }
     }
 
+    @Override
     public Infinity round(final State state) {
         return this;
     }
 
+    @Override
     public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof NumberValue) {
             if (this == summand.minus(state)) {
@@ -145,7 +158,7 @@ public class Infinity extends NumberValue {
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).sumFlipped(this);
+            return ((SetlString)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " + " + summand + "' is not a number or string."
@@ -155,7 +168,8 @@ public class Infinity extends NumberValue {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         if (this == POSITIVE) {
             sb.append("oo");
         } else { // this == NEGATIVE
@@ -174,6 +188,7 @@ public class Infinity extends NumberValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
@@ -189,6 +204,7 @@ public class Infinity extends NumberValue {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         // as only exactly two object ever exist, we can get away with comparing the reference
         if (this == v) {
@@ -198,6 +214,7 @@ public class Infinity extends NumberValue {
         }
     }
 
+    @Override
     public int hashCode() {
         if (this == POSITIVE) {
             return -1029009190;

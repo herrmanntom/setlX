@@ -33,6 +33,7 @@ public class Quote extends Expr {
         mExpr = expr;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         return mExpr.toTermQuoted(state);
     }
@@ -44,6 +45,7 @@ public class Quote extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -54,20 +56,23 @@ public class Quote extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("@");
-        mExpr.appendString(sb, tabs);
+        mExpr.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         return this.toTermQuoted(state);
     }
 
+    @Override
     public Term toTermQuoted(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mExpr.toTerm(state));
+        result.addMember(state, mExpr.toTerm(state));
         return result;
     }
 
@@ -81,6 +86,7 @@ public class Quote extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

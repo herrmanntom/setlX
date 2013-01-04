@@ -21,8 +21,9 @@ public class PD_load extends PreDefinedFunction {
         addParameter("path_to_setlX_file");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value   filePath            = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        final Value   filePath            = args.get(0);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Path-argument '" + filePath + "' is not a string."
@@ -30,11 +31,11 @@ public class PD_load extends PreDefinedFunction {
         }
 
         // get string of file path to be parsed
-        String  file    = filePath.getUnquotedString();
+        final String  file    = filePath.getUnquotedString();
 
         // parse the file
         ParseSetlX.resetErrorCount();
-        Block   blk     = ParseSetlX.parseFile(file);
+        final Block   blk     = ParseSetlX.parseFile(state, file);
 
         // execute the contents
         blk.execute(state);

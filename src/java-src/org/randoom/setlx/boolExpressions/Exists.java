@@ -2,15 +2,15 @@ package org.randoom.setlx.boolExpressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressionUtilities.Condition;
+import org.randoom.setlx.expressionUtilities.Iterator;
+import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Condition;
-import org.randoom.setlx.utilities.Iterator;
-import org.randoom.setlx.utilities.IteratorExecutionContainer;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -50,6 +50,7 @@ public class Exists extends Expr {
             mScope     = null;
         }
 
+        @Override
         public Value execute(final State state, final Value lastIterationValue) throws SetlException {
             mResult = mCondition.eval(state);
             if (mResult == SetlBoolean.TRUE) {
@@ -66,6 +67,7 @@ public class Exists extends Expr {
            NOTE: Use optimizeAndCollectVariables() when adding variables from
                  sub-expressions
         */
+        @Override
         public void collectVariablesAndOptimize (
             final List<Variable> boundVariables,
             final List<Variable> unboundVariables,
@@ -80,8 +82,9 @@ public class Exists extends Expr {
         mCondition = condition;
     }
 
+    @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
-        Exec e = new Exec(mCondition);
+        final Exec e = new Exec(mCondition);
         mIterator.eval(state, e);
         if (e.mResult == SetlBoolean.TRUE && e.mScope != null) {
             // restore state in which mCondition is true
@@ -97,6 +100,7 @@ public class Exists extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -110,20 +114,22 @@ public class Exists extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("exists (");
-        mIterator.appendString(sb);
+        mIterator.appendString(state, sb, 0);
         sb.append(" | ");
-        mCondition.appendString(sb, tabs);
+        mCondition.appendString(state, sb, 0);
         sb.append(")");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mIterator.toTerm(state));
-        result.addMember(mCondition.toTerm(state));
+        result.addMember(state, mIterator.toTerm(state));
+        result.addMember(state, mCondition.toTerm(state));
         return result;
     }
 
@@ -138,6 +144,7 @@ public class Exists extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

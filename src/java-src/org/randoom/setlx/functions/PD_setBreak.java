@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -19,13 +18,14 @@ public class PD_setBreak extends PreDefinedFunction {
         addParameter("id");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
-        Value   id  = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+        final Value   id  = args.get(0);
         if ( ! (id instanceof SetlString)) {
             throw new IncompatibleTypeException("Id-argument '" + id + "' is not a string.");
         }
 
-        Environment.setBreakpoint(((SetlString) id).getUnquotedString());
+        state.setBreakpoint(((SetlString) id).getUnquotedString());
 
         return SetlBoolean.TRUE;
     }

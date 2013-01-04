@@ -21,6 +21,7 @@ public class PD_cacheStats extends PreDefinedFunction {
         addParameter("cachedProcedure");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value function  = args.get(0);
         if ( ! (function instanceof CachedProcedureDefinition)) {
@@ -34,14 +35,14 @@ public class PD_cacheStats extends PreDefinedFunction {
         final SetlSet  result = new SetlSet();
 
         final SetlList hits   = new SetlList(2);
-        hits.addMember(new SetlString("cache hits"));
-        hits.addMember(Rational.valueOf(f.getCacheHits()));
-        result.addMember(hits);
+        hits.addMember(state, new SetlString("cache hits"));
+        hits.addMember(state, Rational.valueOf(f.getCacheHits()));
+        result.addMember(state, hits);
 
         final SetlList size   = new SetlList(2);
-        size.addMember(new SetlString("cached items"));
-        size.addMember(Rational.valueOf(f.getCacheSize()));
-        result.addMember(size);
+        size.addMember(state, new SetlString("cached items"));
+        size.addMember(state, Rational.valueOf(f.getCacheSize()));
+        result.addMember(state, size);
 
         return result;
     }

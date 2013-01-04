@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -42,6 +41,7 @@ public class TryCatch extends Statement {
         mTryList    = tryList;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         try{
             return mBlockToTry.execute(state);
@@ -63,6 +63,7 @@ public class TryCatch extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -81,27 +82,29 @@ public class TryCatch extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("try ");
-        mBlockToTry.appendString(sb, tabs, true);
+        mBlockToTry.appendString(state, sb, tabs, true);
         for (final TryCatchAbstractBranch br : mTryList) {
-            br.appendString(sb, tabs);
+            br.appendString(state, sb, tabs);
         }
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mBlockToTry.toTerm(state));
+        result.addMember(state, mBlockToTry.toTerm(state));
 
         final SetlList branchList = new SetlList(mTryList.size());
         for (final TryCatchAbstractBranch br: mTryList) {
-            branchList.addMember(br.toTerm(state));
+            branchList.addMember(state, br.toTerm(state));
         }
-        result.addMember(branchList);
+        result.addMember(state, branchList);
 
         return result;
     }

@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -33,14 +32,17 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
         mStatements = statements;
     }
 
+    @Override
     public boolean evalConditionToBool(final State state) {
         return true;
     }
 
+    @Override
     public Value execute(final State state) throws SetlException {
         return mStatements.execute(state);
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         return execute(state);
     }
@@ -52,6 +54,7 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -62,19 +65,21 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("default:");
-        sb.append(Environment.getEndl());
-        mStatements.appendString(sb, tabs + 1);
-        sb.append(Environment.getEndl());
+        sb.append(state.getEndl());
+        mStatements.appendString(state, sb, tabs + 1);
+        sb.append(state.getEndl());
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
         return result;
     }
 

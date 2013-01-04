@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -43,18 +42,20 @@ public class SumAssignment extends StatementWithPrintableResult {
         mPrintAfterEval = false;
     }
 
-    /*package*/ void setPrintAfterEval() {
+    /*package*/ @Override
+    void setPrintAfterEval() {
         mPrintAfterEval = true;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         final Value assigned = mLhs.eval(state).sumAssign(state, mRhs.eval(state).clone());
         mLhs.assignUncloned(state, assigned);
 
         if (sTraceAssignments) {
-            Environment.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
+            state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         } else if (mPrintAfterEval && (assigned != Om.OM || !Om.OM.isHidden()) ) {
-            Environment.outWriteLn("~< Result: " + assigned + " >~");
+            state.outWriteLn("~< Result: " + assigned + " >~");
         }
 
         return null;
@@ -67,6 +68,7 @@ public class SumAssignment extends StatementWithPrintableResult {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -76,28 +78,30 @@ public class SumAssignment extends StatementWithPrintableResult {
         mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        // then assing to mLhs
-        // add all variables found to bound by not suppliying unboundVariables
+        // then assign to mLhs
+        // add all variables found to bound by not supplying unboundVariables
         // as this expression is now used in an assignment
         mLhs.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
     }
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
-        mLhs.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
+        mLhs.appendString(state, sb, tabs);
         sb.append(" += ");
-        mRhs.appendString(sb, tabs);
+        mRhs.appendString(state, sb, tabs);
         sb.append(";");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm(state));
-        result.addMember(mRhs.toTerm(state));
+        result.addMember(state, mLhs.toTerm(state));
+        result.addMember(state, mRhs.toTerm(state));
         return result;
     }
 
@@ -111,9 +115,5 @@ public class SumAssignment extends StatementWithPrintableResult {
         }
     }
 
-    // precedence level in SetlX-grammar
-    public int precedence() {
-        return PRECEDENCE;
-    }
 }
 

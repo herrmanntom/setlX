@@ -24,10 +24,10 @@ public class DebugPrompt {
     public static void prompt(final State state, final String message) throws SetlException {
         continePrompt = true;
         if (firstPrompt) {
-            Environment.outWriteLn(
+            state.outWriteLn(
                 "-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Debug~Mode~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-"
             );
-            Environment.outWriteLn(
+            state.outWriteLn(
                 "Execute dbgHelp(); to display debugger commands and their explanation."
             );
             firstPrompt = false;
@@ -36,20 +36,20 @@ public class DebugPrompt {
         Block   blk      = null;
         do {
             // prompt including newline to visually separate the next input
-            Environment.promptUnchecked("\n" + message + "\ndbg> ");
+            state.promptUnchecked("\n" + message + "\ndbg> ");
             try {
                 ParseSetlX.resetErrorCount();
-                blk         = ParseSetlX.parseInteractive();
-            } catch (ParserException pe) {
-                Environment.errWriteLn("\nLast input not executed due to errors in it.");
+                blk         = ParseSetlX.parseInteractive(state);
+            } catch (final ParserException pe) {
+                state.errWriteLn("\nLast input not executed due to errors in it.");
                 blk      = null;
             }
             if (blk != null) {
                 try {
-                    Environment.setDebugPromptActive(true);
+                    state.setDebugPromptActive(true);
                     blk.execute(state);
                 } finally {
-                    Environment.setDebugPromptActive(false);
+                    state.setDebugPromptActive(false);
                 }
             }
         } while (continePrompt);

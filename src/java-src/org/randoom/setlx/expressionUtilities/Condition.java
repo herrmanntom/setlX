@@ -1,4 +1,4 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
@@ -6,6 +6,8 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -20,7 +22,7 @@ implemented here as:
        mExpr
 */
 
-public class Condition {
+public class Condition extends CodeFragment {
     private final Expr mExpr;
 
     public Condition(final Expr expr) {
@@ -47,6 +49,7 @@ public class Condition {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -57,14 +60,8 @@ public class Condition {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mExpr.appendString(sb, tabs);
-    }
-
-    public final String toString() {
-        final StringBuilder sb = new StringBuilder();
-        appendString(sb, 0);
-        return sb.toString();
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mExpr.appendString(state, sb, tabs);
     }
 
     /* term operations */

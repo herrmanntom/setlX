@@ -47,6 +47,7 @@ public class Variable extends Expr {
         mId = id;
     }
 
+    @Override
     protected Value evaluate(final State state) {
         return state.findValue(mId);
     }
@@ -58,6 +59,7 @@ public class Variable extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -71,6 +73,7 @@ public class Variable extends Expr {
     }
 
     // sets this expression to the given value
+    @Override
     public void assignUncloned(final State state, final Value v) {
         state.putValue(mId, v);
     }
@@ -80,6 +83,7 @@ public class Variable extends Expr {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v' */
+    @Override
     public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) {
         return state.putValueCheckUpTo(mId, v, outerScope);
     }
@@ -91,21 +95,24 @@ public class Variable extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mId);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
-        Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(new SetlString(mId));
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
+        result.addMember(state, new SetlString(mId));
         return result;
     }
 
+    @Override
     public Term toTermQuoted(final State state) {
-        Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL, 1);
-        result.addMember(new SetlString(mId));
+        final Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL, 1);
+        result.addMember(state, new SetlString(mId));
         return result;
     }
 
@@ -119,11 +126,13 @@ public class Variable extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }
 
     // methods used when inserted into HashSets etc
+    @Override
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -143,6 +152,7 @@ public class Variable extends Expr {
 
     private final static int initHashCode = Variable.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode + mId.hashCode();
     }

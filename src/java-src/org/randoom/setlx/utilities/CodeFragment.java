@@ -13,7 +13,7 @@ public abstract class CodeFragment {
           - unbound means "not present in bound set when used"
           - used    means "present in bound set when used" */
     protected abstract void collectVariablesAndOptimize (
-        final List<Variable>  boundVariables,
+        final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     );
@@ -27,11 +27,12 @@ public abstract class CodeFragment {
 
     /* string operations */
 
-    public abstract void appendString(final StringBuilder sb, final int tabs);
+    public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
     public final String toString() {
-        final StringBuilder sb = new StringBuilder();
-        appendString(sb, 0);
+        final State         bubble = new StateImplementation();
+        final StringBuilder sb     = new StringBuilder();
+        appendString(bubble, sb, 0);
         return sb.toString();
     }
 

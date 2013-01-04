@@ -5,6 +5,7 @@ grammar SetlXgrammar;
 
     import org.randoom.setlx.boolExpressions.*;
     import org.randoom.setlx.expressions.*;
+    import org.randoom.setlx.expressionUtilities.*;
     import org.randoom.setlx.statements.*;
     import org.randoom.setlx.types.*;
     import org.randoom.setlx.utilities.*;
@@ -16,7 +17,7 @@ grammar SetlXgrammar;
 @lexer::header {
     package org.randoom.setlx.grammar;
 
-    import org.randoom.setlx.utilities.Environment;
+    import org.randoom.setlx.utilities.State;
 
     import java.util.LinkedList;
 }
@@ -42,7 +43,18 @@ grammar SetlXgrammar;
         }
     }
 
-    // reset these variables after each parsing run!
+    // state of the setlX interpreter
+    private State setlXstate;
+
+    public void setSetlXState(final State state) {
+        setlXstate = state;
+    }
+
+    // Error counting is static, because creation of some setlX objects will
+    // use another parser object.
+    //
+    // Reset these variables after each parsing run!
+    //
     private static String lastErrorMsg  = "";
     private static int    lastCount     = 0;
 
@@ -51,13 +63,13 @@ grammar SetlXgrammar;
         lastCount       = 0;
     }
 
-    // make error reporting platform independend
+    // make error reporting platform independent
     // and ignore duplicate messages, which occur when using syntactical predicates
     public void emitErrorMessage(String msg) {
         if (lastErrorMsg.equals(msg)) {
             state.syntaxErrors  = lastCount;
         } else {
-            Environment.writeParserErrLn(msg);
+            setlXstate.writeParserErrLn(msg);
             lastErrorMsg = msg;
             lastCount    = state.syntaxErrors;
         }
@@ -65,9 +77,16 @@ grammar SetlXgrammar;
 }
 
 @lexer::members {
+    // state of the setlX interpreter
+    private State setlXstate;
+
+    public void setSetlXState(final State state) {
+        setlXstate = state;
+    }
+
     // make error reporting platform independend
     public void emitErrorMessage(String msg) {
-        Environment.writeParserErrLn(msg);
+        setlXstate.writeParserErrLn(msg);
     }
 
     // fix parsing: list[2..]
@@ -168,7 +187,7 @@ statement returns [Statement stmnt]
     | 'continue' ';'                                                 { stmnt = Continue.C;                                             }
     | 'exit' ';'                                                     { stmnt = Exit.E;                                                 }
     | 'return' expr[false]? ';'                                      { stmnt = new Return($expr.ex);                                   }
-    | 'assert' '(' condition[false] ',' expr[false] ')' ';'          { stmnt = (Environment.areAssertsDisabled())?
+    | 'assert' '(' condition[false] ',' expr[false] ')' ';'          { stmnt = (setlXstate.areAssertsDisabled())?
                                                                                    null
                                                                                :
                                                                                    new Assert($condition.cnd, $expr.ex);
@@ -225,7 +244,7 @@ regexBranch returns [MatchRegexBranch rb]
         '|'  condition[false]    { condition = $condition.cnd; }
       )?
       ':' block
-      { rb = new MatchRegexBranch($pattern.ex, assignTo, condition, $block.blk);
+      { rb = new MatchRegexBranch(setlXstate, $pattern.ex, assignTo, condition, $block.blk);
         assignTo = null; condition = null; }
     ;
 
@@ -519,11 +538,11 @@ collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
     ;
 
 value [boolean enableIgnore, boolean quoted] returns [Expr v]
-    : list[$enableIgnore] { v = $list.lc;                                     }
-    | set[$enableIgnore]  { v = $set.sc;                                      }
-    | STRING              { v = new StringConstructor($quoted, $STRING.text); }
-    | LITERAL             { v = new LiteralConstructor($LITERAL.text);        }
-    | atomicValue         { v = new ValueExpr($atomicValue.av);               }
+    : list[$enableIgnore] { v = $list.lc;                                                 }
+    | set[$enableIgnore]  { v = $set.sc;                                                  }
+    | STRING              { v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
+    | LITERAL             { v = new LiteralConstructor($LITERAL.text);                    }
+    | atomicValue         { v = new ValueExpr($atomicValue.av);                           }
     | '_'                 { if ($enableIgnore){
                                 v = VariableIgnore.VI;
                              } else {

@@ -16,8 +16,9 @@ public class PD_isNumber extends PreDefinedFunction {
         addParameter("value");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
-        Value arg = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
+        final Value arg = args.get(0);
         if (arg.isRational() == SetlBoolean.TRUE || arg.isReal() == SetlBoolean.TRUE) {
             return SetlBoolean.TRUE;
         } else {

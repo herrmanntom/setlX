@@ -48,6 +48,7 @@ public class Real extends NumberValue {
         mReal = n.divide(d, mathContext);
     }
 
+    @Override
     public Real clone() {
         // this value is more or less atomic and can not be changed once set
         return this;
@@ -75,16 +76,19 @@ public class Real extends NumberValue {
 
     /* type checks (sort of Boolean operation) */
 
+    @Override
     public SetlBoolean isReal() {
         return SetlBoolean.TRUE;
     }
 
     /* type conversions */
 
+    @Override
     public Rational toInteger() {
         return Rational.valueOf(mReal.toBigInteger());
     }
 
+    @Override
     public Rational toRational() {
         final int scale = mReal.scale();
         if (scale >= 0) {
@@ -94,16 +98,19 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     public Real toReal() {
         return this;
     }
 
     /* arithmetic operations */
 
+    @Override
     public Real absoluteValue() {
         return new Real(mReal.abs());
     }
 
+    @Override
     public Rational ceil() {
         BigInteger intValue = mReal.toBigInteger();
         if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) < 0) {
@@ -113,6 +120,7 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
@@ -143,6 +151,7 @@ public class Real extends NumberValue {
         return minuend.toReal().difference(state, this);
     }
 
+    @Override
     public Rational floor() {
         BigInteger intValue = mReal.toBigInteger();
         if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) > 0) {
@@ -152,6 +161,7 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
             return this.quotient(state, divisor).floor();
@@ -164,6 +174,7 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     public NumberValue minus(final State state) throws UndefinedOperationException {
         try {
             return new Real(mReal.negate(mathContext));
@@ -172,6 +183,7 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     protected NumberValue power(final int exponent) throws UndefinedOperationException {
         try {
             return new Real(mReal.pow(exponent, mathContext));
@@ -180,6 +192,7 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     protected NumberValue power(final double exponent) throws NumberToLargeException, IncompatibleTypeException {
         if (mReal.compareTo(BigDecimal.ZERO) < 0) {
             throw new IncompatibleTypeException(
@@ -198,6 +211,7 @@ public class Real extends NumberValue {
         return new Real(r);
     }
 
+    @Override
     public Value product(final State state, final Value multiplier) throws IncompatibleTypeException, UndefinedOperationException {
         if (multiplier instanceof NumberValue) {
             if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
@@ -224,6 +238,7 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
             BigDecimal right = null;
@@ -250,15 +265,16 @@ public class Real extends NumberValue {
             );
         }
     }
-
     public Value quotientFlipped(final State state, final Rational dividend) throws SetlException {
         return dividend.toReal().quotient(state, this);
     }
 
+    @Override
     public Rational round(final State state) {
         return Rational.valueOf(mReal.setScale(0, mathContext.getRoundingMode()).toBigInteger());
     }
 
+    @Override
     public Value sum(final State state, final Value summand) throws IncompatibleTypeException, UndefinedOperationException {
         if (summand instanceof NumberValue) {
             if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
@@ -279,7 +295,7 @@ public class Real extends NumberValue {
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).sumFlipped(this);
+            return ((SetlString)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " + " + summand + "' is not a number or string."
@@ -289,7 +305,8 @@ public class Real extends NumberValue {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mReal.toString());
     }
 
@@ -304,6 +321,7 @@ public class Real extends NumberValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
@@ -322,6 +340,7 @@ public class Real extends NumberValue {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
@@ -336,6 +355,7 @@ public class Real extends NumberValue {
 
     private final static int initHashCode = Real.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode + mReal.hashCode();
     }

@@ -23,6 +23,7 @@ public class PD_isProbablePrime extends PreDefinedFunction {
         addParameter("integer");
     }
 
+    @Override
     public SetlBoolean execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value integer  = args.get(0);
         if (integer.isInteger() != SetlBoolean.TRUE) {

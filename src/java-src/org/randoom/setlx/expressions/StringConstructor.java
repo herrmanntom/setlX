@@ -9,7 +9,6 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -24,11 +23,11 @@ public class StringConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private       String            mOriginalStr; // original String
+    private final String            mOriginalStr; // original String
     private final ArrayList<String> mFragments;   // list of string fragments for after and between expressions
     private final ArrayList<Expr>   mExprs;       // list of $-Expressions
 
-    public StringConstructor(final boolean quoted, String originalStr) {
+    public StringConstructor(final State state, final boolean quoted, String originalStr) {
         this(originalStr, new ArrayList<String>(), new ArrayList<Expr>());
 
         // Strip out double quotes which the parser left in
@@ -51,31 +50,31 @@ public class StringConstructor extends Expr {
                         try {
                             // SetlString parses escape characters properly
                             final String eStr = SetlString.parseString(expr.toString());
-                            final Expr   exp  = ParseSetlX.parseStringToExpr(eStr);
+                            final Expr   exp  = ParseSetlX.parseStringToExpr(state, eStr);
                             // add inner expr to mExprs
                             mExprs.add(exp);
-                        } catch (ParserException pe) {
+                        } catch (final ParserException pe) {
                             /* Doing error handling here is futile, as outer parsing run,
                              * which called this constructor, will notice via the global
                              * error count and (later) halt.
                              * However we can at least provide the user with some feedback.
                              */
                             if (ParseSetlX.getErrorCount() > errCount) {
-                                Environment.writeParserErrLn(
+                                state.writeParserErrLn(
                                     "Error(s) while parsing string " + this + " {"
                                 );
                                 if (pe instanceof SyntaxErrorException) {
                                     for (final String err : ((SyntaxErrorException) pe).getErrors()) {
-                                        Environment.writeParserErrLn(
+                                        state.writeParserErrLn(
                                             "\t" + err
                                         );
                                     }
                                 } else {
-                                    Environment.writeParserErrLn(
+                                    state.writeParserErrLn(
                                         pe.getMessage()
                                     );
                                 }
-                                Environment.writeParserErrLn(
+                                state.writeParserErrLn(
                                     "}"
                                 );
                             }
@@ -110,7 +109,7 @@ public class StringConstructor extends Expr {
                  */
                 ParseSetlX.addReportedError();
                 // However we can at least provide the user with some feedback.
-                Environment.writeParserErrLn(
+                state.writeParserErrLn(
                     "Error(s) while parsing string " + this + " {\n"
                   + "\tclosing '$' missing\n"
                   + "}"
@@ -132,6 +131,7 @@ public class StringConstructor extends Expr {
         mExprs          = exprs;
     }
 
+    @Override
     protected SetlString evaluate(final State state) throws SetlException {
         final Iterator<String>  fIter   = mFragments.iterator();
         final Iterator<Expr>    eIter   = mExprs.iterator();
@@ -144,8 +144,8 @@ public class StringConstructor extends Expr {
             // eval expression, but fail gracefully
             final Expr    exp = eIter.next();
             try {
-                exp.eval(state).appendUnquotedString(data, 0);
-            } catch (SetlException se) {
+                exp.eval(state).appendUnquotedString(state, data, 0);
+            } catch (final SetlException se) {
                 data.append("$Error: ");
                 data.append(se.getMessage());
                 data.append("$");
@@ -175,6 +175,7 @@ public class StringConstructor extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -187,12 +188,14 @@ public class StringConstructor extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mOriginalStr);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         if (mFragments.size() == 1 && mExprs.size() == 0) {
             // simple string without $-expression
@@ -202,15 +205,15 @@ public class StringConstructor extends Expr {
 
             final SetlList strList = new SetlList(mFragments.size());
             for (final String str: mFragments) {
-                strList.addMember(new SetlString(str));
+                strList.addMember(state, new SetlString(str));
             }
-            result.addMember(strList);
+            result.addMember(state, strList);
 
             final SetlList expList = new SetlList(mExprs.size());
             for (final Expr expr: mExprs) {
-                expList.addMember(expr.toTerm(state));
+                expList.addMember(state, expr.toTerm(state));
             }
-            result.addMember(expList);
+            result.addMember(state, expList);
 
             return result;
         }
@@ -243,7 +246,7 @@ public class StringConstructor extends Expr {
                 fragments.add(string);
 
                 if (eIter.hasNext()) {
-                    Expr expr = TermConverter.valueToExpr(eIter.next());
+                    final Expr expr = TermConverter.valueToExpr(eIter.next());
                     exprs.add(expr);
                     originalStr.append("$");
                     originalStr.append(expr.toString().replace("$", "\\$"));
@@ -270,7 +273,7 @@ public class StringConstructor extends Expr {
         final SetlString        sstring     = (SetlString) value;
         final String            string      = sstring.getUnquotedString();
         // string was quoted when it contains a $, otherwise it would have been split
-              boolean           quoted      = string.contains("$");
+              final boolean           quoted      = string.contains("$");
         final String            originalStr = "\"" + sstring.getEscapedString() + "\"";
         final ArrayList<String> fragments   = new ArrayList<String>(1);
         fragments.add(string);
@@ -284,6 +287,7 @@ public class StringConstructor extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

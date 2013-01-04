@@ -9,13 +9,13 @@ import java.io.IOException;
 
 public class DumpSetlX {
 
-    public static void dumpToFile(final String content, String fileName, final boolean append) throws FileNotWriteableException {
+    public static void dumpToFile(final State state, final String content, String fileName, final boolean append) throws FileNotWriteableException {
         // then dump to file
         FileWriter     fWr = null;
         BufferedWriter out = null;
         try {
             // allow modification of fileName/path by environment provider
-            fileName = Environment.filterFileName(fileName);
+            fileName = state.filterFileName(fileName);
             // write file
             fWr = new FileWriter(fileName, append);
             out = new BufferedWriter(fWr);

@@ -17,10 +17,12 @@ public class ValueExpr extends Expr {
         mValue  = value;
     }
 
+    @Override
     public Value eval(final State state) {
         return mValue;
     }
 
+    @Override
     protected Value evaluate(final State state) {
         return eval(state);
     }
@@ -32,6 +34,7 @@ public class ValueExpr extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -40,17 +43,20 @@ public class ValueExpr extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mValue.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mValue.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         return mValue.toTerm(state);
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

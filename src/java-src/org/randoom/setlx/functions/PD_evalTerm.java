@@ -21,14 +21,15 @@ public class PD_evalTerm extends PreDefinedFunction {
         addParameter("term");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value   termArg             = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        final Value         termArg     = args.get(0);
 
         // get code to be executed
-        CodeFragment    fragment    = TermConverter.valueToCodeFragment(termArg, false);
+        final CodeFragment  fragment    = TermConverter.valueToCodeFragment(termArg, false);
 
         // Value to be returned
-        Value           result      = Om.OM;
+        Value               result      = Om.OM;
 
         // execute the contents
         if (fragment instanceof Expr) {

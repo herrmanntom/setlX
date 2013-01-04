@@ -12,6 +12,7 @@ public class SetlBoolean extends Value {
 
     private SetlBoolean() {  }
 
+    @Override
     public SetlBoolean clone() {
         // this value is atomic and can not be changed once set
         return this;
@@ -27,6 +28,7 @@ public class SetlBoolean extends Value {
 
     /* Boolean operations */
 
+    @Override
     public Value conjunction(final State state, final Expr other) throws SetlException {
         if (this == FALSE) {
             return FALSE;
@@ -46,6 +48,7 @@ public class SetlBoolean extends Value {
         }
     }
 
+    @Override
     public Value disjunction(final State state, final Expr other) throws SetlException {
         if (this == TRUE) {
             return TRUE;
@@ -65,6 +68,7 @@ public class SetlBoolean extends Value {
         }
     }
 
+    @Override
     public Value implication(final State state, final Expr other) throws SetlException {
         if (this == FALSE) {
             return TRUE;
@@ -84,6 +88,7 @@ public class SetlBoolean extends Value {
         }
     }
 
+    @Override
     public SetlBoolean negation(final State state) {
         if (this == TRUE) {
             return FALSE;
@@ -94,13 +99,15 @@ public class SetlBoolean extends Value {
 
     /* type checks (sort of boolean operation) */
 
+    @Override
     public SetlBoolean isBoolean() {
         return SetlBoolean.TRUE;
     }
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         if (this == TRUE) {
             sb.append("true");
         } else {
@@ -120,6 +127,7 @@ public class SetlBoolean extends Value {
      * This ranking is necessary to allow sets and lists of different types.
      */
     // also FALSE < TRUE
+    @Override
     public int compareTo(final Value v){
         if (this == v) {
             // as only exacly one FALSE and TRUE object exist, we can compare by reference
@@ -134,15 +142,17 @@ public class SetlBoolean extends Value {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v){
         if (this == v) {
-            // as only exacly one FALSE and TRUE object exist, we can compare by reference
+            // as only exactly one FALSE and TRUE object exist, we can compare by reference
             return true;
         } else {
             return false;
         }
     }
 
+    @Override
     public int hashCode() {
         if (this == TRUE) {
             return 2015404846;

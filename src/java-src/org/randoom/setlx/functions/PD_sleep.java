@@ -19,7 +19,8 @@ public class PD_sleep extends PreDefinedFunction {
         addParameter("time_in_ms");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         if (args.get(0).isInteger() == SetlBoolean.FALSE || args.get(0).compareTo(Rational.ZERO) < 1 ) {
             throw new IncompatibleTypeException(
                 "Time_in_ms-argument '" + args.get(0) + "' is not an integer >= 1."
@@ -27,9 +28,9 @@ public class PD_sleep extends PreDefinedFunction {
         }
 
         try {
-            int     n       = ((Rational) args.get(0)).intValue();
+            final int     n       = ((Rational) args.get(0)).intValue();
             Thread.sleep(n);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // don't care if anything happens here...
         }
 

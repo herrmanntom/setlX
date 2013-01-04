@@ -36,6 +36,7 @@ public class CollectMap extends Expr {
         mArg = arg;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         final Value lhs = mLhs.eval(state);
         if (lhs == Om.OM) {
@@ -51,6 +52,7 @@ public class CollectMap extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -62,26 +64,29 @@ public class CollectMap extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mLhs.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mLhs.appendString(state, sb, tabs);
         sb.append("{");
-        mArg.appendString(sb, tabs);
+        mArg.appendString(state, sb, tabs);
         sb.append("}");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm(state));
-        result.addMember(mArg.toTerm(state));
+        result.addMember(state, mLhs.toTerm(state));
+        result.addMember(state, mArg.toTerm(state));
         return result;
     }
 
+    @Override
     public Term toTermQuoted(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTermQuoted(state));
-        result.addMember(mArg.eval(state).toTerm(state));
+        result.addMember(state, mLhs.toTermQuoted(state));
+        result.addMember(state, mArg.eval(state).toTerm(state));
         return result;
     }
 
@@ -96,6 +101,7 @@ public class CollectMap extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

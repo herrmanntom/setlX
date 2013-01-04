@@ -19,17 +19,18 @@ public class PD_deleteFile extends PreDefinedFunction {
         addParameter("fileName");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
-        Value   filePath    = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+        final Value     filePath    = args.get(0);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "FileName-argument '" + filePath + "' is not a string."
             );
         }
 
-        String  fileName    = filePath.getUnquotedString();
+        final String    fileName    = filePath.getUnquotedString();
 
-        File file = new File(fileName);
+        final File      file        = new File(fileName);
 
         return SetlBoolean.valueOf(file.delete());
     }

@@ -5,7 +5,6 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -31,14 +30,16 @@ public class ExpressionStatement extends StatementWithPrintableResult {
         mPrintAfterEval = false;
     }
 
-    /*package*/ void setPrintAfterEval() {
+    /*package*/ @Override
+    void setPrintAfterEval() {
         mPrintAfterEval = true;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         final Value v = mExpr.eval(state);
         if (mPrintAfterEval && (v != Om.OM || !((Om) v).isHidden()) ) {
-            Environment.outWriteLn("~< Result: " + v + " >~");
+            state.outWriteLn("~< Result: " + v + " >~");
         }
         return null;
     }
@@ -50,6 +51,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -60,14 +62,16 @@ public class ExpressionStatement extends StatementWithPrintableResult {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
-        mExpr.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
+        mExpr.appendString(state, sb, tabs);
         sb.append(";");
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         return mExpr.toTerm(state);
     }

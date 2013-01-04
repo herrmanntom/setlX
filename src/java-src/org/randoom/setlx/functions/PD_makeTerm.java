@@ -21,9 +21,10 @@ public class PD_makeTerm extends PreDefinedFunction {
         addParameter("body");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
-        Value arg0 = args.get(0);
-        Value arg1 = args.get(1);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+        final Value arg0 = args.get(0);
+        final Value arg1 = args.get(1);
         if ( ! (arg0 instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "FunctionalCharacter '" + arg0 + "' is not a string."
@@ -36,7 +37,7 @@ public class PD_makeTerm extends PreDefinedFunction {
         }
         String fct = arg0.getUnquotedString();
 
-        // check if name is usable as term (fist char is upper case or single qoute ( ' ))
+        // check if name is usable as term (fist char is upper case or single quote ( ' ))
         if (fct.length() > 0 && (fct.charAt(0) == '^' || Character.isUpperCase(fct.charAt(0)))) {
             // use correct internal representation when user wants to create a variable
             if (fct.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)) {

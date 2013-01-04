@@ -21,6 +21,7 @@ public class PD_isPrime extends PreDefinedFunction {
         addParameter("n");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value integer  = args.get(0);
         if (integer.isInteger() != SetlBoolean.TRUE) {

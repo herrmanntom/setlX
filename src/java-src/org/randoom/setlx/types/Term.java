@@ -21,9 +21,9 @@ import java.util.List;
 
 public class Term extends IndexedCollectionValue {
     // functional character of the term;    e.g. f
-    private String      mFunctionalCharacter;
+    private final String      mFunctionalCharacter;
     // arguments in inner body of the term; e.g. e1, e2, ..., en
-    private SetlList    mBody;
+    private final SetlList    mBody;
 
     public Term(final String functionalCharacter) {
         this(functionalCharacter, 4);
@@ -38,14 +38,17 @@ public class Term extends IndexedCollectionValue {
         mBody                = body;
     }
 
+    @Override
     public Term clone() {
         return new Term(mFunctionalCharacter, mBody.clone());
     }
 
+    @Override
     public Iterator<Value> iterator() {
         return mBody.iterator();
     }
 
+    @Override
     public Iterator<Value> descendingIterator() {
         return mBody.descendingIterator();
     }
@@ -53,6 +56,7 @@ public class Term extends IndexedCollectionValue {
     /* Boolean operations */
 
     // viral operation
+    @Override
     public Term conjunction(final State state, final Expr other) throws SetlException {
         return (    new Conjunction(
                         TermConverter.valueToExpr(this),
@@ -69,6 +73,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term disjunction(final State state, final Expr other) throws SetlException {
         return (    new Disjunction(
                         TermConverter.valueToExpr(this),
@@ -84,6 +89,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term implication(final State state, final Expr other) throws SetlException {
         return (    new Implication(
                         TermConverter.valueToExpr(this),
@@ -100,6 +106,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term negation(final State state) {
         return (    new Negation(
                         TermConverter.valueToExpr(this)
@@ -109,6 +116,7 @@ public class Term extends IndexedCollectionValue {
 
     /* type checks (sort of Boolean operation) */
 
+    @Override
     public SetlBoolean isTerm() {
         return SetlBoolean.TRUE;
     }
@@ -116,6 +124,7 @@ public class Term extends IndexedCollectionValue {
     /* arithmetic operations */
 
     // viral operation
+    @Override
     public Term difference(final State state, final Value subtrahend) {
         return (    new Difference(
                         TermConverter.valueToExpr(this),
@@ -132,6 +141,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Value factorial(final State state) {
         return (    new Factorial(
                         TermConverter.valueToExpr(this)
@@ -140,6 +150,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term integerDivision(final State state, final Value divisor) {
         return (    new IntegerDivision(
                         TermConverter.valueToExpr(this),
@@ -156,6 +167,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term minus(final State state) {
         return (    new Minus(
                         TermConverter.valueToExpr(this)
@@ -164,6 +176,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term modulo(final State state, final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(this),
@@ -180,6 +193,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term power(final State state, final Value exponent) {
         return (    new Power(
                         TermConverter.valueToExpr(this),
@@ -196,6 +210,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term product(final State state, final Value multiplier) {
         return (    new Product(
                         TermConverter.valueToExpr(this),
@@ -212,6 +227,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term quotient(final State state, final Value divisor) {
         return (    new Quotient(
                         TermConverter.valueToExpr(this),
@@ -228,6 +244,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term sum(final State state, final Value summand) {
         return (    new Sum(
                         TermConverter.valueToExpr(this),
@@ -245,15 +262,18 @@ public class Term extends IndexedCollectionValue {
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
-    public void addMember(final Value element) {
-        mBody.addMember(element);
+    @Override
+    public void addMember(final State state, final Value element) {
+        mBody.addMember(state, element);
     }
 
+    @Override
     public SetlList arguments() {
         return mBody.clone();
     }
 
     // viral operation
+    @Override
     public Term cardinality(final State state) {
         return (    new Cardinality(
                         TermConverter.valueToExpr(this)
@@ -262,6 +282,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term cartesianProduct(final State state, final Value other) {
         return (    new CartesianProduct(
                         TermConverter.valueToExpr(this),
@@ -278,6 +299,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     // viral operation
+    @Override
     public Term collectionAccess(final State state, final List<Value> args) {
         final List<Expr> argExprs = new ArrayList<Expr>(args.size());
         for (final Value v : args) {
@@ -289,11 +311,13 @@ public class Term extends IndexedCollectionValue {
                ).toTerm(state);
     }
 
+    @Override
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
         return mBody.collectionAccessUnCloned(state, args);
     }
 
     // viral operation
+    @Override
     public Term collectMap(final State state, final Value arg) {
         return (    new CollectMap(
                         TermConverter.valueToExpr(this),
@@ -301,15 +325,18 @@ public class Term extends IndexedCollectionValue {
                ).toTerm(state);
     }
 
+    @Override
     public SetlBoolean containsMember(final Value element) {
         // Terms are inherently recursive, so search recursively
         return containsMemberRecursive(element); // this is implemented in CollectionValue.java
     }
 
+    @Override
     public Value firstMember() {
         return mBody.firstMember();
     }
 
+    @Override
     public SetlString functionalCharacter() {
         if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
             return new SetlString(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
@@ -318,88 +345,115 @@ public class Term extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value getMember(final int index) throws SetlException {
         return mBody.getMember(index);
     }
 
-    public Value getMember(final Value index) throws SetlException {
-        return mBody.getMember(index);
+    @Override
+    public Value getMember(final State state, final Value index) throws SetlException {
+        return mBody.getMember(state, index);
     }
 
-    public Value getMemberUnCloned(final int index) throws SetlException {
+    public Value getMemberUnCloned(final State state, final int index) throws SetlException {
         return mBody.getMemberUnCloned(index);
     }
 
-    public Value getMemberUnCloned(final Value index) throws SetlException {
-        return mBody.getMemberUnCloned(index);
+    @Override
+    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
+        return mBody.getMemberUnCloned(state, index);
     }
 
-    public Value getMembers(final Value low, final Value high) throws SetlException {
-        return mBody.getMembers(low, high);
+    @Override
+    public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
+        return mBody.getMembers(state, low, high);
     }
 
+    @Override
     public Value lastMember() {
         return mBody.lastMember();
     }
 
+    @Override
     public Value maximumMember() throws SetlException {
         return mBody.maximumMember();
     }
 
+    @Override
     public Value minimumMember() throws SetlException {
         return mBody.minimumMember();
     }
 
     // viral operation
-    public Term productOfMembers(final State state) throws SetlException {
-        return (    new ProductOfMembers(
-                        TermConverter.valueToExpr(this)
-                    )
-               ).toTerm(state);
+    @Override
+    public Term productOfMembers(final State state, final Value neutral) throws SetlException {
+        if (neutral == Om.OM) {
+            return (    new ProductOfMembers(
+                            TermConverter.valueToExpr(this)
+                        )
+                   ).toTerm(state);
+        } else {
+            return (    new ProductOfMembersBinary(
+                    TermConverter.valueToExpr(neutral),
+                    TermConverter.valueToExpr(this)
+                )
+           ).toTerm(state);
+        }
     }
 
-    public void removeMember(Value element) {
+    @Override
+    public void removeMember(final Value element) {
         mBody.removeMember(element);
     }
 
+    @Override
     public Value removeFirstMember() {
         return mBody.removeFirstMember();
     }
 
+    @Override
     public Value removeLastMember() {
         return mBody.removeLastMember();
     }
 
-    public void setMember(final Value index, final Value v) throws SetlException {
-        mBody.setMember(index, v);
+    @Override
+    public void setMember(final State state, final Value index, final Value v) throws SetlException {
+        mBody.setMember(state, index, v);
     }
 
+    @Override
     public int size() {
         return mBody.size();
     }
 
     // viral operation
-    public Term sumOfMembers(final State state) {
-        return (    new SumOfMembers(
-                        TermConverter.valueToExpr(this)
-                    )
-               ).toTerm(state);
+    @Override
+    public Term sumOfMembers(final State state, final Value neutral) {
+        if (neutral == Om.OM) {
+            return (    new SumOfMembers(
+                    TermConverter.valueToExpr(this)
+                )
+           ).toTerm(state);
+        } else {
+            return (    new SumOfMembersBinary(
+                    TermConverter.valueToExpr(neutral),
+                    TermConverter.valueToExpr(this)
+                )
+           ).toTerm(state);
+        }
     }
 
     /* function call */
 
     // viral operation
-    public Term call(final State state, final List<Expr> exprs, final List<Value> args) throws IncompatibleTypeException {
+    @Override
+    public Term call(final State state, final List<Expr> args) throws IncompatibleTypeException {
         if (mFunctionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
-            final List<Expr> argExprs = new ArrayList<Expr>(args.size());
-            for (final Value v : args) {
-                argExprs.add(TermConverter.valueToExpr(v));
-            }
             return (    new Call(
                             new Variable(
                                 TermConverter.valueToExpr(this).toString()
                             ),
-                            argExprs
+                            args
                         )
                    ).toTerm(state);
         } else {
@@ -411,11 +465,13 @@ public class Term extends IndexedCollectionValue {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(this, false).appendString(sb, 0);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        TermConverter.valueToCodeFragment(this, false).appendString(state, sb, 0);
     }
 
-    public void canonical(final StringBuilder sb) {
+    @Override
+    public void canonical(final State state, final StringBuilder sb) {
         if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
             sb.append(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
         } else {
@@ -423,12 +479,13 @@ public class Term extends IndexedCollectionValue {
         }
 
         sb.append("(");
-        mBody.canonical(sb, /* brackets = */ false);
+        mBody.canonical(state, sb, /* brackets = */ false);
         sb.append(")");
     }
 
     /* term operations */
 
+    @Override
     public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
         if ( mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) ||
                 ( other instanceof Term &&
@@ -479,7 +536,7 @@ public class Term extends IndexedCollectionValue {
         final Iterator<Value> thisIter    = iterator();
         final Iterator<Value> otherIter   = otherTerm.iterator();
         while (thisIter.hasNext() && otherIter.hasNext() && result.isMatch()) {
-            MatchResult subResult   = thisIter.next().matchesTerm(state, otherIter.next());
+            final MatchResult subResult   = thisIter.next().matchesTerm(state, otherIter.next());
             if (subResult.isMatch()) {
                 result.addBindings(subResult);
             } else {
@@ -501,6 +558,7 @@ public class Term extends IndexedCollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
@@ -533,6 +591,7 @@ public class Term extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
@@ -558,6 +617,7 @@ public class Term extends IndexedCollectionValue {
 
     private final static int initHashCode = Term.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode + mFunctionalCharacter.hashCode() * 31 + mBody.hashCode();
     }

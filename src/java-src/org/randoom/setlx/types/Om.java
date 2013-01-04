@@ -1,5 +1,7 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.utilities.State;
+
 public class Om extends Value {
 
     public final static Om OM = new Om();
@@ -13,6 +15,7 @@ public class Om extends Value {
 
     private Om() {  }
 
+    @Override
     public Om clone() {
         // this value is atomic and can not be changed
         return this;
@@ -47,7 +50,8 @@ public class Om extends Value {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("om");
     }
 
@@ -62,6 +66,7 @@ public class Om extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v){
         if (v == OM) {
             return 0;
@@ -74,6 +79,7 @@ public class Om extends Value {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (v == OM) {
             return true;
@@ -84,6 +90,7 @@ public class Om extends Value {
 
     private final static int initHashCode = Om.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode;
     }

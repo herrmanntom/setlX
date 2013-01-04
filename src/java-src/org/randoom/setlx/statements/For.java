@@ -2,14 +2,13 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressionUtilities.Condition;
+import org.randoom.setlx.expressionUtilities.Iterator;
+import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Condition;
-import org.randoom.setlx.utilities.Environment;
-import org.randoom.setlx.utilities.Iterator;
-import org.randoom.setlx.utilities.IteratorExecutionContainer;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -30,7 +29,7 @@ implemented here as:
 public class For extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String  FUNCTIONAL_CHARACTER   = "^for";
-    // continue execution of this loop in debug mode until it finishes. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // continue execution of this loop in debug mode until it finishes. MAY ONLY BE SET BY STATE CLASS!
     public        static boolean sFinishLoop            = false;
 
     private final Iterator  mIterator;
@@ -47,6 +46,7 @@ public class For extends Statement {
             mStatements = statements;
         }
 
+        @Override
         public Value execute(final State state, final Value lastIterationValue) throws SetlException {
             if (mCondition == null || mCondition.evalToBool(state)) {
                 return mStatements.execute(state);
@@ -62,6 +62,7 @@ public class For extends Statement {
            NOTE: Use optimizeAndCollectVariables() when adding variables from
                  sub-expressions
         */
+        @Override
         public void collectVariablesAndOptimize (
             final List<Variable> boundVariables,
             final List<Variable> unboundVariables,
@@ -81,17 +82,18 @@ public class For extends Statement {
         mExec       = new Exec(mCondition, mStatements);
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         final boolean finishLoop = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
-            Environment.setDebugFinishLoop(false);
+            state.setDebugFinishLoop(false);
         }
         final Value result = mIterator.eval(state, mExec);
         if (sFinishLoop) {
-            Environment.setDebugModeActive(true);
-            Environment.setDebugFinishLoop(false);
+            state.setDebugModeActive(true);
+            state.setDebugFinishLoop(false);
         } else if (finishLoop) {
-            Environment.setDebugFinishLoop(true);
+            state.setDebugFinishLoop(true);
         }
         return result;
     }
@@ -103,6 +105,7 @@ public class For extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -113,29 +116,31 @@ public class For extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("for (");
-        mIterator.appendString(sb);
+        mIterator.appendString(state, sb, 0);
         if (mCondition != null) {
             sb.append(" | ");
-            mCondition.appendString(sb, tabs);
+            mCondition.appendString(state, sb, 0);
         }
         sb.append(") ");
-        mStatements.appendString(sb, tabs, true);
+        mStatements.appendString(state, sb, tabs, true);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
-        result.addMember(mIterator.toTerm(state));
+        result.addMember(state, mIterator.toTerm(state));
         if (mCondition != null) {
-            result.addMember(mCondition.toTerm(state));
+            result.addMember(state, mCondition.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
         return result;
     }
 
@@ -151,7 +156,7 @@ public class For extends Statement {
                 }
                 final Block     block     = TermConverter.valueToBlock(term.lastMember());
                 return new For(iterator, condition, block);
-            } catch (SetlException se) {
+            } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }

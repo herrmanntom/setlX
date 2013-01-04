@@ -22,7 +22,7 @@ implemented here as:
       mType  mVar
 */
 
-public class ParameterDef {
+public class ParameterDef extends CodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER    = "^parameter";
     private final static String FUNCTIONAL_CHARACTER_RW = "^rwParameter";
@@ -57,6 +57,7 @@ public class ParameterDef {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -79,21 +80,17 @@ public class ParameterDef {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         if (mType == READ_WRITE) {
             sb.append("rw ");
         }
-        mVar.appendString(sb, 0);
-    }
-
-    public final String toString() {
-        final StringBuilder sb = new StringBuilder();
-        appendString(sb);
-        return sb.toString();
+        mVar.appendString(state, sb, 0);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result;
         if (mType == READ_WRITE) {
@@ -101,7 +98,7 @@ public class ParameterDef {
         } else {
             result = new Term(FUNCTIONAL_CHARACTER);
         }
-        result.addMember(mVar.toTerm(state));
+        result.addMember(state, mVar.toTerm(state));
         return result;
     }
 

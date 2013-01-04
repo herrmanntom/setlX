@@ -17,6 +17,7 @@ public class PD_trim extends PreDefinedFunction {
         addParameter("string");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value string  = args.get(0);
         if ( ! (string instanceof SetlString)) {

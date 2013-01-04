@@ -14,8 +14,8 @@ public abstract class IfThenAbstractBranch extends Statement {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed IfThenAbstractBranch");
         } else {
-            Term    term    = (Term) value;
-            String  fc      = term.functionalCharacter().getUnquotedString();
+            final Term    term    = (Term) value;
+            final String  fc      = term.functionalCharacter().getUnquotedString();
             if        (fc.equals(IfThenBranch.FUNCTIONAL_CHARACTER)) {
                 return IfThenBranch.termToBranch(term);
             } else if (fc.equals(IfThenElseIfBranch.FUNCTIONAL_CHARACTER)) {

@@ -4,12 +4,12 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressionUtilities.Constructor;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Constructor;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -44,6 +44,7 @@ public class SetListConstructor extends Expr {
         mConstructor = constructor;
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         if (mType == SET) {
             final SetlSet set = new SetlSet();
@@ -68,6 +69,7 @@ public class SetListConstructor extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -79,6 +81,7 @@ public class SetListConstructor extends Expr {
     }
 
     // sets this expression to the given value
+    @Override
     public void assignUncloned(final State state, final Value v) throws SetlException {
         if (v instanceof IndexedCollectionValue) {
             if (mType == LIST && mConstructor != null) {
@@ -100,6 +103,7 @@ public class SetListConstructor extends Expr {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
+    @Override
     public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) throws SetlException {
         if (v instanceof IndexedCollectionValue) {
             if (mType == LIST && mConstructor != null) {
@@ -118,14 +122,15 @@ public class SetListConstructor extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         if (mType == SET) {
             sb.append("{");
         } else /* if (mType == LIST) */ {
             sb.append("[");
         }
         if (mConstructor != null) {
-            mConstructor.appendString(sb);
+            mConstructor.appendString(state, sb);
         }
         if (mType == SET) {
             sb.append("}");
@@ -136,6 +141,7 @@ public class SetListConstructor extends Expr {
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         final CollectionValue result;
         if (mType == SET) {
@@ -172,6 +178,7 @@ public class SetListConstructor extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

@@ -1,4 +1,4 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -9,6 +9,9 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -37,14 +40,15 @@ public class ExplicitListWithRest extends Constructor {
         mRest = rest;
     }
 
+    @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
         for (final Expr e: mList) {
-            collection.addMember(e.eval(state));
+            collection.addMember(state, e.eval(state));
         }
         final Value rest = mRest.eval(state);
         if (rest instanceof CollectionValue) {
             for (final Value v: (CollectionValue) rest) {
-                collection.addMember(v);
+                collection.addMember(state, v);
             }
         } else {
             throw new IncompatibleTypeException(
@@ -60,6 +64,7 @@ public class ExplicitListWithRest extends Constructor {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -73,32 +78,34 @@ public class ExplicitListWithRest extends Constructor {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb) {
         final Iterator<Expr> iter = mList.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb, 0);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
         }
         sb.append(" | ");
-        mRest.appendString(sb, 0);
+        mRest.appendString(state, sb, 0);
     }
 
     /* term operations */
 
+    @Override
     public void addToTerm(final State state, final CollectionValue collection) {
         final Term     result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList members = new SetlList(mList.size());
         for (final Expr member: mList) {
-            members.addMember(member.toTerm(state));
+            members.addMember(state, member.toTerm(state));
         }
-        result.addMember(members);
+        result.addMember(state, members);
 
-        result.addMember(mRest.toTerm(state));
+        result.addMember(state, mRest.toTerm(state));
 
-        collection.addMember(result);
+        collection.addMember(state, result);
     }
 
     public static MatchResult matchTerm(final State state, final Term elwRTerm, final CollectionValue collection) throws IncompatibleTypeException {

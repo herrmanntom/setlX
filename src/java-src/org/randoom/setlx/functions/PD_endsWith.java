@@ -19,6 +19,7 @@ public class PD_endsWith extends PreDefinedFunction {
         addParameter("suffix");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value string = args.get(0);
         final Value suffix = args.get(1);
@@ -34,7 +35,6 @@ public class PD_endsWith extends PreDefinedFunction {
             );
         }
 
-
         if (string.getUnquotedString().endsWith(suffix.getUnquotedString())) {
             return SetlBoolean.TRUE;
         } else {
@@ -43,4 +43,3 @@ public class PD_endsWith extends PreDefinedFunction {
     }
 
 }
-

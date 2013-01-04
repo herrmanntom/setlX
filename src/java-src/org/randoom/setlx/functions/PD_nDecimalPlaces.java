@@ -21,6 +21,7 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
         addParameter("n");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final Value number  = args.get(0);
         final Value nValue  = args.get(1);
@@ -43,7 +44,7 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
               Value         digit   = null;
               Value         restMod1= null;
 
-        intPart.appendString(result, 0);
+        intPart.appendString(state, result, 0);
         result.append(".");
         for (int i = 1; i <= n; ++i) {
             rest    = rest.product(state, Rational.TEN);
@@ -51,7 +52,7 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
             digit   = rest.difference(state, restMod1);
             rest    = restMod1;
 
-            digit.appendString(result, 0);
+            digit.appendString(state, result, 0);
         }
 
         return SetlString.newSetlStringFromSB(result);

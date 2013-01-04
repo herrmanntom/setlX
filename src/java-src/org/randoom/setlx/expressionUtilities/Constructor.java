@@ -1,4 +1,4 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -6,12 +6,16 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
 
-public abstract class Constructor {
+public abstract class Constructor extends CodeFragment {
+
     public abstract void fillCollection(
         final State           state,
         final CollectionValue collection
@@ -24,6 +28,7 @@ public abstract class Constructor {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public abstract void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -60,15 +65,19 @@ public abstract class Constructor {
 
     /* String operations */
 
-    public abstract void        appendString(final StringBuilder sb);
-
-    public final    String      toString() {
-        final StringBuilder sb = new StringBuilder();
-        appendString(sb);
-        return sb.toString();
+    @Override
+    public          void        appendString(final State state, final StringBuilder sb, final int tabs) {
+        appendString(state, sb);
     }
 
+    public abstract void        appendString(final State state, final StringBuilder sb);
+
     /* term operations */
+
+    @Override
+    public          Om          toTerm(final State state) {
+        return Om.OM;
+    }
 
     public abstract void        addToTerm(final State state, final CollectionValue collection);
 

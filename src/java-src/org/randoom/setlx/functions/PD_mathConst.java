@@ -18,8 +18,9 @@ public class PD_mathConst extends PreDefinedFunction {
         addParameter("name_of_constant");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws IncompatibleTypeException {
-        Value name = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
+        final Value name = args.get(0);
 
         // create constants with max precision possible when --real256 option is used
         if (       name.getUnquotedString().equalsIgnoreCase( "e"        )) {

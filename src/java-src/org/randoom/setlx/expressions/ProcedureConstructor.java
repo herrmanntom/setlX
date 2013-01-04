@@ -36,6 +36,7 @@ public class ProcedureConstructor extends Expr {
         mClosureVariables = null;
     }
 
+    @Override
     protected ProcedureDefinition evaluate(final State state) throws SetlException {
         if (mClosureVariables == null) {
             this.optimize();
@@ -70,6 +71,7 @@ public class ProcedureConstructor extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -86,17 +88,20 @@ public class ProcedureConstructor extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mDefinition.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mDefinition.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         return mDefinition.toTerm(state);
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

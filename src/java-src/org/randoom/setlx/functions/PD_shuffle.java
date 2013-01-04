@@ -16,8 +16,9 @@ public class PD_shuffle extends PreDefinedFunction {
         addParameter("collectionValue");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        return args.get(0).shuffle();
+        return args.get(0).shuffle(state);
     }
 
 }

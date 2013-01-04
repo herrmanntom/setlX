@@ -5,7 +5,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
@@ -34,6 +33,7 @@ public class GlobalDefinition extends Statement {
         mVars = vars;
     }
 
+    @Override
     protected Value exec(final State state) {
         for (final Variable var : mVars) {
             var.makeGlobal(state);
@@ -48,6 +48,7 @@ public class GlobalDefinition extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -59,13 +60,14 @@ public class GlobalDefinition extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("var ");
 
         final Iterator<Variable> iter = mVars.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb, 0);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
@@ -76,14 +78,15 @@ public class GlobalDefinition extends Statement {
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
-        Term result = new Term(FUNCTIONAL_CHARACTER, 1);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList varList = new SetlList(mVars.size());
         for (final Variable var : mVars) {
-            varList.addMember(var.toTerm(state));
+            varList.addMember(state, var.toTerm(state));
         }
-        result.addMember(varList);
+        result.addMember(state, varList);
 
         return result;
     }

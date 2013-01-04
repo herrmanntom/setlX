@@ -17,9 +17,10 @@ public class PD_fromB extends PreDefinedFunction {
         addParameter("collectionValue", ParameterDef.READ_WRITE);
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value collection = args.get(0);
-        Value element    = collection.removeFirstMember();
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        final Value collection = args.get(0);
+        final Value element    = collection.removeFirstMember();
 
         // write the reduced collection back into the outer environment
         writeBackVars.add(collection);

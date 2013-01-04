@@ -23,6 +23,7 @@ public class PD_replaceFirst extends PreDefinedFunction {
         addParameter("replacement");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, SyntaxErrorException {
         final Value string      = args.get(0);
         final Value pattern     = args.get(1);
@@ -49,7 +50,7 @@ public class PD_replaceFirst extends PreDefinedFunction {
         try {
             return new SetlString(string.getUnquotedString().replaceFirst(pattern.getUnquotedString(),replacement.getUnquotedString()));
         } catch (final PatternSyntaxException pse) {
-            LinkedList<String> errors = new LinkedList<String>();
+            final LinkedList<String> errors = new LinkedList<String>();
             errors.add("Error while parsing regex-pattern '" + pattern.getUnquotedString() + "' {");
             errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
             errors.add("}");

@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -37,6 +36,7 @@ public class Check extends Statement {
         mRecovery   = recovery;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         try {
             return mStatements.execute(state);
@@ -56,6 +56,7 @@ public class Check extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -75,30 +76,32 @@ public class Check extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("check ");
-        mStatements.appendString(sb, tabs, true);
+        mStatements.appendString(state,sb, tabs, true);
         if (mRecovery != null) {
             sb.append(" afterBacktrack ");
-            mRecovery.appendString(sb, tabs, true);
+            mRecovery.appendString(state, sb, tabs, true);
         }
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
         if (mRecovery != null) {
-            result.addMember(mRecovery.toTerm(state));
+            result.addMember(state, mRecovery.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
         return result;
     }
 
-    public static Check termToStatement(Term term) throws TermConversionException {
+    public static Check termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

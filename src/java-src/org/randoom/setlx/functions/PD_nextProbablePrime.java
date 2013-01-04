@@ -21,6 +21,7 @@ public class PD_nextProbablePrime extends PreDefinedFunction {
         addParameter("integer");
     }
 
+    @Override
     public Rational execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final Value integer  = args.get(0);
         if (integer.isInteger() != SetlBoolean.TRUE) {

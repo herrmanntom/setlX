@@ -4,8 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.utilities.Environment;
-import org.randoom.setlx.utilities.ExplicitListWithRest;
+import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -60,6 +59,7 @@ public class SetlList extends IndexedCollectionValue {
         isCloned    = true;  // lists created from another list ARE a clone
     }
 
+    @Override
     public SetlList clone() {
         /* When cloning, THIS list is marked to be a clone as well.
          *
@@ -90,6 +90,7 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Iterator<Value> iterator() {
         return mList.iterator();
     }
@@ -107,14 +108,17 @@ public class SetlList extends IndexedCollectionValue {
             this.position  = this.size - 1;
         }
 
+        @Override
         public boolean hasNext() {
             return 0 < position;
         }
 
+        @Override
         public Value next() {
             return content.get(position--);
         }
 
+        @Override
         public void remove() {
             listShell.separateFromOriginal();
             content.remove(position--);
@@ -122,24 +126,34 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Iterator<Value> descendingIterator() {
         return new SetlListDecendingIterator(this);
     }
 
     public void compress() {
-        while (mList.size() > 0 && mList.get(mList.size() - 1) == Om.OM) {
-            mList.remove(mList.size() - 1);
+        int size    = mList.size();
+        int removed = 0;
+        while (size > 0 && mList.get(size - 1) == Om.OM) {
+            mList.remove(size - 1);
+            ++removed;
+            size = mList.size();
+        }
+        if (size < removed) {
+            mList.trimToSize();
         }
     }
 
     /* type checks (sort of Boolean operation) */
 
+    @Override
     public SetlBoolean isList() {
         return SetlBoolean.TRUE;
     }
 
     /* arithmetic operations */
 
+    @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int      m      = ((Rational) multiplier).intValue();
@@ -151,7 +165,7 @@ public class SetlList extends IndexedCollectionValue {
             final SetlList result = new SetlList(size() * m);
             for (int i = 0; i < m; ++i) {
                 for(final Value v : this) {
-                    result.addMember(v.clone());
+                    result.addMember(state, v.clone());
                 }
             }
             return result;
@@ -164,6 +178,7 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value productAssign(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int m = ((Rational) multiplier).intValue();
@@ -191,11 +206,12 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).sumFlipped(this);
+            return ((SetlString)summand).sumFlipped(state, this);
         } else if (summand instanceof CollectionValue) {
             final ArrayList<Value> list = new ArrayList<Value>(mList.size() + summand.size());
             for (final Value v: mList) {
@@ -215,18 +231,19 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value sumAssign(final State state, final Value summand) throws SetlException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
-            return ((SetlString)summand).sumFlipped(this);
+            return ((SetlString)summand).sumFlipped(state, this);
         } else if (summand instanceof CollectionValue) {
             separateFromOriginal();
             for (final Value v: (CollectionValue) summand) {
                 mList.add(v.clone());
             }
             return this;
-        }else {
+        } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " += " + summand + "' is not a list or string."
             );
@@ -235,12 +252,13 @@ public class SetlList extends IndexedCollectionValue {
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
-    public void addMember(final Value element) {
+    @Override
+    public void addMember(final State state, final Value element) {
         separateFromOriginal();
         mList.add(element.clone());
     }
 
-    public SetlSet collect() {
+    public SetlSet collect(final State state) {
         final HashMap<Value, Integer> map        = new HashMap<Value, Integer>();
               Integer                 occurences = null;
         for (final Value v : mList) {
@@ -253,36 +271,37 @@ public class SetlList extends IndexedCollectionValue {
         }
         final SetlSet result = new SetlSet();
         for (final Map.Entry<Value, Integer> entry : map.entrySet()) {
-            SetlList member = new SetlList(2);
-            member.addMember(entry.getKey());
-            member.addMember(Rational.valueOf(entry.getValue()));
-            result.addMember(member);
+            final SetlList member = new SetlList(2);
+            member.addMember(state, entry.getKey());
+            member.addMember(state, Rational.valueOf(entry.getValue()));
+            result.addMember(state, member);
         }
         return result;
     }
 
+    @Override
     public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
         final int   aSize  = args.size();
         final Value vFirst = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {
             if (aSize == 2 && vFirst == RangeDummy.RD) {
                 // everything up to high boundary: this(  .. y);
-                return getMembers(Rational.ONE, args.get(1));
+                return getMembers(state, Rational.ONE, args.get(1));
 
             } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
                 // everything from low boundary:   this(x ..  );
-                return getMembers(vFirst, Rational.valueOf(size()));
+                return getMembers(state, vFirst, Rational.valueOf(size()));
 
             } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
-                // full range spec:                this(x .. y);
-                return getMembers(vFirst, args.get(2));
+                // full range specification:                this(x .. y);
+                return getMembers(state, vFirst, args.get(2));
             }
             throw new UndefinedOperationException(
                 "Can not access elements using the arguments '" + args + "' on '" + this + "';" +
                 " arguments are malformed."
             );
         } else if (aSize == 1) {
-            return getMember(vFirst);
+            return getMember(state, vFirst);
         } else {
             throw new UndefinedOperationException(
                 "Can not access elements using the arguments '" + args + "' on '" + this + "';" +
@@ -291,6 +310,7 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             // uncloned access is only used in assignments, so we should never get here
@@ -299,7 +319,7 @@ public class SetlList extends IndexedCollectionValue {
                 " range is not allowed in assignments."
             );
         } else if (args.size() == 1) {
-            return getMemberUnCloned(args.get(0));
+            return getMemberUnCloned(state, args.get(0));
         } else {
             // uncloned access is only used in assignments, so we should never get here
             throw new UndefinedOperationException(
@@ -309,10 +329,12 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public SetlBoolean containsMember(final Value element) {
         return SetlBoolean.valueOf(mList.contains(element));
     }
 
+    @Override
     public Value firstMember() {
         if (size() < 1) {
             return Om.OM;
@@ -320,11 +342,13 @@ public class SetlList extends IndexedCollectionValue {
         return mList.get(0).clone();
     }
 
+    @Override
     public Value getMember(final int index) throws SetlException {
         return getMemberZZZInternal(index).clone();
     }
 
-    public Value getMember(final Value index) throws SetlException {
+    @Override
+    public Value getMember(final State state, final Value index) throws SetlException {
         return getMemberZZZInternal(index).clone();
     }
 
@@ -333,7 +357,8 @@ public class SetlList extends IndexedCollectionValue {
         return getMemberZZZInternal(index);
     }
 
-    public Value getMemberUnCloned(final Value index) throws SetlException {
+    @Override
+    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
         separateFromOriginal();
         return getMemberZZZInternal(index);
     }
@@ -363,7 +388,8 @@ public class SetlList extends IndexedCollectionValue {
         return mList.get(index - 1);
     }
 
-    public Value getMembers(final Value vLow, final Value vHigh) throws SetlException {
+    @Override
+    public Value getMembers(final State state, final Value vLow, final Value vHigh) throws SetlException {
         int low = 0, high = 0;
         if (vLow.isInteger() == SetlBoolean.TRUE) {
             low = ((Rational)vLow).intValue();
@@ -405,11 +431,12 @@ public class SetlList extends IndexedCollectionValue {
         }
         final SetlList result = new SetlList(size);
         for (int i = low; i < high; ++i) {
-            result.addMember(mList.get(i).clone());
+            result.addMember(state, mList.get(i).clone());
         }
         return result;
     }
 
+    @Override
     public Value lastMember() {
         if (size() < 1) {
             return Om.OM;
@@ -417,6 +444,7 @@ public class SetlList extends IndexedCollectionValue {
         return mList.get(mList.size() - 1).clone();
     }
 
+    @Override
     public Value maximumMember() throws SetlException {
         Value max = Infinity.NEGATIVE;
         for (final Value v: mList) {
@@ -427,6 +455,7 @@ public class SetlList extends IndexedCollectionValue {
         return max.clone();
     }
 
+    @Override
     public Value minimumMember() throws SetlException {
         Value min = Infinity.POSITIVE;
         for (final Value v: mList) {
@@ -437,6 +466,7 @@ public class SetlList extends IndexedCollectionValue {
         return min.clone();
     }
 
+    @Override
     public Value nextPermutation(final State state) throws SetlException {
         if (size() < 2) {
             return Om.OM;
@@ -473,10 +503,11 @@ public class SetlList extends IndexedCollectionValue {
         return new SetlList(p);
     }
 
+    @Override
     public SetlSet permutations(final State state) throws SetlException {
         if (size() == 0) {
             final SetlSet permutations = new SetlSet();
-            permutations.addMember(clone());
+            permutations.addMember(state, clone());
             return permutations;
         }
         final SetlList  rest            = clone();
@@ -489,18 +520,20 @@ public class SetlList extends IndexedCollectionValue {
                 final SetlList  perm    = (SetlList) permutation.clone();
                 perm.separateFromOriginal();
                 perm.mList.add(i, last.clone());
-                permutations.addMember(perm);
+                permutations.addMember(state, perm);
             }
         }
         return permutations;
     }
 
+    @Override
     public void removeMember(final Value element) {
         separateFromOriginal();
         mList.remove(element);
         compress();
     }
 
+    @Override
     public Value removeFirstMember() {
         if (size() < 1) {
             return Om.OM;
@@ -511,6 +544,7 @@ public class SetlList extends IndexedCollectionValue {
         return result;
     }
 
+    @Override
     public Value removeLastMember() {
         final int index = mList.size() - 1;
         if (index < 0) {
@@ -522,6 +556,7 @@ public class SetlList extends IndexedCollectionValue {
         return result;
     }
 
+    @Override
     public SetlList reverse() {
         final int               size    = mList.size();
         // mark this list to be clone
@@ -534,7 +569,8 @@ public class SetlList extends IndexedCollectionValue {
         return new SetlList(reverse);
     }
 
-    public void setMember(final Value vIndex, final Value v) throws SetlException {
+    @Override
+    public void setMember(final State state, final Value vIndex, final Value v) throws SetlException {
         separateFromOriginal();
         int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
@@ -551,7 +587,7 @@ public class SetlList extends IndexedCollectionValue {
         }
 
         // in java the index is one lower
-        index--;
+        --index;
 
         if (index >= mList.size()) {
             if (v == Om.OM) {
@@ -573,57 +609,63 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
-    public SetlList shuffle() {
+    @Override
+    public SetlList shuffle(final State state) {
         final ArrayList<Value> list = new ArrayList<Value>(mList);
-        Collections.shuffle(list, Environment.getRandom());
+        Collections.shuffle(list, state.getRandom());
         return new SetlList(list);
     }
 
+    @Override
     public int size() {
         return mList.size();
     }
 
+    @Override
     public SetlList sort() {
         final ArrayList<Value> list = new ArrayList<Value>(mList);
         Collections.sort(list);
         return new SetlList(list);
     }
 
-    public SetlList split(final Value pattern) throws IncompatibleTypeException {
+    @Override
+    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException {
         final SetlList  result    = new SetlList();
               SetlList  subResult = new SetlList();
         for (final Value v : mList) {
             if (v.equals(pattern)) {
-                result.addMember(subResult);
+                result.addMember(state, subResult);
                 subResult = new SetlList();
             } else {
-                subResult.addMember(v.clone());
+                subResult.addMember(state, v.clone());
             }
         }
 
-        result.addMember(subResult);
+        result.addMember(state, subResult);
 
         return result;
     }
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(this, false).appendString(sb, 0);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        TermConverter.valueToCodeFragment(this, false).appendString(state, sb, 0);
     }
 
-    public void canonical(final StringBuilder sb) {
-        canonical(sb, true);
+    @Override
+    public void canonical(final State state, final StringBuilder sb) {
+        canonical(state, sb, true);
     }
 
-    public void canonical(final StringBuilder sb, boolean addBracktes) {
+    public void canonical(final State state, final StringBuilder sb, final boolean addBracktes) {
         if (addBracktes) {
             sb.append("[");
         }
 
         final Iterator<Value> iter = iterator();
         while (iter.hasNext()) {
-            iter.next().canonical(sb);
+            iter.next().canonical(state, sb);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
@@ -636,6 +678,7 @@ public class SetlList extends IndexedCollectionValue {
 
     /* term operations */
 
+    @Override
     public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
         if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
@@ -671,10 +714,11 @@ public class SetlList extends IndexedCollectionValue {
         return result;
     }
 
+    @Override
     public Value toTerm(final State state) {
         final SetlList termList = new SetlList(mList.size());
         for (final Value v: mList) {
-            termList.addMember(v.toTerm(state));
+            termList.addMember(state, v.toTerm(state));
         }
         return termList;
     }
@@ -690,6 +734,7 @@ public class SetlList extends IndexedCollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
@@ -719,6 +764,7 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
@@ -743,8 +789,9 @@ public class SetlList extends IndexedCollectionValue {
 
     private final static int initHashCode = SetlList.class.hashCode();
 
+    @Override
     public int hashCode() {
-        int size = mList.size();
+        final int size = mList.size();
         int hash = initHashCode + size;
         if (size >= 1) {
             hash = hash * 31 + mList.get(0).hashCode();

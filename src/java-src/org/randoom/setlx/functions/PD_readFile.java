@@ -10,7 +10,6 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.io.BufferedReader;
@@ -38,6 +37,7 @@ public class PD_readFile extends PreDefinedFunction {
         allowFewerParameters();
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (args.size() < 1) {
             String error = "Procedure is defined with a larger number of parameters ";
@@ -54,14 +54,14 @@ public class PD_readFile extends PreDefinedFunction {
 
         HashSet<Integer> lineNumbers = null;
         if (args.size() == 2) {
-            Value numbers = args.get(1);
+            final Value numbers = args.get(1);
             if ( ! (numbers instanceof CollectionValue)) {
                 throw new IncompatibleTypeException(
                     "ListOfLineNumbers-argument '" + numbers + "' is not a collection value."
                 );
             }
             lineNumbers = new HashSet<Integer>(numbers.size());
-            for (Value num : (CollectionValue) numbers) {
+            for (final Value num : (CollectionValue) numbers) {
                 if (num.isInteger() == SetlBoolean.FALSE) {
                     throw new IncompatibleTypeException(
                         "Value '" + num + "' in listOfLineNumbers is not an integer."
@@ -79,7 +79,7 @@ public class PD_readFile extends PreDefinedFunction {
         }
 
         // get name of file to be read and allow modification of fileName/path by environment provider
-        final String    fileName    = Environment.filterFileName(fileArg.getUnquotedString());
+        final String    fileName    = state.filterFileName(fileArg.getUnquotedString());
 
         // read file
         FileInputStream fstream     = null;
@@ -97,7 +97,7 @@ public class PD_readFile extends PreDefinedFunction {
 
             while ((line = fBr.readLine()) != null) {
                 if (lineNumbers == null || lineNumbers.contains(++lineCounter)) {
-                    fileContent.addMember(new SetlString(line));
+                    fileContent.addMember(state, new SetlString(line));
 
                     if (lineNumbers != null) {
                         lineNumbers.remove(lineCounter);
@@ -110,9 +110,9 @@ public class PD_readFile extends PreDefinedFunction {
 
             return fileContent;
 
-        } catch (FileNotFoundException fnfe) {
+        } catch (final FileNotFoundException fnfe) {
             throw new FileNotReadableException("File '" + fileName + "' does not exist.");
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new FileNotReadableException("Unable to read file '" + fileName + "'.");
         } finally {
             try {
@@ -125,7 +125,7 @@ public class PD_readFile extends PreDefinedFunction {
                 if (fstream != null) {
                     fstream.close();
                 }
-            } catch (IOException ioe) { /* who cares */ }
+            } catch (final IOException ioe) { /* who cares */ }
         }
     }
 }

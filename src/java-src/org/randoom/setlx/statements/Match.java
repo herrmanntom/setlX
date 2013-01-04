@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -40,6 +39,7 @@ public class Match extends Statement {
         mBranchList = branchList;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         final Value term = mExpr.eval(state).toTerm(state);
         final VariableScope outerScope = state.getScope();
@@ -89,6 +89,7 @@ public class Match extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -118,31 +119,33 @@ public class Match extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("match (");
-        mExpr.appendString(sb, 0);
+        mExpr.appendString(state, sb, 0);
         sb.append(") {");
-        sb.append(Environment.getEndl());
+        sb.append(state.getEndl());
         for (final MatchAbstractBranch br : mBranchList) {
-            br.appendString(sb, tabs + 1);
+            br.appendString(state, sb, tabs + 1);
         }
-        Environment.getLineStart(sb, tabs);
+        state.getLineStart(sb, tabs);
         sb.append("}");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(mExpr.toTerm(state));
+        result.addMember(state, mExpr.toTerm(state));
 
         final SetlList branchList = new SetlList(mBranchList.size());
         for (final MatchAbstractBranch br: mBranchList) {
-            branchList.addMember(br.toTerm(state));
+            branchList.addMember(state, br.toTerm(state));
         }
-        result.addMember(branchList);
+        result.addMember(state, branchList);
 
         return result;
     }

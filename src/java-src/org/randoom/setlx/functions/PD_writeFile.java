@@ -9,7 +9,6 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -30,6 +29,7 @@ public class PD_writeFile extends PreDefinedFunction {
         addParameter("contents");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
         return exec(state, args, false);
     }
@@ -49,21 +49,21 @@ public class PD_writeFile extends PreDefinedFunction {
             content = (CollectionValue) contentArg;
         } else {
             content = new SetlList(1);
-            content.addMember(contentArg);
+            content.addMember(state, contentArg);
         }
 
-        final boolean verbose = Environment.isPrintVerbose();
-        Environment.setPrintVerbose(true);
-        final String  endl    = Environment.getEndl();
-        Environment.setPrintVerbose(verbose);
+        final boolean verbose = state.isPrintVerbose();
+        state.setPrintVerbose(true);
+        final String  endl    = state.getEndl();
+        state.setPrintVerbose(verbose);
 
         // write file
         final StringBuilder sb = new StringBuilder();
         for (final Value v : content) {
-            v.appendUnquotedString(sb, 0);
+            v.appendUnquotedString(state, sb, 0);
             sb.append(endl);
         }
-        DumpSetlX.dumpToFile(sb.toString(), fileName, append);
+        DumpSetlX.dumpToFile(state, sb.toString(), fileName, append);
 
         return SetlBoolean.TRUE;
     }

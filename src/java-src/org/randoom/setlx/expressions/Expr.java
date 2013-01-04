@@ -5,8 +5,8 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.DebugPrompt;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.StateImplementation;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
@@ -21,14 +21,14 @@ public abstract class Expr extends CodeFragment {
 
     public Value eval(final State state) throws SetlException {
         try {
-            if (sStepNext && Environment.isDebugModeActive() && ! Environment.isDebugPromptActive()) {
-                Environment.setDebugStepNextExpr(false);
+            if (sStepNext && state.isDebugModeActive() && ! state.isDebugPromptActive()) {
+                state.setDebugStepNextExpr(false);
                 DebugPrompt.prompt(state, this);
             } else if (mReplacement != null) {
                 return mReplacement.clone();
             }
             return this.evaluate(state);
-        } catch (SetlException se) {
+        } catch (final SetlException se) {
             se.addToTrace("Error in \"" + this + "\":");
             throw se;
         }
@@ -39,9 +39,11 @@ public abstract class Expr extends CodeFragment {
     protected void calculateReplacement(final List<Variable> unboundVariables) {
         if (mReplacement == null) {
             try {
-                final State bubble = State.getBubbleState();
+                // bubble state which is not connected to anything useful
+                final State bubble = new StateImplementation();
+                // evaluate in bubble state
                 mReplacement = evaluate(bubble);
-            } catch (SetlException se) {
+            } catch (final SetlException se) {
                 // ignore error
                 mReplacement = null;
 
@@ -70,6 +72,7 @@ public abstract class Expr extends CodeFragment {
 
     /* Gather variables and optimize this expression by setting replacement value
        for this expression, if this can be safely done */
+    @Override
     public final void collectVariablesAndOptimize(
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -145,10 +148,12 @@ public abstract class Expr extends CodeFragment {
 
     /* string operations */
 
-    public abstract void appendString(final StringBuilder sb, final int tabs);
+    @Override
+    public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
     /* term operations */
 
+    @Override
     public abstract Value toTerm(final State state);
 
     // toTerm when quoted ('@') expression is evaluated

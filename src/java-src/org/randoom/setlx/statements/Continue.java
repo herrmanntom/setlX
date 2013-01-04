@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -25,6 +24,7 @@ public class Continue extends Statement {
 
     private Continue() {  }
 
+    @Override
     protected Om exec(final State state) {
         return Om.OM.setContinue();
     }
@@ -36,6 +36,7 @@ public class Continue extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -44,13 +45,15 @@ public class Continue extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("continue;");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }

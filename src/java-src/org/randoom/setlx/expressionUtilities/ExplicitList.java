@@ -1,4 +1,4 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -8,6 +8,8 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
@@ -32,9 +34,10 @@ public class ExplicitList extends Constructor {
         mList = exprList;
     }
 
+    @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
         for (final Expr e: mList) {
-            collection.addMember(e.eval(state));
+            collection.addMember(state, e.eval(state));
         }
     }
 
@@ -45,6 +48,7 @@ public class ExplicitList extends Constructor {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -56,6 +60,7 @@ public class ExplicitList extends Constructor {
     }
 
     // sets the variables used to form this list to the variables from the list given as a parameter
+    @Override
     public void assignUncloned(
         final State                  state,
         final IndexedCollectionValue collection
@@ -76,6 +81,7 @@ public class ExplicitList extends Constructor {
        (but EXCLUDING) `outerScope'.
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
+    @Override
     public boolean assignUnclonedCheckUpTo(
         final State                  state,
         final IndexedCollectionValue collection,
@@ -101,10 +107,11 @@ public class ExplicitList extends Constructor {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb) {
         final Iterator<Expr> iter = mList.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb, 0);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
@@ -113,9 +120,10 @@ public class ExplicitList extends Constructor {
 
     /* term operations */
 
+    @Override
     public void addToTerm(final State state, final CollectionValue collection) {
         for (final Expr member: mList) {
-            collection.addMember(member.toTerm(state));
+            collection.addMember(state, member.toTerm(state));
         }
     }
 

@@ -1,15 +1,17 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressionUtilities.Iterator;
+import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Iterator;
-import org.randoom.setlx.utilities.IteratorExecutionContainer;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
@@ -56,12 +58,13 @@ public class Iteration extends Constructor {
             return mCollection;
         }
 
+        @Override
         public Value execute(final State state, final Value lastIterationValue) throws SetlException {
             if (mCondition == null || mCondition.evalToBool(state)) {
                 if (mExpr != null) {
-                    mCollection.addMember(mExpr.eval(state));
+                    mCollection.addMember(state, mExpr.eval(state));
                 } else { // is simple iteration
-                    mCollection.addMember(lastIterationValue);
+                    mCollection.addMember(state, lastIterationValue);
                 }
             }
             return null;
@@ -74,6 +77,7 @@ public class Iteration extends Constructor {
            NOTE: Use optimizeAndCollectVariables() when adding variables from
                  sub-expressions
         */
+        @Override
         public void collectVariablesAndOptimize (
             final List<Variable> boundVariables,
             final List<Variable> unboundVariables,
@@ -95,8 +99,9 @@ public class Iteration extends Constructor {
         mExec      = new Exec(expr, condition);
     }
 
+    @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
-        CollectionValue tmp = mExec.getCollection();
+        final CollectionValue tmp = mExec.getCollection();
         mExec.setCollection(collection);
         mIterator.eval(state, mExec);
         mExec.setCollection(tmp);
@@ -109,6 +114,7 @@ public class Iteration extends Constructor {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -119,34 +125,36 @@ public class Iteration extends Constructor {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb) {
         if (mExpr != null) {
-            mExpr.appendString(sb, 0);
+            mExpr.appendString(state, sb, 0);
             sb.append(" : ");
         }
-        mIterator.appendString(sb);
+        mIterator.appendString(state, sb, 0);
         if (mCondition != null) {
             sb.append(" | ");
-            mCondition.appendString(sb, 0);
+            mCondition.appendString(state, sb, 0);
         }
     }
 
     /* term operations */
 
+    @Override
     public void addToTerm(final State state, final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
         if (mExpr != null) {
-            result.addMember(mExpr.toTerm(state));
+            result.addMember(state, mExpr.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
-        result.addMember(mIterator.toTerm(state));
+        result.addMember(state, mIterator.toTerm(state));
         if (mCondition != null) {
-            result.addMember(mCondition.toTerm(state));
+            result.addMember(state, mCondition.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
-        collection.addMember(result);
+        collection.addMember(state, result);
     }
 
     /*package*/ static Iteration termToIteration(final Term term) throws TermConversionException {
@@ -166,7 +174,7 @@ public class Iteration extends Constructor {
                     cond    = TermConverter.valueToCondition(term.lastMember());
                 }
                 return new Iteration(expr, iterator, cond);
-            } catch (SetlException se) {
+            } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }

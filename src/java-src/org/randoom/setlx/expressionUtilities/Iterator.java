@@ -1,4 +1,4 @@
-package org.randoom.setlx.utilities;
+package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -11,6 +11,10 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +34,7 @@ implemented here as:
       mAssignable  mCollection    ||       mNext
 */
 
-public class Iterator {
+public class Iterator extends CodeFragment {
     // functional character used in terms
     private final static String     FUNCTIONAL_CHARACTER = "^iterator";
     // Trace all assignments.     MAY ONLY BE SET BY CONTINUE CLASS!
@@ -123,35 +127,39 @@ public class Iterator {
             boundVariables.remove(preIndex + (i - 1));
         }
     }
+    @Override
+    public void collectVariablesAndOptimize (
+        final List<Variable>             boundVariables,
+        final List<Variable>             unboundVariables,
+        final List<Variable>             usedVariables
+    ) {
+        throw new UnsupportedOperationException("Iterators can only be optimized together with their execution container.");
+    }
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb) {
-        mAssignable.appendString(sb, 0);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mAssignable.appendString(state, sb, 0);
         sb.append(" in ");
-        mCollection.appendString(sb, 0);
+        mCollection.appendString(state, sb, 0);
         if (mNext != null) {
             sb.append(", ");
-            mNext.appendString(sb);
+            mNext.appendString(state, sb, tabs);
         }
-    }
-
-    public final String toString() {
-        final StringBuilder sb = new StringBuilder();
-        appendString(sb);
-        return sb.toString();
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
-        result.addMember(mAssignable.toTerm(state));
-        result.addMember(mCollection.toTerm(state));
+        result.addMember(state, mAssignable.toTerm(state));
+        result.addMember(state, mCollection.toTerm(state));
         if (mNext != null) {
-            result.addMember(mNext.toTerm(state));
+            result.addMember(state, mNext.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
         return result;
     }
@@ -176,7 +184,7 @@ public class Iterator {
                     iterator    = Iterator.valueToIterator(term.lastMember());
                 }
                 return new Iterator(assignable, collection, iterator);
-            } catch (SetlException se) {
+            } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
@@ -200,14 +208,14 @@ public class Iterator {
                 innerScope.setWriteThrough(false); // force iteration variables to be local to this block
 
                 // assign value from collection
-                boolean successful = mAssignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
+                final boolean successful = mAssignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
 
                 if ( ! successful) {
                     continue;
                 }
 
                 if (sTraceAssignments) {
-                    Environment.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
+                    state.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
                 }
 
                 // reset WriteThrough, because changes during execution are not strictly local

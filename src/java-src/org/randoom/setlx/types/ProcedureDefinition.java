@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -36,9 +35,9 @@ implemented here as:
 public class ProcedureDefinition extends Value {
     // functional character used in terms
     public  final static String  FUNCTIONAL_CHARACTER = "^procedure";
-    // execute this function continuesly in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // execute this function continuesly in debug mode until it returns. MAY ONLY BE SET BY STATE CLASS!
     public        static boolean sStepThroughFunction = false;
-    // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY STATE CLASS!
     public        static boolean sFinishFunction      = false;
 
     protected final List<ParameterDef>       mParameters;   // parameter list
@@ -65,6 +64,7 @@ public class ProcedureDefinition extends Value {
         return new ProcedureDefinition(mParameters, mStatements);
     }
 
+    @Override
     public ProcedureDefinition clone() {
         if (mClosure != null) {
             return new ProcedureDefinition(mParameters, mStatements, mClosure);
@@ -118,12 +118,14 @@ public class ProcedureDefinition extends Value {
 
     /* type checks (sort of Boolean operation) */
 
+    @Override
     public SetlBoolean isProcedure() {
         return SetlBoolean.TRUE;
     }
 
     /* function call */
 
+    @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         final int size = args.size();
         if (mParameters.size() != size) {
@@ -176,8 +178,8 @@ public class ProcedureDefinition extends Value {
 
         try {
             if (stepThrough) {
-                Environment.setDebugStepThroughFunction(false);
-                Environment.setDebugModeActive(false);
+                state.setDebugStepThroughFunction(false);
+                state.setDebugModeActive(false);
             }
 
             // execute, e.g. perform real procedure call
@@ -212,9 +214,9 @@ public class ProcedureDefinition extends Value {
             wba.writeBack(state);
 
             if (stepThrough || sFinishFunction) {
-                Environment.setDebugModeActive(true);
+                state.setDebugModeActive(true);
                 if (sFinishFunction) {
-                    Environment.setDebugFinishFunction(false);
+                    state.setDebugFinishFunction(false);
                 }
             }
         }
@@ -228,31 +230,33 @@ public class ProcedureDefinition extends Value {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("procedure(");
         final Iterator<ParameterDef> iter = mParameters.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
         }
         sb.append(") ");
-        mStatements.appendString(sb, tabs, /* brackets = */ true);
+        mStatements.appendString(state, sb, tabs, /* brackets = */ true);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
         for (final ParameterDef param: mParameters) {
-            paramList.addMember(param.toTerm(state));
+            paramList.addMember(state, param.toTerm(state));
         }
-        result.addMember(paramList);
+        result.addMember(state, paramList);
 
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
 
         return result;
     }
@@ -282,6 +286,7 @@ public class ProcedureDefinition extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v){
         if (this == v) {
             return 0;
@@ -307,6 +312,7 @@ public class ProcedureDefinition extends Value {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
@@ -332,6 +338,7 @@ public class ProcedureDefinition extends Value {
 
     private final static int initHashCode = ProcedureDefinition.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode;
     }

@@ -16,9 +16,10 @@ public class PD_canonical extends PreDefinedFunction {
         addParameter("term");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
         final StringBuilder sb = new StringBuilder();
-        args.get(0).canonical(sb);
+        args.get(0).canonical(state, sb);
         return SetlString.newSetlStringFromSB(sb);
     }
 }

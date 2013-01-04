@@ -17,8 +17,9 @@ public class PD_split extends PreDefinedFunction {
         addParameter("pattern");
     }
 
+    @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        return args.get(0).split(args.get(1));
+        return args.get(0).split(state, args.get(1));
     }
 }
 

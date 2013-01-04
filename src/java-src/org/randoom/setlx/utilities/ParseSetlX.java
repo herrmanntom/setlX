@@ -28,73 +28,73 @@ public class ParseSetlX {
         loadedLibraries.clear();
     }
 
-    public static Block parseFile(String fileName) throws ParserException {
+    public static Block parseFile(final State state, String fileName) throws ParserException {
         try {
             // allow modification of fileName/path by environment provider
-            fileName = Environment.filterFileName(fileName);
+            fileName = state.filterFileName(fileName);
             if (new File(fileName).isFile()) {
                 // parse the file contents (ANTLR will print its parser errors into stderr ...)
-                return parseBlock(new ANTLRFileStream(fileName));
+                return parseBlock(state, new ANTLRFileStream(fileName));
             } else {
                 throw new FileNotReadableException("File '" + fileName + "' could not be read.");
             }
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new FileNotReadableException("File '" + fileName + "' could not be read.");
         }
     }
 
-    public static Block parseLibrary(String name) throws ParserException {
+    public static Block parseLibrary(final State state, String name) throws ParserException {
         try {
             // allow modification of name by environment provider
-            name = Environment.filterLibraryName(name + ".stlx");
+            name = state.filterLibraryName(name + ".stlx");
             if (new File(name).isFile()) {
                 if (loadedLibraries.contains(name)) {
                     return new Block();
                 } else {
                     loadedLibraries.add(name);
                     // parse the file contents (ANTLR will print its parser errors into stderr ...)
-                    return parseBlock(new ANTLRFileStream(name));
+                    return parseBlock(state, new ANTLRFileStream(name));
                 }
             } else {
                 throw new FileNotReadableException("Library '" + name + "' could not be read.");
             }
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new FileNotReadableException("Library '" + name + "' could not be found.");
         }
     }
 
-    public static Block parseInteractive() throws ParserException {
+    public static Block parseInteractive(final State state) throws ParserException {
         try {
-            final InputStream stream = InputReader.getStream();
+            final InputStream stream = InputReader.getStream(state);
 
             // parse the input (ANTLR will print its parser errors into stderr ...)
-            return parseBlock(new ANTLRInputStream(stream));
+            return parseBlock(state, new ANTLRInputStream(stream));
 
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new EndOfFileException("eof");
         }
     }
 
-    public static Block parseStringToBlock(final String input) throws ParserException {
+    public static Block parseStringToBlock(final State state, final String input) throws ParserException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (ANTLR will print its parser errors into stderr ...)
-            return parseBlock(new ANTLRInputStream(stream));
+            return parseBlock(state, new ANTLRInputStream(stream));
 
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new EndOfFileException("eof");
         }
     }
 
-    public static Expr parseStringToExpr(final String input) throws ParserException {
+    public static Expr parseStringToExpr(final State state, final String input) throws ParserException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
             // parse the input (ANTLR will print its parser errors into stderr ...)
-            return parseExpr(new ANTLRInputStream(stream));
+            return parseExpr(state, new ANTLRInputStream(stream));
 
-        } catch (IOException ioe) {
+        } catch (final IOException ioe) {
             throw new EndOfFileException("eof");
         }
     }
@@ -113,25 +113,29 @@ public class ParseSetlX {
 
     /* private methods */
 
-    private static Block parseBlock(final ANTLRStringStream input) throws SyntaxErrorException {
-        return (Block) handleFragmentParsing(input, BLOCK);
+    private static Block parseBlock(final State state, final ANTLRStringStream input) throws SyntaxErrorException {
+        return (Block) handleFragmentParsing(state, input, BLOCK);
     }
 
-    private static Expr parseExpr(final ANTLRStringStream input) throws SyntaxErrorException {
-        return (Expr) handleFragmentParsing(input, EXPR);
+    private static Expr parseExpr(final State state, final ANTLRStringStream input) throws SyntaxErrorException {
+        return (Expr) handleFragmentParsing(state, input, EXPR);
     }
 
-    private static CodeFragment handleFragmentParsing(final ANTLRStringStream input, final int type) throws SyntaxErrorException {
+    private static CodeFragment handleFragmentParsing(final State state, final ANTLRStringStream input, final int type) throws SyntaxErrorException {
               SetlXgrammarLexer  lexer  = null;
               SetlXgrammarParser parser = null;
-        final LinkedList<String> oldCap = Environment.getParserErrorCapture();
+        final LinkedList<String> oldCap = state.getParserErrorCapture();
         try {
                                     lexer  = new SetlXgrammarLexer(input);
             final CommonTokenStream ts     = new CommonTokenStream(lexer);
                                     parser = new SetlXgrammarParser(ts);
 
             // capture parser errors
-            Environment.setParserErrorCapture(new LinkedList<String>());
+            state.setParserErrorCapture(new LinkedList<String>());
+
+            // set state objects for lexer & parser
+            lexer.setSetlXState(state);
+            parser.setSetlXState(state);
 
             // parse the input
             final CodeFragment      frag   = parseFragment(parser, type);
@@ -179,7 +183,7 @@ public class ParseSetlX {
             errors += parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors();
             if (errors > 0) {
                 throw SyntaxErrorException.create(
-                    Environment.getParserErrorCapture(),
+                    state.getParserErrorCapture(),
                     errors + " syntax error(s) encountered."
                 );
             }
@@ -188,9 +192,9 @@ public class ParseSetlX {
             frag.optimize();
 
             return frag;
-        } catch (RecognitionException re) {
-            throw SyntaxErrorException.create(Environment.getParserErrorCapture(), re.getMessage());
-        } catch (NullPointerException npe) {
+        } catch (final RecognitionException re) {
+            throw SyntaxErrorException.create(state.getParserErrorCapture(), re.getMessage());
+        } catch (final NullPointerException npe) {
             if (lexer != null) {
                 errors += lexer.getNumberOfSyntaxErrors();
             }
@@ -200,7 +204,7 @@ public class ParseSetlX {
             if (errors > 0) {
                 // NullPointerException caused by syntax error(s)
                 throw SyntaxErrorException.create(
-                    Environment.getParserErrorCapture(),
+                    state.getParserErrorCapture(),
                     errors + " syntax error(s) encountered."
                 );
             } else { // NullPointer in parse tree itself
@@ -208,7 +212,7 @@ public class ParseSetlX {
             }
         } finally {
             // restore error capture
-            Environment.setParserErrorCapture(oldCap);
+            state.setParserErrorCapture(oldCap);
         }
     }
 

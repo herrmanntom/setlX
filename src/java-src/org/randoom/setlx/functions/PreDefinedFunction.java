@@ -8,7 +8,6 @@ import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.WriteBackAgent;
@@ -60,6 +59,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     protected abstract Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException;
 
     // this function is called from within SetlX
+    @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         final int paramSize = mParameters.size();
         final int argsSize  = args.size();
@@ -101,7 +101,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
 
         if (sStepThroughFunction) {
-            Environment.setDebugStepThroughFunction(false);
+            state.setDebugStepThroughFunction(false);
         }
 
         // call predefined function (which may add writeBack-values to List)
@@ -131,12 +131,13 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     /* string and char operations */
 
-    public final void appendString(final StringBuilder sb, final int tabs) {
-        String endl = Environment.getEndl();
+    @Override
+    public final void appendString(final State state, final StringBuilder sb, final int tabs) {
+        final String endl = state.getEndl();
         sb.append("procedure(");
         final Iterator<ParameterDef> iter = mParameters.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
@@ -149,21 +150,22 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         }
         sb.append(") {");
         sb.append(endl);
-        Environment.getLineStart(sb, tabs + 1);
+        state.getLineStart(sb, tabs + 1);
         sb.append("/* predefined procedure `");
         sb.append(mName);
         sb.append("' */");
         sb.append(endl);
-        Environment.getLineStart(sb, tabs);
+        state.getLineStart(sb, tabs);
         sb.append("}");
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
-        Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER);
 
-        result.addMember(new SetlString(mName));
+        result.addMember(state, new SetlString(mName));
 
         return result;
     }

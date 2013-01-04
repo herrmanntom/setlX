@@ -3,7 +3,6 @@ package org.randoom.setlxUI.pc;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.ExitException;
-import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
@@ -16,17 +15,15 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.VariableScope;
+import org.randoom.setlx.utilities.StateImplementation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SetlX {
-
-    private final static String     VERSION         = "1.4.5";
+    private final static String     VERSION         = "1.4.99";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2012";
     private final static String     VERSION_PREFIX  = "v";
@@ -45,31 +42,31 @@ public class SetlX {
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
-    public static void main(String[] args) throws Exception {
-        boolean         dump        = false; // writes loaded code into a file
-        String          dumpFile    = "";    // file to dump into
-        boolean         help        = false;
-        boolean         interactive = false;
-        boolean         noExecution = false;
-        String          expression  = null;  // expression to be evaluated using -ev option
-        String          statement   = null;  // code to be executed when using -ex option
-        List<String>    files       = new ArrayList<String>();
-        PcEnvProvider   envProvider = new PcEnvProvider();
-        State           state       = new State();
+    public static void main(final String[] args) throws Exception {
+        boolean             dump        = false; // writes loaded code into a file
+        String              dumpFile    = "";    // file to dump into
+        boolean             help        = false;
+        boolean             interactive = false;
+        boolean             noExecution = false;
+        String              expression  = null;  // expression to be evaluated using -ev option
+        String              statement   = null;  // code to be executed when using -ex option
+        final List<String>  files       = new ArrayList<String>();
+        final PcEnvProvider envProvider = new PcEnvProvider();
+        final State         state       = new StateImplementation();
 
         // initialize Environment
-        Environment.setEnvironmentProvider(envProvider);
-        SetlList parameters = new SetlList(); // can/will be filled later
+        state.setEnvironmentProvider(envProvider);
+        final SetlList parameters = new SetlList(); // can/will be filled later
         state.putValue("params", parameters);
 
-        if ((envProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
-            envProvider.sLibraryPath = "";
+        if ((PcEnvProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
+            PcEnvProvider.sLibraryPath = "";
         }
 
         for (int i = 0; i < args.length; ++i) {
-            String s = args[i];
+            final String s = args[i];
             if (s.equals("--version")) {
-                Environment.outWriteLn(VERSION);
+                state.outWriteLn(VERSION);
 
                 System.exit(EXIT_OK);
 
@@ -115,31 +112,31 @@ public class SetlX {
             } else if (s.equals("--libraryPath")) {
                 ++i; // set to next argument
                 if (i < args.length) {
-                    envProvider.sLibraryPath = args[i];
+                    PcEnvProvider.sLibraryPath = args[i];
                 }
                 // check for incorrect contents
-                if (  envProvider.sLibraryPath.equals("") ||
+                if (  PcEnvProvider.sLibraryPath.equals("") ||
                       (
-                        envProvider.sLibraryPath.length() >= 2 &&
-                        envProvider.sLibraryPath.substring(0,2).equals("--")
+                        PcEnvProvider.sLibraryPath.length() >= 2 &&
+                        PcEnvProvider.sLibraryPath.substring(0,2).equals("--")
                       )
                    ) {
                     help = true;
                 }
             } else if (s.equals("--multiLineMode")) {
-                Environment.setMultiLineMode(true);
+                state.setMultiLineMode(true);
             } else if (s.equals("--noAssert")) {
-                Environment.setAssertsDisabled(true);
+                state.setAssertsDisabled(true);
             } else if (s.equals("--noExecution")) {
                 noExecution = true;
             } else if (s.equals("--params")) {
                 // all remaining arguments are passed into the program
                 ++i; // set to next argument
                 for (; i < args.length; ++i) {
-                    parameters.addMember(new SetlString(args[i]));
+                    parameters.addMember(state, new SetlString(args[i]));
                 }
             } else if (s.equals("--predictableRandom")) { // easier debugging
-                Environment.setPredictableRandoom();
+                state.setPredictableRandoom();
             } else if (s.equals("--real32")) {
                 Real.setPrecision32();
             } else if (s.equals("--real64")) {
@@ -165,21 +162,21 @@ public class SetlX {
         help        = help || (! interactive && files.size() > 0 && (expression != null || statement != null));
 
         if (interactive || verbose || help) {
-            printHeader();
+            printHeader(state);
             if (! help) {
-                printShortHelp();
+                printShortHelp(state);
             }
         }
         if (interactive && ! help) {
-            printInteractiveBegin();
+            printInteractiveBegin(state);
             parseAndExecuteInteractive(state);
         } else if ( ! help ) {
-            List<Block> programs = parseAndDumpCode(expression, statement, files, dump, dumpFile);
+            final List<Block> programs = parseAndDumpCode(state, expression, statement, files, dump, dumpFile);
             if ( ! noExecution) {
                 executeFiles(state, programs);
             }
         } else {
-            printHelp();
+            printHelp(state);
         }
 
         System.exit(EXIT_OK);
@@ -187,32 +184,32 @@ public class SetlX {
     }
 
     private static void parseAndExecuteInteractive(final State state) throws Exception {
-        Environment.setInteractive(true);
+        state.setInteractive(true);
         Block   blk      = null;
         boolean skipTest = false;
         do {
             // prompt including newline to visually separate the next input
-            Environment.prompt("\n=> ");
+            state.prompt("\n=> ");
             try {
                 ParseSetlX.resetErrorCount();
-                blk         = ParseSetlX.parseInteractive();
-                if ( ! Environment.isMultiLineEnabled()) {
-                    Environment.outWriteLn();
+                blk         = ParseSetlX.parseInteractive(state);
+                if ( ! state.isMultiLineEnabled()) {
+                    state.outWriteLn();
                 }
                 blk.markLastExprStatement();
                 skipTest    = false;
-            } catch (EndOfFileException eofe) {
+            } catch (final EndOfFileException eofe) {
                 // user wants to quit
-                Environment.outWriteLn("\n\nGood Bye! (EOF)");
+                state.outWriteLn("\n\nGood Bye! (EOF)");
 
                 break;
 
-            } catch (ParserException pe) {
-                Environment.errWriteLn(pe.getMessage());
+            } catch (final ParserException pe) {
+                state.errWriteLn(pe.getMessage());
                 skipTest = true;
                 blk      = null;
-            } catch (Exception e) { // this should never happen...
-                printInternalError();
+            } catch (final Exception e) { // this should never happen...
+                printInternalError(state);
                 if (unhideExceptions) {
                     e.printStackTrace();
                 }
@@ -221,14 +218,15 @@ public class SetlX {
 
             }
         } while (skipTest || (blk != null && execute(state, blk) != EXEC_EXIT));
-        printExecutionFinished();
+        printExecutionFinished(state);
     }
 
-    private static List<Block> parseAndDumpCode( String       expression,
-                                                 String       statement,
-                                                 List<String> files,
-                                                 boolean      dump,
-                                                 String       dumpFile) throws Exception {
+    private static List<Block> parseAndDumpCode( final State        state,
+                                                 final String       expression,
+                                                 final String       statement,
+                                                 final List<String> files,
+                                                 final boolean      dump,
+                                                 final String       dumpFile) throws Exception {
         // parsed programs
         int nPrograms = files.size();
         if (expression != null) {
@@ -236,42 +234,42 @@ public class SetlX {
         } else if (statement != null) {
             nPrograms += 1;
         }
-        List<Block> programs = new ArrayList<Block>(nPrograms);
+        final List<Block> programs = new ArrayList<Block>(nPrograms);
 
         // parse content of all files
         try {
             if (expression != null) {
                 final Block exp = new Block();
-                exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(expression)));
+                exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(state, expression)));
                 exp.markLastExprStatement();
                 programs.add(exp);
             } else if (statement != null) {
-                final Block stmt = ParseSetlX.parseStringToBlock(statement);
+                final Block stmt = ParseSetlX.parseStringToBlock(state, statement);
                 stmt.markLastExprStatement();
                 programs.add(stmt);
             } else {
-                for (String fileName : files) {
-                    programs.add(ParseSetlX.parseFile(fileName));
+                for (final String fileName : files) {
+                    programs.add(ParseSetlX.parseFile(state, fileName));
                 }
             }
-        } catch (ParserException pe) {
+        } catch (final ParserException pe) {
             if (verbose) {
-                Environment.outWriteLn(
+                state.outWriteLn(
                     "-================================Parser=Errors================================-\n"
                 );
             }
-            Environment.errWriteLn(pe.getMessage());
+            state.errWriteLn(pe.getMessage());
             if (verbose) {
-                Environment.outWriteLn(
+                state.outWriteLn(
                     "\n-================================Parsing=Failed===============================-\n"
                 );
-                Environment.errWriteLn("Execution terminated due to errors in the input.");
+                state.errWriteLn("Execution terminated due to errors in the input.");
             }
 
             System.exit(EXIT_ERROR);
 
-        } catch (Exception e) { // this should never happen...
-            printInternalError();
+        } catch (final Exception e) { // this should never happen...
+            printInternalError(state);
             if (unhideExceptions) {
                 e.printStackTrace();
             }
@@ -281,91 +279,91 @@ public class SetlX {
 
         // no parser errors when we get here
         if (verbose) {
-            Environment.outWriteLn(
+            state.outWriteLn(
                 "-================================Parsed=Program===============================-\n"
             );
         }
 
         // print and/or dump programs if needed
         if (verbose || dump) {
-            Environment.setPrintVerbose(true); // enables correct indentation etc
+            state.setPrintVerbose(true); // enables correct indentation etc
             final int size = programs.size();
             for (int i = 0; i < size; ++i) {
                 // get program text
-                String program = programs.get(i).toString() + '\n';
+                final String program = programs.get(i).toString() + '\n';
 
                 //in verbose mode the parsed programs are echoed
                 if (verbose) {
-                    Environment.outWriteLn(program);
+                    state.outWriteLn(program);
                 }
 
                 // when dump is enabled, the program is appended to the dumpFile
                 if (dump) {
                     try {
-                        DumpSetlX.dumpToFile(program, dumpFile, /* append = */ (i > 0) );
-                    } catch (FileNotWriteableException fnwe) {
-                        Environment.errWriteLn(fnwe.getMessage());
+                        DumpSetlX.dumpToFile(state, program, dumpFile, /* append = */ (i > 0) );
+                    } catch (final FileNotWriteableException fnwe) {
+                        state.errWriteLn(fnwe.getMessage());
 
                         System.exit(EXIT_ERROR);
 
                     }
                 }
             }
-            Environment.setPrintVerbose(false);
+            state.setPrintVerbose(false);
         }
 
         return programs;
     }
 
-    private static void executeFiles(final State state, List<Block> programs) throws Exception {
-        Environment.setInteractive(false);
+    private static void executeFiles(final State state, final List<Block> programs) throws Exception {
+        state.setInteractive(false);
 
         if (verbose) {
-            printExecutionStart();
+            printExecutionStart(state);
         }
 
         // run the parsed code
-        for (Block blk : programs) {
+        for (final Block blk : programs) {
             if (execute(state, blk) != EXEC_OK) {
                 break; // stop in case of error
             }
         }
 
         if (verbose) {
-            printExecutionFinished();
+            printExecutionFinished(state);
         }
     }
 
     private static int execute(final State state, final Block b) {
         try {
 
-            Environment.setDebugModeActive(false);
+            state.setDebugModeActive(false);
             final Value result = b.execute(state);
             if (result == Om.OM) {
                 Om.OM.isContinue();// reset continue outside of procedure
                 Om.OM.isBreak();   // reset break outside of procedure
             }
 
-        } catch (AbortException ae) { // code detected user did something wrong
-            Environment.errWriteLn(ae.getMessage());
+        } catch (final AbortException ae) { // code detected user did something wrong
+            state.errWriteLn(ae.getMessage());
             return EXEC_ERROR;
-        } catch (ExitException ee) { // user/code wants to quit
-            if (Environment.isInteractive()) {
-                Environment.outWriteLn(ee.getMessage());
+        } catch (final ExitException ee) { // user/code wants to quit
+            if (state.isInteractive()) {
+                state.outWriteLn(ee.getMessage());
             }
 
             return EXEC_EXIT; // breaks loop while parsing interactively
 
-        } catch (ResetException re) { // user/code wants to quit debugging
-            if (Environment.isInteractive()) {
-                Environment.outWriteLn("Resetting to interactive prompt.");
+        } catch (final ResetException re) { // user/code wants to quit debugging
+            if (state.isInteractive()) {
+                state.outWriteLn("Resetting to interactive prompt.");
             }
             return EXEC_OK;
-        } catch (SetlException se) { // user/code did something wrong
-            printExceptionsTrace(se.getTrace());
+        } catch (final SetlException se) { // user/code did something wrong
+            printExceptionsTrace(state, se.getTrace());
             return EXEC_ERROR;
-        } catch (OutOfMemoryError oome) {
-            Environment.errWriteLn(
+        } catch (final OutOfMemoryError oome) {
+            state.errWriteLn(
                 "The setlX interpreter has ran out of memory.\n" +
                 "Try improving the SetlX program and/or execute with larger maximum memory size.\n" +
                 "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n" +
@@ -373,8 +371,8 @@ public class SetlX {
                 "If that does not help get a better machine ;-)\n"
             );
             return EXEC_EXIT; // breaks loop while parsing interactively
-        } catch (Exception e) { // this should never happen...
-            printInternalError();
+        } catch (final Exception e) { // this should never happen...
+            printInternalError(state);
             if (unhideExceptions) {
                 e.printStackTrace();
             }
@@ -383,17 +381,17 @@ public class SetlX {
         return EXEC_OK; // continue loop while parsing interactively
     }
 
-    private static void printHeader() {
+    private static void printHeader(final State state) {
         // embed version number into header
-        int     versionSize = VERSION.length() + VERSION_PREFIX.length();
+        final int     versionSize = VERSION.length() + VERSION_PREFIX.length();
         String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 2) );
         header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 2);
         // print header
-        Environment.outWriteLn("\n" + header + "\n");
+        state.outWriteLn("\n" + header + "\n");
     }
 
-    private static void printShortHelp() {
-        Environment.outWriteLn(
+    private static void printShortHelp(final State state) {
+        state.outWriteLn(
             "Welcome to the setlX interpreter!\n" +
             "\n" +
             "Open Source Software from " + SETLX_URL +"\n" +
@@ -404,27 +402,27 @@ public class SetlX {
         );
     }
 
-    private static void printInteractiveBegin() {
-        printHelpInteractive();
-        Environment.outWriteLn(
+    private static void printInteractiveBegin(final State state) {
+        printHelpInteractive(state);
+        state.outWriteLn(
             "-===============================Interactive=Mode==============================-"
         );
     }
 
-    private static void printHelpInteractive() {
-        Environment.outWriteLn(
+    private static void printHelpInteractive(final State state) {
+        state.outWriteLn(
             "Interactive-Mode:\n" +
             "  The 'exit;' statement terminates the interpreter.\n"
         );
     }
 
-    private static void printHelp() {
-        Environment.outWriteLn(
+    private static void printHelp(final State state) {
+        state.outWriteLn(
             "File paths supplied as parameters for this program will be parsed and executed.\n" +
             "The interactive mode will be started if called without any file parameters.\n"
         );
-        printHelpInteractive();
-        Environment.outWriteLn(
+        printHelpInteractive(state);
+        state.outWriteLn(
             "Additional parameters:\n" +
             "  --ev <expression>\n" +
             "     evaluates next argument as expression and exits\n" +
@@ -454,37 +452,37 @@ public class SetlX {
         );
     }
 
-    private static void printInternalError() {
-        Environment.errWriteLn(
+    private static void printInternalError(final State state) {
+        state.errWriteLn(
             "Internal Error. Please report this error including steps and/or code " +
             "to reproduce to `setlx@randoom.org'."
         );
     }
 
-    private static void printExecutionStart() {
-        Environment.outWriteLn(
+    private static void printExecutionStart(final State state) {
+        state.outWriteLn(
             "-===============================Execution=Result==============================-\n"
         );
     }
 
-    private static void printExecutionFinished() {
-        Environment.outWriteLn(
+    private static void printExecutionFinished(final State state) {
+        state.outWriteLn(
             "\n-==============================Execution=Finished=============================-\n"
         );
     }
 
-    private static void printExceptionsTrace(List<String> trace) {
-        int end = trace.size();
-        int max = 40;
-        int m_2 = max / 2;
+    private static void printExceptionsTrace(final State state, final List<String> trace) {
+        final int end = trace.size();
+        final int max = 40;
+        final int m_2 = max / 2;
         for (int i = end - 1; i >= 0; --i) {
             // leave out some messages in the middle, which are most likely just clutter
             if (end > max && i > m_2 - 1 && i < end - (m_2 + 1)) {
                 if (i == m_2) {
-                    Environment.errWriteLn(" ... \n     omitted " + (end - max) + " messages\n ... ");
+                    state.errWriteLn(" ... \n     omitted " + (end - max) + " messages\n ... ");
                 }
             } else {
-                Environment.errWriteLn(trace.get(i));
+                state.errWriteLn(trace.get(i));
             }
         }
     }

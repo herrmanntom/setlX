@@ -4,14 +4,13 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Condition;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
@@ -48,18 +47,18 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     private final Block       mStatements;     // block to execute after match
     private       int         mEndOffset;      // Offset of last match operation (i.e. how far match progressed the input)
 
-    public MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
-        mPattern  = pattern;
-        // optimize pattern to see if it is static and can be compiled now
-        mPattern.optimize();
-        Value patternReplacement = mPattern.getReplacement();
+    public MatchRegexBranch(final State state, final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
+        this(pattern, assignTo, condition, statements);
+
+        // if pattern is static (fully optimized), it can be compiled now
+        final Value patternReplacement = mPattern.getReplacement();
         if (patternReplacement != null) {
             try {
                 mRuntimePattern = Pattern.compile(
                     patternReplacement.getUnquotedString()
                 );
             } catch (final PatternSyntaxException pse) {
-                Environment.writeParserErrLn(
+                state.writeParserErrLn(
                     "Error while parsing regex-pattern " + mPattern + " {\n"
                   + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
                   + "}"
@@ -70,13 +69,22 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         } else {
             mRuntimePattern = null;
         }
-        mAssignTo = assignTo;
-        mAssignTerm = null;
-        mCondition  = condition;
-        mStatements = statements;
-        mEndOffset  = -1;
     }
 
+    private MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
+        mPattern        = pattern;
+        mRuntimePattern = null;
+        mAssignTo       = assignTo;
+        mAssignTerm     = null;
+        mCondition      = condition;
+        mStatements     = statements;
+        mEndOffset      = -1;
+
+        // optimize pattern
+        mPattern.optimize();
+    }
+
+    @Override
     public MatchResult matches(final State state, final Value term) throws SetlException {
         if (term instanceof SetlString) {
             final MatchResult result = scannes(state, (SetlString) term);
@@ -87,6 +95,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return new MatchResult(false);
     }
 
+    @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
         if (mCondition != null) {
             return mCondition.evalToBool(state);
@@ -95,12 +104,22 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         }
     }
 
+    @Override
     public MatchResult scannes(final State state, final SetlString string) throws SetlException {
         Pattern pattern = null;
 
         if (mRuntimePattern != null) {
             pattern = mRuntimePattern;
-        } else {final Value patternStr = mPattern.eval(state);
+        } else {
+            final Value patternStr;
+            final Value patternReplacement = mPattern.getReplacement();
+            if (patternReplacement != null) {
+                // static pattern
+                patternStr = patternReplacement;
+            } else {
+                // dynamic pattern
+                patternStr = mPattern.eval(state);
+            }
             if ( ! (patternStr instanceof SetlString)) {
                 throw new IncompatibleTypeException(
                     "Pattern argument '" + patternStr + "' is not a string."
@@ -109,8 +128,12 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             // parse pattern
             try {
                 pattern = Pattern.compile(patternStr.getUnquotedString());
+                // store pattern if it is static
+                if (patternReplacement != null) {
+                    mRuntimePattern = pattern;
+                }
             } catch (final PatternSyntaxException pse) {
-                LinkedList<String> errors = new LinkedList<String>();
+                final LinkedList<String> errors = new LinkedList<String>();
                 errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
                 errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
                 errors.add("}");
@@ -133,7 +156,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 final int      count  = m.groupCount() + 1;
                 final SetlList groups = new SetlList(count);
                 for (int i = 0; i < count; ++i) {
-                    groups.addMember(new SetlString(m.group(i)));
+                    groups.addMember(state, new SetlString(m.group(i)));
                 }
                 return mAssignTerm.matchesTerm(state, groups);
             }
@@ -143,14 +166,17 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return new MatchResult(r);
     }
 
+    @Override
     public int getEndOffset() {
         return mEndOffset;
     }
 
+    @Override
     public Value execute(final State state) throws SetlException {
         return mStatements.execute(state);
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         return execute(state);
     }
@@ -162,6 +188,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -197,48 +224,50 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("regex ");
 
         sb.append(mPattern);
 
         if (mAssignTo != null) {
             sb.append(" as ");
-            mAssignTo.appendString(sb, tabs);
+            mAssignTo.appendString(state, sb, tabs);
         }
 
         if (mCondition != null) {
             sb.append(" | ");
-            mCondition.appendString(sb, tabs);
+            mCondition.appendString(state, sb, tabs);
         }
 
         sb.append(":");
-        sb.append(Environment.getEndl());
-        mStatements.appendString(sb, tabs + 1);
-        sb.append(Environment.getEndl());
+        sb.append(state.getEndl());
+        mStatements.appendString(state, sb, tabs + 1);
+        sb.append(state.getEndl());
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term     result   = new Term(FUNCTIONAL_CHARACTER, 4);
 
-        result.addMember(mPattern.toTerm(state));
+        result.addMember(state, mPattern.toTerm(state));
 
         if (mAssignTo != null) {
-            result.addMember(mAssignTo.toTerm(state));
+            result.addMember(state, mAssignTo.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
 
         if (mCondition != null) {
-            result.addMember(mCondition.toTerm(state));
+            result.addMember(state, mCondition.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
 
-        result.addMember(mStatements.toTerm(state));
+        result.addMember(state, mStatements.toTerm(state));
 
         return result;
     }

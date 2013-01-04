@@ -36,11 +36,12 @@ public class NotIn extends Expr {
         mRhs = rhs;
     }
 
+    @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
             // note: rhs and lhs swapped!
             return mRhs.eval(state).containsMember(mLhs.eval(state)).negation(state);
-        } catch (SetlException se) {
+        } catch (final SetlException se) {
             se.addToTrace("Error in substitute comparison \"!(" + mLhs + " in " + mRhs +  ")\":");
             throw se;
         }
@@ -53,6 +54,7 @@ public class NotIn extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -64,18 +66,20 @@ public class NotIn extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        mLhs.appendString(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mLhs.appendString(state, sb, tabs);
         sb.append(" notin ");
-        mRhs.appendString(sb, tabs);
+        mRhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(mLhs.toTerm(state));
-        result.addMember(mRhs.toTerm(state));
+        result.addMember(state, mLhs.toTerm(state));
+        result.addMember(state, mRhs.toTerm(state));
         return result;
     }
 
@@ -90,6 +94,7 @@ public class NotIn extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -16,30 +15,31 @@ public class PD_print extends PreDefinedFunction {
         this("print");
     }
 
-    protected PD_print(String fName) {
+    protected PD_print(final String fName) {
         super(fName);
         addParameter("value");
         enableUnlimitedParameters();
         allowFewerParameters();
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
         final StringBuilder out = new StringBuilder();
         for (final Value arg : args) {
-            arg.appendUnquotedString(out, 0);
-            print(out.toString());
+            arg.appendUnquotedString(state, out, 0);
+            print(state, out.toString());
             out.setLength( 0 );
         }
-        printEndl();
+        printEndl(state);
         return Om.OM;
     }
 
-    protected void print(String txt) {
-        Environment.outWrite(txt);
+    protected void print(final State state, final String txt) {
+        state.outWrite(txt);
     }
 
-    protected void printEndl() {
-        Environment.outWriteLn();
+    protected void printEndl(final State state) {
+        state.outWriteLn();
     }
 }
 

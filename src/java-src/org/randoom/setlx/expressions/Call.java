@@ -9,7 +9,6 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -33,7 +32,7 @@ public class Call extends Expr {
     private final static String     FUNCTIONAL_CHARACTER = "^call";
     // precedence level in SetlX-grammar
     private final static int        PRECEDENCE           = 2100;
-    // are any breakpoints set? MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // are any breakpoints set? MAY ONLY BE SET BY STATE CLASS!
     public        static boolean    sBreakpointsEnabled  = false;
     // continue execution of function, which includes this call, in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
     public        static boolean    sFinishOuterFunction = false;
@@ -48,6 +47,7 @@ public class Call extends Expr {
         _this   = toString();
     }
 
+    @Override
     protected Value evaluate(final State state) throws SetlException {
         final Value lhs = mLhs.eval(state);
         if (lhs == Om.OM) {
@@ -55,19 +55,19 @@ public class Call extends Expr {
                 "Identifier \"" + mLhs + "\" is undefined."
             );
         }
-        boolean finishOuterFunction = sFinishOuterFunction;
+        final boolean finishOuterFunction = sFinishOuterFunction;
         try {
-            if (sBreakpointsEnabled && ! Environment.isDebugPromptActive()) {
-                if (Environment.isBreakpoint(mLhs.toString())) {
-                    Environment.setDebugModeActive(true);
+            if (sBreakpointsEnabled && ! state.isDebugPromptActive()) {
+                if (state.isBreakpoint(mLhs.toString())) {
+                    state.setDebugModeActive(true);
                 }
             }
             if (finishOuterFunction) { // unset, because otherwise it would be reset when this call returns
-                Environment.setDebugFinishFunction(false);
+                state.setDebugFinishFunction(false);
             }
             // also supply the original expressions (mArgs), which are needed for 'rw' parameters
             return lhs.call(state, mArgs);
-        } catch (StackOverflowError e) {
+        } catch (final StackOverflowError e) {
             throw new JVMException(
                 "Stack overflow.\n" +
                 "Try preventing recursion and/or execute with larger stack size.\n" +
@@ -75,7 +75,7 @@ public class Call extends Expr {
             );
         } finally {
             if (finishOuterFunction) {
-                Environment.setDebugFinishFunction(true);
+                state.setDebugFinishFunction(true);
             }
         }
     }
@@ -87,6 +87,7 @@ public class Call extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -102,16 +103,17 @@ public class Call extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        if (_this != null && tabs == 0 && ! Environment.isPrintVerbose()) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        if (_this != null && tabs == 0 && ! state.isPrintVerbose()) {
             sb.append(_this);
         } else {
-            mLhs.appendString(sb, tabs);
+            mLhs.appendString(state, sb, tabs);
             sb.append("(");
 
             final Iterator<Expr> iter = mArgs.iterator();
             while (iter.hasNext()) {
-                iter.next().appendString(sb, 0);
+                iter.next().appendString(state, sb, 0);
                 if (iter.hasNext()) {
                     sb.append(", ");
                 }
@@ -123,30 +125,32 @@ public class Call extends Expr {
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(new SetlString(mLhs.toString()));
+        result.addMember(state, new SetlString(mLhs.toString()));
 
         final SetlList  arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
-            arguments.addMember(arg.toTerm(state));
+            arguments.addMember(state, arg.toTerm(state));
         }
-        result.addMember(arguments);
+        result.addMember(state, arguments);
 
         return result;
     }
 
+    @Override
     public Term toTermQuoted(final State state) throws SetlException {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(new SetlString(mLhs.toString()));
+        result.addMember(state, new SetlString(mLhs.toString()));
 
         final SetlList  arguments   = new SetlList(mArgs.size());
-        for (Expr arg: mArgs) {
-            arguments.addMember(arg.eval(state).toTerm(state));
+        for (final Expr arg: mArgs) {
+            arguments.addMember(state, arg.eval(state).toTerm(state));
         }
-        result.addMember(arguments);
+        result.addMember(state, arguments);
 
         return result;
     }
@@ -166,6 +170,7 @@ public class Call extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

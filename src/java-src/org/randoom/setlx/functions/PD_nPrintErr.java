@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 // nPrintErr(value, ...)         : same as nPrint, but prints into stderr
 
@@ -11,10 +11,12 @@ public class PD_nPrintErr extends PD_print {
         super("nPrintErr");
     }
 
-    protected void print(String txt) {
-        Environment.errWrite(txt);
+    @Override
+    protected void print(final State state, final String txt) {
+        state.errWrite(txt);
     }
 
-    protected void printEndl() { /* prints NO newline at the end */ }
+    @Override
+    protected void printEndl(final State state) { /* prints NO newline at the end */ }
 }
 

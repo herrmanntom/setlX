@@ -15,7 +15,8 @@ public class PD_reset extends PreDefinedFunction {
         super("reset");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws ResetException {
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws ResetException {
         throw new ResetException("reset");
     }
 }

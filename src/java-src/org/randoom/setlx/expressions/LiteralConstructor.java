@@ -13,8 +13,8 @@ public class LiteralConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private String     mOriginalLiteral;
-    private SetlString mRuntimeString;
+    private final String     mOriginalLiteral;
+    private final SetlString mRuntimeString;
 
     public LiteralConstructor(final String originalLiteral) {
         this(originalLiteral, SetlString.newLiteral(originalLiteral));
@@ -25,10 +25,12 @@ public class LiteralConstructor extends Expr {
         mRuntimeString   = runtimeString;
     }
 
+    @Override
     public SetlString eval(final State state) {
         return mRuntimeString;
     }
 
+    @Override
     protected SetlString evaluate(final State state) {
         return mRuntimeString;
     }
@@ -40,6 +42,7 @@ public class LiteralConstructor extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -48,16 +51,18 @@ public class LiteralConstructor extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mOriginalLiteral);
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result  = new Term(FUNCTIONAL_CHARACTER, 1);
 
-        result.addMember(mRuntimeString);
+        result.addMember(state, mRuntimeString);
 
         return result;
     }
@@ -73,6 +78,7 @@ public class LiteralConstructor extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

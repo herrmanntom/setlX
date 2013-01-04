@@ -20,17 +20,18 @@ public class PD_parseStatements extends PreDefinedFunction {
         addParameter("setlX_statements");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value   stmntArg = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        final Value   stmntArg = args.get(0);
         if ( ! (stmntArg instanceof SetlString)) {
             throw new IncompatibleTypeException("Statement-argument '" + stmntArg + "' is not a string.");
         }
         // get statement string to be parsed
-        String  stmntStr = stmntArg.getUnquotedString();
+        final String  stmntStr = stmntArg.getUnquotedString();
 
         // parse statements
         ParseSetlX.resetErrorCount();
-        Block   blk      = ParseSetlX.parseStringToBlock(stmntStr);
+        final Block   blk      = ParseSetlX.parseStringToBlock(state, stmntStr);
 
         // return term of result
         return blk.toTerm(state);

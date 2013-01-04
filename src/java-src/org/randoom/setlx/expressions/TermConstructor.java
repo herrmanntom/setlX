@@ -33,11 +33,12 @@ public class TermConstructor extends Expr {
         mArgs   = args;
     }
 
+    @Override
     protected Term evaluate(final State state) throws SetlException {
         final Term result = new Term(mFChar, mArgs.size());
 
         for (final Expr arg: mArgs) {
-            result.addMember(arg.eval(state).toTerm(state)); // evaluate arguments at runtime
+            result.addMember(state, arg.eval(state).toTerm(state)); // evaluate arguments at runtime
         }
 
         return result;
@@ -50,6 +51,7 @@ public class TermConstructor extends Expr {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     protected void collectVariables (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -62,13 +64,14 @@ public class TermConstructor extends Expr {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mFChar);
         sb.append("(");
 
         final Iterator<Expr> iter = mArgs.iterator();
         while (iter.hasNext()) {
-            iter.next().appendString(sb, 0);
+            iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
                 sb.append(", ");
             }
@@ -79,16 +82,18 @@ public class TermConstructor extends Expr {
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(mFChar, mArgs.size());
 
         for (final Expr arg: mArgs) {
-            result.addMember(arg.toTerm(state)); // do not evaluate here
+            result.addMember(state, arg.toTerm(state)); // do not evaluate here
         }
 
         return result;
     }
 
+    @Override
     public Term toTermQuoted(final State state) throws SetlException {
         return this.evaluate(state);
     }
@@ -103,6 +108,7 @@ public class TermConstructor extends Expr {
     }
 
     // precedence level in SetlX-grammar
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }

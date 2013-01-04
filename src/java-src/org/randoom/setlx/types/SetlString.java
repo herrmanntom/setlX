@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -65,7 +64,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     public static SetlString newLiteral(final String s) {
-        SetlString result = new SetlString();
+        final SetlString result = new SetlString();
         // parse escape sequences (only \' is parsed in literals)
         final int           length    = s.length();
         for (int i = 1; i < length - 1; ) {
@@ -114,6 +113,7 @@ public class SetlString extends IndexedCollectionValue {
         return result;
     }
 
+    @Override
     public SetlString clone() {
         /* When cloning, THIS string is marked to be a clone as well.
          *
@@ -159,10 +159,12 @@ public class SetlString extends IndexedCollectionValue {
             }
         }
 
+        @Override
         public boolean hasNext() {
             return (decending && 0 < position) || ( ! decending && position < size);
         }
 
+        @Override
         public SetlString next() {
             if (decending) {
                 return new SetlString(content.charAt(position--));
@@ -171,6 +173,7 @@ public class SetlString extends IndexedCollectionValue {
             }
         }
 
+        @Override
         public void remove() {
             stringShell.separateFromOriginal();
             if (decending) {
@@ -182,22 +185,26 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Iterator<Value> iterator() {
-        return new SetlStringIterator(this, false /*decending*/);
+        return new SetlStringIterator(this, false /*not decending*/);
     }
 
+    @Override
     public Iterator<Value> descendingIterator() {
         return new SetlStringIterator(this, true  /*decending*/);
     }
 
     /* type checks (sort of boolean operation) */
 
+    @Override
     public SetlBoolean isString() {
         return SetlBoolean.TRUE;
     }
 
     /* type conversions */
 
+    @Override
     public Value toInteger() {
         try {
             final Rational result = Rational.valueOf(mContent.toString());
@@ -206,37 +213,40 @@ public class SetlString extends IndexedCollectionValue {
             } else {
                 return Om.OM;
             }
-        } catch (NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             return Om.OM;
         }
     }
 
-    /*package*/ SetlList toList() {
-        SetlList result = new SetlList(size());
-        for (Value str : this) {
-            result.addMember(str);
+    /*package*/ SetlList toList(final State state) {
+        final SetlList result = new SetlList(size());
+        for (final Value str : this) {
+            result.addMember(state, str);
         }
         return result;
     }
 
+    @Override
     public Value toRational() {
         try {
             return Rational.valueOf(mContent.toString());
-        } catch (NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             return Om.OM;
         }
     }
 
+    @Override
     public Value toReal() {
         try {
             return new Real(mContent.toString());
-        } catch (NumberFormatException nfe) {
+        } catch (final NumberFormatException nfe) {
             return Om.OM;
         }
     }
 
     /* arithmetic operations */
 
+    @Override
     public Rational absoluteValue() throws IncompatibleTypeException {
         if (mContent.length() == 1) {
             return Rational.valueOf((long) mContent.charAt(0));
@@ -247,6 +257,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             final int           m   = ((Rational) multiplier).intValue();
@@ -269,6 +280,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value productAssign(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             separateFromOriginal();
@@ -295,6 +307,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
@@ -305,11 +318,12 @@ public class SetlString extends IndexedCollectionValue {
         } else  {
             final SetlString result = clone();
             result.separateFromOriginal();
-            summand.appendUnquotedString(result.mContent, 0);
+            summand.appendUnquotedString(state, result.mContent, 0);
             return result;
         }
     }
 
+    @Override
     public Value sumAssign(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
@@ -319,19 +333,19 @@ public class SetlString extends IndexedCollectionValue {
             );
         } else  {
             separateFromOriginal();
-            summand.appendUnquotedString(mContent, 0);
+            summand.appendUnquotedString(state, mContent, 0);
             return this;
         }
     }
 
-    public SetlString sumFlipped(final Value summand) throws IncompatibleTypeException {
+    public SetlString sumFlipped(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " + " + summand + "' is undefined."
             );
         } else {
             final SetlString result = new SetlString();
-            summand.appendUnquotedString(result.mContent, 0);
+            summand.appendUnquotedString(state, result.mContent, 0);
             result.mContent.append(mContent);
             return result;
         }
@@ -339,33 +353,35 @@ public class SetlString extends IndexedCollectionValue {
 
     /* operations on collection values (Lists, Sets [, Strings]) */
 
-    public void addMember(final Value element) {
+    @Override
+    public void addMember(final State state, final Value element) {
         separateFromOriginal();
-        element.appendUnquotedString(mContent, 0);
+        element.appendUnquotedString(state, mContent, 0);
     }
 
+    @Override
     public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
         final int   aSize   = args.size();
         final Value vFirst  = (aSize >= 1)? args.get(0) : null;
         if (args.contains(RangeDummy.RD)) {
             if (aSize == 2 && vFirst == RangeDummy.RD) {
                 // everything up to high boundary: this(  .. y);
-                return getMembers(Rational.ONE, args.get(1));
+                return getMembers(state, Rational.ONE, args.get(1));
 
             } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
                 // everything from low boundary:   this(x ..  );
-                return getMembers(vFirst, Rational.valueOf(size()));
+                return getMembers(state, vFirst, Rational.valueOf(size()));
 
             } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
                 // full range spec:                this(x .. y);
-                return getMembers(vFirst, args.get(2));
+                return getMembers(state, vFirst, args.get(2));
             }
             throw new UndefinedOperationException(
                 "Can not access elements using arguments '" + args + "' on '" + this + "';" +
                 " arguments are malformed."
             );
         } else if (aSize == 1) {
-            return getMember(vFirst);
+            return getMember(state, vFirst);
         } else {
             throw new UndefinedOperationException(
                 "Can not access elements using arguments '" + args + "' on '" + this + "';" +
@@ -374,6 +390,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public SetlBoolean containsMember(final Value element) throws IncompatibleTypeException {
         if (mContent.indexOf(element.getUnquotedString()) >= 0) {
             return SetlBoolean.TRUE;
@@ -382,6 +399,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value firstMember() {
         if (size() > 0) {
             return new SetlString(mContent.charAt(0));
@@ -390,6 +408,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public SetlString getMember(final int index) throws SetlException {
         if (index > mContent.length()) {
             throw new NumberToLargeException(
@@ -404,7 +423,8 @@ public class SetlString extends IndexedCollectionValue {
         return new SetlString(mContent.substring(index - 1, index));
     }
 
-    public SetlString getMember(final Value vIndex) throws SetlException {
+    @Override
+    public SetlString getMember(final State state, final Value vIndex) throws SetlException {
         int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
             index = ((Rational)vIndex).intValue();
@@ -416,7 +436,8 @@ public class SetlString extends IndexedCollectionValue {
         return getMember(index);
     }
 
-    public Value getMembers(final Value vLow, final Value vHigh) throws SetlException {
+    @Override
+    public Value getMembers(final State state, final Value vLow, final Value vHigh) throws SetlException {
         int low = 0, high = 0;
         if (vLow.isInteger() == SetlBoolean.TRUE) {
             low = ((Rational)vLow).intValue();
@@ -459,6 +480,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value lastMember() {
         if (size() > 0) {
             return new SetlString(mContent.charAt(size() - 1));
@@ -467,20 +489,23 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value maximumMember() throws SetlException {
         throw new UndefinedOperationException(
             "'max(" + this + ")' is undefined."
         );
     }
 
+    @Override
     public Value minimumMember() throws SetlException {
         throw new UndefinedOperationException(
             "'min(" + this + ")' is undefined."
         );
     }
 
+    @Override
     public Value nextPermutation(final State state) throws SetlException {
-        final Value p = toList().nextPermutation(state);
+        final Value p = toList(state).nextPermutation(state);
         if (p == Om.OM) {
             return p;
         } else {
@@ -488,20 +513,22 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public SetlSet permutations(final State state) throws SetlException {
-        final SetlSet p = toList().permutations(state);
+        final SetlSet p = toList(state).permutations(state);
         if (p.size() == 0) {
             return p;
         } else {
-            SetlString neutral = new SetlString();
-            SetlSet    result  = new SetlSet();
+            final SetlString neutral = new SetlString();
+            final SetlSet    result  = new SetlSet();
             for (final Value v : p) {
-                result.addMember(v.sumOfMembers(state, neutral));
+                result.addMember(state, v.sumOfMembers(state, neutral));
             }
             return result;
         }
     }
 
+    @Override
     public void removeMember(final Value element) throws IncompatibleTypeException {
         final String needle = element.getUnquotedString();
         final int    pos    = mContent.indexOf(needle);
@@ -511,6 +538,7 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public Value removeFirstMember() {
         if (size() < 1) {
             return Om.OM;
@@ -521,6 +549,7 @@ public class SetlString extends IndexedCollectionValue {
         return new SetlString(result);
     }
 
+    @Override
     public Value removeLastMember() {
         final int  index  = size() - 1;
         if (index < 0) {
@@ -532,6 +561,7 @@ public class SetlString extends IndexedCollectionValue {
         return new SetlString(result);
     }
 
+    @Override
     public Value reverse() {
         final SetlString result = clone();
         result.separateFromOriginal();
@@ -539,7 +569,8 @@ public class SetlString extends IndexedCollectionValue {
         return result;
     }
 
-    public void setMember(final Value vIndex, final Value v) throws SetlException {
+    @Override
+    public void setMember(final State state, final Value vIndex, final Value v) throws SetlException {
         separateFromOriginal();
         int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
@@ -560,10 +591,10 @@ public class SetlString extends IndexedCollectionValue {
             );
         }
 
-        String value = v.getUnquotedString();
+        final String value = v.getUnquotedString();
 
         // in java the index is one lower
-        index--;
+        --index;
 
         if (index >= mContent.length()) {
             mContent.ensureCapacity(index + value.length());
@@ -578,10 +609,11 @@ public class SetlString extends IndexedCollectionValue {
         mContent.insert(index, value);
     }
 
-    public SetlString shuffle() throws IncompatibleTypeException {
+    @Override
+    public SetlString shuffle(final State state) throws IncompatibleTypeException {
         final List<String> shuffled = Arrays.asList(mContent.toString().split(""));
 
-        Collections.shuffle(shuffled, Environment.getRandom());
+        Collections.shuffle(shuffled, state.getRandom());
 
         final SetlString result = new SetlString();
         for (final String c : shuffled) {
@@ -590,17 +622,20 @@ public class SetlString extends IndexedCollectionValue {
         return result;
     }
 
+    @Override
     public int size() {
         return mContent.length();
     }
 
+    @Override
     public SetlString sort() throws IncompatibleTypeException {
         final char[] chars = mContent.toString().toCharArray();
         Arrays.sort(chars);
         return new SetlString(new String(chars));
     }
 
-    public SetlList split(final Value pattern) throws IncompatibleTypeException {
+    @Override
+    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException {
         if ( ! (pattern instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Pattern '" + pattern  + "' is not a string."
@@ -610,7 +645,7 @@ public class SetlString extends IndexedCollectionValue {
         final List<String> strings = Arrays.asList(mContent.toString().split(p));
         final SetlList     result  = new SetlList(strings.size());
         for (final String str : strings) {
-            result.addMember(new SetlString(str));
+            result.addMember(state, new SetlString(str));
         }
 
         // fix split("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
@@ -619,12 +654,12 @@ public class SetlString extends IndexedCollectionValue {
         }
         // fix split(";", ";") => [], should be ["", ""]
         else if (mContent.toString().equals(p)) {
-            result.addMember(new SetlString());
-            result.addMember(new SetlString());
+            result.addMember(state, new SetlString());
+            result.addMember(state, new SetlString());
         }
         // fix split(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
         else if (mContent.toString().endsWith(p)) {
-            result.addMember(new SetlString());
+            result.addMember(state, new SetlString());
         }
 
         return result;
@@ -632,18 +667,21 @@ public class SetlString extends IndexedCollectionValue {
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("\"");
         sb.append(mContent);
         sb.append("\"");
     }
 
-    public void appendUnquotedString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendUnquotedString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mContent);
     }
 
-    public void canonical(final StringBuilder sb) {
-        appendString(sb, 0);
+    @Override
+    public void canonical(final State state, final StringBuilder sb) {
+        appendString(state, sb, 0);
     }
 
     public String getEscapedString() {
@@ -671,16 +709,19 @@ public class SetlString extends IndexedCollectionValue {
         return sb.toString();
     }
 
+    @Override
     public String getUnquotedString() {
         return mContent.toString();
     }
 
+    @Override
     public SetlString str() {
         return this;
     }
 
     /* term operations */
 
+    @Override
     public MatchResult matchesTerm(final State state, final Value other) {
         if (other == IgnoreDummy.ID || this.equals(other)) {
             return new MatchResult(true);
@@ -700,6 +741,7 @@ public class SetlString extends IndexedCollectionValue {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
@@ -714,11 +756,12 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlString) {
-            StringBuilder other = ((SetlString) v).mContent;
+            final StringBuilder other = ((SetlString) v).mContent;
             if (mContent.length() == other.length()) {
                 return mContent.toString().equals(other.toString());
             } else {
@@ -731,6 +774,7 @@ public class SetlString extends IndexedCollectionValue {
 
     private final static int initHashCode = SetlString.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode + mContent.toString().hashCode();
     }

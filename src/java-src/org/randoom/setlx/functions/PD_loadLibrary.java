@@ -21,8 +21,9 @@ public class PD_loadLibrary extends PreDefinedFunction {
         addParameter("name");
     }
 
-    public Value execute(final State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        Value   nameArg = args.get(0);
+    @Override
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+        final Value   nameArg = args.get(0);
         if ( ! (nameArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Name-argument '" + nameArg + "' is not a string."
@@ -30,11 +31,11 @@ public class PD_loadLibrary extends PreDefinedFunction {
         }
 
         // get string of name to be parsed
-        String  name    = nameArg.getUnquotedString();
+        final String  name    = nameArg.getUnquotedString();
 
         // parse the file
         ParseSetlX.resetErrorCount();
-        Block   blk     = ParseSetlX.parseLibrary(name);
+        final Block   blk     = ParseSetlX.parseLibrary(state, name);
 
         // execute the contents
         blk.execute(state);

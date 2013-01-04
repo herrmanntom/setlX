@@ -1,6 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.utilities.State;
 
 public class SetlError extends Value {
 
@@ -14,6 +15,7 @@ public class SetlError extends Value {
         this(exception.getMessage());
     }
 
+    @Override
     public SetlError clone() {
         // this value is more or less atomic and can not be changed once set
         return this;
@@ -21,13 +23,15 @@ public class SetlError extends Value {
 
     /* type checks (sort of boolean operation) */
 
+    @Override
     public SetlBoolean isError() {
         return SetlBoolean.TRUE;
     }
 
     /* string and char operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mMessage);
     }
 
@@ -42,6 +46,7 @@ public class SetlError extends Value {
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
+    @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
@@ -54,6 +59,7 @@ public class SetlError extends Value {
         }
     }
 
+    @Override
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
@@ -66,6 +72,7 @@ public class SetlError extends Value {
 
     private final static int initHashCode = SetlError.class.hashCode();
 
+    @Override
     public int hashCode() {
         return initHashCode * 31 + mMessage.hashCode();
     }

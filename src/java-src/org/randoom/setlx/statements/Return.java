@@ -8,7 +8,6 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Environment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -36,6 +35,7 @@ public class Return extends Statement {
         mResult = result;
     }
 
+    @Override
     protected Value exec(final State state) throws SetlException {
         if (mResult != null) {
             return mResult.eval(state);
@@ -51,6 +51,7 @@ public class Return extends Statement {
        Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
        when adding variables from them.
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -63,24 +64,26 @@ public class Return extends Statement {
 
     /* string operations */
 
-    public void appendString(final StringBuilder sb, final int tabs) {
-        Environment.getLineStart(sb, tabs);
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.getLineStart(sb, tabs);
         sb.append("return");
         if (mResult != null){
             sb.append(" ");
-            mResult.appendString(sb, 0);
+            mResult.appendString(state, sb, 0);
         }
         sb.append(";");
     }
 
     /* term operations */
 
+    @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         if (mResult != null) {
-            result.addMember(mResult.toTerm(state));
+            result.addMember(state, mResult.toTerm(state));
         } else {
-            result.addMember(new SetlString("nil"));
+            result.addMember(state, new SetlString("nil"));
         }
         return result;
     }

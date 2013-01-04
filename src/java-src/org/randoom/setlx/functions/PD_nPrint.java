@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.utilities.Environment;
+import org.randoom.setlx.utilities.State;
 
 // nPrint(value, ...)            : same as print, but does not add a new line
 
@@ -11,10 +11,12 @@ public class PD_nPrint extends PD_print {
         super("nPrint");
     }
 
-    protected void print(String txt) {
-        Environment.outWrite(txt);
+    @Override
+    protected void print(final State state, final String txt) {
+        state.outWrite(txt);
     }
 
-    protected void printEndl() { /* prints NO newline at the end */ }
+    @Override
+    protected void printEndl(final State state) { /* prints NO newline at the end */ }
 }
 

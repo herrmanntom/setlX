@@ -31,6 +31,16 @@ public class Infinity extends NumberValue {
         return SetlBoolean.TRUE;
     }
 
+    /* native type conversions */
+
+    public double jDoubleValue() {
+        if (this == POSITIVE) {
+            return Double.POSITIVE_INFINITY;
+        } else { // this == NEGATIVE
+            return Double.NEGATIVE_INFINITY;
+        }
+    }
+
     /* arithmetic operations */
 
     public Infinity absoluteValue() {
@@ -45,7 +55,7 @@ public class Infinity extends NumberValue {
         if (subtrahend instanceof NumberValue) {
             if (this == subtrahend) {
                 throw new UndefinedOperationException(
-                    "'" + this + " + " + subtrahend + "' is undefined."
+                    "'" + this + " - " + subtrahend + "' is undefined."
                 );
             }
             return this;

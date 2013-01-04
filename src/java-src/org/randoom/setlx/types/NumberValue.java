@@ -22,13 +22,13 @@ public abstract class NumberValue extends Value {
         if (exponent.isInteger() == SetlBoolean.TRUE && ((Rational) exponent).intConvertable()) {
             return this.power(((Rational) exponent).intValue());
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
-            return this.power(((Real) exponent.toReal()).doubleValue());
+            return this.power(exponent.jDoubleValue());
         } else if (exponent.isReal() == SetlBoolean.TRUE) {
             final Rational r = (Rational) exponent.toRational();
             if (r.isInteger() == SetlBoolean.TRUE && r.intConvertable()) {
                 return this.power(r.intValue());
             } else {
-                return this.power(((Real) exponent).doubleValue());
+                return this.power(exponent.jDoubleValue());
             }
         } else if (exponent instanceof SetlSet && this.equalTo(Rational.TWO)) {
             return ((SetlSet) exponent).powerSet(state);

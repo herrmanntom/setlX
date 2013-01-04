@@ -31,32 +31,25 @@ public class MathFunction extends PreDefinedFunction {
                 "This function requires a single number as parameter."
             );
         }
-        final Value arg = args.get(0).toReal();
-        if (arg != Om.OM) {
-            try {
-                final double r = (Double) mFunction.invoke(null, ((Real) arg).doubleValue());
-                if (r == Double.POSITIVE_INFINITY) {
-                    return Infinity.POSITIVE;
-                } else if (r == Double.NEGATIVE_INFINITY) {
-                    return Infinity.NEGATIVE;
-                }
-                return new Real(String.valueOf(r));
-            } catch (NumberFormatException nfe) {
-                throw new NumberToLargeException(
-                    "Involved numbers are to large or to small for this operation."
-                );
-            } catch (SetlException se) {
-                throw se;
-            } catch (Exception e) {
-                throw new JVMException(
-                    "Error during calling a predefined mathematical function.\n" +
-                    "This is probably a bug in the interpreter.\n" +
-                    "Please report it including executed source example."
-                );
+        try {
+            final double r = (Double) mFunction.invoke(null, args.get(0).jDoubleValue());
+            if (r == Double.POSITIVE_INFINITY) {
+                return Infinity.POSITIVE;
+            } else if (r == Double.NEGATIVE_INFINITY) {
+                return Infinity.NEGATIVE;
             }
-        } else {
-            throw new IncompatibleTypeException(
-                "This function requires a single number as parameter."
+            return new Real(String.valueOf(r));
+        } catch (NumberFormatException nfe) {
+            throw new NumberToLargeException(
+                "Involved numbers are to large or to small for this operation."
+            );
+        } catch (SetlException se) {
+            throw se;
+        } catch (Exception e) {
+            throw new JVMException(
+                "Error during calling a predefined mathematical function.\n" +
+                "This is probably a bug in the interpreter.\n" +
+                "Please report it including executed source example."
             );
         }
     }

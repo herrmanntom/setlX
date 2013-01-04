@@ -57,7 +57,7 @@ public class Real extends NumberValue {
         return mReal;
     }
 
-    public double doubleValue() throws NumberToLargeException {
+    public double jDoubleValue() throws NumberToLargeException {
         if ( mReal.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0 ||
              (
                mReal.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) < 0 &&
@@ -186,7 +186,7 @@ public class Real extends NumberValue {
                 "Left-hand-side of '" + this + " ** " + exponent + "' is negative."
             );
         }
-        final double a = doubleValue(); // may throw exception
+        final double a = jDoubleValue(); // may throw exception
 
         // a ** exponent = exp(ln(a ** exponent) = exp(exponent * ln(a))
         final double r = Math.exp(exponent * Math.log(a));

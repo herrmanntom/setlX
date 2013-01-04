@@ -434,7 +434,7 @@ sum [boolean enableIgnore] returns [Expr s]
           '+' p2 = product[$enableIgnore] { s = new Sum(s, $p2.p);                                             }
         | '-' p2 = product[$enableIgnore] { s = new Difference(s, $p2.p);                                      }
         | NEG_NUMBER                      { s = new Sum(s, new ValueExpr(Rational.valueOf($NEG_NUMBER.text))); }
-        | NEG_REAL                        { s = new Sum(s, new ValueExpr(new Real($NEG_REAL.text)));           }
+        | NEG_REAL                        { s = new Sum(s, new ValueExpr(Real.valueOf($NEG_REAL.text)));       }
       )*
     ;
 
@@ -619,8 +619,8 @@ explicitList [boolean enableIgnore] returns [Constructor el]
 atomicValue returns [Value av]
     : NUMBER     { av = Rational.valueOf($NUMBER.text);       }
     | NEG_NUMBER { av = Rational.valueOf($NEG_NUMBER.text);   }
-    | REAL       { av = new Real($REAL.text);                 }
-    | NEG_REAL   { av = new Real($NEG_REAL.text);             }
+    | REAL       { av = Real.valueOf($REAL.text);             }
+    | NEG_REAL   { av = Real.valueOf($NEG_REAL.text);         }
     | 'om'       { av = Om.OM;                                }
     | 'true'     { av = SetlBoolean.TRUE;                     }
     | 'false'    { av = SetlBoolean.FALSE;                    }

@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Value;
@@ -22,11 +23,11 @@ public class PD_random extends PreDefinedFunction {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Real random = new Real(state.getRandomDouble());
+        final NumberValue random = Real.valueOf(state.getRandomDouble());
         if (args.size() == 1) {
             final Value arg = args.get(0);
             if (arg.equalTo(Rational.ZERO)) {
-                return new Real(0.0);
+                return Real.valueOf(0.0);
             } else {
                 return arg.product(state, random);
             }

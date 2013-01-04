@@ -225,7 +225,7 @@ public class Rational extends NumberValue {
 
     @Override
     public Real toReal() {
-        return new Real(mNominator, mDenominator);
+        return Real.valueOf(mNominator, mDenominator);
     }
 
     /* arithmetic operations */

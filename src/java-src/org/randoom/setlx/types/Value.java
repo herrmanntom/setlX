@@ -1,6 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
@@ -13,7 +14,7 @@ import java.util.List;
 public abstract class Value implements Comparable<Value> {
 
     @Override
-    public abstract Value   clone();
+    public abstract Value clone();
 
     /* Boolean operations */
 
@@ -103,6 +104,19 @@ public abstract class Value implements Comparable<Value> {
 
     public Value toReal() {
         return Om.OM;
+    }
+
+    /* native type conversions */
+
+    public double jDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
+        final Value real = this.toReal();
+        if (real != Om.OM && real instanceof Real) {
+            return ((Real) real).jDoubleValue();
+        } else {
+            throw new IncompatibleTypeException(
+                "'" + this + "' is not a number."
+            );
+        }
     }
 
     /* arithmetic operations */
@@ -566,6 +580,7 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
+    @Override
     public abstract int hashCode();
 
     public final SetlBoolean isEqual(final Value other) {

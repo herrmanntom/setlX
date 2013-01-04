@@ -238,7 +238,7 @@ public class SetlString extends IndexedCollectionValue {
     @Override
     public Value toReal() {
         try {
-            return new Real(mContent.toString());
+            return Real.valueOf(mContent.toString());
         } catch (final NumberFormatException nfe) {
             return Om.OM;
         }

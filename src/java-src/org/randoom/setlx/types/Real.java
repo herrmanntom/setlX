@@ -30,22 +30,45 @@ public class Real extends NumberValue {
 
     private final BigDecimal mReal;
 
-    public Real(final String s) {
+    private Real(final String s) {
         this(new BigDecimal(s, mathContext));
     }
 
-    public Real(final double real) {
-        this(new BigDecimal(real, mathContext));
-    }
-
-    public Real(final BigDecimal real) {
+    private Real(final BigDecimal real) {
         mReal = new BigDecimal(real.toString(), mathContext);
     }
 
-    public Real(final BigInteger nominator, final BigInteger denominator) {
-        BigDecimal n = new BigDecimal(nominator,   mathContext);
-        BigDecimal d = new BigDecimal(denominator, mathContext);
+    private Real(final BigInteger nominator, final BigInteger denominator) {
+        final BigDecimal n = new BigDecimal(nominator,   mathContext);
+        final BigDecimal d = new BigDecimal(denominator, mathContext);
         mReal = n.divide(d, mathContext);
+    }
+
+    public static Real valueOf(final String str) {
+        return new Real(str);
+    }
+
+    public static NumberValue valueOf(final double real) throws UndefinedOperationException {
+        if (Double.isInfinite(real)) {
+            if (real > 0) {
+                return Infinity.POSITIVE;
+            } else {
+                return Infinity.NEGATIVE;
+            }
+        } else if (Double.isNaN(real)) {
+            throw new UndefinedOperationException(
+                "Result of this operation is undefined/not a number."
+            );
+        }
+        return new Real(Double.toString(real));
+    }
+
+    public static Real valueOf(final BigDecimal real) {
+        return new Real(real);
+    }
+
+    public static Real valueOf(final BigInteger nominator, final BigInteger denominator) {
+        return new Real(nominator, denominator);
     }
 
     @Override
@@ -58,7 +81,8 @@ public class Real extends NumberValue {
         return mReal;
     }
 
-    public double doubleValue() throws NumberToLargeException {
+    @Override
+    public double jDoubleValue() throws NumberToLargeException {
         if ( mReal.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0 ||
              (
                mReal.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) < 0 &&
@@ -112,7 +136,7 @@ public class Real extends NumberValue {
 
     @Override
     public Rational ceil() {
-        BigInteger intValue = mReal.toBigInteger();
+        final BigInteger intValue = mReal.toBigInteger();
         if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) < 0) {
             return Rational.valueOf(intValue);
         } else /* if (mReal.compareTo(BigDecimal.ZERO) > 0) */ {
@@ -130,11 +154,11 @@ public class Real extends NumberValue {
             if (subtrahend instanceof Real) {
                 right = ((Real) subtrahend).mReal;
             } else {
-                Rational s = ((Rational) subtrahend);
+                final Rational s = ((Rational) subtrahend);
                 right = s.toReal().mReal;
             }
             try {
-                return new Real(mReal.subtract(right, mathContext));
+                return Real.valueOf(mReal.subtract(right, mathContext));
             } catch (final ArithmeticException ae) {
                 return handleArithmeticException(ae, this + " - " + subtrahend);
             }
@@ -153,7 +177,7 @@ public class Real extends NumberValue {
 
     @Override
     public Rational floor() {
-        BigInteger intValue = mReal.toBigInteger();
+        final BigInteger intValue = mReal.toBigInteger();
         if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) > 0) {
             return Rational.valueOf(intValue);
         } else /* if (mReal.compareTo(BigDecimal.ZERO) < 0) */ {
@@ -186,29 +210,23 @@ public class Real extends NumberValue {
     @Override
     protected NumberValue power(final int exponent) throws UndefinedOperationException {
         try {
-            return new Real(mReal.pow(exponent, mathContext));
+            return Real.valueOf(mReal.pow(exponent, mathContext));
         } catch (final ArithmeticException ae) {
             return handleArithmeticException(ae, this + " ** " + exponent);
         }
     }
 
     @Override
-    protected NumberValue power(final double exponent) throws NumberToLargeException, IncompatibleTypeException {
+    protected NumberValue power(final double exponent) throws NumberToLargeException, IncompatibleTypeException, UndefinedOperationException {
         if (mReal.compareTo(BigDecimal.ZERO) < 0) {
             throw new IncompatibleTypeException(
                 "Left-hand-side of '" + this + " ** " + exponent + "' is negative."
             );
         }
-        final double a = doubleValue(); // may throw exception
+        final double a = jDoubleValue(); // may throw exception
 
         // a ** exponent = exp(ln(a ** exponent) = exp(exponent * ln(a))
-        final double r = Math.exp(exponent * Math.log(a));
-        if (r == Double.POSITIVE_INFINITY) {
-            return Infinity.POSITIVE;
-        } else if (r == Double.NEGATIVE_INFINITY) {
-            return Infinity.NEGATIVE;
-        }
-        return new Real(r);
+        return Real.valueOf(Math.exp(exponent * Math.log(a)));
     }
 
     @Override
@@ -221,11 +239,11 @@ public class Real extends NumberValue {
             if (multiplier instanceof Real) {
                 right = ((Real) multiplier).mReal;
             } else {
-                Rational m = (Rational) multiplier;
+                final Rational m = (Rational) multiplier;
                 right = m.toReal().mReal;
             }
             try {
-                return new Real(mReal.multiply(right, mathContext));
+                return Real.valueOf(mReal.multiply(right, mathContext));
             } catch (final ArithmeticException ae) {
                 return handleArithmeticException(ae, this + " * " + multiplier);
             }
@@ -242,18 +260,29 @@ public class Real extends NumberValue {
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
             BigDecimal right = null;
-            if (divisor instanceof Real) {
-                right = ((Real) divisor).mReal;
-            } else if (divisor == Infinity.POSITIVE) {
-                return new Real(0.0);
+            if (divisor == Infinity.POSITIVE) {
+                return new Real("0.0");
             } else if (divisor == Infinity.NEGATIVE) {
-                return new Real(-0.0);
+                return new Real("-0.0");
+            } else if (divisor instanceof Real) {
+                right = ((Real) divisor).mReal;
             } else {
-                Rational d = (Rational) divisor;
-                right = d.toReal().mReal;
+                right = ((Rational) divisor).toReal().mReal;
+            }
+            if (right.compareTo(BigDecimal.ZERO) == 0) {
+                final int cmp = this.compareTo(Rational.ZERO);
+                if (cmp > 0) {
+                    return Infinity.POSITIVE;
+                } else if (cmp < 0) {
+                    return Infinity.NEGATIVE;
+                } else {
+                    throw new UndefinedOperationException(
+                        "'" + this + " / " + divisor + "' is undefined."
+                    );
+                }
             }
             try {
-                return new Real(mReal.divide(right, mathContext));
+                return Real.valueOf(mReal.divide(right, mathContext));
             } catch (final ArithmeticException ae) {
                 return handleArithmeticException(ae, this + " / " + divisor);
             }
@@ -284,11 +313,11 @@ public class Real extends NumberValue {
             if (summand instanceof Real) {
                 right = ((Real) summand).mReal;
             } else {
-                Rational s = (Rational) summand;
+                final Rational s = (Rational) summand;
                 right = s.toReal().mReal;
             }
             try {
-                return new Real(mReal.add(right, mathContext));
+                return Real.valueOf(mReal.add(right, mathContext));
             } catch (final ArithmeticException ae) {
                 return handleArithmeticException(ae, this + " + " + summand);
             }

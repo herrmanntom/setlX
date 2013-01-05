@@ -12,7 +12,7 @@ setlXJarLocation="setlX.jar"
 javaParameters=""
 
 # execute with increased stack size
-javaParameters="$javaParameters -Xss16m"
+javaParameters="$javaParameters -Xss24m"
 
 # uncomment to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
 #javaParameters="$javaParameters -Xms6g -Xmx6g"
@@ -23,12 +23,25 @@ javaParameters="$javaParameters -Xss16m"
 # parameters for developing the interpreter
 #javaParameters="$javaParameters -Xfuture"
 #javaParameters="$javaParameters -Xprof"
+#javaParameters="$javaParameters -Xrunhprof:cpu=samples,depth=6,doe=y"
 
 ################################################################################
 
+if [ -n "$OVERRIDE_setlXJarLocation" ]
+  then
+    setlXJarLocation="$OVERRIDE_setlXJarLocation"
+fi
+
+java_call="java"
+
+if [ $(which rlwrap > /dev/null 2>&1; echo $?) -eq 0 ]
+  then
+    java_call="rlwrap -C $(basename $0) $java_call"
+fi
+
 if [ -f "$setlXJarLocation" ]
   then
-    java -cp "$setlXJarLocation:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
+    $java_call -cp "$setlXJarLocation:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
     exit $?
 else
     echo "The setlX.jar file can not be found!"

@@ -6,6 +6,13 @@ manualTestFiles=""
 skippedTestFiles=""
 nSkipped=0
 
+# set location for setlX launcher script
+export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
+
+# other locations for tests
+setlXlaunchScript="$PWD/src/setlX"
+diffDir="$PWD"
+
 # prepare the interpreter
 simpleTest=simpleTest/test.stlx
 cd src; make test >/dev/null 2>"$tmpFile"; cd ..
@@ -29,9 +36,11 @@ rm -f diff.*.result
 # loop through all SetlX files, execute them and compare to reference result
 while read -r -d $'\0' path
   do
-    filename="${path#example_SetlX_code/}"
+    shortname="${path#example_SetlX_code/}"
+    directoryname="$(dirname $path)"
+    filename="$(basename $path)"
 
-    if [ "$1" == "no_performance" -a "$(dirname $filename)" == "performance_test_code" ]
+    if [ "$1" == "no_performance" -a "$directoryname" == "example_SetlX_code/performance_test_code" ]
       then
         continue
     fi
@@ -42,25 +51,24 @@ while read -r -d $'\0' path
         continue
     fi
 
-    echo -n "executing file '$filename' ..."
+    echo -n "executing file '$shortname' ..."
 
     # execute with setlX
     if [ -e "$path.input" ]
       then
-        cd src; cat "../$path.input" | ./setlX --predictableRandom "../$path" > "$tmpFile" 2>&1; cd ..
+        cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" --predictableRandom "$filename" > "$tmpFile" 2>&1; cd - >/dev/null
     else
-        cd src; ./setlX --predictableRandom "../$path" > "$tmpFile" 2>&1; cd ..
+        cd "$directoryname"; "$setlXlaunchScript" --predictableRandom "$filename" > "$tmpFile" 2>&1; cd - >/dev/null
     fi
 
-    diff "$path.reference" "$tmpFile" > "diff.result"
+    diff "$path.reference" "$tmpFile" > "$diffDir/diff.result"
     if [ $? -eq 1 ]
       then
 
-        skippedTestFiles="$skippedTestFiles$filename, "
+        skippedTestFiles="$skippedTestFiles$shortname, "
         nSkipped=$(bc <<< "$nSkipped + 1")
 
-        filename="$(basename "$filename")";
-        mv "diff.result" "diff.$filename.result"
+        mv "$diffDir/diff.result" "$diffDir/diff.$filename.result"
         echo -e " failed ... (see diff.$filename.result)\n"
 
     else
@@ -69,7 +77,7 @@ while read -r -d $'\0' path
 
 done < <( find -L example_SetlX_code -name "*.stlx" -print0 )
 
-rm -f diff.result
+rm -f "$diffDir/diff.result"
 
 rm -f "$tmpFile"
 

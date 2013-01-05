@@ -88,6 +88,6 @@ false
 true
 this is a test
 
-[["setlX", "setlX.cmd", "setlX.jar", "setlXprof", "simpleTest"], []]
+[["simpleClosure.stlx", "simpleClosure.stlx.reference"], []]
 
 Assertion failed: "assert function works"

@@ -2,9 +2,13 @@
 
 testFile=$(mktemp -t setlx-XXXXXXXXXX)
 
-cd src;
+# set location for setlX launcher script
+export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
 
-./setlX --version > "$testFile"
+# other locations for tests
+setlXlaunchScript="$PWD/src/setlX"
+
+$setlXlaunchScript --version > "$testFile"
 if [ $? -ne 0 ]
   then
     cat "$testFile"
@@ -16,7 +20,7 @@ fi
 
 version="v$(cat "$testFile" | tr '.' '-')"
 
-resultFileName="../example_SetlX_code/performance_test_code/results/$(hostname | tr '.' '-')_$version"
+resultFileName="example_SetlX_code/performance_test_code/results/$(hostname | tr '.' '-')_$version"
 
 resultFileNameReal="$resultFileName.real.csv"
 resultFileNameUser="$resultFileName.user.csv"
@@ -32,16 +36,20 @@ sumSysTime=0.0
 # loop through all SetlX files, execute them and compare to reference result
 while read -r -d $'\0' path
   do
-    filename="${path#../example_SetlX_code/performance_test_code/}"
+    shortname="${path#example_SetlX_code/performance_test_code/}"
+    directoryname="$(dirname $path)"
+    filename="$(basename $path)"
 
-    echo "executing file '$filename' ..."
+    echo "executing file '$shortname' ..."
 
+    cd "$directoryname"
     execTime=$(
         time -p (
             # execute with setlX
-            ./setlX --predictableRandom "$path" > "$testFile" 2>&1
+            $setlXlaunchScript --predictableRandom "$filename" > "$testFile" 2>&1
         ) 2>&1
     )
+    cd - >/dev/null
 
     diff "$path.reference" "$testFile" > /dev/null
     if [ $? -eq 1 ]
@@ -73,7 +81,7 @@ while read -r -d $'\0' path
         echo
     fi
 
-done < <( find -L "../example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
+done < <( find -L "example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
 
 cat "$resultFileNameReal" | sort > "$testFile"
 echo "code example,$version - time in seconds (real)" > "$resultFileNameReal"

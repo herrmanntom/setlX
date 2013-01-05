@@ -49,7 +49,7 @@ print();
   load(path)                    // loads SetlX source code file and executes it
 */
 
-load("../example_SetlX_code/erlang.stlx"); // will fail if relative path is wrong...
+load("erlang.stlx"); // will fail if relative path is wrong...
 print();
 
 /*******************************************************************************

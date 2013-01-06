@@ -33,6 +33,27 @@ fi
 
 rm -f diff.*.result
 
+# count number of files
+count=0
+while read -r -d $'\0' path
+  do
+    directoryname="$(dirname $path)"
+
+    if [ "$1" == "no_performance" -a "$directoryname" == "example_SetlX_code/performance_test_code" ]
+      then
+        continue
+    fi
+
+    if [ ! -e "$path.reference" ]
+      then
+        continue
+    fi
+
+    count=$(bc <<< "$count + 1")
+
+done < <( find -L example_SetlX_code -name "*.stlx" -print0 )
+
+started=0
 # loop through all SetlX files, execute them and compare to reference result
 while read -r -d $'\0' path
   do
@@ -51,7 +72,8 @@ while read -r -d $'\0' path
         continue
     fi
 
-    echo -n "executing file '$shortname' ..."
+    started=$(bc <<< "$started + 1")
+    echo -n "($started/$count) executing file '$shortname' ..."
 
     # execute with setlX
     if [ -e "$path.input" ]

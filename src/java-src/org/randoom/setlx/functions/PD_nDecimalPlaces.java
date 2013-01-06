@@ -35,7 +35,7 @@ public class PD_nDecimalPlaces extends PreDefinedFunction {
                 "N-argument '" + nValue + "' is not an integer >= 1."
             );
         }
-        final int           n       = ((Rational) nValue).intValue();
+        final int           n       = nValue.jIntValue();
 
               Value         rest    = number.modulo(state, Rational.ONE);
         final Value         intPart = number.difference(state, rest);

@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.CollectionValue;
-import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
@@ -67,7 +66,7 @@ public class PD_readFile extends PreDefinedFunction {
                         "Value '" + num + "' in listOfLineNumbers is not an integer."
                     );
                 }
-                final int n = ((Rational) num).intValue();
+                final int n = num.jIntValue();
                 if (n > 0) {
                     lineNumbers.add(n);
                 } else {

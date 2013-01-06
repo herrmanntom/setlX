@@ -260,7 +260,7 @@ public class SetlString extends IndexedCollectionValue {
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
-            final int           m   = ((Rational) multiplier).intValue();
+            final int m = multiplier.jIntValue();
             if (m < 0) {
                 throw new IncompatibleTypeException(
                     "String multiplier '" + multiplier + "' is negative."
@@ -284,7 +284,7 @@ public class SetlString extends IndexedCollectionValue {
     public Value productAssign(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             separateFromOriginal();
-            final int    m       = ((Rational) multiplier).intValue();
+            final int    m       = multiplier.jIntValue();
             if (m < 0) {
                 throw new IncompatibleTypeException(
                     "String multiplier '" + multiplier + "' is negative."
@@ -427,7 +427,7 @@ public class SetlString extends IndexedCollectionValue {
     public SetlString getMember(final State state, final Value vIndex) throws SetlException {
         int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
-            index = ((Rational)vIndex).intValue();
+            index = vIndex.jIntValue();
         } else {
             throw new IncompatibleTypeException(
                 "Index '" + vIndex + "' is not an integer."
@@ -440,14 +440,14 @@ public class SetlString extends IndexedCollectionValue {
     public Value getMembers(final State state, final Value vLow, final Value vHigh) throws SetlException {
         int low = 0, high = 0;
         if (vLow.isInteger() == SetlBoolean.TRUE) {
-            low = ((Rational)vLow).intValue();
+            low = vLow.jIntValue();
         } else {
             throw new IncompatibleTypeException(
                 "Lower bound '" + vLow + "' is not an integer."
             );
         }
         if (vHigh.isInteger() == SetlBoolean.TRUE) {
-            high = ((Rational)vHigh).intValue();
+            high = vHigh.jIntValue();
         } else {
             throw new IncompatibleTypeException(
                 "Upper bound '" + vHigh + "' is not an integer."
@@ -574,7 +574,7 @@ public class SetlString extends IndexedCollectionValue {
         separateFromOriginal();
         int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
-            index = ((Rational)vIndex).intValue();
+            index = vIndex.jIntValue();
         } else {
             throw new IncompatibleTypeException(
                 "Index '" + vIndex + "' is not a integer."

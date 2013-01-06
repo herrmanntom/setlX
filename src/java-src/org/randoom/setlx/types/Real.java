@@ -81,23 +81,6 @@ public class Real extends NumberValue {
         return mReal;
     }
 
-    @Override
-    public double jDoubleValue() throws NumberToLargeException {
-        if ( mReal.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0 ||
-             (
-               mReal.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) < 0 &&
-               mReal.compareTo(BigDecimal.ZERO) != 0
-             )
-           )
-        {
-            throw new NumberToLargeException(
-                "The value of " + mReal + " is too large or to small for this operation."
-            );
-        } else {
-            return mReal.doubleValue();
-        }
-    }
-
     /* type checks (sort of Boolean operation) */
 
     @Override
@@ -125,6 +108,37 @@ public class Real extends NumberValue {
     @Override
     public Real toReal() {
         return this;
+    }
+
+    /* native type checks */
+
+    @Override
+    public boolean jDoubleConvertable() {
+        return ( mReal.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) < 0 &&
+                    (
+                        mReal.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) > 0 ||
+                        mReal.compareTo(BigDecimal.ZERO) == 0
+                    )
+               );
+    }
+
+    /* native type conversions */
+
+    @Override
+    public double jDoubleValue() throws NumberToLargeException {
+        if ( mReal.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0 ||
+             (
+               mReal.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) < 0 &&
+               mReal.compareTo(BigDecimal.ZERO) != 0
+             )
+           )
+        {
+            throw new NumberToLargeException(
+                "The value of " + mReal + " is too large or to small for this operation."
+            );
+        } else {
+            return mReal.doubleValue();
+        }
     }
 
     /* arithmetic operations */

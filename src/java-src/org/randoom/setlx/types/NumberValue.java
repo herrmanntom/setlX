@@ -25,14 +25,14 @@ public abstract class NumberValue extends Value {
 
     @Override
     public          Value       power(final State state, final Value exponent) throws SetlException {
-        if (exponent.isInteger() == SetlBoolean.TRUE && ((Rational) exponent).intConvertable()) {
-            return this.power(((Rational) exponent).intValue());
+        if (exponent.isInteger() == SetlBoolean.TRUE && exponent.jIntConvertable()) {
+            return this.power(exponent.jIntValue());
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
             return this.power(exponent.jDoubleValue());
         } else if (exponent.isReal() == SetlBoolean.TRUE) {
             final Rational r = (Rational) exponent.toRational();
-            if (r.isInteger() == SetlBoolean.TRUE && r.intConvertable()) {
-                return this.power(r.intValue());
+            if (r.isInteger() == SetlBoolean.TRUE && r.jIntConvertable()) {
+                return this.power(r.jIntValue());
             } else {
                 return this.power(exponent.jDoubleValue());
             }

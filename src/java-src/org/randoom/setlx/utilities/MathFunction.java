@@ -30,7 +30,7 @@ public class MathFunction extends PreDefinedFunction {
             );
         }
         try {
-            final double r = (Double) mFunction.invoke(null, args.get(0).jDoubleValue());
+            final double r = (Double) mFunction.invoke(null, args.get(0).toJDoubleValue());
             return Real.valueOf(r);
         } catch (final SetlException se) {
             throw se;

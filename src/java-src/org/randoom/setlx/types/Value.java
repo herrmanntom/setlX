@@ -1,6 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
@@ -106,15 +107,48 @@ public abstract class Value implements Comparable<Value> {
         return Om.OM;
     }
 
+    /* native type checks */
+
+    public boolean jDoubleConvertable() {
+        return false;
+    }
+
+    public boolean jIntConvertable() {
+        return false;
+    }
+
     /* native type conversions */
 
     public double jDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
+        throw new IncompatibleTypeException(
+            "'" + this + "' is not a real."
+        );
+    }
+
+    public int jIntValue() throws IncompatibleTypeException, NotAnIntegerException, NumberToLargeException {
+        throw new IncompatibleTypeException(
+            "'" + this + "' is not an integer."
+        );
+    }
+
+    public final double toJDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
         final Value real = this.toReal();
         if (real != Om.OM && real instanceof Real) {
             return ((Real) real).jDoubleValue();
         } else {
             throw new IncompatibleTypeException(
-                "'" + this + "' is not a number."
+                "'" + this + "' is not convertable to real."
+            );
+        }
+    }
+
+    public final int toJIntValue() throws IncompatibleTypeException, NotAnIntegerException, NumberToLargeException {
+        final Value integer = this.toInteger();
+        if (integer != Om.OM && integer instanceof Rational) {
+            return ((Rational) integer).jIntValue();
+        } else {
+            throw new IncompatibleTypeException(
+                "'" + this + "' is not convertable to integer."
             );
         }
     }

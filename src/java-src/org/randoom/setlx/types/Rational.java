@@ -105,32 +105,6 @@ public class Rational extends NumberValue {
         return mDenominator;
     }
 
-    public boolean intConvertable() {
-        return (mIsInteger &&
-                mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0 &&
-                mNominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) > 0
-               );
-    }
-
-    public int intValue() throws NotAnIntegerException, NumberToLargeException {
-        if (! mIsInteger) {
-            throw new NotAnIntegerException(
-                "The fraction " + mNominator + "/" + mDenominator + " can't be converted" +
-                " to an integer as the denominator is not 1."
-            );
-        }
-        if (mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
-            mNominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
-        {
-            throw new NumberToLargeException(
-                "The absolute value of " + mNominator + " is too large or to small for " +
-                "this operation."
-            );
-        } else {
-            return mNominator.intValue();
-        }
-    }
-
     // some constants to speed up isPrime()
     private final static    int[]           SOME_INT_PRIMES     = {
           2,   3,   5,   7,  11,  13,  17,  19,  23,  29,  31,  37,  41,  43,  47,
@@ -194,6 +168,7 @@ public class Rational extends NumberValue {
     }
 
     /* type check (sort of Boolean operation) */
+
     @Override
     public SetlBoolean isInteger() {
         if (mIsInteger) {
@@ -209,6 +184,7 @@ public class Rational extends NumberValue {
     }
 
     /* type conversion */
+
     @Override
     public Rational toInteger() {
         if (mIsInteger) {
@@ -226,6 +202,37 @@ public class Rational extends NumberValue {
     @Override
     public Real toReal() {
         return Real.valueOf(mNominator, mDenominator);
+    }
+
+    /* native type checks */
+
+    public boolean jIntConvertable() {
+        return (mIsInteger &&
+                mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0 &&
+                mNominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) > 0
+               );
+    }
+
+    /* native type conversions */
+
+    @Override
+    public int jIntValue() throws NotAnIntegerException, NumberToLargeException {
+        if (! mIsInteger) {
+            throw new NotAnIntegerException(
+                "The fraction " + mNominator + "/" + mDenominator + " can't be converted" +
+                " to an integer as the denominator is not 1."
+            );
+        }
+        if (mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
+            mNominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
+        {
+            throw new NumberToLargeException(
+                "The absolute value of " + mNominator + " is too large or to small for " +
+                "this operation."
+            );
+        } else {
+            return mNominator.intValue();
+        }
     }
 
     /* arithmetic operations */
@@ -309,7 +316,7 @@ public class Rational extends NumberValue {
         }
         // The next line will throw an exception if mNominator > 2^31,
         // but wanting that is crazy talk
-        final int        n      = intValue();
+        final int        n      = jIntValue();
               BigInteger result = BigInteger.ONE;
         final int        CORES  = state.getNumberOfCores();
         // use simple implementation when computing a small factorial or having

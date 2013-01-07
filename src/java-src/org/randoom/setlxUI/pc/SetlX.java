@@ -288,7 +288,7 @@ public class SetlX {
             final int size = programs.size();
             for (int i = 0; i < size; ++i) {
                 // get program text
-                final String program = programs.get(i).toString() + '\n';
+                final String program = programs.get(i).toString(state) + '\n';
 
                 //in verbose mode the parsed programs are echoed
                 if (verbose) {

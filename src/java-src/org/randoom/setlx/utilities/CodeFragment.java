@@ -29,11 +29,16 @@ public abstract class CodeFragment {
 
     public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
+    public final String toString(final State state) {
+        final StringBuilder sb     = new StringBuilder();
+        appendString(state, sb, 0);
+        return sb.toString();
+    }
+
+    @Override
     public final String toString() {
         final State         bubble = new StateImplementation();
-        final StringBuilder sb     = new StringBuilder();
-        appendString(bubble, sb, 0);
-        return sb.toString();
+        return toString(bubble);
     }
 
     /* term operations */

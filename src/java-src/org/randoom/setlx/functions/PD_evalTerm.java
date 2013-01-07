@@ -35,7 +35,7 @@ public class PD_evalTerm extends PreDefinedFunction {
         if (fragment instanceof Expr) {
             result  = ((Expr) fragment).eval(state);
         } else /* if (fragment instanceof Statement) */ {
-            ((Statement) fragment).execute(state);
+            ((Statement) fragment).exec(state);
         }
 
         // everything seems fine

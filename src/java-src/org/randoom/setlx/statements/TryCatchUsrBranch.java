@@ -6,7 +6,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -54,18 +54,18 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
     }
 
     @Override
-    public Value execute(final State state) throws SetlException {
+    public ReturnMessage exec(final State state) throws SetlException {
         // assign directly
         mErrorVar.assign(state, mException.getValue().clone());
         // remove stored exception
         mException = null;
         // execute
-        return mBlockToRecover.execute(state);
+        return mBlockToRecover.exec(state);
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
-        return execute(state);
+    protected ReturnMessage execute(final State state) throws SetlException {
+        return exec(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings

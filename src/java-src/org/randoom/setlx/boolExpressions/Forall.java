@@ -7,10 +7,10 @@ import org.randoom.setlx.expressionUtilities.Iterator;
 import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -51,11 +51,11 @@ public class Forall extends Expr {
         }
 
         @Override
-        public Value execute(final State state, final Value lastIterationValue) throws SetlException {
+        public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             mResult = mCondition.eval(state);
             if (mResult == SetlBoolean.FALSE) {
                 mScope = state.getScope();  // save state where result is true
-                return Om.OM.setBreak();    // stop iteration
+                return ReturnMessage.BREAK; // stop iteration
             }
             return null;
         }

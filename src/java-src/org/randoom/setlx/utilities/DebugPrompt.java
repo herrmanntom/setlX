@@ -47,7 +47,7 @@ public class DebugPrompt {
             if (blk != null) {
                 try {
                     state.setDebugPromptActive(true);
-                    blk.execute(state);
+                    blk.exec(state);
                 } finally {
                     state.setDebugPromptActive(false);
                 }

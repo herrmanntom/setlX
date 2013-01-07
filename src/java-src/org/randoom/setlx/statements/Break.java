@@ -2,8 +2,8 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -25,8 +25,8 @@ public class Break extends Statement {
     private Break() { }
 
     @Override
-    protected Om exec(final State state) {
-        return Om.OM.setBreak();
+    protected ReturnMessage execute(final State state) {
+        return ReturnMessage.BREAK;
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings

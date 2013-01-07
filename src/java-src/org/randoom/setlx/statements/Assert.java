@@ -7,7 +7,7 @@ import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -38,7 +38,7 @@ public class Assert extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         if ( ! mCondition.evalToBool(state)) {
             throw new AssertException("Assertion failed: " + mMessage.eval(state).toString());
         }

@@ -7,7 +7,7 @@ import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -55,18 +55,18 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
     }
 
     @Override
-    public Value execute(final State state) throws SetlException {
+    public ReturnMessage exec(final State state) throws SetlException {
         // wrap into error
         mErrorVar.assign(state, new SetlError(mException));
         // remove stored exception
         mException = null;
         // execute
-        return mBlockToRecover.execute(state);
+        return mBlockToRecover.exec(state);
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
-        return execute(state);
+    protected ReturnMessage execute(final State state) throws SetlException {
+        return exec(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings

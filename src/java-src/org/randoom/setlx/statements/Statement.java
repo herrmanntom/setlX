@@ -6,26 +6,27 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.DebugPrompt;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
 public abstract class Statement extends CodeFragment {
-    // is debug mode active? MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // is debug mode active? MAY ONLY BE SET BY STATE CLASS!
     public static   boolean sDebugModeActive = false;
 
-    public          Value execute(final State state) throws SetlException {
+    public          ReturnMessage exec(final State state) throws SetlException {
         if (sDebugModeActive && ! state.isDebugPromptActive()) {
             DebugPrompt.prompt(state, this);
-            final Value result = exec(state);
+            final ReturnMessage result = execute(state);
             Expr.sStepNext = false;
             return result;
         } else {
-            return exec(state);
+            return execute(state);
         }
     }
 
-    protected abstract Value exec(final State state) throws SetlException;
+    protected abstract ReturnMessage execute(final State state) throws SetlException;
 
     /* Gather all bound and unbound variables in this statement and its siblings
           - bound   means "assigned" in this expression

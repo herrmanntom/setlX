@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
@@ -34,10 +35,10 @@ public class Switch extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         for (final SwitchAbstractBranch br : mBranchList) {
             if (br.evalConditionToBool(state)) {
-                return br.execute(state);
+                return br.exec(state);
             }
         }
         return null;

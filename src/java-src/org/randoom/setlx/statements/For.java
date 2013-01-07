@@ -9,6 +9,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -47,9 +48,9 @@ public class For extends Statement {
         }
 
         @Override
-        public Value execute(final State state, final Value lastIterationValue) throws SetlException {
+        public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             if (mCondition == null || mCondition.evalToBool(state)) {
-                return mStatements.execute(state);
+                return mStatements.exec(state);
                 // ContinueException and BreakException are handled by outer iterator
             }
             return null;
@@ -83,12 +84,12 @@ public class For extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         final boolean finishLoop = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             state.setDebugFinishLoop(false);
         }
-        final Value result = mIterator.eval(state, mExec);
+        final ReturnMessage result = mIterator.eval(state, mExec);
         if (sFinishLoop) {
             state.setDebugModeActive(true);
             state.setDebugFinishLoop(false);

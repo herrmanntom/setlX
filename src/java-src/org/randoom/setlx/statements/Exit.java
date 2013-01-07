@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class Exit extends Statement {
     private Exit() { }
 
     @Override
-    protected Value exec(final State state) throws ExitException {
+    protected ReturnMessage execute(final State state) throws ExitException {
         throw new ExitException("Good Bye! (exit)");
     }
 

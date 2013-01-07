@@ -6,10 +6,6 @@ public class Om extends Value {
 
     public final static Om OM = new Om();
 
-    // used as `continue;' message carrier
-    private boolean isContinue  = false;
-    // used as `break;' message carrier
-    private boolean isBreak     = false;
     // do not display when printing result after evaluating in interactive mode
     private boolean isHidden    = false;
 
@@ -19,24 +15,6 @@ public class Om extends Value {
     public Om clone() {
         // this value is atomic and can not be changed
         return this;
-    }
-
-    public Om setContinue() {
-        isContinue = true;
-        return this;
-    }
-
-    public boolean isContinue() {
-        return isContinue && ((isContinue = false) || true); // reset to false after one query
-    }
-
-    public Om setBreak() {
-        isBreak = true;
-        return this;
-    }
-
-    public boolean isBreak() {
-        return isBreak && ((isBreak = false) || true); // reset to false after one query
     }
 
     public Om hide() {

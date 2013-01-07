@@ -3,8 +3,8 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.BacktrackException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -26,7 +26,7 @@ public class Backtrack extends Statement {
     private Backtrack() { }
 
     @Override
-    protected Value exec(final State state) throws BacktrackException {
+    protected ReturnMessage execute(final State state) throws BacktrackException {
         throw new BacktrackException("Backtrack-statement was executed outside of check-statement.");
     }
 

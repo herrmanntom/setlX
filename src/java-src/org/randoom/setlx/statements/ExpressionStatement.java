@@ -5,6 +5,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         final Value v = mExpr.eval(state);
         if (mPrintAfterEval && (v != Om.OM || !((Om) v).isHidden()) ) {
             state.outWriteLn("~< Result: " + v + " >~");

@@ -6,7 +6,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -37,12 +37,12 @@ public class Check extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         try {
-            return mStatements.execute(state);
+            return mStatements.exec(state);
         } catch (final BacktrackException bte) {
             if (mRecovery != null) {
-                return mRecovery.execute(state);
+                return mRecovery.exec(state);
             } else {
                 return null;
             }

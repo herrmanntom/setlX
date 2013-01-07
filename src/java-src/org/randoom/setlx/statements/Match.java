@@ -8,6 +8,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -40,7 +41,7 @@ public class Match extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         final Value term = mExpr.eval(state).toTerm(state);
         final VariableScope outerScope = state.getScope();
         try {
@@ -60,7 +61,7 @@ public class Match extends Statement {
 
                     if (br.evalConditionToBool(state)) {
                         // execute statements
-                        final Value execResult = br.execute(state);
+                        final ReturnMessage execResult = br.exec(state);
 
                         // reset scope
                         state.setScope(outerScope);

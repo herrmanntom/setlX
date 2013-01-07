@@ -9,11 +9,9 @@ import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DumpSetlX;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
@@ -338,11 +336,7 @@ public class SetlX {
         try {
 
             state.setDebugModeActive(false);
-            final Value result = b.execute(state);
-            if (result == Om.OM) {
-                Om.OM.isContinue();// reset continue outside of procedure
-                Om.OM.isBreak();   // reset break outside of procedure
-            }
+            b.exec(state);
 
         } catch (final AbortException ae) { // code detected user did something wrong
             state.errWriteLn(ae.getMessage());

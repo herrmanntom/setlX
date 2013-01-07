@@ -7,6 +7,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -54,13 +55,13 @@ public class Block extends Statement {
     }
 
     @Override
-    public Value execute(final State state) throws SetlException {
-        Value result = null;
+    public ReturnMessage exec(final State state) throws SetlException {
+        ReturnMessage result = null;
         for (final Statement stmnt : mStatements) {
             if (sStopExecution) {
                 throw new StopExecutionException("Interrupted");
             }
-            result = stmnt.execute(state);
+            result = stmnt.exec(state);
             if (result != null) {
                 return result;
             }
@@ -69,8 +70,8 @@ public class Block extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
-        return execute(state);
+    protected ReturnMessage execute(final State state) throws SetlException {
+        return exec(state);
     }
 
     /* Gather all bound and unbound variables in this statement and its siblings

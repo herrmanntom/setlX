@@ -7,6 +7,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -48,7 +49,7 @@ public class ProductAssignment extends StatementWithPrintableResult {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         final Value assigned = mLhs.eval(state).productAssign(state, mRhs.eval(state).clone());
         mLhs.assignUncloned(state, assigned);
 

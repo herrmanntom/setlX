@@ -4,9 +4,8 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -39,21 +38,19 @@ public class While extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         final boolean finishLoop  = sFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             state.setDebugFinishLoop(false);
         }
-        Value result = null;
+        ReturnMessage result = null;
         while (mCondition.evalToBool(state)) {
-            result = mStatements.execute(state);
+            result = mStatements.exec(state);
             if (result != null) {
-                if (result == Om.OM) {
-                    if (Om.OM.isContinue()) {
-                        continue;
-                    } else if (Om.OM.isBreak()) {
-                        break;
-                    }
+                if (result == ReturnMessage.CONTINUE) {
+                    continue;
+                } else if (result == ReturnMessage.BREAK) {
+                    break;
                 }
                 return result;
             }

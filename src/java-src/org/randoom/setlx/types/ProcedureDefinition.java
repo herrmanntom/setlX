@@ -8,6 +8,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -35,12 +36,12 @@ implemented here as:
 public class ProcedureDefinition extends Value {
     // functional character used in terms
     public  final static String  FUNCTIONAL_CHARACTER = "^procedure";
-    // execute this function continuesly in debug mode until it returns. MAY ONLY BE SET BY STATE CLASS!
+    // execute this function continuously in debug mode until it returns. MAY ONLY BE SET BY STATE CLASS!
     public        static boolean sStepThroughFunction = false;
     // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY STATE CLASS!
     public        static boolean sFinishFunction      = false;
 
-    protected final List<ParameterDef>       mParameters;   // parameter list
+    protected final List<ParameterDef>       mParameters;  // parameter list
     protected final Block                    mStatements;  // statements in the body of the definition
     protected       HashMap<Variable, Value> mClosure;     // variables and values used in closure
 
@@ -172,7 +173,7 @@ public class ProcedureDefinition extends Value {
         values.clear();
 
         // results of call to procedure
-              Value           result      = null;
+              ReturnMessage   result      = null;
         final WriteBackAgent  wba         = new WriteBackAgent(mParameters.size());
         final boolean         stepThrough = sStepThroughFunction;
 
@@ -183,7 +184,7 @@ public class ProcedureDefinition extends Value {
             }
 
             // execute, e.g. perform real procedure call
-            result = mStatements.execute(state);
+            result = mStatements.exec(state);
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < mParameters.size(); ++i) {
@@ -222,7 +223,7 @@ public class ProcedureDefinition extends Value {
         }
 
         if (result != null) {
-            return result;
+            return result.getPayload();
         } else {
             return Om.OM;
         }

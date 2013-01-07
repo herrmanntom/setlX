@@ -5,6 +5,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class GlobalDefinition extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) {
+    protected ReturnMessage execute(final State state) {
         for (final Variable var : mVars) {
             var.makeGlobal(state);
         }

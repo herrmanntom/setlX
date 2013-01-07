@@ -13,6 +13,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -47,7 +48,7 @@ public class Scan extends Statement {
     }
 
     @Override
-    protected Value exec(final State state) throws SetlException {
+    protected ReturnMessage execute(final State state) throws SetlException {
         final Value value = mExpr.eval(state);
         if ( ! (value instanceof SetlString)) {
             throw new IncompatibleTypeException(
@@ -131,7 +132,7 @@ public class Scan extends Statement {
                     innerScope.setWriteThrough(true);
 
                     // execute statements
-                    final Value execResult = largestMatchBranch.execute(state);
+                    final ReturnMessage execResult = largestMatchBranch.exec(state);
 
                     // reset scope
                     state.setScope(outerScope);

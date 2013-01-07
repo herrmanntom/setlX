@@ -7,11 +7,11 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -77,12 +77,12 @@ public class Iterator extends CodeFragment {
              variable to be local
        note: variables inside the whole iteration are not _not_ local
              all will be written `through' these inner scopes                 */
-    public Value eval(final State state, final IteratorExecutionContainer exec) throws SetlException {
+    public ReturnMessage eval(final State state, final IteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = state.getScope();
         try {
-            final Value result = evaluate(state, exec, outerScope);
+            final ReturnMessage result = evaluate(state, exec, outerScope);
 
-            if (result == Om.OM && Om.OM.isBreak()) {
+            if (result == ReturnMessage.BREAK) {
                 return null; // remove break message
             }
 
@@ -192,7 +192,7 @@ public class Iterator extends CodeFragment {
 
     /* private functions */
 
-    private Value evaluate(final State state, final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
+    private ReturnMessage evaluate(final State state, final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
         if (sStopExecution) {
             throw new StopExecutionException("Interrupted");
         }
@@ -223,20 +223,18 @@ public class Iterator extends CodeFragment {
                 /* Starts iteration of next iterator or execution if this is the
                    last iterator.
                    Stops iteration if requested by execution.                 */
-                Value result = null;
+                ReturnMessage result = null;
                 if (mNext != null) {
                     result = mNext.evaluate(state, exec, outerScope);
                 } else {
                     result = exec.execute(state, v);
                 }
                 if (result != null) {
-                    if (result == Om.OM) {
-                        if (Om.OM.isContinue()) {
-                            continue;
-                        } else if (Om.OM.isBreak()) {
-                            return Om.OM.setBreak(); // also break next iterator
-                        }
-                    }
+                    if (result == ReturnMessage.CONTINUE) {
+                        continue;
+                    } /* else if (result == ReturnMessage.BREAK) {
+                        return result; // also break next iterator
+                    } */
                     return result;
                 }
             }

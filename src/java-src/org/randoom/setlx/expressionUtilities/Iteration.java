@@ -10,6 +10,7 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -59,7 +60,7 @@ public class Iteration extends Constructor {
         }
 
         @Override
-        public Value execute(final State state, final Value lastIterationValue) throws SetlException {
+        public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             if (mCondition == null || mCondition.evalToBool(state)) {
                 if (mExpr != null) {
                     mCollection.addMember(state, mExpr.eval(state));

@@ -206,6 +206,7 @@ public class Rational extends NumberValue {
 
     /* native type checks */
 
+    @Override
     public boolean jIntConvertable() {
         return (mIsInteger &&
                 mNominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0 &&
@@ -285,8 +286,8 @@ public class Rational extends NumberValue {
         }
     }
 
-    // subclass for threaded factorial computation
-    class Factorial extends Thread {
+    // private subclass for threaded factorial computation
+    private class Factorial extends Thread {
         private final int        from;
         private final int        to;
         /*package*/   BigInteger result;

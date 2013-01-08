@@ -1,7 +1,9 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
+import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
@@ -44,12 +46,12 @@ public class ProcedureDefinition extends Value {
     protected final List<ParameterDef>       mParameters;  // parameter list
     protected final Block                    mStatements;  // statements in the body of the definition
     protected       HashMap<Variable, Value> mClosure;     // variables and values used in closure
+    private         int                      nrOfCalls;    // how often this procedure was executed
 
     public ProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
-        mParameters = parameters;
-        mStatements = statements;
-        mClosure    = null;
+        this(parameters, statements, null);
     }
+
     protected ProcedureDefinition(final List<ParameterDef> parameters, final Block statements, final HashMap<Variable, Value> closure) {
         mParameters = parameters;
         mStatements = statements;
@@ -58,6 +60,7 @@ public class ProcedureDefinition extends Value {
         } else {
             mClosure = null;
         }
+        nrOfCalls   = 0;
     }
 
     // only to be used by ProcedureConstructor
@@ -169,7 +172,7 @@ public class ProcedureDefinition extends Value {
             }
         }
 
-        // get rid of value-list to potentionally free some memory
+        // get rid of value-list to potentially free some memory
         values.clear();
 
         // results of call to procedure
@@ -183,8 +186,39 @@ public class ProcedureDefinition extends Value {
                 state.setDebugModeActive(false);
             }
 
+            boolean executeInCurrentStack = true;
+            if (++nrOfCalls > 32) {
+                nrOfCalls = 0;
+                if (Thread.currentThread().getStackTrace().length > 768) {
+                    executeInCurrentStack = false;
+                }
+            }
+
             // execute, e.g. perform real procedure call
-            result = mStatements.exec(state);
+            if (executeInCurrentStack) {
+                result = mStatements.exec(state);
+            } else {
+                // prevent running out of stack by creating a new thread
+                final CallExecThread callExec = new CallExecThread(mStatements, state);
+
+                try {
+                    callExec.start();
+                    callExec.join();
+                    result = callExec.mResult;
+                } catch (final OutOfMemoryError e) {
+                    throw new JVMException(
+                        "The setlX interpreter has ran out of (stack-replacement) memory.\n" +
+                        "Try preventing recursion in your SetlX program."
+                    );
+                } catch (final InterruptedException e) {
+                    throw new StopExecutionException("Interrupted");
+                }
+
+                // handle exceptions thrown in thread
+                if (callExec.mException != null) {
+                    throw callExec.mException;
+                }
+            }
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < mParameters.size(); ++i) {
@@ -343,5 +377,32 @@ public class ProcedureDefinition extends Value {
     public int hashCode() {
         return initHashCode;
     }
+
+    // private subclass to cheat the end of the world... or stack, whatever comes first
+    private class CallExecThread extends Thread {
+        private final Block                             mStatements;
+        private final org.randoom.setlx.utilities.State mState;
+        /*package*/   ReturnMessage                     mResult;
+        /*package*/   SetlException                     mException;
+
+        public CallExecThread(final Block statements, final org.randoom.setlx.utilities.State state) {
+            this.mStatements = statements;
+            this.mState      = state;
+            this.mResult     = null;
+            this.mException  = null;
+        }
+
+        @Override
+        public void run() {
+            try {
+                this.mResult    = this.mStatements.exec(this.mState);
+                this.mException = null;
+            } catch (final SetlException e) {
+                this.mResult    = null;
+                this.mException = e;
+            }
+        }
+    }
+
 }
 

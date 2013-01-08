@@ -11,9 +11,6 @@ setlXJarLocation="setlX.jar"
 ############################## additional options ##############################
 javaParameters=""
 
-# execute with increased stack size
-javaParameters="$javaParameters -Xss24m"
-
 # uncomment to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
 #javaParameters="$javaParameters -Xms6g -Xmx6g"
 

@@ -11,9 +11,6 @@ set setlXJarLocation=setlX.jar
 REM ########################## additional options ##############################
 set javaParameters=
 
-REM execute with increased stack size
-set javaParameters=%javaParameters% -Xss24m
-
 REM uncomment by removing 'REM' to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
 REM set javaParameters=%javaParameters% -Xms6g -Xmx6g
 

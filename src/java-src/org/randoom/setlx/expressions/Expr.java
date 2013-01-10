@@ -10,11 +10,15 @@ import org.randoom.setlx.utilities.StateImplementation;
 import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class Expr extends CodeFragment {
-    // step execution of this expr. MAY ONLY BE SET BY ENVIRONMENT CLASS!
+    // step execution of this expression. MAY ONLY BE SET BY STATE CLASS!
     public static boolean sStepNext = false;
+
+    // collection of reusable replacement values
+    private final static HashMap<String, Value> sReplacements = new HashMap<String, Value>();
 
     // value which is the result of this expression, iff expression is `static' (does not contain variables)
     protected Value mReplacement = null;
@@ -41,8 +45,20 @@ public abstract class Expr extends CodeFragment {
             try {
                 // bubble state which is not connected to anything useful
                 final State bubble = new StateImplementation();
-                // evaluate in bubble state
-                mReplacement = evaluate(bubble);
+
+                // string representation of this expression
+                final String _this = this.toString(bubble);
+
+                synchronized (sReplacements) {
+                    // look up if same expression was already evaluated
+                    mReplacement = sReplacements.get(_this);
+
+                    if (mReplacement == null) { // not found
+                        // evaluate in bubble state
+                        mReplacement = evaluate(bubble);
+                        sReplacements.put(_this, mReplacement);
+                    }
+                }
             } catch (final SetlException se) {
                 // ignore error
                 mReplacement = null;
@@ -54,7 +70,11 @@ public abstract class Expr extends CodeFragment {
     }
 
     public Value getReplacement() {
-        return mReplacement.clone();
+        if (mReplacement != null) {
+            return mReplacement.clone();
+        } else {
+            return null;
+        }
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings

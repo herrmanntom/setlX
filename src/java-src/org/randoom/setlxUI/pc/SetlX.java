@@ -266,6 +266,10 @@ public class SetlX {
 
             System.exit(EXIT_ERROR);
 
+        } catch (final OutOfMemoryError oome) {
+            printOoError(state);
+            System.exit(EXIT_ERROR);
+
         } catch (final Exception e) { // this should never happen...
             printInternalError(state);
             if (unhideExceptions) {
@@ -357,13 +361,7 @@ public class SetlX {
             printExceptionsTrace(state, se.getTrace());
             return EXEC_ERROR;
         } catch (final OutOfMemoryError oome) {
-            state.errWriteLn(
-                "The setlX interpreter has ran out of memory.\n" +
-                "Try improving the SetlX program and/or execute with larger maximum memory size.\n" +
-                "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n" +
-                "\n" +
-                "If that does not help get a better machine ;-)\n"
-            );
+            printOoError(state);
             return EXEC_EXIT; // breaks loop while parsing interactively
         } catch (final Exception e) { // this should never happen...
             printInternalError(state);
@@ -443,6 +441,16 @@ public class SetlX {
             "      display the parsed program before executing it\n" +
             "  --version\n" +
             "      displays the interpreter version and terminates\n"
+        );
+    }
+
+    private static void printOoError(final State state) {
+        state.errWriteLn(
+            "The setlX interpreter has ran out of memory.\n" +
+            "Try improving the SetlX program and/or execute with larger maximum memory size.\n" +
+            "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n" +
+            "\n" +
+            "If that does not help get a better machine ;-)\n"
         );
     }
 

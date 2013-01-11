@@ -11,11 +11,11 @@ set setlXJarLocation=setlX.jar
 REM ########################## additional options ##############################
 set javaParameters=
 
-REM uncomment by removing 'REM' to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
-REM set javaParameters=%javaParameters% -Xms6g -Xmx6g
-
 REM uncomment by removing 'REM' to force execution in 64 bit mode (only recent Java versions for Windows support this)
 REM set javaParameters=%javaParameters% -d64
+
+REM uncomment by removing 'REM' to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
+REM set javaParameters=%javaParameters% -Xmx6144m
 
 REM ############################################################################
 

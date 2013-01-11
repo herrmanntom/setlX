@@ -11,11 +11,11 @@ setlXJarLocation="setlX.jar"
 ############################## additional options ##############################
 javaParameters=""
 
-# uncomment to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
-#javaParameters="$javaParameters -Xms6g -Xmx6g"
-
 # uncomment to force execution in 64 bit mode
 #javaParameters="$javaParameters -d64"
+
+# uncomment to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
+#javaParameters="$javaParameters -Xmx6144m"
 
 # parameters for developing the interpreter
 #javaParameters="$javaParameters -Xfuture"

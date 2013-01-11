@@ -11,12 +11,13 @@ import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-// This class represents a function definition
+// This class represents an automatically caching function definition
 
 /*
 grammar rule:
@@ -31,22 +32,22 @@ implemented here as:
 
 public class CachedProcedureDefinition extends ProcedureDefinition {
     // functional character used in terms
-    public  final static String                   FUNCTIONAL_CHARACTER = "^cachedProcedure";
+    public  final static String                                  FUNCTIONAL_CHARACTER = "^cachedProcedure";
 
-    private final        HashMap<SetlList, Value> mCache;
-    private              int                      mCacheHits;
+    private final        HashMap<SetlList, SoftReference<Value>> mCache;
+    private              int                                     mCacheHits;
 
     public CachedProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
         super(parameters, statements);
-        mCache     = new HashMap<SetlList, Value>();
+        mCache     = new HashMap<SetlList, SoftReference<Value>>();
         mCacheHits = 0;
     }
-    protected CachedProcedureDefinition(
-        final List<ParameterDef>       parameters,
-        final Block                    statements,
-        final HashMap<Variable, Value> closure,
-        final HashMap<SetlList, Value> cache,
-        final int                      cacheHits
+    private CachedProcedureDefinition(
+        final List<ParameterDef>                      parameters,
+        final Block                                   statements,
+        final HashMap<Variable, Value>                closure,
+        final HashMap<SetlList, SoftReference<Value>> cache,
+        final int                                     cacheHits
     ) {
         super(parameters, statements, closure);
         mCache     = cache;
@@ -105,18 +106,22 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
             }
         }
 
-        Value cachedResult = mCache.get(key);
+        Value                      cachedResult = null;
+        final SoftReference<Value> result       = mCache.get(key);
+        if (result != null) {
+            cachedResult = result.get();
+        }
 
         if (cachedResult != null) {
             ++mCacheHits;
             return cachedResult.clone();
         } else {
             // cache om to prevent recursion loop
-            mCache.put(key, Om.OM);
+            mCache.put(key, new SoftReference<Value>(Om.OM));
             // call function
             cachedResult = callAfterEval(state, args, values);
             // put value into cache
-            mCache.put(key, cachedResult);
+            mCache.put(key, new SoftReference<Value>(cachedResult));
             // return value
             return cachedResult.clone();
         }

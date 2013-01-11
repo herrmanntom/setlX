@@ -9,6 +9,7 @@ import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
 import org.randoom.setlx.utilities.VariableScope;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +19,7 @@ public abstract class Expr extends CodeFragment {
     public static boolean sStepNext = false;
 
     // collection of reusable replacement values
-    private final static HashMap<String, Value> sReplacements = new HashMap<String, Value>();
+    private final static HashMap<String, SoftReference<Value>> sReplacements = new HashMap<String, SoftReference<Value>>();
 
     // value which is the result of this expression, iff expression is `static' (does not contain variables)
     protected Value mReplacement = null;
@@ -51,12 +52,19 @@ public abstract class Expr extends CodeFragment {
 
                 synchronized (sReplacements) {
                     // look up if same expression was already evaluated
-                    mReplacement = sReplacements.get(_this);
+                    final SoftReference<Value> result = sReplacements.get(_this);
+                    if (result != null) {
+                        mReplacement = result.get();
+
+                        if (mReplacement == null) { // reference was cleared up
+                            sReplacements.remove(_this);
+                        }
+                    }
 
                     if (mReplacement == null) { // not found
                         // evaluate in bubble state
                         mReplacement = evaluate(bubble);
-                        sReplacements.put(_this, mReplacement);
+                        sReplacements.put(_this, new SoftReference<Value>(mReplacement));
                     }
                 }
             } catch (final SetlException se) {

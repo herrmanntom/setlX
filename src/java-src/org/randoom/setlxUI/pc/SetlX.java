@@ -325,10 +325,12 @@ public class SetlX {
         }
 
         // run the parsed code
-        for (final Block blk : programs) {
-            if (execute(state, blk) != EXEC_OK) {
+        for (int program = 0; program < programs.size(); ++program) {
+            if (execute(state, programs.get(program)) != EXEC_OK) {
                 break; // stop in case of error
             }
+            // remove reference to stored code to free some memory
+            programs.set(program, null);
         }
 
         if (verbose) {

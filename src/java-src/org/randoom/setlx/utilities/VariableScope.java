@@ -14,7 +14,7 @@ import java.util.Map;
 // This class collects the variable bindings and the function definitions in current scope.
 public class VariableScope {
     // functional characters used in terms
-    private final   static  String          FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
+    private final   static  String      FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
 
     private final   Map<String, Value>  mVarBindings;
     // stores reference to original scope object upon cloning

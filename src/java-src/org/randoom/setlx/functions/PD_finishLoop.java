@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.State;
@@ -21,7 +21,7 @@ public class PD_finishLoop extends PreDefinedFunction {
         state.setDebugFinishLoop(true);
         state.setDebugModeActive(false);
         DebugPrompt.stopPrompt();
-        return Om.OM.hide();
+        return new SetlError("finishLoop");
     }
 }
 

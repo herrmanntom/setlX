@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ReturnMessage;
@@ -55,7 +54,7 @@ public class ModuloAssignment extends StatementWithPrintableResult {
 
         if (sTraceAssignments) {
             state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
-        } else if (mPrintAfterEval && (assigned != Om.OM || !Om.OM.isHidden()) ) {
+        } else if (mPrintAfterEval) {
             state.outWriteLn("~< Result: " + assigned + " >~");
         }
 

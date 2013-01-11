@@ -1,6 +1,6 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
@@ -31,7 +31,7 @@ public class PD_dbgHelp extends PreDefinedFunction {
                                "  reset();        // stop execution and return to interactive prompt\n";
 
         state.errWriteLn(message);
-        return Om.OM.hide();
+        return new SetlError("dbgHelp");
     }
 }
 

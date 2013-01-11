@@ -6,24 +6,12 @@ public class Om extends Value {
 
     public final static Om OM = new Om();
 
-    // do not display when printing result after evaluating in interactive mode
-    private boolean isHidden    = false;
-
     private Om() {  }
 
     @Override
     public Om clone() {
         // this value is atomic and can not be changed
         return this;
-    }
-
-    public Om hide() {
-        isHidden = true;
-        return this;
-    }
-
-    public boolean isHidden() {
-        return isHidden && ((isHidden = false) || true); // reset to false after one query
     }
 
     /* string and char operations */

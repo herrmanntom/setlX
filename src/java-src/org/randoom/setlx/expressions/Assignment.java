@@ -22,12 +22,10 @@ implemented here as:
 
 public class Assignment extends Expr {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^assignment";
-    // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean    sTraceAssignments       = false;
+    public  final static String FUNCTIONAL_CHARACTER = "^assignment";
 
     // precedence level in SetlX-grammar
-    private final static int        PRECEDENCE              = 1000;
+    private final static int    PRECEDENCE           = 1000;
 
     private final Expr  mLhs;
     private final Expr  mRhs;
@@ -41,7 +39,7 @@ public class Assignment extends Expr {
     protected Value evaluate(final State state) throws SetlException {
         final Value assigned = mLhs.assign(state, mRhs.eval(state).clone());
 
-        if (sTraceAssignments) {
+        if (state.traceAssignments()) {
             state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         }
 

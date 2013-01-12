@@ -10,32 +10,11 @@ import java.util.Random;
 // This interface provides access to the current state of the interpreter.
 public abstract class State {
 
-    public abstract VariableScope       getScope();
-
-    public abstract void                setScope(final VariableScope newEnv);
-
-    public abstract void                resetState();
-
     public abstract void                setEnvironmentProvider(final EnvironmentProvider envProvider);
 
     public abstract EnvironmentProvider getEnvironmentProvider();
 
-    public abstract Value               findValue(final String var);
-
-    public abstract void                putValue(final String var, final Value value);
-
-    public abstract boolean             putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope);
-
-    // Add bindings stored in `scope' into current scope.
-    // This also adds vars in outer scopes of `scope' until reaching the current
-    // scope as outer scope of `scope'.
-    public abstract void                putAllValues(final VariableScope scope);
-
-    public abstract void                makeGlobal(final String var);
-
-    public abstract Term                scopeToTerm();
-
-    /* I/O */
+    /* -- I/O -- */
 
     public abstract String              inReadLine() throws JVMIOException;
 
@@ -64,7 +43,9 @@ public abstract class State {
     // allow modification of library name
     public abstract String              filterLibraryName(final String name);
 
-    /* other stuff */
+    public abstract boolean             isLibraryLoaded(final String name);
+    public abstract void                libraryWasLoaded(final String name);
+
     public abstract int                 getNumberOfCores();
 
     // current time in ms
@@ -101,7 +82,7 @@ public abstract class State {
 
     public abstract void                setTraceAssignments(final boolean traceAssignments);
 
-    public abstract boolean             isTraceAssignments();
+    public abstract boolean             traceAssignments();
 
     public abstract void                setAssertsDisabled(final boolean assertsDisabled);
 
@@ -111,6 +92,29 @@ public abstract class State {
 
     public abstract String              getEndl();
     public abstract String              getTab();
+
+    /* -- saved variables in current scope -- */
+
+    public abstract VariableScope       getScope();
+
+    public abstract void                setScope(final VariableScope newEnv);
+
+    public abstract void                resetState();
+
+    public abstract Value               findValue(final String var);
+
+    public abstract void                putValue(final String var, final Value value);
+
+    public abstract boolean             putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope);
+
+    // Add bindings stored in `scope' into current scope.
+    // This also adds vars in outer scopes of `scope' until reaching the current
+    // scope as outer scope of `scope'.
+    public abstract void                putAllValues(final VariableScope scope);
+
+    public abstract void                makeGlobal(final String var);
+
+    public abstract Term                scopeToTerm();
 
     /* -- Debugger -- */
 

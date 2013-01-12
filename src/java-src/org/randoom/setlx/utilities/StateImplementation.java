@@ -1,20 +1,11 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.JVMIOException;
-import org.randoom.setlx.expressionUtilities.Iterator;
-import org.randoom.setlx.expressions.Assignment;
 import org.randoom.setlx.expressions.Call;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
-import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.statements.DifferenceAssignment;
 import org.randoom.setlx.statements.For;
-import org.randoom.setlx.statements.IntegerDivisionAssignment;
-import org.randoom.setlx.statements.ModuloAssignment;
-import org.randoom.setlx.statements.ProductAssignment;
-import org.randoom.setlx.statements.QuotientAssignment;
 import org.randoom.setlx.statements.Statement;
-import org.randoom.setlx.statements.SumAssignment;
 import org.randoom.setlx.statements.While;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;
@@ -29,61 +20,323 @@ import java.util.Random;
 
 // This class represents the current state of the interpreter.
 public class StateImplementation extends State {
+
+    // interface provider to the outer world
+    private                 EnvironmentProvider mEnvProvider;
+
+    private final           HashSet<String>     mLoadedLibraries;
+    private                 LinkedList<String>  mParserErrorCapture;
+
     /* This variable stores the root VariableScope:
        Predefined functions are dynamically loaded into this VariableScope and
        not only into the current one, to be accessible by any previous and future
        VariableScope clones (results in faster lookup).                       */
-    private final   static  VariableScope       sROOT_Scope                 = new VariableScope();
+    private final   static  VariableScope       sROOT_Scope = new VariableScope();
 
     // this scope stores all global variables
     private final           VariableScope       mGlobals;
-    private                 boolean             mGlobalsPresent             = false;
+    private                 boolean             mGlobalsPresent;
 
     // this variable stores the variable assignment that is currently active
-    private                 VariableScope       mVariableScope              = null;
-
-    // interface provider to the outer world
-    private                 EnvironmentProvider mEnvProvider                = null;
-
-    private                 LinkedList<String>  mParserErrorCapture         = null;
+    private                 VariableScope       mVariableScope;
 
     // number of CPUs/Cores in System
-    private final   static  int                 sCORES                      = Runtime.getRuntime().availableProcessors();
+    private final   static  int                 sCORES = Runtime.getRuntime().availableProcessors();
 
     // is input feed by a human?
-    private                 boolean             mIsHuman                    = false;
+    private                 boolean             mIsHuman;
 
     // random number generator
-    private                 Random              mRandoom                    = null;
+    private                 Random              mRandoom;
 
-    private                 boolean             mStopExecution              = false;
-    private                 boolean             mMultiLineMode              = false;
-    private                 boolean             mIsInteractive              = false;
-    private                 boolean             mPrintVerbose               = false;
-    private                 boolean             mTraceAssignments           = false;
-    private                 boolean             mAssertsDisabled            = false;
+    private                 boolean             mStopExecution;
+    private                 boolean             mMultiLineMode;
+    private                 boolean             mIsInteractive;
+    private                 boolean             mPrintVerbose;
+    private                 boolean             mTraceAssignments;
+    private                 boolean             mAssertsDisabled;
 
     /* -- Debugger -- */
-    private final           HashSet<String>     mBreakpoints                = new HashSet<String>();
-    private                 boolean             mBreakpointsEnabled         = false; // are any breakpoints set?
+    private final           HashSet<String>     mBreakpoints;
+    private                 boolean             mBreakpointsEnabled; // are any breakpoints set?
 
-    private                 boolean             mDebugModeActive            = false;
-    private                 boolean             mDebugPromptActive          = false;
-    private                 boolean             mDebugStepNextExpr          = false;
-    private                 boolean             mDebugStepThroughFunction   = false;
-    private                 boolean             mDebugFinishFunction        = false;
-    private                 boolean             mDebugFinishLoop            = false;
+    private                 boolean             mDebugModeActive;
+    private                 boolean             mDebugPromptActive;
+    private                 boolean             mDebugStepNextExpr;
+    private                 boolean             mDebugStepThroughFunction;
+    private                 boolean             mDebugFinishFunction;
+    private                 boolean             mDebugFinishLoop;
 
     public StateImplementation() {
         this(DummyEnvProvider.DUMMY);
     }
 
     public StateImplementation(final EnvironmentProvider envProvider) {
-        mGlobals        = new VariableScope();
-        mGlobalsPresent = false;
-        mVariableScope  = sROOT_Scope.clone();
-        mEnvProvider    = envProvider;
+        mEnvProvider        = envProvider;
+        mLoadedLibraries    = new HashSet<String>();
+        mParserErrorCapture = null;
+        mGlobals            = new VariableScope();
+        mGlobalsPresent     = false;
+        mVariableScope      = sROOT_Scope.clone();
+        mIsHuman            = false;
+        mRandoom            = new Random();
+        mStopExecution      = false;
+        mMultiLineMode      = false;
+        mIsInteractive      = false;
+        mPrintVerbose       = false;
+        mTraceAssignments   = false;
+        mAssertsDisabled    = false;
+        /* -- Debugger -- */
+        mBreakpoints              = new HashSet<String>();
+        mBreakpointsEnabled       = false;
+        mDebugModeActive          = false;
+        mDebugPromptActive        = false;
+        mDebugStepNextExpr        = false;
+        mDebugStepThroughFunction = false;
+        mDebugFinishFunction      = false;
+        mDebugFinishLoop          = false;
     }
+
+    @Override
+    public void setEnvironmentProvider(final EnvironmentProvider envProvider) {
+        mEnvProvider = envProvider;
+    }
+
+    @Override
+    public EnvironmentProvider getEnvironmentProvider() {
+        return mEnvProvider;
+    }
+
+    /* -- I/O -- */
+
+    @Override
+    public String inReadLine() throws JVMIOException {
+        return mEnvProvider.inReadLine();
+    }
+
+    // write to standard output
+    @Override
+    public void outWrite(final String msg) {
+        mEnvProvider.outWrite(msg);
+    }
+    @Override
+    public void outWriteLn(final String msg) {
+        mEnvProvider.outWrite(msg);
+        mEnvProvider.outWrite(mEnvProvider.getEndl());
+    }
+    @Override
+    public void outWriteLn() {
+        mEnvProvider.outWrite(mEnvProvider.getEndl());
+    }
+
+    // write to standard error
+    @Override
+    public void errWrite(final String msg) {
+        mEnvProvider.errWrite(msg);
+    }
+    @Override
+    public void errWriteLn(final String msg) {
+        mEnvProvider.errWrite(msg);
+        mEnvProvider.errWrite(mEnvProvider.getEndl());
+    }
+    @Override
+    public void errWriteLn() {
+        mEnvProvider.errWrite(mEnvProvider.getEndl());
+    }
+
+    // capture/write parser errors
+    @Override
+    public void writeParserErrLn(final String msg) {
+        if (mParserErrorCapture != null) {
+            mParserErrorCapture.add(msg);
+        } else {
+            errWriteLn(msg);
+        }
+    }
+    @Override
+    public LinkedList<String> getParserErrorCapture() {
+        return mParserErrorCapture;
+    }
+    @Override
+    public void setParserErrorCapture(final LinkedList<String> capture) {
+        mParserErrorCapture = capture;
+    }
+
+    @Override
+    public boolean prompt(final String prompt) throws JVMIOException {
+        // Only if a pipe is connected the input is ready (has input buffered)
+        // BEFORE the prompt.
+        // A human usually takes time AFTER the prompt to type something ;-)
+        //
+        // Also if at one time a prompt was displayed, display all following
+        // prompts. (User may continue to type into stdin AFTER we last read
+        // from it, causing stdin to be ready, but human controlled)
+        if (mIsHuman || ! mEnvProvider.inReady()) {
+            mEnvProvider.promptForInput(prompt);
+            mIsHuman = true;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void promptUnchecked(final String prompt) {
+        mEnvProvider.promptForInput(prompt);
+    }
+
+    // allow modification of fileName/path when reading files
+    @Override
+    public String filterFileName(final String fileName) {
+        return mEnvProvider.filterFileName(fileName);
+    }
+
+    // allow modification of library name
+    @Override
+    public String filterLibraryName(final String name) {
+        return mEnvProvider.filterLibraryName(name);
+    }
+
+    @Override
+    public boolean isLibraryLoaded(final String name) {
+        return mLoadedLibraries.contains(name);
+    }
+
+    @Override
+    public void libraryWasLoaded(final String name) {
+        mLoadedLibraries.add(name);
+    }
+
+    @Override
+    public int getNumberOfCores() {
+        if (sCORES >= 2) {
+            return sCORES;
+        } else {
+            return 1;
+        }
+    }
+
+    // current time in ms
+    @Override
+    public long currentTimeMillis() {
+        return System.currentTimeMillis();
+    }
+
+    @Override
+    public void setPredictableRandoom() {
+        mRandoom = new Random(0);
+    }
+
+    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
+    @Override
+    public int getRandomInt(final int upperBoundary) {
+        return mRandoom.nextInt(upperBoundary);
+    }
+
+    // get random number (all int values are possible)
+    @Override
+    public int getRandomInt() {
+        return mRandoom.nextInt();
+    }
+
+    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
+    @Override
+    public double getRandomDouble() {
+        return mRandoom.nextDouble();
+    }
+
+    @Override
+    public Random getRandom() {
+        return mRandoom;
+    }
+
+    @Override
+    public void stopExecution(final boolean stopExecution) {
+        mStopExecution          = stopExecution;
+    }
+
+    @Override
+    public boolean isExecutionStopped() {
+        return mStopExecution;
+    }
+
+    @Override
+    public void setMultiLineMode(final boolean multiLineMode) {
+        mMultiLineMode          = multiLineMode;
+    }
+
+    @Override
+    public boolean isMultiLineEnabled() {
+        return mMultiLineMode;
+    }
+
+    @Override
+    public void setInteractive(final boolean isInteractive) {
+        mIsInteractive = isInteractive;
+    }
+
+    @Override
+    public boolean isInteractive() {
+        return mIsInteractive;
+    }
+
+    @Override
+    public void setPrintVerbose(final boolean printVerbose) {
+        mPrintVerbose   = printVerbose;
+    }
+
+    @Override
+    public boolean isPrintVerbose() {
+        return mPrintVerbose;
+    }
+
+    @Override
+    public void setTraceAssignments(final boolean traceAssignments) {
+        mTraceAssignments                           = traceAssignments;
+    }
+
+    @Override
+    public boolean traceAssignments() {
+        return mTraceAssignments;
+    }
+
+    @Override
+    public void setAssertsDisabled(final boolean assertsDisabled) {
+        mAssertsDisabled    = assertsDisabled;
+    }
+
+    @Override
+    public boolean areAssertsDisabled() {
+        return mAssertsDisabled;
+    }
+
+    @Override
+    public void getLineStart(final StringBuilder sb, final int tabs) {
+        if (mPrintVerbose && tabs > 0) {
+            final String tab = mEnvProvider.getTab();
+            for (int i = 0; i < tabs; ++i) {
+                sb.append(tab);
+            }
+        }
+    }
+
+    @Override
+    public String getEndl() {
+        if (mPrintVerbose) {
+            return mEnvProvider.getEndl();
+        } else {
+            return " ";
+        }
+    }
+    @Override
+    public String getTab() {
+        if (mPrintVerbose) {
+            return mEnvProvider.getTab();
+        } else {
+            return "";
+        }
+    }
+
+    /* -- saved variables in current scope -- */
 
     @Override
     public VariableScope getScope() {
@@ -100,19 +353,11 @@ public class StateImplementation extends State {
         mVariableScope  = sROOT_Scope.clone();
         mGlobals.clear();
         mGlobalsPresent = false;
-        ParseSetlX.clearLoadedLibraries();
-        mParserErrorCapture.clear();
+        mLoadedLibraries.clear();
+        if (mParserErrorCapture != null) {
+            mParserErrorCapture.clear();
+        }
         mBreakpoints.clear();
-    }
-
-    @Override
-    public void setEnvironmentProvider(final EnvironmentProvider envProvider) {
-        mEnvProvider = envProvider;
-    }
-
-    @Override
-    public EnvironmentProvider getEnvironmentProvider() {
-        return mEnvProvider;
     }
 
     @Override
@@ -203,252 +448,6 @@ public class StateImplementation extends State {
     @Override
     public Term scopeToTerm() {
         return mVariableScope.toTerm(this, mGlobals);
-    }
-
-    /* I/O */
-
-    @Override
-    public String inReadLine() throws JVMIOException {
-        return mEnvProvider.inReadLine();
-    }
-
-    // write to standard output
-    @Override
-    public void outWrite(final String msg) {
-        mEnvProvider.outWrite(msg);
-    }
-    @Override
-    public void outWriteLn(final String msg) {
-        mEnvProvider.outWrite(msg);
-        mEnvProvider.outWrite(mEnvProvider.getEndl());
-    }
-    @Override
-    public void outWriteLn() {
-        mEnvProvider.outWrite(mEnvProvider.getEndl());
-    }
-
-    // write to standard error
-    @Override
-    public void errWrite(final String msg) {
-        mEnvProvider.errWrite(msg);
-    }
-    @Override
-    public void errWriteLn(final String msg) {
-        mEnvProvider.errWrite(msg);
-        mEnvProvider.errWrite(mEnvProvider.getEndl());
-    }
-    @Override
-    public void errWriteLn() {
-        mEnvProvider.errWrite(mEnvProvider.getEndl());
-    }
-
-    // capture/write parser errors
-    @Override
-    public void writeParserErrLn(final String msg) {
-        if (mParserErrorCapture != null) {
-            mParserErrorCapture.add(msg);
-        } else {
-            errWriteLn(msg);
-        }
-    }
-    @Override
-    public LinkedList<String> getParserErrorCapture() {
-        return mParserErrorCapture;
-    }
-    @Override
-    public void setParserErrorCapture(final LinkedList<String> capture) {
-        mParserErrorCapture = capture;
-    }
-
-    @Override
-    public boolean prompt(final String prompt) throws JVMIOException {
-        // Only if a pipe is connected the input is ready (has input buffered)
-        // BEFORE the prompt.
-        // A human usually takes time AFTER the prompt to type something ;-)
-        //
-        // Also if at one time a prompt was displayed, display all following
-        // prompts. (User may continue to type into stdin AFTER we last read
-        // from it, causing stdin to be ready, but human controlled)
-        if (mIsHuman || ! mEnvProvider.inReady()) {
-            mEnvProvider.promptForInput(prompt);
-            mIsHuman = true;
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void promptUnchecked(final String prompt) {
-        mEnvProvider.promptForInput(prompt);
-    }
-
-    // allow modification of fileName/path when reading files
-    @Override
-    public String filterFileName(final String fileName) {
-        return mEnvProvider.filterFileName(fileName);
-    }
-
-    // allow modification of library name
-    @Override
-    public String filterLibraryName(final String name) {
-        return mEnvProvider.filterLibraryName(name);
-    }
-
-    /* other stuff */
-
-    @Override
-    public int getNumberOfCores() {
-        if (sCORES >= 2) {
-            return sCORES;
-        } else {
-            return 1;
-        }
-    }
-
-    // current time in ms
-    @Override
-    public long currentTimeMillis() {
-        return System.currentTimeMillis();
-    }
-
-    @Override
-    public void setPredictableRandoom() {
-        mRandoom = new Random(0);
-    }
-
-    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
-    @Override
-    public int getRandomInt(final int upperBoundary) {
-        if (mRandoom == null) {
-            mRandoom = new Random();
-        }
-        return mRandoom.nextInt(upperBoundary);
-    }
-
-    // get random number (all int values are possible)
-    @Override
-    public int getRandomInt() {
-        if (mRandoom == null) {
-            mRandoom = new Random();
-        }
-        return mRandoom.nextInt();
-    }
-
-    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
-    @Override
-    public double getRandomDouble() {
-        if (mRandoom == null) {
-            mRandoom = new Random();
-        }
-        return mRandoom.nextDouble();
-    }
-
-    @Override
-    public Random getRandom() {
-        if (mRandoom == null) {
-            mRandoom = new Random();
-        }
-        return mRandoom;
-    }
-
-    @Override
-    public void stopExecution(final boolean stopExecution) {
-        mStopExecution          = stopExecution;
-        Block.sStopExecution    = stopExecution;
-        Iterator.sStopExecution = stopExecution;
-    }
-
-    @Override
-    public boolean isExecutionStopped() {
-        return mStopExecution;
-    }
-
-    @Override
-    public void setMultiLineMode(final boolean multiLineMode) {
-        mMultiLineMode          = multiLineMode;
-    }
-
-    @Override
-    public boolean isMultiLineEnabled() {
-        return mMultiLineMode;
-    }
-
-    @Override
-    public void setInteractive(final boolean isInteractive) {
-        mIsInteractive = isInteractive;
-    }
-
-    @Override
-    public boolean isInteractive() {
-        return mIsInteractive;
-    }
-
-    @Override
-    public void setPrintVerbose(final boolean printVerbose) {
-        mPrintVerbose   = printVerbose;
-    }
-
-    @Override
-    public boolean isPrintVerbose() {
-        return mPrintVerbose;
-    }
-
-    @Override
-    public void setTraceAssignments(final boolean traceAssignments) {
-        mTraceAssignments                           = traceAssignments;
-
-        Assignment.sTraceAssignments                = traceAssignments;
-        DifferenceAssignment.sTraceAssignments      = traceAssignments;
-        QuotientAssignment.sTraceAssignments          = traceAssignments;
-        IntegerDivisionAssignment.sTraceAssignments = traceAssignments;
-        ModuloAssignment.sTraceAssignments          = traceAssignments;
-        ProductAssignment.sTraceAssignments         = traceAssignments;
-        SumAssignment.sTraceAssignments             = traceAssignments;
-
-        Iterator.sTraceAssignments                  = traceAssignments;
-        MatchResult.sTraceAssignments               = traceAssignments;
-    }
-
-    @Override
-    public boolean isTraceAssignments() {
-        return mTraceAssignments;
-    }
-
-    @Override
-    public void setAssertsDisabled(final boolean assertsDisabled) {
-        mAssertsDisabled    = assertsDisabled;
-    }
-
-    @Override
-    public boolean areAssertsDisabled() {
-        return mAssertsDisabled;
-    }
-
-    @Override
-    public void getLineStart(final StringBuilder sb, final int tabs) {
-        if (mPrintVerbose && tabs > 0) {
-            final String tab = mEnvProvider.getTab();
-            for (int i = 0; i < tabs; ++i) {
-                sb.append(tab);
-            }
-        }
-    }
-
-    @Override
-    public String getEndl() {
-        if (mPrintVerbose) {
-            return mEnvProvider.getEndl();
-        } else {
-            return " ";
-        }
-    }
-    @Override
-    public String getTab() {
-        if (mPrintVerbose) {
-            return mEnvProvider.getTab();
-        } else {
-            return "";
-        }
     }
 
     /* -- Debugger -- */

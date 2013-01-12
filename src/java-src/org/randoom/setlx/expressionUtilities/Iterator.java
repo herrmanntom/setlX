@@ -36,15 +36,7 @@ implemented here as:
 
 public class Iterator extends CodeFragment {
     // functional character used in terms
-    private final static String     FUNCTIONAL_CHARACTER = "^iterator";
-    // Trace all assignments.     MAY ONLY BE SET BY CONTINUE CLASS!
-    public        static boolean    sContinue            = false;
-    // Trace all assignments.     MAY ONLY BE SET BY BREAK CLASS!
-    public        static boolean    sBreak               = false;
-    // Request execution to stop. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean    sStopExecution       = false;
-    // Trace all assignments.     MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean    sTraceAssignments    = false;
+    private final static String FUNCTIONAL_CHARACTER = "^iterator";
 
     private final Expr      mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private final Expr      mCollection; // Rhs (should be Set/List)
@@ -193,7 +185,7 @@ public class Iterator extends CodeFragment {
     /* private functions */
 
     private ReturnMessage evaluate(final State state, final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
-        if (sStopExecution) {
+        if (state.isExecutionStopped()) {
             throw new StopExecutionException("Interrupted");
         }
         final Value iterationValue = mCollection.eval(state); // trying to iterate over this value
@@ -214,7 +206,7 @@ public class Iterator extends CodeFragment {
                     continue;
                 }
 
-                if (sTraceAssignments) {
+                if (state.traceAssignments()) {
                     state.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
                 }
 

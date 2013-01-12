@@ -32,9 +32,7 @@ implemented here as:
 
 public class Block extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String     FUNCTIONAL_CHARACTER = "^block";
-    // Request execution to stop. MAY ONLY BE SET BY STATE CLASS!
-    public        static boolean    sStopExecution       = false;
+    private final static String   FUNCTIONAL_CHARACTER = "^block";
 
     private final List<Statement> mStatements;
 
@@ -58,7 +56,7 @@ public class Block extends Statement {
     public ReturnMessage exec(final State state) throws SetlException {
         ReturnMessage result = null;
         for (final Statement stmnt : mStatements) {
-            if (sStopExecution) {
+            if (state.isExecutionStopped()) {
                 throw new StopExecutionException("Interrupted");
             }
             result = stmnt.exec(state);

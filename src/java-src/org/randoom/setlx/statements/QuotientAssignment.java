@@ -25,12 +25,10 @@ implemented here as:
 
 public class QuotientAssignment extends StatementWithPrintableResult {
     // functional character used in terms
-    public  final static String     FUNCTIONAL_CHARACTER    = "^quotientAssignment";
-    // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean    sTraceAssignments       = false;
+    public  final static String FUNCTIONAL_CHARACTER = "^quotientAssignment";
 
     // precedence level in SetlX-grammar
-    private final static int        PRECEDENCE              = 1000;
+    private final static int    PRECEDENCE           = 1000;
 
     private final Expr    mLhs;
     private final Expr    mRhs;
@@ -52,7 +50,7 @@ public class QuotientAssignment extends StatementWithPrintableResult {
         final Value assigned = mLhs.eval(state).quotientAssign(state, mRhs.eval(state).clone());
         mLhs.assignUncloned(state, assigned);
 
-        if (sTraceAssignments) {
+        if (state.traceAssignments()) {
             state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         } else if (mPrintAfterEval) {
             state.outWriteLn("~< Result: " + assigned + " >~");

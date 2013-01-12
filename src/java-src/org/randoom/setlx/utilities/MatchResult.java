@@ -6,9 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MatchResult {
-    // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public  static boolean              sTraceAssignments = false;
-
     private        boolean              mMatches;       // does the term match?
     private final  Map<String, Value>   mVarBindings;   // variables to set when term matches
 
@@ -42,7 +39,7 @@ public class MatchResult {
         for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
             state.putValue(entry.getKey(), entry.getValue().clone());
 
-            if (sTraceAssignments) {
+            if (state.traceAssignments()) {
                 state.outWriteLn("~< Trace (match): " + entry.getKey() + " := " + entry.getValue() + " >~");
             }
         }

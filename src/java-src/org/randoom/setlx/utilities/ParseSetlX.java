@@ -15,18 +15,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.List;
 
 public class ParseSetlX {
 
     private final   static  int             EXPR            =  1337;
     private final   static  int             BLOCK           = 31337;
     private         static  int             errors          =     0; // our own error accounting, which survives nested parsing
-    private final   static  List<String>    loadedLibraries = new LinkedList<String>();
-
-    /*package*/ static void clearLoadedLibraries() {
-        loadedLibraries.clear();
-    }
 
     public static Block parseFile(final State state, String fileName) throws ParserException {
         try {
@@ -48,10 +42,10 @@ public class ParseSetlX {
             // allow modification of name by environment provider
             name = state.filterLibraryName(name + ".stlx");
             if (new File(name).isFile()) {
-                if (loadedLibraries.contains(name)) {
+                if (state.isLibraryLoaded(name)) {
                     return new Block();
                 } else {
-                    loadedLibraries.add(name);
+                    state.libraryWasLoaded(name);
                     // parse the file contents (ANTLR will print its parser errors into stderr ...)
                     return parseBlock(state, new ANTLRFileStream(name));
                 }

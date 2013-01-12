@@ -26,8 +26,6 @@ implemented here as:
 public class SumAssignment extends StatementWithPrintableResult {
     // functional character used in terms
     public  final static String     FUNCTIONAL_CHARACTER    = "^sumAssignment";
-    // Trace all assignments. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean    sTraceAssignments       = false;
 
     // precedence level in SetlX-grammar
     private final static int        PRECEDENCE              = 1000;
@@ -52,7 +50,7 @@ public class SumAssignment extends StatementWithPrintableResult {
         final Value assigned = mLhs.eval(state).sumAssign(state, mRhs.eval(state).clone());
         mLhs.assignUncloned(state, assigned);
 
-        if (sTraceAssignments) {
+        if (state.traceAssignments()) {
             state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         } else if (mPrintAfterEval) {
             state.outWriteLn("~< Result: " + assigned + " >~");

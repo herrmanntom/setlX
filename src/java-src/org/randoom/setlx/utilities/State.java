@@ -66,7 +66,7 @@ public abstract class State {
 
     public abstract void                stopExecution(final boolean stopExecution);
 
-    public abstract boolean             isExecutionStopped();
+    public boolean                      isExecutionStopped;
 
     public abstract void                setMultiLineMode(final boolean multiLineMode);
 
@@ -82,7 +82,7 @@ public abstract class State {
 
     public abstract void                setTraceAssignments(final boolean traceAssignments);
 
-    public abstract boolean             traceAssignments();
+    public boolean                      traceAssignments;
 
     public abstract void                setAssertsDisabled(final boolean assertsDisabled);
 

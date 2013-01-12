@@ -39,7 +39,7 @@ public class Assignment extends Expr {
     protected Value evaluate(final State state) throws SetlException {
         final Value assigned = mLhs.assign(state, mRhs.eval(state).clone());
 
-        if (state.traceAssignments()) {
+        if (state.traceAssignments) {
             state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         }
 

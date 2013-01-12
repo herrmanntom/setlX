@@ -49,11 +49,9 @@ public class StateImplementation extends State {
     // random number generator
     private                 Random              mRandoom;
 
-    private                 boolean             mStopExecution;
     private                 boolean             mMultiLineMode;
     private                 boolean             mIsInteractive;
     private                 boolean             mPrintVerbose;
-    private                 boolean             mTraceAssignments;
     private                 boolean             mAssertsDisabled;
 
     /* -- Debugger -- */
@@ -72,20 +70,20 @@ public class StateImplementation extends State {
     }
 
     public StateImplementation(final EnvironmentProvider envProvider) {
-        mEnvProvider        = envProvider;
-        mLoadedLibraries    = new HashSet<String>();
-        mParserErrorCapture = null;
-        mGlobals            = new VariableScope();
-        mGlobalsPresent     = false;
-        mVariableScope      = sROOT_Scope.clone();
-        mIsHuman            = false;
-        mRandoom            = new Random();
-        mStopExecution      = false;
-        mMultiLineMode      = false;
-        mIsInteractive      = false;
-        mPrintVerbose       = false;
-        mTraceAssignments   = false;
-        mAssertsDisabled    = false;
+        mEnvProvider              = envProvider;
+        mLoadedLibraries          = new HashSet<String>();
+        mParserErrorCapture       = null;
+        mGlobals                  = new VariableScope();
+        mGlobalsPresent           = false;
+        mVariableScope            = sROOT_Scope.clone();
+        mIsHuman                  = false;
+        mRandoom                  = new Random();
+        super.isExecutionStopped  = false;
+        mMultiLineMode            = false;
+        mIsInteractive            = false;
+        mPrintVerbose             = false;
+        super.traceAssignments    = false;
+        mAssertsDisabled          = false;
         /* -- Debugger -- */
         mBreakpoints              = new HashSet<String>();
         mBreakpointsEnabled       = false;
@@ -251,17 +249,12 @@ public class StateImplementation extends State {
 
     @Override
     public void stopExecution(final boolean stopExecution) {
-        mStopExecution          = stopExecution;
-    }
-
-    @Override
-    public boolean isExecutionStopped() {
-        return mStopExecution;
+        super.isExecutionStopped = stopExecution;
     }
 
     @Override
     public void setMultiLineMode(final boolean multiLineMode) {
-        mMultiLineMode          = multiLineMode;
+        mMultiLineMode = multiLineMode;
     }
 
     @Override
@@ -281,7 +274,7 @@ public class StateImplementation extends State {
 
     @Override
     public void setPrintVerbose(final boolean printVerbose) {
-        mPrintVerbose   = printVerbose;
+        mPrintVerbose = printVerbose;
     }
 
     @Override
@@ -291,17 +284,12 @@ public class StateImplementation extends State {
 
     @Override
     public void setTraceAssignments(final boolean traceAssignments) {
-        mTraceAssignments                           = traceAssignments;
-    }
-
-    @Override
-    public boolean traceAssignments() {
-        return mTraceAssignments;
+        super.traceAssignments = traceAssignments;
     }
 
     @Override
     public void setAssertsDisabled(final boolean assertsDisabled) {
-        mAssertsDisabled    = assertsDisabled;
+        mAssertsDisabled = assertsDisabled;
     }
 
     @Override
@@ -394,7 +382,7 @@ public class StateImplementation extends State {
             if (v == null) {
                 v = Om.OM;
                 // identifier could not be looked up...
-                // return Om.OM and store it into intial scope to prevent reflection lookup next time
+                // return Om.OM and store it into initial scope to prevent reflection lookup next time
             }
             /* Store result of reflection lookup to root scope to speed up search next time.
 

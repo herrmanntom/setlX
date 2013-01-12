@@ -14,7 +14,7 @@ import java.util.Map;
 // This class collects the variable bindings and the function definitions in current scope.
 public class VariableScope {
     // functional characters used in terms
-    private final   static  String      FUNCTIONAL_CHARACTER_SCOPE      = "^scope";
+    private final   static  String      FUNCTIONAL_CHARACTER_SCOPE = "^scope";
 
     private final   Map<String, Value>  mVarBindings;
     // stores reference to original scope object upon cloning
@@ -64,7 +64,7 @@ public class VariableScope {
         return newEnv;
     }
 
-    public void clear() {
+    /*package*/ void clear() {
         mVarBindings.clear();
     }
 
@@ -100,7 +100,7 @@ public class VariableScope {
     }
 
     // collect all bindings reachable from current scope (except global variables!)
-    private void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+    /*package*/ void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
         if (mOriginalScope != null) {
             mOriginalScope.collectBindings(result, mRestrictToFunctions);
@@ -146,9 +146,9 @@ public class VariableScope {
     }
 
     // Add bindings stored in `scope' into this scope or globals.
-    // This also adds vars in outer scopes of `scope' until reaching this as
-    // outer scope of `scope'.
-    public void storeAllValues(final boolean globalsPresent, final VariableScope globals, final VariableScope scope) {
+    // This also adds variables in outer scopes of `scope' until reaching this
+    // as outer scope of `scope'.
+    /*package*/ void storeAllValues(final boolean globalsPresent, final VariableScope globals, final VariableScope scope) {
         for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
             if (globalsPresent && globals.locateValue(entry.getKey(), false) != null) {
                 globals.storeValue(entry.getKey(), entry.getValue());
@@ -163,7 +163,7 @@ public class VariableScope {
 
     /* term operations */
 
-    public Term toTerm(final State state, final VariableScope globals) {
+    /*package*/ Term toTerm(final State state, final VariableScope globals) {
         final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);

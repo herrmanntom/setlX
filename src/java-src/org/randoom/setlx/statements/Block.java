@@ -56,7 +56,7 @@ public class Block extends Statement {
     public ReturnMessage exec(final State state) throws SetlException {
         ReturnMessage result = null;
         for (final Statement stmnt : mStatements) {
-            if (state.isExecutionStopped()) {
+            if (state.isExecutionStopped) {
                 throw new StopExecutionException("Interrupted");
             }
             result = stmnt.exec(state);

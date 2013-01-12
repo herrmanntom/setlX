@@ -50,7 +50,7 @@ public class QuotientAssignment extends StatementWithPrintableResult {
         final Value assigned = mLhs.eval(state).quotientAssign(state, mRhs.eval(state).clone());
         mLhs.assignUncloned(state, assigned);
 
-        if (state.traceAssignments()) {
+        if (state.traceAssignments) {
             state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         } else if (mPrintAfterEval) {
             state.outWriteLn("~< Result: " + assigned + " >~");

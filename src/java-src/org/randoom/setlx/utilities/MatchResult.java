@@ -39,7 +39,7 @@ public class MatchResult {
         for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
             state.putValue(entry.getKey(), entry.getValue().clone());
 
-            if (state.traceAssignments()) {
+            if (state.traceAssignments) {
                 state.outWriteLn("~< Trace (match): " + entry.getKey() + " := " + entry.getValue() + " >~");
             }
         }

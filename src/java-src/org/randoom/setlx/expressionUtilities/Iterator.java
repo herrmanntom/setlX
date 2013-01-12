@@ -185,7 +185,7 @@ public class Iterator extends CodeFragment {
     /* private functions */
 
     private ReturnMessage evaluate(final State state, final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
-        if (state.isExecutionStopped()) {
+        if (state.isExecutionStopped) {
             throw new StopExecutionException("Interrupted");
         }
         final Value iterationValue = mCollection.eval(state); // trying to iterate over this value
@@ -206,7 +206,7 @@ public class Iterator extends CodeFragment {
                     continue;
                 }
 
-                if (state.traceAssignments()) {
+                if (state.traceAssignments) {
                     state.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
                 }
 

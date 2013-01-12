@@ -2,8 +2,9 @@
 
 testFile=$(mktemp -t setlx-XXXXXXXXXX)
 
-# set location for setlX launcher script
+# set overrides for setlX launcher script
 export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
+export OVERRIDE_setlXjavaParameters="-d64  -Xmx6144m"
 
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"

@@ -24,11 +24,6 @@ javaParameters="$javaParameters -Xrunhprof:cpu=samples,depth=6,doe=y"
 
 ################################################################################
 
-if [ -n "$OVERRIDE_setlXJarLocation" ]
-  then
-    setlXJarLocation="$OVERRIDE_setlXJarLocation"
-fi
-
 java_call="java"
 
 if [ $(which rlwrap > /dev/null 2>&1; echo $?) -eq 0 ]

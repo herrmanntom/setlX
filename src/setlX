@@ -23,6 +23,10 @@ if [ -n "$OVERRIDE_setlXJarLocation" ]
   then
     setlXJarLocation="$OVERRIDE_setlXJarLocation"
 fi
+if [ -n "$OVERRIDE_setlXjavaParameters" ]
+  then
+    javaParameters="$OVERRIDE_setlXjavaParameters"
+fi
 
 java_call="java"
 

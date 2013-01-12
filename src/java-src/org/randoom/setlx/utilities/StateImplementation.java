@@ -1,14 +1,8 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.JVMIOException;
-import org.randoom.setlx.expressions.Call;
-import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.functions.PreDefinedFunction;
-import org.randoom.setlx.statements.For;
-import org.randoom.setlx.statements.Statement;
-import org.randoom.setlx.statements.While;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -56,43 +50,37 @@ public class StateImplementation extends State {
 
     /* -- Debugger -- */
     private final           HashSet<String>     mBreakpoints;
-    private                 boolean             mBreakpointsEnabled; // are any breakpoints set?
 
-    private                 boolean             mDebugModeActive;
     private                 boolean             mDebugPromptActive;
-    private                 boolean             mDebugStepNextExpr;
-    private                 boolean             mDebugStepThroughFunction;
-    private                 boolean             mDebugFinishFunction;
-    private                 boolean             mDebugFinishLoop;
 
     public StateImplementation() {
         this(DummyEnvProvider.DUMMY);
     }
 
     public StateImplementation(final EnvironmentProvider envProvider) {
-        mEnvProvider              = envProvider;
-        mLoadedLibraries          = new HashSet<String>();
-        mParserErrorCapture       = null;
-        mGlobals                  = new VariableScope();
-        mGlobalsPresent           = false;
-        mVariableScope            = sROOT_Scope.clone();
-        mIsHuman                  = false;
-        mRandoom                  = new Random();
-        super.isExecutionStopped  = false;
-        mMultiLineMode            = false;
-        mIsInteractive            = false;
-        mPrintVerbose             = false;
-        super.traceAssignments    = false;
-        mAssertsDisabled          = false;
+        mEnvProvider                     = envProvider;
+        mLoadedLibraries                 = new HashSet<String>();
+        mParserErrorCapture              = null;
+        mGlobals                         = new VariableScope();
+        mGlobalsPresent                  = false;
+        mVariableScope                   = sROOT_Scope.clone();
+        mIsHuman                         = false;
+        mRandoom                         = new Random();
+        super.isExecutionStopped         = false;
+        mMultiLineMode                   = false;
+        mIsInteractive                   = false;
+        mPrintVerbose                    = false;
+        super.traceAssignments           = false;
+        mAssertsDisabled                 = false;
         /* -- Debugger -- */
-        mBreakpoints              = new HashSet<String>();
-        mBreakpointsEnabled       = false;
-        mDebugModeActive          = false;
-        mDebugPromptActive        = false;
-        mDebugStepNextExpr        = false;
-        mDebugStepThroughFunction = false;
-        mDebugFinishFunction      = false;
-        mDebugFinishLoop          = false;
+        mBreakpoints                     = new HashSet<String>();
+        super.areBreakpointsEnabled      = false;
+        super.isDebugModeActive          = false;
+        mDebugPromptActive               = false;
+        super.isDebugStepNextExpr        = false;
+        super.isDebugStepThroughFunction = false;
+        super.isDebugFinishFunction      = false;
+        super.isDebugFinishLoop          = false;
     }
 
     @Override
@@ -471,24 +459,12 @@ public class StateImplementation extends State {
 
     @Override
     public void setBreakpointsEnabled(final boolean enabled) {
-        mBreakpointsEnabled         = enabled;
-        Call.sBreakpointsEnabled    = enabled;
-    }
-
-    @Override
-    public boolean areBreakpointsEnabled() {
-        return mBreakpointsEnabled;
+        super.areBreakpointsEnabled = enabled;
     }
 
     @Override
     public void setDebugModeActive(final boolean active) {
-        mDebugModeActive            = active;
-        Statement.sDebugModeActive  = active;
-    }
-
-    @Override
-    public boolean isDebugModeActive() {
-        return mDebugModeActive;
+        super.isDebugModeActive = active;
     }
 
     @Override
@@ -503,49 +479,22 @@ public class StateImplementation extends State {
 
     @Override
     public void setDebugStepNextExpr(final boolean stepNextExpr) {
-        mDebugStepNextExpr  = stepNextExpr;
-        Expr.sStepNext      = stepNextExpr;
-    }
-
-    @Override
-    public boolean isDebugStepNextExpr() {
-        return mDebugStepNextExpr;
+        super.isDebugStepNextExpr = stepNextExpr;
     }
 
     @Override
     public void setDebugStepThroughFunction(final boolean stepThrough) {
-        mDebugStepThroughFunction                   = stepThrough;
-        ProcedureDefinition.sStepThroughFunction    = stepThrough;
-        PreDefinedFunction.sStepThroughFunction     = stepThrough;
-    }
-
-    @Override
-    public boolean isDebugStepThroughFunction() {
-        return mDebugStepThroughFunction;
+        super.isDebugStepThroughFunction = stepThrough;
     }
 
     @Override
     public void setDebugFinishFunction(final boolean finish) {
-        mDebugFinishFunction                = finish;
-        ProcedureDefinition.sFinishFunction = finish;
-        Call.sFinishOuterFunction           = finish;
-    }
-
-    @Override
-    public boolean isDebugFinishFunction() {
-        return mDebugFinishFunction;
+        super.isDebugFinishFunction = finish;
     }
 
     @Override
     public void setDebugFinishLoop(final boolean finish) {
-        mDebugFinishLoop    = finish;
-        For.sFinishLoop     = finish;
-        While.sFinishLoop   = finish;
-    }
-
-    @Override
-    public boolean isDebugFinishLoop() {
-        return mDebugFinishLoop;
+        super.isDebugFinishLoop = finish;
     }
 }
 

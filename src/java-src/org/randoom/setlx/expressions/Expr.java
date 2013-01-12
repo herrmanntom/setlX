@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class Expr extends CodeFragment {
-    // step execution of this expression. MAY ONLY BE SET BY STATE CLASS!
-    public static boolean sStepNext = false;
 
     // collection of reusable replacement values
     private final static HashMap<String, SoftReference<Value>> sReplacements = new HashMap<String, SoftReference<Value>>();
@@ -26,7 +24,7 @@ public abstract class Expr extends CodeFragment {
 
     public Value eval(final State state) throws SetlException {
         try {
-            if (sStepNext && state.isDebugModeActive() && ! state.isDebugPromptActive()) {
+            if (state.isDebugStepNextExpr && state.isDebugModeActive && ! state.isDebugPromptActive()) {
                 state.setDebugStepNextExpr(false);
                 DebugPrompt.prompt(state, this);
             } else if (mReplacement != null) {

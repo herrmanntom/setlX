@@ -32,10 +32,6 @@ public class Call extends Expr {
     private final static String     FUNCTIONAL_CHARACTER = "^call";
     // precedence level in SetlX-grammar
     private final static int        PRECEDENCE           = 2100;
-    // are any breakpoints set? MAY ONLY BE SET BY STATE CLASS!
-    public        static boolean    sBreakpointsEnabled  = false;
-    // continue execution of function, which includes this call, in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean    sFinishOuterFunction = false;
 
     private final Variable   mLhs;  // left hand side
     private final List<Expr> mArgs; // list of arguments
@@ -55,9 +51,9 @@ public class Call extends Expr {
                 "Identifier \"" + mLhs + "\" is undefined."
             );
         }
-        final boolean finishOuterFunction = sFinishOuterFunction;
+        final boolean finishOuterFunction = state.isDebugFinishFunction;
         try {
-            if (sBreakpointsEnabled && ! state.isDebugPromptActive()) {
+            if (state.areBreakpointsEnabled && ! state.isDebugPromptActive()) {
                 if (state.isBreakpoint(mLhs.toString())) {
                     state.setDebugModeActive(true);
                 }

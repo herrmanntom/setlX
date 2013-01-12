@@ -30,8 +30,6 @@ implemented here as:
 public class For extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String  FUNCTIONAL_CHARACTER   = "^for";
-    // continue execution of this loop in debug mode until it finishes. MAY ONLY BE SET BY STATE CLASS!
-    public        static boolean sFinishLoop            = false;
 
     private final Iterator  mIterator;
     private final Condition mCondition;
@@ -85,12 +83,12 @@ public class For extends Statement {
 
     @Override
     protected ReturnMessage execute(final State state) throws SetlException {
-        final boolean finishLoop = sFinishLoop;
+        final boolean finishLoop = state.isDebugFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             state.setDebugFinishLoop(false);
         }
         final ReturnMessage result = mIterator.eval(state, mExec);
-        if (sFinishLoop) {
+        if (state.isDebugFinishLoop) {
             state.setDebugModeActive(true);
             state.setDebugFinishLoop(false);
         } else if (finishLoop) {

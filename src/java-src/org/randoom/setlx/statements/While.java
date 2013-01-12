@@ -26,8 +26,6 @@ implemented here as:
 public class While extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String  FUNCTIONAL_CHARACTER   = "^while";
-    // continue execution of this loop in debug mode until it finishes. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean sFinishLoop            = false;
 
     private final Condition mCondition;
     private final Block     mStatements;
@@ -39,7 +37,7 @@ public class While extends Statement {
 
     @Override
     protected ReturnMessage execute(final State state) throws SetlException {
-        final boolean finishLoop  = sFinishLoop;
+        final boolean finishLoop  = state.isDebugFinishLoop;
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             state.setDebugFinishLoop(false);
         }
@@ -55,7 +53,7 @@ public class While extends Statement {
                 return result;
             }
         }
-        if (sFinishLoop) {
+        if (state.isDebugFinishLoop) {
             state.setDebugModeActive(true);
             state.setDebugFinishLoop(false);
         } else if (finishLoop) {

@@ -38,10 +38,6 @@ implemented here as:
 public class ProcedureDefinition extends Value {
     // functional character used in terms
     public  final static String  FUNCTIONAL_CHARACTER = "^procedure";
-    // execute this function continuously in debug mode until it returns. MAY ONLY BE SET BY STATE CLASS!
-    public        static boolean sStepThroughFunction = false;
-    // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY STATE CLASS!
-    public        static boolean sFinishFunction      = false;
 
     protected final List<ParameterDef>       mParameters;  // parameter list
     protected final Block                    mStatements;  // statements in the body of the definition
@@ -178,7 +174,7 @@ public class ProcedureDefinition extends Value {
         // results of call to procedure
               ReturnMessage   result      = null;
         final WriteBackAgent  wba         = new WriteBackAgent(mParameters.size());
-        final boolean         stepThrough = sStepThroughFunction;
+        final boolean         stepThrough = state.isDebugStepThroughFunction;
 
         try {
             if (stepThrough) {
@@ -248,9 +244,9 @@ public class ProcedureDefinition extends Value {
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state);
 
-            if (stepThrough || sFinishFunction) {
+            if (stepThrough || state.isDebugFinishFunction) {
                 state.setDebugModeActive(true);
-                if (sFinishFunction) {
+                if (state.isDebugFinishFunction) {
                     state.setDebugFinishFunction(false);
                 }
             }

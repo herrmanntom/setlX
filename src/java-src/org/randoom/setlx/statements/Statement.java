@@ -1,7 +1,6 @@
 package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -12,14 +11,11 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 public abstract class Statement extends CodeFragment {
-    // is debug mode active? MAY ONLY BE SET BY STATE CLASS!
-    public static   boolean sDebugModeActive = false;
 
     public          ReturnMessage exec(final State state) throws SetlException {
-        if (sDebugModeActive && ! state.isDebugPromptActive()) {
+        if (state.isDebugModeActive && ! state.isDebugPromptActive()) {
             DebugPrompt.prompt(state, this);
             final ReturnMessage result = execute(state);
-            Expr.sStepNext = false;
             return result;
         } else {
             return execute(state);

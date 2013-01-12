@@ -19,8 +19,6 @@ import java.util.List;
 public abstract class PreDefinedFunction extends ProcedureDefinition {
     // functional characters used in terms
     private final static String  FUNCTIONAL_CHARACTER = "^preDefinedProcedure";
-    // continue execution of this function in debug mode until it returns. MAY ONLY BE SET BY ENVIRONMENT CLASS!
-    public        static boolean sStepThroughFunction = false;
 
     private final String  mName;
     private       boolean mUnlimitedParameters;
@@ -100,7 +98,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         // List of writeBack-values, which should be stored into the outer scope
         final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
 
-        if (sStepThroughFunction) {
+        if (state.isDebugStepThroughFunction) {
             state.setDebugStepThroughFunction(false);
         }
 

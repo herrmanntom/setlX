@@ -1,5 +1,4 @@
-tutorial: tutorial.pdf
-	open tutorial.pdf
+pdf: tutorial.pdf
 
 %.pdf: %.ps
 	ps2pdf $<
@@ -9,3 +8,9 @@ tutorial: tutorial.pdf
 
 %.dvi: %.tex
 	latex $<
+
+clean:
+	rm -f *.aux *.dvi *.lof *.log *.out *.lof *.toc
+
+dist-clean: clean
+	rm -f *.pdf

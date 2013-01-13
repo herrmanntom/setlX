@@ -1,0 +1,13 @@
+rightAdjust := procedure(n) {
+    switch {
+        case n < 10 : return "   " + n;
+        case n < 100: return  "  " + n;
+        default:      return   " " + n;
+    }
+};      
+for (i in [1 .. 10]) {
+    for (j in [1 .. 10]) {
+        nPrint(rightAdjust(i * j));
+    }
+    print();
+}

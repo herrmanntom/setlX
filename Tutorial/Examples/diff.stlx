@@ -1,0 +1,145 @@
+ln := log;  // use the European name for the natural logarithm
+
+// differentiate the term t with respect to the variable x
+diff := procedure(t, x) {
+    match (t) {
+        case t1 + t2 :
+             return diff(t1, x) + diff(t2, x);
+        case t1 - t2 :
+             return diff(t1, x) - diff(t2, x);
+        case t1 * t2 :
+             return diff(t1, x) * t2 + t1 * diff(t2, x);
+        case t1 / t2 :
+             return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / (t2 * t2);
+        case f ** 0 :
+             return 0;
+        case f ** n | isNumber(n) && n != 0 : 
+             return n * diff(f, x) * f ** (n-1);
+        case f ** g :
+             return diff( @exp(g * @ln(f)), x);
+        case sqrt(a) :
+             return 1/2 * diff(a, x) * a ** (-1/2);
+        case sin(a) :
+             return diff(a, x) * @cos(a);
+        case cos(a) :
+             return -diff(a, x) * @sin(a);
+        case tan(a) :
+             return diff(a, x) / @cos(x) ** 2;
+        case arcsin(a) :
+             return diff(a, x) / (1 - a ** 2) ** (1/2);
+        case arccos(a) :
+             return - diff(a, x) / (1 - a ** 2) ** (1/2);
+        case arctan(a) :
+             return diff(a,x) / (1 + a ** 2);
+        case ln(a) :
+             return diff(a, x) / a;
+        case exp(a) : 
+             return diff(a, x) * @exp(a);
+        case ^variable(x) : // x is defined above, therefore must be equal to match
+             return 1;
+        case ^variable(y) : // y is undefined, therefore matches any other variable
+             return 0;
+        case t | isNumber(t):
+             return 0;    
+        default:
+            abort("error: $t$");
+    }
+};
+
+simplify := procedure(s) {
+    s0 := s;
+    t := simplifyOneStep(s);
+    while (t != s) {
+        s := t;
+        t := simplifyOneStep(s);
+    }
+    // print("simplify($canonical(s)$) = $canonical(t)$");
+    return s;
+};
+
+simplifyOneStep := procedure(e) {
+    match (simplifyParts(e)) { 
+        case 0 + t : return t;  
+        case t + 0 : return t;  
+        case t - t : return 0;  
+        case a - -b: return a + b;  
+        case t + t : return 2 * t;  
+        case n * t + m * t | isNumber(n) && isNumber(m): return (n + m) * t;  
+        case 0 * t : return 0;
+        case t * 0 : return 0;
+        case 1 * t : return t;
+        case n * t | n == -1: return -t;
+        case n / t | n == -1: return - 1/t;
+        case t * 1 : return t;
+        case t * t : return t ** 2;
+        case -a * -b : return a * b;
+        case -a * b : return -(a * b);
+        case a * -b : return -(a * b);
+        case a * (b * c) : return (a * b) * c;
+        case a * (b + c) : return a * b + a * c;
+        case (a + b) * c : return a * c + b * c;
+        case a / b + c / d : return (a * d + b * c) / (b * d);
+        case a * (b / c) : return (a * b) / c;
+        case (a / b) * c : return (a * c) / b;
+        case a * b | isNumber(b) : return simplify(b * a);
+        case 0 / t : return 0;
+        case t / t : return 1;
+        case -t / t : return -1;
+        case t ** n * t ** m | isNumber(n) && isNumber(m): return t ** (n + m);
+        case t ** 1: return t;
+        case 1 ** x: return 1;
+        case 0 ** 0: return;  // returns Omega, the undefined value
+        case t ** 0: return 1;
+        case cos(t) ** 2 + sin(t) ** 2: return 1;
+        case p : return p;        
+    }
+};
+
+simplifyParts := procedure(e) {
+    match (e) {
+        case -t    : return - simplify(t);
+        case s + t : return simplify(s) + simplify(t);
+        case s - t : return simplify(s) - simplify(t);
+        case s * t : return simplify(s) * simplify(t);
+        case s / t : return simplify(s) / simplify(t);
+        case s ** t: return simplify(s) ** simplify(t);
+        case ln(t) : return @ln(simplify(t));
+        case exp(t): return @exp(simplify(t));
+        default    : return e;
+    }
+};
+
+
+test := procedure(s) {
+    d := simplify(diff(parse(s), "x"));
+    print("d/dx($s$) = $d$\n");
+};
+
+test("1 / x"); 
+test("1"); 
+test("x");
+test("y");
+test("x + y");
+test("x ** 2");
+test("x"); 
+test("1 - x"); 
+test("x * x"); 
+test("c * x + d"); 
+test("x - x - x"); 
+test("x - (x - x)"); 
+test("x / x"); 
+test("sin(x) / cos(x)"); 
+test("tan(x)"); 
+test("sqrt(x)"); 
+test("arcsin(x)"); 
+test("arccos(x)"); 
+test("arctan(x)"); 
+test("exp(x)"); 
+test("ln(x)"); 
+test("exp(ln(x))"); 
+test("ln(exp(x))"); 
+test("(x + x) * (x + x)");
+test("x / x");
+test("x ** 2");
+test("x ** x");
+

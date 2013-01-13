@@ -1,0 +1,55 @@
+This is BibTeX, Version 0.99d (TeX Live 2012)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: tutorial.aux
+A level-1 auxiliary file: introduction.aux
+A level-1 auxiliary file: types.aux
+A level-1 auxiliary file: statements.aux
+A level-1 auxiliary file: regular-expressions.aux
+A level-1 auxiliary file: Closures.aux
+A level-1 auxiliary file: backtracking.aux
+A level-1 auxiliary file: predefined-functions.aux
+The style file: alpha.bst
+Database file #1: /Users/stroetma/Dropbox/Kurse/cs.bib
+Warning--empty institution in klein:2009
+You've used 13 entries,
+            2543 wiz_defined-function locations,
+            634 strings with 6058 characters,
+and the built_in function-call counts, 3905 in all, are:
+= -- 372
+> -- 177
+< -- 9
++ -- 59
+- -- 55
+* -- 223
+:= -- 704
+add.period$ -- 41
+call.type$ -- 13
+change.case$ -- 74
+chr.to.int$ -- 13
+cite$ -- 14
+duplicate$ -- 180
+empty$ -- 284
+format.name$ -- 75
+if$ -- 771
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 14
+newline$ -- 70
+num.names$ -- 39
+pop$ -- 84
+preamble$ -- 1
+purify$ -- 86
+quote$ -- 0
+skip$ -- 132
+stack$ -- 0
+substring$ -- 95
+swap$ -- 8
+text.length$ -- 9
+text.prefix$ -- 7
+top$ -- 0
+type$ -- 76
+warning$ -- 1
+while$ -- 31
+width$ -- 16
+write$ -- 171
+(There was 1 warning)

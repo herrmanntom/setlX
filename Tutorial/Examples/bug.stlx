@@ -1,0 +1,24 @@
+simplify := procedure(e) {
+    p := simplifyParts(e);
+    print("calling simplifyParts($canonical(e)$) = $canonical(p)$");
+    match (p) { 
+        case a * (b * c) : return (a * b) * c;
+        case (t)   : return makeTerm("^bracketedExpr", [t]);
+        default    : return p;        
+    }
+};
+
+simplifyParts := procedure(e) {
+    match (e) {
+        case s * t : return simplify(s) * simplify(t);
+        case (t)   : return makeTerm("^bracketedExpr",[simplify(t)]);
+        default    : return e;
+    }
+};
+
+t := parse("a * (b * c)");
+s := simplify(t);
+print(s);
+
+
+

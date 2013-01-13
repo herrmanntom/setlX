@@ -1,0 +1,13 @@
+// convert a natural number into binary representation
+toBin := procedure(n) {
+    if (n < 2) {
+        return str(n);
+    }
+    r := n % 2;
+    n := floor(n / 2);
+    return toBin(n) + toBin(r);
+};
+
+for (i in [1 .. 16]) {
+    print("$i$ = $toBin(i)$ base 2");
+}

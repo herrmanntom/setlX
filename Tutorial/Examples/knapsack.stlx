@@ -1,0 +1,115 @@
+// This file contains various methods for solving the 0/1-knapsack
+// problem:
+// Given a set { 1 .. n } of n items such that item number i has value 
+// v[i] and weight w[i] this function tries to choose a subset of the 
+// given set of items such that the total weight of this subset is less
+// than t and the value of the items in the subset is maximal.
+
+
+assert := procedure(cond, msg) {
+    if (!cond) {
+        throw("msg");
+    }
+};
+
+knapsackNaive := procedure(problem) {
+    [ values, weights, maxWeight ] := problem;
+    n := #values;
+    assert(n == #weights, "Arguments v and w of knapsackNaive must have same size!");
+    return max({ total(s, values) : s in pow({1..n}) | total(s, weights) <= maxWeight });
+};
+
+total := procedure(s, x) {
+    return +/ { x[i] : i in s };
+};
+
+var noCalls;
+
+knapsackDecisionTree := procedure(p) {
+    noCalls := 0;
+    return knapsackDT(p, #p[1]);
+};
+
+knapsackDT := procedure(p, i) {
+    noCalls += 1;
+    [ values, weights, maxWeight ] := p;
+    n := #values;
+    if (i == 1) {
+        if (weights[1] <= maxWeight) {
+            return { 1 };
+        } else {
+            return {};
+        }
+    }
+    withoutI := knapsackDT(p, i - 1);
+    if (weights[i] > maxWeight) {
+        return withoutI;
+    }
+    newP  := [ values, weights, maxWeight - weights[i] ];
+    withI := { i } + knapsackDT(newP, i - 1);
+    valueWithoutI := total(withoutI, values);
+    valueWithI    := total(withI,    values);
+    if (valueWithI <= valueWithoutI) {
+        return withoutI;
+    }
+    return withI;
+};
+
+
+knapsackDynamic := procedure(p) {
+    noCalls := 0;
+    memory := {};
+    result := knapsackDP(p, #p[1], memory);
+    return result;
+};
+
+
+knapsackDP := procedure(p, i, rw memory) {
+    noCalls += 1;
+    [ values, weights, maxWeight ] := p;
+    n := #values;
+    stored := memory[ [ i, maxWeight ] ];
+    if (stored != om) {
+        return stored[2];
+    }
+    if (i == 1) {
+        if (weights[1] <= maxWeight) {
+            memory[ [ 1, maxWeight ] ] := [ values[1], { 1 } ];
+            return { 1 };
+        } else {
+            memory[ [ 1, maxWeight ] ] := [ 0, {} ];
+            return {};
+        }
+    }
+    withoutI := knapsackDP(p, i - 1, memory);
+    if (weights[i] > maxWeight) {
+        valueWithoutI := total(withoutI, values);
+        memory[ [ i, maxWeight ] ] := [ valueWithoutI, withoutI ];
+        return withoutI;
+    }
+    newP  := [ values, weights, maxWeight - weights[i] ];
+    withI := { i } + knapsackDP(newP, i - 1, memory);
+    valueWithoutI := total(withoutI, values);
+    valueWithI    := total(withI,    values);
+    if (valueWithI <= valueWithoutI) {
+        memory[ [ i, maxWeight ] ] := [ valueWithoutI, withoutI ];
+        return withoutI;
+    }
+    memory[ [ i, maxWeight ] ] := [ valueWithI, withI ];
+    return withI; 
+};
+
+//           1,  2,  3,  4, 5, 6, 7, 8   
+values  := [15, 15, 10, 10, 9, 9, 5, 5];
+weights := [ 1,  1,  5,  5, 3, 3, 4, 4];
+problem := [ values, weights, 8 ];
+print(knapsackNaive(problem));
+
+s := knapsackDecisionTree(problem);
+print("decision tree: s = $s$, value = $total(s, values)$");
+print("number of calls: $noCalls$\n");
+
+s := knapsackDynamic(problem);
+print("dynamic programming: s = $s$, value = $total(s, values)$");
+print("number of calls: $noCalls$\n");
+

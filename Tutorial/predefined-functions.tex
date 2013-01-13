@@ -1,0 +1,1282 @@
+\chapter{Predefined Functions}
+This chapter lists  the predefined functions.  The chapter is divided into eight
+sections.
+\begin{enumerate}
+\item The first section lists all functions that are related to sets and lists.
+\item The second section lists all functions that are related to strings.
+\item The third sections lists all functions that are used to work with terms.
+\item The following sections lists all mathematical functions.
+\item The next section list all functions that are used to test whether an object has a
+      given type.
+\item Section six lists the functions that support interactive debugging.
+\item Section seven discusses the functions related to I/O.
+\item The last sections lists all those procedures that did not fit in 
+      any of the previous sections.  
+\end{enumerate}
+
+\section{Functions and Operators on Sets and Lists}
+Most of the operators and functions that are supported on sets and lists have already been
+discussed.  However, for the convenience of the reader, this section describes all
+operators and functions.  However, the discussion of those functions that have already
+been described previously will be quite short.
+\begin{enumerate}
+\item \texttt{+}:  For sets, the binary operator ``\texttt{+}'' computes the union
+      of its arguments.  For lists, this operator appends its arguments.
+\item \texttt{*}:  If both arguments are sets, the operator ``\texttt{*}'' computes the
+      intersection of its arguments. 
+      
+      If one argument is a list $l$ and the other argument is a number $n$, then the list
+      $l$ is appended to itself $n$ times.  Therefore, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1, 2, 3] * 3}
+      \\[0.2cm]
+      yields the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1, 2, 3, 1, 2, 3, 1, 2, 3]}
+      \\[0.2cm]
+      as a result.  Instead of a list, the argument $l$ can also be a string.
+      In this case, the string $l$ is replicated $n$ times.
+\item \texttt{-}:  The operator ``\texttt{-}'' computes the set difference of its arguments.
+      This operator is only defined for sets.
+\item \texttt{\symbol{37}}:  The operator ``\texttt{\symbol{37}}'' computes the symmetric 
+      difference of its arguments.
+      This operator is only defined for sets.
+
+      Of course, all of the operators discussed so far are also defined on numbers and
+      have the obvious meaning when applied to numbers.
+\item \texttt{+/}:  The operator ``\texttt{+/}'' computes the sum of all the elements
+      in its argument.  These elements need not be numbers.  They can also be sets, lists,
+      or strings.  For example, if $s$ is a set of sets, then the expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{+/}\;s$
+      \\[0.2cm]
+      computes the union of all sets in $s$.  If $s$ is a list of lists instead, the same
+      expression builds a new list by concatenating all lists in $l$.
+\item \texttt{*/}:  The operator ``\texttt{*/}'' computes the product of all the elements
+      in its argument.  These elements might be  numbers or sets.  In the latter case,
+      the operator computes the intersection of all elements.
+\item \texttt{arb}: The function $\texttt{arb}(s)$ picks an arbitrary element from the
+      sequence $s$.  The argument $s$ can either be a set, a list, or a string.
+\item \texttt{first}: The function $\texttt{first}(s)$ picks the first  element from the
+      sequence $s$.  The argument $s$ can either be a set, a list, or a string.
+      For a set $s$, the first element is the element that is smallest with respect to the
+      function \texttt{compare} discussed in the last section of this chapter.
+\item \texttt{last}: The function $\texttt{last}(s)$ picks the last element from the
+      sequence $s$.  The argument $s$ can either be a set, a list, or a string.
+      For a set $s$, the last element is the element that is greatest with respect to the
+      function \texttt{compare} discussed in the last section of this chapter.
+\item \texttt{from}: The function $\texttt{from}(s)$ picks an arbitrary element from the
+      sequence $s$.  The argument $s$ can either be a set, a list, or a string.  This
+      element is removed from $s$ and returned.  This function returns the same element as
+      the function \texttt{arb} discussed previously.
+\item \texttt{fromB}: The function $\texttt{fromB}(s)$ picks the first element from the
+      sequence $s$.  The argument $s$ can either be a set, a list, or a string.  This
+      element is 
+      removed from $s$ and returned.  This function returns the same element as the
+      function \texttt{first} discussed previously.
+\item \texttt{fromE}: The function $\texttt{fromB}(s)$ picks the last element from the
+      sequence $s$.  The argument $s$ can either be a set, a string, or a list.  This element is
+      removed from $s$ and returned.  This function returns the same element as the
+      function \texttt{last} discussed previously.
+\item \texttt{domain}: If $r$ is a binary relation, then the equality
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{domain(r) = \{ x :[x,y] in R \}}
+      \\[0.2cm]
+      holds.  For example, we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{domain(\{[1,2],[1,3],[5,7]\}) = \{1,5\}}.
+\item \texttt{max}:  If $s$ is a set or a list, the expression $\mathtt{max}(s)$ computes the biggest
+      element of $s$.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{max(\{1,2,3\})}
+      \\[0.2cm]
+      returns the number $3$.  In general, the elements in $s$ are compared using the function
+      \texttt{compare} discussed in the last section of this chapter.  For example, strings are compared
+      lexicographically, therefore 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{max(\{"abc", "xy", "z" \})}
+      \\[0.2cm]
+      yields the result \texttt{\symbol{34}z\symbol{34}}.
+\item \texttt{min}:  If $s$ is a set or a list, the expression $\mathtt{min}(s)$ computes the smallest
+      element of $s$.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{min(\{1,2,3\})}
+      \\[0.2cm]
+      returns the number $1$.  In general, the elements in $s$ are compared using the function
+      \texttt{compare}.  For example, strings are compared
+      lexicographically, therefore 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{min(\{"abc", "xy", "z" \})}
+      \\[0.2cm]
+      yields the result \texttt{\symbol{34}abc\symbol{34}}.
+\item \texttt{pow}:  If $s$ is a set, the expression $\mathtt{pow}(s)$ computes the power
+      set of $s$.  The power set of $s$ is defined as the set of all subsets of $s$.  
+      For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{pow(\{1,2,3\})}
+      \\[0.2cm]
+      returns the set
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\{\{\}, \{1\}, \{1, 2\}, \{1, 2, 3\}, \{1, 3\}, \{2\}, \{2, 3\}, \{3\}\}}.
+\item \texttt{range}: If $r$ is a binary relation, then the equality
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{range(r) = \{ y :[x,y] in R \}}
+      \\[0.2cm]
+      holds.  For example, we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{range(\{[1,2],[1,3],[5,7]\}) = \{2,3,7\}}.
+\item \texttt{reverse}: If $l$ is a list or string, then $\mathtt{reverse}(l)$ returns a 
+      list or string that contains the elements of $l$ in reverse order.  For example,
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{reverse([1,2,3])}
+      \\[0.2cm]
+      returns the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[3,2,1]}.
+\item \texttt{sort}: If $l$ is a list or string, then $\mathtt{sort}(l)$ sorts $l$ into
+      ascending order.  For example,
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{sort([3,2,1])}
+      \\[0.2cm]
+      returns the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1,2,3]}.
+\end{enumerate}
+
+\section{Functions for String Manipulation}
+\setlx\ provides the following functions that are related to strings.
+\begin{enumerate}
+\item \texttt{char}:  For a natural number $n \in \{ 1, \cdots, 127 \}$,  the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{char}(n)$
+      \\[0.2cm]
+      computes the character with the \textsc{Ascii} code $n$.  For example,
+      $\mathtt{char}(65)$ yields the string \texttt{\symbol{34}A\symbol{34}}.
+\item \texttt{endsWith}: The function \texttt{endsWith} is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{endsWith}(s,t)$.
+      \\[0.2cm]
+      Here, $s$ and $t$ have to be strings.  The function succeeds if the string $t$ is a
+      suffix of the string $s$, i.e.~if there is a string $r$ such that the equation
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $s = r + t$
+      \\[0.2cm] 
+      holds.
+\item \texttt{eval}: The function \texttt{eval}  is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{eval}(s)$.
+      \\[0.2cm]
+      Here, $s$ has to be a string that can be parsed as a \setlx\ expression.  This expression
+      is then evaluated in the current variable context and the result of this evaluation is
+      returned.   Note that $s$ can describe a \setlx\ expression of arbitrary complexity.
+      For example, the statement
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{f := eval("procedure(x) \{ return x * x; \}");}
+      \\[0.2cm]
+      has the same effect as the following statement:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{f := procedure(x) \{ return x * x; \};}
+      \\[0.2cm]
+      Defining a function $f$ via $\texttt{eval}(s)$ is useful because the string $s$
+      can be the result of an arbitrary computation.  
+\item \texttt{execute}: The function \texttt{execute}  is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{execute}(s)$.
+      \\[0.2cm]
+      Here, $s$ has to be a string that can be parsed as a \setlx\ statement.  This statement
+      is then executed in the current variable context and the result of this evaluation is
+      returned.   Note that $s$ can describe a \setlx\ expression of arbitrary complexity.
+      For example, the statement
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{execute("f := procedure(x) \{ return x * x; \};");}
+      \\[0.2cm]
+      has the same effect as the following statement:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{f := procedure(x) \{ return x * x; \};}
+\item \texttt{matches}:  The function \texttt{matches} is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{matches}(s, r)$.
+      \\[0.2cm]
+      It returns \texttt{true} if the regular expression $r$ matches the string $s$.
+      This function can be called with an optional third argument, which must be a Boolean
+      value.  In this case, if the last argument is \texttt{true} and the regular
+      expression $r$ contains \emph{capturing groups}, i.e.~if parts of the regular
+      expression are enclosed in parentheses, then the substrings of the string $s$
+      corresponding to these groups are
+      captured and the function returns a list of strings:  The first element of this
+      list is the string $s$, and the remaining elements are those substrings of $s$ that
+      correspond to the different capturing groups.  
+      Chapter \ref{chapter:regular-expressions} contains examples demonstrating the use of this function.
+      
+\item \texttt{join}: The function \texttt{join} is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{join}(s,t)$.
+      \\[0.2cm]
+      Here, $s$ is either a set or a list.  First, the elements of $s$ are converted into
+      strings.  Then these elements are concatenated using the string $t$ as separator.
+      For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{join([1,2,3], "*")}
+      \\[0.2cm]
+      yields the string \texttt{\symbol{34}1*2*3\symbol{34}}.  
+
+      The function \texttt{join} comes in handy to generate comma separated values.
+\item \texttt{replace}: The function \texttt{replace} is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{replace}(s, r, t)$.
+      \\[0.2cm]
+      Here, $s$ is a string, $r$ is a regular expression, and $t$ is another string.
+      Any substring $u$ of the string $s$ that is matched by the regular expression $r$ is
+      replaced by the string $t$.  The string resulting from this replacement is returned.
+      The string $s$ itself is not changed.
+      Chapter \ref{chapter:regular-expressions} contains examples demonstrating the use of this function.
+
+\item \texttt{replaceFirst}: The function \texttt{replaceFirst} is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{replace}(s, r, t)$.
+      \\[0.2cm]
+      Here, $s$ is a string, $r$ is a regular expression, and $t$ is another string.
+      The first substring $u$ of the string $s$ that is matched by the regular expression $r$ is
+      replaced by the string $t$.  The string resulting from this replacement is returned.
+      The string $s$ itself is not changed.
+      Chapter \ref{chapter:regular-expressions} contains examples demonstrating the use of this function.
+
+\item \texttt{split}: The function \texttt{split} is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{split}(s,t)$.
+      \\[0.2cm]
+      Here, $s$ and $t$ have to be strings.  $t$ can either be a single character or 
+      a regular expression. The call $\mathtt{split}(s, t)$ splits the string $s$ at all
+      occurrences of $t$.  The resulting parts of $s$ are collected into a list.
+      If $t$ is the empty string, the string $s$ is split into all of its characters.
+      For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{split("abc", "");}
+      \\[0.2cm]
+      returns the list \texttt{["a", "b", "c"]}.  As another example,
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{split("abc  xy z", " +");}
+      \\[0.2cm]
+      yields the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{["abc", "xy", "z"]}.
+      \\[0.2cm]
+      Note that we have used the regular expression ``\texttt{+}'' to specify one or more
+      blank characters.
+
+      Certain \emph{magic} characters, i.e.~all those characters that serve as operator
+      symbols in regular expressions have to be escaped if they are intended as split
+      characters.  Escaping is done by prefixing two backslash symbols to the respective 
+      character as in the following example:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{split("abc|xyz", "\symbol{92}\symbol{92}|");}
+      \\[0.2cm]
+      The function \texttt{split} is very handy when processing comma separated values from
+      \textsc{CVS} files.
+\item \texttt{str}:  The function \texttt{str} is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{str}(a)$
+      \\[0.2cm]
+      where the argument $a$ can be anything.  This function computes the string
+      representation of $a$.  For example, after defining the function \texttt{f} as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{f := procedure(n) \{ return n * n; \};}
+      \\[0.2cm]
+      the expression \texttt{str(f)} evaluates to the string
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{"procedure(n) \{ return n * n; \}"}.      
+\item \texttt{toLowerCase}:  Given a string $s$, the expression $\texttt{toLowerCase}(s)$
+      converts all characters of $s$ to lower case.
+\item \texttt{toUpperCase}:  Given a string $s$, the expression $\texttt{toUpperCase}(s)$
+      converts all characters of $s$ to upper case.
+\item \texttt{trim}:  Given a string $s$, the expression $\mathtt{trim}(s)$ returns a
+      string that is $s$ without all leading or trailing white space characters.  For
+      example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{trim("  abc xyz\symbol{92}n")}
+      \\[0.2cm]
+      returns the string \texttt{\symbol{34}abc xyz\symbol{34}}.
+\end{enumerate}
+
+\section{Functions for Term Manipulation}
+The following functions support terms.
+\begin{enumerate}
+\item \texttt{args}:  Given a term $t$ that has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $F(s_1, \cdots, s_n)$,
+      \\[0.2cm]
+      the expression $\mathtt{args}(t)$ returns the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $[s_1, \cdots, s_n]$.
+\item \texttt{evalTerm}: This function is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{evalTerm}(t)$.
+      \\[0.2cm]
+      Here, $t$ has to be a term that represents a  \setlx\ expression.  This expression
+      is then evaluated in the current variable context and the result of this evaluation is
+      returned.   For convenience, the term $t$ can be produced by the function \texttt{parse}.
+      For example, the statement
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{f := evalTerm(parse("procedure(x) \{ return x * x; \}"));}
+      \\[0.2cm]
+      has the same effect as the following statement:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{f := procedure(x) \{ return x * x; \};}
+      \\[0.2cm]
+      The function \texttt{evalTerm} is an advanced feature of \setlx\ that allows for
+      self modifying programs.  This idea is that a function definition given as a string can be
+      transformed into a term.  This term can then be manipulated using the facilities provided
+      by the \texttt{match} statement and the modified term can finally be evaluated using
+      \texttt{evalTerm}. 
+\item \texttt{fct}:  Given a term $t$ that has the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $F(s_1, \cdots, s_n)$,
+      \\[0.2cm]
+      the expression $\mathtt{fct}(t)$ returns the functor $F$.
+\item \texttt{getTerm}: The function \texttt{getTerm}  is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{getTerm}(v)$.
+      \\[0.2cm]
+      It returns a term representing the value $v$.  
+      For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{canonical(getTerm(procedure(n) \{ return n * n; \}))}
+      \\[0.2cm]
+      produces the following output:
+\begin{verbatim}
+    ^procedure([^parameter(^variable("n"))], 
+                ^block([^return(^product(^variable("n"), ^variable("n")))])
+              )
+\end{verbatim}
+      However, there is one twist: If $v$ is either a set or a list,
+      then $\texttt{getTerm}(v)$ transforms the elements of $v$ into terms and returns the
+      resulting set or list.  
+\item \texttt{makeTerm}: Given a functor $F$ and a list $l = [s_1, \cdots, s_n]$,
+      the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{makeTerm}(F, [s_1, \cdots, s_n])$
+      \\[0.2cm]
+      returns the term
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $F(s_1, \cdots, s_n)$.
+\item \texttt{canonical}:  Given a term $t$, the expression $\mathtt{canonical}(t)$
+      returns a string that is the canonical representation of the term $t$.  The 
+      point is, that all operators in $t$ are replaced by functors that denote
+      these operators internally.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{canonical(parse("x+2*y"));}
+      \\[0.2cm]
+      yields the string
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\symbol{94}sum(\symbol{94}variable(\symbol{34}x\symbol{34}), \symbol{94}product(2, \symbol{94}variable(\symbol{34}y\symbol{34})))}.
+      \\[0.2cm]
+      This shows that, internally, variables are represented using the functor
+      \texttt{\symbol{94}variable} and that the operator ``\texttt{+}'' is represented by
+      the functor \texttt{\symbol{94}sum}.
+\item \texttt{parse}:  Given a string $s$, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{parse}(s)$ 
+      \\[0.2cm]
+      tries to parse the string $s$ into a term.  In order to visualize the structure of
+      this term,  the function \texttt{canonical} disussed above can be used.      
+\item \texttt{parseStatements}:  Given a string $s$, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{parseStatements}(s)$ 
+      \\[0.2cm]
+      tries to parse the string $s$ as a sequence of \setlx\ statements.   In order to visualize the structure of
+      this term,  the function \texttt{canonical} disussed above can be used.  For
+      example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{canonical(parseStatements("x := 1; y := 2; z := x + y;"));}
+      \\[0.2cm]
+      yields the following term (which has been formatted for easier readability):
+\begin{verbatim}
+      ^block([^assignment(^variable("x"), 1), 
+              ^assignment(^variable("y"), 2), 
+              ^assignment(^variable("z"), ^sum(^variable("x"), ^variable("y")))
+             ])
+\end{verbatim}
+\end{enumerate}
+
+\section{Mathematical Functions}
+The function \setlx\ provides the following mathematical functions.
+\begin{enumerate}
+\item The operators 
+      ``\texttt{+}'',
+      ``\texttt{-}'',
+      ``\texttt{*}'',
+      ``\texttt{/}'', and
+      ``\texttt{\symbol{37}}'' compute the sum, the difference, the product, the quotient,
+      and the remainder of its operands.  The remainder $a \texttt{\symbol{37}} b$ is
+      defined so that it satisfies
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $0 \leq a \,\texttt{\symbol{37}}\, b$ \quad and \quad $a \,\texttt{\symbol{37}}\, b < b$.
+\item The operator ``\texttt{\symbol{92}}'' computes integer divsion of its arguments.
+      For two integers $a$ and $b$, this is defined such that 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $a = (a\texttt{\symbol{92}} b) \,\texttt{*}\, b + a \,\texttt{\symbol{37}}\, b$
+      \\[0.2cm]
+      holds.
+\item $\texttt{abs}(x)$ calculates the absolute value of the number $x$.
+\item $\texttt{ceil}(x)$ calculates the \emph{ceiling} function of $x$.  Mathematically,
+      $\mathtt{ceil}(x)$ is defined as the smallest integer that is bigger than or equal
+      to $x$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{ceil}(x) := \min \{ n \in \mathbb{Z} \mid x \leq n \}$.
+      \\[0.2cm]
+      For example, we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{ceil(2.1) = 3}.
+\item $\texttt{floor}(x)$ calculates the \emph{flooring} function of $x$.  Mathematically,
+      $\mathtt{floor}(x)$ is defined as the largest integer that is less than or equal
+      to $x$:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{floor}(x) := \max \{ n \in \mathbb{Z} \mid n \leq x \}$.
+      \\[0.2cm]
+      For example, we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{floor(2.9) = 2}.
+\item $\texttt{mathConst}(\textsl{name})$ can be used to compute mathematical constants.
+      At the moment, and $\pi$, Euler's number $e$, and infinity are supported.  Therefore, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{mathConst(\symbol{34}pi\symbol{34}})
+      \\[0.2cm]
+      yields the result $3.141592653589793$, while
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{mathConst(\symbol{34}e\symbol{34}})
+      \\[0.2cm]
+      yields $2.718281828459045$.  To get a number of infinite size, we can write
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{mathConst(\symbol{34}infinity\symbol{34}}).
+      \\[0.2cm]
+      \setlx\ uses the notation ``\texttt{oo}'' to represent the mathematical symbol
+      $\infty$.  \setlx\ supports a little bit of arithmetic using $\infty$.  For example,
+      the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{mathConst("infinity") - 42}
+      \\[0.2cm]
+      evaluates to infinity, while
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{1 / mathConst("infinity")}
+      \\[0.2cm]
+      evaluates to $0$.  However, expressions like
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{mathConst("infinity") - mathConst("infinity");}
+      \\[0.2cm]
+      do not have a meaningful interpretation and result in an error message.
+\item $\mathtt{nextProbablePrime}(n)$ returns the next probable prime number that is greater than
+      $n$.  Here, $n$ needs to be a natural number.   The probability that the result of 
+      $\mathtt{nextProbablePrime}(n)$ is not a prime number is less than $2^{-100}$.
+      For example, to find the smallest prime number greater than 1000 we can use the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{nextProbablePrime(1000)}.
+\item $\texttt{int}(s)$ converts the string $s$ into a number.
+      The function \texttt{int} can also be called if $s$ is already a
+      number.  In this case,  if $s$ is an integer number, it is returned unchanged.  Otherwise,
+      the floating point part is truncated.  Therefore, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{int(2.9)}
+      \\[0.2cm]
+      returns the integer \texttt{2}.
+\item $\mathtt{rational}(s)$ converts the string $s$ into a rational number.  For example
+      the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rational(\symbol{34}2/7\symbol{34})}
+      \\[0.2cm]
+      will return the rational number $2/7$.  The function \texttt{rational} can also be
+      invoked on real numbers.  For example, the expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rational(mathConst("e"))}
+      \\[0.2cm]
+      yields the result $543656365691809/200000000000000$.  
+      The expression $\mathtt{rational}(q)$ returns $q$ if $q$ is already a rational number.
+\item $\texttt{real}(s)$ converts the string $s$ into a floating point number.  For example
+      the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rational(\symbol{34}1.2\symbol{34})}
+      \\[0.2cm]
+      will return the floating point number $1.2$.  The function \texttt{real} can also be
+      invoked on rational numbers.  For example, the expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{real(2/7)}
+      \\[0.2cm]
+      yields  $0.2857142857142857$.
+      The expression $\mathtt{real}(r)$ returns $r$ if $r$ is already a floating point
+      number.
+
+      \textbf{Warning}:  \setlx\ implements floating point numbers via the \textsl{Java}
+      class \texttt{BigDecimal} instead of using the primitive data type \texttt{double}.
+      Therefore, floating point operations are noticeably slower than in other
+      programming languages.
+\item Furthermore, the trigonometrical functions \texttt{sin}, \texttt{cos}, \texttt{tan}
+      and the associated inverse trigonometrical functions 
+      \texttt{asin}, 
+      \texttt{acos}, and 
+      \texttt{atan}
+      are all supported.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{sin(mathConst(\symbol{34}pi\symbol{34})/2);}
+      \\[0.2cm]
+      yields $1.0$.
+\item \texttt{exp($x$)} computes $e^x$ where $e$ is Euler's number.  Therefore, the
+      expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{exp(1)}
+      \\[0.2cm]
+      yields $2.718281828459046$.
+\item \texttt{log($x$)} computes the natural logarithm of $x$.  This function is the
+      inverse function of the exponential function \texttt{exp}.  Therefore, we have
+      the equation
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{log}(\mathtt{exp}(x)) = x$.
+      \\[0.2cm]
+      This equation is valid as long as there is no overflow in the computation of
+      $\mathtt{exp}(x)$.
+\item \texttt{log10($x$)} computes the base 10 logarithm of $x$.
+\item \texttt{sqrt($x$)} computes the square root $\sqrt{x}$.  Therefore, as long as $x$
+      is not too large, the equation
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{sqrt($x$*$x$)$=x$}
+      \\[0.2cm]
+      is valid.
+\item \texttt{cbrt($x$)} computes the cubic root $\sqrt[3]{x}$.  Therefore, as long as $x$
+      is not too large, the equation
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{cbrt($x$*$x$*$x$) $= x$}
+      \\[0.2cm]
+      is valid.
+\item $\texttt{round}(x)$ rounds the number $x$ to the nearest integer.
+\item $\texttt{nDecimalPlaces}(q, n)$ takes a rational number $q$ and a positive natural
+      number $n$ as arguments.  It converts the rational number $q$ into a string that denotes the
+      value of $q$ in decimal floating point notation.  This string contains $n$ digits after the
+      decimal point.  Note that these digits are truncated, there is no rounding
+      involved.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{nDecimalPlaces(2/3,5)}
+      \\[0.2cm]
+      yields the string ``\texttt{0.66666}'', while 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{nDecimalPlaces(1234567/3,5)} returns ``\texttt{411522.33333}''.
+\item $\mathtt{ulp}(x)$  returns the difference between the floating point number $x$ and
+      the smallest floating point number bigger than $x$.  For example, when working with
+      64 bits floating point numbers (which is the default), we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{ulp}(1.0) = \texttt{2.220446049250313E-16}$.
+      \\[0.2cm]
+      \texttt{ulp} is the abbreviation for 
+      \emph{\underline{u}nit in the \underline{l}ast \underline{p}lace}. 
+\item $\mathtt{signum}(x)$ computes the sign of $x$.  If $x$ is positive, the result is
+      $1.0$, if $x$ is negative, the result is $-1.0$.  If $x$ is zero,
+      $\mathtt{signum}(x)$ is also zero.
+\item $\texttt{sinh}(x)$ computes the hyperbolic sine of $x$.  Mathematically, the
+      hyperbolic sine is defined as 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{sinh}(x) := \frac{1}{2} \cdot \bigl(e^x - e^{-x}\bigr)$.
+\item $\texttt{cosh}(x)$ computes the hyperbolic cosine of $x$.  Mathematically, the
+      hyperbolic cosine is defined as 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{cosh}(x) := \frac{1}{2} \cdot \bigl(e^x + e^{-x}\bigr)$.
+\item $\texttt{tanh}(x)$ computes the hyperbolic tangent of $x$.  Mathematically, the
+      hyperbolic tangent is defined as 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{tanh}(x) := \displaystyle \frac{\;\mathtt{sinh}(x)\;}{\mathtt{cosh}(x)}$.
+\item \texttt{isPrime} tests whether its argument is a prime number.  Currently, 
+      this function has a naive implementation and is therefore not efficient.
+\item \texttt{isProbablePrime} tests whether its argument is a prime number.  The test
+      used is probabilistic.  If the function tested is indeed  prime, the test 
+      will succeed.  If the function is not prime, the predicate \texttt{isProbablePrime}
+      neverthelsee might return \texttt{true}.  However, the probability that this happens
+      is less than $2^{-30}$.
+
+      It should be noticed that the implementation of \texttt{isProbablePrime} is
+      based on random numbers.  Therefore, in rare cases different invocations of
+      \texttt{isProbablePrime} might return different results.  
+\end{enumerate}
+
+
+\section{Generating Random Numbers and Permutations}
+In order to generate random numbers, \setlx\ provides the functions \texttt{rnd} and
+\texttt{random}.  The easiest to use of these function is \texttt{random}.  The expression
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{random}()$
+\\[0.2cm]
+generates a random number $x$ such that 
+\\[0.2cm]
+\hspace*{1.3cm}
+$0 \leq x$ \quad and \quad $x \leq 1$
+\\[0.2cm]
+holds.  Normally, this will be a floating point number with 64 bits.  If \setlx\ is
+instead invoked with the either of the parameters ``\texttt{--real32}'',
+``\texttt{--real128}'', or ``\texttt{--real256}'' then $x$ will have 32 bits, 128 bits, or
+256 bits respectively.  For debugging purposes it might be necessary to start \setlx\ with
+the parameter
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{--predictableRandom}.
+\\[0.2cm]
+In this case, the sequence of random numbers that is generated by the function \texttt{random} and
+\texttt{rnd} is always the same.  This is useful when debugging a program working with
+random numbers.  The function \texttt{random} can also be called with an argument.  The expression
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{random}(n)$
+\\[0.2cm]
+is equivalent to the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$n$ * random()}.
+\\[0.2cm]
+The function \texttt{rnd} has a number of different uses.  
+\begin{enumerate}
+\item If $l$ is either a list or a set, then the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rnd($l$})
+      \\[0.2cm]
+      returns a random element of $l$.
+\item If $n$ is an natural number, then 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rnd($n$)}
+      \\[0.2cm]
+      returns a natural number $k$ such that we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $0 \leq k$ and $k \leq n$.
+\item If $n$ is a negative number, then 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rnd($n$)}
+      \\[0.2cm]
+      returns a negative number $k$ such that we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $n \leq k$ \quad and \quad $k \leq 0$.
+\item In order to generate random rational numbers, the function \texttt{rnd} has to be called with
+      two arguments.  The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rnd($a$/$b$, $n$)}
+      \\[0.2cm]
+      is internally translated into the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rnd($n-1$) * a / ($b$ * ($n-1$))}.
+      \\[0.2cm]
+      Therefore, if $a$ is positive, the number returned is a random number between $0$ and the
+      fraction $a/b$ and there will be $n$ different possiblities, so the parameter $n$ is used to
+      control the granularity of the results.  For example,  the expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{rnd(1/2,6)}
+      \\[0.2cm]
+      can return any of the following six fractions:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $0$, $1/10$, $2/10$, $3/10$, $4/10$, $5/10$,
+      \\[0.2cm]
+      while the expression \texttt{rnd(1/2,101)} could return $101$ different results, namely any
+      fraction of the form
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $a/100$ \quad such that $a \in \{0, 1, \cdots 100\}$.
+      \\[0.2cm]
+      Of course, the user will never see a result of the form $50/100$ as this is immmediately
+      reduced to $1/2$. 
+
+      The second parameter also works if the first argument is a natural number.  For example, the
+      expression \texttt{random(1,11)} returns one of the following eleven fractions:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $0$, $1/10$, $2/10$, $3/10$, $4/10$, $5/10$,
+      $6/10$, $7/10$, $8/10$, $9/10$, $10/10$.      
+\end{enumerate}
+
+\subsection{\texttt{shuffle}}
+The function \texttt{shuffle} shuffles a list or string
+randomly.  For example, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{shuffle(\symbol{34}abcdef\symbol{34})}
+\\[0.2cm]
+might yield the result \texttt{\symbol{34}dfbaec\symbol{34}}, while 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{shuffle([1,2,3,4,5,6,7])}
+\\[0.2cm]
+might yield the list \texttt{[1, 7, 4, 6, 3, 5, 2]}.
+
+\subsection{\texttt{nextPermutation}}
+The function \texttt{nextPermutation} can be used to enumerate all possible permutations
+of a given list or string.  For example, the function \texttt{printAllPermutations} shown
+in Figure \ref{fig:allPermutations.stlx} prints all permutations of a given list or string.
+Evaluation of the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{printAllPermutations([1,2,3])}
+\\[0.2cm]
+yields the following output:
+\begin{verbatim}
+    [1, 2, 3]
+    [1, 3, 2]
+    [2, 1, 3]
+    [2, 3, 1]
+    [3, 1, 2]
+    [3, 2, 1]
+\end{verbatim}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    printAllPermutations := procedure(l) {
+        while (l != om) {
+            print(l);
+            l := nextPermutation(l);        
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Printing all permutations of a given list or string.}
+\label{fig:allPermutations.stlx}
+\end{figure}
+
+\subsection{\texttt{permutations}}
+Given a set, list or string $l$, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{permutations}($l$)
+\\[0.2cm]
+returns a set of all permutations of $l$.  For example, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{permutations("abc")}
+\\[0.2cm]
+returns the set
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\{"abc", "acb", "bac", "bca", "cab", "cba"\}}.
+\\[0.2cm]
+Likewise, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{permutations(\{1, 2, 3\})}
+\\[0.2cm]
+yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\{[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]\}}.
+
+\section{Type Checking Functions}
+\setlx\ provides the following functions to check the type of a given function.
+\begin{enumerate}
+\item \texttt{isBoolean} tests whether its argument is a Boolean value.
+\item \texttt{isError} tests whether its argument is an error object.
+
+      For example, consider the following code:
+      \begin{verbatim}
+      try { throw("foo"); } catch (e) { print(isError(e)); }
+      \end{verbatim}
+      \vspace*{-0.5cm}
+
+      Here, the exception $e$ that gets caught has been thrown by the user and therefore
+      is not an error.  Hence, this program fragment prints \texttt{false}.
+      However, the program fragment
+      \begin{verbatim}
+      try { om+1; } catch (e) { print(isError(e)); }
+      \end{verbatim}
+      \vspace*{-0.5cm}
+
+      will indeed print \texttt{true}, as the evaluation of \texttt{om+1}
+      raises an exception that signifies an error.
+\item \texttt{isInfinite} tests whether its argument is a real number that represents
+      either positive or negative infinity.
+\item \texttt{isInteger} tests whether its argument is an integer number.
+\item \texttt{isList} tests whether its argument is a list.
+\item \texttt{isMap} tests whether its argument is a binary relation that maps every
+      element in its domain \emph{uniquely} into an element of its range.  Therefore, a
+      binary relation $r$ is not a map if it contains two pairs
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[$x$,$y_1$]} \quad and \texttt{[$x$,$y_2$]}
+      \\[0.2cm]
+      such that $y_1 \not= y_2$.
+\item \texttt{isNumber} tests whether its argument is a number.
+\item \texttt{isProcedure} tests whether its argument is a procedure.
+\item \texttt{isRational} tests whether its argument is a rational number.
+\item \texttt{isReal} tests whether its argument is a floating point number.
+\item \texttt{isSet} tests whether its argument is a set.
+\item \texttt{isString} tests whether its argument is a string.
+\item \texttt{isTerm} tests whether its argument is a term.
+\end{enumerate}
+
+\section{Interactive Debugging}
+\setlx\ supports a command line interface for interactive debugging.  The interface to the
+debugger consists of the following functions:
+\begin{enumerate}
+\item \texttt{trace}:  This function is called as either
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{trace(true)} \quad or \quad \texttt{trace(false)}.
+      \\[0.2cm]
+      The expression \texttt{trace(true)} switches tracing on:  Afterwards, all
+      assignments are written to the terminal window running \setlx.  To switch tracing
+      of, call \texttt{trace(false)}.
+\item \texttt{setBreak}:  The expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{setBreak}(f)$
+      \\[0.2cm]
+      sets a breakpoint for the function specified by the argument $f$.  
+      In the context of \texttt{setBreak}, the argument $f$ is a string that is the
+      name of a function.
+\item \texttt{rmBreak}:  The expression 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{rmBreak}(f)$
+      \\[0.2cm]
+      removes the breakpoint for the function $f$, where $f$ is the name of a function.
+\item \texttt{lsBreak}: The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{lsBreak()}
+      \\[0.2cm]
+      lists all breakpoints.
+\item \texttt{step}: In general, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{step()}
+      \\[0.2cm]
+      executes the next statement.  However, if the next statement evaluates a complex
+      function, the \texttt{step()} only enters this function so that the programmer can
+      then step through the statements of the called function.
+\item \texttt{uStep}: The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{uStep()}
+      \\[0.2cm]
+      evaluates the expression that is needed to evaluate the next statement.
+      This is called a \emph{micro step}.
+\item \texttt{fStep}: The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{fStep()}
+      \\[0.2cm]
+      executes a \emph{macro step}: this executes the next instruction.  If the next
+      instruction is a function call, then this function call is evaluated in one step,
+      so this function steps over function calls.
+\item \texttt{finish}:  The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{finish()}
+      \\[0.2cm]
+      finishes execution of the current function.  This function is handy if you
+      accidentally step into a function.
+\item \texttt{finishLoop}:  The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{finishLoop()}
+      \\[0.2cm]
+      finishes the execution of the current loop without halting.
+\item \texttt{resume}: The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{resume()}
+      \\[0.2cm]
+      resumes normal execution of the program.
+\item \texttt{reset}: The expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{reset()}
+      \\[0.2cm]
+      stops the execution of the current program and returns to the interactive prompt of
+      the interpreter.
+\end{enumerate}
+Finally the function \texttt{dbgHelp()} lists all commands that are available to support
+interactive debugging.
+
+
+\section{I/O Functions}
+This  section lists all functions related to input and output.
+
+\subsection{\texttt{appendFile}}
+The function \texttt{appendFile} is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{appendFile}(\textsl{fileName}, l)$.
+\\[0.2cm]
+Here, \textsl{fileName} is a string denoting the name of a file, while $l$ is a list of
+strings.  If file a with the specified name does not exist, it is created.  Then the strings
+given in $l$ are appended to the file.   Each string written to the specified file is
+automatically  terminated by a newline character.
+
+\subsection{\texttt{deleteFile}}
+The function \texttt{deleteFile} is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{deleteFile}(\textsl{fileName})$.
+\\[0.2cm]
+Here, \textsl{fileName} is a string denoting the name of a file.
+If a file with the specified name does exist, it is deleted.  In this case the function
+returns \texttt{true}.  If a file with the specified name does not exist, the function
+returns \texttt{false} instead.
+
+\subsection{\texttt{get}}
+The function \texttt{get}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{get}(s)$.
+\\[0.2cm]
+Here, $s$ is a string that is used for a prompt. This argument is optional.  The function prints $s$ and then
+returns the string that the user has supplied.  If no string is supplied, \texttt{get}
+uses the prompt \texttt{": "}.
+
+\subsection{\texttt{load}}
+The function \texttt{load}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{load}(\textsl{file})$.
+\\[0.2cm]
+Here, \textsl{file} has to be a string that denotes a file name, including  the extension
+of the file.  Furthermore, \textsl{file} is expected to contain valid \setlx\ commands.
+These commands are then executed.  In general, most of the commands will be definitions of
+functions.  These function can then be used interactively.
+
+\subsection{\texttt{loadLibrary}}
+The function \texttt{loadLibrary}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{loadLibrary}(\textsl{file})$.
+\\[0.2cm]
+Here, \textsl{file} has to be a string that denotes a file name, \underline{excludin}g  the extension
+of the file.  This file is assumed to be located in the directory that is specified by the
+environment variable 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{SETLX\_LIBRARY\_PATH}.
+\\[0.2cm]
+There are three different ways to set this variable.
+\begin{enumerate}
+\item The variable can be  set a in file like ``\texttt{.profile}'' or
+      ``\texttt{.bashrc}'', or something similar.  Depending on the type of shell you are
+      using, these files are automatically executed when a new shell is started.
+\item The variable can be set manually in the shell.
+\item The variable can be set using the option ``\texttt{--libraryPath}''.
+\end{enumerate}
+The specified \textsl{file} is expected to contain valid \setlx\ commands.
+
+\subsection{\texttt{multiLineMode}}
+The function \texttt{multiLineMode}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{multiLineMode}(\textsl{flag})$.
+\\[0.2cm]
+Here, \texttt{flag} should be an expression that evaluates to a  Boolean value.  The
+function either activates or deactivates \emph{multi line mode}.  If multi line mode is
+activated, then in a shell the next input expression is only evaluated after  the user
+hits the return key twice.  Multi line mode makes it possible to enter statements spanning
+serveral lines interactively.  However, normally this mode is inconvenient, as it requires
+the user to press the return key twice in order to evaluate an expression.  Therefore, by
+default multi line mode is not active.  Multi line mode can also be activated using the option 
+``\texttt{--multiLineMode}'' when starting \setlx.
+
+\subsection{\texttt{nPrint}}
+The function \texttt{nPrint}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{nPrint}(a_1, \cdots, a_n)$.
+\\[0.2cm]
+It takes any number of arguments and prints these arguments onto the standard output
+stream.  In contrast to the function
+\texttt{print}, this function does not append a newline to the printed output.
+
+\subsection{\texttt{nPrintErr}}
+The function \texttt{nPrintErr}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{nPrintErr}(a_1, \cdots, a_n)$.
+\\[0.2cm]
+It takes any number of arguments and prints these arguments onto the standard error
+stream.  In contrast to the function
+\texttt{printErr}, this function does not append a newline to the printed output.
+
+\subsection{\texttt{print}}
+The function \texttt{print}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{print}(a_1, \cdots, a_n)$.
+\\[0.2cm]
+It takes any number of arguments and prints these arguments onto the standard output
+stream.  After all arguments are
+printed, this function appends a newline to the output.
+
+\subsection{\texttt{printErr}}
+The function \texttt{printErr}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{printErr}(a_1, \cdots, a_n)$.
+\\[0.2cm]
+It takes any number of arguments and prints these arguments onto the standard error
+stream.  After all arguments are
+printed, this function appends a newline to the output.
+
+\subsection{\texttt{read}}
+The function \texttt{read}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{read}(s)$.
+\\[0.2cm]
+Here, $s$ is a string that is used for a prompt.  This argument is optional. The function
+prints $s$ and then 
+returns the string that the user has supplied.  However, leading and trailing white space 
+is removed from the string that has been read.  If the string can be interpreted as a
+number, this number is returned instead.  Furthermore, this function keeps prompting the
+user for input until the user enters a non-empty string.
+
+\subsection{\texttt{readFile}}
+The function \texttt{readFile}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{readFile}(\textsl{file}, \textsl{lines})$.
+\\[0.2cm]
+The second parameter \textsl{lines} is optional.
+It reads the specified file and returns a list of strings.  Each string corresponds to one
+line of the file.   This second parameter \textsl{lines} specifies the list of line
+numbers to read.  For example,  the statement 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{read("file.txt",[42] + [78..113])}
+\\[0.2cm]
+will read line number 42 and the lines 78 up to and including line 113 of the given file.
+This feature can be used to read a file in chunks of 1000 lines as in the following example:
+\begin{verbatim}
+    n := 1;
+    while (true) {
+        content := readFile("file", [n .. n + 999]);
+        if (content != []) {
+            // process 1k lines
+            ....
+            n += 1000;
+        } else {
+            break;
+        }
+    }
+\end{verbatim}
+
+\subsection{\texttt{writeFile}}
+The function \texttt{writeFile}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{writeFile}(f, l)$.
+\\[0.2cm]
+Here, $f$ is the name of the file and $l$ is a list.  The file $f$ is created and the list
+$l$ is written into the file $f$.  The different elements of $l$ are separated by newlines.
+
+\section{Miscellaneous Functions}
+This final section lists some functions that did not fit into any of the other sections.
+
+
+\subsection{\texttt{\texttt}{abort}}
+This function aborts the execution of the current function.  This is done by raising an
+exception.  Usually, the function \texttt{abort} is called with one argument.  This
+argument is then thrown as an exception.  For example, the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{try \{ abort(1); \} catch (e) \{ print("e = \$e\$"); \}}
+\\[0.2cm]
+will print the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{e = Error: abort: 1}.
+\\[0.2cm]
+Note that an exception raised via \texttt{abort} can not be catched with the keyword
+\texttt{catchUsr}.   The keyword \texttt{catchUsr} will only catch exceptions that are
+explicitly thrown by the user via invocation of \texttt{throw}.
+
+\subsection{\texttt{cacheStats}}
+The function \texttt{cacheStats}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{cacheStats}(f)$.
+\\[0.2cm]
+Here, $f$ is a cached procedure, i.e.~a procedure that is declared using the
+keyword ``\texttt{cachedProcedure}''.  Note that $f$ has to be the procedure itself, not
+the name of the procedure!  The returned result is a set of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\{["cache hits", 996], ["cached items", 1281]\}}.
+\\[0.2cm]
+This set can be interpreted as a map.  
+
+\subsection{\texttt{clearCache}}
+The function \texttt{clearCache}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{clearCache}(f)$.
+\\[0.2cm]
+Here, $f$ is a cached procedure, i.e.~a procedure that is declared using the
+keyword ``\texttt{cachedProcedure}''.  Note that $f$ has to be the procedure itself, not
+the name of the procedure!  The invocation of $\texttt{clearCache}(f)$ frees the memory
+associated with the cache for the function $f$.  It should be used if the previously
+computed values of $f$ are not likely to be needed for the next computation.
+
+\subsection{\texttt{compare}}
+The function \texttt{compare}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{compare}(x, y)$.
+\\[0.2cm]
+Here, $x$ and $y$ are two arbitrary values.  This function returns $-1$ if $x$ is less
+than $y$, $+1$ if $x$ is bigger than $y$ and $0$ if $x$ and $y$ are equal.
+If $x$ and $y$ have a numerical type,  then the result of $\mathtt{compare}(x,y)$
+coincides with the result produced by the operator ``\texttt{<}''.
+If $x$ and $y$ are both lists, then the lists are compared lexicographically.
+The same remark holds if $x$ and $y$ are both sets.   If $x$ and $y$ have different types,
+then the result of $\mathtt{compare}(x, y)$ is implementation defined.  Therefore, the
+user should not rely on the results returned in these cases.
+
+The function \texttt{compare} is needed internally in order to compare the elements of a
+set.  In \setlx\ all sets are represented as ordered binary trees.
+
+\subsection{\texttt{getScope}}
+The function \texttt{getScope}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{getScope}()$.
+\\[0.2cm]
+It returns a term representing the  \emph{current scope}.  Here, the current scope
+captures the binding of all variables.  For example, suppose the user issues the following
+commands: 
+\begin{verbatim}
+    x := 1;
+    y := 2;
+    f := procedure(n) { return n * n; };
+\end{verbatim}
+Then the current scope consists of the variables \texttt{x}, \texttt{y}, and \texttt{f}.
+Therefore, in this case the expression \texttt{getScope()} returns the following term:
+\begin{verbatim}
+^scope({["f", procedure(n) { return n * n; }], 
+        ["getScope", ^preDefinedProcedure("getScope")], ["params", []], 
+        ["x", 1], 
+        ["y", 2]
+       })
+\end{verbatim}
+ 
+\subsection{\texttt{logo}}
+The function \texttt{logo}  is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{logo}()$.
+\\[0.2cm]
+In order to find how this function works, try it yourself.
+
+\subsection{\texttt{now}}
+The function \texttt{now}  returns the number of milliseconds that have elapsed since
+the beginning of the Unix epoch.
+
+\subsection{\texttt{sleep}}
+The function sleep takes one argument that has to be a positive natural number.  The expression
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{sleep}(t)$
+\\[0.2cm]
+pauses the execution of the process running \setlx\ for $t$ milliseconds.  When printing
+output, this can be used for visual effects.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial"
+%%% End: 

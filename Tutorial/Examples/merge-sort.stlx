@@ -1,0 +1,39 @@
+sort := procedure(l, cmp) {
+    if (#l < 2) {
+        return l;
+    }
+    m := #l \ 2;
+    [l1, l2] := [l[.. m], l[m+1 ..]];
+    [s1, s2] := [sort(l1, cmp), sort(l2, cmp)];
+    return merge(s1, s2, cmp);
+};
+
+merge := procedure(l1, l2, cmp) {
+    match ([l1, l2]) {
+        case [[], _] : return l2;
+        case [_, []] : return l1;
+        case [[x1|r1], [x2|r2]] : 
+             if (cmp(x1, x2)) {
+                 return [x1 | merge(r1, l2, cmp)];
+             } else {
+                 return [x2 | merge(l1, r2, cmp)];
+             }
+    }
+};
+
+less := procedure(x, y) {
+    return x < y;
+};
+
+greater := procedure(x, y) {
+    return y < x;
+};
+
+l := [1,3,5,4,2];
+
+s1 := sort(l, less);
+s2 := sort(l, greater);
+
+print("s1 = $s1$");
+print("s2 = $s2$");
+

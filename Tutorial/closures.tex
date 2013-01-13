@@ -1,0 +1,693 @@
+\chapter{Functional Programming and Closures \label{chapter:closures}}
+We have already stated earlier that \setlx\ is a full-fledged functional language:
+Functions can be used both as arguments to other functions and as return values.  There is
+no fundamental difference in the type of a function or, say, the type of a rational
+number, as both can be assigned to variables, converted to strings, parsed, etc.
+This works because functions are actually implemented as \emph{closures} similar to the
+way this is done in languages like \textsl{Scheme} \cite{sussman:75}. 
+In order to present closures, we present some simple examples first.  After that, we show
+a more complex case study: We discuss a program that transforms a regular expression into a
+non-deterministic finite state machine.
+
+\section{Introductory Examples}
+In this section we will first introduce the basic idea of functional programming.
+After that, we discuss the notion of a closure.
+
+\subsection{Introducing Functional Programming}
+Using functions as arguments to other functions is something that is not often seen in
+conventional programming languages.  Figure \ref{fig:reduce.stlx} shows the implementation of
+the function \texttt{reduce} that takes two arguments:
+\begin{enumerate}
+\item The first argument is a list $l$.
+\item The second argument is a function $f$ mapping two arguments of $l$ into a value.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    reduce := procedure(l, f) {
+        match (l) {
+            case []     : return;
+            case [x]    : return x;
+            case [x,y|r]: return reduce([f(x,y) | r], f);
+        }    
+    };
+    add      := procedure(a, b) { return a + b; };
+    multiply := procedure(a, b) { return a * b; };
+    
+    l := [1 .. 36];
+    x := reduce(l, add,    );
+    y := reduce(l, multiply);
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Implementing a second order function.}
+\label{fig:reduce.stlx}
+\end{figure}
+The function \texttt{reduce} combines successive arguments of the list $l$ and thereby reduces
+the list $l$ into a single value.  For example, if the function $f$ is the function
+\texttt{add} that just adds its arguments, then $\texttt{reduce}(l, \texttt{add})$ sums up
+all the arguments of $l$.  Therefore, in line 11 the sum $\sum_{i=1}^n i$ is assigned to the
+variable $x$.  If instead the second arguments of the function \texttt{reduce} is the function
+\texttt{multiply} that returns the product of its arguments, then 
+$\texttt{reduce}(l, \texttt{multiply})$ computes the product of all elements of the list
+$l$.  Finally, it should be noted that in the case that the list $l$ is empty,
+\texttt{reduce} returns the value \texttt{om}. 
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    sort := procedure(l, cmp) {
+        if (#l < 2) { return l; }
+        m := #l \ 2;
+        [l1, l2] := [l[.. m], l[m+1 ..]];
+        [s1, s2] := [sort(l1, cmp), sort(l2, cmp)];
+        return merge(s1, s2, cmp);
+    };
+    merge := procedure(l1, l2, cmp) {
+        match ([l1, l2]) {
+            case [[], _] : return l2;
+            case [_, []] : return l1;
+            case [[x1|r1], [x2|r2]] : 
+                 if (cmp(x1, x2)) {
+                     return [x1 | merge(r1, l2, cmp)];
+                 } else {
+                     return [x2 | merge(l1, r2, cmp)];
+                 }
+        }
+    };
+    less    := procedure(x, y) { return x < y; };
+    greater := procedure(x, y) { return y < x; };
+    l  := [1,3,5,4,2];    
+    s1 := sort(l, less);
+    s2 := sort(l, greater);
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A generic sort function.}
+\label{fig:merge-sort.stlx}
+\end{figure}
+
+Notice that the function \texttt{reduce} is a so called \emph{second order function} because
+one of its arguments is itself a function.  While the example given above might seem
+artificial, there are common applications of this scheme.  One example is sorting.
+Figure \ref{fig:merge-sort.stlx} on page \pageref{fig:merge-sort.stlx} shows a generic
+implementation of the merge sort algorithm.  Here, the function \texttt{sort} takes two
+arguments:
+\begin{enumerate}
+\item The first argument $l$ is the list to be sorted.
+\item The second argument \texttt{cmp} is a binary function that compares two list elements
+      and returns either \texttt{true} or \texttt{false}.  If we call the function
+      \texttt{sort} with second argument \texttt{less}, where the function \texttt{less} is
+      defined in line 20, then the resulting list will be sorted ascendingly.
+      If instead we use the function \texttt{greater} defined in line 21 as the second
+      argument, then the list $l$ will be sorted descendingly.
+
+      The second argument enables us to sort a list that contains elements that are not
+      numbers.  In order to do so, we just have to implement an appropriate version of the
+      function \texttt{cmp}.
+\end{enumerate}
+So far, the function we have discussed did not return functions.  The next example will change
+that.  In mathematics, given a function
+\\[0.2cm]
+\hspace*{1.3cm}
+$f: \mathbb{N} \rightarrow \mathbb{N}$
+\\[0.2cm]
+mapping natural numbers into natural numbers, the \emph{discrete derivative} of $f$ is denoted
+as $\Delta f$ and is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$(\Delta f)(n) := f(n+1) - f(n)$.
+\\[0.2cm]
+For example, given the function $f: \mathbb{N} \rightarrow \mathbb{N}$ defined as $f(n) := 2^n$,
+we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$(\Delta f)(n) = 2^{n+1} - 2^n = 2^n = f(n)$.
+\\[0.2cm]
+To give another example, the discrete derivative of the identity function is the function that
+maps every natural number to the number $1$, since $(n+1) - n = 1$.  
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    delta := procedure(f) {
+        return n |-> f(n+1) - f(n);
+    };    
+    g := n |-> n;
+    h := n |-> 2 ** n;
+    deltaG := delta(g);
+    deltaH := delta(h);
+    
+    print([ deltaG(n) : n in [1 .. 10]]);
+    print([ deltaH(n) : n in [1 .. 10]]);
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Computing the discrete derivative of a given function.}
+\label{fig:finite-difference.stlx}
+\end{figure}
+
+\noindent
+Figure \ref{fig:finite-difference.stlx} shows the implementation of the function \texttt{delta}
+that takes a function $f$ as input and then returns the discrete derivative of $f$.  In line 6
+and 7, this function is applied to the identity function and to the function $n \mapsto 2^n$,
+respectively.  The resulting functions \texttt{deltaG} and \texttt{deltaH} are then applied to
+the sequence of natural numbers from 1 to 10.  In the first case, the result is a list
+containing the number $1$ for ten times, while in the second case the the result is a list of the
+first ten powers of $2$.
+
+
+\subsection{Implementing Counters via Closures}
+The concept of a closure is non-trivial, therefore we introduce the idea using some simple
+examples.  Figure \ref{fig:counter-closure.stlx} shows the function
+\texttt{createCounter}.  This function initializes the variable \texttt{count} to a given
+value and then returns a procedure that increments this value.  
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    createCounter := procedure(i) {
+        count   := i;
+        counter := procedure() {
+                       count += 1;
+                       return count;
+                   };
+        return counter;
+    };   
+    ctr0 := createCounter(0);
+    ctr9 := createCounter(9);
+    
+    u := ctr0(); v := ctr0(); w := ctr0();
+    x := ctr9(); y := ctr9(); z := ctr9();
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Creating a counter as a closure.}
+\label{fig:counter-closure.stlx}
+\end{figure}
+
+Notice that the variable \texttt{count} is defined outside the procedure
+\texttt{counter}.  Still, the function \texttt{counter} has access to this variable:
+It can both read its value and can even change the value.  When the function \texttt{counter} is
+defined, the variable \texttt{count} is safely tucked away together with the function
+\texttt{counter}.  Therefore, although the variable \texttt{count} goes out of scope once the
+function \texttt{createCounter} terminates, the function \texttt{counter} still has access
+to a 
+copy of this variable.  Therefore, when we call the function \texttt{createCounter} in line 9, 
+the variable \texttt{ctr0} is assigned a version of the function counter where the variable
+\texttt{count} initially has the value 0.  Later, when we call the function \texttt{ctr0},
+in line 12, this counter is incremented 3 times.  Therefore, after line 12 is executed,
+the variables \texttt{u}, \texttt{v}, and \texttt{w} have the values $1$, $2$, and $3$,
+respectively. 
+
+You should also notice that the function \texttt{ctr9} created in line 10 gets its
+\underline{own} copy of the variable \texttt{count}.  In the case of the function
+\texttt{ctr9}, this copy of \texttt{count} is initialized with the value 9.  Therefore, after
+we have called the function \texttt{ctr9} in line 13, the variables \texttt{u}, \texttt{v}, and
+\texttt{w} have the values $10$, $11$, and $12$. 
+
+\section[Closures in Action]{Closures in Action: Generating Finite State Machines from Regular Expressions}
+In this section we demonstrate a non-trivial application of closures.  We present a program that
+takes a regular expression $r$ as input and that converts this regular expression into a
+non-deterministic finite state machine using the \emph{Thompson construction} \cite{hopcroft:06}.
+For the purpose of this section, \emph{regular expressions} are defined inductively as
+follows.
+\begin{enumerate}
+\item Every character $c$ is a regular expression matching exactly this character and
+      nothing else.
+\item If $r_1$ and $r_2$ are regular expressions,  then $r_1 \cdot r_2$ is a regular
+      expression.  If $r_1$ matches the string $s_1$ and $r_2$ matches the string $s_2$,
+      then $r_1 \cdot r_2$ matches the string $s_1s_2$, where $s_1s_2$ is understood as
+      the concatenation of $s_1$ and $s_2$.
+\item If $r_1$ and $r_2$ are regular expressions,  then $r_1 \mid r_2$ is a regular
+      expression.  The regular expression $r_1 \mid r_2$ matches any string that is matched
+      by either $r_1$ or $r_2$.
+\item If $r$ is a regular expression, then $r^*$ is a regular expression.
+      This regular expression matches the empty string and, furthermore, matches any string
+      $s$ that can be decomposed as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $s = t_1 t_2 \cdots t_n$
+      \\[0.2cm]
+      where each of the substrings $t_i$ is matched by the regular expression $r$.
+\end{enumerate}
+For the purpose of the program we are going to develop, composite regular expressions will be
+represented by terms.  In detail, we have the following representation of regular
+expressions.
+\begin{enumerate}
+\item A regular expression $r$ of the form $r = c$ where $c$ is a single character is
+      represented by the string consisting of the character $c$.
+\item A regular expression $r$ of the form $r = r_1 \cdot r_2$ is represented by the term
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Cat(r1, r2)}
+      \\[0.2cm]
+      where \texttt{r1} is the representation of $r_1$ and \texttt{r2} is the
+      representation of $r_2$.
+\item A regular expression $r$ of the form $r = r_1 \mid r_2$ is represented by the term
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Or(r1, r2)}
+      \\[0.2cm]
+      where \texttt{r1} is the representation of $r_1$ and \texttt{r2} is the
+      representation of $r_2$.
+\item A regular expression $r$ of the form $r = r_0^*$ is represented by the term
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Star(r0)}
+      \\[0.2cm]
+      where \texttt{r0} is the representation of $r_0$.
+\end{enumerate}
+The Thompson construction of a non-deterministic finite state machine from a given regular
+expression $r$ works by induction on the structure of $r$.  Given a regular expression
+$r$,  we define a non-deterministic finite state machine $A(r)$ by induction on $r$.
+For the purpose of this section, a finite state machine $A$ is a 4-tuple
+\\[0.2cm]
+\hspace*{1.3cm}
+$A = \langle Q, \delta, q_0, q_f \rangle$
+\\[0.2cm]
+where $Q$ is the set of states, 
+$\delta$ is the transition function and maps a pair $\langle q, c \rangle$ where $q$ is a
+state and $c$ is a character to a set of new states.  If we denote the set of characters
+as $\Sigma$, then the function $\delta$ has the signature
+\\[0.2cm]
+\hspace*{1.3cm}
+$\delta: Q \times \Sigma \rightarrow 2^Q$.
+\\[0.2cm]
+The understanding  of $\delta(q,c)$ is that if the finite state machine $A$ is in the
+state $q$ and reads the character $c$, then it can switch to any of the states in
+$\delta(q,c)$.
+Finally, $q_0$ is the start state and $q_f$ is the accepting state.  In the following, we
+abbreviate the notion of a  
+\emph{finite state machine} as fsm.
+\begin{enumerate}
+\item For a letter $c$ the fsm $A(c)$ is defined as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $A(c) = \langle \{ q_0, q_1 \}, 
+                      \{ \langle q_0, c \rangle \mapsto q_1\}, q_0, q_1  \rangle$.
+      \\[0.2cm]
+      The set of states is given as $\{ q_0, q_1 \}$, on reading the character $c$ the
+      transition function maps the state $q_0$ to $q_1$, the start state is $q_0$ and the
+      accepting state is $q_1$.  This fsm is shown in Figure
+      \ref{fig:aChar.eps}.
+
+      \begin{figure}[!ht]
+        \centering
+      \epsfig{file=aChar.eps, scale=0.5}
+      \caption{The finite state machine $A(c)$.}
+      \label{fig:aChar.eps}
+      \end{figure}
+
+      \begin{figure}[!ht]
+      \centering
+      \begin{Verbatim}[ frame         = lines, 
+                        framesep      = 0.3cm, 
+                        firstnumber   = 1,
+                        labelposition = bottomline,
+                        numbers       = left,
+                        numbersep     = -0.2cm,
+                        xleftmargin   = 0.8cm,
+                        xrightmargin  = 0.8cm,
+                      ]
+    genCharNFA := procedure(c) {
+        q0 := getNewState();
+        q1 := getNewState();
+        delta := procedure(q, d) { 
+                     if (q == q0 && d == c) { 
+                         return { q1 };
+                     } else { 
+                         return {};
+                     }
+                 };
+        return [ {q0, q1}, delta, q0, q1 ];
+    };
+      \end{Verbatim}
+      \vspace*{-0.3cm}
+      \caption{Generating the fsm to recognize the character $c$.}
+      \label{fig:genCharNFA.stlx}
+      \end{figure}
+
+      Figure \ref{fig:genCharNFA.stlx} shows the function \texttt{genCharNFA} that takes a
+      character $c$ and generates the fsm $A(c)$.  The code corresponds closely to the
+      diagram shown in Figure \ref{fig:aChar.eps}.
+      \begin{enumerate}
+      \item We generate two new states $q_0$ and $q_1$ using the function
+            \texttt{getNewState}.  The implementation of this function is shown in Figure
+            \ref{fig:getNewState.stlx} on page \pageref{fig:getNewState.stlx}.  It creates a new 
+            unique string that is interpreted as a state.
+      \item The transition function checks whether the state $q$ given as input is equal
+            to the start state $q_0$ and whether, furthermore, the character $d$ that is
+            read is identical to the character $c$.  If this is the case, the fsm switches
+            into the state $q_1$ and therefore the set of possible next states is the singelton
+            set $\{ q_1 \}$.  Since this is the only transition of the fsm, in all other
+            cases the set of next states is empty.
+      \end{enumerate}
+      
+\item In order to compute the fsm $A(r_1 \cdot r_2)$ 
+      we have to assume that the states of the fsms
+      $A(r_1)$ and $A(r_2)$ are different.  
+      Let us assume that  $A(r_1)$ and $A(r_2)$ have the following form:
+      \begin{enumerate}
+      \item $A(r_1) = \langle Q_1, \delta_1, q_1, q_2 \rangle$,
+      \item $A(r_2) = \langle Q_2, \delta_2, q_3, q_4 \rangle$, \quad where
+      \item $Q_1 \cap Q_2 = \{\}$.
+      \end{enumerate}
+      Using $A(r_1)$ and $A(r_2)$ we construct the fsm $A(r_1 \cdot r_2)$ as
+      \\[0.2cm]
+      \hspace*{0.8cm}
+       $\langle Q_1 \cup Q_2, \Sigma, 
+                \{ \pair(q_2,\varepsilon) \mapsto q_3 \} 
+                   \cup \delta_1 \cup \delta_2, q_0, q_4 \rangle$
+      \\[0.2cm]
+      The notation $\{ \pair(q_2,\varepsilon) \mapsto q_3 \} \cup \delta_1 \cup \delta_2$
+      specifies that the transition function $\delta$ contains all transitions
+      from the transition functions  $\delta_1$ and $\delta_2$.  Additionally,
+      there is an  $\varepsilon$-transition from $q_2$ to
+      $q_3$.  Formally, the transition function could also be specified as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\delta(q,c) := \left\{
+      \begin{array}{ll}
+        \{ q_3 \}       & \mbox{if $q = q_2$ and $c = \varepsilon$}, \\[0.2cm]
+        \delta_1(q, c)  & \mbox{if $q \in Q_1$ and $\pair(q,c) \not= \pair(q_2,\varepsilon)$}, \\[0.2cm]
+        \delta_2(q, c)  & \mbox{if $q \in Q_2$.} 
+      \end{array}\right.
+      $
+      \\[0.2cm]
+      Figure \ref{fig:aConcat.eps} depicts the fsm $A(r_1 \cdot r_2)$.
+      
+      \begin{figure}[!ht]
+        \centering
+      \epsfig{file=aConcat.eps, scale=0.8}
+      \caption{The finite state machine $A(r_1 \cdot r_2)$.}
+      \label{fig:aConcat.eps}
+      \end{figure}
+
+      Figure \ref{fig:catenate.stlx} on page \pageref{fig:catenate.stlx} shows the
+      implementation of the function \texttt{catenate}.  This function takes two
+      finite state machines \texttt{f1} and \texttt{f2} and concatenates them in the way
+      depicted in Figure \ref{fig:aConcat.eps}.  This function can be used
+      to compute $A(r_1 \cdot r_2)$, since we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $A(r_1 \cdot r_2) = \mathtt{catenate}\bigl(A(r_1), A(r_2)\bigr)$.
+
+    \begin{figure}[!ht]
+    \centering
+    \begin{Verbatim}[ frame         = lines, 
+                      framesep      = 0.3cm, 
+                      firstnumber   = 1,
+                      labelposition = bottomline,
+                      numbers       = left,
+                      numbersep     = -0.2cm,
+                      xleftmargin   = 0.8cm,
+                      xrightmargin  = 0.8cm,
+                    ]
+    catenate := procedure(f1, f2) {
+        [m1, delta1, q1, q2] := f1;
+        [m2, delta2, q3, q4] := f2;
+        delta := procedure(q, c) {
+                     if (q == q2 && c == "") {
+                         return { q3 };
+                     } else if (q in m1) {
+                         return delta1(q, c);
+                     } else if (q in m2) {
+                         return delta2(q, c);
+                     } else {
+                         return {};
+                     }
+                 };
+        return [ m1 + m2, delta, q1, q4 ];
+    };
+    \end{Verbatim}
+    \vspace*{-0.3cm}
+    \caption{The function to compute $A(r_1 \cdot r_2)$}
+    \label{fig:catenate.stlx}
+    \end{figure}
+\item In order to define the fsm  $A(r_1 + r_2)$ we assume that we have already computed
+      the fsms $A(r_1)$ and $A(r_2)$ and that their sets of states are disjoint.
+      If  $A(r_1)$ and $A(r_2)$ are given as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $A(r_1) = \langle Q_1, \delta_1, q_1, q_3 \rangle$ \quad and \quad
+      $A(r_2) = \langle Q_2, \delta_2, q_2, q_4 \rangle$
+      \\[0.2cm]
+      the the fsm $A(r_1 + r_2)$ can be defined as
+      \\[0.2cm]
+      \hspace*{0.0cm}
+       $\langle \{ q_0, q_5 \} \cup Q_1 \cup Q_2, 
+                \{ \pair(q_0,\varepsilon) \mapsto q_1, \pair(q_0,\varepsilon) \mapsto q_2,
+                   \pair(q_3,\varepsilon) \mapsto q_5, \pair(q_4,\varepsilon) \mapsto q_5 \} 
+                   \cup \delta_1 \cup \delta_2, q_0, q_5 \rangle$.
+      \\[0.2cm]
+      This finite state machine is shown in Figure \ref{fig:aPlus.eps}.
+      In addition to the states of $A(r_1)$ and $A(r_2)$ there are two additional 
+      states:
+      \begin{enumerate}
+      \item $q_0$ is the start state of the fsm $A(r_1 + r_2)$,
+      \item $q_5$ is the accepting state of $A(r_1 + r_2)$.
+      \end{enumerate}
+      In addition to the transitions of the fsms  $A(r_1)$ and $A(r_2)$ we have four $\varepsilon$-transitions.
+      \begin{enumerate}
+      \item There are $\varepsilon$-transitions from $q_0$ to the states $q_1$ and $q_2$.
+      \item There are $\varepsilon$-transitions from  $q_3$ and $q_4$ to $q_5$.
+      \end{enumerate}
+                   
+      \begin{figure}[!ht]
+        \centering
+      \epsfig{file=aPlus.eps, scale=0.5}
+      \caption{The finite state machine $A(r_1 + r_2)$.}
+      \label{fig:aPlus.eps}
+      \end{figure}
+
+    \begin{figure}[!ht]
+    \centering
+    \begin{Verbatim}[ frame         = lines, 
+                      framesep      = 0.3cm, 
+                      firstnumber   = 1,
+                      labelposition = bottomline,
+                      numbers       = left,
+                      numbersep     = -0.2cm,
+                      xleftmargin   = 0.8cm,
+                      xrightmargin  = 0.8cm,
+                    ]
+    disjunction := procedure(f1, f2) {
+        [m1, delta1, q1, q3] := f1;
+        [m2, delta2, q2, q4] := f2;
+        q0 := getNewState(); 
+        q5 := getNewState(); 
+        delta := procedure(q, c) {
+                     if (q == q0 && c == "") {
+                         return { q1, q2 };
+                     } else if (q in { q3, q4 } && c == "") {
+                         return { q5 };
+                     } else if (q in m1) {
+                         return delta1(q, c);
+                     } else if (q in m2) {
+                         return delta2(q, c);
+                     } else {
+                         return {};
+                     } 
+                 };
+        return [ { q0, q5 } + m1 + m2, delta, q0, q5 ];
+    };
+    \end{Verbatim}
+    \vspace*{-0.3cm}
+    \caption{The function to compute $A(r_1 + r_2)$.}
+    \label{fig:disjunction.stlx}
+    \end{figure}
+      
+      Figure \ref{fig:disjunction.stlx} on page \pageref{fig:disjunction.stlx} shows the
+      implementation of the function \texttt{disjunction}.  This function takes two
+      finite state machines \texttt{f1} and \texttt{f2} and combines them in the way
+      depicted in Figure \ref{fig:aPlus.eps}.  This function can be used
+      to compute $A(r_1 + r_2)$, since we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $A(r_1 +r_2) = \mathtt{catenate}\bigl(A(r_1), A(r_2)\bigr)$.
+\item In order to define $A(r^*)$ we assume $A(r)$ is given as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $A(r) = \langle Q, \delta, q_1, q_2 \rangle$.
+      \\[0.2cm]
+      Then  $A(r^*)$ is defined as
+      \\[0.2cm]
+      \hspace*{0.8cm}
+       $\langle \{ q_0, q_3 \} \cup Q, 
+                \{ \pair(q_0,\varepsilon) \mapsto q_1, \pair(q_2,\varepsilon) \mapsto q_1,
+                   \pair(q_0,\varepsilon) \mapsto q_3, \pair(q_2,\varepsilon) \mapsto q_3 \} 
+                   \cup \delta, q_0, q_3  \rangle$.
+      \\[0.2cm]
+
+      \begin{figure}[!ht]
+        \centering
+      \epsfig{file=aStar.eps, scale=0.5}
+      \caption{The finite state machine $A(r^*)$.}
+      \label{fig:aStar.eps}
+      \end{figure}
+
+      Figure \ref{fig:aStar.eps} depicts the fsm $A(r^*)$.
+      In addition to the states of the fsm  $A(r)$ there are two new states:
+      \begin{enumerate}
+      \item $q_0$ is the start state of $A(r^*)$,
+      \item $q_3$ is the accepting state of $A(r^*)$.
+      \end{enumerate}
+      Furthermore, there are four additional  $\varepsilon$-transitions.
+      \begin{enumerate}
+      \item There are two $\varepsilon$-transitions form the start state $q_0$ to $q_1$ and $q_3$.
+      \item From $q_2$ there is an  $\varepsilon$-transition back to $q_1$ and also an
+            $\varepsilon$-transition to $q_3$.
+      \end{enumerate}
+      Figure \ref{fig:kleene.stlx} on page \pageref{fig:kleene.stlx} shows the
+      implementation of the function \texttt{kleene}.  This function takes a
+      finite state machine \texttt{f} and transforms it in the way
+      depicted in Figure \ref{fig:aStar.eps}.  This function can be used
+      to compute $A(r^*)$, since we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $A(r^*) = \mathtt{kleene}\bigl(A(r)\bigr)$.
+ 
+    \begin{figure}[!ht]
+    \centering
+    \begin{Verbatim}[ frame         = lines, 
+                      framesep      = 0.3cm, 
+                      firstnumber   = 1,
+                      labelposition = bottomline,
+                      numbers       = left,
+                      numbersep     = -0.2cm,
+                      xleftmargin   = 0.8cm,
+                      xrightmargin  = 0.8cm,
+                    ]
+    kleene := procedure(f) {
+        [m, delta0, q1, q2] := f;
+        q0 := getNewState(); 
+        q3 := getNewState(); 
+        delta := procedure(q, c) {
+                     if (q == q0 && c == "") {
+                         return { q1, q3 };
+                     } else if (q == q2 && c == "") {
+                         return { q1, q3 };
+                     } else if (q in m) {
+                         return delta0(q, c);
+                     } else {
+                         return {};
+                     } 
+                 };
+        return [ { q0, q3 } + m, delta, q0, q3 ];
+    };
+    \end{Verbatim}
+    \vspace*{-0.3cm}
+    \caption{The function to compute $A(r^*)$.}
+    \label{fig:kleene.stlx}
+    \end{figure}
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    var gStateCount;
+    gStateCount := -1;
+    
+    getNewState := procedure() {
+        gStateCount += 1;
+        return "q" + gStateCount;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to generate unique states.}
+\label{fig:getNewState.stlx}
+\end{figure}
+
+Finally, Figure \ref{fig:regexp2NFA.stlx} shows how to generate a finite state machine
+from a given regular expression.  The function $\texttt{regexp2NFA}(r)$ is defined by
+recursion on $r$:
+\begin{enumerate}
+\item If $r$ is a single character $c$, then the fsm $A(c)$ is computed using
+      the function $\texttt{genCharNFA}(c)$.
+\item If $r = r_1 \cdot r_2$, the function \texttt{regexp2NFA} recursively computes
+      finite state machines $A(r_1)$ and $A(r_2)$.  These fsms are then combined
+      using the function $\texttt{catenate}\bigr(A(r_1), A(r_2)\bigr)$.
+\item If $r = r_1 + r_2$, the function \texttt{regexp2NFA} recursively computes
+      finite state machines $A(r_1)$ and $A(r_2)$.  These fsms are then combined
+      using the function $\texttt{disjunction}\bigr(A(r_1), A(r_2)\bigr)$.
+\item If $r = r_0^*$, the function \texttt{regexp2NFA} recursively computes
+      the finite state machines $A(r_0)$.  This fsm is then transformed
+      using the function $\texttt{kleene}\bigr(A(r_0)\bigr)$.
+\end{enumerate}
+The reader should note that we have made heavy use of closures to implement the functions
+\texttt{genCharNFA}, \texttt{catenate}, \texttt{disjunction}, and \texttt{kleene}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    regexp2NFA := procedure(r) {
+        match (r) {
+            case c | isString(c): 
+                 return genCharNFA(c);
+            case Cat(r1, r2): 
+                 return catenate(regexp2NFA(r1), regexp2NFA(r2));        
+            case Or(r1, r2): 
+                 return disjunction(regexp2NFA(r1), regexp2NFA(r2));
+            case Star(r0): 
+                 return kleene(regexp2NFA(r0));
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Generating a non-deterministic fsm from a regular expression.}
+\label{fig:regexp2NFA.stlx}
+\end{figure}
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial"
+%%% End: 

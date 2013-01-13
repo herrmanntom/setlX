@@ -1,0 +1,11 @@
+start := now();
+n := 1000000;
+i := 0;
+x := 1.0;
+while (i < n) {
+    x := 0.5 * (x + 2/x);
+    i += 1;
+}
+stop  := now();
+print("x = $x$");
+print("time = $(stop - start) * 0.001$ seconds");

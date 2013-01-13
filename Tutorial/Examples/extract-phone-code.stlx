@@ -1,0 +1,19 @@
+// This function takes as input a string.  This string is a phone number in the form
+//    "+49-711-6673-4504".
+// The function extracts both the country code and the area code and returns a pair
+// of strings of the form
+//    [area, country],
+// where area is the area code and country is the country code.
+extractCountryArea := procedure(phone) {
+    match (phone) {
+        regex '\+([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+)' as [_, c, a, _, _]:
+            return [c, a];
+        default: abort("The string $phone$ is not a phone number!");
+    }
+};
+
+[c, a] := extractCountryArea("+49-711-6673-4504");
+print("country = $c$");
+print("area    = $a$");
+[c, a] := extractCountryArea("hugo");
+

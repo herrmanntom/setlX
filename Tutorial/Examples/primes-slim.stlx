@@ -1,0 +1,9 @@
+factors := procedure(p) {
+    return { f in { 1 .. p } | p % f == 0 };
+};
+
+primes := procedure(n) {
+	return { p in { 2 .. n } | factors(p) == { 1, p } };
+};
+
+print(primes(100));

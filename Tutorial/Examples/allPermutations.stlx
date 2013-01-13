@@ -1,0 +1,9 @@
+printAllPermutations := procedure(l) {
+    while (l != om) {
+        print(l);
+        l := nextPermutation(l);        
+    }
+};
+
+printAllPermutations([1,2,3]);
+

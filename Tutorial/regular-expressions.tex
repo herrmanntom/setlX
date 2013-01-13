@@ -1,0 +1,638 @@
+\chapter{Regular Expressions \label{chapter:regular-expressions}}
+\emph{Regular expressions} are a very powerful tool when processing strings.
+Therefore, most modern programming languages support them.  \setlx\ is no exception.  
+As \setlx\ is based on \textsl{Java}, the syntax of the regular expressions supported by
+\setlx\ is the same as the syntax of regular expressions in \textsl{Java}.  Therefore, it
+is not necessary to describe the syntax of regular expressions in this document.  The
+documentation of the \textsl{Java} class \texttt{java.util.regex.Pattern} which can
+be found at
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}{\texttt{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}}
+\\[0.2cm]
+contains a concise description of the syntax and semantics of regular expressions.
+For a more general discussion of the use of regular expression, the book of Friedl
+\cite{friedl:2006} is an excellent choice.
+Therefore, we will confine ourselves to show how regular expressions can be used in
+\setlx.  In \setlx, there are two control structures that make use of regular expressions.
+The first is the \texttt{match} statement and the second is the \texttt{scan} statement.
+
+\section{Using Regular Expressions in a \texttt{match} Statement}
+Instead of the keyword ``\texttt{case}'', a branch in a \texttt{match} statement can begin
+with the keyword ``\texttt{regex}''.  Figure \ref{fig:regexp.stlx} shows the definition of
+a function named \texttt{classify} that can takes a string and tries to classify this
+string as either a word or a number.  
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    classify := procedure(s) {
+        match (s) {
+            regex '0|[1-9][0-9]*': print("found an integer");
+            regex '[a-zA-Z]+'    : print("found a word");
+            regex '\s+'          : // skip white space
+            default              : print("unkown: $s$");
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A simple function to recognize numbers and words.}
+\label{fig:regexp.stlx}
+\end{figure}
+
+Note that we have specified the regular expressions
+using literal strings, i.e.~strings enclosed in single quote characters. This is necessary
+in line 5, since the regular expression \\[0.2cm]
+\hspace*{1.3cm}
+\verb|'\s+'|
+\\[0.2cm]
+contains a backslash character.  If we had used double quotes, it would have been
+necessary to escape the backslash character with another backslash and we would have had
+to write
+\\[0.2cm]
+\hspace*{1.3cm}
+\verb|"\\s+"|
+\\[0.2cm]
+instead.  Invoking the function \texttt{classify} as 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{classify("123");}
+\\[0.2cm]
+ prints the message ``\texttt{found an integer}'', while invoking the function as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{classify("Hugo");}
+\\[0.2cm]
+prints the message `\texttt{found a word}''.  Finally, calling
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{classify("0123");}
+\\[0.2cm]
+prints the answer ``\texttt{unkown: 0123}''.  
+
+\subsection{Extracting Substrings}
+Often,  strings are structured and the task is to extract substrings corresponding to
+certain parts of a string.  This can be done using regular expressions.  For 
+example, consider a phone number in the format
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{+49-711-6673-4504}.
+\\[0.2cm]
+Here, the substring ``\texttt{49}'' is the country code, the substring ``\texttt{711}'' is
+the area code, the substring ``\texttt{6673}'' is the company code, and finally
+``\texttt{4504}'' is the extension.  The regular expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\verb|\+([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+)|
+\\[0.2cm]
+specifies this format and the different blocks of parentheses correspond to the diffferent
+codes. If  a phone number is given and the task is to
+extract, say, the country code and the area code, then this can be achieved with the 
+\setlx\ function shown in Figure \ref{fig:extract-phone-code.stlx}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.3cm,
+                  xrightmargin  = 0.3cm,
+                ]
+    extractCountryArea := procedure(phone) {
+        match (phone) {
+            regex '\+([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+)' as [_, c, a, _, _]:
+                return [c, a];
+            default: abort("The string $phone$ is not a phone number!");
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to extract the country and area code of a phone number.}
+\label{fig:extract-phone-code.stlx}
+\end{figure}
+
+\noindent
+Here, the regular expression to recognize phone numbers has several parts that are
+enclosed in parentheses.  These parts are collected in a list of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$[s, p_1, \cdots, p_n]$.
+\\[0.2cm]
+The first element $s$ of this list is the string that matched the regular expression.  The
+remaning elements $p_i$ correspond to the different parts of the regular expression: $p_1$
+corresponds to the first group of parentheses, $p_2$ corresponds to the second group, and
+in general $p_i$ corresponds to the $i$-th group.  In line 3 this list is the matched
+against the pattern
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[\_, c, a, \_, \_]}.
+\\[0.2cm]
+Therefore, if the match is successful, the variable \texttt{c} will contain the country
+code and the variable \texttt{a} is instantiated with the country code.  The groups of
+regular expressions that are not needed are matched against the anonymous variable
+``\texttt{\_}''. 
+
+If there a regular expression contains  nested groups of parentheses, then the order of
+the groups is determined by the left parenthesis of a group.  For example, the regular
+expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{'((a+)(b*)c?)d'}
+\\[0.2cm]
+contains three groups:
+\begin{enumerate}
+\item the first group is \texttt{'((a+)(b*)c?)'},
+\item the second group is \texttt{'(a+)'}, and
+\item the third group is \texttt{'(b*)'}.
+\end{enumerate}
+
+\subsection{Testing Regular Expressions}
+In real life applications, regular expressions can get quite involved and difficult to
+comprehend.  The function \texttt{testRegexp} shown in Figure \ref{fig:test-regexp.stlx}
+can be used to test a given regular expression:  The function takes a regular expression
+\texttt{re} as its first argument, while the second argument is a string \texttt{s}.  The
+function tests whether the string \texttt{s} matches the regular expression \texttt{re}.
+If this is the case, the function \texttt{testRegexp} returns a list that contains all the
+substrings corresponding to the different parenthesized groups of the regular expression
+\texttt{re}.   For example,  invoking this function as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{testRegexp('(a*)(a+)b', "aaab");}
+\\[0.2cm]
+yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{["aaab", "aa", "a"]}.
+\\[0.2cm]
+Here, the first element of the list is the string that was matched by the regular
+expression, the second element \texttt{"aa"} corresponds to the regular subexpression
+\texttt{'(a*)'}, and the last element \texttt{"a"} corresponds to the regular
+subexpression \texttt{'(a+)'}.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    testRegexp := procedure(re, s) {
+        match (s) {
+            regex re as l: return l;
+            default : print("no match!");
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Testing regular expressions.}
+\label{fig:test-regexp.stlx}
+\end{figure}
+
+\subsection{Extracting Comments from a File}
+In this section we present an example of the  \texttt{match} statement in action.  The
+function \texttt{printComments} shown in Figure \ref{fig:find-comments.stlx} attempts to
+extract all those \texttt{C}-style comments from a file that are contained in a single
+line.  The regular expression \verb|'\s*(//.*)'| in line 5 matches comments starting
+with ``\texttt{//}'', while the regular expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\verb"'\s*(\/\*([^*]|\*+[^*/])*\*+\/)\s*'"
+\\[0.2cm]
+in line 6 matches comments that start with the string ``\texttt{/*}'' and end with the
+string ``\texttt{*/}''.  This regular expression is quite difficult to read for two
+reasons:
+\begin{enumerate}
+\item We have to preceed the symbol ``\texttt{*}'' with a backslash in order to prevent it
+      from being interpreted as a quantifier.
+\item We have to ensure that the string between  ``\texttt{/*}'' and ``\texttt{*/}'' does
+      not contain the substring ``\texttt{*/}''.  The regular expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \verb"([^*]|\*+[^*/])*"
+      \\[0.2cm]
+      specifies this substring:  This substring can have an arbitrary number of parts
+      that satisfy the follwing specification:
+      \begin{enumerate}
+      \item A part may consists of any character different from
+            the character ``\texttt{*}''.  This is specificed by the regular expression
+            \verb"'[^*]'".
+      \item A part may be a sequence of ``\texttt{*}'' characters
+            that is neither followed by the character ``\texttt{/}'' nor the character
+            ``\texttt{*}''.   These parts are matched by the regular expression
+            \verb"\*+[^*/]".
+      \end{enumerate}
+      Concatenating any number of these parts will never produce a string containing the
+      substring ``\texttt{*/}''.
+\end{enumerate}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.3cm,
+                  xrightmargin  = 0.3cm,
+                ]
+    printComments := procedure(file) {
+        lines := readFile(file);
+        for (l in lines) {
+            match (l) {
+                regex '\s*(//.*)'                       as c: print(c[2]);
+                regex '\s*(/\*([^*]|\*+[^*/])*\*+/)\s*' as c: print(c[2]);
+            }
+        }
+    };
+    
+    for (file in params) {
+        printComments(file);
+    }
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Extracting comments from a given file.}
+\label{fig:find-comments.stlx}
+\end{figure}
+
+If the code shown in Figure \ref{fig:find-comments.stlx} is stored in the file
+\texttt{find-comments.stlx}, then we can invoke this program as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{setlx find-comments.stlx --params file.stlx}
+\\[0.2cm]
+The option ``\texttt{--params}'' creates the global variable \texttt{params} that contains
+a list of length one.  The first element of this list is the string
+``\texttt{file.stlx}''.  Therefore, the \texttt{for} loop in line 11 will call the
+function \texttt{printComments} with the string ``\texttt{file.stlx}''.  If we invoke the
+program using the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{setlx find-comments.stlx --params *.stlx}
+\\[0.2cm]
+instead, then the function \texttt{printComments} will be called for all files ending in
+``\texttt{.stlx}''. 
+
+\subsection{Conditions in \texttt{match} Statements}
+A clause of a \texttt{match} statement can contain an optional Boolean condition that is
+separated from the regular expression by the string ``\texttt{|}''.   Figure
+\ref{fig:find-palindrom.stlx} shows a program to search for palindroms in a given file.
+Line 6 shows how a condition can be attached to a \texttt{regex} clause. The regular
+expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\verb|'[a-zA-Z]+'|
+\\[0.2cm]
+matches any number of letters, but the string \texttt{c[1]} corresponding to the match
+is only added to the set of palindroms if the predicate \texttt{isPalindrom[c[1])} yields
+\texttt{true}. 
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    findPalindrom := procedure(file) {
+        all := split(join(readFile(file), "\n"), '[^a-zA-Z]+');
+        palindroms := {};
+        for (s in all) {
+            match (s) {
+                regex '[a-zA-Z]+' as c | isPalindrom(c[1]): 
+                      palindroms += { c[1] };
+                regex '.|\n': 
+                      // skip rest
+            }
+        }
+        return palindroms;        
+    };
+    
+    isPalindrom := procedure(s) {
+        n := #s + 1;
+        return +/ [s[n - i] : i in [1 .. #s]] == s;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A program to find palindroms in a file.}
+\label{fig:find-palindrom.stlx}
+\end{figure}
+
+
+\section{The \texttt{scan} Statement}
+The program to extract comments that was presented in the previous subsection is quite
+unsatisfactory as it will only recognize those strings that span a single line.
+Figure \ref{fig:find-comments-scan.stlx} shows a function that instead extracts all
+comments form a given file.  The function \texttt{printComments} takes a string as
+argument.  This string is interpreted as the name of a file.  In line 2, the function 
+\texttt{readFile} reads this file.  The function produces a list of strings.  Each string
+corresponds to a single line of the file without the trailing line break.  The function
+\texttt{join} joins all these lines into a single string.  As the second argument of
+\texttt{join} is the string ``\texttt{\symbol{92}n}'', a newline is put inbetween the
+lines that are joined.  The end result is that the variable \texttt{s} contains the
+content of the file as one string.  This string is the scanned using the \texttt{scan}
+statement in line 3.  The \texttt{scan} statement is explained in more detail below.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    printComments := procedure(file) {
+        s := join(readFile(file), "\n");
+        scan (s) {
+            regex '//[^\n]*'                as c: print(c[1]);
+            regex '/\*([^*]|\*+[^*/])*\*+/' as c: print(c[1]);
+            regex '.|\n'                        : // skip every thing else
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Extracting comments using the match statement.}
+\label{fig:find-comments-scan.stlx}
+\end{figure}
+
+The general form of a scan statement is as follows:
+\\[0.2cm]
+\hspace*{1.3cm} \texttt{scan ($s$) \{}  \\
+\hspace*{1.8cm} \texttt{regex} $r_1$ \texttt{as} $l$ : $b_1$ \\
+\hspace*{1.8cm} $\vdots$                                                  \\
+\hspace*{1.8cm} \texttt{regex} $r_n$ \texttt{as} $l$ : $b_n$ \\
+\hspace*{1.3cm} \texttt{\}}             
+\\[0.2cm]
+Here, $s$ is a string to be analyzed, the variables $r_1$, $\cdots$, $r_n$ are regular
+expressions, while $b_1$, $\cdots$, $b_n$ are lists of statements.  The \texttt{scan}
+statement works as follows:
+\begin{enumerate}
+\item All the regular expressions $r_1$, $\cdots$, $r_n$ are tried in parallel to match a
+      prefix of the string $s$.
+      \begin{enumerate}
+      \item If none of these regular expression matches, the scan statement is aborted
+            with an error message.
+      \item If exactly one regular expression $r_i$ matches, then the corresponding
+            statements $b_i$ are executed and the prefix matched by $r_i$ is removed from
+            the beginning of $s$.
+      \item If more than one regular expression matches, then there is a conflict which
+            is resolved in two steps:
+            \begin{enumerate}
+            \item If the prefix matched by some regular expression $r_j$ is longer
+                  than any other prefix matched by a another regular expression $r_i$,
+                  then the regular expression $r_j$ wins, the list of statements $b_j$ is
+                  executed and the prefix matched by $r_j$ is removed from $s$.
+            \item If there are two (or more) regular expressions $r_i$ and $r_j$ that both
+                  match a prefix of maximal length, then the regular expression with the
+                  lowest index wins, i.e.~if $i < j$, then $b_i$ is executed.
+            \end{enumerate}
+      \end{enumerate}
+\item This is repeated as long as the string $s$ is not empty.  Therefore, a \texttt{scan}
+      statement is like a \texttt{while} loop combined with a \texttt{match} statement.
+\end{enumerate}
+The clauses in a \texttt{scan} statement can also have Boolean conditions attached.  This
+works the same way as it works for a \texttt{match} statement.
+
+The \texttt{scan} statement provides a functionality that is similar to the functionality
+provided  by tools like \texttt{lex} \cite{lesk:1975} or
+\href{http://jflex.de}{\textsl{JFlex}} \cite{klein:2009}. 
+In order to support this claim, we present an example program that computes the marks of
+an exam.  Assume the results of an exam are collected in a text file like the one shown in
+Figure \ref{fig:result.txt}.  The first line of this file shows that this is an exam about
+algorithms and the secomnd line gives the name of the group.  The fourth line tells us
+that there are 6 exercises in the given exam and the remaining lines list the points that
+have been achieved by individual students.  A hyphen signals that an exercise has not been
+worked on.  In order to calculate marks, we just have to add up all the points.  From
+this, the mark can easily be calculated.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    Exam:  Algorithms
+    Group: TIT07AIX
+    
+    Exercises:                1. 2. 3. 4. 5. 6.
+    Max Müller-Lüdenscheidt:  8  9  8  -  7  6
+    Daniel Dumpfbacke:        4  4  2  0  -  -
+    Susi Sorglos:             9 12 12  9  9  6
+    Jacky Jeckle:             9 12 12  -  9  6
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Typical results from an exam.}
+\label{fig:result.txt}
+\end{figure}
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    evalExam := procedure(file, maxPoints) {
+        all := join(readFile(file), "\n");
+        state := "normal";
+        scan(all) using map {
+            regex '[a-zA-Z]+:.*\n': // skip header
+            regex '[A-Za-zäöüÄÖÜß]+\s[A-Za-zäöüÄÖÜß\-]+:' as [ name ]:
+                  nPrint(name);
+                  state := "printBlanks";
+                  sumPoints := 0;
+            regex '[ \t]+' as [ whiteSpace ] | state == "printBlanks":
+                  nPrint(whiteSpace);  
+                  state := "normal";
+            regex '[ \t]+' | state == "normal": 
+                  // skip white space between points
+            regex '0|[1-9][0-9]*' as [ number ]:
+                  sumPoints += int(number);
+            regex '-': 
+                  // skip exercises that have not been done  
+            regex '\n' | sumPoints != om:
+                  print(mark(sumPoints, maxPoints));
+                  sumPoints := om;
+            regex '[ \t]*\n' | sumPoints == om:
+                  // skip empty lines
+            regex '.|\n' as [ c ]:
+                  print("unrecognized character: $c$");
+                  print("line:   ", map["line"]);
+                  print("column: ", map["column"]);
+        }
+    };
+    mark := procedure(p, m) {
+        return 7.0 - 6.0 * p / m;
+    };    
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A program to compute marks for an exam.}
+\label{fig:exam.stlx}
+\end{figure}
+
+Figure \ref{fig:exam.stlx} shows a program that does this calculation.  We discuss this
+program line by line.
+\begin{enumerate}
+\item The function \texttt{evalExam} takes two arguments:  The first is the name of a file
+      containing the results of the exam and the second argument is the number of points 
+      needed to get the best mark.  This number is a parameter that is needed to calculate
+      the marks.
+\item Line 2 creates a string containing the content of the given file.
+\item We will use two states in our scanner:
+      \begin{enumerate}
+      \item The first state is identified by the string \texttt{"normal"}.
+            Initially, the variable \texttt{state} has this value.
+      \item The second state is identified by the string \texttt{"printBlanks"}. 
+            We enter this state when we have read the name of a student.
+            This state is needed to read the white space between the name of a student 
+            and the first number following the student.
+
+            In state \texttt{"normal"}, all white space is discarded, but in state
+            \texttt{"printBlanks"} white space is printed.  This is necessary to format
+            the output.
+      \end{enumerate}
+      Line 3 therefore initializes the variable \texttt{state} to \texttt{"normal"}.
+\item The regular expression in line 5 is needed to skip the header of the file.  These
+      header lines can be recognized that there is a single word followed by a colon
+      `\texttt{:}''.   In contrast, the names of students always consist of two words.
+\item The regular expression inline 5 matches the name of a student. 
+      This name is printed and the number of points for this student is set to $0$.
+      Furthermore, when the name of a student is seen, the state is changed to the state
+      \texttt{"printBlanks"}.
+\item The regular expression in line 10 matches the white space following the name of a
+      student.  This white space is then printed and the state is switched back to
+      \texttt{"normal"}.
+\item Line 13 skips over white space that is encountered in state \texttt{"normal"}.
+\item The clause in line 15 recognizes strings that can be interpreted as numbers.  These
+      strings are converted into numbers with the help of the function \texttt{int} and
+      then this number is added to the number of points achieved by this student.
+\item Line 17 skips hyphens as these correspond to an exercise that has not been attempted
+      by the student.
+\item Line 19 checks whether we are at the end of a line listingthe points of a student.
+      This is the case if we encounter a newline and the variable \texttt{sumPoints}
+      is not undefined.  In this case, the mark for this student is computed and printed.
+      Furthermore, the variable \texttt{sumPoints} is set back to the undefined status.
+\item Any empty lines are skipped in line 22.
+\item Finally, if we encounter any remaing character, then there is a syntax error
+      in our input file.  In this case, line 24 recognizes this character and
+      produces an error message.  This error message
+      specifies the line and column of the character.  This is done with the help of the
+      variable \texttt{map} that has been declared in line 4 via the \texttt{using}
+      directive.  
+\end{enumerate}
+
+\section{Additional Functions Using Regular Expressions}
+There are three predefined functions that use regular expressions.
+\begin{enumerate}
+\item The function 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{matches}(s, r)$ 
+      \\[0.2cm]
+      takes a string $s$ and a regular expression $r$ as its arguments.  It returns
+      \texttt{true} if the string $s$ is in the language described by the regular
+      expression $r$.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{matches(\symbol{34}42\symbol{34}, '0|[1-9][0-9]*');}
+      \\[0.2cm]
+      returns \texttt{true} as the string \texttt{\symbol{34}42\symbol{34}} can be
+      interpreted as a number and the regular expression \texttt{'0|[1-9][0-9]*'}
+      describes natural numbers in the decimal system.
+
+      There is a variant of \texttt{matches} that takes three arguments.  It is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{matches}(s, r, \mathtt{true})$.
+      \\[0.2cm]
+      In this case, $r$ should be a regular expression containing serveral \emph{groups},
+      i.e.~there should be several subexpressions in $r$ that are enclosed in
+      parentheses.  Then, if $r$ matches $s$, the function \texttt{matches} returns a list
+      of substrings of $s$.  The first element of this list is  the  string $s$,
+      the remaining elements are the substrings corresponding to the different groups of $r$.
+      For example, the expression
+      \\[0.2cm]
+      \hspace*{0.3cm}
+      \verb|matches("+49-711-6673-4504", '\+([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+)', true)|
+      \\[0.2cm]
+      returns the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{["+49-711-6673-4504", "49", "711", "6673", "4504"]}.
+      \\[0.2cm]
+      If \texttt{matches} is called with three arguments where the last argument is
+      \texttt{true}, an unsuccessful match returns the empty list.
+\item The function
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{replace($s$, $r$, $t$)}
+      \\[0.2cm]
+      receives three arguments: the arguments $s$ and $t$ are strings, while $r$ is a
+      regular expression.  The function looks for substrings in $s$ that match $r$.  These
+      substrings are then replaced by $t$.  For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \verb|replace("+49-711-6673-4504", '[0-9]{4}', "XXXX");| 
+      \\[0.2cm]
+      returns the string
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \verb|"+49-711-XXXX-XXXX"|.
+\item There is a variant to the function \texttt{replace($s$, $r$, $t$)} that replaces only the first substring in $s$
+      that matches $r$.  This variant is called \texttt{replaceFirst} and is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{replaceFirst($s$, $r$, $t$)}.
+      \\[0.2cm]
+      For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \verb|replaceFirst("+49-711-6673-4504", '[0-9]{4}', "XXXX");| 
+      \\[0.2cm]
+      returns the string
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \verb|"+49-711-XXXX-4504"|.
+\end{enumerate}
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial"
+%%% End: 

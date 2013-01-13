@@ -1,0 +1,9 @@
+// reverse the given list
+reverse := procedure(l) {
+    match (l) {
+        case []   : return l;
+        case [x|r]: return reverse(r) + [x];
+        default:    abort("type error in reverse($l$)");
+    }
+};
+

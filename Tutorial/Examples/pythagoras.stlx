@@ -1,0 +1,13 @@
+pythagoras := procedure(n) {
+    s := { 1 .. n };
+    m := { [[a, b], c] : a in s, b in s, c in s };
+    r := {};
+    for ([[a,b], c] in m) { 
+        if (a*a + b*b == c*c) { 
+            r += { [a,b,c] }; 
+        } 
+    }
+    return r;
+};
+
+print(pythagoras(10));

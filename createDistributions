@@ -85,6 +85,7 @@ rm -f "$binOnly.zip"
 rm -f "$devel.zip"
 # remove other stuff
 rm -f "diff.result"
+rm -f diff.*.result
 
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "
@@ -109,6 +110,17 @@ cd src;make dist-clean;cd ..
 
 # create development zip
 echo -n "=> Creating development kit ... "
-zip -qr "$devel.zip" . -x \*.zip
+zip -qr "$devel.zip" . -x \*.zip \*.git\*
 echo "done"
+
+# warn if current release is not tagged in git
+if [ -d ".git" -a $(which git > /dev/null 2>&1; echo $?) -eq 0 ]
+  then
+    if [ $(git tag | grep -c "$version") -ne 1 ]
+      then
+        echo 2>&1
+        echo "WARNING: Version number of created distribution is not tagged in git!" 2>&1
+        echo 2>&1
+    fi
+fi
 

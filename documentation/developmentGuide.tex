@@ -220,11 +220,13 @@ This script should be run before creating a new version, by executing
 ./test_all_examples
 \end{lstlisting}
 
+Note that to succeed a 64-bit java installation and about 6GB of free memory are required.
+
 The logic of the script is as follows:
 \begin{itemize}
 	\item First \command{make test} is executed and its result verified.
 	\item Each source file ending in \command{.stlx} inside the \command{example\_SetX\_code} folder will be executed, if a file with the same basename, but ending in \command{.stlx.reference} exists.
-	\item If the executed program requires user input, a file with the same basename, but ending in \command{.stlx.input} must be created, including an input per line. This fill will be piped into the interpreter when executing the source file.
+	\item If the executed program requires user input, a file with the same basename, but ending in \command{.stlx.input} must be created, including an input per line. This file will be piped into the interpreter when executing the source file.
 	\item Execution uses the \command{src} folder as working directory and starts \setlX{} with the \command{--predictableRandom} option, thus ensuring predictable results. 
 	\item The output (on both stdout and stderr) of the execution and the reference file are compared using diff.
 	\item When the resulting diff is empty, the next source file is executed.

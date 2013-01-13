@@ -1,7 +1,7 @@
 package org.randoom.setlx.utilities;
 
 // This class lets all calls die
-/*package*/ class DummyEnvProvider implements EnvironmentProvider {
+public class DummyEnvProvider implements EnvironmentProvider {
 
     public final static DummyEnvProvider DUMMY = new DummyEnvProvider();
 

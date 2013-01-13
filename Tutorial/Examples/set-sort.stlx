@@ -1,0 +1,7 @@
+// Sort the given set s.
+setSort := procedure(s) {
+    match (s) {
+        case {}   : return [];
+        case {x|r}: return [x] + setSort(r);
+    }
+};

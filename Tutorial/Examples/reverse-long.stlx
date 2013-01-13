@@ -1,0 +1,13 @@
+// reverse the given string
+reverse := procedure(s) {
+    if (s == "") {
+        return s;
+    } else if (isString(s)) {
+        c := s[1];
+        r := s[2..];
+        return reverse(r) + c;
+    } else {
+        abort("type error in reverse($s$)");
+    }
+};
+

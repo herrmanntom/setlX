@@ -1,0 +1,15 @@
+product := procedure(r1, r2) {
+    r := {};
+    for ([x, y1] in r1, [y2, z] in r2) {
+        if (y1 == y2) {
+            r += { [x, z] };
+        }
+    }
+    return r;
+};
+
+r := { [n, n*n] : n in [1..100] };
+
+print(product(r, r));
+
+

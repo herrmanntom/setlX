@@ -1,0 +1,9 @@
+// reverse the given string
+reverse := procedure(s) {
+    match (s) {
+        case []   : return s;
+        case [c|r]: return reverse(r) + c;
+        default   : abort("type error in reverse($s$)");
+    }
+};
+

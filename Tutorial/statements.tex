@@ -1,0 +1,1305 @@
+\chapter{Writing Statements in \setlx}
+This section discusses the various possibilities to write statements and the 
+features offered by \setlx\ to steer the control flow in a program.
+\setlx\ supports the follwing statements to control the flow of execution:
+\begin{enumerate}
+\item branching statements like \texttt{if-then-else}, \texttt{switch}, and \texttt{match},
+\item the looping statements \texttt{for} and \texttt{while} together with \texttt{break} and
+      \texttt{continue}, 
+\item \texttt{try-catch} statements to deal with exceptions,
+\item the \texttt{backtrack} statement to support backtracking.
+\end{enumerate}
+
+\section{Assignment Statements}
+The most basic command is the assignment.  In contrast to the programming languages \texttt{C}
+and \textsl{Java}, \setlx\ uses the operator ``\texttt{:=}'' for assignments.  For example, the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x := 2/3;}
+\\[0.2cm]
+binds the variable \texttt{x} to the fraction $\frac{2}{3}$.  \setlx\ supports simultaneous
+assignments to multiple variables via lists.  For example, the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[x, y, z] := [1, 2, 3];}
+\\[0.2cm]
+simultaneously binds the variables \texttt{x} to $1$, \texttt{y} to $2$ and \texttt{z} to $3$.
+This feature can be used to swap the values of two variables:  The statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[x, y] := [y, x];}
+\\[0.2cm]
+swaps the values of $x$ and $y$.  If we do not need to assign all the values of a list, we
+can use the underscore ``\texttt{\_}'' as an anonymous variable.  For example,
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[x, \_, z] := [1, 2, 3];} 
+\\[0.2cm]
+assigns the number \texttt{1} to the variable \texttt{x} and the variable \texttt{z} is
+is set to \texttt{3}.
+
+The assignment operator can be combined with any of the operators 
+``\texttt{+}'',
+``\texttt{-}'',
+``\texttt{*}'',
+``\texttt{/}'',
+``\texttt{\symbol{37}}'', and 
+``\texttt{\symbol{92}}''.
+For example, the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x += 1;}
+\\[0.2cm]
+increments the value of the variable \texttt{x} by one,  while the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x *= 2;}
+\\[0.2cm]
+doubles the value of \texttt{x}.   
+
+Finally,
+assignment statements can be chained.  For example, the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := b := 3;}
+\\[0.2cm]
+assigns the value \texttt{3} to both  \texttt{a} and \texttt{b}.
+
+\section{Functions}
+The code shown in figure
+\ref{fig:primes-slim.stlx} on page \pageref{fig:primes-slim.stlx} shows a simple program
+to compute prime numbers.  It defines two functions.  The function \texttt{factors} takes a
+natural number $p$ as its first argument and computes the set of all factors of $p$.  Here, a number
+$f$ is a factor of $p$ iff dividing $p$ by $f$ leaves no remainder, that is 
+$p \,\texttt{\symbol{37}}\, f = 0$.
+The second function \texttt{primes} takes a natural number $n$ as an argument and computes the
+set of all those prime numbers that are less or equal to $n$.  
+
+The idea is that a number $p$ is prime
+iff the set of all  factors of $p$ contains just $1$ and $p$.  
+Note that, as \setlx\ is a functional language, the functions that are defined by the
+keyword \texttt{procedure}  are assigned to variables.  These functions can be used like
+any other values.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    factors := procedure(p) {
+        return { f in { 1 .. p } | p % f == 0 };
+    };
+    primes := procedure(n) {
+        return { p in { 2 .. n } | factors(p) == { 1, p } };
+    };
+    print(primes(100));
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A naive program to compute primes.}
+\label{fig:primes-slim.stlx}
+\end{figure}
+
+\noindent
+A simplified grammar rule for the definition of a function can be given as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{fctDef} \;\rightarrow\; \mathtt{VAR}\; \quoted{:=} \quoted{procedure} \quoted{(} \textsl{paramList} 
+ \quoted{)} \quoted{\{} \textsl{block} \quoted{\}} \quoted{;}$
+\\[0.2cm]
+The meaning of the symbols used in this grammar rule are as follows:
+\begin{enumerate}
+\item \texttt{VAR} identifies a variable.  This variable is bound to the definition of the function.
+      Note that in \setlx\ the name of a variable has to start with a lower case letter.
+\item \textsl{paramList} is a list of the formal parameters of the function.  In
+      \textsc{Ebnf}-notation the grammar rule for \textsl{paramList} is given as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\textsl{paramList} \;\rightarrow\; (\textsl{paramSpec}\;\; (\squoted{,}\; \textsl{paramSpec})^*)?$
+      \\[0.2cm]
+      Therefore, a \textsl{paramList} is a possibly empty list of parameter specifications that are 
+      separated by a comma ``\texttt{,}''.  A parameter specification is either just a variable
+      or it is a variable preceded by the token ``\texttt{rw}'':
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\textsl{paramSpec} \;\rightarrow\; (\mathtt{ID} \mid \squoted{rw}\; \mathtt{ID})$.
+      \\[0.2cm]  
+      If the parameter is preceded by the keyword \texttt{rw}, then this parameter is a 
+      \emph{read-write parameter}, which means that the function can change the value of the
+      variable given as argument.  Parameters not specified as read-write parameters have a strict
+      \emph{call by value semantics}, and therefore changes to those parameters will not be
+      visible outside the function.
+\item \textsl{block} is a sequence of statements.
+\end{enumerate}
+Note that the definition of a function has to be terminated by the symbol ``\texttt{;}''.
+
+There is a variant syntax for definining function which is appropriate if the definition of the
+function is just a single expression.  For example, the function mapping $x$ to the square
+$x*x$ can be defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{f := x |-> x * x;}
+\\[0.2cm]
+A definition of this form is called a \emph{lambda definition}.
+If the function takes more than one arguments, the argument list has to be enclosed in square
+brackets.  For example, the function \texttt{hyp} that computes the hypotenuse of a rectangular triangle
+can be defined as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{hyp := [x, y] |-> sqrt(x*x + y*y);}
+\\[0.2cm]
+The syntax for a lambda definition is given by the follwing grammar rule:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{fctDef} \;\rightarrow\; \mathtt{ID} \quoted{:=} \textsl{lambdaParams} \quoted{|->} \textsl{expr}$
+\\[0.2cm]
+Here, \textsl{lambdaParams} is either just a single parameter or a list of parameters, where the
+parameters are enclosed in square brackets and are separated by commas, while
+\textsl{expr} denotes an expression.
+
+Lambda definitions are handy if we don't bother to give a name to a function.
+For example, the code in figure \ref{fig:lambda.stlx} defines a function map.  This function takes
+two arguments: The first argument $l$ is a list and the second argument $f$ is a function that is to
+be applied to all arguments of this list.  In line 4, the function map is called with a function
+that squares its argument.  Therefore, the assignment in line 4 computes the list of the first 10
+square numbers.  Note that we did not had to name the function that did the squaring.  Instead, we
+have  used a lambda definition.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    map := procedure(l, f) {
+        return [ f(x) : x in l ];
+    };    
+    t := map([1 .. 10], x |-> x * x);
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{An example of a lambda definition in use.}
+\label{fig:lambda.stlx}
+\end{figure}
+
+\noindent
+Of course, it is much easier to build the list of the first 10 squares using the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{t := [x*x : $\hspace*{-0.3cm}$x in [1..10]];}
+
+\subsection{Memoization}
+The Fibonacci function $\textsl{fib}: \mathbb{N} \rightarrow \mathbb{N}$ is defined
+recursivly by the following equations:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{fib}(0) = 0$, \quad
+$\textsl{fib}(1) = 1$, \quad and \quad
+$\textsl{fib}(n+2) = \textsl{fib}(n+1) + \textsl{fib}(n)$. 
+\\[0.2cm]
+These equations are readily implemented as shown in Figure \ref{fig:fibonacci.stlx}.
+However, this implementation has a performance problem which can be easily seen when tracing the
+computation of $\textsl{fib}(4)$.  
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    fibonacci := procedure(n) {
+        if (n in [0,1]) {
+            return n;
+        }
+        return fibonacci(n-1) + fibonacci(n-2);
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A naive implementation of the Fibonacci function.}
+\label{fig:fibonacci.stlx}
+\end{figure}
+
+\pagebreak 
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    fibonacci := procedure(n) {
+        if (n in [0,1]) {
+            result := n;
+        } else {
+            result := fibonacci(n-1) + fibonacci(n-2);
+        }
+        print("fibonacci($n$) = $result$");
+        return result;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Tracing the computation of the Fibonacci function.}
+\label{fig:fibonacci-trace.stlx}
+\end{figure}
+
+In order to trace the computation, we change the program as shown in Figure
+\ref{fig:fibonacci-trace.stlx}.  
+If we evaluate the expression \texttt{fibonacci(4)}, we get the output shown in Figure
+\ref{fig:fibonacci.trace}.  This output shows that the expression \texttt{fibonacci(2)} is
+evaluated twice.  The reason is that the value of \texttt{fibonacci(2)} is needed in the equation
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{fibonacci(4)} := \texttt{fibonacci(3)} + \texttt{fibonacci(2)}
+\\[0.2cm]
+to compute \texttt{fibonacci(4)}, but then in order to compute \texttt{fibonacci(3)}, we
+have to compute \texttt{fibonacci(2)} again.  The trace also shows that the problem gets
+aggravated the longer the computation runs.  For example, the value of
+\texttt{fibonacci(1)} has to be computed three times.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = none,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    => fibonacci(4);
+    
+    fibonacci(1) = 1
+    fibonacci(0) = 0
+    fibonacci(2) = 1
+    fibonacci(1) = 1
+    fibonacci(3) = 2
+    fibonacci(1) = 1
+    fibonacci(0) = 0
+    fibonacci(2) = 1
+    fibonacci(4) = 3
+    ~< Result: 3 >~
+    
+    => 
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Output of evaluating the expression \texttt{fibonacci(4)}.}
+\label{fig:fibonacci.trace}
+\end{figure}
+
+
+In order to have a more efficient computation, it is necessary to memorize the values of
+the function \texttt{fibonacci} once they are computed.  Fortunately, \setlx\ offers
+\emph{cached functions}.  If a function $f$ is declared as a cached function, then every
+time the function $f$ is evaluated for an argument $x$, the computed value $f(x)$ is
+memorized and stored in a table.  The next time the function $f$ is used to compute
+$f(x)$, the interpreter first checks whether the value of $f(x)$ has already been
+computed.  In this case, instead of computing $f(x)$ again,  the function returns the
+value stored in the table.  Figure
+\ref{fig:fibonacci-cached.stlx} shows an implementation of the Fibonacci function as a
+cached function.  If we compare the program in Figure
+\ref{fig:fibonacci-cached.stlx} with our first attempt shown in Figure
+\ref{fig:fibonacci.stlx}, then we see that the only difference is that instead of the
+keyword ``\texttt{procedure}'' we have used the keyword ``\texttt{cachedProcedure}'' instead.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    fibonacci := cachedProcedure(n) {
+        if (n in [0,1]) {
+            return n;
+        } 
+        return fibonacci(n-1) + fibonacci(n-2);
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A cached implementation of the Fibonacci function.}
+\label{fig:fibonacci-cached.stlx}
+\end{figure}
+
+\vspace*{0.3cm}
+
+\noindent
+\textbf{Warning}:  A function should only be declared as a \texttt{cachedProcedure} if it is
+guaranteed to always produce the same result when called with the same argument.
+Therefore, a function should not be declared as a \texttt{cachedProcedure} if it does one
+of the following things:
+\begin{enumerate}
+\item The function reads global variables that might change.
+
+      A variable \texttt{x} can be declared to be a global variable by writing
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{var x;}
+      \\[0.2cm]
+      In that case, the variable is visible in the scope of all functions.
+\item The function makes use of random numbers.
+\item The function reads input either form a file or from the command line.
+\end{enumerate}
+To further support cached procedures,  \setlx\ provides the function \texttt{cacheStats},
+which is called with a single argument that must be a cached function.  For example, if
+we define the function \texttt{fibonacci} as shown in Figure
+\ref{fig:fibonacci-cached.stlx} and evaluate the expression \texttt{fibonacci(100)}, then
+the expression \texttt{cacheStats(fib)} gives the following result:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\symbol{126}< Result: {["cache hits", 98], ["cached items", 101]} >\symbol{126}}
+\\[0.2cm]
+This tells us that the cache contains 101 different argument/value pairs, as the cache
+now stores the values
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{fibonacci($n$)} \quad for all $n \in \{0,\cdots,100\}$.
+\\[0.2cm]
+Furthermore, we see that 98 of these 101 argument/value pairs have been used in order to
+compute the values of \texttt{fibonacci} for different arguments.  The reason is that the
+values for the last three arguments 99, 100, and 101 have not yet been used for the
+computation of different values, but all other arguments have been used at least once for
+computing another value.
+
+In order to prevent memory leaks, \setlx\ provides the function \texttt{clearCache}.  This
+function is invoked with one argument which must be a cached function.  Writing
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{clearCache(f)}
+\\[0.2cm]
+clears the cache for the function $f$, that is all argument/value pairs stored for $f$
+will be removed from the cache.
+
+
+\section{Branching Statements}
+Like most modern languages, \setlx\ supports \texttt{if-then-else} statements and
+\texttt{switch} statements.  A generalization of \texttt{switch} statements, the so called
+\texttt{match} statements, are also supported. We begin our discussion with
+\texttt{if-then-else} statements.
+
+\subsection{\texttt{if-then-else} Statements}
+In order to support branching, \setlx\ supports \texttt{if-then-else} statements.  The syntax is 
+similar to the corresponding syntax in the programming language \texttt{C}.  However, braces are
+required.  For example, figure \ref{fig:toBin.stlx} on page \pageref{fig:toBin.stlx} shows a
+recursive function that computes the binary representation of a natural number.  
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    toBin := procedure(n) {
+        if (n < 2) {
+            return str(n);
+        } else {
+            r := n % 2;
+            n := floor(n / 2);
+            return toBin(n) + toBin(r);
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to compute the binary representation of a natural number.}
+\label{fig:toBin.stlx}
+\end{figure}
+
+As in the programming languages \texttt{C} and \textsl{Java}, the \texttt{else} clause is optional.
+
+\subsection{\texttt{switch} Statements}
+Figure \ref{fig:sort3.stlx} shows a function that takes a list of length 3.  The function sorts
+the resulting list.  In effect, the function \texttt{sort3} implements a decision tree.
+This example shows how \texttt{if-else} statements can be cascaded.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    sort3 := procedure(l) {
+        [ x, y, z ] := l;
+        if (x <= y) {
+            if (y <= z) {
+                return [ x, y, z ];
+            } else if (x <= z) { 
+                return [ x, z, y ];
+            } else {
+                return [ z, x, y ];
+            }
+        } else if (z <= y) { 
+            return [z, y, x];
+        } else if (x <= z) { 
+            return [ y, x, z ];
+        } else {
+            return [ y, z, x ];
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to sort a list of three elements.}
+\label{fig:sort3.stlx}
+\end{figure}
+
+Figure \ref{fig:sort3switch.stlx} on page \pageref{fig:sort3switch.stlx} 
+shows how to sort a list of length 3 using a switch
+statement.  Although this implementation is easier to understand, it is less efficient than the
+previous version.  The reason is that some of the tests are redundant.  This is most obvious for the
+last case in line 9 since at the time when control arrives in line 9 it is already known that $z$ must be
+less or equal than $y$ and that, furthermore, $y$ must be less or equal than $x$, since all other
+cases are already covered.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    sort3 := procedure(l) {
+        [ x, y, z ] := l;
+        switch {
+            case x <= y && y <= z: return [ x, y, z ];
+            case x <= z && z <= y: return [ x, z, y ];
+            case y <= x && x <= z: return [ y, x, z ];
+            case y <= z && z <= x: return [ y, z, x ];
+            case z <= x && x <= y: return [ z, x, y ];
+            case z <= y && y <= x: return [ z, y, x ];
+            default: print("Impossible error occurred!");
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Sorting a list of 3 elements using a \texttt{switch} statement.}
+\label{fig:sort3switch.stlx}
+\end{figure}
+
+The grammar rule for \texttt{switch} statements is as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{stmnt} \;\rightarrow\; \quoted{switch} \quoted{\{} \textsl{caseList} \quoted{\}}$
+\\[0.2cm]
+where the syntactical variable \textsl{caseList} is defined via the rule:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{caseList} \;\rightarrow\; (\squoted{case}\; \textsl{boolExpr} \quoted{:} \textsl{block})^* 
+ (\squoted{default} \quoted{:} \textsl{block})?$
+\\[0.2cm]
+Here, \textsl{boolExpr} is a boolean expression and \textsl{block} is a list of statements.
+
+In contrast to the programming languages \texttt{C} and \textsl{Java}, the \texttt{switch}
+statement in \setlx\ doesn't have a fall through.  Therefore, we don't need a \texttt{break} statement in the
+block of statements following a case condition.  
+There are two other important distinction between the \texttt{switch} statement in
+\textsl{Java} and the \texttt{switch} statement in \setlx:  
+\begin{enumerate}
+\item The keyword switch is not followed by a value.
+\item The conditions following the keyword \texttt{case} have to be Boolean values.  
+\end{enumerate}
+There is a another type of switching
+statements that is much more powerful than the \texttt{switch} statement.  This is called
+\emph{matching} and will be discussed in the next section.
+
+\section{Matching}
+One of the most powerful branching construct is \emph{matching}.  Although the syntax for the
+matching statement is always the same, there are really four different types of matching for each of the
+types that matching has been implemented.  Matching has been implemented for
+ strings, list, sets, and terms.  We discuss \emph{string matching} first.
+
+\subsection{String Matching}
+Many algorithms that deal with a given string $s$ have to deal with two cases:  Either the string $s$ is
+empty or it is nonempty and has to be split into its first character $c$ and the remaning characters $r$,
+that is we have 
+\\[0.2cm]
+\hspace*{1.3cm}
+$s = c + r$ \quad where $c = s[1]$ and $r = s[2..]$.
+\\[0.2cm]
+In order to facilitate algorithms that have to make this kind of case distinction, \setlx\ provides the
+\texttt{match} statement.  Consider the function\footnote{
+There is also a predefined version of the function \texttt{reverse} which does exactly the
+same thing as the function in Figure \ref{fig:reverse.stlx}.  However, once we define the
+function \texttt{reverse} as in Figure \ref{fig:reverse.stlx}, the predefined function
+gets overwritten and is no longer accessible.}
+ \texttt{reverse} shown in Figure \ref{fig:reverse.stlx}.
+This function reverses its input argument, so the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{reverse("abc")}
+\\[0.2cm]
+yields the result \texttt{"cba"}.  In order to reverse a string $s$, the function has to deal with two
+cases:
+\begin{enumerate}
+\item If the string $s$ is empty.  In this case, we can just return the string $s$ as it is.
+      This case is dealt with in line 3.  There, we have used the pattern ``\texttt{[]}'' to match
+      the empty string.  Instead, we could have used the empty string itself.  Using the pattern
+      ``\texttt{[]}'' will prove beneficial when dealing with lists because it turns out that the
+      function
+      \texttt{reverse} as given in Figure \ref{fig:reverse.stlx} can also be used to reverse a list.
+\item If the string $s$ is not empty, then it can be split up into a first character $c$ and the remaining
+      characters $r$.  In this case, we reverse the string $r$ and append the character $c$ to the end of
+      this string.  This case is dealt with in line 4.
+\end{enumerate}
+The \texttt{match} statement in function \texttt{reverse}  has a default case in line 5 to deal with
+those cases where $s$ is not a string. 
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    reverse := procedure(s) {
+        match (s) {
+            case []   : return s;
+            case [c|r]: return reverse(r) + c;
+            default   : abort("type error in reverse($s$)");
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function that reverses a string.}
+\label{fig:reverse.stlx}
+\end{figure}
+
+The last example shows that the syntax for the match statement  is similar to the syntax for the switch
+statement.  The main difference is that the keyword is now ``\texttt{match}'' instead of
+``\texttt{switch}'' and that the cases no longer contain Boolean values but instead contain
+\emph{patterns} that can be used to check whether a string has a given form and to extract the
+corresponding components.  Basically, the function \texttt{reverse} given above is interpreted as if it
+had been written in the way shown in Figure \ref{fig:reverse-long.stlx} on page \pageref{fig:reverse-long.stlx}.
+This example shows that the use of the \texttt{match} statement can make programs more compact while
+increasing their legibility.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    reverse := procedure(s) {
+        if (s == "") {
+            return s;
+        } else if (isString(s)) {
+            c := s[1];
+            r := s[2..];
+            return reverse(r) + c;
+        } else {
+            abort("type error in reverse($s$)");
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to reverse a string that does not use matching.}
+\label{fig:reverse-long.stlx}
+\end{figure}
+
+To explore string matching further, consider a function \texttt{reversePairs} that interchanges all pairs
+of characters, so for example we have
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{reversePairs("abcd") = "badc"} \quad and \quad
+\texttt{reversePairs("abcde") = "badce"}. 
+\\[0.2cm]
+This function can be implemented as shown in Figure \ref{fig:reverse-pairs.stlx} on page
+\pageref{fig:reverse-pairs.stlx}.  Notice that we can match the empty string with the pattern
+``\texttt{[]}'' in line 3.  The pattern ``\texttt{[c]}'' matches a string consisting of one
+character $c$.  In line 5 the pattern \texttt{[a,b|r]} extracts the first two
+characters from the string $s$ and binds them to the variables $a$ and $b$.  The rest of the string is
+then bound to $r$.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    reversePairs := procedure(s) {
+        match (s) {
+            case []     : return s;
+            case [c]    : return c;
+            case [a,b|r]: return b + a + reversePairs(r);
+    
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to exchange pairs of characters.}
+\label{fig:reverse-pairs.stlx}
+\end{figure}
+
+\subsubsection{String Decomposition via Assignment}
+Assignment can be used to decompose a string into its constituent characters.  For
+example, if $s$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{s := }\verb|"abc";|
+\\[0.2cm]
+then after the assignment
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[u, v, w] := s;}
+\\[0.2cm]
+the variables $u$, $v$, and $w$ have the values
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$u$ =} \verb|"a"|,
+\texttt{$v$ =} \verb|"b"|, \quad and
+\texttt{$W$ =} \verb|"c"|. 
+\\[0.2cm]
+Therefore, list assignment can be seen as a lightweight alternative to matching.
+
+\subsection{List Matching}
+As strings can be seen as lists of characters, the matching of lists is very similar to the matching of
+strings.  The function \texttt{reverse} shown in Figure \ref{fig:reverse.stlx} can also be used to
+reverse a list.
+ If the argument $s$ of \texttt{reverse} is a list instead of a string, we match the empty list with
+ the pattern ``\texttt{[]}'', while the pattern ``\texttt{[c|r]}'' matches a non-empty list:  
+The variable $c$  matches the first element  of the list, while the variable $r$ matches the remaining elements.
+
+List assignment is another way to decompose a list that is akin to matching.  If the list 
+$l$ is defined via
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{l := [1..3];}
+\\[0.2cm]
+then after the assignment
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[x, y, z] := l;}
+\\[0.2cm]
+the variables $x$, $y$, and $y$ have the values $x = 1$, $y = 2$, and $z = 3$.
+
+\subsection{Set Matching}
+As sets are quite similar to lists, the matching of sets is closely related to the matching of
+lists.  Figure \ref{fig:set-sort.stlx}  shows the function \texttt{setSort} that takes a
+set of numbers as its  argument and returns a sorted list containing the numbers appearing
+in the set.  In the \texttt{match} statement, we match the empty set with the pattern
+``\texttt{\{\}}'', while the pattern ``\texttt{\{x|r\}}'' matches a non-empty set:  
+The variable $x$ matches the first element of the set, while the variable $r$ matches the
+set of all the remaining elements.  
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    setSort := procedure(s) {
+        match (s) {
+            case {}   : return [];
+            case {x|r}: return [x] + setSort(r);
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to sort a set of numbers.}
+\label{fig:set-sort.stlx}
+\end{figure}
+
+Of course, sorting a set into a list is trivial, as a
+set in \setlx\ is represented by an ordered binary tree and therefore is already sorted.
+For this reason, we could also transform a set $s$ into a sorted list by using the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[] + s}.
+\\[0.2cm]
+In general, for a list $l$ and a set $s$ the exression \texttt{$l$ + $s$} creates a new
+list containing all elements of $l$.  Then, the elements of $s$ are appended to this
+list.  The expression \texttt{$s$ + $l$} creates a new set containing the elements of
+$s$.  Then, the elements of $l$ are inserted into this set.
+
+
+\subsection{Term Matching}
+The most elaborate form of matching is the matching of terms.  This kind of matching is similar to
+the kind of matching provided in the programming languages \textsl{Prolog} and \textsc{Ml}.
+Figure \ref{fig:binary-tree.stlx} shows an implementation of the function \texttt{insert} that uses
+term matching instead of the functions ``\texttt{fct}'' and ``\texttt{args}'' that had been used in
+the previous implementation shown in Figure \ref{fig:binary-tree-no-matching.stlx} on page
+\pageref{fig:binary-tree-no-matching.stlx}.  In line 3 of Figure \ref{fig:binary-tree.stlx}, the
+\texttt{case} statement checks whether $m$ is the empty tree.  This is more straightforward than
+testing that the functor of $m$ is ``\texttt{Nil}'', as it is done in line 3 of Figure
+\ref{fig:binary-tree-no-matching.stlx}.  However, the real benefit of matching shows in line 5 of
+Figure \ref{fig:binary-tree.stlx} since the case statement in this line does not only check whether
+the functor of $m$ is ``\texttt{Node}'' but also assigns the variables \texttt{k2}, \texttt{l}, and
+\texttt{r} to the respective subterms of $m$.  Compare this with line 5 and line 6 of Figure
+\ref{fig:binary-tree-no-matching.stlx} where we had to use a separate statement in line 6 to extract
+the arguments of $m$.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    insert := procedure(m, k1) {
+        match (m) {
+            case Nil() : 
+                 return Node(k1, Nil(), Nil());
+            case Node(k2, l, r): 
+                 if (k1 == k2) {
+                     return Node(k1, l, r);
+                 } else if (compare(k1, k2) < 0) { 
+                     return Node(k2, insert(l, k1), r);
+                 } else {
+                     return Node(k2, l, insert(r, k1));
+                 }
+            default: abort("Error in insert($m$, $k1$, $v1$)");
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Inserting an element into a binary tree using matching.}
+\label{fig:binary-tree.stlx}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    diff := procedure(t, x) {
+        match (t) {
+            case t1 + t2 :
+                return diff(t1, x) + diff(t2, x);
+            case t1 - t2 :
+                return diff(t1, x) - diff(t2, x);
+            case t1 * t2 :
+                return diff(t1, x) * t2 + t1 * diff(t2, x);
+            case t1 / t2 :
+                return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / t2 * t2;
+            case f ** g :
+                return diff( @exp(g * @ln(f)), x);
+            case ln(a) :
+                return diff(a, x) / a;
+            case exp(a) :
+                return diff(a, x) * @exp(a);
+            case ^variable(x) : // x is defined above as second argument
+                return 1;
+            case ^variable(y) : // y is undefined, matches any other variable
+                return 0;
+            case n | isNumber(n):   
+                return 0;  
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to perform symbolic differentiation.}
+\label{fig:diff.stlx}
+\end{figure}
+
+\noindent
+Let us discuss a more complex example of matching.  The function \texttt{diff} shown in Figure
+\ref{fig:diff.stlx} on page \pageref{fig:diff.stlx} is supposed to be called with two arguments:
+\begin{enumerate}
+\item The first argument $t$ is a term that is interpreted as an arithmetic expression.
+\item The second argument $x$ is a string that is interpreted as  the name of a variable.
+\end{enumerate}
+The function \texttt{diff} interprets the term $t$ as a mathematical function and differentiates this
+function with respect to the variable $x$.  For example, in order to compute the derivative of the function
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \mapsto x^x$
+\\[0.2cm]
+we can invoke \texttt{diff} as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{diff(parse("x ** x"), "x");}
+\\[0.2cm]
+Here the function \texttt{parse} transforms the string ``\texttt{x ** x}'' into a term.  The form of
+this term will be discussed in more detail later.  For the moment, let us focus on the
+\texttt{match} statement in Figure
+\ref{fig:diff.stlx}.  Consider line 3: If the term that is to be differentiated has the form
+\texttt{t1 + t2}, then both \texttt{t1} and \texttt{t2} have to be differentiated separately and the
+resulting terms have to be added.  For a more interesting example, consider line 8.  This line
+implements the product rule:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\frac{d\;}{dx} \bigl(t_1 \cdot t_2\bigr) = \frac{d\, t_1}{dx} \cdot t_2 + t_1 \cdot \frac{d\,t_2}{dx}$.
+\\[0.2cm]
+Note how the pattern 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{t1 * t2}
+\\[0.2cm]
+in line 7 extracts the two factors from a term that is a product.  Further, note that in line 12 and line 16
+we had to prefix the function symbols ``\texttt{exp}'' and ``\texttt{ln}'' with the character
+``\texttt{\symbol{64}}'' in order to convert these function symbols into functors.
+
+In order to understand this example in Figure \ref{fig:diff.stlx} in more
+detail, we have to discuss how the function \texttt{parse} converts a string into a term.  The
+function \texttt{parse} needs to represent all operator symbols and it also needs to represent
+variables.  A variable of the form \texttt{\symbol{34}x\symbol{34}} is parsed as a
+term of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\symbol{94}variable(\symbol{34}x\symbol{34})}.
+\\[0.2cm]
+This should explain the patterns used in line 19 and line 21 of Figure \ref{fig:diff.stlx}.
+In order to inspect the internal representation of a term, we  use the function
+``\texttt{canonical}''.  For example, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{canonical(parse(\symbol{34}x ** x\symbol{34}))}
+\\[0.2cm]
+yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\symbol{94}power(\symbol{94}variable(\symbol{34}x\symbol{34}), \symbol{94}variable(\symbol{34}x\symbol{34}))}.
+\\[0.2cm]
+This shows that the functor ``\texttt{\symbol{94}power}'' is the internal representation of the
+power operator ``\texttt{**}''.  The internal representation of 
+``\texttt{+}'' is ``\texttt{\symbol{94}sum}'',
+``\texttt{-}'' is represented as ``\texttt{\symbol{94}difference}'',
+``\texttt{*}'' is represented as ``\texttt{\symbol{94}product}'', and
+``\texttt{/}'' is represented as ``\texttt{\symbol{94}quotient}''.
+
+Note that the example makes extensive use of the fact that terms are \emph{viral} when used with
+the arithmetic operators 
+``\texttt{+}'', ``\texttt{-}'', ``\texttt{*}'', ``\texttt{/}'', ``\texttt{\symbol{92}}'', and
+``\texttt{\%}'':  
+If one operand of these operators is a term, the operator automatically yields a term.
+For example, the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{parse("x") + 2}
+\\[0.2cm]
+yields the term
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\symbol{94}sum(\symbol{94}variable(\symbol{34}x\symbol{34}), 2)}.
+\\[0.2cm]
+Note also that terms are not viral inside function symbols like ``\texttt{exp}''.  Therefore, this
+function symbol has to be prefixed by the operator ``\texttt{\symbol{64}}'' to turn it
+into a functor.
+
+Line 21 shows how a condition can be attached to a pattern:  The pattern 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{case n:}
+\\[0.2cm]
+would match anything.  However, we want to match only numbers here.  Therefore, we have used
+the pattern
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{case n | isNumber(n):}
+\\[0.2cm]
+in order to ensure that \texttt{n} is indeed a number.
+
+\subsection{Term Decomposition via List Assignment}
+Similar to strings, terms can be decomposed via list assignment.  For example, after the assignment
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[x,y,z] := F(1, G(2), \{2,3\});}
+\\[0.2cm]
+the variables $x$, $y$, and $z$ have the values
+\\[0.2cm]
+\hspace*{1.3cm}
+$x = 1$, \quad $y = \mathtt{G(2)}$, \quad and \quad $z = \{2,3\}$.
+\\[0.2cm]
+Of course, the function \texttt{args} achieves a similar effect.  We have that
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{args(F(1, G(2), \{2,3\})) = [1, G(2), \{2, 3\}]}.
+
+\section{Loops}
+\setlx\ offers two different kinds of loops: \texttt{for} loops and \texttt{while} loops.  The
+\texttt{while} loops are the most general loops.  Therefore, we discuss them first.  
+
+\subsection{\texttt{while} Loops}
+The syntax and semantics of \texttt{while} loops in \setlx\ is really the same as in the programming
+language \texttt{C}.  To demonstrate a \texttt{while} loop,
+let us implement a function testing the \emph{Ulam conjecture}:  Define the function
+\\[0.2cm]
+\hspace*{1.3cm}
+$f: \mathbb{N} \rightarrow \mathbb{N}$
+\\[0.2cm]
+recursively as follows:
+\begin{enumerate}
+\item $f(n) := 1$ if $n \leq 1$,
+\item $f(n) := \left\{
+       \begin{array}[c]{ll}
+         f(n/2)           & \mbox{if $n \,\texttt{\symbol{37}}\, 2 = 0$;} \\[0.2cm]  
+         f(3 \cdot n + 1) & \mbox{otherwise.} 
+       \end{array}
+       \right.
+      $ 
+\end{enumerate}
+Then $f$ is well-defined and, furthermore, $f(n) = 1$ for all $n \in \mathbb{N}$.  Figure
+\ref{fig:ulam.stlx} shows an implementation of this function in \setlx.  
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    f := procedure(n) {
+        if (n == 0) {
+            return 1;   
+        }
+        while (n != 1) {
+            if (n % 2 == 0) {
+                n /= 2;
+            } else {
+                n := 3 * n + 1;
+            }
+        }
+        return n;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A program to test the Ulam conjecture.}
+\label{fig:ulam.stlx}
+\end{figure}
+
+The function $f$ is implemented via a \texttt{while} loop.  This loop runs as long as $n$
+is different from $1$.  The syntax of a \texttt{while} loop is given by the following
+grammar rule:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{statement} \;\rightarrow\; \quoted{while} \quoted{(} \textsl{boolExpr} \quoted{)}
+ \quoted{\{}  \textsl{block} \quoted{\}} 
+$.
+\\[0.2cm]
+Here, \textsl{boolExpr} is a Boolean expression returning either \texttt{true} or
+\texttt{false}.  This condition is called the \emph{guard} of the \texttt{while} loop.
+\textsl{block} is a list of statements.  Note that the
+block of statements always has to be enclosed in curly braces, even if it consists only of a
+single statement.  The semantics of a \texttt{while} loop is the same as in \texttt{C}:
+The loop is executed as long as the guard is true.  In order to abort an iteration
+prematurely, \setlx\ provides the command \texttt{continue}.  This command aborts the
+current iteration of the loop and proceeds with the next iteration.  In order to abort the
+loop itself, the command \texttt{break} can be used.  Figure \ref{fig:break-and-continue.stlx} shows
+a function that uses both a \texttt{break} statement and a \texttt{continue} statement.  This
+function will print the number 1.  Then, when $n$ is incremented to 2, the \texttt{continue}
+statement in line 6 is executed so that the number 2 is not printed.  In the next iteration of the
+loop, the number $n$ is incremented to 3 and printed.  In the final iteration of the loop, $n$ is
+incremented to 4 and the \texttt{break} statement in line 9 terminates the loop.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    testBreakAndContinue := procedure() {
+        n := 0;
+        while (n < 10) {
+            n := n + 1;
+            if (n == 2) {
+                continue;
+            }
+            if (n == 4) {
+                break;
+            }
+            print(n);
+        }
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{This function demonstrates the semantics of \texttt{break} and \texttt{continue}.}
+\label{fig:break-and-continue.stlx}
+\end{figure}
+
+\subsection{\texttt{for} Loops}
+In order to perform a list of commands a predefined number of times, a \texttt{for} loop should  be
+used.  Figure \ref{fig:multiplication-table.stlx} on page \pageref{fig:multiplication-table.stlx}
+shows some \setlx\ code that prints a multiplication table.  The output of this program is
+shown in Figure \ref{fig:multiplication-table} on page \pageref{fig:multiplication-table}.
+
+In the program in Figure \ref{fig:multiplication-table.stlx}, the printing is done in the two nested
+loops that start in line 8.  In line 8, the counting variable \texttt{i} iterates over all values
+from $1$ to $10$.  Similarly, the counting variable \texttt{j} in line 9 iterates over the same values.
+The product \texttt{i * j} is computed in line 10 and printed without a newline using the
+function \texttt{nPrint}.
+The function $\texttt{rightAdjust}(n)$ turns the number $n$ into a string by padding the
+number with blanks from the left so that the resulting string always has a length of 4 
+characters.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    rightAdjust := procedure(n) {
+        switch {
+            case n < 10 : return "   " + n;
+            case n < 100: return  "  " + n;
+            default:      return   " " + n;
+        }
+    };      
+    for (i in [1 .. 10]) {
+        for (j in [1 .. 10]) {
+            nPrint(rightAdjust(i * j));
+        }
+        print();
+    }
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A simple program to generate a multiplication table.}
+\label{fig:multiplication-table.stlx}
+\end{figure}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = none,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+       1   2   3   4   5   6   7   8   9  10
+       2   4   6   8  10  12  14  16  18  20
+       3   6   9  12  15  18  21  24  27  30
+       4   8  12  16  20  24  28  32  36  40
+       5  10  15  20  25  30  35  40  45  50
+       6  12  18  24  30  36  42  48  54  60
+       7  14  21  28  35  42  49  56  63  70
+       8  16  24  32  40  48  56  64  72  80
+       9  18  27  36  45  54  63  72  81  90
+      10  20  30  40  50  60  70  80  90 100
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Output of the program in Figure \ref{fig:multiplication-table.stlx}.}
+\label{fig:multiplication-table}
+\end{figure}
+
+The general syntax of a \texttt{for} loop is given by the following \textsc{Ebnf} rule:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{statement} \rightarrow \quoted{for} \quoted{(} \textsl{iterator} \;(\squoted{,}\; \textsl{iterator})^* \quoted{)}
+  \quoted{\{} \textsl{block} \;\squoted{\}}
+$.
+\\[0.2cm]
+Here an iterator is either a \emph{simple iterator} or a \emph{tuple iterator}.  A
+\emph{simple iterator} has the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \quoted{in} s$.  
+\\[0.2cm]
+Here $s$ is either a set, a list, or a string and $x$ is the name of a variable.
+This variable is bound to the elements of $s$ in turn.  For example,  the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{for (x in [1..10]) \{ print(x); \}}
+\\[0.2cm]
+will print the numbers from 1 to 10.  If $s$ is a string, then the variable $x$ iterates over the
+characters of $s$.  For example, the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{for (c in \symbol{34}abc\symbol{34}) \{ print(c); \}}
+\\[0.2cm]
+prints the characters \texttt{\symbol{34}a\symbol{34}}, \texttt{\symbol{34}b\symbol{34}},
+and \texttt{\symbol{34}c\symbol{34}}.  
+
+
+The iterator of a \texttt{for} loop can also be a \emph{tuple iterator}.  The simplest form of
+a tuple is
+\\[0.2cm]
+\hspace*{1.3cm}
+ $[x_1, \cdots, x_n] \quoted{in} s$.
+\\[0.2cm]
+Here, $s$ must be either a set or a list that contains lists of length $n$ as elements. 
+Figure \ref{fig:relational-product-for.stlx} on page \pageref{fig:relational-product-for.stlx}
+shows a procedure that computes the relational product 
+of two binary relations $r_1$ and $r_2$.  In set theory, the relational product $r_1 \circ r_2$
+is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$r_1 \circ r_2 := \{ \pair(x,z) \mid \pair(x,y) \in r_1 \wedge \pair(y,z) \in r_2 \}$.
+\\[0.2cm]
+The \texttt{for} loop in line 3 iterates over the two relations \texttt{r1} and \texttt{r2}.
+The following \texttt{if} statement selects those pairs of pairs of numbers such that the second
+component of the first pair is identical to the first component of the second pair.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    product := procedure(r1, r2) {
+        r := {};
+        for ([x, y1] in r1, [y2, z] in r2) {
+            if (y1 == y2) {
+                r += { [x, z] };
+            }
+        }
+        return r;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A program to compute the relational product of two binary relations.}
+\label{fig:relational-product-for.stlx}
+\end{figure}
+
+Of course, in \setlx\ the relational product can be computed more easily via set comprehension.
+Figure \ref{fig:relational-product.stlx} on page \pageref{fig:relational-product.stlx} shows
+an implementation that is based on set comprehension.  It is a bit shorter as the test in
+line 4 of Figure \ref{fig:relational-product-for.stlx} is essentially integrated in the
+definition of the set in line 2 of Figure \ref{fig:relational-product.stlx}.
+In general, most occurences of \texttt{for} loops can be replaced by equivalent set
+definitions.  In most cases, the resulting code will be both shorter and easier to understand.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    product := procedure(r1, r2) {
+        return { [x, z] : [x, y] in r1, [y, z] in r2 };
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Computing the relational product via set comprehension.}
+\label{fig:relational-product.stlx}
+\end{figure}
+
+Iterators can be even more complex, since the tuples can be nested, so something like
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{for ([[x,y],z] in s) \{ $\cdots$ \}}
+\\[0.2cm]
+is possible.  However, as this feature is rarely needed, we won't discuss it further.
+
+
+A \texttt{for} loop creates a local scope for the iteration variable.  Therefore, the last
+line of the program shown in Figure \ref{fig:scope-for-loop.stlx} prints the message
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x = 1.}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    x := 1;
+    for (x in "abc") {
+        print(x);
+    }
+    print("x = $x$");
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A program illustrating the scope of a \texttt{for} loop.}
+\label{fig:scope-for-loop.stlx}
+\end{figure}
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial"
+%%% End: 

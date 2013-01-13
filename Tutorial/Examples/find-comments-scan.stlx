@@ -1,0 +1,13 @@
+printComments := procedure(file) {
+    s := join(readFile(file), "\n");
+    scan (s) {
+        regex '//[^\n]*'                as c: print(c[1]);
+        regex '/\*([^*]|\*+[^*/])*\*+/' as c: print(c[1]);
+        regex '.|\n'                        : // skip every thing else
+    }
+};
+
+for (file in params) {
+    print("file: $file$");
+    printComments(file);
+}

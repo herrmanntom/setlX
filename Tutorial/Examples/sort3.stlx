@@ -1,0 +1,59 @@
+// Sort the list l. Assumes that #l == 3.
+sort3 := procedure(l) {
+    [ x, y, z ] := l;
+    if (x <= y) {
+        if (y <= z) {
+            return [ x, y, z ];
+        } else if (x <= z) { 
+            return [ x, z, y ];
+        } else {
+            return [ z, x, y ];
+        }
+    } else if (z <= y) { 
+        return [z, y, x];
+    } else if (x <= z) { 
+        return [ y, x, z ];
+    } else {
+        return [ y, z, x ];
+    }
+};
+
+// Check whether the list l is sorted.  The list l has to have a size of 3.
+isSorted := procedure(l) {
+    return l[1] <= l[2] && l[2] <= l[3];
+};
+
+// Given a list l, generate a set containing all permutations of l.
+allPermutations := procedure(l) {
+    if (l == []) {
+        return { [] };
+    }
+    n := #l;
+    result := {};
+    for (i in [ 1 .. n ]) {
+        for (k in allPermutations(l[1..i-1] + l[i+1..n])) {
+            result += { [ l[i] ] + k };
+        }
+    }
+    return result;
+};
+
+// Given a list l of length n and an index i in [ 1 .. n ], return 
+// the list without the i-th element.
+without := procedure(l, i) {
+    n := #l;
+    return l[ 1 .. i-1 ] + l[ i+1 .. n];
+};
+
+testSort := procedure(l) {
+    for (k in allPermutations(l)) {
+        s := sort3(k);
+        if (!isSorted(s)) {
+            print("Error: k = $k$, s = $s$");
+        } else {
+            print("k = $k$, s = $s$");
+        }
+    }
+};
+l := [1,2,3];
+testSort(l);

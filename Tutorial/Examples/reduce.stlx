@@ -1,0 +1,20 @@
+reduce := procedure(l, f, e) {
+    match (l) {
+        case []     : return e;
+        case [x]    : return x;
+        case [x,y|r]: return reduce([f(x,y) | r], f, e);
+    }    
+};
+
+add      := procedure(x, y) { return x + y; };
+multiply := procedure(x, y) { return x * y; };
+
+l := [1 .. 36];
+
+x := reduce(l, add,      0);
+y := reduce(l, multiply, 0);
+
+print("x = $x$");
+print("y = $y$");
+
+                          

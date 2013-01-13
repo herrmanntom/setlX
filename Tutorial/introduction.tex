@@ -1,0 +1,106 @@
+\chapter{Introduction}
+Every year, dozens of new programming languages are proposed and each time this
+happens,  the inventors of the new language have to answer the same question: 
+There are hundreds of programming lanuages already, why do we need yet another one?  
+Of course, the answer is always the same.  It consists of an economical argument, a
+theological argument and a practical argument. For the
+convenience of the reader, let us brievely review these arguments as they read for \setlx.  
+\begin{enumerate}
+\item Nothing less than the prosperity and wellfare of the entire universe is at
+      stake and only \setlx\ provides the means to save it.
+\item Programming in \setlx\ is the only way to guarantee redemption from 
+      the eternal hell fire that awaits those not programming in \setlx.
+\item Programming in \setlx\ is fun!
+\end{enumerate}
+The economical argument has already been discussed at length by Adams \cite{adams:1980},
+therefore we don't have to repeat it here.   We deeply
+regret the fact that the philosophical background of the average computer scientist does not permit
+them to follow advanced theological discussions.  Therefore, we refrain from giving a
+detailed proof of the second claim.  Nevertheless, we hope the examples given in this
+tutorial will convince the reader of the truth of the third claim.
+  One of the reasons for this is that \setlx\ programs are both very concise and
+readable.  This often makes it possible to fit the implementation of complex algorithms in \setlx\ on a
+single slide because the \setlx\ program is as concise as the pseudocode that is usually used to
+present algorithms in lectures.  The benefit of this is that instead of pseudocode, students have a
+running program.  Indeed, the conciseness of \setlx\ programs was one of the reasons for
+the first author to adopt \setlx\ as a programming language in his courses on computer
+science: It is often feasible to write a complete \setlx\ program in a few lines 
+onto the blackboard, since \setlx\ programs are as concise as mathematical formulae.
+
+
+\setlx\ is well suited to implement complex algorithms. This is achieved because SetlX
+provides a number of sophisticated builtin data types that enable the user to code at a very high
+abstraction level.
+These types are sets, lists, first-order terms, and functions.  
+As sets are implemented as ordered binary trees, sets of pairs can be used both as symbol
+tables and as priority queues.  This enables a very concise implementation 
+of a number of graph theoretical algorithms.
+
+The purpose of this tutorial is to introduce the most important features of \setlx\ and to
+show how the use of the above mentioned data types leads to programs that are both shorter
+and clearer than the corresponding programs in other programming languages.  This was the
+prime motivation of the first author to develop \setlx:  It turns out that \setlx\ is very
+convenient as a tool to present algorithms at a high abstraction level in a class room. 
+Furthermore, \setlx\ makes the abstract concepts of set theory tangible for students of
+computer science. 
+\pagebreak
+
+\noindent 
+The remainder
+of this tutorial is structured as follows:
+\begin{enumerate}
+\item In the second chapter, we discuss the data types available in \setlx.
+\item The third chapter provides the control structures.
+\item The fourth chapter deals with regular expressions.
+\item The fifth chapter discusses the \texttt{try-}\texttt{catch} and \texttt{throw}
+      mechanism and demonstrates the use of \emph{backtracking}.
+\item The final chapter explains the predefined functions.
+\end{enumerate}
+This tutorial is not meant as an introduction to programming.  It assumes that the reader
+has had some preliminary exposure to programming and has already written a few programs in
+either \texttt{C}, \textsl{Java}, or a similar language.
+
+\section*{Downloading}
+The current distribution of  \setlx\ can be downloaded from either
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{http://wwwlehre.dhbw-stuttgart.de/~stroetma/SetlX/setlX.php}{\texttt{http://wwwlehre.dhbw-stuttgart.de/\symbol{126}stroetma/SetlX/setlX.php}}
+\\[0.2cm]
+or
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{http://randoom.org/Software/SetlX}{\texttt{http://randoom.org/Software/SetlX}}.
+\\[0.2cm]
+\setlx\ is
+written in \textsl{Java} and is therefore supported on a number of different operating
+systems.  Currently, \setlx\ is supported on \textsl{Linux}, \textsl{Mac OS X},
+\textsl{Microsoft Windows}, and \textsl{Android}.
+
+The websites given above explain how to install the language on various platforms.  
+The distribution contains the \textsl{Java} code and a development guide that gives an
+overview of the implementation. 
+
+\subsection*{Disclaimer}
+The development of \setlx\ is an ongoing project.  Therefore some of the material presented in
+this tutorial might be out of date, while certain aspects of the language won't be
+covered.  The current version of this tutorial is not intended to be a reference manual.
+The idea is rather to provide the reader with an introduction that is sufficient to get started.
+
+\subsection*{Encouragement}
+The autors would be grateful for any kind of feedback.  The authors can be contacted via
+email as follows:
+\begin{tabbing}
+\qquad \= Karl Stroetmann: \qquad \= \href{mailto:stroetmann@dhbw-stuttgart.de}{\texttt{stroetmann@dhbw-stuttgart.de}} \\[0.2cm]
+       \> Tom Herrmann:           \> \href{mailto:setlx@randoom.org}{\texttt{setlx@randoom.org}}
+\end{tabbing}
+
+\subsection*{Acknowledgements}
+The autors would like to acknowledge that Karl-Friedrich Gebhardt and Hakan Kjellerstrand 
+have both  read earlier drafts of
+this tutorial and have given valuable feedback that has helped to improve the current
+presentation. 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial"
+%%% End: 

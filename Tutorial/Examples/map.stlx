@@ -1,0 +1,4 @@
+r := { [n, n*n] : n in {1..10} };
+print( "r[3]      = $r[3]$"      );
+print( "domain(r) = $domain(r)$" );
+print( "range(r)  = $range(r)$"  );

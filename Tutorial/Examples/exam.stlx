@@ -1,0 +1,35 @@
+evalExam := procedure(file, maxPoints) {
+    all := join(readFile(file), "\n");
+    state := "normal";
+    scan (all) using map {
+        regex '[a-zA-Z]+:.*\n': // skip header
+        regex '[A-Za-z‰ˆ¸ƒ÷‹ﬂ]+\s[A-Za-z‰ˆ¸ƒ÷‹ﬂ\-]+:' as [ name ]:
+              nPrint(name);
+              state := "printBlanks";
+              sumPoints := 0;
+        regex '[ \t]+' as [ whiteSpace ] | state == "printBlanks":
+              nPrint(whiteSpace);  
+              state := "normal";
+        regex '[ \t]+' | state == "normal": 
+              // skip white space between points
+        regex '0|[1-9][0-9]*' as [ number ]:
+              sumPoints += int(number);
+        regex '-': 
+              // skip exercises that have not been done  
+        regex '\n' | sumPoints != om:
+              print(note(sumPoints, maxPoints));
+              sumPoints := om;
+        regex '[ \t]*\n' | sumPoints == om:
+              // skip empty lines
+        regex '.|\n' as [ c ]:
+              print("unrecognized character: $c$");
+              print("line:   ", map["line"]);
+              print("column: ", map["column"]);
+    }
+};
+
+note := procedure(p, m) {
+    return 7.0 - 6.0 * p / m;
+};
+
+evalExam("result.txt", 60);

@@ -1,0 +1,5 @@
+b := 2;
+for (n in [1 .. 9]) {
+    b := 1/2 * (b + 2/b);
+    print(n + ": " + nDecimalPlaces(b, 100));
+}

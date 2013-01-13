@@ -1,5 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.4.5--- 2013-01-13
  + more robust internal handling of reals
  + improved stack management
  # fix conversion from infinity to double

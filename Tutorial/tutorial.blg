@@ -5,15 +5,15 @@ A level-1 auxiliary file: introduction.aux
 A level-1 auxiliary file: types.aux
 A level-1 auxiliary file: statements.aux
 A level-1 auxiliary file: regular-expressions.aux
-A level-1 auxiliary file: Closures.aux
+A level-1 auxiliary file: closures.aux
 A level-1 auxiliary file: backtracking.aux
 A level-1 auxiliary file: predefined-functions.aux
 The style file: alpha.bst
-Database file #1: /Users/stroetma/Dropbox/Kurse/cs.bib
+Database file #1: /Users/karldrstroetmann/Dropbox/Kurse/cs.bib
 Warning--empty institution in klein:2009
 You've used 13 entries,
             2543 wiz_defined-function locations,
-            634 strings with 6058 characters,
+            634 strings with 6067 characters,
 and the built_in function-call counts, 3905 in all, are:
 = -- 372
 > -- 177

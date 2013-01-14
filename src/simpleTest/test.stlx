@@ -360,6 +360,38 @@ equality := procedure() {
 };
 equality();
 
+infinityTests := procedure() {
+    inf := mathConst("infinity");
+
+    if (1.0/0.0 == inf && 1/0.0 == inf && 1.0/0 == inf) {
+        correct := true;
+    } else {
+        correct := false;
+    }
+
+    if (2.9/inf == 0.0) {
+        correct := correct && true;
+    } else {
+        correct := false;
+    }
+
+    if (exp(inf) == inf && exp(-inf) == 0.0) {
+        correct := correct && true;
+    } else {
+        correct := false;
+    }
+
+    try {
+        sin(inf); // < should throw an error
+        correct := false;
+    } catch (e) {
+        correct := correct && true;
+    }
+
+    tester(correct, "infinityTests");
+};
+infinityTests();
+
 // ************************************************************************** \\
 
 printErr("\n$testsOK$ / $testNumber$ successful");

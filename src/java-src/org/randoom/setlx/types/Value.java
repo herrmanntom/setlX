@@ -131,10 +131,10 @@ public abstract class Value implements Comparable<Value> {
         );
     }
 
-    public final double toJDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
+    public double toJDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
         final Value real = this.toReal();
-        if (real != Om.OM && real instanceof Real) {
-            return ((Real) real).jDoubleValue();
+        if (real != Om.OM) {
+            return real.jDoubleValue();
         } else {
             throw new IncompatibleTypeException(
                 "'" + this + "' is not convertable to real."
@@ -144,8 +144,8 @@ public abstract class Value implements Comparable<Value> {
 
     public final int toJIntValue() throws IncompatibleTypeException, NotAnIntegerException, NumberToLargeException {
         final Value integer = this.toInteger();
-        if (integer != Om.OM && integer instanceof Rational) {
-            return ((Rational) integer).jIntValue();
+        if (integer != Om.OM) {
+            return integer.jIntValue();
         } else {
             throw new IncompatibleTypeException(
                 "'" + this + "' is not convertable to integer."

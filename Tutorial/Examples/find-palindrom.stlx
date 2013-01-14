@@ -1,0 +1,24 @@
+findPalindrom := procedure(file) {
+    all := split(join(readFile(file), "\n"), '[^a-zA-Z]+');
+    palindroms := {};
+    for (s in all) {
+        match (s) {
+            regex '[a-zA-Z]+' as c | isPalindrom(c[1]): 
+                  palindroms += { c[1] };
+            regex '.|\n': 
+                  // skip rest
+        }
+    }
+    return palindroms;
+    
+};
+
+isPalindrom := procedure(s) {
+    if (#s <= 2) {
+        return false;
+    }
+    n := #s + 1;
+    return +/ [s[n - i] : i in [1 .. #s]] == s;
+};
+
+print(findPalindrom("alice.txt"));

@@ -1,0 +1,176 @@
+\documentclass[twoside]{report}
+\usepackage{fleqn}
+\usepackage{epsfig}
+\usepackage[latin1]{inputenc}
+\usepackage{a4wide}
+\usepackage{amssymb}
+\usepackage{wasysym}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage{alltt}
+
+% point links to top left corner of respective element, not to caption
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+
+\hypersetup{
+		colorlinks=true, % comment this to make xdvi work properly
+		linkcolor=blue,
+		citecolor=red,
+		pdfborder={0 0 0} 
+}
+
+\pagestyle{fancy}
+
+\setlength{\textheight}{22.0cm}
+\fancyfoot[C]{--- \thepage\ ---}
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername\ \thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection.\ #1}}
+
+\fancypagestyle{plain}{\fancyhf{} 
+                       \fancyfoot[C]{--- \thepage\ ---}
+                       \renewcommand{\headrulewidth}{0pt}
+                       \renewcommand{\footrulewidth}{0pt}
+}
+
+
+\newfont{\chess}{chess20}
+\newfont{\bigchess}{chess30}
+\newcommand{\chf}{\baselineskip20pt\lineskip0pt\chess}
+
+\newtheorem{Definition}{Definition}
+\newtheorem{Notation}[Definition]{Notation}
+\newtheorem{Korollar}[Definition]{Korollar}
+\newtheorem{Lemma}[Definition]{Lemma}
+\newtheorem{Satz}[Definition]{Satz}
+\newtheorem{Theorem}[Definition]{Theorem}
+
+\newcommand{\club }{\ensuremath{\clubsuit   }}
+\newcommand{\spade}{\ensuremath{\spadesuit  }}
+\newcommand{\heart}{\ensuremath{\heartsuit  }}
+\newcommand{\diamo}{\ensuremath{\diamondsuit}}
+
+
+\title{\vspace*{-1cm}
+  \epsfig{file=aleph0,scale=0.21} \\[0.5cm]
+\textsc{SetlX} --- A Tutorial \\[0.5cm]
+Version 1.4.5
+}
+\author{Karl Stroetmann \\[0.2cm]
+Duale Hochschule Baden-Württemberg Stuttgart  \\[0.2cm]
+\href{mailto:stroetmann@dhbw-stuttgart.de}{\texttt{stroetmann@dhbw-stuttgart.de}} \\[0.5cm]
+ Tom Herrmann  \\[0.2cm]
+Duale Hochschule Baden-Württemberg Stuttgart  \\[0.2cm]
+\href{mailto:setlx@randoom.org}{\texttt{setlx@randoom.org}}
+}
+
+\newcommand{\squoted}[1]{\mbox{``\texttt{#1}''}}
+\newcommand{\quoted}[1]{\;\mbox{``\texttt{#1}''}\;}
+
+\newcommand{\example}{\vspace*{0.2cm}
+
+\noindent
+\textbf{Example}: \ }
+
+\newcommand{\next}{\vspace*{0.1cm}
+
+\noindent}
+
+\newcommand{\remark}{\vspace*{0.2cm}
+
+\noindent
+\textbf{Remark}: }
+
+
+\newcounter{exercise}
+\newcommand{\exercise}{\vspace*{0.1cm}
+\stepcounter{exercise}
+
+\noindent
+\textbf{Exercise \arabic{exercise}}: }
+
+\newcommand{\qed}{\hspace*{\fill} $\Box$}
+\newcommand{\exend}{\hspace*{\fill} $\diamond$}
+\newcommand{\setlx}{\textsc{SetlX}}
+\newcommand{\cmd}[1]{\texttt{=> \textsl{#1}}}
+
+
+\def\pair(#1,#2){\langle #1, #2 \rangle}
+
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  In the late sixties, Jack Schwartz, a renowned professor of mathematics at the Courant Institute for
+Mathematical Sciences in New York, developed a very high level programming language called
+\textsc{Setl} 
+\cite{schwartz:1970, setl86}.  The most distinguishing feature of this language is the
+support it offers for sets and lists.   This feature permits convenient implementations of
+mathematical algorithms:  As set theory is the language of mathematics, many mathematical
+algorithms that are formulated in terms of set theory have very straightforward implementations in
+\textsc{Setl}. 
+
+Unfortunately, at the time of its invention, \textsc{Setl} did not get the attention that it deserved.
+One of the main reasons was that \textsc{Setl} is an interpreted language and in those
+days, the run time overhead of an interpreter loop was not yet affordable.  More than
+forty years after the first conception of \textsc{Setl}, the efficiency of computers has changed
+dramatically and for many applications, the run time efficiency of a languange is no
+longer as important as it once was.  After all, 
+modern scripting languages like Python \cite{vanRossum:95} or Ruby \cite{flanagan:2008}
+are all interpreted and noticeably slower than compiled languages like \texttt{C}, but this
+fact hasn't impeded their success. 
+
+At the Baden-Württemberg Corporate State University, the first author has used
+\textsc{Setl2} \cite{snyder90b} 
+for some years in a number of his introductory computer science courses.  He has 
+noticed that the adoption of \textsc{Setl} has made the abstract concepts of set theory
+tangible to the students.
+ Nevertheless, as the original version of
+\textsc{Setl} is more than forty years old, it has a number of shortcomings.  
+One minor issue is the fact, that the syntax is quite dated and has proven difficult to
+master  for students that are mainly acquainted with \texttt{C} and \textsl{Java}.
+Furthermore,  \textsc{Setl} lacks any immediate support for first order terms.  Therefore, 
+\textsc{Setl} has been extended into the new language \textsc{SetlX}.  The main features that have
+been changed or added are as follows: 
+\begin{itemize}
+\item \textsc{SetlX} supports terms in a way similar to the language \textsl{Prolog}.  In
+      particular, \textsc{SetlX} supports matching.
+\item \textsc{SetlX} supports some ideas from functional programming.  In particular,
+      functions can be used as a primitive data type.  Furthermore, \textsc{SetlX}
+      supports \emph{closures} and the \emph{memoization} of functions.
+\item \textsc{SetlX} provides some means to support backtracking.
+\item Lastly, while \textsc{Setl} has a syntax that is reminiscent of Algol,
+      \textsc{SetlX} has a syntax that is more akin to languages like \texttt{C} or
+      \textsl{Java}.  
+\end{itemize}
+The language \textsc{SetlX} has been implemented by Tom Herrmann as part of his student
+research project.  Fortunately, for the time being he continues to maintain the language
+and even implements new features.
+\end{abstract}
+\pagebreak
+
+\tableofcontents
+
+\include{introduction}    
+\include{types}    
+\include{statements}
+\include{regular-expressions}
+\include{closures}
+\include{backtracking}
+\include{predefined-functions}    
+
+\bibliographystyle{alpha}
+\bibliography{/Users/stroetma/Dropbox/Kurse/cs}
+%\bibliography{/Users/karldrstroetmann/Dropbox/Kurse/cs}
+
+\end{document}
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% End: 

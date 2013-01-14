@@ -1,0 +1,14 @@
+printComments := procedure(file) {
+    lines := readFile(file);
+    for (l in lines) {
+        match (l) {
+            regex '\s*(//.*)'                         as c: print(c[2]);
+            regex '\s*(/\*([^*]|\*+[^*/])*\*+/)\s*' as c: print(c[2]);
+        }
+    }
+};
+
+for (file in params) {
+    print("file: $file$");
+    printComments(file);
+}

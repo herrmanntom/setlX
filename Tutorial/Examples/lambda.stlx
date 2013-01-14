@@ -1,0 +1,7 @@
+map := procedure(l, f) {
+    return [ f(x) : x in l ];
+};
+
+l := [ 1 .. 10 ];
+
+print(map(l, x |-> x * x));

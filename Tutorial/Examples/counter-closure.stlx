@@ -1,0 +1,17 @@
+createCounter := procedure(i) {
+    count   := i;
+    counter := procedure() {
+                   count += 1;
+                   return count;
+               };
+    return counter;
+};   
+
+ctr0 := createCounter(0);
+ctr9 := createCounter(9);
+
+u := ctr0(); v := ctr0(); w := ctr0();
+x := ctr9(); y := ctr9(); z := ctr9();
+
+print("u = $u$, v = $v$, w = $w$");
+print("x = $x$, y = $y$, z = $z$");

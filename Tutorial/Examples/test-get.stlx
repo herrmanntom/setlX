@@ -1,0 +1,3 @@
+x := get();
+print("x = $x$");
+exit;

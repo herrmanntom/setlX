@@ -1,0 +1,82 @@
+\contentsline {chapter}{\numberline {1}Introduction}{4}{chapter.1}
+\contentsline {chapter}{\numberline {2}\textsc {SetlX}\ Types}{6}{chapter.2}
+\contentsline {section}{\numberline {2.1}Getting Started}{6}{section.2.1}
+\contentsline {section}{\numberline {2.2}Boolean Values}{9}{section.2.2}
+\contentsline {section}{\numberline {2.3}Sets}{10}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}Operators on Sets}{12}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Set Comprehensions}{14}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}Miscellaneous Set Functions}{15}{subsection.2.3.3}
+\contentsline {section}{\numberline {2.4}Lists}{16}{section.2.4}
+\contentsline {section}{\numberline {2.5}Pairs, Relations, and Functions}{17}{section.2.5}
+\contentsline {section}{\numberline {2.6}Procedures}{19}{section.2.6}
+\contentsline {section}{\numberline {2.7}Strings}{19}{section.2.7}
+\contentsline {subsection}{\numberline {2.7.1}Literal Strings}{20}{subsection.2.7.1}
+\contentsline {section}{\numberline {2.8}Terms}{21}{section.2.8}
+\contentsline {chapter}{\numberline {3}Writing Statements in \textsc {SetlX}}{24}{chapter.3}
+\contentsline {section}{\numberline {3.1}Assignment Statements}{24}{section.3.1}
+\contentsline {section}{\numberline {3.2}Functions}{25}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Memoization}{26}{subsection.3.2.1}
+\contentsline {section}{\numberline {3.3}Branching Statements}{28}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}\texttt {if-then-else} Statements}{29}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}\texttt {switch} Statements}{29}{subsection.3.3.2}
+\contentsline {section}{\numberline {3.4}Matching}{30}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}String Matching}{30}{subsection.3.4.1}
+\contentsline {subsubsection}{String Decomposition via Assignment}{31}{section*.6}
+\contentsline {subsection}{\numberline {3.4.2}List Matching}{32}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}Set Matching}{33}{subsection.3.4.3}
+\contentsline {subsection}{\numberline {3.4.4}Term Matching}{33}{subsection.3.4.4}
+\contentsline {subsection}{\numberline {3.4.5}Term Decomposition via List Assignment}{35}{subsection.3.4.5}
+\contentsline {section}{\numberline {3.5}Loops}{36}{section.3.5}
+\contentsline {subsection}{\numberline {3.5.1}\texttt {while} Loops}{36}{subsection.3.5.1}
+\contentsline {subsection}{\numberline {3.5.2}\texttt {for} Loops}{37}{subsection.3.5.2}
+\contentsline {chapter}{\numberline {4}Regular Expressions }{40}{chapter.4}
+\contentsline {section}{\numberline {4.1}Using Regular Expressions in a \texttt {match} Statement}{40}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Extracting Substrings}{41}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Testing Regular Expressions}{42}{subsection.4.1.2}
+\contentsline {subsection}{\numberline {4.1.3}Extracting Comments from a File}{42}{subsection.4.1.3}
+\contentsline {subsection}{\numberline {4.1.4}Conditions in \texttt {match} Statements}{43}{subsection.4.1.4}
+\contentsline {section}{\numberline {4.2}The \texttt {scan} Statement}{44}{section.4.2}
+\contentsline {section}{\numberline {4.3}Additional Functions Using Regular Expressions}{47}{section.4.3}
+\contentsline {chapter}{\numberline {5}Functional Programming and Closures }{49}{chapter.5}
+\contentsline {section}{\numberline {5.1}Introductory Examples}{49}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Introducing Functional Programming}{49}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {5.1.2}Implementing Counters via Closures}{51}{subsection.5.1.2}
+\contentsline {section}{\numberline {5.2}Closures in Action}{52}{section.5.2}
+\contentsline {chapter}{\numberline {6}Exceptions and Backtracking}{59}{chapter.6}
+\contentsline {section}{\numberline {6.1}Exceptions}{59}{section.6.1}
+\contentsline {subsection}{\numberline {6.1.1}Different Kinds of Exceptions}{61}{subsection.6.1.1}
+\contentsline {section}{\numberline {6.2}Backtracking}{62}{section.6.2}
+\contentsline {chapter}{\numberline {7}Predefined Functions}{67}{chapter.7}
+\contentsline {section}{\numberline {7.1}Functions and Operators on Sets and Lists}{67}{section.7.1}
+\contentsline {section}{\numberline {7.2}Functions for String Manipulation}{69}{section.7.2}
+\contentsline {section}{\numberline {7.3}Functions for Term Manipulation}{72}{section.7.3}
+\contentsline {section}{\numberline {7.4}Mathematical Functions}{73}{section.7.4}
+\contentsline {section}{\numberline {7.5}Generating Random Numbers and Permutations}{76}{section.7.5}
+\contentsline {subsection}{\numberline {7.5.1}\texttt {shuffle}}{77}{subsection.7.5.1}
+\contentsline {subsection}{\numberline {7.5.2}\texttt {nextPermutation}}{78}{subsection.7.5.2}
+\contentsline {subsection}{\numberline {7.5.3}\texttt {permutations}}{78}{subsection.7.5.3}
+\contentsline {section}{\numberline {7.6}Type Checking Functions}{78}{section.7.6}
+\contentsline {section}{\numberline {7.7}Interactive Debugging}{79}{section.7.7}
+\contentsline {section}{\numberline {7.8}I/O Functions}{81}{section.7.8}
+\contentsline {subsection}{\numberline {7.8.1}\texttt {appendFile}}{81}{subsection.7.8.1}
+\contentsline {subsection}{\numberline {7.8.2}\texttt {deleteFile}}{81}{subsection.7.8.2}
+\contentsline {subsection}{\numberline {7.8.3}\texttt {get}}{81}{subsection.7.8.3}
+\contentsline {subsection}{\numberline {7.8.4}\texttt {load}}{81}{subsection.7.8.4}
+\contentsline {subsection}{\numberline {7.8.5}\texttt {loadLibrary}}{81}{subsection.7.8.5}
+\contentsline {subsection}{\numberline {7.8.6}\texttt {multiLineMode}}{82}{subsection.7.8.6}
+\contentsline {subsection}{\numberline {7.8.7}\texttt {nPrint}}{82}{subsection.7.8.7}
+\contentsline {subsection}{\numberline {7.8.8}\texttt {nPrintErr}}{82}{subsection.7.8.8}
+\contentsline {subsection}{\numberline {7.8.9}\texttt {print}}{82}{subsection.7.8.9}
+\contentsline {subsection}{\numberline {7.8.10}\texttt {printErr}}{82}{subsection.7.8.10}
+\contentsline {subsection}{\numberline {7.8.11}\texttt {read}}{83}{subsection.7.8.11}
+\contentsline {subsection}{\numberline {7.8.12}\texttt {readFile}}{83}{subsection.7.8.12}
+\contentsline {subsection}{\numberline {7.8.13}\texttt {writeFile}}{83}{subsection.7.8.13}
+\contentsline {section}{\numberline {7.9}Miscellaneous Functions}{83}{section.7.9}
+\contentsline {subsection}{\numberline {7.9.1}\texttt {\texttt }{abort}}{83}{subsection.7.9.1}
+\contentsline {subsection}{\numberline {7.9.2}\texttt {cacheStats}}{84}{subsection.7.9.2}
+\contentsline {subsection}{\numberline {7.9.3}\texttt {clearCache}}{84}{subsection.7.9.3}
+\contentsline {subsection}{\numberline {7.9.4}\texttt {compare}}{84}{subsection.7.9.4}
+\contentsline {subsection}{\numberline {7.9.5}\texttt {getScope}}{84}{subsection.7.9.5}
+\contentsline {subsection}{\numberline {7.9.6}\texttt {logo}}{85}{subsection.7.9.6}
+\contentsline {subsection}{\numberline {7.9.7}\texttt {now}}{85}{subsection.7.9.7}
+\contentsline {subsection}{\numberline {7.9.8}\texttt {sleep}}{85}{subsection.7.9.8}

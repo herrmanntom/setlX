@@ -1,0 +1,74 @@
+\begin{thebibliography}{SDSD86}
+
+\bibitem[Ada80]{adams:1980}
+Douglas Adams.
+\newblock {\em The Hitchhiker's Guide to the Galaxy}.
+\newblock Harmony Books, New York, 1980.
+
+\bibitem[Bra90]{bratko90}
+Ivan Bratko.
+\newblock {\em {PROLOG} Programming for Artificial Intelligence}.
+\newblock Addison-Wesley, 2nd edition, 1990.
+
+\bibitem[FM08]{flanagan:2008}
+David Flanagan and Yukihiro Matsumoto.
+\newblock {\em The Ruby Programming Language}.
+\newblock O'Reilly, 2008.
+
+\bibitem[Fri06]{friedl:2006}
+Jeffrey E.~F. Friedl.
+\newblock {\em Mastering Regular Expressions}.
+\newblock O'Reilly \& Associates, {3rd} edition, 2006.
+
+\bibitem[HMU06]{hopcroft:06}
+John~E. Hopcroft, Rajeev Motwani, and Jeffrey~D. Ullman.
+\newblock {\em Introduction to Automata Theory, Languages, and Computation}.
+\newblock Addison-Wesley, 3rd edition, 2006.
+
+\bibitem[Kle09]{klein:2009}
+Gerwin Klein.
+\newblock {JFlex User's Manual: Version 1.4.3}.
+\newblock Technical report, 2009.
+\newblock Available at: \texttt{http://jflex.de/jflex.pdf}.
+
+\bibitem[Les75]{lesk:1975}
+Michael~E. Lesk.
+\newblock Lex -- {A} lexical analyzer generator.
+\newblock Comp. Sci. Tech. Rep. No.~39, Bell Laboratories, Murray Hill, New
+  Jersey, 1975.
+
+\bibitem[Sch70]{schwartz:1970}
+Jacob~T. Schwartz.
+\newblock Set theory as a language for program specification and programming.
+\newblock Technical report, Courant Institute of Mathematical Sciences, New
+  York University, 1970.
+
+\bibitem[SDSD86]{setl86}
+J.~T. Schwartz, R.~B. Dewar, E.~Schonberg, and E.~Dubinsky.
+\newblock {\em Programming With Sets: An Introduction to SETL}.
+\newblock Springer-Verlag, 1986.
+
+\bibitem[Sny90]{snyder90b}
+W.~Kirk Snyder.
+\newblock The {Setl2} programming language: Update on current developments.
+\newblock Technical report, Courant Institute of Mathematical Sciences, New
+  York University, 1990.
+\newblock Available at \\
+  \texttt{ftp://cs.nyu.edu/pub/languages/setl2/doc/2.2/update.ps}.
+
+\bibitem[SS75]{sussman:75}
+Gerald~Jay Sussman and Guy~L. Steele.
+\newblock Scheme: An interpreter for extended lambda calculus.
+\newblock Technical report, MIT AI LAB, 1975.
+
+\bibitem[SS86]{sterling86}
+Leon Sterling and Ehud Shapiro.
+\newblock {\em The Art of Prolog}.
+\newblock MIT Press, 1986.
+
+\bibitem[vR95]{vanRossum:95}
+Guido van Rossum.
+\newblock Python tutorial.
+\newblock Technical report, Centrum Wiskunde \& Informatica, Amsterdam, 1995.
+
+\end{thebibliography}

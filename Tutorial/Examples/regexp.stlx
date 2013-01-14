@@ -1,0 +1,13 @@
+classify := procedure(s) {
+    match (s) {
+        regex '0|[1-9][0-9]*': print("found an integer");
+        regex '[a-zA-Z]+'    : print("found a word");
+        regex '\s+'          : // skip white space
+        default              : print("unkown: $s$");
+    }
+};
+
+classify("123");
+classify("Hugo");
+classify(" \t\n");
+classify("0123");

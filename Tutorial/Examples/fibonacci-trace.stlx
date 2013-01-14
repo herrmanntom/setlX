@@ -1,0 +1,10 @@
+fibonacci := procedure(n) {
+    if (n in [0,1]) {
+        result := n;
+    } else {
+        result := fibonacci(n-1) + fibonacci(n-2);
+    }
+    print("fibonacci($n$) = $result$");
+    return result;
+};
+

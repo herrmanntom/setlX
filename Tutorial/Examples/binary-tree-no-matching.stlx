@@ -1,0 +1,49 @@
+map := procedure() {
+    return Nil();
+};
+
+insert := procedure(m, k1) {
+    switch {
+        case fct(m) == "Nil" : 
+             return Node(k1, Nil(), Nil());
+        case fct(m) == "Node": 
+             [ k2, l, r ] := args(m);
+             if (k1 == k2) {
+                 return Node(k1, l, r);
+             } else if (compare(k1, k2) < 0) { 
+                 return Node(k2, insert(l, k1), r);
+             } else {
+                 return Node(k2, l, insert(r, k1));
+             }
+        default: abort("Error in insert($m$, $k1$, $v1$)");
+    }
+};
+
+toString := procedure(m, n) {
+    match (m) {
+        case Nil() :
+             return " " * n + "Nil";
+        case Node(k, l, r) :
+             return toString(l, n + 4) + "\n" + 
+                    " " * n + "<" + k + ">\n" +
+                    toString(r, n + 4);
+        default: abort("toString($m$, $n$)");
+    }
+};
+    
+demo := procedure(cmp) {
+    m := map();
+    m := insert(m, "anton" );
+    m := insert(m, "hugo"  );
+    m := insert(m, "gustav");
+    m := insert(m, "jens"  );
+    m := insert(m, "hubert");
+    m := insert(m, "andre" );
+    m := insert(m, "rene"  );
+    print("\n$toString(m, 0)$\n");
+};
+
+demo(lessThan);
+
+
+

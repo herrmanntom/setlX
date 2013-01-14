@@ -1,0 +1,6 @@
+x := 1;
+
+for (x in "abc") {
+    print(x);
+}
+print("x = $x$!");

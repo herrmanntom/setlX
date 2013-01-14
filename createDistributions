@@ -118,9 +118,9 @@ if [ -d ".git" -a $(which git > /dev/null 2>&1; echo $?) -eq 0 ]
   then
     if [ $(git tag | grep -c "$version") -ne 1 ]
       then
-        echo 2>&1
-        echo "WARNING: Version number of created distribution is not tagged in git!" 2>&1
-        echo 2>&1
+        echo >&2
+        echo "WARNING: Version number of created distribution is not tagged in git!" >&2
+        echo >&2
     fi
 fi
 

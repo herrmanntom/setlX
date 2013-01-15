@@ -11,6 +11,7 @@ Tutorial/*.log
 Tutorial/*.out
 Tutorial/*.pdf
 Tutorial/*.toc
+Tutorial/auto/*
 grammar_pure/EBNF_extractor/*.class
 grammar_pure/EBNF_extractor/EBNF_Grammar.tokens
 grammar_pure/EBNF_extractor/EBNF_GrammarLexer.java

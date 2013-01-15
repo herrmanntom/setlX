@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+ + add latex source for tutorial
+ # fix infinity when used as parameter for predefined math functions
+
 ---v1.4.5--- 2013-01-13
  + more robust internal handling of reals
  + improved stack management

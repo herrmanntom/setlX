@@ -5,6 +5,7 @@ documentation/*.out
 documentation/*.pdf
 documentation/*.toc
 documentation/version.tex
+Tutorial/*.?00pk
 Tutorial/*.aux
 Tutorial/*.dvi
 Tutorial/*.log
@@ -25,4 +26,5 @@ src/java-src/org/randoom/setlx/grammar
 src/setlX.jar
 developmentGuide.pdf
 manual.pdf
+tutorial.pdf
 setlX_*.zip

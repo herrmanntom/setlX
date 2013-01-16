@@ -72,6 +72,29 @@ else
     exit 1
 fi
 
+# goto tutorial's source
+cd ../Tutorial
+
+# clean the documentation source
+echo "=> Cleaning the tutorial's source ..."
+make dist-clean
+
+# make tutorial
+echo "=> Rebuilding the tutorial ..."
+make
+if [ -f tutorial.pdf ]
+  then
+    # move the finished PDFs where they belong
+    mv -f *.pdf ../.
+    # clean it up again
+    make dist-clean
+    echo "=> The tutorial was build correctly."
+else
+    echo "=> Building the tutorial failed ..."
+    # break
+    exit 1
+fi
+
 # go to project root
 cd ..
 
@@ -118,9 +141,9 @@ if [ -d ".git" -a $(which git > /dev/null 2>&1; echo $?) -eq 0 ]
   then
     if [ $(git tag | grep -c "$version") -ne 1 ]
       then
-        echo 2>&1
-        echo "WARNING: Version number of created distribution is not tagged in git!" 2>&1
-        echo 2>&1
+        echo >&2
+        echo "WARNING: Version number of created distribution is not tagged in git!" >&2
+        echo >&2
     fi
 fi
 

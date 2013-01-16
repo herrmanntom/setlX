@@ -33,14 +33,27 @@ public class Infinity extends NumberValue {
         return SetlBoolean.TRUE;
     }
 
+    /* native type checks */
+
+    @Override
+    public boolean jDoubleConvertable() {
+        return true;
+    }
+
     /* native type conversions */
 
+    @Override
     public double jDoubleValue() {
         if (this == POSITIVE) {
             return Double.POSITIVE_INFINITY;
         } else { // this == NEGATIVE
             return Double.NEGATIVE_INFINITY;
         }
+    }
+
+    @Override
+    public double toJDoubleValue() {
+        return this.jDoubleValue();
     }
 
     /* arithmetic operations */

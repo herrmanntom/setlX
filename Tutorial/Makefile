@@ -8,9 +8,11 @@ pdf: tutorial.pdf
 
 %.dvi: %.tex
 	latex $<
+	if [ -f $@ ]; then latex $< ; fi
+	if [ -f $@ ]; then latex $< ; fi
 
 clean:
-	rm -f *.aux *.dvi *.lof *.log *.out *.lof *.toc
+	rm -f *.?00pk *.aux *.blg *.dvi *.lof *.log *.out *.lof *.toc
 
 dist-clean: clean
 	rm -f *.pdf

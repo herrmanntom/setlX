@@ -1,0 +1,127 @@
+
+loadLibrary("aStar_hanoi_exact_stddraw");
+
+
+
+drawBase := procedure( disks ){
+    setPenColor("BLACK");
+    diskHalf := disks / 2;
+    for( i in [0 .. 2] ){
+        filledRectangle( diskHalf + disks*i, diskHalf/2+0.5, 0.1, diskHalf/2+0.5 ); 
+    }
+};
+
+drawState := procedure( state, disks ){
+    setPenColor("BROWN");
+    for( i in [1 .. 3] ){
+        diskNumber := 0;
+        while( #state[i] > 0  ){
+            filledRectangle(  disks/2 + disks*(i-1), diskNumber/2 + 0.25, fromE( state[i] )/2, 0.25 ); 
+            diskNumber := diskNumber + 1;
+        }
+    }
+};
+
+
+moveVertical := procedure(state,position,down,disks){
+    disksize := fromB( state[position] );
+    diskposition := #state[position];
+    if ( !down ){
+        y := ((diskposition/2) + 0.25);
+    }else{
+        y := (disks/2+1.5);
+    }
+    i := 0;
+    while(   (!down && ((diskposition/2) + 0.25 + i) <= (disks/2+1.5))
+          || ( down && ((diskposition/2) + 0.25)     <= (disks/2+1.5)+i)   
+    ){
+        clear();
+        drawBase(disks);
+        drawState(state,disks);
+        filledRectangle(  disks/2+disks*(position-1), y+i, disksize/2, 0.25 );
+        if ( down ){
+            i := i - 0.1;
+        }else{
+            i := i + 0.1;
+        }
+        show(1);        
+    } 
+};
+
+
+moveUp := procedure(old,from,disks){
+    moveVertical(old,from,false,disks);
+};
+
+moveDown := procedure(new,to,disks){
+    moveVertical(new,to,true,disks);
+};
+
+moveHorizontal := procedure(old,from,to,disks){
+    disksize := fromB( old[from] );
+    diskposition := #old[from];
+    if ( from < to ){
+        right := true;
+    }else{
+        right := false;
+    }
+    i := from;
+    while( (right && i <= to) || (!right && i >= to) ){
+        clear();
+        drawBase(disks);
+        drawState(old,disks);
+        filledRectangle(disks/2+disks*(i-1), (disks/2+1.5), disksize/2, 0.25 );
+        show(1);
+        if ( right ){
+            i := i + 0.1;
+        }else{
+            i := i - 0.1;
+        }
+    }
+};
+
+animateTransition := procedure( old, new, disks ){
+    from := 0;
+    to   := 0; 
+    for( i in [1 .. 3] ){
+        if ( #new[i] > #old[i] ){
+            to := i;
+        }
+        if ( #old[i] > #new[i] ){
+            from := i;
+        }
+    }
+    moveUp(old,from,disks);
+    moveHorizontal(old,from,to,disks);
+    moveDown(new,to,disks);
+    
+};
+
+animate := procedure( disks ){
+    algorithm := hanoi( disks ); 
+    print( algorithm );
+    setCanvasSize( 600, 400 );
+    xmax := (disks * 3) + 2;
+    ymax := (disks * 2) + 2;
+    setXscale( 0, xmax );
+    setYscale( 0, ymax );
+    begin := true;
+    while( #algorithm > 0 ){
+        nextState := fromE( algorithm );
+        if ( !begin ){
+            animateTransition( lastState, nextState, disks );
+        }else{
+            begin := false;
+        }
+        clear();
+        drawBase( disks );
+        drawState( nextState, disks );
+        lastState := nextState;
+        show( 500 );
+    }
+    
+};
+
+animate( rational( read("Please enter the size of the hanoi towers!") ) );
+
+read();

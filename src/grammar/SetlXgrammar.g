@@ -433,8 +433,6 @@ sum [boolean enableIgnore] returns [Expr s]
       (
           '+' p2 = product[$enableIgnore] { s = new Sum(s, $p2.p);                                             }
         | '-' p2 = product[$enableIgnore] { s = new Difference(s, $p2.p);                                      }
-        | NEG_NUMBER                      { s = new Sum(s, new ValueExpr(Rational.valueOf($NEG_NUMBER.text))); }
-        | NEG_REAL                        { s = new Sum(s, new ValueExpr(Real.valueOf($NEG_REAL.text)));       }
       )*
     ;
 
@@ -618,9 +616,7 @@ explicitList [boolean enableIgnore] returns [Constructor el]
 
 atomicValue returns [Value av]
     : NUMBER     { av = Rational.valueOf($NUMBER.text);       }
-    | NEG_NUMBER { av = Rational.valueOf($NEG_NUMBER.text);   }
     | REAL       { av = Real.valueOf($REAL.text);             }
-    | NEG_REAL   { av = Real.valueOf($NEG_REAL.text);         }
     | 'om'       { av = Om.OM;                                }
     | 'true'     { av = SetlBoolean.TRUE;                     }
     | 'false'    { av = SetlBoolean.FALSE;                    }
@@ -629,17 +625,12 @@ atomicValue returns [Value av]
 TERM            : ('^'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
 ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
-NEG_NUMBER      : '-' NUMBER;
 REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
-NEG_REAL        : NEG_NUMBER '.' ('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
 RANGE_SIGN      : '..';
 // fix parsing `list[2..]' by emitting two tokens for one rule. Otherwise ANTLR
 // gets confused and want's to parse a REAL and runs into an unexpected second dot.
-NUMBER_RANGE    : (
-                     n1 = NUMBER     { $n1.setType(NUMBER);     emit($n1); }
-                   | n2 = NEG_NUMBER { $n2.setType(NEG_NUMBER); emit($n2); }
-                  )
-                  r = RANGE_SIGN     { $r.setType(RANGE_SIGN);  emit($r); }
+NUMBER_RANGE    : n1 = NUMBER     { $n1.setType(NUMBER);     emit($n1); } 
+                  r  = RANGE_SIGN { $r.setType(RANGE_SIGN);  emit($r ); }
                 ;
 STRING          : '"' ('\\"'|~('"'))* '"';
 LITERAL         : '\'' ('\\\''|~('\''))* '\'';

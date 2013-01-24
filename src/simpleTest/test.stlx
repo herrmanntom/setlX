@@ -201,7 +201,7 @@ lazyChecking := procedure() {
     // now a should be 3, but b still 2, c should be false
     correct := correct && a == 3 && b == 2 && !c;
 
-    tester(correct, "lazyChecking");
+    tester(correct, "lazy checking");
 };
 lazyChecking();
 
@@ -222,7 +222,7 @@ relationExtension := procedure() {
 
     correct := correct && r == {[1, 1], [2, 3], [3, 9], [4, 5]};
 
-    tester(correct, "relationExtension");
+    tester(correct, "relation extension");
 };
 relationExtension();
 
@@ -237,7 +237,7 @@ formatedString := procedure() {
 
     correct := s == "p1 || p2 || p3 || p4 || p5 || p6 || p7 || p8 || p9 || false";
 
-    tester(correct, "formatedString");
+    tester(correct, "formated string");
 };
 formatedString();
 
@@ -262,7 +262,7 @@ complexLhsAssignment := procedure() {
     [a[1], a[2]] := [a[2], a[1]];
     [a[1][1], a[2][2]] := [a[2][2], a[1][1]];
 
-    tester(a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]], "complexLhsAssignment");
+    tester(a == [[12, 22, 23, 24], [11, 21, 13], [31, 320, 33]], "complex lhs assignment");
 };
 complexLhsAssignment();
 
@@ -285,7 +285,7 @@ valueVsReference := procedure() {
 
     correct := correct && l2 in s;
 
-    tester(correct, "valueVsReference");
+    tester(correct, "value vs reference");
 };
 valueVsReference();
 
@@ -299,7 +299,7 @@ matchSets := procedure() {
             correct := false;
     }
 
-    tester(correct, "matchSets");
+    tester(correct, "match sets");
 };
 matchSets();
 
@@ -310,26 +310,9 @@ complexIndirectAssignment := procedure() {
 
     correct := s == { ["a", 3], ["b", [1, 2]] };
 
-    tester(correct, "complexIndirectAssignment");
+    tester(correct, "complex indirect assignment");
 };
 complexIndirectAssignment();
-
-forallCombinations := procedure() {
-    if (true && forall(x in [1..10] | x < 11) && 1 == 1) {
-        correct := true;
-    } else {
-        correct := false;
-    }
-
-    if (forall(x in [1..10] | x < 10) || true) {
-        correct := correct && true;
-    } else {
-        correct := correct && false;
-    }
-
-    tester(correct, "forallCombinations");
-};
-forallCombinations();
 
 equality := procedure() {
     if (1.0 == 1.0 && 1 == 1 && 1/2 == 1/2) {
@@ -388,14 +371,58 @@ infinityTests := procedure() {
         correct := correct && true;
     }
 
-    tester(correct, "infinityTests");
+    tester(correct, "infinity computation");
 };
 infinityTests();
+
+grammarTests := procedure() {
+    correct := true;
+    try {
+
+        // combine forall with other conditions
+        if (true && forall(x in [1..10] | x < 11) && 1 == 1) {
+            correct := correct && true;
+        } else {
+            correct := false;
+        }
+        if (forall(x in [1..10] | x < 10) || true) {
+            correct := correct && true;
+        } else {
+            correct := false;
+        }
+
+        // negative numbers vs unary minus vs binary minus
+        if (parseStatements("x := -2;") == ^block([^assignment(^variable("x"), ^minus(2))])) {
+            correct := correct && true;
+        } else {
+            correct := false;
+        }
+        if (parseStatements("x:= x-2;") == ^block([^assignment(^variable("x"), ^difference(^variable("x"), 2))])) {
+            correct := correct && true;
+        } else {
+            correct := false;
+        }
+        if (parseStatements("x := x-2*x;") == ^block([^assignment(^variable("x"), ^difference(^variable("x"), ^product(2, ^variable("x"))))])) {
+            correct := correct && true;
+        } else {
+            correct := false;
+        }
+
+    } catch (error) {
+        // any parser error fails the test
+        correct := false;
+    }
+
+    tester(correct, "grammar");
+};
+grammarTests();
 
 // ************************************************************************** \\
 
 printErr("\n$testsOK$ / $testNumber$ successful");
 if (testsOK == testNumber) {
     printErr("Everything is fine. Move along sir!");
+} else {
+    printErr("Errors detected. Please fix them all.");
 }
 

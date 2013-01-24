@@ -45,7 +45,7 @@ public class PD_writeFile extends PreDefinedFunction {
         final String          fileName    = fileArg.getUnquotedString();
         // get content to be written into the file
               CollectionValue content     = null;
-        if (contentArg instanceof CollectionValue && ! (contentArg instanceof Term || contentArg instanceof String)) {
+        if (contentArg instanceof CollectionValue && ! (contentArg instanceof Term || contentArg instanceof SetlString)) {
             content = (CollectionValue) contentArg;
         } else {
             content = new SetlList(1);

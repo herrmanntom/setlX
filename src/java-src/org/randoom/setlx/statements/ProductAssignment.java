@@ -53,7 +53,7 @@ public class ProductAssignment extends StatementWithPrintableResult {
         if (state.traceAssignments) {
             state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
         } else if (mPrintAfterEval) {
-            state.outWriteLn("~< Result: " + assigned + " >~");
+            printResult(state, assigned);
         }
 
         return null;

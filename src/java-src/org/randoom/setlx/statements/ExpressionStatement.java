@@ -39,7 +39,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     protected ReturnMessage execute(final State state) throws SetlException {
         final Value v = mExpr.eval(state);
         if (mPrintAfterEval) {
-            state.outWriteLn("~< Result: " + v + " >~");
+            printResult(state, v);
         }
         return null;
     }

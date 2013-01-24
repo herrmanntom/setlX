@@ -40,7 +40,7 @@ public class SetlX {
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) {
         boolean             dump        = false; // writes loaded code into a file
         String              dumpFile    = "";    // file to dump into
         boolean             help        = false;
@@ -181,14 +181,14 @@ public class SetlX {
 
     }
 
-    private static void parseAndExecuteInteractive(final State state) throws Exception {
+    private static void parseAndExecuteInteractive(final State state) {
         state.setInteractive(true);
         Block   blk      = null;
         boolean skipTest = false;
         do {
-            // prompt including newline to visually separate the next input
-            state.prompt("\n=> ");
             try {
+                // prompt including newline to visually separate the next input
+                state.prompt("\n=> ");
                 ParseSetlX.resetErrorCount();
                 blk         = ParseSetlX.parseInteractive(state);
                 if ( ! state.isMultiLineEnabled()) {
@@ -224,7 +224,7 @@ public class SetlX {
                                                  final String       statement,
                                                  final List<String> files,
                                                  final boolean      dump,
-                                                 final String       dumpFile) throws Exception {
+                                                 final String       dumpFile) {
         // parsed programs
         int nPrograms = files.size();
         if (expression != null) {
@@ -317,7 +317,7 @@ public class SetlX {
         return programs;
     }
 
-    private static void executeFiles(final State state, final List<Block> programs) throws Exception {
+    private static void executeFiles(final State state, final List<Block> programs) {
         state.setInteractive(false);
 
         if (verbose) {

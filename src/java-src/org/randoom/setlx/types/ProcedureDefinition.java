@@ -37,12 +37,13 @@ implemented here as:
 
 public class ProcedureDefinition extends Value {
     // functional character used in terms
-    public  final static String  FUNCTIONAL_CHARACTER = "^procedure";
+    public  final static String FUNCTIONAL_CHARACTER = "^procedure";
+    // count how often procedures where executed before checking to replace the stack
+    private       static int    nrOfCalls            = 0;
 
     protected final List<ParameterDef>       mParameters;  // parameter list
     protected final Block                    mStatements;  // statements in the body of the definition
     protected       HashMap<Variable, Value> mClosure;     // variables and values used in closure
-    private         int                      nrOfCalls;    // how often this procedure was executed
 
     public ProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
         this(parameters, statements, null);

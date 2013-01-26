@@ -69,6 +69,10 @@ public abstract class Value implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isObject() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isProcedure() {
         return SetlBoolean.FALSE;
     }
@@ -523,6 +527,20 @@ public abstract class Value implements Comparable<Value> {
     public Value sumOfMembers(final State state, final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '+/ " + this + "' is not a collection value."
+        );
+    }
+
+    /* features of objects */
+
+    public Value getObjectMember(final String variable) throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
+        );
+    }
+
+    public void setObjectMember(final String variable, final Value value) throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Can not add member '" + variable + "' into operand; '" + this + "' is not an object."
         );
     }
 

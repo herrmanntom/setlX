@@ -7,11 +7,11 @@ public class SetlError extends Value {
 
     private final String mMessage;
 
-    public SetlError(final String message){
+    public SetlError(final String message) {
         mMessage = message;
     }
 
-    public SetlError(final SetlException exception){
+    public SetlError(final SetlException exception) {
         this(exception.getMessage());
     }
 

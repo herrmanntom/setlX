@@ -331,13 +331,8 @@ assignable [boolean enableIgnore] returns [Expr a]
     ;
 
 expr [boolean enableIgnore] returns [Expr ex]
-    : definition              { ex = $definition.d; }
-    | equation[$enableIgnore] { ex = $equation.eq;  }
-    ;
-
-definition returns [ProcedureConstructor d]
-    : lambdaDefinition    { d = new ProcedureConstructor($lambdaDefinition.ld);    }
-    | procedureDefinition { d = new ProcedureConstructor($procedureDefinition.pd); }
+    : lambdaDefinition        { ex = new ProcedureConstructor($lambdaDefinition.ld); }
+    | equation[$enableIgnore] { ex = $equation.eq;                                   }
     ;
 
 lambdaDefinition returns [LambdaDefinition ld]
@@ -357,29 +352,6 @@ lambdaParameters returns [List<ParameterDef> paramList]
         )*
       )?
       ']'
-    ;
-
-procedureDefinition returns [ProcedureDefinition pd]
-    : 'procedure' '(' procedureParameters ')' '{' block '}'
-      { pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk); }
-    | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
-      { pd = new CachedProcedureDefinition($procedureParameters.paramList, $block.blk); }
-    ;
-
-procedureParameters returns [List<ParameterDef> paramList]
-    @init {
-        paramList = new ArrayList<ParameterDef>();
-    }
-    : dp1 = procedureParameter       { paramList.add($dp1.param); }
-      (
-        ',' dp2 = procedureParameter { paramList.add($dp2.param); }
-      )*
-    | /* epsilon */
-    ;
-
-procedureParameter returns [ParameterDef param]
-    : 'rw' variable { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
-    | variable      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
 equation [boolean enableIgnore] returns [Expr eq]
@@ -479,12 +451,14 @@ factor [boolean enableIgnore, boolean quoted] returns [Expr f]
     | 'exists' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
       { f = new Exists($iteratorChain.ic, $condition.cnd); }
     | (
-          '(' expr[$enableIgnore] ')'         { f = new BracketedExpr($expr.ex); }
-        | call[$enableIgnore]                 { f = $call.c;                     }
-        | value[$enableIgnore, $quoted]       { f = $value.v;                    }
+          '(' expr[$enableIgnore] ')'   { f = new BracketedExpr($expr.ex);                       }
+        | procedureDefinition           { f = new ProcedureConstructor($procedureDefinition.pd); }
+        | variable                      { f = $variable.v;                                       }
+        | value[$enableIgnore, $quoted] { f = $value.v;                                          }
       )
+      call[$enableIgnore, $f]           { f = $call.c;                                           }
       (
-        '!'                                   { f = new Factorial(f);            }
+        '!'                             { f = new Factorial(f);                                  }
       )?
     ;
 
@@ -498,16 +472,36 @@ termArguments returns [List<Expr> args]
     |  /* epsilon */ { args = new ArrayList<Expr>(); }
     ;
 
-call [boolean enableIgnore] returns [Expr c]
+procedureDefinition returns [ProcedureDefinition pd]
+    : 'procedure' '(' procedureParameters ')' '{' block '}'
+      { pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk); }
+    | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
+      { pd = new CachedProcedureDefinition($procedureParameters.paramList, $block.blk); }
+    ;
+
+procedureParameters returns [List<ParameterDef> paramList]
     @init {
-        Variable var = null;
+        paramList = new ArrayList<ParameterDef>();
     }
-    : variable                                         { c = var = $variable.v;                                       }
+    : dp1 = procedureParameter       { paramList.add($dp1.param); }
       (
-         '(' callParameters[$enableIgnore] ')'         { c = new Call(var, $callParameters.params);                   }
-      )?
-      (
-         '[' collectionAccessParams[$enableIgnore] ']' { c = new CollectionAccess(c, $collectionAccessParams.params); }
+        ',' dp2 = procedureParameter { paramList.add($dp2.param); }
+      )*
+    | /* epsilon */
+    ;
+
+procedureParameter returns [ParameterDef param]
+    : 'rw' variable { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
+    | variable      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
+    ;
+
+call [boolean enableIgnore, Expr lhs] returns [Expr c]
+    @init {
+        c = lhs;
+    }
+    : (
+         '(' callParameters[$enableIgnore] ')'         { c = new Call(c, $callParameters.params);                     }
+       | '[' collectionAccessParams[$enableIgnore] ']' { c = new CollectionAccess(c, $collectionAccessParams.params); }
        | '{' expr[$enableIgnore]                   '}' { c = new CollectMap(c, $expr.ex);                             }
       )*
     ;

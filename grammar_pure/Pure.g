@@ -84,13 +84,8 @@ assignable
     ;
 
 expr
-    : definition
-    | equation
-    ;
-
-definition
     : lambdaDefinition
-    | procedureDefinition
+    | equation
     ;
 
 lambdaDefinition
@@ -100,21 +95,6 @@ lambdaDefinition
 lambdaParameters
     : variable
     | '[' (variable (',' variable)*)? ']'
-    ;
-
-procedureDefinition
-    : 'procedure' '(' procedureParameters ')' '{' block '}'
-    | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
-    ;
-
-procedureParameters
-    : procedureParameter (',' procedureParameter)*
-    | /* epsilon */
-    ;
-
-procedureParameter
-    : 'rw' variable
-    | variable
     ;
 
 equation
@@ -167,7 +147,7 @@ factor
     | term
     | 'forall' '(' iteratorChain '|' condition ')'
     | 'exists' '(' iteratorChain '|' condition ')'
-    | ('(' expr ')' | call | value) '!'?
+    | ('(' expr ')' | procedureDefinition | variable | value) call '!'?
     ;
 
 term
@@ -179,8 +159,23 @@ termArguments
     | /* epsilon */
     ;
 
+procedureDefinition
+    : 'procedure' '(' procedureParameters ')' '{' block '}'
+    | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
+    ;
+
+procedureParameters
+    : procedureParameter (',' procedureParameter)*
+    | /* epsilon */
+    ;
+
+procedureParameter
+    : 'rw' variable
+    | variable
+    ;
+
 call
-    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' expr '}')*
+    : ('(' callParameters ')' | '[' collectionAccessParams ']' | '{' expr '}')*
     ;
 
 callParameters

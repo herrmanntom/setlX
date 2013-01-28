@@ -3,8 +3,6 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.exceptions.UnknownFunctionException;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -18,13 +16,19 @@ import java.util.List;
 
 /*
 grammar rule:
+
+factor
+    : [..]
+    | ('(' expr ')' | procedureDefinition | variable | value) call '!'?
+    ;
+
 call
-    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
+    :                                                         ('(' callParameters ')' | [..])*
     ;
 
 implemented here as:
-      ========      ==============
-        mLhs             mArgs
+       =====================================================       ==============
+                                mLhs                                  mArgs
 */
 
 public class Call extends Expr {
@@ -33,11 +37,11 @@ public class Call extends Expr {
     // precedence level in SetlX-grammar
     private final static int        PRECEDENCE           = 2100;
 
-    private final Variable   mLhs;  // left hand side
+    private final Expr       mLhs;  // left hand side
     private final List<Expr> mArgs; // list of arguments
     private final String     _this; // pre-computed toString(), which has less stack penalty in case of stack overflow error...
 
-    public Call(final Variable lhs, final List<Expr> args) {
+    public Call(final Expr lhs, final List<Expr> args) {
         mLhs    = lhs;
         mArgs   = args;
         _this   = toString();
@@ -46,11 +50,6 @@ public class Call extends Expr {
     @Override
     protected Value evaluate(final State state) throws SetlException {
         final Value lhs = mLhs.eval(state);
-        if (lhs == Om.OM) {
-            throw new UnknownFunctionException(
-                "Identifier \"" + mLhs + "\" is undefined."
-            );
-        }
         final boolean finishOuterFunction = state.isDebugFinishFunction;
         try {
             if (state.areBreakpointsEnabled && ! state.isDebugPromptActive()) {
@@ -61,7 +60,7 @@ public class Call extends Expr {
             if (finishOuterFunction) { // unset, because otherwise it would be reset when this call returns
                 state.setDebugFinishFunction(false);
             }
-            // also supply the original expressions (mArgs), which are needed for 'rw' parameters
+            // supply the original expressions (mArgs), which are needed for 'rw' parameters
             return lhs.call(state, mArgs);
         } catch (final StackOverflowError e) {
             throw new JVMException(
@@ -125,7 +124,11 @@ public class Call extends Expr {
     public Term toTerm(final State state) {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(state, new SetlString(mLhs.toString()));
+        if (mLhs instanceof Variable) {
+            result.addMember(state, new SetlString(mLhs.toString()));
+        } else {
+            result.addMember(state, mLhs.toTerm(state));
+        }
 
         final SetlList  arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
@@ -140,7 +143,11 @@ public class Call extends Expr {
     public Term toTermQuoted(final State state) throws SetlException {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(state, new SetlString(mLhs.toString()));
+        if (mLhs instanceof Variable) {
+            result.addMember(state, new SetlString(mLhs.toString()));
+        } else {
+            result.addMember(state, mLhs.toTerm(state));
+        }
 
         final SetlList  arguments   = new SetlList(mArgs.size());
         for (final Expr arg: mArgs) {
@@ -152,16 +159,22 @@ public class Call extends Expr {
     }
 
     public static Call termToExpr(final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember() instanceof SetlString && term.lastMember() instanceof SetlList)) {
+        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final String      lhs     = ((SetlString) term.firstMember()).getUnquotedString();
+            final Value       lhsTerm = term.firstMember();
+            final Expr        lhs;
+            if (lhsTerm instanceof SetlString) {
+                lhs = new Variable(lhsTerm.getUnquotedString());
+            } else {
+                lhs = TermConverter.valueToExpr(lhsTerm);
+            }
             final SetlList    argsLst = (SetlList) term.lastMember();
             final List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
             for (final Value v : argsLst) {
                 args.add(TermConverter.valueToExpr(v));
             }
-            return new Call(new Variable(lhs), args);
+            return new Call(lhs, args);
         }
     }
 

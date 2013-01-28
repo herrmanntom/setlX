@@ -136,6 +136,16 @@ public class ParseSetlX {
 
             // now ANTLR will add its parser errors into our capture ...
 
+            // start optimizing the fragment
+            final Thread optimizer = new Thread() {
+                                        @Override
+                                        public void run() {
+                                            frag.optimize();
+                                        }
+                                     };
+            optimizer.start();
+
+
             /* check for unparsed syntax errors at the end of the input stream */
 
             // fill token stream until EOF is reached (parser fills only as far as its lookahead needs)
@@ -182,8 +192,14 @@ public class ParseSetlX {
                 );
             }
 
-            // Optimize fragment
-            frag.optimize();
+            // wait until optimization of the fragment is finished, but max 0.25s
+            int ticks = 0;
+            while(ticks < 250 && optimizer.isAlive()) {
+                try {
+                    Thread.sleep(5);
+                } catch (final InterruptedException e) { /* don't care */ }
+                ticks += 5;
+            }
 
             return frag;
         } catch (final RecognitionException re) {

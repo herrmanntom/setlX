@@ -38,7 +38,7 @@ public class DebugPrompt {
             // prompt including newline to visually separate the next input
             state.promptUnchecked("\n" + message + "\ndbg> ");
             try {
-                ParseSetlX.resetErrorCount();
+                state.resetParserErrorCount();
                 blk         = ParseSetlX.parseInteractive(state);
             } catch (final ParserException pe) {
                 state.errWriteLn("\nLast input not executed due to errors in it.");

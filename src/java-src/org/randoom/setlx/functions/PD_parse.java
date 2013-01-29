@@ -28,8 +28,8 @@ public class PD_parse extends PreDefinedFunction {
         // get expression string to be parsed
         final String  exprStr = exprArg.getUnquotedString();
 
-        // parse expr
-        ParseSetlX.resetErrorCount();
+        // parse expression
+        state.resetParserErrorCount();
         final Expr expr = ParseSetlX.parseStringToExpr(state, exprStr);
 
         // return term of result

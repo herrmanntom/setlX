@@ -34,7 +34,7 @@ public class PD_execute extends PreDefinedFunction {
         final String  stmntStr = stmntArg.getUnquotedString();
 
         // parse statements
-        ParseSetlX.resetErrorCount();
+        state.resetParserErrorCount();
         final Block   blk      = ParseSetlX.parseStringToBlock(state, stmntStr);
 
         // execute the contents

@@ -29,7 +29,7 @@ public class PD_eval extends PreDefinedFunction {
         // get expression string to be parsed
         final String  exprStr = exprArg.getUnquotedString();
 
-        ParseSetlX.resetErrorCount();
+        state.resetParserErrorCount();
         final Expr    expr    = ParseSetlX.parseStringToExpr(state, exprStr);
 
         // eval and return result

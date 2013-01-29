@@ -12,7 +12,6 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -64,7 +63,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                   + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
                   + "}"
                 );
-                ParseSetlX.addReportedError();
+                state.addToParserErrorCount(1);
                 mRuntimePattern = null;
             }
         } else {

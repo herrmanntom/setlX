@@ -189,7 +189,7 @@ public class SetlX {
             try {
                 // prompt including newline to visually separate the next input
                 state.prompt("\n=> ");
-                ParseSetlX.resetErrorCount();
+                state.resetParserErrorCount();
                 blk         = ParseSetlX.parseInteractive(state);
                 if ( ! state.isMultiLineEnabled()) {
                     state.outWriteLn();

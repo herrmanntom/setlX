@@ -20,7 +20,6 @@ public class ParseSetlX {
 
     private final   static  int             EXPR            =  1337;
     private final   static  int             BLOCK           = 31337;
-    private         static  int             errors          =     0; // our own error accounting, which survives nested parsing
 
     public static Block parseFile(final State state, String fileName) throws ParserException {
         try {
@@ -93,18 +92,6 @@ public class ParseSetlX {
         }
     }
 
-    public static int getErrorCount() {
-        return errors;
-    }
-
-    public static void resetErrorCount() {
-        errors = 0;
-    }
-
-    public static void addReportedError() {
-        errors++;
-    }
-
     /* private methods */
 
     private static Block parseBlock(final State state, final ANTLRStringStream input) throws SyntaxErrorException {
@@ -136,15 +123,14 @@ public class ParseSetlX {
 
             // now ANTLR will add its parser errors into our capture ...
 
-            // start optimizing the fragment
-            final Thread optimizer = new Thread() {
-                                        @Override
-                                        public void run() {
-                                            frag.optimize();
-                                        }
-                                     };
-            optimizer.start();
+            // update error count
+            state.addToParserErrorCount(parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors());
 
+            // start optimizing the fragment
+            final Thread optimizer = new OptimizerThread(frag);
+            if (state.getParserErrorCount() == 0 && frag != null) {
+                optimizer.start();
+            }
 
             /* check for unparsed syntax errors at the end of the input stream */
 
@@ -179,16 +165,15 @@ public class ParseSetlX {
                     String error  = "line " + t.getLine() + ":" + t.getCharPositionInLine();
                            error += " input '" + ts.toString(index, ts.size()) + "' includes unidentified errors";
                     // fake ANTLR like error message
-                    errors++;
+                    state.addToParserErrorCount(1);
                     parser.emitErrorMessage(error);
                 }
             }
 
-            errors += parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors();
-            if (errors > 0) {
+            if (state.getParserErrorCount() > 0) {
                 throw SyntaxErrorException.create(
                     state.getParserErrorCapture(),
-                    errors + " syntax error(s) encountered."
+                    state.getParserErrorCount() + " syntax error(s) encountered."
                 );
             }
 
@@ -206,16 +191,16 @@ public class ParseSetlX {
             throw SyntaxErrorException.create(state.getParserErrorCapture(), re.getMessage());
         } catch (final NullPointerException npe) {
             if (lexer != null) {
-                errors += lexer.getNumberOfSyntaxErrors();
+                state.addToParserErrorCount(lexer.getNumberOfSyntaxErrors());
             }
             if (parser != null) {
-                errors += parser.getNumberOfSyntaxErrors();
+                state.addToParserErrorCount(parser.getNumberOfSyntaxErrors());
             }
-            if (errors > 0) {
+            if (state.getParserErrorCount() > 0) {
                 // NullPointerException caused by syntax error(s)
                 throw SyntaxErrorException.create(
                     state.getParserErrorCapture(),
-                    errors + " syntax error(s) encountered."
+                    state.getParserErrorCount() + " syntax error(s) encountered."
                 );
             } else { // NullPointer in parse tree itself
                 throw SyntaxErrorException.create(new LinkedList<String>(),"Parsed tree contains nullpointer.");
@@ -237,5 +222,20 @@ public class ParseSetlX {
                 return null;
         }
     }
+
+    // private subclass to execute optimization using a different thread
+    private static class OptimizerThread extends Thread {
+        private final CodeFragment mFragment;
+
+        public OptimizerThread(final CodeFragment fragment) {
+            mFragment = fragment;
+        }
+
+        @Override
+        public void run() {
+            mFragment.optimize();
+        }
+    }
+
 }
 

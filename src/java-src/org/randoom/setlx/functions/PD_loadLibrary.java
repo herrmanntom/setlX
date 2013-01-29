@@ -34,7 +34,7 @@ public class PD_loadLibrary extends PreDefinedFunction {
         final String  name    = nameArg.getUnquotedString();
 
         // parse the file
-        ParseSetlX.resetErrorCount();
+        state.resetParserErrorCount();
         final Block   blk     = ParseSetlX.parseLibrary(state, name);
 
         // execute the contents

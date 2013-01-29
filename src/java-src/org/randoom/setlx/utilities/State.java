@@ -32,6 +32,10 @@ public abstract class State {
     public abstract void                writeParserErrLn(final String msg);
     public abstract LinkedList<String>  getParserErrorCapture();
     public abstract void                setParserErrorCapture(final LinkedList<String> capture);
+    // our own error accounting, which survives nested parsing
+    public abstract int                 getParserErrorCount();
+    public abstract void                addToParserErrorCount(int numberOfErrors);
+    public abstract void                resetParserErrorCount();
 
     public abstract boolean             prompt(final String prompt) throws JVMIOException;
 

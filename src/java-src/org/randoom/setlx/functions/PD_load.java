@@ -34,7 +34,7 @@ public class PD_load extends PreDefinedFunction {
         final String  file    = filePath.getUnquotedString();
 
         // parse the file
-        ParseSetlX.resetErrorCount();
+        state.resetParserErrorCount();
         final Block   blk     = ParseSetlX.parseFile(state, file);
 
         // execute the contents

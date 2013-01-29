@@ -46,7 +46,7 @@ public class StringConstructor extends Expr {
                         // end of inner expr
                         innerExpr = false;
                         // parse inner expr
-                        final int errCount = ParseSetlX.getErrorCount();
+                        final int errCount = state.getParserErrorCount();
                         try {
                             // SetlString parses escape characters properly
                             final String eStr = SetlString.parseString(expr.toString());
@@ -59,7 +59,7 @@ public class StringConstructor extends Expr {
                              * error count and (later) halt.
                              * However we can at least provide the user with some feedback.
                              */
-                            if (ParseSetlX.getErrorCount() > errCount) {
+                            if (state.getParserErrorCount() > errCount) {
                                 state.writeParserErrLn(
                                     "Error(s) while parsing string " + this + " {"
                                 );
@@ -107,7 +107,7 @@ public class StringConstructor extends Expr {
                  * Instead make outer parsing run, which called this constructor,
                  * notice this error and (later) halt.
                  */
-                ParseSetlX.addReportedError();
+                state.addToParserErrorCount(1);
                 // However we can at least provide the user with some feedback.
                 state.writeParserErrLn(
                     "Error(s) while parsing string " + this + " {\n"

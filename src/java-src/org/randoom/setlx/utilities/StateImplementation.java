@@ -20,6 +20,7 @@ public class StateImplementation extends State {
 
     private final           HashSet<String>     mLoadedLibraries;
     private                 LinkedList<String>  mParserErrorCapture;
+    private                 int                 mParserErrorCount;
 
     /* This variable stores the root VariableScope:
        Predefined functions are dynamically loaded into this VariableScope and
@@ -61,6 +62,7 @@ public class StateImplementation extends State {
         mEnvProvider                     = envProvider;
         mLoadedLibraries                 = new HashSet<String>();
         mParserErrorCapture              = null;
+        mParserErrorCount                = 0;
         mGlobals                         = new VariableScope();
         mGlobalsPresent                  = false;
         mVariableScope                   = sROOT_Scope.clone();
@@ -146,6 +148,21 @@ public class StateImplementation extends State {
     @Override
     public void setParserErrorCapture(final LinkedList<String> capture) {
         mParserErrorCapture = capture;
+    }
+
+    @Override
+    public int getParserErrorCount() {
+        return mParserErrorCount;
+    }
+
+    @Override
+    public void addToParserErrorCount(final int numberOfErrors) {
+        mParserErrorCount += numberOfErrors;
+    }
+
+    @Override
+    public void resetParserErrorCount() {
+        mParserErrorCount = 0;
     }
 
     @Override

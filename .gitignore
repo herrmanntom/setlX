@@ -24,7 +24,6 @@ grammar_pure/*.class
 src/bin
 src/java-src/org/randoom/setlx/grammar
 src/setlX.jar
-diff.result
 diff.*.result
 developmentGuide.pdf
 manual.pdf

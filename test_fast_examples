@@ -1,6 +1,7 @@
 #!/bin/bash
 
-./test_all_examples "no_performance"
+export setlX_block_performance="1"
+./test_all_examples "$@"
 exitCode=$?
 
 exit $exitCode

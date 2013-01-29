@@ -6,6 +6,19 @@ manualTestFiles=""
 skippedTestFiles=""
 nSkipped=0
 
+# number of concurrent processes to start
+numberOfThreads="2"
+if [ ! -z "$1" ]
+  then
+    if [[ "$1" =~ ^[1-9][0-9]*$ ]]
+      then
+        numberOfThreads="$1"
+    else
+        echo "First argument (number of threads) must be a number!"
+        exit 1
+    fi
+fi
+
 # set overrides for setlX launcher script
 export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
 export OVERRIDE_setlXjavaParameters="-d64  -Xmx6144m"
@@ -40,7 +53,7 @@ while read -r -d $'\0' path
   do
     directoryname="$(dirname $path)"
 
-    if [ "$1" == "no_performance" -a "$directoryname" == "example_SetlX_code/performance_test_code" ]
+    if [ "$setlX_block_performance" == "1" -a "$directoryname" == "example_SetlX_code/performance_test_code" ]
       then
         continue
     fi
@@ -55,14 +68,22 @@ while read -r -d $'\0' path
 done < <( find -L example_SetlX_code -name "*.stlx" -print0 )
 
 started=0
+threadID=0
+pids=( )
+references=( )
+outputFiles=( )
+filenames=( )
+shotnames=( )
+messages=( )
 # loop through all SetlX files, execute them and compare to reference result
 while read -r -d $'\0' path
   do
     shortname="${path#example_SetlX_code/}"
     directoryname="$(dirname $path)"
     filename="$(basename $path)"
+    outputFile=$(mktemp -t setlx-XXXXXXXXXX)
 
-    if [ "$1" == "no_performance" -a "$directoryname" == "example_SetlX_code/performance_test_code" ]
+    if [ "$setlX_block_performance" == "1" -a "$directoryname" == "example_SetlX_code/performance_test_code" ]
       then
         continue
     fi
@@ -74,33 +95,70 @@ while read -r -d $'\0' path
     fi
 
     started=$(bc <<< "$started + 1")
-    echo -n "($started/$count) executing file '$shortname' ..."
+    echo -e "Starting test $started/$count.\n"
+    message="Test of file '$shortname' ($started/$count) "
 
-    # execute with setlX
-    if [ -e "$path.input" ]
-      then
-        cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" --predictableRandom --unhideExceptions "$filename" > "$tmpFile" 2>&1; cd - >/dev/null
-    else
-        cd "$directoryname"; "$setlXlaunchScript" --predictableRandom --unhideExceptions "$filename" > "$tmpFile" 2>&1; cd - >/dev/null
-    fi
+    (
+        # execute with setlX
+        if [ -e "$path.input" ]
+          then
+            cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" --predictableRandom --unhideExceptions "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+        else
+            cd "$directoryname"; "$setlXlaunchScript" --predictableRandom --unhideExceptions "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+        fi
+    )&
+    pids[$threadID]=$!
+    references[$threadID]="$path.reference"
+    outputFiles[$threadID]="$outputFile"
+    filenames[$threadID]="$filename"
+    shotnames[$threadID]="$shortname"
+    messages[$threadID]="$message"
 
-    diff "$path.reference" "$tmpFile" > "$diffDir/diff.result"
-    if [ $? -eq 1 ]
-      then
+    # get next free ID in array, which is smaller as $numberOfThreads
+    threadID=-1
+    while [ $threadID -lt 0 ]
+      do
+        if [ $started -ge $count ]
+          then
+            wait
+        fi
+        for (( i = 0; i < $numberOfThreads; i++))
+          do
+            if [ $(kill -0 "${pids[$i]}" > /dev/null 2>&1; echo $?) -ne 0 ]
+              then
+                threadID=$i
 
-        skippedTestFiles="$skippedTestFiles$shortname, "
-        nSkipped=$(bc <<< "$nSkipped + 1")
+                # diff result of finished thread
+                if [ -f "${outputFiles[$i]}" ]
+                  then
+                    message=""
 
-        mv "$diffDir/diff.result" "$diffDir/diff.$filename.result"
-        echo -e " failed ... (see diff.$filename.result)\n"
+                    diff "${references[$i]}" "${outputFiles[$i]}" > "$tmpFile"
+                    if [ $? -eq 1 ]
+                      then
 
-    else
-        echo -e " successful!\n"
-    fi
+                        skippedTestFiles="$skippedTestFiles${shotnames[$i]}, "
+                        nSkipped=$(bc <<< "$nSkipped + 1")
+
+                        mv "$tmpFile" "$diffDir/diff.${filenames[$i]}.result"
+                        message="${messages[$i]} failed ... (see diff.${filenames[$i]}.result)\n"
+
+                    else
+                        message="${messages[$i]} successful!\n"
+                    fi
+                    echo -e "$message"
+
+                    rm -f "${outputFiles[$i]}"
+                fi
+            fi
+        done
+        if [ $threadID -lt 0 ]
+          then
+            sleep 1
+        fi
+    done
 
 done < <( find -L example_SetlX_code -name "*.stlx" -print0 )
-
-rm -f "$diffDir/diff.result"
 
 rm -f "$tmpFile"
 
@@ -114,6 +172,9 @@ if [ $nSkipped -gt 0 ]
     echo "The following examples failed: $skippedTestFiles"
     echo
     echo "!! $nSkipped examples did fail this test !!"
+else
+    echo
+    echo "Everything is fabulous. Well done sir!"
 fi
 
 exit 0

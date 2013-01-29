@@ -81,9 +81,10 @@ public class ProcedureConstructor extends Expr {
         final int preUsed    = usedVariables.size();
         mDefinition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        mClosureVariables = new HashSet<Variable>();
-        mClosureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
-        mClosureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
+        final HashSet<Variable> closureVariables = new HashSet<Variable>();
+        closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
+        closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
+        mClosureVariables = closureVariables;
     }
 
     /* string operations */

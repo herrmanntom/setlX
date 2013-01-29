@@ -38,25 +38,16 @@ public class Iteration extends Constructor {
     private final Expr      mExpr;
     private final Iterator  mIterator;
     private final Condition mCondition;
-    private final Exec      mExec;
 
     private class Exec implements IteratorExecutionContainer {
         private final Expr            mExpr;
         private final Condition       mCondition;
-        private       CollectionValue mCollection;
+        private final CollectionValue mCollection;
 
-        public Exec (final Expr expr, final Condition condition) {
+        public Exec (final Expr expr, final Condition condition, final CollectionValue collection) {
             mExpr       = expr;
             mCondition  = condition;
-            mCollection = null;
-        }
-
-        public void setCollection(final CollectionValue collection) {
             mCollection = collection;
-        }
-
-        public CollectionValue getCollection() {
-            return mCollection;
         }
 
         @Override
@@ -97,15 +88,11 @@ public class Iteration extends Constructor {
         mExpr      = expr;
         mIterator  = iterator;
         mCondition = condition;
-        mExec      = new Exec(expr, condition);
     }
 
     @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
-        final CollectionValue tmp = mExec.getCollection();
-        mExec.setCollection(collection);
-        mIterator.eval(state, mExec);
-        mExec.setCollection(tmp);
+        mIterator.eval(state, new Exec(mExpr, mCondition, collection));
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -121,7 +108,7 @@ public class Iteration extends Constructor {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
-        mIterator.collectVariablesAndOptimize(mExec, boundVariables, unboundVariables, usedVariables);
+        mIterator.collectVariablesAndOptimize(new Exec(mExpr, mCondition, null), boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

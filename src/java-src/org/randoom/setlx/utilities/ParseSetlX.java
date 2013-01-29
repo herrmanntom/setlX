@@ -110,6 +110,7 @@ public class ParseSetlX {
                                     lexer  = new SetlXgrammarLexer(input);
             final CommonTokenStream ts     = new CommonTokenStream(lexer);
                                     parser = new SetlXgrammarParser(ts);
+            final long              startT = state.currentTimeMillis();
 
             // capture parser errors
             state.setParserErrorCapture(new LinkedList<String>());
@@ -123,12 +124,10 @@ public class ParseSetlX {
 
             // now ANTLR will add its parser errors into our capture ...
 
-            // update error count
-            state.addToParserErrorCount(parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors());
-
             // start optimizing the fragment
-            final Thread optimizer = new OptimizerThread(frag);
-            if (state.getParserErrorCount() == 0 && frag != null) {
+            Thread optimizer = null;
+            if (frag != null) {// might happen if parser ran into errors
+                optimizer = new OptimizerThread(frag);
                 optimizer.start();
             }
 
@@ -170,6 +169,9 @@ public class ParseSetlX {
                 }
             }
 
+            // update error count
+            state.addToParserErrorCount(parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors());
+
             if (state.getParserErrorCount() > 0) {
                 throw SyntaxErrorException.create(
                     state.getParserErrorCapture(),
@@ -177,13 +179,13 @@ public class ParseSetlX {
                 );
             }
 
-            // wait until optimization of the fragment is finished, but max 0.25s
-            int ticks = 0;
-            while(ticks < 250 && optimizer.isAlive()) {
+            // wait for optimization of the fragment, but max until 0.25s after start
+            while((state.currentTimeMillis() - startT) < 250 &&
+                  optimizer != null && optimizer.isAlive()
+            ) {
                 try {
                     Thread.sleep(5);
                 } catch (final InterruptedException e) { /* don't care */ }
-                ticks += 5;
             }
 
             return frag;

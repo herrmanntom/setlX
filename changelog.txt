@@ -1,7 +1,10 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+ + use multithreaded test script
  + add latex source for tutorial
+ + print results of --ev and --ex options without sugar coating
  # fix infinity when used as parameter for predefined math functions
+ # fix some issues in the grammar
 
 ---v1.4.5--- 2013-01-13
  + more robust internal handling of reals

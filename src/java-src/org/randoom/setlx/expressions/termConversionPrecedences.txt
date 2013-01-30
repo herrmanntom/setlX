@@ -20,7 +20,7 @@ Precedence, Associativity, Operator(s)
 1900,       -,             other unary operators
 2000,       right,         **
 2100,       left,          ! i.e. factorial
-2100,       -,             () and other unary expressions e.g. call etc
+2100,       -,             () and other unary expressions e.g. call, memberAccess etc
 2200,       right,         ! i.e. not
 9999,       -,             reserved (expressions with this precedence will never be bracketed.
                            This includes atoms like Values, Set-Constructors, String-Constructors, etc)

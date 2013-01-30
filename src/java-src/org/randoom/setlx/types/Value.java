@@ -359,7 +359,10 @@ public abstract class Value implements Comparable<Value> {
     }
 
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
-        return collectionAccessUnCloned(state, args);
+        throw new IncompatibleTypeException(
+            "Can not access elements using the arguments '" + args + "' on this operand-type;" +
+            " '" + this + "' is not a collection value."
+        );
     }
 
     // returns a set of all pairs which first element matches arg
@@ -533,6 +536,12 @@ public abstract class Value implements Comparable<Value> {
     /* features of objects */
 
     public Value getObjectMember(final String variable) throws IncompatibleTypeException {
+        throw new IncompatibleTypeException(
+            "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
+        );
+    }
+
+    public Value getObjectMemberUnCloned(final String variable) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
         );

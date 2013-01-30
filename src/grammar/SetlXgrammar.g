@@ -318,7 +318,8 @@ explicitAssignList returns [ExplicitList eil]
 assignable [boolean enableIgnore] returns [Expr a]
     : variable                 { a = $variable.v;                          }
       (
-        '[' expr[false] ']'    { a = new CollectionAccess(a, $expr.ex);    }
+         memberAccess[$a]      { a = $memberAccess.ma;                     }
+       | '[' expr[false] ']'   { a = new CollectionAccess(a, $expr.ex);    }
       )*
     | assignList               { a = $assignList.alc;                      }
     | '_'                      { if ($enableIgnore) {
@@ -346,10 +347,10 @@ lambdaParameters returns [List<ParameterDef> paramList]
     : variable              { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
     | '['
       (
-        v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
-        (
-          ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
-        )*
+       v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
+       (
+         ',' v2 = variable { paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
+       )*
       )?
       ']'
     ;
@@ -411,19 +412,19 @@ sum [boolean enableIgnore] returns [Expr s]
 product [boolean enableIgnore] returns [Expr p]
     : r1 = reduce[$enableIgnore]          { p = $r1.r;                          }
       (
-          '*'  r2 = reduce[$enableIgnore] { p = new Product         (p, $r2.r); }
-        | '/'  r2 = reduce[$enableIgnore] { p = new Quotient        (p, $r2.r); }
-        | '\\' r2 = reduce[$enableIgnore] { p = new IntegerDivision (p, $r2.r); }
-        | '%'  r2 = reduce[$enableIgnore] { p = new Modulo          (p, $r2.r); }
-        | '><' r2 = reduce[$enableIgnore] { p = new CartesianProduct(p, $r2.r); }
+         '*'  r2 = reduce[$enableIgnore] { p = new Product         (p, $r2.r); }
+       | '/'  r2 = reduce[$enableIgnore] { p = new Quotient        (p, $r2.r); }
+       | '\\' r2 = reduce[$enableIgnore] { p = new IntegerDivision (p, $r2.r); }
+       | '%'  r2 = reduce[$enableIgnore] { p = new Modulo          (p, $r2.r); }
+       | '><' r2 = reduce[$enableIgnore] { p = new CartesianProduct(p, $r2.r); }
       )*
     ;
 
 reduce [boolean enableIgnore] returns [Expr r]
     : p1 = prefixOperation[$enableIgnore, false]          { r = $p1.po;                                }
       (
-          '+/' p2 = prefixOperation[$enableIgnore, false] { r = new SumOfMembersBinary    (r, $p2.po); }
-        | '*/' p2 = prefixOperation[$enableIgnore, false] { r = new ProductOfMembersBinary(r, $p2.po); }
+         '+/' p2 = prefixOperation[$enableIgnore, false] { r = new SumOfMembersBinary    (r, $p2.po); }
+       | '*/' p2 = prefixOperation[$enableIgnore, false] { r = new ProductOfMembersBinary(r, $p2.po); }
       )*
     ;
 
@@ -451,14 +452,20 @@ factor [boolean enableIgnore, boolean quoted] returns [Expr f]
     | 'exists' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
       { f = new Exists($iteratorChain.ic, $condition.cnd); }
     | (
-          '(' expr[$enableIgnore] ')'   { f = new BracketedExpr($expr.ex);                       }
-        | procedureDefinition           { f = new ProcedureConstructor($procedureDefinition.pd); }
-        | variable                      { f = $variable.v;                                       }
-        | value[$enableIgnore, $quoted] { f = $value.v;                                          }
+         '(' expr[$enableIgnore] ')'   { f = new BracketedExpr($expr.ex);                       }
+       | procedureDefinition           { f = new ProcedureConstructor($procedureDefinition.pd); }
+       | variable                      { f = $variable.v;                                       }
       )
-      call[$enableIgnore, $f]           { f = $call.c;                                           }
       (
-        '!'                             { f = new Factorial(f);                                  }
+         memberAccess[$f]              { f = $memberAccess.ma;                                  }
+       | call[$enableIgnore, $f]       { f = $call.c;                                           }
+      )*
+      (
+        '!'                            { f = new Factorial(f);                                  }
+      )?
+    | value[$enableIgnore, $quoted]    { f = $value.v;                                          }
+      (
+        '!'                            { f = new Factorial(f);                                  }
       )?
     ;
 
@@ -473,7 +480,7 @@ termArguments returns [List<Expr> args]
     ;
 
 procedureDefinition returns [ProcedureDefinition pd]
-    : 'procedure' '(' procedureParameters ')' '{' block '}'
+    : 'procedure'       '(' procedureParameters ')' '{' block '}'
       { pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk); }
     | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
       { pd = new CachedProcedureDefinition($procedureParameters.paramList, $block.blk); }
@@ -495,15 +502,20 @@ procedureParameter returns [ParameterDef param]
     | variable      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
 
+memberAccess [Expr lhs] returns [Expr ma]
+    @init {
+        ma = lhs;
+    }
+    : '.' variable { ma = new MemberAccess(ma, $variable.v); }
+    ;
+
 call [boolean enableIgnore, Expr lhs] returns [Expr c]
     @init {
         c = lhs;
     }
-    : (
-         '(' callParameters[$enableIgnore] ')'         { c = new Call(c, $callParameters.params);                     }
-       | '[' collectionAccessParams[$enableIgnore] ']' { c = new CollectionAccess(c, $collectionAccessParams.params); }
-       | '{' expr[$enableIgnore]                   '}' { c = new CollectMap(c, $expr.ex);                             }
-      )*
+    : '(' callParameters[$enableIgnore] ')'         { c = new Call(c, $callParameters.params);                     }
+    | '[' collectionAccessParams[$enableIgnore] ']' { c = new CollectionAccess(c, $collectionAccessParams.params); }
+    | '{' expr[$enableIgnore]                   '}' { c = new CollectMap(c, $expr.ex);                             }
     ;
 
 callParameters [boolean enableIgnore] returns [List<Expr> params]
@@ -623,7 +635,7 @@ REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
 RANGE_SIGN      : '..';
 // fix parsing `list[2..]' by emitting two tokens for one rule. Otherwise ANTLR
 // gets confused and want's to parse a REAL and runs into an unexpected second dot.
-NUMBER_RANGE    : n1 = NUMBER     { $n1.setType(NUMBER);     emit($n1); } 
+NUMBER_RANGE    : n1 = NUMBER     { $n1.setType(NUMBER);     emit($n1); }
                   r  = RANGE_SIGN { $r.setType(RANGE_SIGN);  emit($r ); }
                 ;
 STRING          : '"' ('\\"'|~('"'))* '"';

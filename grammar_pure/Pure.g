@@ -78,7 +78,7 @@ explicitAssignList
     ;
 
 assignable
-    : variable ('[' expr ']')*
+    : variable (memberAccess | '[' expr ']')*
     | assignList
     | '_'
     ;
@@ -147,7 +147,8 @@ factor
     | term
     | 'forall' '(' iteratorChain '|' condition ')'
     | 'exists' '(' iteratorChain '|' condition ')'
-    | ('(' expr ')' | procedureDefinition | variable | value) call '!'?
+    | ('(' expr ')' | procedureDefinition | variable) (memberAccess | call)* '!'?
+    | value '!'?
     ;
 
 term
@@ -174,8 +175,14 @@ procedureParameter
     | variable
     ;
 
+memberAccess
+    : '.' variable
+    ;
+
 call
-    : ('(' callParameters ')' | '[' collectionAccessParams ']' | '{' expr '}')*
+    : '(' callParameters ')'
+    | '[' collectionAccessParams ']'
+    | '{' expr '}'
     ;
 
 callParameters

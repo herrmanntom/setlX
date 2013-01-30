@@ -3,9 +3,6 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.exceptions.UnknownFunctionException;
-import org.randoom.setlx.types.CollectionValue;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -27,7 +24,7 @@ implemented here as:
                   mLhs                                mArgs
 */
 
-public class CollectionAccess extends Expr {
+public class CollectionAccess extends AssignableExpression {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String FUNCTIONAL_CHARACTER = "^collectionAccess";
     // precedence level in SetlX-grammar
@@ -49,11 +46,6 @@ public class CollectionAccess extends Expr {
     @Override
     protected Value evaluate(final State state) throws SetlException {
         final Value lhs = mLhs.eval(state);
-        if (lhs == Om.OM) {
-            throw new UnknownFunctionException(
-                "Identifier \"" + mLhs + "\" is undefined."
-            );
-        }
         // evaluate all arguments
         final List<Value> args = new ArrayList<Value>(mArgs.size());
         for (final Expr arg: mArgs) {
@@ -65,31 +57,27 @@ public class CollectionAccess extends Expr {
         return lhs.collectionAccess(state, args);
     }
 
-    private Value evaluateUnCloned(final State state) throws SetlException {
-        Value lhs = null;
-        if (mLhs instanceof Variable) {
-            lhs = mLhs.eval(state);
-        } else if (mLhs instanceof CollectionAccess) {
-            lhs = ((CollectionAccess) mLhs).evaluateUnCloned(state);
+    @Override
+    /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
+        if (mLhs instanceof AssignableExpression) {
+            final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
+
+            // evaluate all arguments
+            final List<Value> args = new ArrayList<Value>(mArgs.size());
+            for (final Expr arg: mArgs) {
+                if (arg != null) {
+                    args.add(arg.eval(state).clone());
+                }
+            }
+
+            // execute
+            return lhs.collectionAccessUnCloned(state, args);
+
         } else {
             throw new IncompatibleTypeException(
                 "\"" + this + "\" is unusable for list assignment."
             );
         }
-        if (lhs == Om.OM) {
-            throw new UnknownFunctionException(
-                "Identifier \"" + mLhs + "\" is undefined."
-            );
-        }
-        // evaluate all arguments
-        final List<Value> args = new ArrayList<Value>(mArgs.size());
-        for (final Expr arg: mArgs) {
-            if (arg != null) {
-                args.add(arg.eval(state).clone());
-            }
-        }
-        // execute
-        return lhs.collectionAccessUnCloned(state, args);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -114,22 +102,12 @@ public class CollectionAccess extends Expr {
     // sets this expression to the given value
     @Override
     public void assignUncloned(final State state, final Value v) throws SetlException {
-        Value lhs = null;
-        if (mLhs instanceof Variable) {
-            lhs = mLhs.eval(state);
-            if (lhs == Om.OM) {
-                throw new UnknownFunctionException(
-                    "Identifier \"" + mLhs + "\" is undefined."
-                );
-            }
-        } else if (mLhs instanceof CollectionAccess) {
-            lhs = ((CollectionAccess) mLhs).evaluateUnCloned(state);
-        }
-        if (lhs != null && lhs instanceof CollectionValue && mArgs.size() == 1) {
+        if (mArgs.size() == 1 && mLhs instanceof AssignableExpression) {
+            final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
             lhs.setMember(state, mArgs.get(0).eval(state), v);
         } else {
             throw new IncompatibleTypeException(
-                "Left-hand-side of \"" + mLhs + " := " + v + "\" is unusable for list assignment."
+                "Left-hand-side of \"" + this + " := " + v + "\" is unusable for list assignment."
             );
         }
     }

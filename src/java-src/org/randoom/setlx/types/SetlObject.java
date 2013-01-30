@@ -92,6 +92,16 @@ public class SetlObject extends Value {
     public Value getObjectMember(final String variable) {
         final Value result = mMembers.get(variable);
         if (result != null) {
+            return result.clone();
+        } else {
+            return Om.OM;
+        }
+    }
+
+    @Override
+    public Value getObjectMemberUnCloned(final String variable) {
+        final Value result = mMembers.get(variable);
+        if (result != null) {
             return result;
         } else {
             return Om.OM;

@@ -20,7 +20,7 @@ implemented here as:
       mId
 */
 
-public class Variable extends Expr {
+public class Variable extends AssignableExpression {
     // This functional character is used internally
     public  final static String   FUNCTIONAL_CHARACTER          = "^Variable";
     // this one is used externally (e.g. during toString)
@@ -50,6 +50,11 @@ public class Variable extends Expr {
     @Override
     protected Value evaluate(final State state) {
         return state.findValue(mId);
+    }
+
+    @Override
+    /*package*/ Value evaluateUnCloned(final State state) {
+        return evaluate(state);
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings

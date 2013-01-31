@@ -1,5 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+ + first part of object orientation extension
+ + add new() function, which creates empty objects
  + use multithreaded test script
  + add latex source for tutorial
  + print results of --ev and --ex options without sugar coating

@@ -1,10 +1,15 @@
 package org.randoom.setlx.types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.utilities.State;
 
 /* This class implements a object which can store arbitrary SetlX values.
@@ -75,6 +80,34 @@ public class SetlObject extends Value {
         }
     }
 
+    private Value overload(final State  state,
+                           final String member
+    ) throws SetlException {
+        final ArrayList<Expr> args = new ArrayList<Expr>();
+        args.add(new ValueExpr(this));
+        return overloadQuerry(member).call(state, args);
+    }
+
+    private Value overload(final State  state,
+                           final String member,
+                           final Value  other
+    ) throws SetlException {
+        final ArrayList<Expr> args = new ArrayList<Expr>();
+        args.add(new ValueExpr(this));
+        args.add(new ValueExpr(other));
+        return overloadQuerry(member).call(state, args);
+    }
+
+    private Value overloadQuerry(final String member) throws UndefinedOperationException {
+        final Value function = mMembers.get(member);
+        if (function != null) {
+            return function;
+        }
+        throw new UndefinedOperationException(
+            "Member '" + member + " in " + this + "' is undefined."
+        );
+    }
+
     /* type checks (sort of boolean operation) */
 
     @Override
@@ -83,6 +116,21 @@ public class SetlObject extends Value {
     }
 
     /* arithmetic operations */
+
+    @Override
+    public Value factorial(final State state) throws SetlException {
+        return overload(state, "factorial");
+    }
+
+    @Override
+    public Value sum(final State state, final Value summand) throws SetlException {
+        if (summand instanceof Term) {
+            return ((Term) summand).sumFlipped(state, this);
+        } else if (summand instanceof SetlString) {
+            return ((SetlString) summand).sumFlipped(state, this);
+        }
+        return overload(state, "sum", summand);
+    }
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 
@@ -100,6 +148,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value getObjectMemberUnCloned(final String variable) {
+        separateFromOriginal();
         final Value result = mMembers.get(variable);
         if (result != null) {
             return result;
@@ -118,7 +167,7 @@ public class SetlObject extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append("object [");
+        sb.append("object<{");
         final Iterator<Entry<String, Value>> iter = mMembers.entrySet().iterator();
         while (iter.hasNext()) {
             final Entry<String, Value> entry = iter.next();
@@ -129,6 +178,7 @@ public class SetlObject extends Value {
                 sb.append(", ");
             }
         }
+        sb.append("}>");
     }
 
     /* comparisons */

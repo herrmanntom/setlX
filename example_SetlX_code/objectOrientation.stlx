@@ -1,0 +1,25 @@
+// this program demonstrates some object orientation features of setlX
+
+// create a empty object
+a := new();
+a.number := 5;
+
+// and another one
+b := new();
+b.number := 15;
+
+// overload '+' operator on object 'a'
+a.sum := [this, other]|-> this.number + other.number;
+
+print("a == $a$");
+print("b == $b$");
+print("a + b == $a + b$");
+
+// also overload '!' operator
+a.factorial := procedure(rw this) { if (this.cache == om) { this.cache := (this.number ** 2)!;} return this.cache;};
+
+print();
+print("a == $a$");
+print("a! == $a!$");
+print("a == $a$");
+

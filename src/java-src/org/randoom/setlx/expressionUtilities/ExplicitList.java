@@ -27,7 +27,7 @@ implemented here as:
              mList
 */
 
-public class ExplicitList extends Constructor {
+public class ExplicitList extends CollectionBuilder {
     private final List<Expr> mList;
 
     public ExplicitList(final List<Expr> exprList) {

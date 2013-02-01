@@ -25,7 +25,7 @@ implemented here as:
      mStart    mSecond      mStop
 */
 
-public class Range extends Constructor {
+public class Range extends CollectionBuilder {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^range";
 

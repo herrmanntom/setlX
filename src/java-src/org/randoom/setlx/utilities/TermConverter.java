@@ -5,6 +5,7 @@ import org.randoom.setlx.boolExpressions.Equal;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.BracketedExpr;
 import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
+import org.randoom.setlx.expressions.ConstructorConstructor;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.ProcedureConstructor;
 import org.randoom.setlx.expressions.SetListConstructor;
@@ -16,6 +17,7 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedureDefinition;
+import org.randoom.setlx.types.ConstructorDefinition;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.ProcedureDefinition;
@@ -66,13 +68,13 @@ public class TermConverter {
                             clAss       = Class.forName(packageNameBExpr + '.' + needle);
                             converter   = clAss.getMethod("termToExpr", Term.class);
                             sExprConverters.put(fc, converter);
-                        } catch (Exception e1) {
+                        } catch (final Exception e1) {
                             // look-up failed, try next package
                             try {
                                 clAss       = Class.forName(packageNameExpr + '.' + needle);
                                 converter   = clAss.getMethod("termToExpr", Term.class);
                                 sExprConverters.put(fc, converter);
-                            } catch (Exception e2) {
+                            } catch (final Exception e2) {
                                 // look-up failed, try next package
                                 if (restrictToExpr) {
                                     converter   = null;
@@ -81,7 +83,7 @@ public class TermConverter {
                                         clAss       = Class.forName(packageNameStmnt + '.' + needle);
                                         converter   = clAss.getMethod("termToStatement", Term.class);
                                         sStatementConverters.put(fc, converter);
-                                    } catch (Exception e3) {
+                                    } catch (final Exception e3) {
                                         // look-up failed, nothing more to try
                                         converter   = null;
                                     }
@@ -93,7 +95,7 @@ public class TermConverter {
                     if (converter != null) {
                         try {
                             return (CodeFragment) converter.invoke(null, term);
-                        } catch (Exception e) {
+                        } catch (final Exception e) {
                             if (e instanceof TermConversionException) {
                                 throw (TermConversionException) e;
                             } else { // will never happen ;-)
@@ -110,6 +112,8 @@ public class TermConverter {
                         return new ProcedureConstructor(LambdaDefinition.termToValue(term));
                     } else if (fc.equals(ProcedureDefinition.FUNCTIONAL_CHARACTER)) {
                         return new ProcedureConstructor(ProcedureDefinition.termToValue(term));
+                    } else if (fc.equals(ConstructorDefinition.FUNCTIONAL_CHARACTER)) {
+                        return new ConstructorConstructor(ConstructorDefinition.termToValue(term));
                     }
                     // nothing matched
                     else {
@@ -122,7 +126,7 @@ public class TermConverter {
                         "Functional character does not represent an CodeFragment."
                     );
                 }
-            } catch (TermConversionException tce) {
+            } catch (final TermConversionException tce) {
                 // create TermConstructor for this custom term
                 return TermConstructor.termToExpr(term);
             }
@@ -139,7 +143,7 @@ public class TermConverter {
                 } else {
                     throw new TermConversionException("not a special value");
                 }
-            } catch (TermConversionException tce) {
+            } catch (final TermConversionException tce) {
                 // some error occurred... create ValueExpr for this value
                 return new ValueExpr(value);
             }
@@ -179,7 +183,7 @@ public class TermConverter {
         if (s instanceof Block) {
             return (Block) s;
         } else { // wrap into block
-            Block   b   = new Block(1);
+            final Block   b   = new Block(1);
             b.add(s);
             return b;
         }

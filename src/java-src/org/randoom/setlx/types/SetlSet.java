@@ -22,10 +22,10 @@ import java.util.TreeSet;
  *
  * Also see:
  *   interpreter.expressions.SetListConstructor
- *   interpreter.utilities.Constructor
- *   interpreter.utilities.ExplicitList
- *   interpreter.utilities.Iteration
- *   interpreter.utilities.Range
+ *   interpreter.expressionUtilities.CollectionBuilder
+ *   interpreter.expressionUtilities.ExplicitList
+ *   interpreter.expressionUtilities.Iteration
+ *   interpreter.expressionUtilities.Range
  */
 
 public class SetlSet extends CollectionValue {
@@ -230,7 +230,7 @@ public class SetlSet extends CollectionValue {
         if (exponent instanceof NumberValue && exponent.equalTo(Rational.TWO)) {
             try {
                 return this.cartesianProduct(state, this);
-            } catch (SetlException se) {
+            } catch (final SetlException se) {
                 se.addToTrace("Error in substitute operation \"" + this + " >< " + this +  "\":");
                 throw se;
             }
@@ -415,7 +415,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public SetlBoolean containsMember(Value element) {
+    public SetlBoolean containsMember(final Value element) {
         return SetlBoolean.valueOf(mSortedSet.contains(element));
     }
 
@@ -602,7 +602,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public void removeMember(Value element) {
+    public void removeMember(final Value element) {
         separateFromOriginal();
         mSortedSet.remove(element);
     }
@@ -651,6 +651,7 @@ public class SetlSet extends CollectionValue {
 
     /* term operations */
 
+    @Override
     public MatchResult matchesTerm(final State state, final Value otr) throws IncompatibleTypeException {
         if (otr == IgnoreDummy.ID) {
             return new MatchResult(true);
@@ -746,7 +747,7 @@ public class SetlSet extends CollectionValue {
             final Iterator<Value> iterFirst  = iterator();
             final Iterator<Value> iterSecond = ((SetlSet) v).iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
-                int     cmp    = iterFirst.next().compareTo(iterSecond.next());
+                final int     cmp    = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp == 0) {
                     continue;
                 }
@@ -795,7 +796,7 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public int hashCode() {
-        int size = mSortedSet.size();
+        final int size = mSortedSet.size();
         int hash = initHashCode + size;
         if (size >= 1) {
             hash = hash * 31 + mSortedSet.first().hashCode();

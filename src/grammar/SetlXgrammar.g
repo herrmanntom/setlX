@@ -344,7 +344,7 @@ lambdaParameters returns [List<ParameterDef> paramList]
     @init {
         paramList = new ArrayList<ParameterDef>();
     }
-    : variable              { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
+    : variable             { paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
     | '['
       (
        v1 = variable       { paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
@@ -402,10 +402,10 @@ comparison [boolean enableIgnore] returns [Expr comp]
 
 sum [boolean enableIgnore] returns [Expr s]
     :
-      p1 = product[$enableIgnore]         { s = $p1.p;                                                         }
+      p1 = product[$enableIgnore]         { s = $p1.p;                    }
       (
-          '+' p2 = product[$enableIgnore] { s = new Sum(s, $p2.p);                                             }
-        | '-' p2 = product[$enableIgnore] { s = new Difference(s, $p2.p);                                      }
+          '+' p2 = product[$enableIgnore] { s = new Sum(s, $p2.p);        }
+        | '-' p2 = product[$enableIgnore] { s = new Difference(s, $p2.p); }
       )*
     ;
 
@@ -421,7 +421,7 @@ product [boolean enableIgnore] returns [Expr p]
     ;
 
 reduce [boolean enableIgnore] returns [Expr r]
-    : p1 = prefixOperation[$enableIgnore, false]          { r = $p1.po;                                }
+    : p1 = prefixOperation[$enableIgnore, false]         { r = $p1.po;                                }
       (
          '+/' p2 = prefixOperation[$enableIgnore, false] { r = new SumOfMembersBinary    (r, $p2.po); }
        | '*/' p2 = prefixOperation[$enableIgnore, false] { r = new ProductOfMembersBinary(r, $p2.po); }
@@ -454,6 +454,7 @@ factor [boolean enableIgnore, boolean quoted] returns [Expr f]
     | (
          '(' expr[$enableIgnore] ')'   { f = new BracketedExpr($expr.ex);                       }
        | procedureDefinition           { f = new ProcedureConstructor($procedureDefinition.pd); }
+       | objectConstructor             { f = new ConstructorConstructor($objectConstructor.oc); }
        | variable                      { f = $variable.v;                                       }
       )
       (
@@ -481,7 +482,7 @@ termArguments returns [List<Expr> args]
 
 procedureDefinition returns [ProcedureDefinition pd]
     : 'procedure'       '(' procedureParameters ')' '{' block '}'
-      { pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk); }
+      { pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk);       }
     | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
       { pd = new CachedProcedureDefinition($procedureParameters.paramList, $block.blk); }
     ;
@@ -500,6 +501,11 @@ procedureParameters returns [List<ParameterDef> paramList]
 procedureParameter returns [ParameterDef param]
     : 'rw' variable { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
     | variable      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
+    ;
+    
+objectConstructor returns [ConstructorDefinition oc]
+    : 'constructor' '(' procedureParameters ')' '{' b1 = block ('static' '{' b2 = block '}')? '}'
+      { oc = new ConstructorDefinition($procedureParameters.paramList, $b1.blk, $b2.blk); }
     ;
 
 memberAccess [Expr lhs] returns [Expr ma]
@@ -558,19 +564,19 @@ value [boolean enableIgnore, boolean quoted] returns [Expr v]
 
 list [boolean enableIgnore] returns [SetListConstructor lc]
     :
-      '[' constructor[$enableIgnore]? ']' { lc = new SetListConstructor(SetListConstructor.LIST, $constructor.c); }
+      '[' collectionBuilder[$enableIgnore]? ']' { lc = new SetListConstructor(SetListConstructor.LIST, $collectionBuilder.cb); }
     ;
 
 set [boolean enableIgnore] returns [SetListConstructor sc]
     :
-      '{' constructor[$enableIgnore]? '}' { sc = new SetListConstructor(SetListConstructor.SET, $constructor.c); }
+      '{' collectionBuilder[$enableIgnore]? '}' { sc = new SetListConstructor(SetListConstructor.SET, $collectionBuilder.cb); }
     ;
 
-constructor [boolean enableIgnore] returns [Constructor c]
-    : ( range[true]        )=> range[$enableIgnore]        { c = $range.r;         }
-    | ( shortIterate[true] )=> shortIterate[$enableIgnore] { c = $shortIterate.si; }
-    | ( iterate[true]      )=> iterate[$enableIgnore]      { c = $iterate.i;       }
-    | explicitList[$enableIgnore]                          { c = $explicitList.el; }
+collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]
+    : ( range[true]        )=> range[$enableIgnore]        { cb = $range.r;         }
+    | ( shortIterate[true] )=> shortIterate[$enableIgnore] { cb = $shortIterate.si; }
+    | ( iterate[true]      )=> iterate[$enableIgnore]      { cb = $iterate.i;       }
+    | explicitList[$enableIgnore]                          { cb = $explicitList.el; }
     ;
 
 range [boolean enableIgnore] returns [Range r]
@@ -613,7 +619,7 @@ iteratorChain [boolean enableIgnore] returns [Iterator ic]
       )*
     ;
 
-explicitList [boolean enableIgnore] returns [Constructor el]
+explicitList [boolean enableIgnore] returns [CollectionBuilder el]
     : exprList[$enableIgnore] { el = new ExplicitList        ($exprList.exprs);           }
       (
         '|' expr[false]       { el = new ExplicitListWithRest($exprList.exprs, $expr.ex); }

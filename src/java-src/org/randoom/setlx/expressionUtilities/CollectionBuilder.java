@@ -14,7 +14,7 @@ import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
 
-public abstract class Constructor extends CodeFragment {
+public abstract class CollectionBuilder extends CodeFragment {
 
     public abstract void fillCollection(
         final State           state,
@@ -81,7 +81,7 @@ public abstract class Constructor extends CodeFragment {
 
     public abstract void        addToTerm(final State state, final CollectionValue collection);
 
-    public static   Constructor CollectionValueToConstructor(final CollectionValue value) throws TermConversionException {
+    public static   CollectionBuilder collectionValueToBuilder(final CollectionValue value) throws TermConversionException {
         if (value.size() == 1 && value.firstMember() instanceof Term) {
             final Term    term    = (Term) value.firstMember();
             final String  fc      = term.functionalCharacter().getUnquotedString();

@@ -57,7 +57,6 @@ public class ProcedureDefinition extends Value {
         } else {
             mClosure = null;
         }
-        nrOfCalls   = 0;
     }
 
     // only to be used by ProcedureConstructor

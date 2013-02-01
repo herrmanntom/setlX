@@ -147,7 +147,7 @@ factor
     | term
     | 'forall' '(' iteratorChain '|' condition ')'
     | 'exists' '(' iteratorChain '|' condition ')'
-    | ('(' expr ')' | procedureDefinition | variable) (memberAccess | call)* '!'?
+    | ('(' expr ')' | procedureDefinition | objectConstructor | variable) (memberAccess | call)* '!'?
     | value '!'?
     ;
 
@@ -173,6 +173,10 @@ procedureParameters
 procedureParameter
     : 'rw' variable
     | variable
+    ;
+
+objectConstructor
+    : 'constructor' '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
     ;
 
 memberAccess
@@ -206,14 +210,14 @@ value
     ;
 
 list
-    : '[' constructor? ']'
+    : '[' collectionBuilder? ']'
     ;
 
 set
-    : '{' constructor? '}'
+    : '{' collectionBuilder? '}'
     ;
 
-constructor
+collectionBuilder
     : (range)=> range
     | (shortIterate)=> shortIterate
     | (iterate)=> iterate

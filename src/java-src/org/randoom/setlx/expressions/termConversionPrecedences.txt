@@ -7,7 +7,7 @@ precedences and associativity rules listed here:
 Precedence, Associativity, Operator(s)
 0000,       -,             reserved (explicit "do never bracket inner expression!")
 1000,       right,         :=
-1000,       -,             +=, -=, *=, /=, \=, %=
+1050,       left,          lambdaDefinition
 1100,       left,          <==>, <!=>
 1200,       right,         =>
 1300,       left,          ||

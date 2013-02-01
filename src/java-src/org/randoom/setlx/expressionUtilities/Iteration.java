@@ -31,7 +31,7 @@ implemented here as:
        mExpr        mIterator        mCondition
 */
 
-public class Iteration extends Constructor {
+public class Iteration extends CollectionBuilder {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^iteration";
 

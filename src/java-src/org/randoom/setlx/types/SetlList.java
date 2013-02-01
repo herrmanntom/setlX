@@ -22,10 +22,10 @@ import java.util.Map;
  *
  * Also see:
  *   interpreter.expressions.SetListConstructor
- *   interpreter.utilities.Constructor
- *   interpreter.utilities.ExplicitList
- *   interpreter.utilities.Iteration
- *   interpreter.utilities.Range
+ *   interpreter.expressionUtilities.CollectionBuilder
+ *   interpreter.expressionUtilities.ExplicitList
+ *   interpreter.expressionUtilities.Iteration
+ *   interpreter.expressionUtilities.Range
  */
 
 public class SetlList extends IndexedCollectionValue {

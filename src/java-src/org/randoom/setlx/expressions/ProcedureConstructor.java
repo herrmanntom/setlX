@@ -2,6 +2,7 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.ProcedureDefinition;
@@ -26,6 +27,7 @@ implemented here as:
 
 public class ProcedureConstructor extends Expr {
     // precedence level in SetlX-grammar
+    private final static int          LAMBDA_PRECEDENCE    = 1050;
     private final static int          PRECEDENCE           = 9999;
 
     private final ProcedureDefinition mDefinition;
@@ -104,7 +106,11 @@ public class ProcedureConstructor extends Expr {
     // precedence level in SetlX-grammar
     @Override
     public int precedence() {
-        return PRECEDENCE;
+        if (mDefinition instanceof LambdaDefinition) {
+            return LAMBDA_PRECEDENCE;
+        } else {
+            return PRECEDENCE;
+        }
     }
 }
 

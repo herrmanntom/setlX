@@ -49,6 +49,10 @@ public abstract class Value implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isConstructor() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isError() {
         return SetlBoolean.FALSE;
     }

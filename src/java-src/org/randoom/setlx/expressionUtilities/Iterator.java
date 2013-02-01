@@ -145,7 +145,7 @@ public class Iterator extends CodeFragment {
 
     @Override
     public Term toTerm(final State state) {
-        final Term result = new Term(FUNCTIONAL_CHARACTER);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
         result.addMember(state, mAssignable.toTerm(state));
         result.addMember(state, mCollection.toTerm(state));
         if (mNext != null) {

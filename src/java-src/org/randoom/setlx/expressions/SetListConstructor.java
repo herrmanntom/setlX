@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressionUtilities.Constructor;
+import org.randoom.setlx.expressionUtilities.CollectionBuilder;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.SetlList;
@@ -18,44 +18,44 @@ import java.util.List;
 /*
 grammar rules:
 list
-    : '[' constructor? ']'
+    : '[' collectionBuilder? ']'
     ;
 
 set
-    : '{' constructor? '}'
+    : '{' collectionBuilder? '}'
     ;
 
 implemented here as:
 ====      ============
-mType     mConstructor
+mType       mBuilder
 */
 
 public class SetListConstructor extends Expr {
-    public  final static int    LIST        = 23;
-    public  final static int    SET         = 42;
+    public  final static int        LIST        = 23;
+    public  final static int        SET         = 42;
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE  = 9999;
+    private final static int        PRECEDENCE  = 9999;
 
-    private final int           mType;
-    private final Constructor   mConstructor;
+    private final int               mType;
+    private final CollectionBuilder mBuilder;
 
-    public SetListConstructor(final int type, final Constructor constructor) {
-        mType        = type;
-        mConstructor = constructor;
+    public SetListConstructor(final int type, final CollectionBuilder constructor) {
+        mType    = type;
+        mBuilder = constructor;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
         if (mType == SET) {
             final SetlSet set = new SetlSet();
-            if (mConstructor != null) {
-                mConstructor.fillCollection(state, set);
+            if (mBuilder != null) {
+                mBuilder.fillCollection(state, set);
             }
             return set;
         } else /* if (mType == LIST) */ {
             final SetlList list = new SetlList();
-            if (mConstructor != null) {
-                mConstructor.fillCollection(state, list);
+            if (mBuilder != null) {
+                mBuilder.fillCollection(state, list);
             }
             list.compress();
             return list;
@@ -75,8 +75,8 @@ public class SetListConstructor extends Expr {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
-        if (mConstructor != null) {
-            mConstructor.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (mBuilder != null) {
+            mBuilder.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -84,8 +84,8 @@ public class SetListConstructor extends Expr {
     @Override
     public void assignUncloned(final State state, final Value v) throws SetlException {
         if (v instanceof IndexedCollectionValue) {
-            if (mType == LIST && mConstructor != null) {
-                mConstructor.assignUncloned(state, (IndexedCollectionValue) v);
+            if (mType == LIST && mBuilder != null) {
+                mBuilder.assignUncloned(state, (IndexedCollectionValue) v);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."
@@ -106,8 +106,8 @@ public class SetListConstructor extends Expr {
     @Override
     public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) throws SetlException {
         if (v instanceof IndexedCollectionValue) {
-            if (mType == LIST && mConstructor != null) {
-               return mConstructor.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope);
+            if (mType == LIST && mBuilder != null) {
+               return mBuilder.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."
@@ -129,8 +129,8 @@ public class SetListConstructor extends Expr {
         } else /* if (mType == LIST) */ {
             sb.append("[");
         }
-        if (mConstructor != null) {
-            mConstructor.appendString(state, sb);
+        if (mBuilder != null) {
+            mBuilder.appendString(state, sb);
         }
         if (mType == SET) {
             sb.append("}");
@@ -149,8 +149,8 @@ public class SetListConstructor extends Expr {
         } else /* if (mType == LIST) */ {
             result = new SetlList();
         }
-        if (mConstructor != null) {
-            mConstructor.addToTerm(state, result);
+        if (mBuilder != null) {
+            mBuilder.addToTerm(state, result);
         }
         return result;
     }
@@ -167,7 +167,7 @@ public class SetListConstructor extends Expr {
                     return new SetListConstructor(SET,  null);
                 }
             } else { // not empty
-                final Constructor c = Constructor.CollectionValueToConstructor(cv);
+                final CollectionBuilder c = CollectionBuilder.collectionValueToBuilder(cv);
                 if (cv instanceof SetlList) {
                     return new SetListConstructor(LIST, c);
                 } else /* if (cv instanceof SetlSet) */ {

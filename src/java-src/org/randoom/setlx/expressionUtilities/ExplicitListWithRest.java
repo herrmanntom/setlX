@@ -28,7 +28,7 @@ implemented here as:
              mList               mRest
 */
 
-public class ExplicitListWithRest extends Constructor {
+public class ExplicitListWithRest extends CollectionBuilder {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^explicitListWithRest";
 

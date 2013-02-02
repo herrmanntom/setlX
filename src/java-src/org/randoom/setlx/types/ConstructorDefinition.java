@@ -1,17 +1,22 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.VariableScope;
+import org.randoom.setlx.utilities.WriteBackAgent;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-// This class represents a function definition
+// This class represents a definition of a constructor for objects
 
 /*
 grammar rule:
@@ -28,14 +33,19 @@ public class ConstructorDefinition extends Value {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = "^constructor";
 
-    protected final List<ParameterDef> mParameters; // parameter list
-    protected final Block              mInit;       // statements in the body of the definition
-    protected final Block              mStatic;     // statements in the static block
+    private final List<ParameterDef> mParameters; // parameter list
+    private final Block              mInit;       // statements in the body of the definition
+    private final Block              mStatic;     // statements in the static block
+    private       VariableScope      mStaticDefs; // definitions from static block
 
-    public ConstructorDefinition(final List<ParameterDef> parameters, final Block init, final Block staticBlock) {
+    public ConstructorDefinition(final List<ParameterDef> parameters,
+                                 final Block              init,
+                                 final Block              staticBlock
+    ) {
         mParameters = parameters;
         mInit       = init;
         mStatic     = staticBlock;
+        mStaticDefs = null;
     }
 
     @Override
@@ -47,9 +57,10 @@ public class ConstructorDefinition extends Value {
           - bound   means "assigned" in this value
           - unbound means "not present in bound set when used"
           - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
+       NOTE: Use collectVariablesAndOptimize() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -66,8 +77,115 @@ public class ConstructorDefinition extends Value {
         }
 
         mInit.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+
         if (mStatic != null) {
             mStatic.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        }
+    }
+
+    /* function call */
+
+    @Override
+    public Value call(final State state, final List<Expr> args) throws SetlException {
+        final int nArguments = args.size();
+        if (mParameters.size() != nArguments) {
+            throw new IncorrectNumberOfParametersException(
+                "'" + this + "' is defined with a different number of parameters " +
+                "(" + mParameters.size() + ")."
+            );
+        }
+
+        // evaluate arguments
+        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        for (final Expr arg : args) {
+            values.add(arg.eval(state));
+        }
+
+        // save old scope
+        final VariableScope oldScope    = state.getScope();
+        // create new scope used for the static definitions
+        final VariableScope newScope    = oldScope.createFunctionsOnlyLinkedScope();
+        state.setScope(newScope);
+
+        // put arguments into inner scope
+        final int size = values.size();
+        for (int i = 0; i < size; ++i) {
+            final ParameterDef param = mParameters.get(i);
+            if (param.getType() == ParameterDef.READ_WRITE) {
+                param.assign(state, values.get(i));
+            } else {
+                param.assign(state, values.get(i).clone());
+            }
+        }
+
+        final WriteBackAgent wba         = new WriteBackAgent(mParameters.size());
+        final boolean        stepThrough = state.isDebugStepThroughFunction;
+
+        try {
+            if (stepThrough) {
+                state.setDebugStepThroughFunction(false);
+                state.setDebugModeActive(false);
+            }
+
+            // execute, e.g. compute member definition
+            mInit.exec(state);
+
+            // extract 'rw' arguments from scope and store them into WriteBackAgent
+            for (int i = 0; i < mParameters.size(); ++i) {
+                final ParameterDef param = mParameters.get(i);
+                if (param.getType() == ParameterDef.READ_WRITE) {
+                    // value of parameter after execution
+                    final Value postValue = param.getValue(state);
+                    // expression used to fill parameter before execution
+                    final Expr  preExpr   = args.get(i);
+                    /* if possible the WriteBackAgent will set the variable used in this
+                       expression to its postExecution state in the outer environment    */
+                    wba.add(preExpr, postValue);
+                }
+            }
+
+            // compute static definition, if not already done
+            if (mStaticDefs == null && mStatic != null) {
+                mStaticDefs = computeStaticDefinitions(state);
+            }
+
+            newScope.unlink();
+
+            return SetlObject.createNew(mStaticDefs, newScope);
+
+        } finally { // make sure scope is always reset
+            // restore old scope
+            state.setScope(oldScope);
+
+            // write values in WriteBackAgent into restored scope
+            wba.writeBack(state);
+
+            if (stepThrough || state.isDebugFinishFunction) {
+                state.setDebugModeActive(true);
+                if (state.isDebugFinishFunction) {
+                    state.setDebugFinishFunction(false);
+                }
+            }
+        }
+    }
+
+    private VariableScope computeStaticDefinitions(final State state) throws SetlException {
+        // save old scope
+        final VariableScope oldScope = state.getScope();
+        // create new scope used for the static definitions
+        final VariableScope newScope = oldScope.createFunctionsOnlyLinkedScope();
+        state.setScope(newScope);
+
+        try {
+            // execute, e.g. compute static definition
+            mStatic.exec(state);
+
+            newScope.unlink();
+            return newScope;
+
+        } finally { // make sure scope is always reset
+            // restore old scope
+            state.setScope(oldScope);
         }
     }
 
@@ -155,14 +273,9 @@ public class ConstructorDefinition extends Value {
      * value given as argument, > 0 if its greater and == 0 if both values
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
-     * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString
-     * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
     public int compareTo(final Value v){
-        // TODO fix
         if (this == v) {
             return 0;
         } else if (v instanceof ConstructorDefinition) {
@@ -188,13 +301,21 @@ public class ConstructorDefinition extends Value {
                     return 0;
                 }
             }
-        } else if (v == Infinity.POSITIVE) {
-            // only +Infinity is bigger
-            return -1;
         } else {
-            // everything else is smaller
-            return 1;
+            return this.compareToOrdering() - v.compareToOrdering();
         }
+    }
+
+    /* To compare "incomparable" values, e.g. of different types, the following
+     * order is established and used in compareTo():
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
+     * < SetlObject < ConstructorDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
+    @Override
+    protected int compareToOrdering() {
+        return 1200;
     }
 
     @Override

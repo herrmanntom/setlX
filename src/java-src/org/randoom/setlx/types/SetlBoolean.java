@@ -121,10 +121,6 @@ public class SetlBoolean extends Value {
      * value given as argument, > 0 if its greater and == 0 if both values
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
-     * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString
-     * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
      */
     // also FALSE < TRUE
     @Override
@@ -132,14 +128,25 @@ public class SetlBoolean extends Value {
         if (this == v) {
             // as only exacly one FALSE and TRUE object exist, we can compare by reference
             return 0;
-        } else if (v instanceof SetlError || v == Om.OM ||
-                   v == Infinity.NEGATIVE || (this == TRUE && v == FALSE)) {
-            // only SetlError, Om, -Infinity and FALSE are smaller
+        } else if (this == TRUE  && v == FALSE) {
             return 1;
-        } else {
-            // everything else is bigger
+        } else if (this == FALSE && v == TRUE ) {
             return -1;
+        } else {
+            return this.compareToOrdering() - v.compareToOrdering();
         }
+    }
+
+    /* To compare "incomparable" values, e.g. of different types, the following
+     * order is established and used in compareTo():
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
+     * < SetlObject < ConstructorDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
+    @Override
+    protected int compareToOrdering() {
+        return 400;
     }
 
     @Override

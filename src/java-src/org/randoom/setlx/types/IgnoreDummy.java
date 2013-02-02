@@ -41,6 +41,11 @@ public class IgnoreDummy extends Value {
     }
 
     @Override
+    protected int compareToOrdering() {
+        return 0;
+    }
+
+    @Override
     public boolean equalTo(final Value v) {
         if (v == ID) {
             return true;

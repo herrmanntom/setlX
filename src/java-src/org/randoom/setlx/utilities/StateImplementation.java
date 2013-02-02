@@ -65,7 +65,7 @@ public class StateImplementation extends State {
         mParserErrorCount                = 0;
         mGlobals                         = new VariableScope();
         mGlobalsPresent                  = false;
-        mVariableScope                   = sROOT_Scope.clone();
+        mVariableScope                   = sROOT_Scope.createLinkedScope();
         mIsHuman                         = false;
         mRandoom                         = new Random();
         super.isExecutionStopped         = false;
@@ -337,13 +337,13 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void setScope(final VariableScope newEnv) {
-        mVariableScope = newEnv;
+    public void setScope(final VariableScope newScope) {
+        mVariableScope = newScope;
     }
 
     @Override
     public void resetState() {
-        mVariableScope  = sROOT_Scope.clone();
+        mVariableScope  = sROOT_Scope.createLinkedScope();
         mGlobals.clear();
         mGlobalsPresent = false;
         mLoadedLibraries.clear();

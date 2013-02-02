@@ -6,16 +6,34 @@ import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
 
 import java.util.List;
 
-public abstract class Value implements Comparable<Value> {
+public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     @Override
     public abstract Value clone();
+
+    /* Gather all bound and unbound variables in this value and its siblings
+          - bound   means "assigned" in this value
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    @Override
+    public void collectVariablesAndOptimize (
+      final List<Variable> boundVariables,
+      final List<Variable> unboundVariables,
+      final List<Variable> usedVariables
+    ) {
+        /* nothing to collect */
+    }
 
     /* Boolean operations */
 
@@ -539,19 +557,19 @@ public abstract class Value implements Comparable<Value> {
 
     /* features of objects */
 
-    public Value getObjectMember(final String variable) throws IncompatibleTypeException {
+    public Value getObjectMember(final State state, final Variable variable) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
         );
     }
 
-    public Value getObjectMemberUnCloned(final String variable) throws IncompatibleTypeException {
+    public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
         );
     }
 
-    public void setObjectMember(final String variable, final Value value) throws IncompatibleTypeException {
+    public void setObjectMember(final State state, final Variable variable, final Value value) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Can not add member '" + variable + "' into operand; '" + this + "' is not an object."
         );
@@ -569,6 +587,7 @@ public abstract class Value implements Comparable<Value> {
 
     /* string and char operations */
 
+    @Override
     public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
     public void appendUnquotedString(final State state, final StringBuilder sb, final int tabs) {
@@ -596,14 +615,6 @@ public abstract class Value implements Comparable<Value> {
         return SetlString.newSetlStringFromSB(sb);
     }
 
-    @Override
-    public final String toString() {
-        final State         bubble = new StateImplementation();
-        final StringBuilder sb     = new StringBuilder();
-        appendString(bubble, sb, 0);
-        return sb.toString();
-    }
-
     /* term operations */
 
     public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
@@ -614,6 +625,7 @@ public abstract class Value implements Comparable<Value> {
         }
     }
 
+    @Override
     public Value toTerm(final State state) {
         return this.clone();
     }
@@ -624,13 +636,18 @@ public abstract class Value implements Comparable<Value> {
      * value given as argument, > 0 if its greater and == 0 if both values
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
-     * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString
-     * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
     public abstract int     compareTo(final Value v);
+
+    /* To compare "incomparable" values, e.g. of different types, the following
+     * order is established and used in compareTo():
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
+     * < SetlObject < ConstructorDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
+    protected abstract int  compareToOrdering();
 
     public abstract boolean equalTo  (final Value v);
 

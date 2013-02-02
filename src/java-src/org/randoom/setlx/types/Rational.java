@@ -651,18 +651,21 @@ public class Rational extends NumberValue {
             }
         } else if (v instanceof Real) {
             return toReal().compareTo(v);
-        } else if (v instanceof SetlError ||
-                   v == Om.OM             ||
-                   v == Infinity.NEGATIVE ||
-                   v == SetlBoolean.TRUE  ||
-                   v == SetlBoolean.FALSE
-                  )
-        {
-            // only SetlError, Om, -Infinity and SetlBoolean are smaller
-            return 1;
-        } else {
-            return -1;
+        }  else {
+            return this.compareToOrdering() - v.compareToOrdering();
         }
+    }
+
+    /* To compare "incomparable" values, e.g. of different types, the following
+     * order is established and used in compareTo():
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
+     * < SetlObject < ConstructorDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
+    @Override
+    protected int compareToOrdering() {
+        return 500;
     }
 
     @Override

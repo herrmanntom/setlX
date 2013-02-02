@@ -1,16 +1,20 @@
 // this program demonstrates some object orientation features of setlX
 
-// create a empty object
-a := new();
-a.number := 5;
+// create a constructor
+c := constructor(n) {
+    number := n;
 
-// and another one
-b := new();
-b.number := 15;
+    static {
+        // overload '+' operator
+        sum := [this, other]|-> this.number + other.number;
+    }
+};
 
-// overload '+' operator on object 'a'
-a.sum := [this, other]|-> this.number + other.number;
+// create two objects
+a := c(5);
+b := c(15);
 
+// do some work with objects
 print("a == $a$");
 print("b == $b$");
 print("a + b == $a + b$");

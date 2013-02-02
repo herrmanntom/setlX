@@ -9,7 +9,9 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 // This class collects the variable bindings and the function definitions in current scope.
 public class VariableScope {
@@ -17,10 +19,16 @@ public class VariableScope {
     private final   static  String      FUNCTIONAL_CHARACTER_SCOPE = "^scope";
 
     private final   Map<String, Value>  mVarBindings;
+
+    // stores reference static scope of objects
+    private         VariableScope       mStaticScope;
+
     // stores reference to original scope object upon cloning
     private         VariableScope       mOriginalScope;
+
     // if set mOriginalScope is only searched for functions, not variables
     private         boolean             mRestrictToFunctions;
+
     /* If set variables read from outer scopes will _not_ be copied to
        current one     and
        variables changed in this scope will be written into scopes
@@ -36,6 +44,7 @@ public class VariableScope {
     // scopes have to be cloned from current one, therefore don't use from outside!
     /*package*/ VariableScope() {
         mVarBindings            = new HashMap<String, Value>();
+        mStaticScope            = null;
         mOriginalScope          = null;
         mRestrictToFunctions    = false;
         mReadThrough            = false;
@@ -44,32 +53,60 @@ public class VariableScope {
 
     @Override
     public VariableScope clone() {
-        final VariableScope newEnv = new VariableScope();
-        newEnv.mOriginalScope      = this;
-        return newEnv;
+        final VariableScope newScope  = new VariableScope();
+
+        for (final Map.Entry<String, Value> entry : this.mVarBindings.entrySet()) {
+            newScope.mVarBindings.put(entry.getKey(), entry.getValue().clone());
+        }
+
+        newScope.mStaticScope         = this.mStaticScope;
+        newScope.mOriginalScope       = this.mOriginalScope;
+        newScope.mRestrictToFunctions = this.mRestrictToFunctions;
+        newScope.mReadThrough         = this.mReadThrough;
+        newScope.mWriteThrough        = this.mWriteThrough;
+        return newScope;
+    }
+
+    public VariableScope createLinkedScope() {
+        final VariableScope newScope = new VariableScope();
+        newScope.mOriginalScope      = this;
+        return newScope;
     }
 
     /* iterators need special scopeBlocks, because the iteration variables are local
        to their iteration, but all other variables inside the execution body are not */
     public VariableScope createInteratorBlock() {
-        final VariableScope newEnv = this.clone();
-        newEnv.mReadThrough        = true;
-        newEnv.mWriteThrough       = true;
-        return newEnv;
+        final VariableScope newScope = this.createLinkedScope();
+        newScope.mReadThrough        = true;
+        newScope.mWriteThrough       = true;
+        return newScope;
     }
 
-    public VariableScope cloneFunctions() {
-        final VariableScope newEnv  = this.clone();
-        newEnv.mRestrictToFunctions = true;
-        return newEnv;
+    public VariableScope createFunctionsOnlyLinkedScope() {
+        final VariableScope newScope  = this.createLinkedScope();
+        newScope.mRestrictToFunctions = true;
+        return newScope;
     }
 
     /*package*/ void clear() {
         mVarBindings.clear();
     }
 
+    public void unlink() {
+        mStaticScope   = null;
+        mOriginalScope = null;
+    }
+
+    public void linkToStaticScope(final VariableScope linkTarget) {
+        mStaticScope   = linkTarget;
+    }
+
     public void setWriteThrough(final boolean writeThrough) {
         mWriteThrough = writeThrough;
+    }
+
+    public int size() {
+        return mVarBindings.size();
     }
 
     /*package*/ Value locateValue(final String var, final boolean check) {
@@ -80,6 +117,12 @@ public class VariableScope {
         Value v = mVarBindings.get(var);
         if (v != null) {
             return v;
+        }
+        if (mStaticScope != null) {
+            v = mStaticScope.locateValue(var, false);
+            if (v != null && v != Om.OM) {
+                return v;
+            }
         }
         if (mOriginalScope != null && (v = mOriginalScope.locateValue(var, false)) != null) {
             // found some value in outer scope
@@ -102,6 +145,9 @@ public class VariableScope {
     // collect all bindings reachable from current scope (except global variables!)
     /*package*/ void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
+        if (mStaticScope != null) {
+            mStaticScope.collectBindings(result, mRestrictToFunctions);
+        }
         if (mOriginalScope != null) {
             mOriginalScope.collectBindings(result, mRestrictToFunctions);
         }
@@ -163,7 +209,7 @@ public class VariableScope {
 
     /* term operations */
 
-    /*package*/ Term toTerm(final State state, final VariableScope globals) {
+    public Term toTerm(final State state, final VariableScope globals) {
         final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
@@ -184,6 +230,54 @@ public class VariableScope {
         result.addMember(state, bindings);
 
         return result;
+    }
+
+    /* string and char operations */
+
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        final Iterator<Entry<String, Value>> iter = mVarBindings.entrySet().iterator();
+        while (iter.hasNext()) {
+            final Entry<String, Value> entry = iter.next();
+            sb.append(entry.getKey());
+            sb.append(" := ");
+            entry.getValue().appendString(state, sb, tabs);
+            if (iter.hasNext()) {
+                sb.append(", ");
+            }
+        }
+    }
+
+    /* comparisons */
+
+    public int compareTo(final VariableScope other) {
+        if (this == other) {
+            return 0;
+        }
+        final int size  = this.size();
+        final int oSize = other.size();
+        if (size < oSize) {
+            return -1;
+        } else if (size == oSize) {
+            return mVarBindings.toString().compareTo(other.mVarBindings.toString());
+        } else {
+            return 1;
+        }
+    }
+
+    public boolean equalTo(final VariableScope other) {
+        if (this == other) {
+            return true;
+        } else if (this.size() == other.size()) {
+            for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
+                final Value otherV = other.mVarBindings.get(entry.getKey());
+                if (otherV == null || ! entry.getValue().equalTo(otherV)) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

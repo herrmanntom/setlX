@@ -101,7 +101,7 @@ public abstract class State {
 
     public abstract VariableScope       getScope();
 
-    public abstract void                setScope(final VariableScope newEnv);
+    public abstract void                setScope(final VariableScope newScope);
 
     public abstract void                resetState();
 

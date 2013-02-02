@@ -39,6 +39,9 @@ build:                                                      \
 	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos make.cmd setlX.cmd; fi
 	rm -f make_.cmd setlX_.cmd
 
+grammar:                                                    \
+        java-src/org/randoom/setlx/grammar/SetlXgrammar*.java
+
 bin/org/randoom/setlxUI/pc/SetlX.class :                    \
         java-src/org/randoom/setlxUI/pc/SetlX.java                              \
         java-src/org/randoom/setlx/exceptions/*.java                            \

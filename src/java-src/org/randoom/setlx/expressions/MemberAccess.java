@@ -33,24 +33,22 @@ public class MemberAccess extends AssignableExpression {
 
     private final Expr     mLhs;       // left hand side (Variable, Expr, CollectionAccess, etc)
     private final Variable mMember;    // member to access
-    private final String   mMemberStr; // name of variable
 
     public MemberAccess(final Expr lhs, final Variable member) {
         mLhs       = lhs;
         mMember    = member;
-        mMemberStr = mMember.toString();
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).getObjectMember(mMemberStr);
+        return mLhs.eval(state).getObjectMember(state, mMember);
     }
 
     @Override
     /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
         if (mLhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
-            return lhs.getObjectMemberUnCloned(mMemberStr);
+            return lhs.getObjectMemberUnCloned(state, mMember);
         } else {
             throw new IncompatibleTypeException(
                 "\"" + this + "\" is unusable for list assignment."
@@ -79,7 +77,7 @@ public class MemberAccess extends AssignableExpression {
     public void assignUncloned(final State state, final Value v) throws SetlException {
         if (mLhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
-            lhs.setObjectMember(mMemberStr, v);
+            lhs.setObjectMember(state, mMember, v);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + this + " := " + v + "\" is unusable for member assignment."
@@ -93,7 +91,7 @@ public class MemberAccess extends AssignableExpression {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         mLhs.appendString(state, sb, tabs);
         sb.append(".");
-        sb.append(mMemberStr);
+        mMember.appendString(state, sb, tabs);
     }
 
     /* term operations */

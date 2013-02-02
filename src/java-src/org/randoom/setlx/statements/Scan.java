@@ -91,7 +91,7 @@ public class Scan extends Statement {
                         final int offset = br.getEndOffset();
                         if (offset > largestMatchSize) {
                             // scope for condition
-                            final VariableScope innerScope = outerScope.clone();
+                            final VariableScope innerScope = outerScope.createLinkedScope();
                             state.setScope(innerScope);
 
                             // put current position into scope

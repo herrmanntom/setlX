@@ -29,6 +29,11 @@ public class RangeDummy extends Value {
     }
 
     @Override
+    protected int compareToOrdering() {
+        return 0;
+    }
+
+    @Override
     public boolean equalTo(final Value v) {
         if (v == RD) {
             return true;

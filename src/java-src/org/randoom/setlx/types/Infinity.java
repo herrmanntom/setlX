@@ -206,24 +206,29 @@ public class Infinity extends NumberValue {
      * value given as argument, > 0 if its greater and == 0 if both values
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
-     * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString
-     * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (this == POSITIVE) {
-            // everything else is smaller
-            return 1;
-        } else if (v instanceof SetlError || v == Om.OM) { // to get here this must be NEGATIVE
-            // SetlError and Om are the only things smaller when this is NEGATIVE
-            return 1;
         } else {
-            // everything in between is bigger
-            return -1;
+            return this.compareToOrdering() - v.compareToOrdering();
+        }
+    }
+
+    /* To compare "incomparable" values, e.g. of different types, the following
+     * order is established and used in compareTo():
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
+     * < SetlObject < ConstructorDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
+    @Override
+    protected int compareToOrdering() {
+        if (this == POSITIVE) {
+            return 1300;
+        } else {
+            return  300;
         }
     }
 

@@ -144,11 +144,11 @@ public class ProcedureDefinition extends Value {
         return callAfterEval(state, args, values);
     }
 
-    protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values) throws SetlException {
+    protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values) throws SetlException {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
-        state.setScope(oldScope.cloneFunctions());
+        state.setScope(oldScope.createFunctionsOnlyLinkedScope());
 
         // assign closure contents
         if (mClosure != null) {
@@ -312,10 +312,6 @@ public class ProcedureDefinition extends Value {
      * value given as argument, > 0 if its greater and == 0 if both values
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
-     * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString
-     * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
     public int compareTo(final Value v){
@@ -334,13 +330,21 @@ public class ProcedureDefinition extends Value {
                 }
                 return mStatements.toString().compareTo(other.mStatements.toString());
             }
-        } else if (v == Infinity.POSITIVE) {
-            // only +Infinity is bigger
-            return -1;
         } else {
-            // everything else is smaller
-            return 1;
+            return this.compareToOrdering() - v.compareToOrdering();
         }
+    }
+
+    /* To compare "incomparable" values, e.g. of different types, the following
+     * order is established and used in compareTo():
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
+     * < SetlObject < ConstructorDefinition < +Infinity
+     * This ranking is necessary to allow sets and lists of different types.
+     */
+    @Override
+    protected int compareToOrdering() {
+        return 1000;
     }
 
     @Override

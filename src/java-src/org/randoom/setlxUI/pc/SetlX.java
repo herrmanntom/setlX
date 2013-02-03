@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SetlX {
-    private final static String     VERSION         = "1.4.99";
+    private final static String     VERSION         = "1.4.999";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2013";
     private final static String     VERSION_PREFIX  = "v";

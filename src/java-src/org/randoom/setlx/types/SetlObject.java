@@ -1,9 +1,19 @@
 package org.randoom.setlx.types;
 
 import java.util.ArrayList;
+
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressions.Difference;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.Factorial;
+import org.randoom.setlx.expressions.IntegerDivision;
+import org.randoom.setlx.expressions.Minus;
+import org.randoom.setlx.expressions.Modulo;
+import org.randoom.setlx.expressions.Power;
+import org.randoom.setlx.expressions.Product;
+import org.randoom.setlx.expressions.Quotient;
+import org.randoom.setlx.expressions.Sum;
 import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.utilities.State;
@@ -100,8 +110,11 @@ public class SetlObject extends Value {
             return function;
         }
         throw new UndefinedOperationException(
-            "Member '" + member + " in " + this + "' is undefined."
+            "Member '" + member + "' is undefined in '" + this + "'."
         );
+    }
+    private static Variable createOverloadVariable(final String functionalCharacter) {
+        return new Variable(functionalCharacter.substring(1));
     }
 
     /* type checks (sort of boolean operation) */
@@ -114,10 +127,69 @@ public class SetlObject extends Value {
     /* arithmetic operations */
 
     @Override
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
+        if (subtrahend instanceof Term) {
+            return ((Term) subtrahend).differenceFlipped(state, this);
+        }
+        return overload(state, DIFFERENCE, subtrahend);
+    }
+    final static Variable DIFFERENCE = createOverloadVariable(Difference.functionalCharacter());;
+
+    @Override
     public Value factorial(final State state) throws SetlException {
         return overload(state, FACTORIAL);
     }
-    final static Variable FACTORIAL = new Variable("factorial");
+    final static Variable FACTORIAL = createOverloadVariable(Factorial.functionalCharacter());
+
+    @Override
+    public Value integerDivision(final State state, final Value divisor) throws SetlException {
+        if (divisor instanceof Term) {
+            return ((Term) divisor).integerDivisionFlipped(state, this);
+        }
+        return overload(state, INTEGER_DIVISON, divisor);
+    }
+    final static Variable INTEGER_DIVISON = createOverloadVariable(IntegerDivision.functionalCharacter());
+
+    @Override
+    public Value minus(final State state) throws SetlException {
+        return overload(state, MINUS);
+    }
+    final static Variable MINUS = createOverloadVariable(Minus.functionalCharacter());;
+
+    @Override
+    public Value modulo(final State state, final Value modulo) throws SetlException {
+        if (modulo instanceof Term) {
+            return ((Term) modulo).moduloFlipped(state, this);
+        }
+        return overload(state, MODULO, modulo);
+    }
+    final static Variable MODULO = createOverloadVariable(Modulo.functionalCharacter());;
+
+    @Override
+    public Value power(final State state, final Value exponent) throws SetlException {
+        if (exponent instanceof Term) {
+            return ((Term) exponent).powerFlipped(state, this);
+        }
+        return overload(state, POWER, exponent);
+    }
+    final static Variable POWER = createOverloadVariable(Power.functionalCharacter());;
+
+    @Override
+    public Value product(final State state, final Value multiplier) throws SetlException {
+        if (multiplier instanceof Term) {
+            return ((Term) multiplier).productFlipped(state, this);
+        }
+        return overload(state, PRODUCT, multiplier);
+    }
+    final static Variable PRODUCT = createOverloadVariable(Product.functionalCharacter());
+    @Override
+    public Value quotient(final State state, final Value divisor) throws SetlException {
+        if (divisor instanceof Term) {
+            return ((Term) divisor).quotientFlipped(state, this);
+        }
+        return overload(state, QUOTIENT, divisor);
+    }
+    final static Variable QUOTIENT = createOverloadVariable(Quotient.functionalCharacter());
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
@@ -128,7 +200,7 @@ public class SetlObject extends Value {
         }
         return overload(state, SUM, summand);
     }
-    final static Variable SUM = new Variable("sum");
+    final static Variable SUM = createOverloadVariable(Sum.functionalCharacter());
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 

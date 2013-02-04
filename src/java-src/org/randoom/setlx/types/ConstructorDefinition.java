@@ -3,9 +3,12 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.Assignment;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -35,22 +38,38 @@ public class ConstructorDefinition extends Value {
 
     private final List<ParameterDef> mParameters; // parameter list
     private final Block              mInit;       // statements in the body of the definition
-    private final Block              mStatic;     // statements in the static block
+    private       Block              mStatic;     // statements in the static block
     private       VariableScope      mStaticDefs; // definitions from static block
 
     public ConstructorDefinition(final List<ParameterDef> parameters,
                                  final Block              init,
                                  final Block              staticBlock
     ) {
+        this(parameters, init, staticBlock, null);
+    }
+
+    private ConstructorDefinition(final List<ParameterDef> parameters,
+                                 final Block              init,
+                                 final Block              staticBlock,
+                                 final VariableScope      staticDefs
+    ) {
         mParameters = parameters;
         mInit       = init;
         mStatic     = staticBlock;
-        mStaticDefs = null;
+        mStaticDefs = staticDefs;
     }
 
     @Override
     public ConstructorDefinition clone() {
-        return new ConstructorDefinition(mParameters, mInit, mStatic);
+        Block staticBlock = null;
+        if (mStatic != null) {
+            staticBlock = mStatic.clone();
+        }
+        VariableScope staticDefs = null;
+        if (mStaticDefs != null) {
+            staticDefs = mStaticDefs.clone();
+        }
+        return new ConstructorDefinition(mParameters, mInit, staticBlock, staticDefs);
     }
 
     /* Gather all bound and unbound variables in this value and its siblings
@@ -130,7 +149,8 @@ public class ConstructorDefinition extends Value {
             // execute, e.g. compute member definition
             mInit.exec(state);
 
-            // extract 'rw' arguments from scope and store them into WriteBackAgent
+            // extract 'rw' arguments from scope, store them into WriteBackAgent
+            // and remove all parameters from scope
             for (int i = 0; i < mParameters.size(); ++i) {
                 final ParameterDef param = mParameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE) {
@@ -142,14 +162,18 @@ public class ConstructorDefinition extends Value {
                        expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);
                 }
+                // remove parameter from scope
+                param.assign(state, Om.OM);
             }
 
             // compute static definition, if not already done
-            if (mStaticDefs == null && mStatic != null) {
+            if (mStaticDefs == null) {
                 mStaticDefs = computeStaticDefinitions(state);
             }
 
             newScope.unlink();
+            newScope.pruneOM();
+            newScope.linkToStaticScope(mStaticDefs);
 
             return SetlObject.createNew(mStaticDefs, newScope);
 
@@ -178,9 +202,13 @@ public class ConstructorDefinition extends Value {
 
         try {
             // execute, e.g. compute static definition
-            mStatic.exec(state);
+            if (mStatic != null) {
+                mStatic.exec(state);
+            }
 
             newScope.unlink();
+            newScope.pruneOM();
+
             return newScope;
 
         } finally { // make sure scope is always reset
@@ -194,6 +222,44 @@ public class ConstructorDefinition extends Value {
     @Override
     public SetlBoolean isConstructor() {
         return SetlBoolean.TRUE;
+    }
+
+    /* features of objects */
+
+    @Override
+    public Value getObjectMember(final State state, final Variable variable) throws SetlException {
+        return getObjectMemberUnCloned(state, variable).clone();
+    }
+
+    @Override
+    public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
+        if (mStaticDefs == null) {
+            mStaticDefs = computeStaticDefinitions(state);
+        }
+        final VariableScope oldScope = state.getScope();
+        state.setScope(mStaticDefs);
+        try {
+            return variable.eval(state);
+        } finally {
+            state.setScope(oldScope);
+        }
+    }
+
+    @Override
+    public void setObjectMember(final State state, final Variable variable, final Value value) {
+        if (mStatic == null) {
+            mStatic = new Block();
+        }
+        mStatic.add(new ExpressionStatement(new Assignment(variable, new ValueExpr(value))));
+        if (mStaticDefs != null) {
+            final VariableScope oldScope = state.getScope();
+            state.setScope(mStaticDefs);
+            try {
+                variable.assignUncloned(state, value);
+            } finally {
+                state.setScope(oldScope);
+            }
+        }
     }
 
     /* string and char operations */

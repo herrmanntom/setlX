@@ -30,10 +30,10 @@ public class SetlObject extends Value {
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
 
-    private final VariableScope mStaticDefinitions;
-    private       VariableScope mMembers;
-    // is this list a clone
-    private boolean                isCloned;
+    private     final VariableScope mStaticDefinitions;
+    /*package*/       VariableScope mMembers;
+    // is this object a clone
+    private           boolean       isCloned;
 
     private SetlObject(final VariableScope staticDefinitions, final VariableScope members) {
         mStaticDefinitions = staticDefinitions;
@@ -82,7 +82,6 @@ public class SetlObject extends Value {
                            final Variable member
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
-        args.add(new ValueExpr(this));
         return overloadQuerry(state, member).call(state, args);
     }
 
@@ -91,7 +90,6 @@ public class SetlObject extends Value {
                            final Value    other
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
-        args.add(new ValueExpr(this));
         args.add(new ValueExpr(other));
         return overloadQuerry(state, member).call(state, args);
     }
@@ -145,12 +143,14 @@ public class SetlObject extends Value {
     public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
         separateFromOriginal();
         final VariableScope oldScope = state.getScope();
-        mMembers.linkToStaticScope(mStaticDefinitions);
         state.setScope(mMembers);
         try {
-            return variable.eval(state);
+            final Value value = variable.eval(state);
+            if (value instanceof ProcedureDefinition) {
+                ((ProcedureDefinition) value).addSurroundingObject(this);
+            }
+            return value;
         } finally {
-            mMembers.unlink();
             state.setScope(oldScope);
         }
     }
@@ -174,8 +174,9 @@ public class SetlObject extends Value {
         sb.append("object<{");
         mMembers.appendString(state, sb, tabs);
         if (mStaticDefinitions != null) {
-            sb.append("}static{");
+            sb.append(" static{");
             mStaticDefinitions.appendString(state, sb, tabs);
+            sb.append("}");
         }
         sb.append("}>");
     }

@@ -48,6 +48,13 @@ public class Block extends Statement {
         mStatements = statements;
     }
 
+    @Override
+    public Block clone() {
+        final Block clone = new Block();
+        clone.mStatements.addAll(mStatements);
+        return clone;
+    }
+
     public void add(final Statement stmnt) {
         mStatements.add(stmnt);
     }

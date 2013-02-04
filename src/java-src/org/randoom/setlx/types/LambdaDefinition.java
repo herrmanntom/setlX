@@ -55,7 +55,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     @Override
     public LambdaDefinition clone() {
-        if (mClosure != null) {
+        if (mClosure != null || mObject != null) {
             return new LambdaDefinition(mParameters, mStatements, mClosure, mExpr);
         } else {
             return this;
@@ -66,6 +66,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mObject = null;
         if (mParameters.size() == 1) {
             mParameters.get(0).appendString(state, sb, 0);
         } else {
@@ -87,6 +88,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     @Override
     public Value toTerm(final State state) {
+        mObject = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
@@ -118,6 +120,7 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     @Override
     public int hashCode() {
+        mObject = null;
         return initHashCode;
     }
 }

@@ -92,6 +92,17 @@ public class VariableScope {
         mVarBindings.clear();
     }
 
+    public void pruneOM() {
+        Iterator<Map.Entry<String, Value>> iter = mVarBindings.entrySet().iterator();
+        while (iter.hasNext()) {
+            final Map.Entry<String, Value> entry = iter.next();
+            if (entry.getValue() == Om.OM) {
+                mVarBindings.remove(entry.getKey());
+                iter = mVarBindings.entrySet().iterator();
+            }
+        }
+    }
+
     public void unlink() {
         mStaticScope   = null;
         mOriginalScope = null;
@@ -209,7 +220,7 @@ public class VariableScope {
 
     /* term operations */
 
-    public Term toTerm(final State state, final VariableScope globals) {
+    /*package*/ Term toTerm(final State state, final VariableScope globals) {
         final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
@@ -241,8 +252,9 @@ public class VariableScope {
             sb.append(entry.getKey());
             sb.append(" := ");
             entry.getValue().appendString(state, sb, tabs);
+            sb.append(";");
             if (iter.hasNext()) {
-                sb.append(", ");
+                sb.append(" ");
             }
         }
     }

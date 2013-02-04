@@ -44,6 +44,7 @@ public class ProcedureDefinition extends Value {
     protected final List<ParameterDef>       mParameters;  // parameter list
     protected final Block                    mStatements;  // statements in the body of the definition
     protected       HashMap<Variable, Value> mClosure;     // variables and values used in closure
+    protected       SetlObject               mObject;      // surrounding object for next call
 
     public ProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
         this(parameters, statements, null);
@@ -57,6 +58,7 @@ public class ProcedureDefinition extends Value {
         } else {
             mClosure = null;
         }
+        mObject = null;
     }
 
     // only to be used by ProcedureConstructor
@@ -66,7 +68,7 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public ProcedureDefinition clone() {
-        if (mClosure != null) {
+        if (mClosure != null || mObject != null) {
             return new ProcedureDefinition(mParameters, mStatements, mClosure);
         } else {
             return this;
@@ -77,6 +79,10 @@ public class ProcedureDefinition extends Value {
         mClosure = closure;
     }
 
+    public void addSurroundingObject(final SetlObject object) {
+        mObject = object;
+    }
+
     /* Gather all bound and unbound variables in this value and its siblings
           - bound   means "assigned" in this value
           - unbound means "not present in bound set when used"
@@ -84,6 +90,7 @@ public class ProcedureDefinition extends Value {
        NOTE: Use optimizeAndCollectVariables() when adding variables from
              sub-expressions
     */
+    @Override
     public void collectVariablesAndOptimize (
         final List<Variable> boundVariables,
         final List<Variable> unboundVariables,
@@ -120,6 +127,7 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public SetlBoolean isProcedure() {
+        mObject = null;
         return SetlBoolean.TRUE;
     }
 
@@ -128,7 +136,7 @@ public class ProcedureDefinition extends Value {
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         final int size = args.size();
-        if (mParameters.size() != size) {
+        if ((mParameters.size() != size && mObject == null) || (mParameters.size()-1 != size && mObject != null)) {
             throw new IncorrectNumberOfParametersException(
                 "'" + this + "' is defined with a different number of parameters " +
                 "(" + mParameters.size() + ")."
@@ -137,18 +145,31 @@ public class ProcedureDefinition extends Value {
 
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(size);
+        if (mObject != null) {
+            values.add(mObject);
+        }
         for (final Expr arg : args) {
             values.add(arg.eval(state));
         }
 
-        return callAfterEval(state, args, values);
+        final Value result = callAfterEval(state, args, values);
+
+        mObject = null;
+
+        return result;
     }
 
     protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values) throws SetlException {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
-        state.setScope(oldScope.createFunctionsOnlyLinkedScope());
+        final VariableScope newScope = oldScope.createFunctionsOnlyLinkedScope();
+        state.setScope(newScope);
+
+        // link members of surrounding object
+        if (mObject != null) {
+            newScope.linkToStaticScope(mObject.mMembers);
+        }
 
         // assign closure contents
         if (mClosure != null) {
@@ -218,6 +239,10 @@ public class ProcedureDefinition extends Value {
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < mParameters.size(); ++i) {
+                // skip first parameter of object-bound call (i.e. `this')
+                if (mObject != null && i == 0) {
+                    continue;
+                }
                 final ParameterDef param = mParameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE) {
                     // value of parameter after execution
@@ -241,6 +266,8 @@ public class ProcedureDefinition extends Value {
             // restore old scope
             state.setScope(oldScope);
 
+            newScope.unlink();
+
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state);
 
@@ -263,6 +290,7 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mObject = null;
         sb.append("procedure(");
         final Iterator<ParameterDef> iter = mParameters.iterator();
         while (iter.hasNext()) {
@@ -279,6 +307,7 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public Value toTerm(final State state) {
+        mObject = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
@@ -314,7 +343,8 @@ public class ProcedureDefinition extends Value {
      * Useful output is only possible if both values are of the same type.
      */
     @Override
-    public int compareTo(final Value v){
+    public int compareTo(final Value v) {
+        mObject = null;
         if (this == v) {
             return 0;
         } else if (v instanceof ProcedureDefinition) {
@@ -344,11 +374,13 @@ public class ProcedureDefinition extends Value {
      */
     @Override
     protected int compareToOrdering() {
+        mObject = null;
         return 1000;
     }
 
     @Override
     public boolean equalTo(final Value v) {
+        mObject = null;
         if (this == v) {
             return true;
         } else if (v instanceof PreDefinedFunction) {
@@ -375,6 +407,7 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public int hashCode() {
+        mObject = null;
         return initHashCode;
     }
 

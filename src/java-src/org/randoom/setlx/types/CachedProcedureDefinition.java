@@ -61,7 +61,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     @Override
     public CachedProcedureDefinition clone() {
-        if (mClosure != null) {
+        if (mClosure != null || mObject != null) {
             return new CachedProcedureDefinition(mParameters, mStatements, mClosure, mCache, mCacheHits);
         } else {
             return this;
@@ -69,12 +69,15 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
     }
 
     public int getCacheHits() {
+        mObject = null;
         return mCacheHits;
     }
     public int getCacheSize() {
+        mObject = null;
         return mCache.size();
     }
     public void clearCache() {
+        mObject = null;
         mCache.clear();
         mCacheHits = 0;
     }
@@ -131,6 +134,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        mObject = null;
         sb.append("cachedProcedure(");
         final Iterator<ParameterDef> iter = mParameters.iterator();
         while (iter.hasNext()) {
@@ -147,6 +151,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     @Override
     public Value toTerm(final State state) {
+        mObject = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList paramList = new SetlList(mParameters.size());
@@ -178,6 +183,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
 
     @Override
     public int hashCode() {
+        mObject = null;
         return initHashCode;
     }
 }

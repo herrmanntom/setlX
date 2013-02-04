@@ -41,7 +41,7 @@ public class MemberAccess extends AssignableExpression {
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).getObjectMember(state, mMember);
+        return mLhs.eval(state).getObjectMemberUnCloned(state, mMember);
     }
 
     @Override

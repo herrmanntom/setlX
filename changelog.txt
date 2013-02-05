@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.4.999--- 2013-02-05
+ + implementation of object orientation extension almost feature complete
+   (missing a number of overloadable operators)
+
 ---v1.4.99--- 2013-02-03
  + first iteration of object orientation extension
  + use multithreaded test script

@@ -87,7 +87,10 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         final int size = args.size();
-        if (mParameters.size() != size) {
+        final SetlObject object = mObject;
+        mObject = null;
+
+        if ((mParameters.size() != size && object == null) || (mParameters.size()-1 != size && object != null)) {
             throw new IncorrectNumberOfParametersException(
                 "'" + this + "' is defined with a different number of parameters " +
                 "(" + mParameters.size() + ")."
@@ -122,7 +125,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
             // cache om to prevent recursion loop
             mCache.put(key, new SoftReference<Value>(Om.OM));
             // call function
-            cachedResult = callAfterEval(state, args, values);
+            cachedResult = callAfterEval(state, args, values, object);
             // put value into cache
             mCache.put(key, new SoftReference<Value>(cachedResult));
             // return value

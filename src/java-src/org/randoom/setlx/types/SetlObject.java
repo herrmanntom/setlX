@@ -88,6 +88,10 @@ public class SetlObject extends Value {
         }
     }
 
+    public VariableScope getScope() {
+        return mMembers;
+    }
+
     private Value overload(final State    state,
                            final Variable member
     ) throws SetlException {
@@ -219,7 +223,9 @@ public class SetlObject extends Value {
         try {
             final Value value = variable.eval(state);
             if (value instanceof ProcedureDefinition) {
-                ((ProcedureDefinition) value).addSurroundingObject(this);
+                final ProcedureDefinition proc = (ProcedureDefinition) value;
+                proc.addSurroundingObject(this);
+                proc.addClosure(null);
             }
             return value;
         } finally {

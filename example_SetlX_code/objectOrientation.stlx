@@ -6,7 +6,7 @@ c := constructor(n) {
 
     static {
         // overload '+' operator
-        sum := [this, other]|-> this.number + other.number;
+        sum := [this, other]|-> number + other.number;
     }
 };
 
@@ -19,11 +19,23 @@ print("a == $a$");
 print("b == $b$");
 print("a + b == $a + b$");
 
-// also overload '!' operator
-a.factorial := procedure(rw this) { if (this.cache == om) { this.cache := (this.number ** 2)!;} return this.cache;};
+print();
+// also overload '!' operator in object `a'; note 'rw' and prefix of `this.' is required for write access
+a.factorial := procedure(rw this) { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache;};
 
 print();
 print("a == $a$");
 print("a! == $a!$");
 print("a == $a$");
+print("a! == $a!$");
+
+print();
+// finally overload the power operator (**) with something unusual for all objects of c; note `rw' again
+c.power := procedure(rw this, rw other) { [other.number, this.number] := [this.number, other.number]; return "swapped";};
+
+print("a.number == $a.number$");
+print("b.number == $b.number$");
+print("a ** b == $a ** b$");
+print("a.number == $a.number$");
+print("b.number == $b.number$");
 

@@ -3,6 +3,8 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.UnknownFunctionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -50,6 +52,11 @@ public class Call extends Expr {
     @Override
     protected Value evaluate(final State state) throws SetlException {
         final Value lhs = mLhs.eval(state);
+        if (lhs == Om.OM) {
+            throw new UnknownFunctionException(
+                "Left hand side \"" + mLhs + "\" is undefined."
+            );
+        }
         final boolean finishOuterFunction = state.isDebugFinishFunction;
         try {
             if (state.areBreakpointsEnabled && ! state.isDebugPromptActive()) {

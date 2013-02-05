@@ -2,6 +2,8 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.UnknownFunctionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -36,7 +38,13 @@ public class CollectMap extends Expr {
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).collectMap(state, mArg.eval(state).clone());
+        final Value lhs = mLhs.eval(state);
+        if (lhs == Om.OM) {
+            throw new UnknownFunctionException(
+                "Left hand side \"" + mLhs + "\" is undefined."
+            );
+        }
+        return lhs.collectMap(state, mArg.eval(state).clone());
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings

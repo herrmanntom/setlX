@@ -3,6 +3,8 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.UnknownFunctionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -46,6 +48,11 @@ public class CollectionAccess extends AssignableExpression {
     @Override
     protected Value evaluate(final State state) throws SetlException {
         final Value lhs = mLhs.eval(state);
+        if (lhs == Om.OM) {
+            throw new UnknownFunctionException(
+                "Left hand side \"" + mLhs + "\" is undefined."
+            );
+        }
         // evaluate all arguments
         final List<Value> args = new ArrayList<Value>(mArgs.size());
         for (final Expr arg: mArgs) {
@@ -61,6 +68,11 @@ public class CollectionAccess extends AssignableExpression {
     /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
         if (mLhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
+            if (lhs == Om.OM) {
+                throw new UnknownFunctionException(
+                    "Left hand side \"" + mLhs + "\" is undefined."
+                );
+            }
 
             // evaluate all arguments
             final List<Value> args = new ArrayList<Value>(mArgs.size());
@@ -104,6 +116,11 @@ public class CollectionAccess extends AssignableExpression {
     public void assignUncloned(final State state, final Value v) throws SetlException {
         if (mArgs.size() == 1 && mLhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
+            if (lhs == Om.OM) {
+                throw new UnknownFunctionException(
+                    "Left hand side \"" + mLhs + "\" is undefined."
+                );
+            }
             lhs.setMember(state, mArgs.get(0).eval(state), v);
         } else {
             throw new IncompatibleTypeException(

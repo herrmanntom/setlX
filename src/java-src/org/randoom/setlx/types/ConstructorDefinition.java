@@ -173,7 +173,7 @@ public class ConstructorDefinition extends Value {
 
             newScope.unlink();
             newScope.pruneOM();
-            newScope.linkToStaticScope(mStaticDefs);
+            newScope.linkToOriginalScope(mStaticDefs);
 
             return SetlObject.createNew(mStaticDefs, newScope);
 

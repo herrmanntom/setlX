@@ -88,6 +88,10 @@ public class SetlObject extends Value {
         }
     }
 
+    public VariableScope getScope() {
+        return mMembers;
+    }
+
     private Value overload(final State    state,
                            final Variable member
     ) throws SetlException {
@@ -105,7 +109,7 @@ public class SetlObject extends Value {
     }
 
     private Value overloadQuerry(final State state, final Variable member) throws SetlException {
-        final Value function = getObjectMemberUnCloned(state, member);
+        final Value function = getObjectMemberUnClonedUnSafe(state, member);
         if (function != Om.OM) {
             return function;
         }
@@ -208,18 +212,24 @@ public class SetlObject extends Value {
 
     @Override
     public Value getObjectMember(final State state, final Variable variable) throws SetlException {
-        return getObjectMemberUnCloned(state, variable).clone();
+        return getObjectMemberUnClonedUnSafe(state, variable).clone();
     }
 
     @Override
     public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
         separateFromOriginal();
+        return getObjectMemberUnClonedUnSafe(state, variable);
+    }
+
+    private Value getObjectMemberUnClonedUnSafe(final State state, final Variable variable) throws SetlException {
         final VariableScope oldScope = state.getScope();
         state.setScope(mMembers);
         try {
             final Value value = variable.eval(state);
             if (value instanceof ProcedureDefinition) {
-                ((ProcedureDefinition) value).addSurroundingObject(this);
+                final ProcedureDefinition proc = (ProcedureDefinition) value;
+                proc.addSurroundingObject(this);
+                proc.addClosure(null);
             }
             return value;
         } finally {

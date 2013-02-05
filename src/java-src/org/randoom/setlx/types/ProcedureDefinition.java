@@ -135,8 +135,11 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
-        final int size = args.size();
-        if ((mParameters.size() != size && mObject == null) || (mParameters.size()-1 != size && mObject != null)) {
+        final int        size   = args.size();
+        final SetlObject object = mObject;
+        mObject = null;
+
+        if ((mParameters.size() != size && object == null) || (mParameters.size()-1 != size && object != null)) {
             throw new IncorrectNumberOfParametersException(
                 "'" + this + "' is defined with a different number of parameters " +
                 "(" + mParameters.size() + ")."
@@ -145,21 +148,16 @@ public class ProcedureDefinition extends Value {
 
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(size);
-        if (mObject != null) {
-            values.add(mObject);
-        }
         for (final Expr arg : args) {
             values.add(arg.eval(state));
         }
 
-        final Value result = callAfterEval(state, args, values);
-
-        mObject = null;
+        final Value result = callAfterEval(state, args, values, object);
 
         return result;
     }
 
-    protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values) throws SetlException {
+    protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
@@ -167,8 +165,8 @@ public class ProcedureDefinition extends Value {
         state.setScope(newScope);
 
         // link members of surrounding object
-        if (mObject != null) {
-            newScope.linkToStaticScope(mObject.mMembers);
+        if (object != null) {
+            newScope.linkToObjectScope(object);
         }
 
         // assign closure contents
@@ -179,13 +177,23 @@ public class ProcedureDefinition extends Value {
         }
 
         // put arguments into inner scope
-        final int size = values.size();
-        for (int i = 0; i < size; ++i) {
+        final int parametersSize = mParameters.size();
+        for (int i = 0; i < parametersSize; ++i) {
             final ParameterDef param = mParameters.get(i);
-            if (param.getType() == ParameterDef.READ_WRITE) {
-                param.assign(state, values.get(i));
+            final Value        value;
+            if (object != null) {
+                if (i == 0) {
+                    value = object;
+                } else {
+                    value = values.get(i - 1);
+                }
             } else {
-                param.assign(state, values.get(i).clone());
+                value = values.get(i);
+            }
+            if (param.getType() == ParameterDef.READ_WRITE) {
+                param.assign(state, value);
+            } else {
+                param.assign(state, value.clone());
             }
         }
 
@@ -238,9 +246,9 @@ public class ProcedureDefinition extends Value {
             }
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
-            for (int i = 0; i < mParameters.size(); ++i) {
+            for (int i = 0; i < parametersSize; ++i) {
                 // skip first parameter of object-bound call (i.e. `this')
-                if (mObject != null && i == 0) {
+                if (object != null && i == 0) {
                     continue;
                 }
                 final ParameterDef param = mParameters.get(i);
@@ -248,7 +256,12 @@ public class ProcedureDefinition extends Value {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
                     // expression used to fill parameter before execution
-                    final Expr  preExpr   = args.get(i);
+                    final Expr  preExpr;
+                    if (object != null) {
+                        preExpr = args.get(i - 1);
+                    } else {
+                        preExpr = args.get(i);
+                    }
                     /* if possible the WriteBackAgent will set the variable used in this
                        expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);

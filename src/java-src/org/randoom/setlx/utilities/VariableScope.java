@@ -3,6 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -20,8 +21,8 @@ public class VariableScope {
 
     private final   Map<String, Value>  mVarBindings;
 
-    // stores reference static scope of objects
-    private         VariableScope       mStaticScope;
+    // stores reference scope of object
+    private         SetlObject          mObjectScope;
 
     // stores reference to original scope object upon cloning
     private         VariableScope       mOriginalScope;
@@ -44,7 +45,7 @@ public class VariableScope {
     // scopes have to be cloned from current one, therefore don't use from outside!
     /*package*/ VariableScope() {
         mVarBindings            = new HashMap<String, Value>();
-        mStaticScope            = null;
+        mObjectScope            = null;
         mOriginalScope          = null;
         mRestrictToFunctions    = false;
         mReadThrough            = false;
@@ -59,7 +60,7 @@ public class VariableScope {
             newScope.mVarBindings.put(entry.getKey(), entry.getValue().clone());
         }
 
-        newScope.mStaticScope         = this.mStaticScope;
+        newScope.mObjectScope         = this.mObjectScope;
         newScope.mOriginalScope       = this.mOriginalScope;
         newScope.mRestrictToFunctions = this.mRestrictToFunctions;
         newScope.mReadThrough         = this.mReadThrough;
@@ -104,12 +105,16 @@ public class VariableScope {
     }
 
     public void unlink() {
-        mStaticScope   = null;
+        mObjectScope   = null;
         mOriginalScope = null;
     }
 
-    public void linkToStaticScope(final VariableScope linkTarget) {
-        mStaticScope   = linkTarget;
+    public void linkToOriginalScope(final VariableScope linkTarget) {
+        mOriginalScope = linkTarget;
+    }
+
+    public void linkToObjectScope(final SetlObject linkTarget) {
+        mObjectScope   = linkTarget;
     }
 
     public void setWriteThrough(final boolean writeThrough) {
@@ -129,8 +134,8 @@ public class VariableScope {
         if (v != null) {
             return v;
         }
-        if (mStaticScope != null) {
-            v = mStaticScope.locateValue(var, false);
+        if (mObjectScope != null) {
+            v = mObjectScope.getScope().locateValue(var, false);
             if (v != null && v != Om.OM) {
                 return v;
             }
@@ -144,7 +149,7 @@ public class VariableScope {
             }
 
             // cache result, if this is allowed
-            if ( ! mReadThrough) {
+            if ( ! mReadThrough && v != Om.OM) {
                 mVarBindings.put(var, v);
             }
 
@@ -156,11 +161,11 @@ public class VariableScope {
     // collect all bindings reachable from current scope (except global variables!)
     /*package*/ void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
-        if (mStaticScope != null) {
-            mStaticScope.collectBindings(result, mRestrictToFunctions);
+        if (mObjectScope != null) {
+            mObjectScope.getScope().collectBindings(result, false);
         }
         if (mOriginalScope != null) {
-            mOriginalScope.collectBindings(result, mRestrictToFunctions);
+            mOriginalScope.collectBindings(result, restrictToFunctions || mRestrictToFunctions);
         }
         // add own bindings (possibly overwriting values from inner bindings)
         for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
@@ -174,6 +179,9 @@ public class VariableScope {
     /*package*/ void storeValue(final String var, final Value value) {
         if ( ! mWriteThrough || mVarBindings.get(var) != null) {
             // this scope does not allow write through or variable is actually stored here
+            if (var.equals("cache")) {
+                //throw new NullPointerException("die, die, die");
+            }
             mVarBindings.put(var, value);
         } else if (mWriteThrough          && // allowed to write into mOriginalScope
                    mOriginalScope != null && // mOriginalScope exists
@@ -183,6 +191,12 @@ public class VariableScope {
         }
     }
 
+    /*
+     * Store `value' for variable into current scope, but only if scopes linked
+     * from current one up until `outerScope' do not have this value defined already.
+     * Return false if linked scope contained a different value under this variable,
+     * true otherwise.
+     */
     /*package*/ boolean storeValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
         VariableScope toCheck = mOriginalScope;
         while (toCheck != null && toCheck != outerScope) {
@@ -195,6 +209,17 @@ public class VariableScope {
                 }
             } else {
                 toCheck = toCheck.mOriginalScope;
+            }
+        }
+        // also check in scopes of surrounding objects
+        if (mObjectScope != null) {
+            final Value now = mObjectScope.getScope().locateValue(var, false);
+            if (now != null) { // already saved there
+                if (now.equalTo(value)) {
+                    return true;
+                } else if (now != Om.OM) {
+                    return false;
+                }
             }
         }
         // to get here, `var' is not stored in any upper scope up to outerScope
@@ -220,7 +245,7 @@ public class VariableScope {
 
     /* term operations */
 
-    /*package*/ Term toTerm(final State state, final VariableScope globals) {
+    /*package*/ public Term toTerm(final State state, final VariableScope globals) {
         final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);

@@ -407,6 +407,12 @@ public class StateImplementation extends State {
         }
     }
 
+    /*
+     * Store `value' for variable into current scope, but only if scopes linked
+     * from current one up until `outerScope' do not have this value defined already.
+     * Return false if linked scope contained a different value under this variable,
+     * true otherwise.
+     */
     @Override
     public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
         if (mGlobalsPresent) {

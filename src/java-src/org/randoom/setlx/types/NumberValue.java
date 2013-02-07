@@ -26,15 +26,15 @@ public abstract class NumberValue extends Value {
     @Override
     public          Value       power(final State state, final Value exponent) throws SetlException {
         if (exponent.isInteger() == SetlBoolean.TRUE && exponent.jIntConvertable()) {
-            return this.power(exponent.jIntValue());
+            return this.power(state, exponent.jIntValue());
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
-            return this.power(exponent.jDoubleValue());
+            return this.power(state, exponent.jDoubleValue());
         } else if (exponent.isReal() == SetlBoolean.TRUE) {
-            final Rational r = (Rational) exponent.toRational();
+            final Rational r = (Rational) exponent.toRational(state);
             if (r.isInteger() == SetlBoolean.TRUE && r.jIntConvertable()) {
-                return this.power(r.jIntValue());
+                return this.power(state, r.jIntValue());
             } else {
-                return this.power(exponent.jDoubleValue());
+                return this.power(state, exponent.jDoubleValue());
             }
         } else if (exponent instanceof SetlSet && this.equalTo(Rational.TWO)) {
             return ((SetlSet) exponent).powerSet(state);
@@ -47,8 +47,8 @@ public abstract class NumberValue extends Value {
         }
     }
 
-    protected abstract NumberValue power(final int    exponent) throws SetlException;
-    protected abstract NumberValue power(final double exponent) throws SetlException;
+    protected abstract NumberValue power(final State state, final int    exponent) throws SetlException;
+    protected abstract NumberValue power(final State state, final double exponent) throws SetlException;
 
     @Override
     public    abstract Value       product(final State state, final Value multiplier) throws SetlException;

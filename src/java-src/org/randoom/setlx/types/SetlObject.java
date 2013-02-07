@@ -2,6 +2,7 @@ package org.randoom.setlx.types;
 
 import java.util.ArrayList;
 
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Difference;
@@ -41,7 +42,7 @@ public class SetlObject extends Value {
      */
 
     private     final VariableScope mStaticDefinitions;
-    /*package*/       VariableScope mMembers;
+    private           VariableScope mMembers;
     // is this object a clone
     private           boolean       isCloned;
 
@@ -127,6 +128,47 @@ public class SetlObject extends Value {
     public SetlBoolean isObject() {
         return SetlBoolean.TRUE;
     }
+
+    /* type conversions */
+
+    @Override
+    public Value toInteger(final State state) throws SetlException {
+        final Value result = overload(state, toInteger);
+        if (result.isInteger() == SetlBoolean.FALSE) {
+            throw new IncompatibleTypeException(
+                "Result of '" + toInteger + "' is not an integer."
+            );
+        } else {
+            return result;
+        }
+    }
+    final static Variable toInteger = new Variable("toInt");
+
+    @Override
+    public Value toRational(final State state) throws SetlException {
+        final Value result = overload(state, toRational);
+        if ( ! (result instanceof Rational)) {
+            throw new IncompatibleTypeException(
+                "Result of '" + toRational + "' is not a reational number."
+            );
+        } else {
+            return result;
+        }
+    }
+    final static Variable toRational = new Variable("toRational");
+
+    @Override
+    public Value toReal(final State state) throws SetlException {
+        final Value result = overload(state, toReal);
+        if ( ! (result instanceof Real)) {
+            throw new IncompatibleTypeException(
+                "Result of '" + toReal + "' is not a real."
+            );
+        } else {
+            return result;
+        }
+    }
+    final static Variable toReal = new Variable("toReal");
 
     /* arithmetic operations */
 

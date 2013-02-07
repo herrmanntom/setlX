@@ -121,15 +121,15 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* type conversions */
 
-    public Value toInteger() {
+    public Value toInteger(final State state) throws SetlException {
         return Om.OM;
     }
 
-    public Value toRational() {
+    public Value toRational(final State state) throws SetlException {
         return Om.OM;
     }
 
-    public Value toReal() {
+    public Value toReal(final State state) throws SetlException {
         return Om.OM;
     }
 
@@ -157,8 +157,8 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public double toJDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
-        final Value real = this.toReal();
+    public double toJDoubleValue(final State state) throws SetlException {
+        final Value real = this.toReal(state);
         if (real != Om.OM) {
             return real.jDoubleValue();
         } else {
@@ -168,8 +168,8 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         }
     }
 
-    public final int toJIntValue() throws IncompatibleTypeException, NotAnIntegerException, NumberToLargeException {
-        final Value integer = this.toInteger();
+    public final int toJIntValue(final State state) throws SetlException {
+        final Value integer = this.toInteger(state);
         if (integer != Om.OM) {
             return integer.jIntValue();
         } else {

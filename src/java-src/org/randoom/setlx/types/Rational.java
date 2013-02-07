@@ -186,7 +186,7 @@ public class Rational extends NumberValue {
     /* type conversion */
 
     @Override
-    public Rational toInteger() {
+    public Rational toInteger(final State state) {
         if (mIsInteger) {
             return this;
         } else {
@@ -195,12 +195,16 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public Rational toRational() {
+    public Rational toRational(final State state) {
         return this;
     }
 
     @Override
-    public Real toReal() {
+    public Real toReal(final State state) {
+        return Real.valueOf(mNominator, mDenominator);
+    }
+
+    /*package*/ Real toReal() {
         return Real.valueOf(mNominator, mDenominator);
     }
 
@@ -454,7 +458,7 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    protected Rational power(final int exponent) throws NumberToLargeException {
+    protected Rational power(final State state, final int exponent) throws NumberToLargeException {
         if (exponent >= 0) {
             return new Rational(mNominator  .pow(exponent     ), mDenominator.pow(exponent     ));
         } else {
@@ -463,8 +467,8 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    protected NumberValue power(final double exponent) throws SetlException {
-        return toReal().power(exponent);
+    protected NumberValue power(final State state, final double exponent) throws SetlException {
+        return toReal(state).power(state, exponent);
     }
 
     @Override
@@ -562,8 +566,8 @@ public class Rational extends NumberValue {
         if (mIsInteger) {
             return this;
         } else {
-            final Rational roundPart = (Rational) this.difference(state, this.toInteger()).toReal().round(state);
-            return (Rational) this.toInteger().sum(state, roundPart);
+            final Rational roundPart = (Rational) this.difference(state, this.toInteger(state)).toReal(state).round(state);
+            return (Rational) this.toInteger(state).sum(state, roundPart);
         }
     }
 

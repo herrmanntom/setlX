@@ -91,12 +91,12 @@ public class Real extends NumberValue {
     /* type conversions */
 
     @Override
-    public Rational toInteger() {
+    public Rational toInteger(final State state) {
         return Rational.valueOf(mReal.toBigInteger());
     }
 
     @Override
-    public Rational toRational() {
+    public Rational toRational(final State state) {
         final int scale = mReal.scale();
         if (scale >= 0) {
             return Rational.valueOf(mReal.unscaledValue(), BigInteger.TEN.pow(scale));
@@ -106,7 +106,7 @@ public class Real extends NumberValue {
     }
 
     @Override
-    public Real toReal() {
+    public Real toReal(final State state) {
         return this;
     }
 
@@ -169,7 +169,7 @@ public class Real extends NumberValue {
                 right = ((Real) subtrahend).mReal;
             } else {
                 final Rational s = ((Rational) subtrahend);
-                right = s.toReal().mReal;
+                right = s.toReal(state).mReal;
             }
             try {
                 return Real.valueOf(mReal.subtract(right, mathContext));
@@ -186,7 +186,7 @@ public class Real extends NumberValue {
     }
 
     public Value differenceFlipped(final State state, final Rational minuend) throws SetlException {
-        return minuend.toReal().difference(state, this);
+        return minuend.toReal(state).difference(state, this);
     }
 
     @Override
@@ -222,7 +222,7 @@ public class Real extends NumberValue {
     }
 
     @Override
-    protected NumberValue power(final int exponent) throws UndefinedOperationException {
+    protected NumberValue power(final State state, final int exponent) throws UndefinedOperationException {
         try {
             return Real.valueOf(mReal.pow(exponent, mathContext));
         } catch (final ArithmeticException ae) {
@@ -231,7 +231,7 @@ public class Real extends NumberValue {
     }
 
     @Override
-    protected NumberValue power(final double exponent) throws NumberToLargeException, IncompatibleTypeException, UndefinedOperationException {
+    protected NumberValue power(final State state, final double exponent) throws NumberToLargeException, IncompatibleTypeException, UndefinedOperationException {
         if (mReal.compareTo(BigDecimal.ZERO) < 0) {
             throw new IncompatibleTypeException(
                 "Left-hand-side of '" + this + " ** " + exponent + "' is negative."
@@ -254,7 +254,7 @@ public class Real extends NumberValue {
                 right = ((Real) multiplier).mReal;
             } else {
                 final Rational m = (Rational) multiplier;
-                right = m.toReal().mReal;
+                right = m.toReal(state).mReal;
             }
             try {
                 return Real.valueOf(mReal.multiply(right, mathContext));
@@ -281,7 +281,7 @@ public class Real extends NumberValue {
             } else if (divisor instanceof Real) {
                 right = ((Real) divisor).mReal;
             } else {
-                right = ((Rational) divisor).toReal().mReal;
+                right = ((Rational) divisor).toReal(state).mReal;
             }
             if (right.compareTo(BigDecimal.ZERO) == 0) {
                 final int cmp = this.compareTo(Rational.ZERO);
@@ -309,7 +309,7 @@ public class Real extends NumberValue {
         }
     }
     public Value quotientFlipped(final State state, final Rational dividend) throws SetlException {
-        return dividend.toReal().quotient(state, this);
+        return dividend.toReal(state).quotient(state, this);
     }
 
     @Override
@@ -328,7 +328,7 @@ public class Real extends NumberValue {
                 right = ((Real) summand).mReal;
             } else {
                 final Rational s = (Rational) summand;
-                right = s.toReal().mReal;
+                right = s.toReal(state).mReal;
             }
             try {
                 return Real.valueOf(mReal.add(right, mathContext));

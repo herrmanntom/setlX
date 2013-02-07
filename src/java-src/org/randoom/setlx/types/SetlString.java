@@ -205,7 +205,7 @@ public class SetlString extends IndexedCollectionValue {
     /* type conversions */
 
     @Override
-    public Value toInteger() {
+    public Value toInteger(final State state) {
         try {
             final Rational result = Rational.valueOf(mContent.toString());
             if (result.isInteger() == SetlBoolean.TRUE) {
@@ -227,7 +227,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value toRational() {
+    public Value toRational(final State state) {
         try {
             return Rational.valueOf(mContent.toString());
         } catch (final NumberFormatException nfe) {
@@ -236,7 +236,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value toReal() {
+    public Value toReal(final State state) {
         try {
             return Real.valueOf(mContent.toString());
         } catch (final NumberFormatException nfe) {

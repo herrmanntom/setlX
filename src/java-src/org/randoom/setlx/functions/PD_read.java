@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.JVMIOException;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
@@ -23,7 +24,7 @@ public class PD_read extends PreDefinedFunction {
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         Value          inputValue = Om.OM;
         String         input      = null;
         String         prompt     = null;
@@ -49,10 +50,10 @@ public class PD_read extends PreDefinedFunction {
 
         if (input != null) {
             inputValue = new SetlString(input);
-            if (inputValue.toInteger() != Om.OM) {
-                inputValue = inputValue.toInteger();
-            } else if (inputValue.toReal() != Om.OM) {
-                inputValue = inputValue.toReal();
+            if (inputValue.toInteger(state) != Om.OM) {
+                inputValue = inputValue.toInteger(state);
+            } else if (inputValue.toReal(state) != Om.OM) {
+                inputValue = inputValue.toReal(state);
             }
         } else {
             inputValue = Om.OM;

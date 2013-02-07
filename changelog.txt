@@ -1,5 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+ + allow overloading of more functions for objects
+
 ---v1.4.999--- 2013-02-05
  + implementation of object orientation extension almost feature complete
    (missing a number of overloadable operators)

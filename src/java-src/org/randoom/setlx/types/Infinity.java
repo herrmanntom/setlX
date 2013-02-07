@@ -52,7 +52,7 @@ public class Infinity extends NumberValue {
     }
 
     @Override
-    public double toJDoubleValue() {
+    public double toJDoubleValue(final State state) {
         return this.jDoubleValue();
     }
 
@@ -101,14 +101,14 @@ public class Infinity extends NumberValue {
     }
 
     @Override
-    protected NumberValue power(final int exponent) throws UndefinedOperationException{
+    protected NumberValue power(final State state, final int exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );
     }
 
     @Override
-    protected NumberValue power(final double exponent) throws UndefinedOperationException{
+    protected NumberValue power(final State state, final double exponent) throws UndefinedOperationException{
         throw new UndefinedOperationException(
             "'" + this + " ** " + exponent + "' is undefined."
         );

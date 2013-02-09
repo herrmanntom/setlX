@@ -247,7 +247,7 @@ public class SetlString extends IndexedCollectionValue {
     /* arithmetic operations */
 
     @Override
-    public Rational absoluteValue() throws IncompatibleTypeException {
+    public Rational absoluteValue(final State state) throws IncompatibleTypeException {
         if (mContent.length() == 1) {
             return Rational.valueOf((long) mContent.charAt(0));
         } else {
@@ -490,14 +490,14 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value maximumMember() throws SetlException {
+    public Value maximumMember(final State state) throws SetlException {
         throw new UndefinedOperationException(
             "'max(" + this + ")' is undefined."
         );
     }
 
     @Override
-    public Value minimumMember() throws SetlException {
+    public Value minimumMember(final State state) throws SetlException {
         throw new UndefinedOperationException(
             "'min(" + this + ")' is undefined."
         );

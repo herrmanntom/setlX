@@ -39,7 +39,7 @@ public class BoolEqual extends Expr {
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
-            return mLhs.eval(state).isEqual(mRhs.eval(state));
+            return mLhs.eval(state).isEqualTo(state, mRhs.eval(state));
         } catch (final SetlException se) {
             se.addToTrace("Error in substitute comparison \"" + mLhs + " == " + mRhs + "\":");
             throw se;

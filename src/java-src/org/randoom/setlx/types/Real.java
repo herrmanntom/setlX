@@ -144,12 +144,12 @@ public class Real extends NumberValue {
     /* arithmetic operations */
 
     @Override
-    public Real absoluteValue() {
+    public Real absoluteValue(final State state) {
         return new Real(mReal.abs());
     }
 
     @Override
-    public Rational ceil() {
+    public Rational ceil(final State state) {
         final BigInteger intValue = mReal.toBigInteger();
         if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) < 0) {
             return Rational.valueOf(intValue);
@@ -190,7 +190,7 @@ public class Real extends NumberValue {
     }
 
     @Override
-    public Rational floor() {
+    public Rational floor(final State state) {
         final BigInteger intValue = mReal.toBigInteger();
         if (mReal.compareTo(new BigDecimal(intValue)) == 0 || mReal.compareTo(BigDecimal.ZERO) > 0) {
             return Rational.valueOf(intValue);
@@ -202,7 +202,7 @@ public class Real extends NumberValue {
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
-            return this.quotient(state, divisor).floor();
+            return this.quotient(state, divisor).floor(state);
         } else if (divisor instanceof Term) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {

@@ -9,16 +9,16 @@ public abstract class NumberValue extends Value {
     /* arithmetic operations */
 
     @Override
-    public abstract NumberValue absoluteValue();
+    public abstract NumberValue absoluteValue(final State state);
 
     @Override
-    public abstract NumberValue ceil();
+    public abstract NumberValue ceil(final State state);
 
     @Override
     public abstract Value       difference(final State state, final Value subtrahend) throws SetlException;
 
     @Override
-    public abstract NumberValue floor();
+    public abstract NumberValue floor(final State state);
 
     @Override
     public abstract NumberValue minus(final State state) throws SetlException;
@@ -65,7 +65,7 @@ public abstract class NumberValue extends Value {
     /* comparisons */
 
     @Override
-    public final    SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
+    public final    SetlBoolean isLessThan(final State state, final Value other) throws IncompatibleTypeException {
         if (this == other) {
             return SetlBoolean.FALSE;
         } else if (other instanceof NumberValue) {

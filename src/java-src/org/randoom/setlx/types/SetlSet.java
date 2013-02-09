@@ -96,10 +96,10 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public SetlBoolean isLessThan(final Value other) throws IncompatibleTypeException {
+    public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
         if (other instanceof SetlSet) {
             final SetlSet otr = (SetlSet) other;
-            return SetlBoolean.valueOf((otr.mSortedSet.containsAll(mSortedSet)) && this.isEqual(otr) == SetlBoolean.FALSE);
+            return SetlBoolean.valueOf((otr.mSortedSet.containsAll(mSortedSet)) && this.isEqualTo(state, otr) == SetlBoolean.FALSE);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " < " + other + "' is not a set."
@@ -504,7 +504,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value maximumMember() {
+    public Value maximumMember(final State state) {
         if (size() < 1) {
             return Infinity.NEGATIVE;
         }
@@ -512,7 +512,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value minimumMember() {
+    public Value minimumMember(final State state) {
         if (size() < 1) {
             return Infinity.POSITIVE;
         }

@@ -375,13 +375,13 @@ public class Term extends IndexedCollectionValue {
     }
 
     @Override
-    public Value maximumMember() throws SetlException {
-        return mBody.maximumMember();
+    public Value maximumMember(final State state) throws SetlException {
+        return mBody.maximumMember(state);
     }
 
     @Override
-    public Value minimumMember() throws SetlException {
-        return mBody.minimumMember();
+    public Value minimumMember(final State state) throws SetlException {
+        return mBody.minimumMember(state);
     }
 
     // viral operation

@@ -133,44 +133,56 @@ public class SetlObject extends Value {
 
     @Override
     public Value toInteger(final State state) throws SetlException {
-        final Value result = overload(state, toInteger);
-        if (result.isInteger() == SetlBoolean.FALSE) {
+        final Value result = overload(state, TO_INTEGER);
+        if (result == Om.OM && result.isInteger() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException(
-                "Result of '" + toInteger + "' is not an integer."
+                "Result of '" + TO_INTEGER + "' is not an integer."
             );
         } else {
             return result;
         }
     }
-    final static Variable toInteger = new Variable("toInt");
+    final static Variable TO_INTEGER = new Variable("toInt");
 
     @Override
     public Value toRational(final State state) throws SetlException {
-        final Value result = overload(state, toRational);
-        if ( ! (result instanceof Rational)) {
+        final Value result = overload(state, TO_RATIONAL);
+        if (result == Om.OM && ! (result instanceof Rational)) {
             throw new IncompatibleTypeException(
-                "Result of '" + toRational + "' is not a reational number."
+                "Result of '" + TO_RATIONAL + "' is not a reational number."
             );
         } else {
             return result;
         }
     }
-    final static Variable toRational = new Variable("toRational");
+    final static Variable TO_RATIONAL = new Variable("toRational");
 
     @Override
     public Value toReal(final State state) throws SetlException {
-        final Value result = overload(state, toReal);
-        if ( ! (result instanceof Real)) {
+        final Value result = overload(state, TO_REAL);
+        if (result == Om.OM && ! (result instanceof Real)) {
             throw new IncompatibleTypeException(
-                "Result of '" + toReal + "' is not a real."
+                "Result of '" + TO_REAL + "' is not a real."
             );
         } else {
             return result;
         }
     }
-    final static Variable toReal = new Variable("toReal");
+    final static Variable TO_REAL = new Variable("toReal");
 
     /* arithmetic operations */
+
+    @Override
+    public Value absoluteValue(final State state) throws SetlException {
+        return overload(state, ABS);
+    }
+    final static Variable ABS = new Variable("abs");
+
+    @Override
+    public Value ceil(final State state) throws SetlException {
+        return overload(state, CEIL);
+    }
+    final static Variable CEIL = new Variable("ceil");
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
@@ -179,13 +191,19 @@ public class SetlObject extends Value {
         }
         return overload(state, DIFFERENCE, subtrahend);
     }
-    final static Variable DIFFERENCE = createOverloadVariable(Difference.functionalCharacter());;
+    final static Variable DIFFERENCE = createOverloadVariable(Difference.functionalCharacter());
 
     @Override
     public Value factorial(final State state) throws SetlException {
         return overload(state, FACTORIAL);
     }
     final static Variable FACTORIAL = createOverloadVariable(Factorial.functionalCharacter());
+
+    @Override
+    public Value floor(final State state) throws SetlException {
+        return overload(state, FLOOR);
+    }
+    final static Variable FLOOR = new Variable("floor");
 
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
@@ -200,7 +218,7 @@ public class SetlObject extends Value {
     public Value minus(final State state) throws SetlException {
         return overload(state, MINUS);
     }
-    final static Variable MINUS = createOverloadVariable(Minus.functionalCharacter());;
+    final static Variable MINUS = createOverloadVariable(Minus.functionalCharacter());
 
     @Override
     public Value modulo(final State state, final Value modulo) throws SetlException {
@@ -209,7 +227,7 @@ public class SetlObject extends Value {
         }
         return overload(state, MODULO, modulo);
     }
-    final static Variable MODULO = createOverloadVariable(Modulo.functionalCharacter());;
+    final static Variable MODULO = createOverloadVariable(Modulo.functionalCharacter());
 
     @Override
     public Value power(final State state, final Value exponent) throws SetlException {
@@ -218,7 +236,7 @@ public class SetlObject extends Value {
         }
         return overload(state, POWER, exponent);
     }
-    final static Variable POWER = createOverloadVariable(Power.functionalCharacter());;
+    final static Variable POWER = createOverloadVariable(Power.functionalCharacter());
 
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
@@ -236,6 +254,12 @@ public class SetlObject extends Value {
         return overload(state, QUOTIENT, divisor);
     }
     final static Variable QUOTIENT = createOverloadVariable(Quotient.functionalCharacter());
+
+    @Override
+    public Value round(final State state) throws SetlException {
+        return overload(state, ROUND);
+    }
+    final static Variable ROUND = new Variable("round");
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
@@ -375,5 +399,33 @@ public class SetlObject extends Value {
         }
         return hash;
     }
+
+    @Override
+    public final SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
+        final Value result = overload(state, IS_EQUAL_TO, other);
+        if ( ! (result instanceof SetlBoolean)) {
+            throw new IncompatibleTypeException(
+                "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
+            );
+        } else {
+            return (SetlBoolean) result;
+        }
+    }
+    final static Variable IS_EQUAL_TO = new Variable("isEqualTo");
+
+    /* this comparison is different than `this.compareTo(other) < 0' and should
+       throw errors on seemingly incomparable types like `5 < TRUE'            */
+    @Override
+    public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
+        final Value result = overload(state, IS_LESS_THAN, other);
+        if ( ! (result instanceof SetlBoolean)) {
+            throw new IncompatibleTypeException(
+                "Result of '" + IS_LESS_THAN + "' is not a Boolean value."
+            );
+        } else {
+            return (SetlBoolean) result;
+        }
+    }
+    final static Variable IS_LESS_THAN = new Variable("isLessThan");
 }
 

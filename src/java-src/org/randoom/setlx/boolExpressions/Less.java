@@ -65,7 +65,7 @@ public class Less extends Expr {
 
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).isLessThan(mRhs.eval(state));
+        return mLhs.eval(state).isLessThan(state, mRhs.eval(state));
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings

@@ -69,7 +69,7 @@ public class LessOrEqual extends Expr {
         try {
             final Value lhs = mLhs.eval(state);
             final Value rhs = mRhs.eval(state);
-            return SetlBoolean.valueOf(lhs.isEqual(rhs) == SetlBoolean.TRUE || lhs.isLessThan(rhs) == SetlBoolean.TRUE);
+            return SetlBoolean.valueOf(lhs.isEqualTo(state, rhs) == SetlBoolean.TRUE || lhs.isLessThan(state, rhs) == SetlBoolean.TRUE);
         } catch (final SetlException se) {
             se.addToTrace("Error in substitute comparison \"(" + mLhs + " == " + mRhs + ") || (" + mLhs + " < " + mRhs +  ")\":");
             throw se;

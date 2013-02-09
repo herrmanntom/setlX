@@ -111,10 +111,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract Value           lastMember();
 
     @Override
-    public abstract Value           maximumMember() throws SetlException;
+    public abstract Value           maximumMember(final State state) throws SetlException;
 
     @Override
-    public abstract Value           minimumMember() throws SetlException;
+    public abstract Value           minimumMember(final State state) throws SetlException;
 
     @Override
     public          Value           productOfMembers(final State state, final Value neutral) throws SetlException {

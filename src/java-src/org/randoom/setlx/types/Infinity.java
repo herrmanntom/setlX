@@ -59,12 +59,12 @@ public class Infinity extends NumberValue {
     /* arithmetic operations */
 
     @Override
-    public Infinity absoluteValue() {
+    public Infinity absoluteValue(final State state) {
         return POSITIVE;
     }
 
     @Override
-    public Infinity ceil() {
+    public Infinity ceil(final State state) {
         return this;
     }
 
@@ -87,7 +87,7 @@ public class Infinity extends NumberValue {
     }
 
     @Override
-    public Infinity floor() {
+    public Infinity floor(final State state) {
         return this;
     }
 

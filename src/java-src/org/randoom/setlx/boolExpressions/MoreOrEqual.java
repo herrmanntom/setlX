@@ -70,7 +70,7 @@ public class MoreOrEqual extends Expr {
             final Value lhs = mLhs.eval(state);
             final Value rhs = mRhs.eval(state);
             // note: rhs and lhs swapped!
-            return SetlBoolean.valueOf(rhs.isEqual(lhs) == SetlBoolean.TRUE || rhs.isLessThan(lhs) == SetlBoolean.TRUE);
+            return SetlBoolean.valueOf(rhs.isEqualTo(state, lhs) == SetlBoolean.TRUE || rhs.isLessThan(state, lhs) == SetlBoolean.TRUE);
         } catch (final SetlException se) {
             se.addToTrace("Error in substitute comparison \"(" + mRhs + " == " + mLhs + ") || (" + mRhs + " < " + mLhs +  ")\":");
             throw se;

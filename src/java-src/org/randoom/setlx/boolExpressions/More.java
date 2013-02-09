@@ -67,7 +67,7 @@ public class More extends Expr {
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
             // note: rhs and lhs swapped!
-            return mRhs.eval(state).isLessThan(mLhs.eval(state));
+            return mRhs.eval(state).isLessThan(state, mLhs.eval(state));
         } catch (final SetlException se) {
             se.addToTrace("Error in substitute comparison \"" + mRhs + " < " + mLhs +  "\":");
             throw se;

@@ -445,10 +445,10 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public Value maximumMember() throws SetlException {
+    public Value maximumMember(final State state) throws SetlException {
         Value max = Infinity.NEGATIVE;
         for (final Value v: mList) {
-            if (v.maximum(max).equals(v)) {
+            if (v.maximum(state, max).equals(v)) {
                 max = v;
             }
         }
@@ -456,10 +456,10 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public Value minimumMember() throws SetlException {
+    public Value minimumMember(final State state) throws SetlException {
         Value min = Infinity.POSITIVE;
         for (final Value v: mList) {
-            if (v.minimum(min).equals(v)) {
+            if (v.minimum(state, min).equals(v)) {
                 min = v;
             }
         }

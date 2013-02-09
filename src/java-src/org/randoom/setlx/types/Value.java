@@ -181,13 +181,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* arithmetic operations */
 
-    public NumberValue absoluteValue() throws IncompatibleTypeException {
+    public Value absoluteValue(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a number or character."
         );
     }
 
-    public Value ceil() throws SetlException {
+    public Value ceil(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a number."
         );
@@ -218,7 +218,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value floor() throws SetlException {
+    public Value floor(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a number."
         );
@@ -237,16 +237,16 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return integerDivision(state, divisor);
     }
 
-    public final Value maximum(final Value other) throws SetlException {
-        if(other != Om.OM && this.isLessThan(other) == SetlBoolean.TRUE){
+    public final Value maximum(final State state, final Value other) throws SetlException {
+        if(other != Om.OM && this.isLessThan(state, other) == SetlBoolean.TRUE){
             return other.clone();
         } else {
             return this.clone();
         }
     }
 
-    public final Value minimum(final Value other) throws SetlException {
-        if(other == Om.OM || other.isLessThan(this) == SetlBoolean.TRUE){
+    public final Value minimum(final State state, final Value other) throws SetlException {
+        if(other == Om.OM || other.isLessThan(state, this) == SetlBoolean.TRUE){
             return other.clone();
         } else {
             return this.clone();
@@ -452,13 +452,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value maximumMember() throws SetlException {
+    public Value maximumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument of 'max(" + this + "') is not a collection value."
         );
     }
 
-    public Value minimumMember() throws SetlException {
+    public Value minimumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument of 'min(" + this + "') is not a collection value."
         );
@@ -665,13 +665,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     @Override
     public abstract int hashCode();
 
-    public final SetlBoolean isEqual(final Value other) {
+    public SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
         return SetlBoolean.valueOf(this.equalTo(other));
     }
 
     /* this comparison is different than `this.compareTo(other) < 0' and should
        throw errors on seemingly incomparable types like `5 < TRUE'            */
-    public SetlBoolean isLessThan(final Value other) throws SetlException {
+    public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
         throw new UndefinedOperationException("'" + this + " < " + other + "' is undefined.");
     }
 }

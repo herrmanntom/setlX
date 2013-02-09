@@ -38,7 +38,7 @@ public class Equal extends Expr {
 
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).isEqual(mRhs.eval(state));
+        return mLhs.eval(state).isEqualTo(state, mRhs.eval(state));
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings

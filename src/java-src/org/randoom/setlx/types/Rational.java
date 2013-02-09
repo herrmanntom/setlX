@@ -242,7 +242,7 @@ public class Rational extends NumberValue {
 
     /* arithmetic operations */
     @Override
-    public Rational absoluteValue() {
+    public Rational absoluteValue(final State state) {
         return new Rational(mNominator.abs(), mDenominator.abs());
     }
 
@@ -251,7 +251,7 @@ public class Rational extends NumberValue {
     // numbers in Java does not satisfy the mathematical specification that
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
-    public Rational ceil() {
+    public Rational ceil(final State state) {
         if (mNominator.compareTo(BigInteger.ZERO) > 0 &&
              ! mIsInteger
            )
@@ -403,7 +403,7 @@ public class Rational extends NumberValue {
     // numbers in Java does not satisfy the mathematical specification that
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
-    public Rational floor() {
+    public Rational floor(final State state) {
         if (mNominator.compareTo(BigInteger.ZERO) < 0 &&
              ! mIsInteger
            )
@@ -417,7 +417,7 @@ public class Rational extends NumberValue {
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
-            return this.quotient(state, divisor).floor();
+            return this.quotient(state, divisor).floor(state);
         } else if (divisor instanceof Term) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
@@ -446,7 +446,7 @@ public class Rational extends NumberValue {
                 }
             } else {
                 final Rational ab = (Rational) this.quotient(state, b);
-                return this.difference(state, ab.floor().product(state, b));
+                return this.difference(state, ab.floor(state).product(state, b));
             }
         } else if (modulo instanceof Term) {
             return ((Term) modulo).moduloFlipped(state, this);

@@ -612,7 +612,7 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public SetlString charConvert() throws NumberToLargeException {
+    public SetlString charConvert(final State state) throws NumberToLargeException {
         if (mNominator.compareTo(BigInteger.valueOf(127)) <= 0 &&
             mNominator.compareTo(BigInteger.ZERO) >= 0         &&
             mIsInteger

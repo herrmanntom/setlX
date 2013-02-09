@@ -57,19 +57,19 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract void            addMember(final State state, final Value element);
 
     @Override
-    public final    Value           arbitraryMember() {
+    public final    Value           arbitraryMember(final State state) {
         if (this.size() < 1) {
             return Om.OM;
         } else if (this.size() % 2 == 0) {
              // lets keep some balance to avoid restructuring of the underling collection
-            return this.firstMember();
+            return this.firstMember(state);
         } else {
-            return this.lastMember();
+            return this.lastMember(state);
         }
     }
 
     @Override
-    public abstract SetlBoolean     containsMember(final Value element) throws IncompatibleTypeException;
+    public abstract SetlBoolean     containsMember(final State state, final Value element) throws IncompatibleTypeException;
 
     // compare not only own members, but also all members contained in own members
     public          SetlBoolean     containsMemberRecursive(final Value element) {
@@ -87,14 +87,18 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
 
     @Override
+    public final    Value           firstMember(final State state) {
+        return firstMember();
+    }
+
     public abstract Value           firstMember();
 
     @Override
     public abstract Value           getMember(final State state, final Value index) throws SetlException;
 
     @Override
-    public          SetlString      join(final State state, final Value separator) {
-        final SetlString      sep    = separator.str();
+    public          SetlString      join(final State state, final Value separator) throws SetlException {
+        final SetlString      sep    = separator.str(state);
         final SetlString      result = new SetlString();
 
         final Iterator<Value> iter   = iterator();
@@ -108,6 +112,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
 
     @Override
+    public final    Value           lastMember(final State state) {
+        return lastMember();
+    }
+
     public abstract Value           lastMember();
 
     @Override
@@ -133,9 +141,17 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract void            removeMember(final Value element) throws IncompatibleTypeException;
 
     @Override
+    public final    Value           removeFirstMember(final State state) {
+        return removeFirstMember();
+    }
+
     public abstract Value           removeFirstMember();
 
     @Override
+    public final    Value           removeLastMember(final State state) {
+        return removeLastMember();
+    }
+
     public abstract Value           removeLastMember();
 
     @Override

@@ -48,7 +48,7 @@ public class Variable extends AssignableExpression {
     }
 
     @Override
-    protected Value evaluate(final State state) {
+    public Value evaluate(final State state) {
         return state.findValue(mId);
     }
 

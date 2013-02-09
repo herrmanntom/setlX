@@ -268,7 +268,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlList arguments() {
+    public SetlList arguments(final State state) {
         return mBody.clone();
     }
 
@@ -326,7 +326,7 @@ public class Term extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlBoolean containsMember(final Value element) {
+    public SetlBoolean containsMember(final State state, final Value element) {
         // Terms are inherently recursive, so search recursively
         return containsMemberRecursive(element); // this is implemented in CollectionValue.java
     }
@@ -337,6 +337,10 @@ public class Term extends IndexedCollectionValue {
     }
 
     @Override
+    public SetlString functionalCharacter(final State state) {
+        return functionalCharacter();
+    }
+
     public SetlString functionalCharacter() {
         if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
             return new SetlString(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
@@ -497,7 +501,7 @@ public class Term extends IndexedCollectionValue {
             // 'this' is a variable, which match anything (except ignore of course)
             final MatchResult result  = new MatchResult(true);
             // get name of variable
-            final Value       idStr   = mBody.firstMember();
+            final Value       idStr   = mBody.firstMember(state);
             if ( ! (idStr instanceof SetlString)) { // this is a wrong ^variable term
                 return new MatchResult(false);
             }

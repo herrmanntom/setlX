@@ -85,5 +85,9 @@ public class Cardinality extends Expr {
     public int precedence() {
         return PRECEDENCE;
     }
+
+    public static String functionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
+    }
 }
 

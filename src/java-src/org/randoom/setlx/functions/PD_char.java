@@ -18,7 +18,7 @@ public class PD_char extends PreDefinedFunction {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).charConvert();
+        return args.get(0).charConvert(state);
     }
 }
 

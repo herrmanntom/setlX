@@ -40,7 +40,7 @@ public class NotIn extends Expr {
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
             // note: rhs and lhs swapped!
-            return mRhs.eval(state).containsMember(mLhs.eval(state)).negation(state);
+            return mRhs.eval(state).containsMember(state, mLhs.eval(state)).negation(state);
         } catch (final SetlException se) {
             se.addToTrace("Error in substitute comparison \"!(" + mLhs + " in " + mRhs +  ")\":");
             throw se;

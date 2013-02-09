@@ -18,7 +18,7 @@ public class PD_domain extends PreDefinedFunction {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).domain();
+        return args.get(0).domain(state);
     }
 }
 

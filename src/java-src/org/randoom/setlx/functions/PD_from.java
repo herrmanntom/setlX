@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
@@ -25,16 +26,16 @@ public class PD_from extends PreDefinedFunction {
     public Value execute(final State       state,
                          final List<Value> args,
                          final List<Value> writeBackVars
-    ) throws IncompatibleTypeException {
+    ) throws SetlException {
         final Value collection = args.get(0);
         final Value element;
         try {
             // throws exception when `collection' is not a collection
             final int size = collection.size();
             if (size % 2 == 0) {
-                element = collection.removeFirstMember();
+                element = collection.removeFirstMember(state);
             } else {
-                element = collection.removeLastMember();
+                element = collection.removeLastMember(state);
             }
         } catch (final IncompatibleTypeException ite) {
             throw new IncompatibleTypeException(

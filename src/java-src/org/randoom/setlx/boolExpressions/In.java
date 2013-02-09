@@ -39,7 +39,7 @@ public class In extends Expr {
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         // note: rhs and lhs swapped!
-        return mRhs.eval(state).containsMember(mLhs.eval(state));
+        return mRhs.eval(state).containsMember(state, mLhs.eval(state));
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings

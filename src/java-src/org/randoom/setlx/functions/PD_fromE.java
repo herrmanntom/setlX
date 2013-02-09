@@ -20,7 +20,7 @@ public class PD_fromE extends PreDefinedFunction {
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final Value collection = args.get(0);
-        final Value element    = collection.removeLastMember();
+        final Value element    = collection.removeLastMember(state);
 
         // write the reduced collection back into the outer environment
         writeBackVars.add(collection);

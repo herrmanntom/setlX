@@ -18,7 +18,7 @@ public class PD_last extends PreDefinedFunction {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).lastMember();
+        return args.get(0).lastMember(state);
     }
 }
 

@@ -10,7 +10,6 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.StateImplementation;
 
 import java.util.List;
 
@@ -348,19 +347,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value arbitraryMember() throws IncompatibleTypeException {
+    public Value arbitraryMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a collection value."
         );
     }
 
-    public SetlList arguments() throws IncompatibleTypeException {
+    public Value arguments(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a term."
         );
     }
 
-    public Value cardinality(final State state) throws IncompatibleTypeException {
+    public Value cardinality(final State state) throws SetlException {
         return Rational.valueOf(this.size());
     }
 
@@ -395,25 +394,25 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public SetlBoolean containsMember(final Value element) throws IncompatibleTypeException {
+    public SetlBoolean containsMember(final State state, final Value element) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '" + element  + " in " + this + "' is not a collection value."
         );
     }
 
-    public SetlSet domain() throws SetlException {
+    public Value domain(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a set."
         );
     }
 
-    public Value firstMember() throws IncompatibleTypeException {
+    public Value firstMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get first member from operand; '" + this + "' is not a collection value."
         );
     }
 
-    public SetlString functionalCharacter() throws IncompatibleTypeException {
+    public Value functionalCharacter(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a term."
         );
@@ -440,13 +439,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value join(final State state, final Value separator) throws IncompatibleTypeException {
+    public Value join(final State state, final Value separator) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' not a collection value."
         );
     }
 
-    public Value lastMember() throws SetlException {
+    public Value lastMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get last member from operand; '" + this + "' is not a collection value."
         );
@@ -476,19 +475,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public SetlSet permutations(final State state) throws SetlException {
+    public Value permutations(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a collection value."
         );
     }
 
-    public SetlSet powerSet(final State state) throws SetlException {
+    public Value powerSet(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a set."
         );
     }
 
-    public SetlSet range(final State state) throws SetlException {
+    public Value range(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a set."
         );
@@ -500,19 +499,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value removeFirstMember() throws IncompatibleTypeException {
+    public Value removeFirstMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not remove first member from operand; '" + this + "' is not a collection value."
         );
     }
 
-    public Value removeLastMember() throws IncompatibleTypeException {
+    public Value removeLastMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not remove last member from operand; '" + this + "' is not a collection value."
         );
     }
 
-    public Value reverse() throws IncompatibleTypeException {
+    public Value reverse(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a list or string."
         );
@@ -525,7 +524,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value shuffle(final State state) throws IncompatibleTypeException {
+    public Value shuffle(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a list or string."
         );
@@ -537,13 +536,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value sort() throws IncompatibleTypeException {
+    public Value sort(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a list or string."
         );
     }
 
-    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException {
+    public Value split(final State state, final Value pattern) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this + "' is not a string."
         );
@@ -598,7 +597,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         appendString(state, sb, 0);
     }
 
-    public SetlString charConvert() throws SetlException {
+    public Value charConvert(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a number between 0 and 255."
         );
@@ -608,10 +607,9 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return toString();
     }
 
-    public SetlString str() {
-        final State         bubble = new StateImplementation();
-        final StringBuilder sb     = new StringBuilder();
-        appendString(bubble, sb, 0);
+    public SetlString str(final State state) throws SetlException {
+        final StringBuilder sb = new StringBuilder();
+        appendString(state, sb, 0);
         return SetlString.newSetlStringFromSB(sb);
     }
 

@@ -391,7 +391,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlBoolean containsMember(final Value element) throws IncompatibleTypeException {
+    public SetlBoolean containsMember(final State state, final Value element) throws IncompatibleTypeException {
         if (mContent.indexOf(element.getUnquotedString()) >= 0) {
             return SetlBoolean.TRUE;
         } else {
@@ -562,7 +562,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value reverse() {
+    public Value reverse(final State state) {
         final SetlString result = clone();
         result.separateFromOriginal();
         result.mContent.reverse();
@@ -628,7 +628,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlString sort() throws IncompatibleTypeException {
+    public SetlString sort(final State state) throws IncompatibleTypeException {
         final char[] chars = mContent.toString().toCharArray();
         Arrays.sort(chars);
         return new SetlString(new String(chars));
@@ -715,7 +715,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlString str() {
+    public SetlString str(final State state) {
         return this;
     }
 

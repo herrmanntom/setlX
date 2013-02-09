@@ -330,7 +330,7 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlBoolean containsMember(final Value element) {
+    public SetlBoolean containsMember(final State state, final Value element) {
         return SetlBoolean.valueOf(mList.contains(element));
     }
 
@@ -557,7 +557,7 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlList reverse() {
+    public SetlList reverse(final State state) {
         final int               size    = mList.size();
         // mark this list to be clone
         isCloned = true;
@@ -622,7 +622,7 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlList sort() {
+    public SetlList sort(final State state) {
         final ArrayList<Value> list = new ArrayList<Value>(mList);
         Collections.sort(list);
         return new SetlList(list);

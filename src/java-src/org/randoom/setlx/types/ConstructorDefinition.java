@@ -122,8 +122,8 @@ public class ConstructorDefinition extends Value {
 
         // save old scope
         final VariableScope oldScope    = state.getScope();
-        // create new scope used for the static definitions
-        final VariableScope newScope    = oldScope.createFunctionsOnlyLinkedScope();
+        // create new scope used for the member definitions
+        final VariableScope newScope    = oldScope.createFunctionsOnlyLinkedScope().createLinkedScope();
         state.setScope(newScope);
 
         // put arguments into inner scope
@@ -197,7 +197,7 @@ public class ConstructorDefinition extends Value {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the static definitions
-        final VariableScope newScope = oldScope.createFunctionsOnlyLinkedScope();
+        final VariableScope newScope = oldScope.createFunctionsOnlyLinkedScope().createLinkedScope();
         state.setScope(newScope);
 
         try {

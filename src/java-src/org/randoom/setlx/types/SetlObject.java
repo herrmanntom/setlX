@@ -34,6 +34,7 @@ import org.randoom.setlx.functions.PD_first;
 import org.randoom.setlx.functions.PD_floor;
 import org.randoom.setlx.functions.PD_fromB;
 import org.randoom.setlx.functions.PD_fromE;
+import org.randoom.setlx.functions.PD_int;
 import org.randoom.setlx.functions.PD_join;
 import org.randoom.setlx.functions.PD_last;
 import org.randoom.setlx.functions.PD_max;
@@ -42,6 +43,8 @@ import org.randoom.setlx.functions.PD_nextPermutation;
 import org.randoom.setlx.functions.PD_permutations;
 import org.randoom.setlx.functions.PD_pow;
 import org.randoom.setlx.functions.PD_range;
+import org.randoom.setlx.functions.PD_rational;
+import org.randoom.setlx.functions.PD_real;
 import org.randoom.setlx.functions.PD_reverse;
 import org.randoom.setlx.functions.PD_round;
 import org.randoom.setlx.functions.PD_shuffle;
@@ -154,7 +157,7 @@ public class SetlObject extends Value {
         return new Variable(functionalCharacter.substring(1));
     }
     private static Variable createOverloadVariable(final PreDefinedFunction function) {
-        return new Variable(function.getName());
+        return new Variable("f_" + function.getName());
     }
 
     /* type checks (sort of boolean operation) */
@@ -177,7 +180,7 @@ public class SetlObject extends Value {
             return result;
         }
     }
-    final static Variable TO_INTEGER = new Variable("toInt");
+    final static Variable TO_INTEGER = createOverloadVariable(PD_int.DEFINITION);
 
     @Override
     public Value toRational(final State state) throws SetlException {
@@ -190,7 +193,7 @@ public class SetlObject extends Value {
             return result;
         }
     }
-    final static Variable TO_RATIONAL = new Variable("toRational");
+    final static Variable TO_RATIONAL = createOverloadVariable(PD_rational.DEFINITION);
 
     @Override
     public Value toReal(final State state) throws SetlException {
@@ -203,7 +206,7 @@ public class SetlObject extends Value {
             return result;
         }
     }
-    final static Variable TO_REAL = new Variable("toReal");
+    final static Variable TO_REAL = createOverloadVariable(PD_real.DEFINITION);
 
     /* arithmetic operations */
 
@@ -520,7 +523,7 @@ public class SetlObject extends Value {
             try {
                 str(state).appendString(state, sb, tabs);
             } catch (final SetlException e) {
-                sb.append("Error during execution of member '" + STR + "':" + e.getMessage());
+                sb.append("Error during execution of member '" + STR + "': " + e.getMessage());
             }
         } else {
             canonical(state, sb, tabs);

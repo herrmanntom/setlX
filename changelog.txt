@@ -1,5 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+ + added nCPUs() functions, returning the number of CPUs (/cores) in the system
  + allow overloading of more functions for objects
 
 ---v1.4.999--- 2013-02-05

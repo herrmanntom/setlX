@@ -80,14 +80,14 @@ public class SetlObject extends Value {
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
 
-    private     final VariableScope mStaticDefinitions;
     private           VariableScope mMembers;
+    private     final VariableScope mStaticDefinitions;
     // is this object a clone
     private           boolean       isCloned;
 
-    private SetlObject(final VariableScope staticDefinitions, final VariableScope members) {
-        mStaticDefinitions = staticDefinitions;
+    private SetlObject(final VariableScope members, final VariableScope staticDefinitions) {
         mMembers           = members;
+        mStaticDefinitions = staticDefinitions;
         isCloned           = false; // new objects are not a clone
     }
 

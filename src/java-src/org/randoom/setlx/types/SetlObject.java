@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Call;
 import org.randoom.setlx.expressions.Cardinality;
@@ -64,6 +65,9 @@ import org.randoom.setlx.utilities.VariableScope;
  */
 
 public class SetlObject extends Value {
+    // functional character used in terms
+    public  final static String FUNCTIONAL_CHARACTER = "^object";
+
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this object carries a isClone flag.
      *
@@ -87,12 +91,12 @@ public class SetlObject extends Value {
         isCloned           = false; // new objects are not a clone
     }
 
-    public static SetlObject createNew(final VariableScope staticDefinitions, final VariableScope members) {
-        return new SetlObject(staticDefinitions, members);
+    public static SetlObject createNew(final VariableScope members, final VariableScope staticDefinitions) {
+        return new SetlObject(members, staticDefinitions);
     }
 
-    private static SetlObject createClone(final VariableScope staticDefinitions, final VariableScope members) {
-        final SetlObject result = new SetlObject(staticDefinitions, members);
+    private static SetlObject createClone(final VariableScope members, final VariableScope staticDefinitions) {
+        final SetlObject result = new SetlObject(members, staticDefinitions);
         result.isCloned = true;
         return result;
     }
@@ -107,7 +111,7 @@ public class SetlObject extends Value {
          * modifications of THIS original would bleed through to the clones.
          */
         isCloned = true;
-        return createClone(mStaticDefinitions, mMembers);
+        return createClone(mMembers, mStaticDefinitions);
     }
 
     /* If the contents of THIS SetlList is modified, the following function MUST
@@ -538,12 +542,9 @@ public class SetlObject extends Value {
     private void canonical(final State state, final StringBuilder sb, final int tabs) {
         sb.append("object<{");
         mMembers.appendString(state, sb, tabs);
-        if (mStaticDefinitions != null) {
-            sb.append(" static{");
-            mStaticDefinitions.appendString(state, sb, tabs);
-            sb.append("}");
-        }
-        sb.append("}>");
+        sb.append(" static{");
+        mStaticDefinitions.appendString(state, sb, tabs);
+        sb.append("} }>");
     }
 
     @Override
@@ -565,6 +566,36 @@ public class SetlObject extends Value {
     }
     final static Variable STR = createOverloadVariable(PD_str.DEFINITION);
 
+    /* term operations */
+
+    @Override
+    public Value toTerm(final State state) {
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
+
+        mMembers.unlink();
+
+        result.addMember(state, mMembers.toTerm(state, null));
+
+        mStaticDefinitions.unlink();
+
+        result.addMember(state, mStaticDefinitions.toTerm(state, null));
+
+        mMembers.linkToOriginalScope(mStaticDefinitions);
+
+        return result;
+    }
+
+    public static SetlObject termToValue(final Term term) throws TermConversionException {
+        if (term.size() != 2) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            final VariableScope members           = VariableScope.valueToScope(term.firstMember());
+            final VariableScope staticDefinitions = VariableScope.valueToScope(term.lastMember());
+            members.linkToOriginalScope(staticDefinitions);
+            return createNew(members, staticDefinitions);
+        }
+    }
+
     /* comparisons */
 
     /* Compare two Values.  Return value is < 0 if this value is less than the
@@ -581,15 +612,8 @@ public class SetlObject extends Value {
             final int cmp = mMembers.compareTo(other.mMembers);
             if (cmp != 0) {
                 return cmp;
-            } else if (mStaticDefinitions != null && other.mStaticDefinitions != null) {
-                return mStaticDefinitions.compareTo(other.mStaticDefinitions);
-            } else if (mStaticDefinitions != null) {
-                return 1;
-            } else if (other.mStaticDefinitions != null) {
-                return -1;
-            } else {
-                return 0;
             }
+            return mStaticDefinitions.compareTo(other.mStaticDefinitions);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -614,11 +638,7 @@ public class SetlObject extends Value {
         } else if (v instanceof SetlObject) {
             final SetlObject other = (SetlObject) v;
             if (mMembers.equalTo(other.mMembers)) {
-                if (mStaticDefinitions != null && other.mStaticDefinitions != null) {
-                    return mStaticDefinitions.equalTo(other.mStaticDefinitions);
-                } else if (mStaticDefinitions == null && other.mStaticDefinitions == null) {
-                    return true;
-                }
+                return mStaticDefinitions.equalTo(other.mStaticDefinitions);
             }
         }
         return false;

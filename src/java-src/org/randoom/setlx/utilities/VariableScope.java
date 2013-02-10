@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.SetlList;
@@ -179,9 +180,6 @@ public class VariableScope {
     /*package*/ void storeValue(final String var, final Value value) {
         if ( ! mWriteThrough || mVarBindings.get(var) != null) {
             // this scope does not allow write through or variable is actually stored here
-            if (var.equals("cache")) {
-                //throw new NullPointerException("die, die, die");
-            }
             mVarBindings.put(var, value);
         } else if (mWriteThrough          && // allowed to write into mOriginalScope
                    mOriginalScope != null && // mOriginalScope exists
@@ -249,7 +247,9 @@ public class VariableScope {
         final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
-        globals.collectBindings(allVars, false);
+        if (globals != null) {
+            globals.collectBindings(allVars, false);
+        }
 
         // term which represents the scope
         final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
@@ -266,6 +266,28 @@ public class VariableScope {
         result.addMember(state, bindings);
 
         return result;
+    }
+
+    public static VariableScope valueToScope(final Value value) throws TermConversionException {
+        if (value instanceof Term) {
+            final Term term = (Term) value;
+            if (term.size() == 1 || term.firstMember() instanceof SetlSet) {
+                final SetlSet       bindings = (SetlSet) term.firstMember();
+                final VariableScope newScope = new VariableScope();
+                for (final Value val : bindings) {
+                    if (val instanceof SetlList) {
+                        final SetlList binding = (SetlList) val;
+                        if (binding.size() == 2 && binding.firstMember() instanceof SetlString) {
+                            newScope.storeValue(binding.firstMember().getUnquotedString(), TermConverter.valueTermToValue(binding.lastMember()));
+                            continue;
+                        }
+                    }
+                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
+                }
+                return newScope;
+            }
+        }
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
     }
 
     /* string and char operations */

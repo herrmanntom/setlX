@@ -23,6 +23,7 @@ import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -35,24 +36,50 @@ import java.util.Map;
 
 public class TermConverter {
 
-    private static Map<String, Method> sExprConverters;
-    private static Map<String, Method> sStatementConverters;
+    private static Map<String, Method> sExprConverters      = new HashMap<String, Method>();
+    private static Map<String, Method> sStatementConverters = new HashMap<String, Method>();
+
+    public static Value valueTermToValue(final Value value) throws TermConversionException {
+        if (value instanceof Term) {
+            final Term   term = (Term) value;
+            final String fc   = term.functionalCharacter().getUnquotedString();
+            if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
+                // special cases
+                // non-generic values
+                if (fc.equals(CachedProcedureDefinition.FUNCTIONAL_CHARACTER)) {
+                    return CachedProcedureDefinition.termToValue(term);
+                } else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
+                    return LambdaDefinition.termToValue(term);
+                } else if (fc.equals(ProcedureDefinition.FUNCTIONAL_CHARACTER)) {
+                    return ProcedureDefinition.termToValue(term);
+                } else if (fc.equals(ConstructorDefinition.FUNCTIONAL_CHARACTER)) {
+                    return ConstructorDefinition.termToValue(term);
+                } else if (fc.equals(SetlObject.FUNCTIONAL_CHARACTER)) {
+                    return SetlObject.termToValue(term);
+                }
+            }
+            throw new TermConversionException(
+                "This term does not represent a value."
+            );
+        } else { // `value' is in fact a (more or less) simple value
+            return value;
+        }
+    }
 
     public static CodeFragment valueToCodeFragment(final Value value, final boolean restrictToExpr) {
         if (value instanceof Term) {
-            if (sExprConverters == null || sStatementConverters == null) {
-                sExprConverters         = new HashMap<String, Method>();
-                sStatementConverters    = new HashMap<String, Method>();
-            }
             final Term    term    = (Term) value;
             final String  fc      = term.functionalCharacter().getUnquotedString();
             try {
                 if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
-                    // search in expr map
-                    Method  converter   = sExprConverters.get(fc);
-                    // and in statement map if allowed and nothing was found (yet)
-                    if ( ! restrictToExpr && converter == null) {
-                        converter   = sStatementConverters.get(fc);
+                    Method  converter   = null;
+                    synchronized (sExprConverters) {
+                        // search in expr map
+                        converter = sExprConverters.get(fc);
+                        // and in statement map if allowed and nothing was found (yet)
+                        if ( ! restrictToExpr && converter == null) {
+                            converter = sStatementConverters.get(fc);
+                        }
                     }
                     // search via reflection, if method was not found in maps
                     if (converter == null) {
@@ -67,13 +94,19 @@ public class TermConverter {
                         try {
                             clAss       = Class.forName(packageNameBExpr + '.' + needle);
                             converter   = clAss.getMethod("termToExpr", Term.class);
-                            sExprConverters.put(fc, converter);
+
+                            synchronized (sExprConverters) {
+                                sExprConverters.put(fc, converter);
+                            }
                         } catch (final Exception e1) {
                             // look-up failed, try next package
                             try {
                                 clAss       = Class.forName(packageNameExpr + '.' + needle);
                                 converter   = clAss.getMethod("termToExpr", Term.class);
-                                sExprConverters.put(fc, converter);
+
+                                synchronized (sExprConverters) {
+                                    sExprConverters.put(fc, converter);
+                                }
                             } catch (final Exception e2) {
                                 // look-up failed, try next package
                                 if (restrictToExpr) {
@@ -82,7 +115,10 @@ public class TermConverter {
                                     try {
                                         clAss       = Class.forName(packageNameStmnt + '.' + needle);
                                         converter   = clAss.getMethod("termToStatement", Term.class);
-                                        sStatementConverters.put(fc, converter);
+
+                                        synchronized (sExprConverters) {
+                                            sStatementConverters.put(fc, converter);
+                                        }
                                     } catch (final Exception e3) {
                                         // look-up failed, nothing more to try
                                         converter   = null;
@@ -105,27 +141,19 @@ public class TermConverter {
                         }
                     }
                     // special cases
-                    // non-generic values
-                    else if (fc.equals(CachedProcedureDefinition.FUNCTIONAL_CHARACTER)) {
-                        return new ProcedureConstructor(CachedProcedureDefinition.termToValue(term));
-                    } else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
-                        return new ProcedureConstructor(LambdaDefinition.termToValue(term));
-                    } else if (fc.equals(ProcedureDefinition.FUNCTIONAL_CHARACTER)) {
-                        return new ProcedureConstructor(ProcedureDefinition.termToValue(term));
-                    } else if (fc.equals(ConstructorDefinition.FUNCTIONAL_CHARACTER)) {
-                        return new ConstructorConstructor(ConstructorDefinition.termToValue(term));
+                    final Value specialValue = valueTermToValue(value);
+
+                    if (specialValue instanceof ProcedureDefinition) {
+                        return new ProcedureConstructor((ProcedureDefinition) specialValue);
+                    } else if (specialValue instanceof ConstructorDefinition) {
+                        return new ConstructorConstructor((ConstructorDefinition) specialValue);
+                    } else if (specialValue instanceof SetlObject) {
+                        return new ValueExpr(specialValue);
                     }
-                    // nothing matched
-                    else {
-                        throw new TermConversionException(
-                            "Functional character does not represent an CodeFragment."
-                        );
-                    }
-                } else {
-                    throw new TermConversionException(
-                        "Functional character does not represent an CodeFragment."
-                    );
                 }
+                throw new TermConversionException(
+                    "This term does not represent an CodeFragment."
+                );
             } catch (final TermConversionException tce) {
                 // create TermConstructor for this custom term
                 return TermConstructor.termToExpr(term);
@@ -169,16 +197,20 @@ public class TermConverter {
         return new Condition(valueToExpr(value));
     }
 
-    public static Statement valueToStatement(final Value value) {
+    public static Statement valueToStatement(final Value value) throws TermConversionException {
         final CodeFragment cf = valueToCodeFragment(value, false);
         if (cf instanceof Statement) {
             return (Statement) cf;
-        } else { // must be an expression
+        } else if (cf instanceof Expr) {
             return new ExpressionStatement((Expr) cf);
+        } else {
+            throw new TermConversionException(
+                "This term does not represent a Statement."
+            );
         }
     }
 
-    public static Block valueToBlock(final Value value) {
+    public static Block valueToBlock(final Value value) throws TermConversionException {
         final Statement   s   = valueToStatement(value);
         if (s instanceof Block) {
             return (Block) s;

@@ -175,7 +175,7 @@ public class ConstructorDefinition extends Value {
             newScope.pruneOM();
             newScope.linkToOriginalScope(mStaticDefs);
 
-            return SetlObject.createNew(mStaticDefs, newScope);
+            return SetlObject.createNew(newScope, mStaticDefs);
 
         } finally { // make sure scope is always reset
             // restore old scope

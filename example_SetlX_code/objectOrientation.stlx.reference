@@ -1,12 +1,12 @@
-a == object<{number := 5; static{sum := [this, other] |-> number + other.number;}}>
-b == object<{number := 15; static{sum := [this, other] |-> number + other.number;}}>
+a == object<{number := 5; static{sum := [this, other] |-> number + other.number;} }>
+b == object<{number := 15; static{sum := [this, other] |-> number + other.number;} }>
 a + b == 20
 
 
-a == object<{sum := [this, other] |-> number + other.number; factorial := procedure(rw this) { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache; }; number := 5; static{sum := [this, other] |-> number + other.number;}}>
+a == object<{sum := [this, other] |-> number + other.number; factorial := procedure(rw this) { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache; }; number := 5; static{sum := [this, other] |-> number + other.number;} }>
 uncached factorial
 a! == 15511210043330985984000000
-a == object<{cache := 15511210043330985984000000; sum := [this, other] |-> number + other.number; number := 5; factorial := procedure(rw this) { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache; }; static{sum := [this, other] |-> number + other.number;}}>
+a == object<{cache := 15511210043330985984000000; sum := [this, other] |-> number + other.number; number := 5; factorial := procedure(rw this) { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache; }; static{sum := [this, other] |-> number + other.number;} }>
 a! == 15511210043330985984000000
 
 a.number == 5

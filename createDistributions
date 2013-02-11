@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# set overrides for setlX launcher script
+export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
+
+# other locations for tests
+setlXlaunchScript="$PWD/src/setlX"
+
 cd src
 
 # clean the interpreter source
@@ -9,7 +15,7 @@ make dist-clean
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
 make
-if [ -f setlX.jar ]
+if [ -f "$OVERRIDE_setlXJarLocation" ]
   then
     # clean it up again (does not remove the jar)
     make clean
@@ -21,7 +27,7 @@ else
 fi
 
 # get version from executable (jar)
-version=$(./setlX --version)
+version=$("$setlXlaunchScript" --version)
 versionForFileNames=$(echo $version | tr "." "-")
 
 # goto documentation source

@@ -65,6 +65,9 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
     public static final Color WHITE      = Color.WHITE;
     public static final Color YELLOW     = Color.YELLOW;
 
+    
+    public static final String PLAY = "Play";
+    public static final String PAUSE = "Pause";
     /**
      * Shade of blue used in Introduction to Programming in Java.
      * It is Pantone 300U. The RGB values are approximately (9, 90, 166).
@@ -141,8 +144,13 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 
     private static Thread waitingThread  = null;
     
-    private static SetlXAnimationSpeedSlider animationSpeedSlider = null;
+    private static boolean paused = false;
     
+    private static SetlXAnimationSpeedSlider animationSpeedSlider = null;
+    private static boolean animationSpeedSlidervisible = false;
+    
+    private static JButton playpause = null;
+    private static boolean playpausevisible = false;
 
     // singleton pattern: client can't instantiate
     private StdDraw() { }
@@ -201,8 +209,20 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
 
         draw.addMouseListener(std);
         draw.addMouseMotionListener(std);
-
-        frame.setContentPane(draw);
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridBagLayout());
+        //Code added to this class for selX
+        
+        playpause = createPlayPauseButton();
+        playpause.setVisible(playpausevisible);
+        panel.add(playpause,new GridBagConstraints(0,0,1,1,0.1,0.1,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
+        animationSpeedSlider = new SetlXAnimationSpeedSlider();
+        animationSpeedSlider.setVisible(animationSpeedSlidervisible);
+        panel.add(animationSpeedSlider,new GridBagConstraints(1,0,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
+        playpause.addActionListener(std);
+        //End setlX code
+        panel.add(draw,new GridBagConstraints(0,1,2,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        frame.setContentPane(panel);
         frame.addKeyListener(std);    // JLabel cannot get keyboard focus
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows
@@ -212,6 +232,21 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         frame.pack();
         frame.requestFocusInWindow();
         frame.setVisible(true);
+    }
+    
+    
+    private static JButton createPlayPauseButton(){
+        return new JButton(createPlayPauseButtonText());
+    }
+    
+    private static String createPlayPauseButtonText(){
+        String text;
+        if ( isPaused() ){
+            text = PLAY;
+        }else{
+            text = PAUSE;
+        }
+        return text;
     }
 
     // create the menu bar (changed to private)
@@ -224,13 +259,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
                                 Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
         menu.add(menuItem1);
-        //Code added to this class for selX
-        JButton playpause = new JButton("Play");
-        menuBar.add(playpause);
-        animationSpeedSlider = new SetlXAnimationSpeedSlider();
-        menuBar.add(animationSpeedSlider);
-        playpause.addActionListener(std);
-        //End setlX code
+        
         return menuBar;
     }
 
@@ -851,8 +880,10 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         defer = false;
         draw();
         try { 
-            waitingThread = Thread.currentThread();
-            waitingThread.sleep((long)Math.round(t*animationSpeedSlider.getSpeedMultiplier())); 
+            do{
+                waitingThread = Thread.currentThread();
+                Thread.sleep(Math.round(t*animationSpeedSlider.getSpeedMultiplier()));
+            }while( isPaused() );
         }catch (InterruptedException e) {
             show(t);
         }
@@ -923,6 +954,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
      */
     public void actionPerformed(ActionEvent e) {
         if ( e.getSource() instanceof JButton ){
+            setPaused(!isPaused());
             return;
         }
         FileDialog chooser = new FileDialog(StdDraw.frame, "Use a .png or .jpg extension", FileDialog.SAVE);
@@ -1114,6 +1146,31 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         StdDraw.text(0.2, 0.5, "black text");
         StdDraw.setPenColor(StdDraw.WHITE);
         StdDraw.text(0.8, 0.8, "white text");
+    }
+
+    public static void addSpeedSlider( boolean add ){
+        animationSpeedSlidervisible = add;
+        if ( animationSpeedSlider != null ){
+             animationSpeedSlider.setVisible(animationSpeedSlidervisible);
+        }
+    }
+    
+    public static void addPlayPauseButton( boolean add ){
+        playpausevisible = add;
+        if ( playpause != null ){
+            playpause.setVisible(playpausevisible);
+        }
+    }
+    
+    public static boolean isPaused() {
+        return paused;
+    }
+
+    public static void setPaused(boolean paused) {
+        StdDraw.paused = paused;
+        if ( playpause != null ){
+            playpause.setText(createPlayPauseButtonText());
+        }
     }
 
     

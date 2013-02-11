@@ -1,7 +1,10 @@
 
-loadLibrary("aStar_hanoi_exact_stddraw");
 
+loadLibrary("aStar_hanoi_exact_animation");
 
+setPaused(true);
+addPlayPauseButton();
+addSpeedSlider();
 
 drawBase := procedure( disks ){
     setPenColor("BLACK");

@@ -215,6 +215,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         
         playpause = createPlayPauseButton();
         playpause.setVisible(playpausevisible);
+        playpause.setPreferredSize((new JButton(PAUSE)).getPreferredSize());
         panel.add(playpause,new GridBagConstraints(0,0,1,1,0.1,0.1,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
         animationSpeedSlider = new SetlXAnimationSpeedSlider();
         animationSpeedSlider.setVisible(animationSpeedSlidervisible);

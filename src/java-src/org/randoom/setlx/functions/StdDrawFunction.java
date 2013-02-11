@@ -15,7 +15,7 @@ public abstract class StdDrawFunction extends PreDefinedFunction{
     protected Integer integerFromValue(Value v) throws SetlException{
         if (v instanceof NumberValue){
             Value arg = v.toReal();
-            return (int) ((Real) arg).doubleValue();
+            return (int) ((Real) arg).jDoubleValue();
         }else{
             throw new IncompatibleTypeException( "Error in \""+ getName() +"\":\n" + 
                                                  "Parameter " + v + " of incompatible Type.");
@@ -26,7 +26,7 @@ public abstract class StdDrawFunction extends PreDefinedFunction{
     protected Double doubleFromValue(Value v) throws SetlException{
         if (v instanceof NumberValue){
             Value arg = v.toReal();
-            return ((Real) arg).doubleValue();
+            return ((Real) arg).jDoubleValue();
         }else{
             throw new IncompatibleTypeException( "Error in \""+ getName() +"\":\n" + 
                                                  "Parameter " + v + " of incompatible Type.");

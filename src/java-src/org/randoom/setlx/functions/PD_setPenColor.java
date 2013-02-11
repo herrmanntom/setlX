@@ -8,6 +8,7 @@ import java.util.List;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
 public class PD_setPenColor extends StdDrawFunction {
@@ -24,7 +25,7 @@ public class PD_setPenColor extends StdDrawFunction {
     
 
     @Override
-    protected Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException{
+    protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException{
         Color c = StdDraw.BLACK;
         if ( args.size() == 1 ){
             try {

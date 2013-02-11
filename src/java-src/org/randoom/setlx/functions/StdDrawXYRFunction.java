@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import java.util.List;
 import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.types.*;
+import org.randoom.setlx.utilities.State;
 
 //square(NumberValue,NumberValue,NumberValue) : 
 //
@@ -15,7 +16,7 @@ public abstract class StdDrawXYRFunction extends StdDrawFunction{
         addParameter("r");    
     }
 
-    public Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         Double x = doubleFromValue(args.get(0));
         Double y = doubleFromValue(args.get(1));
         Double r = doubleFromValue(args.get(2));

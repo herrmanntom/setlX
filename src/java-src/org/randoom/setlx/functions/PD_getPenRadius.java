@@ -1,10 +1,12 @@
 package org.randoom.setlx.functions;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
 
@@ -17,8 +19,8 @@ public class PD_getPenRadius extends StdDrawFunction {
     
     
     @Override
-    protected Value execute(List<Value> args, List<Value> writeBackVars) throws SetlException{
-        return new Real(StdDraw.getPenRadius());
+    protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException{
+        return Real.valueOf(StdDraw.getPenRadius());
     }
 
 

@@ -1,5 +1,6 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
@@ -568,7 +569,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public void setObjectMember(final State state, final Variable variable, final Value value) throws IncompatibleTypeException {
+    public void setObjectMember(final State state, final Variable variable, final Value value) throws IncompatibleTypeException, IllegalRedefinitionException {
         throw new IncompatibleTypeException(
             "Can not add member '" + variable + "' into operand; '" + this + "' is not an object."
         );

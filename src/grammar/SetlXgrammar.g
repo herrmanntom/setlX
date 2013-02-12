@@ -149,8 +149,7 @@ statement returns [Statement stmnt]
         List<TryCatchAbstractBranch>    tryList    = new ArrayList<TryCatchAbstractBranch>();
         Condition                       condition  = null;
     }
-    : 'var' listOfVariables ';'                                      { stmnt = new GlobalDefinition($listOfVariables.lov);             }
-    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));                 }
+    : 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));                 }
       (
         'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));           }
       )*
@@ -503,9 +502,9 @@ procedureParameter returns [ParameterDef param]
     | variable      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
     ;
     
-objectConstructor returns [ConstructorDefinition oc]
+objectConstructor returns [ClassDefinition oc]
     : 'constructor' '(' procedureParameters ')' '{' b1 = block ('static' '{' b2 = block '}')? '}'
-      { oc = new ConstructorDefinition($procedureParameters.paramList, $b1.blk, $b2.blk); }
+      { oc = new ClassDefinition($procedureParameters.paramList, $b1.blk, $b2.blk); }
     ;
 
 memberAccess [Expr lhs] returns [Expr ma]

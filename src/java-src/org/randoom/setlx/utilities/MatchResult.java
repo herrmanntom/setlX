@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.types.Value;
 
 import java.util.HashMap;
@@ -35,7 +36,7 @@ public class MatchResult {
         }
     }
 
-    public void setAllBindings(final State state) {
+    public void setAllBindings(final State state) throws IllegalRedefinitionException {
         for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
             state.putValue(entry.getKey(), entry.getValue().clone());
 

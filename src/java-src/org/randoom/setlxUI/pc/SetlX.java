@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -55,7 +56,11 @@ public class SetlX {
         // initialize Environment
         state.setEnvironmentProvider(envProvider);
         final SetlList parameters = new SetlList(); // can/will be filled later
-        state.putValue("params", parameters);
+        try {
+            state.putValue("params", parameters);
+        } catch (final IllegalRedefinitionException e) {
+            // impossible
+        }
 
         if ((PcEnvProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
             PcEnvProvider.sLibraryPath = "";

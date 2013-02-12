@@ -1,6 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;
 import org.randoom.setlx.types.SetlList;
@@ -228,27 +229,25 @@ public class VariableScope {
     // Add bindings stored in `scope' into this scope or globals.
     // This also adds variables in outer scopes of `scope' until reaching this
     // as outer scope of `scope'.
-    /*package*/ void storeAllValues(final boolean globalsPresent, final VariableScope globals, final VariableScope scope) {
+    /*package*/ void storeAllValues(final VariableScope scope) {
         for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
-            if (globalsPresent && globals.locateValue(entry.getKey(), false) != null) {
-                globals.storeValue(entry.getKey(), entry.getValue());
-            } else {
-                storeValue(entry.getKey(), entry.getValue());
-            }
+            storeValue(entry.getKey(), entry.getValue());
         }
         if (scope.mOriginalScope != null && scope.mOriginalScope != this) {
-            storeAllValues(globalsPresent, globals, scope.mOriginalScope);
+            storeAllValues(scope.mOriginalScope);
         }
     }
 
     /* term operations */
 
-    /*package*/ public Term toTerm(final State state, final VariableScope globals) {
+    /*package*/ public Term toTerm(final State state, final HashMap<String, ClassDefinition> classDefinitions) {
         final Map<String, Value> allVars = new HashMap<String, Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
-        if (globals != null) {
-            globals.collectBindings(allVars, false);
+        if (classDefinitions != null) {
+            for (final Map.Entry<String, ClassDefinition> entry : classDefinitions.entrySet()) {
+                allVars.put(entry.getKey(), entry.getValue());
+            }
         }
 
         // term which represents the scope

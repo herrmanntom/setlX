@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.4.99999--- 2013-0x-xx
+ + removed global definitions ('var')
+
 ---v1.4.9999--- 2013-02-10
  + added nCPUs() functions, returning the number of CPUs (/cores) in the system
  + allow overloading of more functions for objects

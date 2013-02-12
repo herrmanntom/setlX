@@ -1,5 +1,6 @@
 package org.randoom.setlx.expressions;
 
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -79,7 +80,7 @@ public class Variable extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v) {
+    public void assignUncloned(final State state, final Value v) throws IllegalRedefinitionException {
         state.putValue(mId, v);
     }
 
@@ -91,11 +92,6 @@ public class Variable extends AssignableExpression {
     @Override
     public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) {
         return state.putValueCheckUpTo(mId, v, outerScope);
-    }
-
-    // sets this expression to the given value
-    public void makeGlobal(final State state) {
-        state.makeGlobal(mId);
     }
 
     /* string operations */

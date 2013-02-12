@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -500,7 +501,7 @@ public class SetlObject extends Value {
     }
 
     @Override
-    public void setObjectMember(final State state, final Variable variable, final Value value) {
+    public void setObjectMember(final State state, final Variable variable, final Value value) throws IllegalRedefinitionException {
         separateFromOriginal();
         final VariableScope oldScope = state.getScope();
         state.setScope(mMembers);

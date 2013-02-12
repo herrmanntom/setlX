@@ -1,12 +1,15 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
@@ -29,8 +32,7 @@ public class StateImplementation extends State {
     private final   static  VariableScope       sROOT_Scope = new VariableScope();
 
     // this scope stores all global variables
-    private final           VariableScope       mGlobals;
-    private                 boolean             mGlobalsPresent;
+    private final           HashMap<String, ClassDefinition> classDefinitions;
 
     // this variable stores the variable assignment that is currently active
     private                 VariableScope       mVariableScope;
@@ -63,8 +65,7 @@ public class StateImplementation extends State {
         mLoadedLibraries                 = new HashSet<String>();
         mParserErrorCapture              = null;
         mParserErrorCount                = 0;
-        mGlobals                         = new VariableScope();
-        mGlobalsPresent                  = false;
+        classDefinitions                 = new HashMap<String, ClassDefinition>();
         mVariableScope                   = sROOT_Scope.createLinkedScope();
         mIsHuman                         = false;
         mRandoom                         = new Random();
@@ -344,8 +345,7 @@ public class StateImplementation extends State {
     @Override
     public void resetState() {
         mVariableScope  = sROOT_Scope.createLinkedScope();
-        mGlobals.clear();
-        mGlobalsPresent = false;
+        classDefinitions.clear();
         mLoadedLibraries.clear();
         if (mParserErrorCapture != null) {
             mParserErrorCapture.clear();
@@ -355,14 +355,11 @@ public class StateImplementation extends State {
 
     @Override
     public Value findValue(final String var) {
-        Value v = null;
-        if (mGlobalsPresent) {
-            v = mGlobals.locateValue(var, true);
-            if (v != null) {
-                return v;
-            }
+        Value v = classDefinitions.get(var);
+        if (v != null) {
+            return v;
         }
-        v = mVariableScope.locateValue(var, ! mGlobalsPresent);
+        v = mVariableScope.locateValue(var, true);
         if (v == null) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedFunction.class.getPackage().getName();
@@ -399,9 +396,11 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void putValue(final String var, final Value value) {
-        if (mGlobalsPresent && mGlobals.locateValue(var, false) != null) {
-            mGlobals.storeValue(var, value);
+    public void putValue(final String var, final Value value) throws IllegalRedefinitionException {
+        if (classDefinitions.containsKey(var)) {
+            throw new IllegalRedefinitionException(
+                "Redefinition of classes is not allowed."
+            );
         } else {
             mVariableScope.storeValue(var, value);
         }
@@ -415,14 +414,12 @@ public class StateImplementation extends State {
      */
     @Override
     public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
-        if (mGlobalsPresent) {
-            final Value now = mGlobals.locateValue(var, false);
-            if (now != null) {
-                if (now.equalTo(value)) {
-                    return true;
-                } else {
-                    return false;
-                }
+        final Value now = classDefinitions.get(var);
+        if (now != null) {
+            if (now.equalTo(value)) {
+                return true;
+            } else {
+                return false;
             }
         }
         return mVariableScope.storeValueCheckUpTo(var, value, outerScope);
@@ -432,21 +429,25 @@ public class StateImplementation extends State {
     // This also adds vars in outer scopes of `scope' until reaching the current
     // scope as outer scope of `scope'.
     @Override
-    public void putAllValues(final VariableScope scope) {
-        mVariableScope.storeAllValues(mGlobalsPresent, mGlobals, scope);
+    public void putAllValues(final VariableScope scope) throws IllegalRedefinitionException {
+        for (final String key : classDefinitions.keySet()) {
+            if (classDefinitions.containsKey(key)) {
+                throw new IllegalRedefinitionException(
+                    "Redefinition of classes is not allowed."
+                );
+            }
+        }
+        mVariableScope.storeAllValues(scope);
     }
 
     @Override
-    public void makeGlobal(final String var) {
-        if (mGlobals.locateValue(var, false) == null) {
-            mGlobals.storeValue(var, Om.OM);
-        }
-        mGlobalsPresent = true;
+    public void putClassDefinition(final String var, final ClassDefinition classDef) {
+        classDefinitions.put(var, classDef);
     }
 
     @Override
     public Term scopeToTerm() {
-        return mVariableScope.toTerm(this, mGlobals);
+        return mVariableScope.toTerm(this, classDefinitions);
     }
 
     /* -- Debugger -- */

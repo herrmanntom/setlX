@@ -1,6 +1,6 @@
 package org.randoom.setlx.expressions;
 
-import org.randoom.setlx.types.ConstructorDefinition;
+import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
@@ -21,9 +21,9 @@ public class ConstructorConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int          PRECEDENCE           = 9999;
 
-    protected final ConstructorDefinition mDefinition;
+    protected final ClassDefinition mDefinition;
 
-    public ConstructorConstructor(final ConstructorDefinition definition) {
+    public ConstructorConstructor(final ClassDefinition definition) {
         mDefinition = definition;
     }
 

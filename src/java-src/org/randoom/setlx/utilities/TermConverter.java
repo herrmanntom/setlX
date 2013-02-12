@@ -17,7 +17,7 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedureDefinition;
-import org.randoom.setlx.types.ConstructorDefinition;
+import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.ProcedureDefinition;
@@ -52,8 +52,8 @@ public class TermConverter {
                     return LambdaDefinition.termToValue(term);
                 } else if (fc.equals(ProcedureDefinition.FUNCTIONAL_CHARACTER)) {
                     return ProcedureDefinition.termToValue(term);
-                } else if (fc.equals(ConstructorDefinition.FUNCTIONAL_CHARACTER)) {
-                    return ConstructorDefinition.termToValue(term);
+                } else if (fc.equals(ClassDefinition.FUNCTIONAL_CHARACTER)) {
+                    return ClassDefinition.termToValue(term);
                 } else if (fc.equals(SetlObject.FUNCTIONAL_CHARACTER)) {
                     return SetlObject.termToValue(term);
                 }
@@ -145,8 +145,8 @@ public class TermConverter {
 
                     if (specialValue instanceof ProcedureDefinition) {
                         return new ProcedureConstructor((ProcedureDefinition) specialValue);
-                    } else if (specialValue instanceof ConstructorDefinition) {
-                        return new ConstructorConstructor((ConstructorDefinition) specialValue);
+                    } else if (specialValue instanceof ClassDefinition) {
+                        return new ConstructorConstructor((ClassDefinition) specialValue);
                     } else if (specialValue instanceof SetlObject) {
                         return new ValueExpr(specialValue);
                     }

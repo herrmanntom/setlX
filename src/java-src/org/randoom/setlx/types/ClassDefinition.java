@@ -1,5 +1,6 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -32,7 +33,7 @@ implemented here as:
                             mParameters             mInit               mStatic
 */
 
-public class ConstructorDefinition extends Value {
+public class ClassDefinition extends Value {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = "^constructor";
 
@@ -41,14 +42,14 @@ public class ConstructorDefinition extends Value {
     private       Block              mStatic;     // statements in the static block
     private       VariableScope      mStaticDefs; // definitions from static block
 
-    public ConstructorDefinition(final List<ParameterDef> parameters,
+    public ClassDefinition(final List<ParameterDef> parameters,
                                  final Block              init,
                                  final Block              staticBlock
     ) {
         this(parameters, init, staticBlock, null);
     }
 
-    private ConstructorDefinition(final List<ParameterDef> parameters,
+    private ClassDefinition(final List<ParameterDef> parameters,
                                  final Block              init,
                                  final Block              staticBlock,
                                  final VariableScope      staticDefs
@@ -60,7 +61,7 @@ public class ConstructorDefinition extends Value {
     }
 
     @Override
-    public ConstructorDefinition clone() {
+    public ClassDefinition clone() {
         Block staticBlock = null;
         if (mStatic != null) {
             staticBlock = mStatic.clone();
@@ -69,7 +70,7 @@ public class ConstructorDefinition extends Value {
         if (mStaticDefs != null) {
             staticDefs = mStaticDefs.clone();
         }
-        return new ConstructorDefinition(mParameters, mInit, staticBlock, staticDefs);
+        return new ClassDefinition(mParameters, mInit, staticBlock, staticDefs);
     }
 
     /* Gather all bound and unbound variables in this value and its siblings
@@ -246,7 +247,7 @@ public class ConstructorDefinition extends Value {
     }
 
     @Override
-    public void setObjectMember(final State state, final Variable variable, final Value value) {
+    public void setObjectMember(final State state, final Variable variable, final Value value) throws IllegalRedefinitionException {
         if (mStatic == null) {
             mStatic = new Block();
         }
@@ -311,7 +312,7 @@ public class ConstructorDefinition extends Value {
         return result;
     }
 
-    public static ConstructorDefinition termToValue(final Term term) throws TermConversionException {
+    public static ClassDefinition termToValue(final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -326,7 +327,7 @@ public class ConstructorDefinition extends Value {
                 if (! term.lastMember().equals(new SetlString("nil"))) {
                     staticBlock    = TermConverter.valueToBlock(term.lastMember());
                 }
-                return new ConstructorDefinition(parameters, init, staticBlock);
+                return new ClassDefinition(parameters, init, staticBlock);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
@@ -344,8 +345,8 @@ public class ConstructorDefinition extends Value {
     public int compareTo(final Value v){
         if (this == v) {
             return 0;
-        } else if (v instanceof ConstructorDefinition) {
-            final ConstructorDefinition other = (ConstructorDefinition) v;
+        } else if (v instanceof ClassDefinition) {
+            final ClassDefinition other = (ClassDefinition) v;
             int cmp = mParameters.toString().compareTo(other.mParameters.toString());
             if (cmp != 0) {
                 return cmp;
@@ -388,8 +389,8 @@ public class ConstructorDefinition extends Value {
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
-        } else if (v instanceof ConstructorDefinition) {
-            final ConstructorDefinition other = (ConstructorDefinition) v;
+        } else if (v instanceof ClassDefinition) {
+            final ClassDefinition other = (ClassDefinition) v;
             if (mParameters.toString().equals(other.mParameters.toString())) {
                 if (mInit.toString().equals(other.mInit.toString())) {
                     return mStatic.toString().equals(other.mStatic.toString());
@@ -399,7 +400,7 @@ public class ConstructorDefinition extends Value {
         return false;
     }
 
-    private final static int initHashCode = ConstructorDefinition.class.hashCode();
+    private final static int initHashCode = ClassDefinition.class.hashCode();
 
     @Override
     public int hashCode() {

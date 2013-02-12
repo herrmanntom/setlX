@@ -1,13 +1,11 @@
 // this program demonstrates how straight forward implementing A* can be
 
 /* algorithm */
-var h, transition;
-
 aStar := procedure(s, t) {
     g := predecessor := f := {};
 
     g[s]        := 0;
-    f[s]        := h[s];
+    f[s]        := graph.h[s];
     openQueue   := { [f[s], s] };
 
     while(openQueue != {}) {
@@ -16,42 +14,45 @@ aStar := procedure(s, t) {
             printPath(s, t, x, fx, predecessor);
             return;
         }
-        for ( [y, yCost] in transition{x} | g[y] == om || g[x] + yCost < g[y]) {
+        for ( [y, yCost] in graph.transition{x} | g[y] == om || g[x] + yCost < g[y]) {
             predecessor[y]  := x;
             g[y]            := g[x] + yCost;
             openQueue       -= { [f[y], y] };
-            f[y]            := g[y] + h[y];
+            f[y]            := g[y] + graph.h[y];
             openQueue       += { [f[y], y] };
         }
     }
     print("path $s$ -> $t$: no solution");
 };
 
-/* graph */
-// heuristic: [node, estimation]
-h := {[1, 22], [2, 94], [3, 98], [4, 34], [5, 88], [6, 4], [7, 8], [8, 5], [9, 1], [10, 0]};
+class graph() {
+    static {
+        // heuristic: [node, estimation]
+        h := {[1, 22], [2, 94], [3, 98], [4, 34], [5, 88], [6, 4], [7, 8], [8, 5], [9, 1], [10, 0]};
 
-// transitions: [node, [neighbor, cost]] which represents the path: node --{cost}--> neighbor
-transition := {
-    [ 1, [ 4, 13]],
-    [ 1, [ 5, 65]],
-    [ 1, [10, 53]],
-    [ 2, [ 9, 29]],
-    [ 3, [ 2,  7]],
-    [ 3, [ 4, 13]],
-    [ 3, [ 9, 11]],
-    [ 4, [ 3, 12]],
-    [ 5, [ 7, 55]],
-    [ 5, [10, 35]],
-    [ 6, [ 5, 12]],
-    [ 7, [ 4,  8]],
-    [ 7, [ 8, 11]],
-    [ 8, [ 9,  9]],
-    [ 8, [ 6, 39]],
-    [10, [ 6, 17]],
-    [10, [ 7, 14]],
-    [10, [ 8, 23]]
-};
+        // transitions: [node, [neighbor, cost]] which represents the path: node --{cost}--> neighbor
+        transition := {
+            [ 1, [ 4, 13]],
+            [ 1, [ 5, 65]],
+            [ 1, [10, 53]],
+            [ 2, [ 9, 29]],
+            [ 3, [ 2,  7]],
+            [ 3, [ 4, 13]],
+            [ 3, [ 9, 11]],
+            [ 4, [ 3, 12]],
+            [ 5, [ 7, 55]],
+            [ 5, [10, 35]],
+            [ 6, [ 5, 12]],
+            [ 7, [ 4,  8]],
+            [ 7, [ 8, 11]],
+            [ 8, [ 9,  9]],
+            [ 8, [ 6, 39]],
+            [10, [ 6, 17]],
+            [10, [ 7, 14]],
+            [10, [ 8, 23]]
+        };
+    }
+}
 
 /* print the path */
 printPath := procedure(start, targets, end, cost, predecessor) {

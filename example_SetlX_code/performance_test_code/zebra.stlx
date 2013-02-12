@@ -1,3 +1,4 @@
+// this example is not good SetlX code, but only used because its slow.
 
 onePerHouse := procedure(m) {
 	return {somewhere(x): x in m} + {something(m, i): i in {1 .. 5}} + +/ {atMostOneAt(m, i): i in {1 .. 5}};
@@ -47,15 +48,15 @@ printSolution := procedure(s) {
 };
 
 parse := procedure(s) {
-	mTokenList := scanFormula(s);
-	mIndex := 1;
+	state.tokenList := scanFormula(s);
+	state.index := 1;
 	result := parseFormula();
 	return normalize(result);
 };
 
 parseFormula := procedure() {
 	implicationLhs := parseImplication();
-	if (mIndex <= #mTokenList && mTokenList[mIndex] != ")") {
+	if (state.index <= #state.tokenList && state.tokenList[state.index] != ")") {
 		checkTokens("<->");
 		implicationRhs := parseImplication();
 		return [implicationLhs, "<->", implicationRhs];
@@ -66,7 +67,7 @@ parseFormula := procedure() {
 
 parseImplication := procedure() {
 	conjunction := parseConjunction();
-	if (mIndex <= #mTokenList && mTokenList[mIndex] notin {"<->", ")"}) {
+	if (state.index <= #state.tokenList && state.tokenList[state.index] notin {"<->", ")"}) {
 		checkTokens("->");
 		implication := parseImplication();
 		return [conjunction, "->", implication];
@@ -117,22 +118,22 @@ parseAtomic := procedure() {
 		}
 		return formula;
 	}
-	if (isString((mTokenList[mIndex]))) {
-		result := mTokenList[mIndex];
-		mIndex := mIndex + 1;
+	if (isString((state.tokenList[state.index]))) {
+		result := state.tokenList[state.index];
+		state.index := state.index + 1;
 		return result;
 	}
-	print(mTokenList);
-	print(mIndex);
+	print(state.tokenList);
+	print(state.index);
 	abort("Parse Error in parseFactor. ");
 };
 
 checkTokens := procedure(token) {
-	if (mIndex > #mTokenList) {
+	if (state.index > #state.tokenList) {
 		return false;
 	}
-	if (mTokenList[mIndex] == token) {
-		mIndex := mIndex + 1;
+	if (state.tokenList[state.index] == token) {
+		state.index := state.index + 1;
 		return true;
 	}
 	return false;
@@ -363,8 +364,13 @@ knf := procedure(f) {
 	}
 };
 
-var mTokenList;
-var mIndex;
+class state() {
+    static {
+        tokenList := [];
+        index     := 0;
+    }
+}
+
 german := "German";
 briton := "Briton";
 swede := "Swede";

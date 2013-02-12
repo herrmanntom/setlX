@@ -13,7 +13,7 @@ block
     ;
 
 statement
-    : 'var' listOfVariables ';'
+    : classDefinition
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
     | match
@@ -31,6 +31,10 @@ statement
     | (assignmentOther)=> assignmentOther ';'
     | (assignmentDirect)=> assignmentDirect ';'
     | expr ';'
+    ;
+
+classDefinition
+    : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}' ';'?
     ;
 
 match
@@ -147,7 +151,7 @@ factor
     | term
     | 'forall' '(' iteratorChain '|' condition ')'
     | 'exists' '(' iteratorChain '|' condition ')'
-    | ('(' expr ')' | procedureDefinition | objectConstructor | variable) (memberAccess | call)* '!'?
+    | ('(' expr ')' | procedureDefinition | variable) (memberAccess | call)* '!'?
     | value '!'?
     ;
 
@@ -173,10 +177,6 @@ procedureParameters
 procedureParameter
     : 'rw' variable
     | variable
-    ;
-
-objectConstructor
-    : 'constructor' '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
     ;
 
 memberAccess

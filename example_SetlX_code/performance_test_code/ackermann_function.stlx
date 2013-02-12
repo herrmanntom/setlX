@@ -21,8 +21,12 @@
 // Also see my SetlX page: http://www.hakank.org/setl/
 //
 
-var cache;
-var cache_calls;
+class cache() {
+    static {
+        buffer := {};
+        nCalls := 0;
+    }
+}
 
 a := procedure(m, n) {
   match([m,n]) {
@@ -34,9 +38,9 @@ a := procedure(m, n) {
 };
 
 a2 := procedure(m, n) {
-  c := cache[[m,n]];
+  c := cache.buffer[[m,n]];
   if (c != om) {
-    cache_calls += 1;
+    cache.nCalls += 1;
     return c;
   }
 
@@ -46,7 +50,7 @@ a2 := procedure(m, n) {
   case [_,0]: res := a2(m-1, 1);
   default   : res := a2(m-1, a2(m, n-1));
   }
-  cache[[m,n]] := res;
+  cache.buffer[[m,n]] := res;
 
   return res;
 };
@@ -56,23 +60,23 @@ a2 := procedure(m, n) {
 //   print("a($i$,$j$): $a(i,j)$");
 // }
 
-// cache := {};
+// cache.buffer := {};
 // print("\nusing cache:");
 // for(i in [0..4], j in [0..4]) {
 //   print("a2($i$,$j$): $a2(i,j)$");
 // }
 
-cache := {};
-cache_calls := 0;
+cache.buffer := {};
+cache.nCalls := 0;
 print("(3,13):$a2(3,13)$");
-print("\tcache_calls: $cache_calls$");
-cache := {};
-cache_calls := 0;
+print("\tcache_calls: $cache.nCalls$");
+cache.buffer := {};
+cache.nCalls := 0;
 print("(4,1):$a2(4,1)$");
-print("\tcache_calls: $cache_calls$");
+print("\tcache_calls: $cache.nCalls$");
 
 // Stack overflow...
-// cache := {};
-// cache_calls := 0;
+// cache.buffer := {};
+// cache.nCalls := 0;
 // print("(4,2):$a2(4,2)$");
-// print("\tcache_calls: $cache_calls$");
+// print("\tcache_calls: $cache.nCalls$");

@@ -5,7 +5,6 @@ import org.randoom.setlx.boolExpressions.Equal;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.BracketedExpr;
 import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
-import org.randoom.setlx.expressions.ConstructorConstructor;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.ProcedureConstructor;
 import org.randoom.setlx.expressions.SetListConstructor;
@@ -146,7 +145,7 @@ public class TermConverter {
                     if (specialValue instanceof ProcedureDefinition) {
                         return new ProcedureConstructor((ProcedureDefinition) specialValue);
                     } else if (specialValue instanceof ClassDefinition) {
-                        return new ConstructorConstructor((ClassDefinition) specialValue);
+                        return new ValueExpr(specialValue);
                     } else if (specialValue instanceof SetlObject) {
                         return new ValueExpr(specialValue);
                     }

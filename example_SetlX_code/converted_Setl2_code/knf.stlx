@@ -166,15 +166,15 @@ prettyPrint := procedure(f) {
 };
 
 parse := procedure(s) {
-	mTokenList := scanFormula(s);
-	mIndex := 1;
+	state.tokenList := scanFormula(s);
+	state.index := 1;
 	result := parseFormula();
 	return result;
 };
 
 parseFormula := procedure() {
 	implicationLhs := parseImplication();
-	if (mIndex <= #mTokenList && mTokenList[mIndex] != ")") {
+	if (state.index <= #state.tokenList && state.tokenList[state.index] != ")") {
 		checkTokens("<->");
 		implicationRhs := parseImplication();
 		return [implicationLhs, "<->", implicationRhs];
@@ -185,7 +185,7 @@ parseFormula := procedure() {
 
 parseImplication := procedure() {
 	conjunction := parseConjunction();
-	if (mIndex <= #mTokenList && mTokenList[mIndex] notin {"<->", ")"}) {
+	if (state.index <= #state.tokenList && state.tokenList[state.index] notin {"<->", ")"}) {
 		checkTokens("->");
 		implication := parseImplication();
 		return [conjunction, "->", implication];
@@ -236,20 +236,20 @@ parseAtomic := procedure() {
 		}
 		return formula;
 	}
-	if (isString((mTokenList[mIndex]))) {
-		result := mTokenList[mIndex];
-		mIndex := mIndex + 1;
+	if (isString((state.tokenList[state.index]))) {
+		result := state.tokenList[state.index];
+		state.index := state.index + 1;
 		return result;
 	}
 	abort("Parse Error in parseFactor,");
 };
 
 checkTokens := procedure(token) {
-	if (mIndex > #mTokenList) {
+	if (state.index > #state.tokenList) {
 		return false;
 	}
-	if (mTokenList[mIndex] == token) {
-		mIndex := mIndex + 1;
+	if (state.tokenList[state.index] == token) {
+		state.index := state.index + 1;
 		return true;
 	}
 	return false;
@@ -297,8 +297,13 @@ scanFormula := procedure(s) {
 	print("Error in scanFormula: s = ", s);
 };
 
-var mTokenList;
-var mIndex;
+class state() {
+    static {
+        tokenList := [];
+        index     := 0;
+    }
+}
+
 s := "(p + q -> r) * r * -p -> q";
 f := parse(s);
 print(f);

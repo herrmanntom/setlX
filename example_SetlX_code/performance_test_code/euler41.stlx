@@ -1,9 +1,9 @@
-// 
+//
 // Project Euler problem 41 in SETL
 //
 // """
-// We shall say that an n-digit number is pandigital if it makes use of all 
-// the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital 
+// We shall say that an n-digit number is pandigital if it makes use of all
+// the digits 1 to n exactly once. For example, 2143 is a 4-digit pandigital
 // and is also prime.
 //
 // What is the largest n-digit pandigital prime that exists?
@@ -13,50 +13,42 @@
 // Also see my SETL page: http://www.hakank.org/setl/
 //
 
-// fix for version < 1.2.0
-if (reverse == om) {
-    reverse := procedure(a) {
-        ll := #a;
-        if (isString(a)) {
-            return +/[ a[i] : i in [ll,ll-1..1] ];
-        } else {
-            return [ a[i] : i in [ll,ll-1..1] ];
-        }
-    };
+class state() {
+    static {
+        prime_hash := {};
+    }
 }
-
-var prime_hash;
 
 is_prime := procedure(n) {
 
-    pp := prime_hash[n];
+    pp := state.prime_hash[n];
     if (pp != om) {
         return pp;
     }
 
     if (n == 1) {
-      prime_hash[n] := false;
+      state.prime_hash[n] := false;
       return false;
     }
 
     if (n == 2 || n == 3) {
-        prime_hash[n] := true;
+        state.prime_hash[n] := true;
         return(true);
     }
 
     if (n % 2 == 0) {
-        prime_hash[n] := false;
+        state.prime_hash[n] := false;
         return(false);
     }
 
     for (i in [3, 5..round(sqrt(n))+1]) {
         if (n % i == 0) {
-            prime_hash[n] := false;
+            state.prime_hash[n] := false;
             return(false);
         }
     }
 
-    prime_hash[n] := true;
+    state.prime_hash[n] := true;
     return(true);
 
 };
@@ -67,7 +59,7 @@ problem41 := procedure() {
     // n=8 is not possible since 1+2+3+4+5+6+7+8=36 is divisible by 3
     n := 7;
     m := 0;
-    prime_hash := {};
+    state.prime_hash := {};
     while (m == 0 && n >= 4) {
         p := [];
         for (i in [n,n-1..1]) {
@@ -81,7 +73,7 @@ problem41 := procedure() {
               m := v; // found it
               quit;
           }
-          
+
         }
         n -= 1;
 
@@ -101,5 +93,5 @@ perms2 := procedure(s) {
 
 };
 
-
 problem41();
+

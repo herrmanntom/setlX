@@ -32,8 +32,8 @@ singleVars := procedure(expr) {
 };
 
 testVars := procedure(expr, x) {
-	mTokenList := scanExpr(expr);
-	mIndex := 1;
+	state.tokenList := scanExpr(expr);
+	state.index := 1;
 	expr := parseExpr();
 	print("   allVars( ", prettyPrint(expr), ") = ", allVars(expr));
 	print(" countVars( ", prettyPrint(expr), ", ", x, ") = ", countVars(expr, x));
@@ -109,12 +109,12 @@ isVariable := procedure(expr) {
 parseExpr := procedure() {
 	product := parseProduct();
 	result := parseExprRest(product);
-	if (mTokenList[mIndex] == ")") {
+	if (state.tokenList[state.index] == ")") {
 		return result;
 	}
-	if (#mTokenList + 1 != mIndex) {
-		print("mTokenList = ", mTokenList);
-		print("mIndex     = ", mIndex);
+	if (#state.tokenList + 1 != state.index) {
+		print("state.tokenList = ", state.tokenList);
+		print("state.index     = ", state.index);
 		print("result     = ", result);
 		abort("Parse Error");
 	}
@@ -237,25 +237,25 @@ parseFactor := procedure() {
 		}
 		return ["arctan", expr];
 	}
-	if (isString(mTokenList[mIndex])) {
-		result := mTokenList[mIndex];
-		mIndex := mIndex + 1;
+	if (isString(state.tokenList[state.index])) {
+		result := state.tokenList[state.index];
+		state.index := state.index + 1;
 		return result;
 	}
-	if (isInteger(mTokenList[mIndex])) {
-		result := mTokenList[mIndex];
-		mIndex := mIndex + 1;
+	if (isInteger(state.tokenList[state.index])) {
+		result := state.tokenList[state.index];
+		state.index := state.index + 1;
 		return result;
 	}
 	abort("Parse Error in parseFactor,");
 };
 
 checkTokens := procedure(token) {
-	if (mIndex > #mTokenList) {
+	if (state.index > #state.tokenList) {
 		return false;
 	}
-	if (mTokenList[mIndex] == token) {
-		mIndex := mIndex + 1;
+	if (state.tokenList[state.index] == token) {
+		state.index := state.index + 1;
 		return true;
 	}
 	return false;
@@ -325,7 +325,12 @@ ascii2int := procedure(s) {
 	return +/ [(abs(s[i]) - abs("0")) * 10 ** (#s - i): i in [1 .. #s]];
 };
 
-var mTokenList;
-var mIndex;
+class state() {
+    static {
+        tokenList := [];
+        index     := 0;
+    }
+}
+
 testVars("(x + y) * (x + y) + z", "x");
 

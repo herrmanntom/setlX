@@ -23,7 +23,8 @@ grammar SetlXgrammar;
 }
 
 @members {
-    private final static String IGNORE_TOKEN_ERROR = "ignore character ('_') is only valid inside assignments and match statements 'case' conditions";
+    private final static String IGNORE_TOKEN_ERROR        = "ignore character ('_') is only valid inside assignments and match statements 'case' conditions";
+    private final static String SEMICOLON_FOLLOWING_CLASS = "statements which uses blocks are not terminated with a semicolon (';')";
 
     private void customErrorHandling(String tokenTextToMatch, String message) {
         state.syntaxErrors++;
@@ -149,7 +150,8 @@ statement returns [Statement stmnt]
         List<TryCatchAbstractBranch>    tryList    = new ArrayList<TryCatchAbstractBranch>();
         Condition                       condition  = null;
     }
-    : 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));                 }
+    : classDefinition                                                { stmnt = $classDefinition.cd;                                    }
+    | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));                 }
       (
         'else' 'if' '(' c2 = condition[false] ')' '{' b2 = block '}' { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));           }
       )*
@@ -194,6 +196,14 @@ statement returns [Statement stmnt]
     | ( assignmentOther )=> assignmentOther   ';'                    { stmnt = $assignmentOther.assign;                                }
     | ( assignmentDirect )=> assignmentDirect ';'                    { stmnt = new ExpressionStatement($assignmentDirect.assign);      }
     | expr[false] ';'                                                { stmnt = new ExpressionStatement($expr.ex);                      }
+    ;
+
+classDefinition returns [ClassDefiner cd]
+    : 'class' ID '(' procedureParameters ')' '{' b1 = block ('static' '{' b2 = block '}')? '}'
+      { cd = new ClassDefiner($ID.text, new ClassDefinition($procedureParameters.paramList, $b1.blk, $b2.blk)); }
+      (
+        ';' { customErrorHandling(";", SEMICOLON_FOLLOWING_CLASS); }
+      )?
     ;
 
 match returns [Match m]
@@ -453,7 +463,6 @@ factor [boolean enableIgnore, boolean quoted] returns [Expr f]
     | (
          '(' expr[$enableIgnore] ')'   { f = new BracketedExpr($expr.ex);                       }
        | procedureDefinition           { f = new ProcedureConstructor($procedureDefinition.pd); }
-       | objectConstructor             { f = new ConstructorConstructor($objectConstructor.oc); }
        | variable                      { f = $variable.v;                                       }
       )
       (
@@ -500,11 +509,6 @@ procedureParameters returns [List<ParameterDef> paramList]
 procedureParameter returns [ParameterDef param]
     : 'rw' variable { param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
     | variable      { param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
-    ;
-    
-objectConstructor returns [ClassDefinition oc]
-    : 'constructor' '(' procedureParameters ')' '{' b1 = block ('static' '{' b2 = block '}')? '}'
-      { oc = new ClassDefinition($procedureParameters.paramList, $b1.blk, $b2.blk); }
     ;
 
 memberAccess [Expr lhs] returns [Expr ma]

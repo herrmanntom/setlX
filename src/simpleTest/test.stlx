@@ -1,16 +1,18 @@
-var testNumber, testsOK;
-
-testNumber := 0;
-testsOK    := 0;
+class stateOfTests() {
+    static {
+        testNumber := 0;
+        testsOK    := 0;
+    }
+}
 
 tester := procedure(boolean, name) {
-    testNumber += 1;
+    stateOfTests.testNumber += 1;
 
     if (boolean) {
-        testsOK += 1;
-        printErr("test $testNumber$ successful ($name$)");
+        stateOfTests.testsOK += 1;
+        printErr("test $stateOfTests.testNumber$ successful ($name$)");
     } else {
-        printErr("test $testNumber$ failed ($name$)");
+        printErr("test $stateOfTests.testNumber$ failed ($name$)");
     }
 
     return boolean;
@@ -419,8 +421,8 @@ grammarTests();
 
 // ************************************************************************** \\
 
-printErr("\n$testsOK$ / $testNumber$ successful");
-if (testsOK == testNumber) {
+printErr("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
+if (stateOfTests.testsOK == stateOfTests.testNumber) {
     printErr("Everything is fine. Move along sir!");
 } else {
     printErr("Errors detected. Please fix them all.");

@@ -29,7 +29,11 @@
 // This SETL program was created by Hakan Kjellerstrand (hakank@bonetmail.com).
 // See also my SETL page: http://www.hakank.org/setl/
 
-var prime_hash;
+class state() {
+    static {
+        prime_hash := {};
+    }
+}
 
 p2 := procedure(a,b) {
   
@@ -44,7 +48,7 @@ p2 := procedure(a,b) {
 
 
 problem27 := procedure() {
-    prime_hash := {};
+    state.prime_hash := {};
 
     t := 999;
     bestLen := 0;

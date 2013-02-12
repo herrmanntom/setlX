@@ -1,14 +1,14 @@
 // this program demonstrates some object orientation features of setlX
 
-// create a constructor
-c := constructor(n) {
+// define class
+class c(n) {
     number := n;
 
     static {
         // overload '+' operator
         sum := [this, other]|-> number + other.number;
     }
-};
+}
 
 // create two objects
 a := c(5);

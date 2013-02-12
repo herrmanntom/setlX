@@ -431,7 +431,7 @@ public class StateImplementation extends State {
     @Override
     public void putAllValues(final VariableScope scope) throws IllegalRedefinitionException {
         for (final String key : classDefinitions.keySet()) {
-            if (classDefinitions.containsKey(key)) {
+            if (scope.locateValue(key, false) != null) {
                 throw new IllegalRedefinitionException(
                     "Redefinition of classes is not allowed."
                 );

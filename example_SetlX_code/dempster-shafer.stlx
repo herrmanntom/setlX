@@ -1,21 +1,18 @@
 // This program computes evidences using Dempster-Shafer theory
 
-// stores everything known about the possible offenders (see examples below)
-var data;
-
 // selects (names of) all offenders
 omega := procedure() {
-    return { row[1] : row in data };
+    return { row[1] : row in knowledge.data };
 };
 
 // select all offenders whose data in row i equals n
 selectEq := procedure(i, n) {
-    return { row[1] : row in data | row[i] == n };
+    return { row[1] : row in knowledge.data | row[i] == n };
 };
 
 // select all offenders whose data in row i is in the set/list n
 selectIn := procedure(i, n) {
-    return { row[1] : row in data | row[i] in n };
+    return { row[1] : row in knowledge.data | row[i] in n };
 };
 
 // adds evidences which are for the same set of offenders, but occur multiple times
@@ -108,16 +105,21 @@ nbrFormat := procedure(value) {
 /**                               first example                              **/
 /******************************************************************************/
 
-// all possible offenders
-data := {
-// name,    hight, age, hair color
- ["Tobias", 182,   30,  "brown" ],
- ["Ralf",   169,   55,  "black" ],
- ["Sabine", 195,   17,  "brown" ],
- ["Ulrike", 166,   61,  "gray"  ],
- ["Erna",   176,   41,  "blond" ],
- ["Frank",  181,   34,  "blond" ]
-};
+// stores everything known about the possible offenders (see examples below)
+class knowledge() {
+    static {
+        // all possible offenders
+        data := {
+            // name,   hight, age, hair color
+            ["Tobias", 182,   30,  "brown" ],
+            ["Ralf",   169,   55,  "black" ],
+            ["Sabine", 195,   17,  "brown" ],
+            ["Ulrike", 166,   61,  "gray"  ],
+            ["Erna",   176,   41,  "blond" ],
+            ["Frank",  181,   34,  "blond" ]
+        };
+    }
+}
 
 // first witness testifies offenders hair was "brown" or "black" and is 88% sure
 one := {[selectIn(4, {"brown", "black"}), 0.88], [omega(), 0.12]};
@@ -146,7 +148,7 @@ prettyPrint(oneTwoThree);
 print("-------------------------------------------------------------------------------");
 
 // all possible offenders
-data := {
+knowledge.data := {
 // name,    hair color, sex, age
  ["Alfons", "brown",    "m", 37],
  ["Klaus",  "black",    "m", 55],
@@ -183,3 +185,4 @@ prettyPrint(oneTwo);
 oneTwoThree := accumulate(oneTwo, three);
 
 prettyPrint(oneTwoThree);
+

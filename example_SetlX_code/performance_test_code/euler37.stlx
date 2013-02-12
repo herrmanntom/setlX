@@ -17,23 +17,15 @@
 // Also see my SETL page: http://www.hakank.org/setl/
 //
 
-// fix for version < 1.2.0
-if (reverse == om) {
-    reverse := procedure(a) {
-        ll := #a;
-        if (isString(a)) {
-            return +/[ a[i] : i in [ll,ll-1..1] ];
-        } else {
-            return [ a[i] : i in [ll,ll-1..1] ];
-        }
-    };
+class state() {
+    static {
+        prime_hash := {};
+    }
 }
-
-var prime_hash;
 
 is_prime := procedure(n) {
 
-    pp := prime_hash[n];
+    pp := state.prime_hash[n];
     if (pp != om) {
         return pp;
     }
@@ -47,18 +39,18 @@ is_prime := procedure(n) {
     }
 
     if (n % 2 == 0) {
-        prime_hash[n] := false;
+        state.prime_hash[n] := false;
         return(false);
     }
 
     for (i in [3, 5..round(sqrt(n))+1]) {
         if (n % i == 0) {
-            prime_hash[n] := false;
+            state.prime_hash[n] := false;
             return(false);
         }
     }
 
-    prime_hash[n] := true;
+    state.prime_hash[n] := true;
 
     return true;
 };
@@ -93,7 +85,7 @@ problem37 := procedure() {
     // so we start on 9
 
     // init the prime hash
-    prime_hash := {[1,false],[2,true],[3,true]};
+    state.prime_hash := {[1,false],[2,true],[3,true]};
 
     p := 7+2;
     sum := 0;
@@ -118,5 +110,5 @@ problem37 := procedure() {
 
 };
 
-
 problem37();
+

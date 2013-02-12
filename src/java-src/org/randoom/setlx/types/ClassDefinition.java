@@ -24,53 +24,53 @@ import java.util.List;
 
 /*
 grammar rule:
-objectConstructor
-    : 'constructor' '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
+classDefinition
+    : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
     ;
 
 implemented here as:
-                        ===================         =====               =====
-                            mParameters             mInit               mStatic
+                     ===================         =====               =====
+                         parameters            initBlock           staticBlock
 */
 
 public class ClassDefinition extends Value {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = "^constructor";
 
-    private final List<ParameterDef> mParameters; // parameter list
-    private final Block              mInit;       // statements in the body of the definition
-    private       Block              mStatic;     // statements in the static block
-    private       VariableScope      mStaticDefs; // definitions from static block
+    private final List<ParameterDef> parameters;  // parameter list
+    private final Block              initBlock;   // statements in the body of the definition
+    private       Block              staticBlock; // statements in the static block
+    private       VariableScope      staticDefs;  // definitions from static block
 
     public ClassDefinition(final List<ParameterDef> parameters,
-                                 final Block              init,
-                                 final Block              staticBlock
+                           final Block              init,
+                           final Block              staticBlock
     ) {
         this(parameters, init, staticBlock, null);
     }
 
     private ClassDefinition(final List<ParameterDef> parameters,
-                                 final Block              init,
-                                 final Block              staticBlock,
-                                 final VariableScope      staticDefs
+                            final Block              init,
+                            final Block              staticBlock,
+                            final VariableScope      staticDefs
     ) {
-        mParameters = parameters;
-        mInit       = init;
-        mStatic     = staticBlock;
-        mStaticDefs = staticDefs;
+        this.parameters  = parameters;
+        this.initBlock   = init;
+        this.staticBlock = staticBlock;
+        this.staticDefs  = staticDefs;
     }
 
     @Override
     public ClassDefinition clone() {
         Block staticBlock = null;
-        if (mStatic != null) {
-            staticBlock = mStatic.clone();
+        if (this.staticBlock != null) {
+            staticBlock = this.staticBlock.clone();
         }
         VariableScope staticDefs = null;
-        if (mStaticDefs != null) {
-            staticDefs = mStaticDefs.clone();
+        if (this.staticDefs != null) {
+            staticDefs = this.staticDefs.clone();
         }
-        return new ClassDefinition(mParameters, mInit, staticBlock, staticDefs);
+        return new ClassDefinition(parameters, initBlock, staticBlock, staticDefs);
     }
 
     /* Gather all bound and unbound variables in this value and its siblings
@@ -92,14 +92,14 @@ public class ClassDefinition extends Value {
         final List<Variable> innerUsedVariables    = new ArrayList<Variable>();
 
         // add all parameters to bound
-        for (final ParameterDef def : mParameters) {
+        for (final ParameterDef def : parameters) {
             def.collectVariablesAndOptimize(innerBoundVariables, innerBoundVariables, innerBoundVariables);
         }
 
-        mInit.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        initBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
 
-        if (mStatic != null) {
-            mStatic.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        if (staticBlock != null) {
+            staticBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
     }
 
@@ -108,10 +108,10 @@ public class ClassDefinition extends Value {
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         final int nArguments = args.size();
-        if (mParameters.size() != nArguments) {
+        if (parameters.size() != nArguments) {
             throw new IncorrectNumberOfParametersException(
                 "'" + this + "' is defined with a different number of parameters " +
-                "(" + mParameters.size() + ")."
+                "(" + parameters.size() + ")."
             );
         }
 
@@ -130,7 +130,7 @@ public class ClassDefinition extends Value {
         // put arguments into inner scope
         final int size = values.size();
         for (int i = 0; i < size; ++i) {
-            final ParameterDef param = mParameters.get(i);
+            final ParameterDef param = parameters.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
                 param.assign(state, values.get(i));
             } else {
@@ -138,7 +138,7 @@ public class ClassDefinition extends Value {
             }
         }
 
-        final WriteBackAgent wba         = new WriteBackAgent(mParameters.size());
+        final WriteBackAgent wba         = new WriteBackAgent(parameters.size());
         final boolean        stepThrough = state.isDebugStepThroughFunction;
 
         try {
@@ -148,12 +148,12 @@ public class ClassDefinition extends Value {
             }
 
             // execute, e.g. compute member definition
-            mInit.exec(state);
+            initBlock.exec(state);
 
             // extract 'rw' arguments from scope, store them into WriteBackAgent
             // and remove all parameters from scope
-            for (int i = 0; i < mParameters.size(); ++i) {
-                final ParameterDef param = mParameters.get(i);
+            for (int i = 0; i < parameters.size(); ++i) {
+                final ParameterDef param = parameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE) {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
@@ -168,15 +168,15 @@ public class ClassDefinition extends Value {
             }
 
             // compute static definition, if not already done
-            if (mStaticDefs == null) {
-                mStaticDefs = computeStaticDefinitions(state);
+            if (staticDefs == null) {
+                staticDefs = computeStaticDefinitions(state);
             }
 
             newScope.unlink();
             newScope.pruneOM();
-            newScope.linkToOriginalScope(mStaticDefs);
+            newScope.linkToOriginalScope(staticDefs);
 
-            return SetlObject.createNew(newScope, mStaticDefs);
+            return SetlObject.createNew(newScope, staticDefs);
 
         } finally { // make sure scope is always reset
             // restore old scope
@@ -203,8 +203,8 @@ public class ClassDefinition extends Value {
 
         try {
             // execute, e.g. compute static definition
-            if (mStatic != null) {
-                mStatic.exec(state);
+            if (staticBlock != null) {
+                staticBlock.exec(state);
             }
 
             newScope.unlink();
@@ -234,11 +234,11 @@ public class ClassDefinition extends Value {
 
     @Override
     public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
-        if (mStaticDefs == null) {
-            mStaticDefs = computeStaticDefinitions(state);
+        if (staticDefs == null) {
+            staticDefs = computeStaticDefinitions(state);
         }
         final VariableScope oldScope = state.getScope();
-        state.setScope(mStaticDefs);
+        state.setScope(staticDefs);
         try {
             return variable.eval(state);
         } finally {
@@ -248,13 +248,13 @@ public class ClassDefinition extends Value {
 
     @Override
     public void setObjectMember(final State state, final Variable variable, final Value value) throws IllegalRedefinitionException {
-        if (mStatic == null) {
-            mStatic = new Block();
+        if (staticBlock == null) {
+            staticBlock = new Block();
         }
-        mStatic.add(new ExpressionStatement(new Assignment(variable, new ValueExpr(value))));
-        if (mStaticDefs != null) {
+        staticBlock.add(new ExpressionStatement(new Assignment(variable, new ValueExpr(value))));
+        if (staticDefs != null) {
             final VariableScope oldScope = state.getScope();
-            state.setScope(mStaticDefs);
+            state.setScope(staticDefs);
             try {
                 variable.assignUncloned(state, value);
             } finally {
@@ -267,9 +267,18 @@ public class ClassDefinition extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        appendString(null, state, sb, tabs);
+    }
+
+    public void appendString(final String className, final State state, final StringBuilder sb, final int tabs) {
         final String endl = state.getEndl();
-        sb.append("constructor(");
-        final Iterator<ParameterDef> iter = mParameters.iterator();
+        sb.append("class");
+        if (className != null) {
+            sb.append(" ");
+            sb.append(className);
+        }
+        sb.append(" (");
+        final Iterator<ParameterDef> iter = parameters.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
@@ -278,12 +287,12 @@ public class ClassDefinition extends Value {
         }
         sb.append(") {");
         sb.append(endl);
-        mInit.appendString(state, sb, tabs + 1, /* brackets = */ false);
-        if (mStatic != null) {
+        initBlock.appendString(state, sb, tabs + 1, /* brackets = */ false);
+        if (staticBlock != null) {
             sb.append(endl);
             state.getLineStart(sb, tabs + 1);
             sb.append("static ");
-            mStatic.appendString(state, sb, tabs + 1, /* brackets = */ true);
+            staticBlock.appendString(state, sb, tabs + 1, /* brackets = */ true);
         }
         sb.append(endl);
         state.getLineStart(sb, tabs);
@@ -296,15 +305,15 @@ public class ClassDefinition extends Value {
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
-        final SetlList paramList = new SetlList(mParameters.size());
-        for (final ParameterDef param: mParameters) {
+        final SetlList paramList = new SetlList(parameters.size());
+        for (final ParameterDef param: parameters) {
             paramList.addMember(state, param.toTerm(state));
         }
         result.addMember(state, paramList);
 
-        result.addMember(state, mInit.toTerm(state));
-        if (mStatic != null) {
-            result.addMember(state, mInit.toTerm(state));
+        result.addMember(state, initBlock.toTerm(state));
+        if (staticBlock != null) {
+            result.addMember(state, initBlock.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
@@ -347,22 +356,22 @@ public class ClassDefinition extends Value {
             return 0;
         } else if (v instanceof ClassDefinition) {
             final ClassDefinition other = (ClassDefinition) v;
-            int cmp = mParameters.toString().compareTo(other.mParameters.toString());
+            int cmp = parameters.toString().compareTo(other.parameters.toString());
             if (cmp != 0) {
                 return cmp;
             }
-            cmp = mInit.toString().compareTo(other.mInit.toString());
+            cmp = initBlock.toString().compareTo(other.initBlock.toString());
             if (cmp != 0) {
                 return cmp;
             }
-            if (mStatic != null) {
-                if (other.mStatic != null) {
-                    return mStatic.toString().compareTo(other.mStatic.toString());
+            if (staticBlock != null) {
+                if (other.staticBlock != null) {
+                    return staticBlock.toString().compareTo(other.staticBlock.toString());
                 } else {
                     return 1;
                 }
             } else {
-                if (other.mStatic != null) {
+                if (other.staticBlock != null) {
                     return -1;
                 } else {
                     return 0;
@@ -391,9 +400,9 @@ public class ClassDefinition extends Value {
             return true;
         } else if (v instanceof ClassDefinition) {
             final ClassDefinition other = (ClassDefinition) v;
-            if (mParameters.toString().equals(other.mParameters.toString())) {
-                if (mInit.toString().equals(other.mInit.toString())) {
-                    return mStatic.toString().equals(other.mStatic.toString());
+            if (parameters.toString().equals(other.parameters.toString())) {
+                if (initBlock.toString().equals(other.initBlock.toString())) {
+                    return staticBlock.toString().equals(other.staticBlock.toString());
                 }
             }
         }

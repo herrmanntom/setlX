@@ -1,0 +1,72 @@
+class complex(real, imag) {
+    mReal := real;
+    mImag := imag;
+    
+  static {
+    f_str := this |-> this.mReal + " + " + this.mImag + " * i";
+
+    sum := 
+        [this, that] |-> complex(this.mReal + that.mReal, 
+                                 this.mImag + that.mImag);
+    difference := 
+        [this, that] |-> complex(mReal - that.mReal, 
+                                 mImag - that.mImag);
+    product := procedure(this, that) {
+        return complex(mReal * that.mReal - mImag * that.mImag,
+                       mReal * that.mImag + mImag * that.mReal);
+    };
+    quotient := procedure(this, that) {
+        denom := that.f_abs();
+        real  := (mReal * that.mReal + mImag * that.mImag) / denom;
+        imag  := (mImag * that.mReal - mReal * that.mImag) / denom;
+        return complex(real, imag);
+    };
+    power := procedure(this, that) {
+        return f_exp(that * f_log(this));
+    };
+    f_exp := procedure(this) {
+        r := exp(this.mReal);
+        return complex(r * cos(this.mImag), r * sin(this.mImag));
+    };
+    f_log := procedure(this) {
+        r := log(this.mReal * this.mReal + this.mImag * this.mImag) / 2; 
+        return complex(r, arg(this));
+    };
+    arg := procedure(this) {
+        pi  := mathConst("Pi");
+        if (this.mReal == 0 && this.mImag > 0) {
+            return pi/2;
+        } else if (this.mReal == 0 && this.mImag < 0) {
+            return -pi/2;
+        } else if (this.mReal > 0 && this.mImag == 0) {
+            return -pi;
+        }
+        if (this.mReal > 0) {
+            return atan(this.mImag / this.mReal);
+        } else if (this.mReal < 0 && this.mImag >= 0) {
+            return pi/2 - atan(this.mReal / this.mImag);
+        } else if (this.mReal < 0 && this.mImag < 0) {
+            return -pi/2 - atan(this.mReal / this.mImag);
+        } else {  // mReal == 0 && mImag == 0
+            return;  // returns omega
+        }   
+    };    
+    f_abs := this |-> sqrt(mReal * mReal + mImag * mImag);
+  }
+}
+
+x := complex(3,  4);
+y := complex(3, -4);
+
+print("$x$ + $y$ = $x + y$");
+print("$x$ - $y$ = $x - y$");
+print("($x$) * ($y$) = $x * y$");
+print("($x$) / ($y$) = $x / y$");
+print("($x$) ** ($y$) = $x ** y$");
+
+phi := complex(2/3, 1/2);
+for (i in [1..10]) {
+    n := complex(i, 0);
+    z := phi ** n;
+    print(z - z.f_log().f_exp());
+}

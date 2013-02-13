@@ -1,0 +1,93 @@
+// This class computes an exact solution to the traveling salesman problem.
+
+class tsp(coordinates) {
+    // The member-variable mCoordinates stores the catresian coordinates of the 
+    // as a list of pairs.  
+    mCoordinates := coordinates;  
+
+    // Solve the traveling salesman problem.
+    solve := procedure(this) {
+        clearCache(minCycle);
+        clearCache(distance);
+        return minCycle({2 .. #mCoordinates});
+    };
+
+    // Compute a path of minimal length that visits all nodes of the set s + {1}.
+    // The path has to start and end at node 1.  Inbetween, all the nodes of s are
+    // visited exactly once.  The node 1 must not to be an element of the set s.
+    minCycle := cachedProcedure(s) {
+        if (#s == 2) {
+            [b, c] := [x : x in s];
+            return [1,b,c,1];
+        }
+        minLength := mathConst("Infinity");
+        for (x in s) {
+            path    := connect(minCycle(s - {x}), x);
+            lengthP := pathLength(path);
+            if (lengthP < minLength) {
+                minLength := lengthP;
+                result    := path;
+            }
+        }
+        return result;
+    };
+
+    // Splice the vertex f into the cycle p so that the length of the new path
+    // as small as possible.
+    connect := procedure(p, f) {
+        n := #p;
+        minDist := mathConst("Infinity");
+        for (j in [1 .. n-1]) {
+            distJ := distance(p[j], f) + distance(f, p[j+1]) 
+                   - distance(p[j], p[j+1]); 
+            if (distJ < minDist) {
+                minIdx  := j;
+                minDist := distJ;
+            }
+        }
+        return p[..minIdx] + [f] + p[minIdx+1..];
+    };
+
+    pathLength := procedure(p) {
+        return +/ [ distance(p[i], p[i+1]) : i in [1 .. #p-1] ];
+    };
+
+    // Compute the distance between node j and node k.
+    distance := cachedProcedure(j, k) {
+        [xJ, yJ] := mCoordinates[j];
+        [xK, yK] := mCoordinates[k];
+        return sqrt((xJ - xK) ** 2 + (yJ - yK) ** 2);
+    };
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Code for testing.                                                          //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// The first line of the file contains the number n of vertices.  The next n 
+// lines of the file contain the x and y coordinates of these vertices.
+readProblem := procedure(file) {
+    lines       := readFile(file);
+    numberNodes := int(#lines);
+    coordinates := [ 0 : i in [1 .. numberNodes] ]; 
+    // compute edges
+    for (i in [1 .. numberNodes]) {
+        [x, y] := split(lines[i], " ");
+        coordinates[i] := [ real(x), real(y) ];
+    }
+    return coordinates;
+};
+
+testTSP := procedure(file) {
+    start   := now();
+    coords  := readProblem(file);
+    problem := tsp(coords);
+    tour    := problem.solve();
+    stop    := now();
+    print(tour);
+    // print("used $(stop - start) * 0.001$ seconds");
+};
+
+testTSP("tsp.stlx.input");

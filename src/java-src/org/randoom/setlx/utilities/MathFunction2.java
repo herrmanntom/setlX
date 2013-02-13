@@ -14,24 +14,27 @@ import java.util.List;
 
 // this class encapsulates functions from java.Math
 
-public class MathFunction extends PreDefinedFunction {
+public class MathFunction2 extends PreDefinedFunction {
     private final Method mFunction;
 
-    public MathFunction(final String name, final Method function) {
+    public MathFunction2(final String name, final Method function) {
         super(name);
         addParameter("x");
+        addParameter("y");
         mFunction = function;
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        if ( ! (args.get(0) instanceof NumberValue || args.get(0) instanceof SetlObject)) {
+        if ( ! (args.get(0) instanceof NumberValue || args.get(0) instanceof SetlObject) ||
+             ! (args.get(1) instanceof NumberValue || args.get(1) instanceof SetlObject)
+        ) {
             throw new IncompatibleTypeException(
-                "This function requires a single number as parameter."
+                "This function requires two numbers as parameters."
             );
         }
         try {
-            final double r = (Double) mFunction.invoke(null, args.get(0).toJDoubleValue(state));
+            final double r = (Double) mFunction.invoke(null, args.get(0).toJDoubleValue(state), args.get(1).toJDoubleValue(state));
             return Real.valueOf(r);
         } catch (final SetlException se) {
             throw se;

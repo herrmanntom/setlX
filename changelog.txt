@@ -1,5 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+ + added hypot(numberValue, numberValue) and atan2(numberValue, numberValue) functions
+
 ---v1.4.99999--- 2013-02-12
  + removed global definitions ('var')
  + changed class definition syntax

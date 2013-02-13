@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Value;
 
 import java.lang.reflect.Method;
@@ -24,7 +25,7 @@ public class MathFunction extends PreDefinedFunction {
 
     @Override
 	public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        if ( ! (args.get(0) instanceof NumberValue)) {
+        if ( ! (args.get(0) instanceof NumberValue || args.get(0) instanceof SetlObject)) {
             throw new IncompatibleTypeException(
                 "This function requires a single number as parameter."
             );

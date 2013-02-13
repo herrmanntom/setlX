@@ -16,7 +16,7 @@ class complex(real, imag) {
                        mReal * that.mImag + mImag * that.mReal);
     };
     quotient := procedure(this, that) {
-        denom := that.f_abs();
+        denom := that.mReal * that.mReal + this.mImag * this.mImag;
         real  := (mReal * that.mReal + mImag * that.mImag) / denom;
         imag  := (mImag * that.mReal - mReal * that.mImag) / denom;
         return complex(real, imag);
@@ -30,28 +30,8 @@ class complex(real, imag) {
     };
     f_log := procedure(this) {
         r := log(this.mReal * this.mReal + this.mImag * this.mImag) / 2; 
-        return complex(r, arg(this));
+        return complex(r, atan2(this.mImag, this.mReal));
     };
-    arg := procedure(this) {
-        pi  := mathConst("Pi");
-        if (this.mReal == 0 && this.mImag > 0) {
-            return pi/2;
-        } else if (this.mReal == 0 && this.mImag < 0) {
-            return -pi/2;
-        } else if (this.mReal > 0 && this.mImag == 0) {
-            return -pi;
-        }
-        if (this.mReal > 0) {
-            return atan(this.mImag / this.mReal);
-        } else if (this.mReal < 0 && this.mImag >= 0) {
-            return pi/2 - atan(this.mReal / this.mImag);
-        } else if (this.mReal < 0 && this.mImag < 0) {
-            return -pi/2 - atan(this.mReal / this.mImag);
-        } else {  // mReal == 0 && mImag == 0
-            return;  // returns omega
-        }   
-    };    
-    f_abs := this |-> sqrt(mReal * mReal + mImag * mImag);
   }
 }
 

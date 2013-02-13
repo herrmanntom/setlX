@@ -90,4 +90,4 @@ testTSP := procedure(file) {
     // print("used $(stop - start) * 0.001$ seconds");
 };
 
-testTSP("tsp.stlx.input");
+testTSP("tsp.data");

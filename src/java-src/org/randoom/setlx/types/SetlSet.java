@@ -652,7 +652,7 @@ public class SetlSet extends CollectionValue {
     /* term operations */
 
     @Override
-    public MatchResult matchesTerm(final State state, final Value otr) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final State state, final Value otr) throws SetlException {
         if (otr == IgnoreDummy.ID) {
             return new MatchResult(true);
         } else if ( ! (otr instanceof SetlSet)) {

@@ -679,7 +679,7 @@ public class SetlList extends IndexedCollectionValue {
     /* term operations */
 
     @Override
-    public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
         if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
         } else if ( ! (other instanceof SetlList || other instanceof SetlString)) {

@@ -1,7 +1,11 @@
 package org.randoom.setlx.types;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
@@ -24,7 +28,6 @@ import org.randoom.setlx.expressions.Quotient;
 import org.randoom.setlx.expressions.Sum;
 import org.randoom.setlx.expressions.SumOfMembersBinary;
 import org.randoom.setlx.expressions.ValueExpr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.functions.PD_abs;
 import org.randoom.setlx.functions.PD_arb;
 import org.randoom.setlx.functions.PD_args;
@@ -55,7 +58,6 @@ import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.VariableScope;
 
 /* This class implements a object which can store arbitrary SetlX values.
  * It will most likely be created by a ConstructorDefinition
@@ -81,24 +83,24 @@ public class SetlObject extends Value {
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
 
-    private           VariableScope mMembers;
-    private     final VariableScope mStaticDefinitions;
+    private           HashMap<String, Value> members;
+    private     final ClassDefinition        classDefinition;
     // is this object a clone
     private           boolean       isCloned;
 
-    private SetlObject(final VariableScope members, final VariableScope staticDefinitions) {
-        mMembers           = members;
-        mStaticDefinitions = staticDefinitions;
-        isCloned           = false; // new objects are not a clone
+    private SetlObject(final HashMap<String, Value> members, final ClassDefinition classDefinition) {
+        this.members         = members;
+        this.classDefinition = classDefinition;
+        isCloned             = false; // new objects are not a clone
     }
 
-    public static SetlObject createNew(final VariableScope members, final VariableScope staticDefinitions) {
-        return new SetlObject(members, staticDefinitions);
+    public static SetlObject createNew(final HashMap<String, Value> members, final ClassDefinition classDefinition) {
+        return new SetlObject(members, classDefinition);
     }
 
-    private static SetlObject createClone(final VariableScope members, final VariableScope staticDefinitions) {
-        final SetlObject result = new SetlObject(members, staticDefinitions);
-        result.isCloned = true;
+    private static SetlObject createClone(final HashMap<String, Value> members, final ClassDefinition classDefinition) {
+        final SetlObject result = new SetlObject(members, classDefinition);
+        result.isCloned         = true;
         return result;
     }
 
@@ -112,7 +114,7 @@ public class SetlObject extends Value {
          * modifications of THIS original would bleed through to the clones.
          */
         isCloned = true;
-        return createClone(mMembers, mStaticDefinitions);
+        return createClone(members, classDefinition);
     }
 
     /* If the contents of THIS SetlList is modified, the following function MUST
@@ -124,32 +126,32 @@ public class SetlObject extends Value {
      */
     private void separateFromOriginal() {
         if (isCloned) {
-            mMembers = mMembers.clone();
-            isCloned = false;
+            final HashMap<String, Value> members = new HashMap<String, Value>();
+            for (final Entry<String, Value> entry: this.members.entrySet()) {
+                members.put(entry.getKey(), entry.getValue().clone());
+            }
+            this.members  = members;
+            this.isCloned = false;
         }
     }
 
-    public VariableScope getScope() {
-        return mMembers;
-    }
-
-    private Value overload(final State    state,
-                           final Variable member
+    private Value overload(final State  state,
+                           final String member
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
         return overloadQuerry(state, member).call(state, args);
     }
 
-    private Value overload(final State    state,
-                           final Variable member,
-                           final Value    other
+    private Value overload(final State  state,
+                           final String member,
+                           final Value  other
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
         args.add(new ValueExpr(other));
         return overloadQuerry(state, member).call(state, args);
     }
 
-    private Value overloadQuerry(final State state, final Variable member) throws SetlException {
+    private Value overloadQuerry(final State state, final String member) throws SetlException {
         final Value function = getObjectMemberUnClonedUnSafe(state, member);
         if (function != Om.OM) {
             return function;
@@ -158,11 +160,11 @@ public class SetlObject extends Value {
             "Member '" + member + "' is undefined in '" + this + "'."
         );
     }
-    private static Variable createOverloadVariable(final String functionalCharacter) {
-        return new Variable(functionalCharacter.substring(1));
+    private static String createOverloadVariable(final String functionalCharacter) {
+        return functionalCharacter.substring(1);
     }
-    private static Variable createOverloadVariable(final PreDefinedFunction function) {
-        return new Variable("f_" + function.getName());
+    private static String createOverloadVariable(final PreDefinedFunction function) {
+        return "f_" + function.getName();
     }
 
     /* type checks (sort of boolean operation) */
@@ -185,7 +187,7 @@ public class SetlObject extends Value {
             return result;
         }
     }
-    final static Variable TO_INTEGER = createOverloadVariable(PD_int.DEFINITION);
+    final static String TO_INTEGER = createOverloadVariable(PD_int.DEFINITION);
 
     @Override
     public Value toRational(final State state) throws SetlException {
@@ -198,7 +200,7 @@ public class SetlObject extends Value {
             return result;
         }
     }
-    final static Variable TO_RATIONAL = createOverloadVariable(PD_rational.DEFINITION);
+    final static String TO_RATIONAL = createOverloadVariable(PD_rational.DEFINITION);
 
     @Override
     public Value toReal(final State state) throws SetlException {
@@ -211,7 +213,7 @@ public class SetlObject extends Value {
             return result;
         }
     }
-    final static Variable TO_REAL = createOverloadVariable(PD_real.DEFINITION);
+    final static String TO_REAL = createOverloadVariable(PD_real.DEFINITION);
 
     /* arithmetic operations */
 
@@ -219,13 +221,13 @@ public class SetlObject extends Value {
     public Value absoluteValue(final State state) throws SetlException {
         return overload(state, ABS);
     }
-    final static Variable ABS = createOverloadVariable(PD_abs.DEFINITION);
+    final static String ABS = createOverloadVariable(PD_abs.DEFINITION);
 
     @Override
     public Value ceil(final State state) throws SetlException {
         return overload(state, CEIL);
     }
-    final static Variable CEIL = createOverloadVariable(PD_ceil.DEFINITION);
+    final static String CEIL = createOverloadVariable(PD_ceil.DEFINITION);
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
@@ -234,19 +236,19 @@ public class SetlObject extends Value {
         }
         return overload(state, DIFFERENCE, subtrahend);
     }
-    final static Variable DIFFERENCE = createOverloadVariable(Difference.functionalCharacter());
+    final static String DIFFERENCE = createOverloadVariable(Difference.functionalCharacter());
 
     @Override
     public Value factorial(final State state) throws SetlException {
         return overload(state, FACTORIAL);
     }
-    final static Variable FACTORIAL = createOverloadVariable(Factorial.functionalCharacter());
+    final static String FACTORIAL = createOverloadVariable(Factorial.functionalCharacter());
 
     @Override
     public Value floor(final State state) throws SetlException {
         return overload(state, FLOOR);
     }
-    final static Variable FLOOR = createOverloadVariable(PD_floor.DEFINITION);
+    final static String FLOOR = createOverloadVariable(PD_floor.DEFINITION);
 
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
@@ -255,13 +257,13 @@ public class SetlObject extends Value {
         }
         return overload(state, INTEGER_DIVISON, divisor);
     }
-    final static Variable INTEGER_DIVISON = createOverloadVariable(IntegerDivision.functionalCharacter());
+    final static String INTEGER_DIVISON = createOverloadVariable(IntegerDivision.functionalCharacter());
 
     @Override
     public Value minus(final State state) throws SetlException {
         return overload(state, MINUS);
     }
-    final static Variable MINUS = createOverloadVariable(Minus.functionalCharacter());
+    final static String MINUS = createOverloadVariable(Minus.functionalCharacter());
 
     @Override
     public Value modulo(final State state, final Value modulo) throws SetlException {
@@ -270,7 +272,7 @@ public class SetlObject extends Value {
         }
         return overload(state, MODULO, modulo);
     }
-    final static Variable MODULO = createOverloadVariable(Modulo.functionalCharacter());
+    final static String MODULO = createOverloadVariable(Modulo.functionalCharacter());
 
     @Override
     public Value power(final State state, final Value exponent) throws SetlException {
@@ -279,7 +281,7 @@ public class SetlObject extends Value {
         }
         return overload(state, POWER, exponent);
     }
-    final static Variable POWER = createOverloadVariable(Power.functionalCharacter());
+    final static String POWER = createOverloadVariable(Power.functionalCharacter());
 
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
@@ -288,7 +290,7 @@ public class SetlObject extends Value {
         }
         return overload(state, PRODUCT, multiplier);
     }
-    final static Variable PRODUCT = createOverloadVariable(Product.functionalCharacter());
+    final static String PRODUCT = createOverloadVariable(Product.functionalCharacter());
     @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof Term) {
@@ -296,13 +298,13 @@ public class SetlObject extends Value {
         }
         return overload(state, QUOTIENT, divisor);
     }
-    final static Variable QUOTIENT = createOverloadVariable(Quotient.functionalCharacter());
+    final static String QUOTIENT = createOverloadVariable(Quotient.functionalCharacter());
 
     @Override
     public Value round(final State state) throws SetlException {
         return overload(state, ROUND);
     }
-    final static Variable ROUND = createOverloadVariable(PD_round.DEFINITION);
+    final static String ROUND = createOverloadVariable(PD_round.DEFINITION);
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
@@ -313,7 +315,7 @@ public class SetlObject extends Value {
         }
         return overload(state, SUM, summand);
     }
-    final static Variable SUM = createOverloadVariable(Sum.functionalCharacter());
+    final static String SUM = createOverloadVariable(Sum.functionalCharacter());
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 
@@ -321,19 +323,19 @@ public class SetlObject extends Value {
     public Value arbitraryMember(final State state) throws SetlException {
         return overload(state, ARB);
     }
-    final static Variable ARB = createOverloadVariable(PD_arb.DEFINITION);
+    final static String ARB = createOverloadVariable(PD_arb.DEFINITION);
 
     @Override
     public Value arguments(final State state) throws SetlException {
         return overload(state, ARGS);
     }
-    final static Variable ARGS = createOverloadVariable(PD_args.DEFINITION);
+    final static String ARGS = createOverloadVariable(PD_args.DEFINITION);
 
     @Override
     public Value cardinality(final State state) throws SetlException {
         return overload(state, CARDINALITY);
     }
-    final static Variable CARDINALITY = createOverloadVariable(Cardinality.functionalCharacter());
+    final static String CARDINALITY = createOverloadVariable(Cardinality.functionalCharacter());
 
     @Override
     public Value cartesianProduct(final State state, final Value other) throws SetlException {
@@ -342,7 +344,7 @@ public class SetlObject extends Value {
         }
         return overload(state, CARTESIAN_PRODUCT, other);
     }
-    final static Variable CARTESIAN_PRODUCT = createOverloadVariable(CartesianProduct.functionalCharacter());
+    final static String CARTESIAN_PRODUCT = createOverloadVariable(CartesianProduct.functionalCharacter());
 
     @Override
     public SetlBoolean containsMember(final State state, final Value element) throws SetlException {
@@ -355,161 +357,152 @@ public class SetlObject extends Value {
             return (SetlBoolean) result;
         }
     }
-    final static Variable CONTAINS_MEMBER = new Variable("containsMember");
+    final static String CONTAINS_MEMBER = "containsMember";
 
     @Override
     public Value domain(final State state) throws SetlException {
         return overload(state, DOMAIN);
     }
-    final static Variable DOMAIN = createOverloadVariable(PD_domain.DEFINITION);
+    final static String DOMAIN = createOverloadVariable(PD_domain.DEFINITION);
 
     @Override
     public Value firstMember(final State state) throws SetlException {
         return overload(state, FIRST);
     }
-    final static Variable FIRST = createOverloadVariable(PD_first.DEFINITION);
+    final static String FIRST = createOverloadVariable(PD_first.DEFINITION);
 
     @Override
     public Value functionalCharacter(final State state) throws SetlException {
         return overload(state, FCT);
     }
-    final static Variable FCT = createOverloadVariable(PD_fct.DEFINITION);
+    final static String FCT = createOverloadVariable(PD_fct.DEFINITION);
 
     @Override
     public Value join(final State state, final Value separator) throws SetlException {
         return overload(state, JOIN, separator);
     }
-    final static Variable JOIN = createOverloadVariable(PD_join.DEFINITION);
+    final static String JOIN = createOverloadVariable(PD_join.DEFINITION);
 
     @Override
     public Value lastMember(final State state) throws SetlException {
         return overload(state, LAST);
     }
-    final static Variable LAST = createOverloadVariable(PD_last.DEFINITION);
+    final static String LAST = createOverloadVariable(PD_last.DEFINITION);
 
     @Override
     public Value maximumMember(final State state) throws SetlException {
         return overload(state, MAX);
     }
-    final static Variable MAX = createOverloadVariable(PD_max.DEFINITION);
+    final static String MAX = createOverloadVariable(PD_max.DEFINITION);
 
     @Override
     public Value minimumMember(final State state) throws SetlException {
         return overload(state, MIN);
     }
-    final static Variable MIN = createOverloadVariable(PD_min.DEFINITION);
+    final static String MIN = createOverloadVariable(PD_min.DEFINITION);
 
     @Override
     public Value productOfMembers(final State state, final Value neutral) throws SetlException {
         return overload(state, PRODUCT_OF_MEMBERS, neutral);
     }
-    final static Variable PRODUCT_OF_MEMBERS = createOverloadVariable(ProductOfMembersBinary.functionalCharacter());
+    final static String PRODUCT_OF_MEMBERS = createOverloadVariable(ProductOfMembersBinary.functionalCharacter());
 
     @Override
     public Value nextPermutation(final State state) throws SetlException {
         return overload(state, NEXT_PERMUTATION);
     }
-    final static Variable NEXT_PERMUTATION = createOverloadVariable(PD_nextPermutation.DEFINITION);
+    final static String NEXT_PERMUTATION = createOverloadVariable(PD_nextPermutation.DEFINITION);
 
     @Override
     public Value permutations(final State state) throws SetlException {
         return overload(state, PERMUTATIONS);
     }
-    final static Variable PERMUTATIONS = createOverloadVariable(PD_permutations.DEFINITION);
+    final static String PERMUTATIONS = createOverloadVariable(PD_permutations.DEFINITION);
 
     @Override
     public Value powerSet(final State state) throws SetlException {
         return overload(state, POWER_SET);
     }
-    final static Variable POWER_SET = createOverloadVariable(PD_pow.DEFINITION);
+    final static String POWER_SET = createOverloadVariable(PD_pow.DEFINITION);
 
     @Override
     public Value range(final State state) throws SetlException {
         return overload(state, RANGE);
     }
-    final static Variable RANGE = createOverloadVariable(PD_range.DEFINITION);
+    final static String RANGE = createOverloadVariable(PD_range.DEFINITION);
 
     @Override
     public Value removeFirstMember(final State state) throws SetlException {
         return overload(state, REMOVE_FIRST);
     }
-    final static Variable REMOVE_FIRST = createOverloadVariable(PD_fromB.DEFINITION);
+    final static String REMOVE_FIRST = createOverloadVariable(PD_fromB.DEFINITION);
 
     @Override
     public Value removeLastMember(final State state) throws SetlException {
         return overload(state, REMOVE_LAST);
     }
-    final static Variable REMOVE_LAST = createOverloadVariable(PD_fromE.DEFINITION);
+    final static String REMOVE_LAST = createOverloadVariable(PD_fromE.DEFINITION);
 
     @Override
     public Value reverse(final State state) throws SetlException {
         return overload(state, REVERSE);
     }
-    final static Variable REVERSE = createOverloadVariable(PD_reverse.DEFINITION);
+    final static String REVERSE = createOverloadVariable(PD_reverse.DEFINITION);
 
     @Override
     public Value shuffle(final State state) throws SetlException {
         return overload(state, SHUFFLE);
     }
-    final static Variable SHUFFLE = createOverloadVariable(PD_shuffle.DEFINITION);
+    final static String SHUFFLE = createOverloadVariable(PD_shuffle.DEFINITION);
 
     @Override
     public Value sort(final State state) throws SetlException {
         return overload(state, SORT);
     }
-    final static Variable SORT = createOverloadVariable(PD_sort.DEFINITION);
+    final static String SORT = createOverloadVariable(PD_sort.DEFINITION);
 
     @Override
     public Value split(final State state, final Value pattern) throws SetlException {
         return overload(state, SPLIT, pattern);
     }
-    final static Variable SPLIT = createOverloadVariable(PD_split.DEFINITION);
+    final static String SPLIT = createOverloadVariable(PD_split.DEFINITION);
 
     @Override
     public Value sumOfMembers(final State state, final Value neutral) throws SetlException {
         return overload(state, SUM_OF_MEMBERS, neutral);
     }
-    final static Variable SUM_OF_MEMBERS = createOverloadVariable(SumOfMembersBinary.functionalCharacter());
+    final static String SUM_OF_MEMBERS = createOverloadVariable(SumOfMembersBinary.functionalCharacter());
 
     /* features of objects */
 
     @Override
-    public Value getObjectMember(final State state, final Variable variable) throws SetlException {
+    public Value getObjectMember(final State state, final String variable) throws SetlException {
         return getObjectMemberUnClonedUnSafe(state, variable).clone();
     }
 
     @Override
-    public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
+    public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {
         separateFromOriginal();
         return getObjectMemberUnClonedUnSafe(state, variable);
     }
 
-    private Value getObjectMemberUnClonedUnSafe(final State state, final Variable variable) {
-        final VariableScope oldScope = state.getScope();
-        state.setScope(mMembers);
-        try {
-            final Value value = variable.evaluate(state);
-            if (value instanceof ProcedureDefinition) {
-                final ProcedureDefinition proc = (ProcedureDefinition) value;
-                proc.addSurroundingObject(this);
-                proc.addClosure(null);
-            }
-            return value;
-        } finally {
-            state.setScope(oldScope);
+    private Value getObjectMemberUnClonedUnSafe(final State state, final String variable) throws SetlException {
+        Value result = members.get(variable);
+        if (result == null) {
+            result = classDefinition.getObjectMemberUnCloned(state, variable);
         }
+        if (result instanceof ProcedureDefinition) {
+            final ProcedureDefinition proc = (ProcedureDefinition) result;
+            proc.addSurroundingObject(this);
+            proc.addClosure(null);
+        }
+        return result;
     }
 
     @Override
-    public void setObjectMember(final State state, final Variable variable, final Value value) throws IllegalRedefinitionException {
+    public void setObjectMember(final State state, final String variable, final Value value) throws IllegalRedefinitionException {
         separateFromOriginal();
-        final VariableScope oldScope = state.getScope();
-        state.setScope(mMembers);
-        try {
-            variable.assignUncloned(state, value);
-        } finally {
-            state.setScope(oldScope);
-        }
+        members.put(variable, value);
     }
 
     /* function call */
@@ -518,21 +511,22 @@ public class SetlObject extends Value {
     public Value call(final State state, final List<Expr> args) throws SetlException {
         return overloadQuerry(state, CALL).call(state, args);
     }
-    final static Variable CALL = createOverloadVariable(Call.functionalCharacter());
+    final static String CALL = createOverloadVariable(Call.functionalCharacter());
 
     /* string and char operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        if (getObjectMemberUnClonedUnSafe(state, STR) != Om.OM) {
-            try {
+        try {
+            if (getObjectMemberUnClonedUnSafe(state, STR) != Om.OM) {
                 str(state).appendString(state, sb, tabs);
-            } catch (final SetlException e) {
-                sb.append("Error during execution of member '" + STR + "': " + e.getMessage());
+                return;
             }
-        } else {
-            canonical(state, sb, tabs);
+        } catch (final SetlException e) {
+            sb.append("Error during execution of member '" + STR + "': " + e.getMessage());
         }
+
+        canonical(state, sb, tabs);
     }
 
     @Override
@@ -542,9 +536,19 @@ public class SetlObject extends Value {
 
     private void canonical(final State state, final StringBuilder sb, final int tabs) {
         sb.append("object<{");
-        mMembers.appendString(state, sb, tabs);
+        final Iterator<Entry<String, Value>> iter = members.entrySet().iterator();
+        while (iter.hasNext()) {
+            final Entry<String, Value> entry = iter.next();
+            sb.append(entry.getKey());
+            sb.append(" := ");
+            entry.getValue().appendString(state, sb, tabs);
+            sb.append(";");
+            if (iter.hasNext()) {
+                sb.append(" ");
+            }
+        }
         sb.append(" static{");
-        mStaticDefinitions.appendString(state, sb, tabs);
+        classDefinition.appendString(state, sb, tabs);
         sb.append("} }>");
     }
 
@@ -552,7 +556,7 @@ public class SetlObject extends Value {
     public Value charConvert(final State state) throws SetlException {
         return overload(state, CHAR);
     }
-    final static Variable CHAR = createOverloadVariable(PD_char.DEFINITION);
+    final static String CHAR = createOverloadVariable(PD_char.DEFINITION);
 
     @Override
     public SetlString str(final State state) throws SetlException {
@@ -565,7 +569,7 @@ public class SetlObject extends Value {
             return (SetlString) result;
         }
     }
-    final static Variable STR = createOverloadVariable(PD_str.DEFINITION);
+    final static String STR = createOverloadVariable(PD_str.DEFINITION);
 
     /* term operations */
 
@@ -573,15 +577,9 @@ public class SetlObject extends Value {
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        mMembers.unlink();
+// TODO        result.addMember(state, members.toTerm(state, null));
 
-        result.addMember(state, mMembers.toTerm(state, null));
-
-        mStaticDefinitions.unlink();
-
-        result.addMember(state, mStaticDefinitions.toTerm(state, null));
-
-        mMembers.linkToOriginalScope(mStaticDefinitions);
+        result.addMember(state, classDefinition.toTerm(state));
 
         return result;
     }
@@ -590,10 +588,13 @@ public class SetlObject extends Value {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final VariableScope members           = VariableScope.valueToScope(term.firstMember());
-            final VariableScope staticDefinitions = VariableScope.valueToScope(term.lastMember());
-            members.linkToOriginalScope(staticDefinitions);
-            return createNew(members, staticDefinitions);
+ // TODO           final VariableScope members  = VariableScope.valueToScope(term.firstMember());
+//            final Value         classDef = TermConverter.valueTermToValue(term.lastMember());
+//            if (classDef instanceof ClassDefinition) {
+//                return createNew(members, (ClassDefinition) classDef);
+//            } else {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+//            }
         }
     }
 
@@ -610,11 +611,43 @@ public class SetlObject extends Value {
             return 0;
         } else if (v instanceof SetlObject) {
             final SetlObject other = (SetlObject) v;
-            final int cmp = mMembers.compareTo(other.mMembers);
+            int cmp = classDefinition.compareTo(other.classDefinition);
             if (cmp != 0) {
                 return cmp;
             }
-            return mStaticDefinitions.compareTo(other.mStaticDefinitions);
+
+            final Integer thisSize = members.size();
+            final Integer otherSize = other.members.size();
+            cmp = thisSize.compareTo(otherSize);
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            for (final Entry<String, Value> entry: members.entrySet()) {
+                final Value otherValue = other.members.get(entry.getKey());
+                if (otherValue != null) {
+                    cmp = entry.getValue().compareTo(otherValue);
+                    if (cmp != 0) {
+                        return cmp;
+                    }
+                } else {
+                    return 1;
+                }
+            }
+
+            for (final Entry<String, Value> entry: other.members.entrySet()) {
+                final Value thisValue = members.get(entry.getKey());
+                if (thisValue != null) {
+                    cmp = entry.getValue().compareTo(thisValue);
+                    if (cmp != 0) {
+                        return cmp;
+                    }
+                } else {
+                    return -1;
+                }
+            }
+
+            return 0;
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -638,8 +671,9 @@ public class SetlObject extends Value {
             return true;
         } else if (v instanceof SetlObject) {
             final SetlObject other = (SetlObject) v;
-            if (mMembers.equalTo(other.mMembers)) {
-                return mStaticDefinitions.equalTo(other.mStaticDefinitions);
+            if (classDefinition.equalTo(other.classDefinition)) {
+                return members.size() == other.members.size() &&
+                       members.entrySet().containsAll(other.members.entrySet());
             }
         }
         return false;
@@ -649,10 +683,10 @@ public class SetlObject extends Value {
 
     @Override
     public int hashCode() {
-        final int size = mMembers.size();
+        final int size = members.size();
         int hash = initHashCode + size;
         if (size >= 1) {
-            hash = hash * 31 + mMembers.hashCode();
+            hash = hash * 31 + members.hashCode();
         }
         return hash;
     }
@@ -668,7 +702,7 @@ public class SetlObject extends Value {
             return (SetlBoolean) result;
         }
     }
-    final static Variable IS_EQUAL_TO = new Variable("isEqualTo");
+    final static String IS_EQUAL_TO = "isEqualTo";
 
     /* this comparison is different than `this.compareTo(other) < 0' and should
        throw errors on seemingly incomparable types like `5 < TRUE'            */
@@ -683,6 +717,17 @@ public class SetlObject extends Value {
             return (SetlBoolean) result;
         }
     }
-    final static Variable IS_LESS_THAN = new Variable("isLessThan");
+    final static String IS_LESS_THAN = "isLessThan";
+
+    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+        classDefinition.collectBindings(result, restrictToFunctions);
+
+        for (final Map.Entry<String, Value> entry : members.entrySet()) {
+            final Value val = entry.getValue();
+            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
+                result.put(entry.getKey(), val);
+            }
+        }
+    }
 }
 

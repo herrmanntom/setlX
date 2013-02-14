@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Om;
@@ -12,9 +13,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 // This class collects the variable bindings and the function definitions in current scope.
 public class VariableScope {
@@ -95,17 +94,6 @@ public class VariableScope {
         mVarBindings.clear();
     }
 
-    public void pruneOM() {
-        Iterator<Map.Entry<String, Value>> iter = mVarBindings.entrySet().iterator();
-        while (iter.hasNext()) {
-            final Map.Entry<String, Value> entry = iter.next();
-            if (entry.getValue() == Om.OM) {
-                mVarBindings.remove(entry.getKey());
-                iter = mVarBindings.entrySet().iterator();
-            }
-        }
-    }
-
     public void unlink() {
         mObjectScope   = null;
         mOriginalScope = null;
@@ -127,7 +115,7 @@ public class VariableScope {
         return mVarBindings.size();
     }
 
-    /*package*/ Value locateValue(final String var, final boolean check) {
+    /*package*/ Value locateValue(final State state, final String var, final boolean check) throws SetlException {
         if (check&&var.length()==3&&var.charAt(1)==97&&var.charAt(2)==114&&var.charAt(0)==119) {
             final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
             return new SetlString(new String(v));
@@ -137,12 +125,12 @@ public class VariableScope {
             return v;
         }
         if (mObjectScope != null) {
-            v = mObjectScope.getScope().locateValue(var, false);
-            if (v != null && v != Om.OM) {
+            v = mObjectScope.getObjectMemberUnCloned(state, var);
+            if (v != Om.OM) {
                 return v;
             }
         }
-        if (mOriginalScope != null && (v = mOriginalScope.locateValue(var, false)) != null) {
+        if (mOriginalScope != null && (v = mOriginalScope.locateValue(state, var, false)) != null) {
             // found some value in outer scope
 
             // return nothing, if value is not allowed to be read from outer scopes
@@ -161,10 +149,10 @@ public class VariableScope {
     }
 
     // collect all bindings reachable from current scope (except global variables!)
-    /*package*/ void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
         if (mObjectScope != null) {
-            mObjectScope.getScope().collectBindings(result, false);
+            mObjectScope.collectBindings(result, restrictToFunctions);
         }
         if (mOriginalScope != null) {
             mOriginalScope.collectBindings(result, restrictToFunctions || mRestrictToFunctions);
@@ -196,7 +184,7 @@ public class VariableScope {
      * Return false if linked scope contained a different value under this variable,
      * true otherwise.
      */
-    /*package*/ boolean storeValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
+    /*package*/ boolean storeValueCheckUpTo(final State state, final String var, final Value value, final VariableScope outerScope) throws SetlException {
         VariableScope toCheck = mOriginalScope;
         while (toCheck != null && toCheck != outerScope) {
             final Value now = toCheck.mVarBindings.get(var);
@@ -212,11 +200,11 @@ public class VariableScope {
         }
         // also check in scopes of surrounding objects
         if (mObjectScope != null) {
-            final Value now = mObjectScope.getScope().locateValue(var, false);
-            if (now != null) { // already saved there
+            final Value now = mObjectScope.getObjectMemberUnCloned(state, var);
+            if (now != Om.OM) { // already saved there
                 if (now.equalTo(value)) {
                     return true;
-                } else if (now != Om.OM) {
+                } else {
                     return false;
                 }
             }
@@ -289,22 +277,6 @@ public class VariableScope {
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
     }
 
-    /* string and char operations */
-
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        final Iterator<Entry<String, Value>> iter = mVarBindings.entrySet().iterator();
-        while (iter.hasNext()) {
-            final Entry<String, Value> entry = iter.next();
-            sb.append(entry.getKey());
-            sb.append(" := ");
-            entry.getValue().appendString(state, sb, tabs);
-            sb.append(";");
-            if (iter.hasNext()) {
-                sb.append(" ");
-            }
-        }
-    }
-
     /* comparisons */
 
     public int compareTo(final VariableScope other) {
@@ -320,6 +292,16 @@ public class VariableScope {
         } else {
             return 1;
         }
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        } else if (other instanceof VariableScope) {
+            return this.equalTo((VariableScope) other);
+        }
+        return false;
     }
 
     public boolean equalTo(final VariableScope other) {

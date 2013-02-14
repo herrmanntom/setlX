@@ -1,6 +1,5 @@
 package org.randoom.setlx.types;
 
-import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -17,8 +16,11 @@ import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 // This class represents a definition of a constructor for objects
 
@@ -37,40 +39,57 @@ public class ClassDefinition extends Value {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = "^constructor";
 
-    private final List<ParameterDef> parameters;  // parameter list
-    private final Block              initBlock;   // statements in the body of the definition
-    private       Block              staticBlock; // statements in the static block
-    private       VariableScope      staticDefs;  // definitions from static block
+    private final List<ParameterDef>     parameters;  // parameter list
+    private final Block                  initBlock;   // statements in the body of the definition
+    private       List<Variable>         initVars;    // member variables defined in the body
+    private       Block                  staticBlock; // statements in the static block
+    private       List<Variable>         staticVars;  // variables defined in the static block
+    private       HashMap<String, Value> staticDefs;  // definitions from static block
 
     public ClassDefinition(final List<ParameterDef> parameters,
                            final Block              init,
                            final Block              staticBlock
     ) {
-        this(parameters, init, staticBlock, null);
+        this(parameters, init, null, staticBlock, null, null);
     }
 
-    private ClassDefinition(final List<ParameterDef> parameters,
-                            final Block              init,
-                            final Block              staticBlock,
-                            final VariableScope      staticDefs
+    private ClassDefinition(final List<ParameterDef>     parameters,
+                            final Block                  init,
+                            final List<Variable>         initVars,
+                            final Block                  staticBlock,
+                            final List<Variable>         staticVars,
+                            final HashMap<String, Value> staticDefs
     ) {
         this.parameters  = parameters;
         this.initBlock   = init;
+        this.initVars    = initVars;
         this.staticBlock = staticBlock;
+        this.staticVars  = staticVars;
         this.staticDefs  = staticDefs;
     }
 
     @Override
     public ClassDefinition clone() {
+        List<Variable> initVars = null;
+        if (this.initVars != null) {
+            initVars = new ArrayList<Variable>(this.initVars);
+        }
         Block staticBlock = null;
         if (this.staticBlock != null) {
             staticBlock = this.staticBlock.clone();
         }
-        VariableScope staticDefs = null;
-        if (this.staticDefs != null) {
-            staticDefs = this.staticDefs.clone();
+        List<Variable> staticVars = null;
+        if (this.staticVars != null) {
+            staticVars = new ArrayList<Variable>(this.staticVars);
         }
-        return new ClassDefinition(parameters, initBlock, staticBlock, staticDefs);
+        HashMap<String, Value> staticDefs = null;
+        if (this.staticDefs != null) {
+            staticDefs = new HashMap<String, Value>();
+            for (final Entry<String, Value> entry: this.staticDefs.entrySet()) {
+                staticDefs.put(entry.getKey(), entry.getValue().clone());
+            }
+        }
+        return new ClassDefinition(parameters, initBlock, initVars, staticBlock, staticVars, staticDefs);
     }
 
     /* Gather all bound and unbound variables in this value and its siblings
@@ -96,17 +115,34 @@ public class ClassDefinition extends Value {
             def.collectVariablesAndOptimize(innerBoundVariables, innerBoundVariables, innerBoundVariables);
         }
 
+        int preBound = innerBoundVariables.size();
         initBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        final List<Variable> initVars = new ArrayList<Variable>();
+        for (int i = preBound; i < innerBoundVariables.size(); ++i) {
+            initVars.add(innerBoundVariables.get(i));
+        }
 
+        preBound = innerBoundVariables.size();
         if (staticBlock != null) {
             staticBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
+        final List<Variable> staticVars = new ArrayList<Variable>();
+        for (int i = preBound; i < innerBoundVariables.size(); ++i) {
+            staticVars.add(innerBoundVariables.get(i));
+        }
+
+        this.initVars   = initVars;
+        this.staticVars = staticVars;
     }
 
     /* function call */
 
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
+        if (staticVars == null) {
+            optimize();
+        }
+
         final int nArguments = args.size();
         if (parameters.size() != nArguments) {
             throw new IncorrectNumberOfParametersException(
@@ -173,10 +209,17 @@ public class ClassDefinition extends Value {
             }
 
             newScope.unlink();
-            newScope.pruneOM();
-            newScope.linkToOriginalScope(staticDefs);
 
-            return SetlObject.createNew(newScope, staticDefs);
+            final HashMap<String, Value> members = new HashMap<String, Value>();
+
+            for (final Variable var : this.initVars) {
+                final Value value = var.evaluate(state);
+                if (value != Om.OM) {
+                    members.put(var.getID(), value.clone());
+                }
+            }
+
+            return SetlObject.createNew(members, this);
 
         } finally { // make sure scope is always reset
             // restore old scope
@@ -194,7 +237,11 @@ public class ClassDefinition extends Value {
         }
     }
 
-    private VariableScope computeStaticDefinitions(final State state) throws SetlException {
+    private HashMap<String, Value> computeStaticDefinitions(final State state) throws SetlException {
+        if (staticVars == null) {
+            optimize();
+        }
+
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the static definitions
@@ -208,9 +255,17 @@ public class ClassDefinition extends Value {
             }
 
             newScope.unlink();
-            newScope.pruneOM();
 
-            return newScope;
+            final HashMap<String, Value> staticDefs = new HashMap<String, Value>();
+
+            for (final Variable var : this.staticVars) {
+                final Value value = var.evaluate(state);
+                if (value != Om.OM) {
+                    staticDefs.put(var.getID(), value.clone());
+                }
+            }
+
+            return staticDefs;
 
         } finally { // make sure scope is always reset
             // restore old scope
@@ -228,38 +283,33 @@ public class ClassDefinition extends Value {
     /* features of objects */
 
     @Override
-    public Value getObjectMember(final State state, final Variable variable) throws SetlException {
+    public Value getObjectMember(final State state, final String variable) throws SetlException {
         return getObjectMemberUnCloned(state, variable).clone();
     }
 
     @Override
-    public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
+    public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {
         if (staticDefs == null) {
             staticDefs = computeStaticDefinitions(state);
         }
-        final VariableScope oldScope = state.getScope();
-        state.setScope(staticDefs);
-        try {
-            return variable.eval(state);
-        } finally {
-            state.setScope(oldScope);
+        final Value result = staticDefs.get(variable);
+        if (result != null) {
+            return result;
+        } else {
+            return Om.OM;
         }
     }
 
     @Override
-    public void setObjectMember(final State state, final Variable variable, final Value value) throws IllegalRedefinitionException {
+    public void setObjectMember(final State state, final String variable, final Value value) {
         if (staticBlock == null) {
             staticBlock = new Block();
         }
-        staticBlock.add(new ExpressionStatement(new Assignment(variable, new ValueExpr(value))));
+        final Variable var = new Variable(variable);
+        staticBlock.add(new ExpressionStatement(new Assignment(var, new ValueExpr(value))));
+        staticVars.add(var);
         if (staticDefs != null) {
-            final VariableScope oldScope = state.getScope();
-            state.setScope(staticDefs);
-            try {
-                variable.assignUncloned(state, value);
-            } finally {
-                state.setScope(oldScope);
-            }
+            staticDefs.put(variable, value);
         }
     }
 
@@ -414,6 +464,15 @@ public class ClassDefinition extends Value {
     @Override
     public int hashCode() {
         return initHashCode;
+    }
+
+    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+        for (final Map.Entry<String, Value> entry : staticDefs.entrySet()) {
+            final Value val = entry.getValue();
+            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
+                result.put(entry.getKey(), val);
+            }
+        }
     }
 
 }

@@ -31,24 +31,26 @@ public class MemberAccess extends AssignableExpression {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 2100;
 
-    private final Expr     mLhs;       // left hand side (Variable, Expr, CollectionAccess, etc)
-    private final Variable mMember;    // member to access
+    private final Expr     lhs;      // left hand side (Variable, Expr, CollectionAccess, etc)
+    private final Variable member;   // member to access
+    private final String   memberID; // member to access
 
     public MemberAccess(final Expr lhs, final Variable member) {
-        mLhs       = lhs;
-        mMember    = member;
+        this.lhs      = lhs;
+        this.member   = member;
+        this.memberID = member.getID();
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).getObjectMemberUnCloned(state, mMember);
+        return lhs.eval(state).getObjectMemberUnCloned(state, memberID);
     }
 
     @Override
     /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
-        if (mLhs instanceof AssignableExpression) {
-            final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
-            return lhs.getObjectMemberUnCloned(state, mMember);
+        if (this.lhs instanceof AssignableExpression) {
+            final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
+            return lhs.getObjectMemberUnCloned(state, memberID);
         } else {
             throw new IncompatibleTypeException(
                 "\"" + this + "\" is unusable for list assignment."
@@ -69,15 +71,15 @@ public class MemberAccess extends AssignableExpression {
         final List<Variable> unboundVariables,
         final List<Variable> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     // sets this expression to the given value
     @Override
     public void assignUncloned(final State state, final Value v) throws SetlException {
-        if (mLhs instanceof AssignableExpression) {
-            final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
-            lhs.setObjectMember(state, mMember, v);
+        if (this.lhs instanceof AssignableExpression) {
+            final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
+            lhs.setObjectMember(state, memberID, v);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + this + " := " + v + "\" is unusable for member assignment."
@@ -89,9 +91,9 @@ public class MemberAccess extends AssignableExpression {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(".");
-        mMember.appendString(state, sb, tabs);
+        sb.append(memberID);
     }
 
     /* term operations */
@@ -99,8 +101,8 @@ public class MemberAccess extends AssignableExpression {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mMember.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, member.toTerm(state));
         return result;
     }
 

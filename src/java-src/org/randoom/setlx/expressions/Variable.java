@@ -1,6 +1,7 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -49,12 +50,12 @@ public class Variable extends AssignableExpression {
     }
 
     @Override
-    public Value evaluate(final State state) {
+    public Value evaluate(final State state) throws SetlException {
         return state.findValue(mId);
     }
 
     @Override
-    /*package*/ Value evaluateUnCloned(final State state) {
+    /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
         return evaluate(state);
     }
 
@@ -90,7 +91,7 @@ public class Variable extends AssignableExpression {
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v' */
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) throws SetlException {
         return state.putValueCheckUpTo(mId, v, outerScope);
     }
 
@@ -99,6 +100,10 @@ public class Variable extends AssignableExpression {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(mId);
+    }
+
+    public String getID() {
+        return mId;
     }
 
     /* term operations */

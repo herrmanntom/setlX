@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Om;
@@ -354,12 +355,12 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public Value findValue(final String var) {
+    public Value findValue(final String var) throws SetlException {
         Value v = classDefinitions.get(var);
         if (v != null) {
             return v;
         }
-        v = mVariableScope.locateValue(var, true);
+        v = mVariableScope.locateValue(this, var, true);
         if (v == null) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedFunction.class.getPackage().getName();
@@ -413,7 +414,7 @@ public class StateImplementation extends State {
      * true otherwise.
      */
     @Override
-    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) {
+    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) throws SetlException {
         final Value now = classDefinitions.get(var);
         if (now != null) {
             if (now.equalTo(value)) {
@@ -422,16 +423,16 @@ public class StateImplementation extends State {
                 return false;
             }
         }
-        return mVariableScope.storeValueCheckUpTo(var, value, outerScope);
+        return mVariableScope.storeValueCheckUpTo(this, var, value, outerScope);
     }
 
     // Add bindings stored in `scope' into current scope.
     // This also adds vars in outer scopes of `scope' until reaching the current
     // scope as outer scope of `scope'.
     @Override
-    public void putAllValues(final VariableScope scope) throws IllegalRedefinitionException {
+    public void putAllValues(final VariableScope scope) throws SetlException {
         for (final String key : classDefinitions.keySet()) {
-            if (scope.locateValue(key, false) != null) {
+            if (scope.locateValue(this, key, false) != null) {
                 throw new IllegalRedefinitionException(
                     "Redefinition of classes is not allowed."
                 );

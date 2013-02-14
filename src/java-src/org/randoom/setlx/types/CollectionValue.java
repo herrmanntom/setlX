@@ -178,6 +178,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     /* term operations */
 
     @Override
-    public abstract MatchResult     matchesTerm(final State state, final Value other) throws IncompatibleTypeException;
+    public abstract MatchResult     matchesTerm(final State state, final Value other) throws SetlException;
 }
 

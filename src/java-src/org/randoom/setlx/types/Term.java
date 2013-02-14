@@ -490,7 +490,7 @@ public class Term extends IndexedCollectionValue {
     /* term operations */
 
     @Override
-    public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
         if ( mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) ||
                 ( other instanceof Term &&
                   ((Term) other).mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER)

@@ -22,7 +22,7 @@ class complex(real, imag) {
         return complex(real, imag);
     };
     power := procedure(this, that) {
-        return f_exp(that * f_log(this));
+        return (that * f_log()).f_exp();
     };
     f_exp := procedure(this) {
         r := exp(this.mReal);

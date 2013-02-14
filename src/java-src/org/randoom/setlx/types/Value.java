@@ -557,19 +557,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* features of objects */
 
-    public Value getObjectMember(final State state, final Variable variable) throws SetlException {
+    public Value getObjectMember(final State state, final String variable) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
         );
     }
 
-    public Value getObjectMemberUnCloned(final State state, final Variable variable) throws SetlException {
+    public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
         );
     }
 
-    public void setObjectMember(final State state, final Variable variable, final Value value) throws IncompatibleTypeException, IllegalRedefinitionException {
+    public void setObjectMember(final State state, final String variable, final Value value) throws IncompatibleTypeException, IllegalRedefinitionException {
         throw new IncompatibleTypeException(
             "Can not add member '" + variable + "' into operand; '" + this + "' is not an object."
         );
@@ -616,7 +616,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* term operations */
 
-    public MatchResult matchesTerm(final State state, final Value other) throws IncompatibleTypeException {
+    public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
         if (other == IgnoreDummy.ID || this.equalTo(other)) {
             return new MatchResult(true);
         } else {

@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -107,7 +108,7 @@ public abstract class State {
 
     public abstract void                resetState();
 
-    public abstract Value               findValue(final String var);
+    public abstract Value               findValue(final String var) throws SetlException;
 
     public abstract void                putValue(final String var, final Value value) throws IllegalRedefinitionException;
 
@@ -117,12 +118,12 @@ public abstract class State {
      * Return false if linked scope contained a different value under this variable,
      * true otherwise.
      */
-    public abstract boolean             putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope);
+    public abstract boolean             putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) throws SetlException;
 
     // Add bindings stored in `scope' into current scope.
     // This also adds vars in outer scopes of `scope' until reaching the current
     // scope as outer scope of `scope'.
-    public abstract void                putAllValues(final VariableScope scope) throws IllegalRedefinitionException;
+    public abstract void                putAllValues(final VariableScope scope) throws SetlException;
 
     public abstract void                putClassDefinition(final String var, final ClassDefinition classDef);
 

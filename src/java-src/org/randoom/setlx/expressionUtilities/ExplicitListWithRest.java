@@ -108,7 +108,7 @@ public class ExplicitListWithRest extends CollectionBuilder {
         collection.addMember(state, result);
     }
 
-    public static MatchResult matchTerm(final State state, final Term elwRTerm, final CollectionValue collection) throws IncompatibleTypeException {
+    public static MatchResult matchTerm(final State state, final Term elwRTerm, final CollectionValue collection) throws SetlException {
         final String fc = elwRTerm.functionalCharacter().getUnquotedString();
         if (fc.equals(FUNCTIONAL_CHARACTER) && elwRTerm.size() == 2 && elwRTerm.firstMember() instanceof SetlList) {
             final SetlList terms = (SetlList) elwRTerm.firstMember();

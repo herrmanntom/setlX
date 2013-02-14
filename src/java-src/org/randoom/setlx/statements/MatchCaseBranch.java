@@ -1,6 +1,5 @@
 package org.randoom.setlx.statements;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
@@ -52,7 +51,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     }
 
     @Override
-    public MatchResult matches(final State state, final Value term) throws IncompatibleTypeException {
+    public MatchResult matches(final State state, final Value term) throws SetlException {
         if (mExprs.size() > mTerms.size()) {
             for (final Expr expr: mExprs) {
                 mTerms.add(expr.toTerm(state));

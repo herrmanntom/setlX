@@ -568,9 +568,9 @@ public class SetlObject extends Value {
                 sb.append(" ");
             }
         }
-        sb.append(" static{");
+        sb.append(" ");
         classDefinition.appendString(state, sb, tabs);
-        sb.append("} }>");
+        sb.append(" }>");
     }
 
     @Override

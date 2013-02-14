@@ -301,7 +301,7 @@ public class ClassDefinition extends Value {
     }
 
     @Override
-    public void setObjectMember(final State state, final String variable, final Value value) {
+    public void setObjectMember(final String variable, final Value value) {
         if (staticBlock == null) {
             staticBlock = new Block();
         }

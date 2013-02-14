@@ -25,23 +25,27 @@ public class MathFunction extends PreDefinedFunction {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        if ( ! (args.get(0) instanceof NumberValue || args.get(0) instanceof SetlObject)) {
-            throw new IncompatibleTypeException(
-                "This function requires a single number as parameter."
-            );
+        final Value arg = args.get(0);
+        if (arg instanceof NumberValue) {
+            try {
+                final double r = (Double) mFunction.invoke(null, arg.toJDoubleValue(state));
+                return Real.valueOf(r);
+            } catch (final SetlException se) {
+                throw se;
+            } catch (final Exception e) {
+                throw new JVMException(
+                    "Error during calling a predefined mathematical function.\n" +
+                    "This is probably a bug in the interpreter.\n" +
+                    "Please report it including executed source example."
+                );
+            }
+        } else if (arg instanceof SetlObject) {
+            return ((SetlObject) arg).overloadMathFunction(state, getName());
         }
-        try {
-            final double r = (Double) mFunction.invoke(null, args.get(0).toJDoubleValue(state));
-            return Real.valueOf(r);
-        } catch (final SetlException se) {
-            throw se;
-        } catch (final Exception e) {
-            throw new JVMException(
-                "Error during calling a predefined mathematical function.\n" +
-                "This is probably a bug in the interpreter.\n" +
-                "Please report it including executed source example."
-            );
-        }
+
+        throw new IncompatibleTypeException(
+            "This function requires a single number as parameter."
+        );
     }
 }
 

@@ -23,7 +23,6 @@ print();
 // also overload '!' operator in object `a'; note 'rw' and prefix of `this.' is required for write access
 a.factorial := procedure(rw this) { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache;};
 
-print();
 print("a == $a$");
 print("a! == $a!$");
 print("a == $a$");

@@ -1,13 +1,5 @@
 package org.randoom.setlx.types;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -58,6 +50,13 @@ import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.utilities.State;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /* This class implements a object which can store arbitrary SetlX values.
  * It will most likely be created by a ConstructorDefinition
@@ -142,6 +141,12 @@ public class SetlObject extends Value {
         return overloadQuerry(state, member).call(state, args);
     }
 
+    public Value overloadMathFunction(final State  state,
+                                      final String functionName
+    ) throws SetlException {
+        return overload(state, "f_" + functionName);
+    }
+
     private Value overload(final State  state,
                            final String member,
                            final Value  other
@@ -149,6 +154,13 @@ public class SetlObject extends Value {
         final ArrayList<Expr> args = new ArrayList<Expr>();
         args.add(new ValueExpr(other));
         return overloadQuerry(state, member).call(state, args);
+    }
+
+    public Value overloadMathFunction(final State  state,
+                                      final String functionName,
+                                      final Value  other
+    ) throws SetlException {
+        return overload(state, "f_" + functionName, other);
     }
 
     private Value overloadQuerry(final State state, final String member) throws SetlException {
@@ -486,6 +498,15 @@ public class SetlObject extends Value {
         return getObjectMemberUnClonedUnSafe(state, variable);
     }
 
+    public boolean isObjectMemberDefinied(final String variable) {
+        final Value val = members.get(variable);
+        if (val != null && val != Om.OM) {
+            return true;
+        } {
+            return false;
+        }
+    }
+
     private Value getObjectMemberUnClonedUnSafe(final State state, final String variable) throws SetlException {
         Value result = members.get(variable);
         if (result == null) {
@@ -500,7 +521,7 @@ public class SetlObject extends Value {
     }
 
     @Override
-    public void setObjectMember(final State state, final String variable, final Value value) throws IllegalRedefinitionException {
+    public void setObjectMember(final String variable, final Value value) {
         separateFromOriginal();
         members.put(variable, value);
     }

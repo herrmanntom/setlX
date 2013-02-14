@@ -22,7 +22,7 @@ class complex(real, imag) {
         return complex(real, imag);
     };
     power := procedure(this, that) {
-        return (that * f_log()).f_exp();
+        return exp(that * log(this));
     };
     f_exp := procedure(this) {
         r := exp(this.mReal);
@@ -48,5 +48,5 @@ phi := complex(2/3, 1/2);
 for (i in [1..10]) {
     n := complex(i, 0);
     z := phi ** n;
-    print(z - z.f_log().f_exp());
+    print(z - exp(log(z)));
 }

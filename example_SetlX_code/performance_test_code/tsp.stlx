@@ -1,8 +1,8 @@
 // This class computes an exact solution to the traveling salesman problem.
 
 class tsp(coordinates) {
-    // The member-variable mCoordinates stores the catresian coordinates of the 
-    // as a list of pairs.
+    // The member variable mCoordinates stores the cartesian coordinates of the 
+    // vertices as a list of pairs.
     mCoordinates := coordinates;
 
     // Solve the traveling salesman problem.
@@ -34,7 +34,7 @@ class tsp(coordinates) {
     };
 
     // Splice the vertex f into the cycle p so that the length of the new path
-    // as small as possible.
+    // is as small as possible.
     connect := procedure(this, p, f) {
         n := #p;
         minDist := mathConst("Infinity");

@@ -1,0 +1,87 @@
+// Compute the strongly connected components of a graph with nodeCount
+// nodes.  The graph is given via the adjacency lists in edges. The
+// parameter reverse contains the adjacency lists of the reverse graph.
+class kosarajuSCC(nodeCount, edges, reverse) {
+    mNodeCount := nodeCount;
+    mEdges     := edges;
+    mReverse   := reverse;
+    mMarked    := [ false : _ in [1 .. mNodeCount] ]; 
+    mSccId     := [    -1 : _ in [1 .. mNodeCount] ];
+    mCount     := 0;
+    
+    scc := procedure(rw this) {
+        for (v in topologicalSort(mReverse)) {
+            if (!mMarked[v]) {
+                this.mCount += 1;  // new scc found
+                dfs(v);
+            }
+        }
+        sccList := [ [] : _ in [1 .. mCount] ];
+        for (v in [1 .. mNodeCount]) {
+            sccList[mSccId[v]] += [ v ];
+        }
+        return sccList;
+    };
+    // depth first search starting from node v
+    dfs := procedure(rw this, v) {
+        mMarked[v] := true;
+        mSccId [v] := mCount;
+        for (w in mEdges[v]) {
+            if (!mMarked[w]) {
+                dfs(w);
+            }
+        }
+    };
+    topologicalSort := procedure(this, edges) {
+        stack  := [];
+        marked := [ false : _ in [1 .. mNodeCount] ];
+        for (v in [1 .. mNodeCount]) {
+            if (!marked[v]) {
+                topologicalDFS(v, edges, marked, stack);
+            }
+        }
+        return stack;
+    };
+    topologicalDFS := procedure(this, v, edges, rw marked, rw stack) {
+        marked[v] := true;
+        for (w in edges[v]) {
+            if (!marked[w]) {
+                topologicalDFS(w, edges, marked, stack);
+            }
+        }
+        stack := [ v ] + stack;
+    };
+    getCount := procedure(this) {
+        return mCount;
+    };
+}
+
+// Read a graph and compute the adjacency lists of the graph and of the reverse graph.
+readGraph := procedure(file) {
+    lines  := readFile(file);
+    [numberNodes, numberEdges] := split(lines[1], " ");
+    n := int(numberNodes);
+    m := int(numberEdges);
+    edges   := [ [] : _ in [1 .. n] ]; 
+    reverse := [ [] : _ in [1 .. n] ]; 
+    // fill adjacency lists
+    for (i in [1 .. m]) {
+        [x, y] := split(lines[i+1], " ");
+        nodeX  := int(x);
+        nodeY  := int(y);
+        edges  [nodeX] += [ nodeY ];
+        reverse[nodeY] += [ nodeX ];
+    }
+    return [n, edges, reverse];
+};
+
+testSCC := procedure(file) {
+    [n, e, r] := readGraph(file);
+    sccId := kosarajuSCC(n, e, r);
+    sccId.scc();
+    print("number of strongly connected components in $file$ is $sccId.getCount()$");
+};
+
+testSCC("kosarajuSCC.data");
+
+

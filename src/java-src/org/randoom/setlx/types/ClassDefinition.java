@@ -138,6 +138,11 @@ public class ClassDefinition extends Value {
             optimize();
         }
 
+        // compute static definition, if not already done
+        if (staticDefs == null) {
+            staticDefs = computeStaticDefinitions(state);
+        }
+
         final int nArguments = args.size();
         if (parameters.size() != nArguments) {
             throw new IncorrectNumberOfParametersException(
@@ -183,11 +188,6 @@ public class ClassDefinition extends Value {
         }
 
         try {
-
-            // compute static definition, if not already done
-            if (staticDefs == null) {
-                staticDefs = computeStaticDefinitions(state);
-            }
 
             // execute, e.g. compute member definition
             initBlock.exec(state);

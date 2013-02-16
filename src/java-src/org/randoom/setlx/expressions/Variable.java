@@ -72,7 +72,7 @@ public class Variable extends AssignableExpression {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        if (boundVariables.contains(this)) {
+        if (boundVariables.contains(mId)) {
             usedVariables.add(mId);
         } else {
             unboundVariables.add(mId);

@@ -167,11 +167,11 @@ public class VariableScope {
     }
 
     /*package*/ void storeValue(final String var, final Value value) {
-        if ( ! mWriteThrough || mVarBindings.get(var) != null) {
+        if ( ! mWriteThrough && mObjectScope != null && mObjectScope.isObjectMemberDefinied(var)) {
+            mObjectScope.setObjectMember(var, value);
+        } else if ( ! mWriteThrough || mVarBindings.get(var) != null) {
             // this scope does not allow write through or variable is actually stored here
             mVarBindings.put(var, value);
-        } else if ( ! mWriteThrough && mObjectScope != null && mObjectScope.isObjectMemberDefinied(var)) {
-            mObjectScope.setObjectMember(var, value);
         } else if (mWriteThrough          && // allowed to write into mOriginalScope
                    mOriginalScope != null && // mOriginalScope exists
                    ( ! mRestrictToFunctions || value instanceof ProcedureDefinition) // not restricted

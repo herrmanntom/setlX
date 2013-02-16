@@ -191,31 +191,31 @@ public class Scan extends Statement {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* The Variable in this statement get assigned temporarily.
            Collect it into a temporary list and remove it again before returning. */
-        final List<Variable> tempAssigned = new ArrayList<Variable>();
+        final List<String> tempAssigned = new ArrayList<String>();
         if (mPosVar != null) {
-            mPosVar.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
+            mPosVar.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }
         final int preBound = boundVariables.size();
         boundVariables.addAll(tempAssigned);
 
         // binding inside an scan are only valid if present in all branches
         // and last branch is an default-branch
-        List<Variable> boundHere = null;
+        List<String> boundHere = null;
         for (final MatchAbstractBranch br : mBranchList) {
-            final List<Variable> boundTmp = new ArrayList<Variable>(boundVariables);
+            final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
-                boundHere = new ArrayList<Variable>(boundTmp.subList(preBound, boundTmp.size()));
+                boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
             } else {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }

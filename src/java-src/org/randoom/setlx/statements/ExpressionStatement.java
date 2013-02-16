@@ -2,7 +2,6 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
@@ -53,9 +52,9 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }

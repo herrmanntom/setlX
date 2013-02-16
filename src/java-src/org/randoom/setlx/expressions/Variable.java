@@ -38,7 +38,7 @@ public class Variable extends AssignableExpression {
      *      }
      */
 
-    public  final static Variable PREVENT_OPTIMIZATION_DUMMY    = new Variable("@123456789*%%");
+    public  final static String   PREVENT_OPTIMIZATION_DUMMY    = "@123456789*%%";
 
     // precedence level in SetlX-grammar
     private final static int      PRECEDENCE                    = 9999;
@@ -68,14 +68,14 @@ public class Variable extends AssignableExpression {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         if (boundVariables.contains(this)) {
-            usedVariables.add(this);
+            usedVariables.add(mId);
         } else {
-            unboundVariables.add(this);
+            unboundVariables.add(mId);
         }
     }
 

@@ -3,7 +3,6 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ReturnMessage;
@@ -68,9 +67,9 @@ public class QuotientAssignment extends StatementWithPrintableResult {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         // first we evaluate lhs and rhs as usual
         mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);

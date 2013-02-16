@@ -67,9 +67,9 @@ public class MemberAccess extends AssignableExpression {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }

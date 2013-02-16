@@ -36,9 +36,9 @@ public class ValueExpr extends Expr {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) { /* nothing to collect */ }
 
     /* string operations */

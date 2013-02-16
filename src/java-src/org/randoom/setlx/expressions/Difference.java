@@ -48,9 +48,9 @@ public class Difference extends Expr {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);

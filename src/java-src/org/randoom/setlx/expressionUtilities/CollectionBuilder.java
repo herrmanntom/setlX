@@ -3,7 +3,6 @@ package org.randoom.setlx.expressionUtilities;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.Om;
@@ -30,9 +29,9 @@ public abstract class CollectionBuilder extends CodeFragment {
     */
     @Override
     public abstract void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     );
 
     // sets the variables used to construct this list to the variables from the

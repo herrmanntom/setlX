@@ -77,9 +77,9 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         // add all variables found to bound by not suppliying unboundVariables
         // as this expression is now used in an assignment

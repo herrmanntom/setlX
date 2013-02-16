@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
@@ -45,7 +44,7 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
     private CachedProcedureDefinition(
         final List<ParameterDef>                      parameters,
         final Block                                   statements,
-        final HashMap<Variable, Value>                closure,
+        final HashMap<String, Value>                  closure,
         final HashMap<SetlList, SoftReference<Value>> cache,
         final int                                     cacheHits
     ) {

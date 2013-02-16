@@ -59,9 +59,9 @@ public class ParameterDef extends CodeFragment {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mVar.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }

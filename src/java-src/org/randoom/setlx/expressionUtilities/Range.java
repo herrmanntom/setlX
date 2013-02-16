@@ -3,7 +3,6 @@ package org.randoom.setlx.expressionUtilities;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlString;
@@ -61,9 +60,9 @@ public class Range extends CollectionBuilder {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mStart.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         if (mSecond != null) {

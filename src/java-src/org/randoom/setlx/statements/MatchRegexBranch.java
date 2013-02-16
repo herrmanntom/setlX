@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -190,18 +189,18 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mPattern.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<Variable> tempAssigned = new ArrayList<Variable>();
+        final List<String> tempAssigned = new ArrayList<String>();
         if (mAssignTo != null) {
-            mAssignTo.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
+            mAssignTo.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }
 
         final int preIndex = boundVariables.size();

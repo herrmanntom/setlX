@@ -2,7 +2,6 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -53,21 +52,21 @@ public class IfThen extends Statement {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         // binding inside an if-then-else are only valid if present in all branches
         // and last branch is an else-branch
         final int      preBound  = boundVariables.size();
-        List<Variable> boundHere = null;
+        List<String> boundHere = null;
         for (final IfThenAbstractBranch br : mBranchList) {
-            final List<Variable> boundTmp = new ArrayList<Variable>(boundVariables);
+            final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
-                boundHere = new ArrayList<Variable>(boundTmp.subList(preBound, boundTmp.size()));
+                boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
             } else {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }

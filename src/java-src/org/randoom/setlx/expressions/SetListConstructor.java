@@ -71,9 +71,9 @@ public class SetListConstructor extends Expr {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         if (mBuilder != null) {
             mBuilder.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);

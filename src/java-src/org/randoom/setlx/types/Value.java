@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
@@ -27,9 +26,9 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     */
     @Override
     public void collectVariablesAndOptimize (
-      final List<Variable> boundVariables,
-      final List<Variable> unboundVariables,
-      final List<Variable> usedVariables
+      final List<String> boundVariables,
+      final List<String> unboundVariables,
+      final List<String> usedVariables
     ) {
         /* nothing to collect */
     }

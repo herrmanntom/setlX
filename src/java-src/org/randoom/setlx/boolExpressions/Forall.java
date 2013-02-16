@@ -69,9 +69,9 @@ public class Forall extends Expr {
         */
         @Override
         public void collectVariablesAndOptimize (
-            final List<Variable> boundVariables,
-            final List<Variable> unboundVariables,
-            final List<Variable> usedVariables
+            final List<String> boundVariables,
+            final List<String> unboundVariables,
+            final List<String> usedVariables
         ) {
             mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
@@ -102,9 +102,9 @@ public class Forall extends Expr {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mIterator.collectVariablesAndOptimize(new Exec(mCondition), boundVariables, unboundVariables, usedVariables);
 

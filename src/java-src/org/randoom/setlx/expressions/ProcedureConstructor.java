@@ -11,7 +11,6 @@ import org.randoom.setlx.utilities.State;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /*
 grammar rule:
@@ -31,7 +30,7 @@ public class ProcedureConstructor extends Expr {
     private final static int          PRECEDENCE           = 9999;
 
     private final ProcedureDefinition mDefinition;
-    private       Set<Variable>       mClosureVariables;
+    private       HashSet<String>     mClosureVariables;
 
     public ProcedureConstructor(final ProcedureDefinition definition) {
         mDefinition       = definition;
@@ -44,15 +43,15 @@ public class ProcedureConstructor extends Expr {
             this.optimize();
         }
         if (! mClosureVariables.isEmpty()) {
-            final HashMap<Variable, Value> closure = new HashMap<Variable, Value>();
-            for (final Variable var : mClosureVariables) {
-                if (var.getID().equals("this")) {
+            final HashMap<String, Value> closure = new HashMap<String, Value>();
+            for (final String var : mClosureVariables) {
+                if (var.equals("this")) {
                     continue;
                 }
-                final Value val = var.eval(state);
+                final Value val = state.findValue(var);
                 if (val != Om.OM) {
                     if (val instanceof PreDefinedFunction &&
-                       var.getID().equals(((PreDefinedFunction)val).getName())
+                       var.equals(((PreDefinedFunction)val).getName())
                     ) {
                         // skip predefined Functions bound to their name
                     } else {
@@ -78,15 +77,15 @@ public class ProcedureConstructor extends Expr {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         final int preUnbound = unboundVariables.size();
         final int preUsed    = usedVariables.size();
         mDefinition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        final HashSet<Variable> closureVariables = new HashSet<Variable>();
+        final HashSet<String> closureVariables = new HashSet<String>();
         closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
         closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
         mClosureVariables = closureVariables;

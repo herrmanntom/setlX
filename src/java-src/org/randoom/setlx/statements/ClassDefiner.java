@@ -2,7 +2,6 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -51,11 +50,11 @@ public class ClassDefiner extends Statement {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
-        boundVariables.add(new Variable(name));
+        boundVariables.add(name);
         classDefinition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 

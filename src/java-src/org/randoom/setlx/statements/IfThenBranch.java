@@ -3,7 +3,6 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
@@ -59,9 +58,9 @@ public class IfThenBranch extends IfThenAbstractBranch {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);

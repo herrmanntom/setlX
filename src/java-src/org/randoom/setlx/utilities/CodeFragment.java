@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
@@ -13,15 +12,15 @@ public abstract class CodeFragment {
           - unbound means "not present in bound set when used"
           - used    means "present in bound set when used" */
     protected abstract void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     );
 
     public final void optimize() {
-        final List<Variable> boundVariables   = new ArrayList<Variable>();
-        final List<Variable> unboundVariables = new ArrayList<Variable>();
-        final List<Variable> usedVariables    = new ArrayList<Variable>();
+        final List<String> boundVariables   = new ArrayList<String>();
+        final List<String> unboundVariables = new ArrayList<String>();
+        final List<String> usedVariables    = new ArrayList<String>();
         collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 

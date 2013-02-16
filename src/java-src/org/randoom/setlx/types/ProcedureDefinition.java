@@ -41,20 +41,20 @@ public class ProcedureDefinition extends Value {
     // count how often procedures where executed before checking to replace the stack
     private       static int      nrOfCalls            = 0;
 
-    protected final List<ParameterDef>       mParameters;  // parameter list
-    protected final Block                    mStatements;  // statements in the body of the definition
-    protected       HashMap<Variable, Value> mClosure;     // variables and values used in closure
-    protected       SetlObject               mObject;      // surrounding object for next call
+    protected final List<ParameterDef>     mParameters;  // parameter list
+    protected final Block                  mStatements;  // statements in the body of the definition
+    protected       HashMap<String, Value> mClosure;     // variables and values used in closure
+    protected       SetlObject             mObject;      // surrounding object for next call
 
     public ProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
         this(parameters, statements, null);
     }
 
-    protected ProcedureDefinition(final List<ParameterDef> parameters, final Block statements, final HashMap<Variable, Value> closure) {
+    protected ProcedureDefinition(final List<ParameterDef> parameters, final Block statements, final HashMap<String, Value> closure) {
         mParameters = parameters;
         mStatements = statements;
         if (closure != null) {
-            mClosure = new HashMap<Variable, Value>(closure);
+            mClosure = new HashMap<String, Value>(closure);
         } else {
             mClosure = null;
         }
@@ -75,7 +75,7 @@ public class ProcedureDefinition extends Value {
         }
     }
 
-    public void setClosure(final HashMap<Variable, Value> closure) {
+    public void setClosure(final HashMap<String, Value> closure) {
         mClosure = closure;
     }
 
@@ -92,14 +92,14 @@ public class ProcedureDefinition extends Value {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         /* first collect and optimize the inside */
-        final List<Variable> innerBoundVariables   = new ArrayList<Variable>();
-        final List<Variable> innerUnboundVariables = new ArrayList<Variable>();
-        final List<Variable> innerUsedVariables    = new ArrayList<Variable>();
+        final List<String> innerBoundVariables   = new ArrayList<String>();
+        final List<String> innerUnboundVariables = new ArrayList<String>();
+        final List<String> innerUsedVariables    = new ArrayList<String>();
 
         // add all parameters to bound
         for (final ParameterDef def : mParameters) {
@@ -112,7 +112,7 @@ public class ProcedureDefinition extends Value {
 
         // upon defining this procedure, all variables which are unbound inside
         // will be read to create the closure for this procedure
-        for (final Variable var : innerUnboundVariables) {
+        for (final String var : innerUnboundVariables) {
             if (var == Variable.PREVENT_OPTIMIZATION_DUMMY) {
                 continue;
             } else if (boundVariables.contains(var)) {
@@ -171,8 +171,8 @@ public class ProcedureDefinition extends Value {
 
         // assign closure contents
         if (mClosure != null) {
-            for (final Map.Entry<Variable, Value> entry : mClosure.entrySet()) {
-                entry.getKey().assignUnclonedCheckUpTo(state, entry.getValue(), oldScope);
+            for (final Map.Entry<String, Value> entry : mClosure.entrySet()) {
+                new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, entry.getValue(), oldScope);
             }
         }
 
@@ -256,8 +256,8 @@ public class ProcedureDefinition extends Value {
 
             // read closure variables and update their current state
             if (mClosure != null) {
-                for (final Map.Entry<Variable, Value> entry : mClosure.entrySet()) {
-                    entry.setValue(entry.getKey().eval(state));
+                for (final Map.Entry<String, Value> entry : mClosure.entrySet()) {
+                    entry.setValue(state.findValue(entry.getKey()));
                 }
             }
 

@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressionUtilities.Iterator;
 import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -63,9 +62,9 @@ public class For extends Statement {
         */
         @Override
         public void collectVariablesAndOptimize (
-            final List<Variable> boundVariables,
-            final List<Variable> unboundVariables,
-            final List<Variable> usedVariables
+            final List<String> boundVariables,
+            final List<String> unboundVariables,
+            final List<String> usedVariables
         ) {
             if (mCondition != null) {
                 mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
@@ -106,9 +105,9 @@ public class For extends Statement {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mIterator.collectVariablesAndOptimize(mExec, boundVariables, unboundVariables, usedVariables);
     }

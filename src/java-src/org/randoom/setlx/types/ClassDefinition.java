@@ -17,6 +17,7 @@ import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +42,9 @@ public class ClassDefinition extends Value {
 
     private final List<ParameterDef>     parameters;  // parameter list
     private final Block                  initBlock;   // statements in the body of the definition
-    private       List<Variable>         initVars;    // member variables defined in the body
+    private       HashSet<String>        initVars;    // member variables defined in the body
     private       Block                  staticBlock; // statements in the static block
-    private       List<Variable>         staticVars;  // variables defined in the static block
+    private       HashSet<String>        staticVars;  // variables defined in the static block
     private       HashMap<String, Value> staticDefs;  // definitions from static block
 
     public ClassDefinition(final List<ParameterDef> parameters,
@@ -55,9 +56,9 @@ public class ClassDefinition extends Value {
 
     private ClassDefinition(final List<ParameterDef>     parameters,
                             final Block                  init,
-                            final List<Variable>         initVars,
+                            final HashSet<String>        initVars,
                             final Block                  staticBlock,
-                            final List<Variable>         staticVars,
+                            final HashSet<String>        staticVars,
                             final HashMap<String, Value> staticDefs
     ) {
         this.parameters  = parameters;
@@ -70,17 +71,17 @@ public class ClassDefinition extends Value {
 
     @Override
     public ClassDefinition clone() {
-        List<Variable> initVars = null;
+        HashSet<String> initVars = null;
         if (this.initVars != null) {
-            initVars = new ArrayList<Variable>(this.initVars);
+            initVars = new HashSet<String>(this.initVars);
         }
         Block staticBlock = null;
         if (this.staticBlock != null) {
             staticBlock = this.staticBlock.clone();
         }
-        List<Variable> staticVars = null;
+        HashSet<String> staticVars = null;
         if (this.staticVars != null) {
-            staticVars = new ArrayList<Variable>(this.staticVars);
+            staticVars = new HashSet<String>(this.staticVars);
         }
         HashMap<String, Value> staticDefs = null;
         if (this.staticDefs != null) {
@@ -101,14 +102,14 @@ public class ClassDefinition extends Value {
     */
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         /* collect and optimize the inside */
-        final List<Variable> innerBoundVariables   = new ArrayList<Variable>();
-        final List<Variable> innerUnboundVariables = new ArrayList<Variable>();
-        final List<Variable> innerUsedVariables    = new ArrayList<Variable>();
+        final List<String> innerBoundVariables   = new ArrayList<String>();
+        final List<String> innerUnboundVariables = new ArrayList<String>();
+        final List<String> innerUsedVariables    = new ArrayList<String>();
 
         // add all parameters to bound
         for (final ParameterDef def : parameters) {
@@ -117,13 +118,13 @@ public class ClassDefinition extends Value {
 
         int preBound = innerBoundVariables.size();
         initBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
-        final List<Variable> initVars = new ArrayList<Variable>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+        final HashSet<String> initVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
         preBound = innerBoundVariables.size();
         if (staticBlock != null) {
             staticBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
-        final List<Variable> staticVars = new ArrayList<Variable>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+        final HashSet<String> staticVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
         this.initVars   = initVars;
         this.staticVars = staticVars;
@@ -249,16 +250,16 @@ public class ClassDefinition extends Value {
         }
     }
 
-    private HashMap<String, Value> extractBindings(final State state, final List<Variable> vars) throws SetlException {
+    private HashMap<String, Value> extractBindings(final State state, final HashSet<String> vars) throws SetlException {
         final HashMap<String, Value> bindings = new HashMap<String, Value>();
 
-        for (final Variable var : vars) {
-            final Value value = var.evaluate(state);
+        for (final String var : vars) {
+            final Value value = state.findValue(var);
             if (value instanceof ProcedureDefinition) {
                 ((ProcedureDefinition) value).setClosure(null);
             }
             if (value != Om.OM) {
-                bindings.put(var.getID(), value.clone());
+                bindings.put(var, value.clone());
             }
         }
         return bindings;
@@ -301,7 +302,7 @@ public class ClassDefinition extends Value {
         }
         final Variable var = new Variable(variable);
         staticBlock.add(new ExpressionStatement(new Assignment(var, new ValueExpr(value))));
-        staticVars.add(var);
+        staticVars.add(var.getID());
         if (staticDefs != null) {
             staticDefs.put(variable, value);
         }

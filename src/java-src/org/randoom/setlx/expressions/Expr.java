@@ -39,7 +39,7 @@ public abstract class Expr extends CodeFragment {
 
     protected abstract Value evaluate(final State state) throws SetlException;
 
-    protected void calculateReplacement(final List<Variable> unboundVariables) {
+    protected void calculateReplacement(final List<String> unboundVariables) {
         if (mReplacement == null) {
             try {
                 // bubble state which is not connected to anything useful
@@ -91,18 +91,18 @@ public abstract class Expr extends CodeFragment {
              sub-expressions
     */
     protected abstract void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     );
 
     /* Gather variables and optimize this expression by setting replacement value
        for this expression, if this can be safely done */
     @Override
     public final void collectVariablesAndOptimize(
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         if (mReplacement != null) {
             // already optimized, no variables are needed during execution
@@ -125,8 +125,8 @@ public abstract class Expr extends CodeFragment {
             }
             // or if all used variables are not prebound
             else {
-                final List<Variable> prebound     = boundVariables.subList(0, preBoundSize);
-                final List<Variable> usedHere     = new ArrayList<Variable>(usedVariables.subList(preUsedSize, usedVariables.size()));
+                final List<String> prebound     = boundVariables.subList(0, preBoundSize);
+                final List<String> usedHere     = new ArrayList<String>(usedVariables.subList(preUsedSize, usedVariables.size()));
                 final int            usedHereSize = usedHere.size();
 
                 // check if any prebound variables could have been used

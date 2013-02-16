@@ -3,7 +3,6 @@ package org.randoom.setlx.boolExpressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.State;
@@ -50,9 +49,9 @@ public class Equal extends Expr {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);

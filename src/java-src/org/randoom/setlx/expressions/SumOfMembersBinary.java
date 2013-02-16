@@ -48,9 +48,9 @@ public class SumOfMembersBinary extends Expr {
     */
     @Override
     protected void collectVariables (
-        final List<Variable> boundVariables,
-        final List<Variable> unboundVariables,
-        final List<Variable> usedVariables
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         mCollection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         mNeutral.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);

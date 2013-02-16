@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -93,17 +92,17 @@ public class Iterator extends CodeFragment {
     */
     public void collectVariablesAndOptimize (
         final IteratorExecutionContainer container,
-        final List<Variable>             boundVariables,
-        final List<Variable>             unboundVariables,
-        final List<Variable>             usedVariables
+        final List<String>             boundVariables,
+        final List<String>             unboundVariables,
+        final List<String>             usedVariables
     ) {
         mCollection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<Variable> tempAssigned = new ArrayList<Variable>();
-        mAssignable.collectVariablesAndOptimize(new ArrayList<Variable>(), tempAssigned, tempAssigned);
+        final List<String> tempAssigned = new ArrayList<String>();
+        mAssignable.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempAssigned);
@@ -121,9 +120,9 @@ public class Iterator extends CodeFragment {
     }
     @Override
     public void collectVariablesAndOptimize (
-        final List<Variable>             boundVariables,
-        final List<Variable>             unboundVariables,
-        final List<Variable>             usedVariables
+        final List<String>             boundVariables,
+        final List<String>             unboundVariables,
+        final List<String>             usedVariables
     ) {
         throw new UnsupportedOperationException("Iterators can only be optimized together with their execution container.");
     }

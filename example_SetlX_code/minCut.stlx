@@ -1,0 +1,126 @@
+// Compute the minimum gut of a given graph using the algorithm of Stoer and 
+// Wagner.  The graph is given via the adjacency lists in edges. 
+class stoerWagnerMinCut(edges) {
+    mNodeCount := #edges;
+    mEdges     := edges;
+    // mEquivNodes[i] is the list of all nodes that have been merged with 
+    // the node i either directly or indirectly.
+    mEquivNodes := [ [ i ] : i in [1 .. mNodeCount] ];
+
+    // This procedure computes the minimum cut of the given graph.  The result
+    // is returned as a pair of the form [d, s] where s is one set of the cut
+    // and d is the number of edges crossing the boundary of s.
+    minCut := procedure(this) {
+        if (mNodeCount == 2) {
+            s := { x : x in mEquivNodes[1] };
+            t := arb({ x in {2 .. #mEdges} | !(x in s) });
+            return [countEdges(s, t), s];
+        }
+        s  := { 1 };
+        q  := { [1, v] : v in mEdges[1] };  // used as priority queue
+        qf := { [v, 1] : v in mEdges[1] };  // used to look up distances
+        for (i in [1 .. mNodeCount-1]) {
+            [cutNumber, v] := last(q);
+            equivV := { x : x in mEquivNodes[v] };
+            lastS  := s;
+            s += equivV;
+            updateQueue(q, qf, equivV);
+            neighbours := adjacent(v, s);
+            updateDistances(neighbours, s, q, qf);
+            vPrev := vLast;
+            vLast := v;
+        }
+        merge(vPrev, vLast);
+        [ c, s ] := minCut();
+        if (c < cutNumber) {
+            return [c, s];
+        }
+        return [cutNumber, lastS];
+    };
+
+    // The variable nodeset is a set of nodes that are added to the queue q.
+    updateQueue := procedure(this, rw q, rw qf, nodeSet) {
+        for (v in nodeSet) {
+            dist := qf[v];
+            if (dist != om) {
+                q  -= { [dist, v] };
+                qf -= { [v, dist] };
+            }
+        }
+    };
+
+    // update the distances of all elements in the queue q and in qf
+    updateDistances := procedure(this, neighbours, s, rw q, rw qf) {
+        for (x in neighbours) {
+            dNew := countEdges(s, x);
+            dOld := qf[x];
+            if (dOld != om) {
+                q  -= { [dOld, x] };
+                qf -= { [x, dOld] };
+            }
+            q  += { [dNew, x] };
+            qf += { [x, dNew] };
+        }
+    };
+
+    // Compute all nodes adjacent to the node v that are not in s. If there 
+    // are nodes equivalent to v, the nodes adjacent to these nodes are also 
+    // returned.
+    adjacent := procedure(this, v, s) {
+        sEquiv := { y : x in s, y in mEquivNodes[x] };
+        return +/ { { y in mEdges[x] | !(y in sEquiv) } : x in mEquivNodes[v] };
+    };
+
+    // This procedure computes the number of edges connecting the set s with
+    // the node v.
+    countEdges := procedure(this, s, v) {
+        return +/ [ countEdgesSingle(s, e) : e in mEquivNodes[v] ];
+    };
+
+    countEdgesSingle := procedure(this, s, v) {
+        neighbours := { y : y in mEdges[v] };
+        count := #{ x in s | x in neighbours };
+        return count;
+    };
+    
+    // This procedure merges the nodes x and y.  The edges are updated in order 
+    // to eliminate self loops.
+    merge := procedure(this, x, y) {
+        s := mEquivNodes[x];
+        t := mEquivNodes[y];
+        a := s + t;
+        b := { x : x in a };
+        for (n in a) {
+            mEdges[n] := [ x in mEdges[n] | !(x in b) ];
+        }
+        for (n in a) {
+            mEquivNodes[n] := a;
+        }
+        mNodeCount -= 1;
+    };
+}
+
+// Read a graph and compute the adjacency lists of the graph and of the reverse graph.
+readGraph := procedure(file) {
+    lines := readFile(file);
+    n     := #lines;
+    edges := [ {} : _ in [1 .. n] ]; 
+    // fill adjacency lists
+    for (i in [1 .. n]) {
+        numbers := split(lines[i], " ");
+        edges[i] := [ int(x) : x in numbers | int(x) != i ];
+    }
+    return edges;
+};
+
+testSCC := procedure(file) {
+    edges := readGraph(file);
+    graph := stoerWagnerMinCut(edges);
+    [d, c] := graph.minCut();
+    print("value of minimum cut in $file$ is $d$");
+    print("minimum cut: $c$");
+};
+
+testSCC("minCut.data");
+
+

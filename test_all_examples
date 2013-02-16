@@ -159,7 +159,12 @@ while read -r -d $'\0' path
         done
         if [ $threadID -lt 0 ]
           then
-            sleep 1
+            if [ $(which usleep > /dev/null 2>&1; echo $?) -eq 0 ]
+              then
+                usleep 100000
+            else
+                sleep 1
+            fi
         fi
     done
 

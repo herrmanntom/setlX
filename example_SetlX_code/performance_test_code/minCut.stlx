@@ -10,7 +10,7 @@ class stoerWagnerMinCut(edges) {
     // This procedure computes the minimum cut of the given graph.  The result
     // is returned as a pair of the form [d, s] where s is one set of the cut
     // and d is the number of edges crossing the boundary of s.
-    minCut := procedure(this) {
+    minCut := procedure() {
         if (mNodeCount == 2) {
             s := { x : x in mEquivNodes[1] };
             t := arb({ x in {2 .. #mEdges} | !(x in s) });
@@ -39,7 +39,7 @@ class stoerWagnerMinCut(edges) {
     };
 
     // The variable nodeset is a set of nodes that are added to the queue q.
-    updateQueue := procedure(this, rw q, rw qf, nodeSet) {
+    updateQueue := procedure(rw q, rw qf, nodeSet) {
         for (v in nodeSet) {
             dist := qf[v];
             if (dist != om) {
@@ -50,7 +50,7 @@ class stoerWagnerMinCut(edges) {
     };
 
     // update the distances of all elements in the queue q and in qf
-    updateDistances := procedure(this, neighbours, s, rw q, rw qf) {
+    updateDistances := procedure(neighbours, s, rw q, rw qf) {
         for (x in neighbours) {
             dNew := countEdges(s, x);
             dOld := qf[x];
@@ -66,18 +66,18 @@ class stoerWagnerMinCut(edges) {
     // Compute all nodes adjacent to the node v that are not in s. If there 
     // are nodes equivalent to v, the nodes adjacent to these nodes are also 
     // returned.
-    adjacent := procedure(this, v, s) {
+    adjacent := procedure(v, s) {
         sEquiv := { y : x in s, y in mEquivNodes[x] };
         return +/ { { y in mEdges[x] | !(y in sEquiv) } : x in mEquivNodes[v] };
     };
 
     // This procedure computes the number of edges connecting the set s with
     // the node v.
-    countEdges := procedure(this, s, v) {
+    countEdges := procedure(s, v) {
         return +/ [ countEdgesSingle(s, e) : e in mEquivNodes[v] ];
     };
 
-    countEdgesSingle := procedure(this, s, v) {
+    countEdgesSingle := procedure(s, v) {
         neighbours := { y : y in mEdges[v] };
         count := #{ x in s | x in neighbours };
         return count;
@@ -85,7 +85,7 @@ class stoerWagnerMinCut(edges) {
     
     // This procedure merges the nodes x and y.  The edges are updated in order 
     // to eliminate self loops.
-    merge := procedure(this, x, y) {
+    merge := procedure(x, y) {
         s := mEquivNodes[x];
         t := mEquivNodes[y];
         a := s + t;

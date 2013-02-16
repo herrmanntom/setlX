@@ -23,7 +23,7 @@ this class implements an ignored variable inside an idList or expression:
                                  ===
 */
 
-public class VariableIgnore extends Expr {
+public class VariableIgnore extends AssignableExpression {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     public  final static String         FUNCTIONAL_CHARACTER = "^variableIgnore";
     // precedence level in SetlX-grammar
@@ -38,6 +38,11 @@ public class VariableIgnore extends Expr {
         return IgnoreDummy.ID;
     }
 
+    @Override
+    protected IgnoreDummy evaluateUnCloned(final State state) throws UndefinedOperationException {
+        return IgnoreDummy.ID;
+    }
+
     /* Gather all bound and unbound variables in this expression and its siblings
           - bound   means "assigned" in this expression
           - unbound means "not present in bound set when used"
@@ -47,6 +52,21 @@ public class VariableIgnore extends Expr {
     */
     @Override
     protected void collectVariables (
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) { /* nothing to collect */ }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+       when this expression gets assigned
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    @Override
+    public void collectVariablesWhenAssigned (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables

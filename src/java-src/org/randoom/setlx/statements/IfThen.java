@@ -58,7 +58,7 @@ public class IfThen extends Statement {
     ) {
         // binding inside an if-then-else are only valid if present in all branches
         // and last branch is an else-branch
-        final int      preBound  = boundVariables.size();
+        final int    preBound  = boundVariables.size();
         List<String> boundHere = null;
         for (final IfThenAbstractBranch br : mBranchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);

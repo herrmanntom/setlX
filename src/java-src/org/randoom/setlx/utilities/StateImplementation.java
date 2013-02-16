@@ -20,67 +20,67 @@ import java.util.Random;
 public class StateImplementation extends State {
 
     // interface provider to the outer world
-    private                 EnvironmentProvider mEnvProvider;
+    private                 EnvironmentProvider envProvider;
 
-    private final           HashSet<String>     mLoadedLibraries;
-    private                 LinkedList<String>  mParserErrorCapture;
-    private                 int                 mParserErrorCount;
+    private final           HashSet<String>     loadedLibraries;
+    private                 LinkedList<String>  parserErrorCapture;
+    private                 int                 parserErrorCount;
 
     /* This variable stores the root VariableScope:
        Predefined functions are dynamically loaded into this VariableScope and
        not only into the current one, to be accessible by any previous and future
        VariableScope clones (results in faster lookup).                       */
-    private final   static  VariableScope       sROOT_Scope = new VariableScope();
+    private final   static  VariableScope       ROOT_SCOPE = new VariableScope();
 
     // this scope stores all global variables
     private final           HashMap<String, ClassDefinition> classDefinitions;
 
     // this variable stores the variable assignment that is currently active
-    private                 VariableScope       mVariableScope;
+    private                 VariableScope       variableScope;
 
     // number of CPUs/Cores in System
-    private final   static  int                 sCORES = Runtime.getRuntime().availableProcessors();
+    private final   static  int                 CORES = Runtime.getRuntime().availableProcessors();
 
     // is input feed by a human?
-    private                 boolean             mIsHuman;
+    private                 boolean             isHuman;
 
     // random number generator
-    private                 Random              mRandoom;
+    private                 Random              randoom;
 
-    private                 boolean             mMultiLineMode;
-    private                 boolean             mIsInteractive;
-    private                 boolean             mPrintVerbose;
-    private                 boolean             mAssertsDisabled;
+    private                 boolean             multiLineMode;
+    private                 boolean             isInteractive;
+    private                 boolean             printVerbose;
+    private                 boolean             assertsDisabled;
 
     /* -- Debugger -- */
-    private final           HashSet<String>     mBreakpoints;
+    private final           HashSet<String>     breakpoints;
 
-    private                 boolean             mDebugPromptActive;
+    private                 boolean             debugPromptActive;
 
     public StateImplementation() {
         this(DummyEnvProvider.DUMMY);
     }
 
     public StateImplementation(final EnvironmentProvider envProvider) {
-        mEnvProvider                     = envProvider;
-        mLoadedLibraries                 = new HashSet<String>();
-        mParserErrorCapture              = null;
-        mParserErrorCount                = 0;
+        this.envProvider                 = envProvider;
+        loadedLibraries                  = new HashSet<String>();
+        parserErrorCapture               = null;
+        parserErrorCount                 = 0;
         classDefinitions                 = new HashMap<String, ClassDefinition>();
-        mVariableScope                   = sROOT_Scope.createLinkedScope();
-        mIsHuman                         = false;
-        mRandoom                         = new Random();
+        variableScope                    = ROOT_SCOPE.createLinkedScope();
+        isHuman                          = false;
+        randoom                          = new Random();
         super.isExecutionStopped         = false;
-        mMultiLineMode                   = false;
-        mIsInteractive                   = false;
-        mPrintVerbose                    = false;
+        multiLineMode                    = false;
+        isInteractive                    = false;
+        printVerbose                     = false;
         super.traceAssignments           = false;
-        mAssertsDisabled                 = false;
+        assertsDisabled                  = false;
         /* -- Debugger -- */
-        mBreakpoints                     = new HashSet<String>();
+        breakpoints                      = new HashSet<String>();
         super.areBreakpointsEnabled      = false;
         super.isDebugModeActive          = false;
-        mDebugPromptActive               = false;
+        debugPromptActive                = false;
         super.isDebugStepNextExpr        = false;
         super.isDebugStepThroughFunction = false;
         super.isDebugFinishFunction      = false;
@@ -89,82 +89,82 @@ public class StateImplementation extends State {
 
     @Override
     public void setEnvironmentProvider(final EnvironmentProvider envProvider) {
-        mEnvProvider = envProvider;
+        this.envProvider = envProvider;
     }
 
     @Override
     public EnvironmentProvider getEnvironmentProvider() {
-        return mEnvProvider;
+        return envProvider;
     }
 
     /* -- I/O -- */
 
     @Override
     public String inReadLine() throws JVMIOException {
-        return mEnvProvider.inReadLine();
+        return envProvider.inReadLine();
     }
 
     // write to standard output
     @Override
     public void outWrite(final String msg) {
-        mEnvProvider.outWrite(msg);
+        envProvider.outWrite(msg);
     }
     @Override
     public void outWriteLn(final String msg) {
-        mEnvProvider.outWrite(msg);
-        mEnvProvider.outWrite(mEnvProvider.getEndl());
+        envProvider.outWrite(msg);
+        envProvider.outWrite(envProvider.getEndl());
     }
     @Override
     public void outWriteLn() {
-        mEnvProvider.outWrite(mEnvProvider.getEndl());
+        envProvider.outWrite(envProvider.getEndl());
     }
 
     // write to standard error
     @Override
     public void errWrite(final String msg) {
-        mEnvProvider.errWrite(msg);
+        envProvider.errWrite(msg);
     }
     @Override
     public void errWriteLn(final String msg) {
-        mEnvProvider.errWrite(msg);
-        mEnvProvider.errWrite(mEnvProvider.getEndl());
+        envProvider.errWrite(msg);
+        envProvider.errWrite(envProvider.getEndl());
     }
     @Override
     public void errWriteLn() {
-        mEnvProvider.errWrite(mEnvProvider.getEndl());
+        envProvider.errWrite(envProvider.getEndl());
     }
 
     // capture/write parser errors
     @Override
     public void writeParserErrLn(final String msg) {
-        if (mParserErrorCapture != null) {
-            mParserErrorCapture.add(msg);
+        if (parserErrorCapture != null) {
+            parserErrorCapture.add(msg);
         } else {
             errWriteLn(msg);
         }
     }
     @Override
     public LinkedList<String> getParserErrorCapture() {
-        return mParserErrorCapture;
+        return parserErrorCapture;
     }
     @Override
     public void setParserErrorCapture(final LinkedList<String> capture) {
-        mParserErrorCapture = capture;
+        parserErrorCapture = capture;
     }
 
     @Override
     public int getParserErrorCount() {
-        return mParserErrorCount;
+        return parserErrorCount;
     }
 
     @Override
     public void addToParserErrorCount(final int numberOfErrors) {
-        mParserErrorCount += numberOfErrors;
+        parserErrorCount += numberOfErrors;
     }
 
     @Override
     public void resetParserErrorCount() {
-        mParserErrorCount = 0;
+        parserErrorCount = 0;
     }
 
     @Override
@@ -176,9 +176,9 @@ public class StateImplementation extends State {
         // Also if at one time a prompt was displayed, display all following
         // prompts. (User may continue to type into stdin AFTER we last read
         // from it, causing stdin to be ready, but human controlled)
-        if (mIsHuman || ! mEnvProvider.inReady()) {
-            mEnvProvider.promptForInput(prompt);
-            mIsHuman = true;
+        if (isHuman || ! envProvider.inReady()) {
+            envProvider.promptForInput(prompt);
+            isHuman = true;
             return true;
         }
         return false;
@@ -186,35 +186,35 @@ public class StateImplementation extends State {
 
     @Override
     public void promptUnchecked(final String prompt) {
-        mEnvProvider.promptForInput(prompt);
+        envProvider.promptForInput(prompt);
     }
 
     // allow modification of fileName/path when reading files
     @Override
     public String filterFileName(final String fileName) {
-        return mEnvProvider.filterFileName(fileName);
+        return envProvider.filterFileName(fileName);
     }
 
     // allow modification of library name
     @Override
     public String filterLibraryName(final String name) {
-        return mEnvProvider.filterLibraryName(name);
+        return envProvider.filterLibraryName(name);
     }
 
     @Override
     public boolean isLibraryLoaded(final String name) {
-        return mLoadedLibraries.contains(name);
+        return loadedLibraries.contains(name);
     }
 
     @Override
     public void libraryWasLoaded(final String name) {
-        mLoadedLibraries.add(name);
+        loadedLibraries.add(name);
     }
 
     @Override
     public int getNumberOfCores() {
-        if (sCORES >= 2) {
-            return sCORES;
+        if (CORES >= 2) {
+            return CORES;
         } else {
             return 1;
         }
@@ -228,30 +228,30 @@ public class StateImplementation extends State {
 
     @Override
     public void setPredictableRandoom() {
-        mRandoom = new Random(0);
+        randoom = new Random(0);
     }
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
     @Override
     public int getRandomInt(final int upperBoundary) {
-        return mRandoom.nextInt(upperBoundary);
+        return randoom.nextInt(upperBoundary);
     }
 
     // get random number (all int values are possible)
     @Override
     public int getRandomInt() {
-        return mRandoom.nextInt();
+        return randoom.nextInt();
     }
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
     @Override
     public double getRandomDouble() {
-        return mRandoom.nextDouble();
+        return randoom.nextDouble();
     }
 
     @Override
     public Random getRandom() {
-        return mRandoom;
+        return randoom;
     }
 
     @Override
@@ -261,32 +261,32 @@ public class StateImplementation extends State {
 
     @Override
     public void setMultiLineMode(final boolean multiLineMode) {
-        mMultiLineMode = multiLineMode;
+        this.multiLineMode = multiLineMode;
     }
 
     @Override
     public boolean isMultiLineEnabled() {
-        return mMultiLineMode;
+        return multiLineMode;
     }
 
     @Override
     public void setInteractive(final boolean isInteractive) {
-        mIsInteractive = isInteractive;
+        this.isInteractive = isInteractive;
     }
 
     @Override
     public boolean isInteractive() {
-        return mIsInteractive;
+        return isInteractive;
     }
 
     @Override
     public void setPrintVerbose(final boolean printVerbose) {
-        mPrintVerbose = printVerbose;
+        this.printVerbose = printVerbose;
     }
 
     @Override
     public boolean isPrintVerbose() {
-        return mPrintVerbose;
+        return printVerbose;
     }
 
     @Override
@@ -296,18 +296,18 @@ public class StateImplementation extends State {
 
     @Override
     public void setAssertsDisabled(final boolean assertsDisabled) {
-        mAssertsDisabled = assertsDisabled;
+        this.assertsDisabled = assertsDisabled;
     }
 
     @Override
     public boolean areAssertsDisabled() {
-        return mAssertsDisabled;
+        return assertsDisabled;
     }
 
     @Override
     public void getLineStart(final StringBuilder sb, final int tabs) {
-        if (mPrintVerbose && tabs > 0) {
-            final String tab = mEnvProvider.getTab();
+        if (printVerbose && tabs > 0) {
+            final String tab = envProvider.getTab();
             for (int i = 0; i < tabs; ++i) {
                 sb.append(tab);
             }
@@ -316,16 +316,16 @@ public class StateImplementation extends State {
 
     @Override
     public String getEndl() {
-        if (mPrintVerbose) {
-            return mEnvProvider.getEndl();
+        if (printVerbose) {
+            return envProvider.getEndl();
         } else {
             return " ";
         }
     }
     @Override
     public String getTab() {
-        if (mPrintVerbose) {
-            return mEnvProvider.getTab();
+        if (printVerbose) {
+            return envProvider.getTab();
         } else {
             return "";
         }
@@ -335,23 +335,23 @@ public class StateImplementation extends State {
 
     @Override
     public VariableScope getScope() {
-        return mVariableScope;
+        return variableScope;
     }
 
     @Override
     public void setScope(final VariableScope newScope) {
-        mVariableScope = newScope;
+        variableScope = newScope;
     }
 
     @Override
     public void resetState() {
-        mVariableScope  = sROOT_Scope.createLinkedScope();
+        variableScope  = ROOT_SCOPE.createLinkedScope();
         classDefinitions.clear();
-        mLoadedLibraries.clear();
-        if (mParserErrorCapture != null) {
-            mParserErrorCapture.clear();
+        loadedLibraries.clear();
+        if (parserErrorCapture != null) {
+            parserErrorCapture.clear();
         }
-        mBreakpoints.clear();
+        breakpoints.clear();
     }
 
     @Override
@@ -360,7 +360,7 @@ public class StateImplementation extends State {
         if (v != null) {
             return v;
         }
-        v = mVariableScope.locateValue(this, var, true);
+        v = variableScope.locateValue(this, var, true);
         if (v == null && ! var.equals("this")) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedFunction.class.getPackage().getName();
@@ -391,7 +391,9 @@ public class StateImplementation extends State {
 
                Root scope is chosen, because it is at the end of every
                currently existing and all future scopes search paths.         */
-            sROOT_Scope.storeValue(var, v);
+            ROOT_SCOPE.storeValue(var, v);
+        } else if (v == null) {
+            v = Om.OM;
         }
         return v;
     }
@@ -403,7 +405,7 @@ public class StateImplementation extends State {
                 "Redefinition of classes is not allowed."
             );
         } else {
-            mVariableScope.storeValue(var, value);
+            variableScope.storeValue(var, value);
         }
     }
 
@@ -423,7 +425,7 @@ public class StateImplementation extends State {
                 return false;
             }
         }
-        return mVariableScope.storeValueCheckUpTo(this, var, value, outerScope);
+        return variableScope.storeValueCheckUpTo(this, var, value, outerScope);
     }
 
     // Add bindings stored in `scope' into current scope.
@@ -438,7 +440,7 @@ public class StateImplementation extends State {
                 );
             }
         }
-        mVariableScope.storeAllValues(scope);
+        variableScope.storeAllValues(scope);
     }
 
     @Override
@@ -448,38 +450,38 @@ public class StateImplementation extends State {
 
     @Override
     public Term scopeToTerm() {
-        return mVariableScope.toTerm(this, classDefinitions);
+        return variableScope.toTerm(this, classDefinitions);
     }
 
     /* -- Debugger -- */
 
     @Override
     public void setBreakpoint(final String id) {
-        mBreakpoints.add(id);
+        breakpoints.add(id);
         setBreakpointsEnabled(true);
     }
 
     @Override
     public boolean removeBreakpoint(final String id) {
-        final boolean result  = mBreakpoints.remove(id);
-        setBreakpointsEnabled(mBreakpoints.size() > 0);
+        final boolean result  = breakpoints.remove(id);
+        setBreakpointsEnabled(breakpoints.size() > 0);
         return result;
     }
 
     @Override
     public void removeAllBreakpoints() {
-        mBreakpoints.clear();
+        breakpoints.clear();
         setBreakpointsEnabled(false);
     }
 
     @Override
     public boolean isBreakpoint(final String id) {
-        return mBreakpoints.contains(id);
+        return breakpoints.contains(id);
     }
 
     @Override
     public String[] getAllBreakpoints() {
-        return mBreakpoints.toArray(new String[0]);
+        return breakpoints.toArray(new String[0]);
     }
 
     @Override
@@ -494,12 +496,12 @@ public class StateImplementation extends State {
 
     @Override
     public void setDebugPromptActive(final boolean active) {
-        mDebugPromptActive  = active;
+        debugPromptActive  = active;
     }
 
     @Override
     public boolean isDebugPromptActive() {
-        return mDebugPromptActive;
+        return debugPromptActive;
     }
 
     @Override

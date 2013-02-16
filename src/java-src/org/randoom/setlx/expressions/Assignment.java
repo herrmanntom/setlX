@@ -17,7 +17,7 @@ assignment
 
 implemented here as:
       ==========       ===================================
-         mLhs                          mRhs
+          lhs                          rhs
 */
 
 public class Assignment extends Expr {
@@ -27,20 +27,20 @@ public class Assignment extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1000;
 
-    private final Expr  mLhs;
-    private final Expr  mRhs;
+    private final AssignableExpression lhs;
+    private final Expr                 rhs;
 
-    public Assignment(final Expr lhs, final Expr rhs) {
-        mLhs  = lhs;
-        mRhs  = rhs;
+    public Assignment(final AssignableExpression lhs, final Expr rhs) {
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        final Value assigned = mLhs.assign(state, mRhs.eval(state).clone());
+        final Value assigned = lhs.assign(state, rhs.eval(state).clone());
 
         if (state.traceAssignments) {
-            state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
+            state.outWriteLn("~< Trace: " + lhs + " := " + assigned + " >~");
         }
 
         return assigned;
@@ -59,20 +59,18 @@ public class Assignment extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        // add all found variables to bound by not supplying unboundVariables
-        // as this expression is used in an assignment
-        mLhs.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+        lhs.collectVariablesWhenAssigned(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(" := ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -80,19 +78,20 @@ public class Assignment extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 
     public static Assignment termToExpr(final Term term) throws TermConversionException {
-        if (term.size() != 2) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
+        if (term.size() == 2) {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new Assignment(lhs, rhs);
+            if (lhs instanceof AssignableExpression) {
+                return new Assignment((AssignableExpression) lhs, rhs);
+            }
         }
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
     // precedence level in SetlX-grammar

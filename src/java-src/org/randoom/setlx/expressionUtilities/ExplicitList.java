@@ -3,6 +3,7 @@ package org.randoom.setlx.expressionUtilities;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.AssignableExpression;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
@@ -55,6 +56,25 @@ public class ExplicitList extends CollectionBuilder {
     ) {
         for (final Expr expr : mList) {
             expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+       when this expression gets assigned
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+    */
+    @Override
+    public void collectVariablesWhenAssigned (
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) {
+        for (final Expr expr : mList) {
+            if (expr instanceof AssignableExpression) {
+                ((AssignableExpression) expr).collectVariablesWhenAssigned(boundVariables, unboundVariables, usedVariables);
+            }
         }
     }
 

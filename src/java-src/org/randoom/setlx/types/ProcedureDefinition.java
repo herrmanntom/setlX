@@ -166,7 +166,7 @@ public class ProcedureDefinition extends Value {
 
         // link members of surrounding object
         if (object != null) {
-            newScope.linkToObjectScope(object);
+            newScope.linkToThisObject(object);
         }
 
         // assign closure contents

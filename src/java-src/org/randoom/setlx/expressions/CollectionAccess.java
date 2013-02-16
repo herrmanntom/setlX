@@ -32,30 +32,30 @@ public class CollectionAccess extends AssignableExpression {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private final Expr       mLhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
-    private final List<Expr> mArgs;      // list of arguments
+    private final Expr       lhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
+    private final List<Expr> args;      // list of arguments
 
     public CollectionAccess(final Expr lhs, final Expr arg) {
         this(lhs, new ArrayList<Expr>(1));
-        mArgs.add(arg);
+        args.add(arg);
     }
 
     public CollectionAccess(final Expr lhs, final List<Expr> args) {
-        mLhs    = lhs;
-        mArgs   = args;
+        this.lhs  = lhs;
+        this.args = args;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        final Value lhs = mLhs.eval(state);
+        final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + mLhs + "\" is undefined."
+                "Left hand side \"" + lhs + "\" is undefined."
             );
         }
         // evaluate all arguments
-        final List<Value> args = new ArrayList<Value>(mArgs.size());
-        for (final Expr arg: mArgs) {
+        final List<Value> args = new ArrayList<Value>(this.args.size());
+        for (final Expr arg: this.args) {
             if (arg != null) {
                 args.add(arg.eval(state).clone());
             }
@@ -66,17 +66,17 @@ public class CollectionAccess extends AssignableExpression {
 
     @Override
     /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
-        if (mLhs instanceof AssignableExpression) {
-            final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
+        if (lhs instanceof AssignableExpression) {
+            final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
-                    "Left hand side \"" + mLhs + "\" is undefined."
+                    "Left hand side \"" + lhs + "\" is undefined."
                 );
             }
 
             // evaluate all arguments
-            final List<Value> args = new ArrayList<Value>(mArgs.size());
-            for (final Expr arg: mArgs) {
+            final List<Value> args = new ArrayList<Value>(this.args.size());
+            for (final Expr arg: this.args) {
                 if (arg != null) {
                     args.add(arg.eval(state).clone());
                 }
@@ -105,23 +105,41 @@ public class CollectionAccess extends AssignableExpression {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        for (final Expr expr : mArgs) {
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        for (final Expr expr : args) {
             expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+       when this expression gets assigned
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+    */
+    @Override
+    public void collectVariablesWhenAssigned (
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) {
+        if (lhs instanceof AssignableExpression) {
+            // lhs is read, not bound, so use collectVariablesAndOptimize()
+            lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
     // sets this expression to the given value
     @Override
     public void assignUncloned(final State state, final Value v) throws SetlException {
-        if (mArgs.size() == 1 && mLhs instanceof AssignableExpression) {
-            final Value lhs = ((AssignableExpression) mLhs).evaluateUnCloned(state);
+        if (args.size() == 1 && lhs instanceof AssignableExpression) {
+            final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
-                    "Left hand side \"" + mLhs + "\" is undefined."
+                    "Left hand side \"" + lhs + "\" is undefined."
                 );
             }
-            lhs.setMember(state, mArgs.get(0).eval(state), v);
+            lhs.setMember(state, args.get(0).eval(state), v);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + this + " := " + v + "\" is unusable for list assignment."
@@ -133,10 +151,10 @@ public class CollectionAccess extends AssignableExpression {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append("[");
 
-        final Iterator<Expr> iter = mArgs.iterator();
+        final Iterator<Expr> iter = args.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
@@ -153,10 +171,10 @@ public class CollectionAccess extends AssignableExpression {
     public Term toTerm(final State state) {
         final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(state, mLhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
 
-        final SetlList    arguments   = new SetlList(mArgs.size());
-        for (final Expr arg: mArgs) {
+        final SetlList    arguments   = new SetlList(args.size());
+        for (final Expr arg: args) {
             arguments.addMember(state, arg.toTerm(state));
         }
         result.addMember(state, arguments);
@@ -168,10 +186,10 @@ public class CollectionAccess extends AssignableExpression {
     public Term toTermQuoted(final State state) throws SetlException {
         final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(state, mLhs.toTermQuoted(state));
+        result.addMember(state, lhs.toTermQuoted(state));
 
-        final SetlList    arguments   = new SetlList(mArgs.size());
-        for (final Expr arg: mArgs) {
+        final SetlList    arguments   = new SetlList(args.size());
+        for (final Expr arg: args) {
             arguments.addMember(state, arg.eval(state).toTerm(state));
         }
         result.addMember(state, arguments);

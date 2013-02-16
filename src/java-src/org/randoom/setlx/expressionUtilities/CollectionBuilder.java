@@ -34,6 +34,20 @@ public abstract class CollectionBuilder extends CodeFragment {
         final List<String> usedVariables
     );
 
+    /* Gather all bound and unbound variables in this expression and its siblings
+       when this expression gets assigned
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+    */
+    public void collectVariablesWhenAssigned (
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) {
+        /* do nothing by default */
+    }
+
     // sets the variables used to construct this list to the variables from the
     // collection given as a parameter
     public          void assignUncloned(

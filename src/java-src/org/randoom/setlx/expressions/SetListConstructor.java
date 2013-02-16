@@ -30,7 +30,7 @@ implemented here as:
 mType       mBuilder
 */
 
-public class SetListConstructor extends Expr {
+public class SetListConstructor extends AssignableExpression {
     public  final static int        LIST        = 23;
     public  final static int        SET         = 42;
     // precedence level in SetlX-grammar
@@ -62,6 +62,11 @@ public class SetListConstructor extends Expr {
         }
     }
 
+    @Override
+    Value evaluateUnCloned(final State state) throws SetlException {
+        return evaluate(state);
+    }
+
     /* Gather all bound and unbound variables in this expression and its siblings
           - bound   means "assigned" in this expression
           - unbound means "not present in bound set when used"
@@ -77,6 +82,23 @@ public class SetListConstructor extends Expr {
     ) {
         if (mBuilder != null) {
             mBuilder.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+       when this expression gets assigned
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+    */
+    @Override
+    public void collectVariablesWhenAssigned (
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) {
+        if (mBuilder != null) {
+            mBuilder.collectVariablesWhenAssigned(boundVariables, unboundVariables, usedVariables);
         }
     }
 

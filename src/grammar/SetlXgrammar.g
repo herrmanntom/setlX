@@ -324,13 +324,13 @@ explicitAssignList returns [ExplicitList eil]
       )*                          { eil = new ExplicitList(exprs); }
     ;
 
-assignable [boolean enableIgnore] returns [Expr a]
-    : variable                 { a = $variable.v;                          }
+assignable [boolean enableIgnore] returns [AssignableExpression a]
+    : variable                 { a = $variable.v;                             }
       (
-         memberAccess[$a]      { a = $memberAccess.ma;                     }
-       | '[' expr[false] ']'   { a = new CollectionAccess(a, $expr.ex);    }
+         memberAccess[$a]      { a = (AssignableExpression) $memberAccess.ma; }
+       | '[' expr[false] ']'   { a = new CollectionAccess(a, $expr.ex);       }
       )*
-    | assignList               { a = $assignList.alc;                      }
+    | assignList               { a = $assignList.alc;                         }
     | '_'                      { if ($enableIgnore) {
                                     a = VariableIgnore.VI;
                                  } else {

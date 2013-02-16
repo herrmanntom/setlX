@@ -21,16 +21,16 @@ public class VariableScope {
     // functional characters used in terms
     private final   static  String      FUNCTIONAL_CHARACTER_SCOPE = "^scope";
 
-    private final   Map<String, Value>  mVarBindings;
+    private final   Map<String, Value>  bindings;
 
     // stores reference scope of object
-    private         SetlObject          mObjectScope;
+    private         SetlObject          thisObject;
 
     // stores reference to original scope object upon cloning
-    private         VariableScope       mOriginalScope;
+    private         VariableScope       originalScope;
 
     // if set mOriginalScope is only searched for functions, not variables
-    private         boolean             mRestrictToFunctions;
+    private         boolean             isRestrictedToFunctions;
 
     /* If set variables read from outer scopes will _not_ be copied to
        current one     and
@@ -41,38 +41,38 @@ public class VariableScope {
        because the iteration variables are local to each iteration, but other
        variables used inside the iteration are not local to the iteration
        (e.g. iteration do not introduce an inner scope!).                     */
-    private         boolean             mReadThrough;
-    private         boolean             mWriteThrough;
+    private         boolean             readThrough;
+    private         boolean             writeThrough;
 
     // scopes have to be cloned from current one, therefore don't use from outside!
     /*package*/ VariableScope() {
-        mVarBindings            = new HashMap<String, Value>();
-        mObjectScope            = null;
-        mOriginalScope          = null;
-        mRestrictToFunctions    = false;
-        mReadThrough            = false;
-        mWriteThrough           = false;
+        bindings                = new HashMap<String, Value>();
+        thisObject              = null;
+        originalScope           = null;
+        isRestrictedToFunctions = false;
+        readThrough             = false;
+        writeThrough            = false;
     }
 
     @Override
     public VariableScope clone() {
-        final VariableScope newScope  = new VariableScope();
+        final VariableScope newScope     = new VariableScope();
 
-        for (final Map.Entry<String, Value> entry : this.mVarBindings.entrySet()) {
-            newScope.mVarBindings.put(entry.getKey(), entry.getValue().clone());
+        for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
+            newScope.bindings.put(entry.getKey(), entry.getValue().clone());
         }
 
-        newScope.mObjectScope         = this.mObjectScope;
-        newScope.mOriginalScope       = this.mOriginalScope;
-        newScope.mRestrictToFunctions = this.mRestrictToFunctions;
-        newScope.mReadThrough         = this.mReadThrough;
-        newScope.mWriteThrough        = this.mWriteThrough;
+        newScope.thisObject              = thisObject;
+        newScope.originalScope           = originalScope;
+        newScope.isRestrictedToFunctions = isRestrictedToFunctions;
+        newScope.readThrough             = readThrough;
+        newScope.writeThrough            = writeThrough;
         return newScope;
     }
 
     public VariableScope createLinkedScope() {
         final VariableScope newScope = new VariableScope();
-        newScope.mOriginalScope      = this;
+        newScope.originalScope       = this;
         return newScope;
     }
 
@@ -80,40 +80,40 @@ public class VariableScope {
        to their iteration, but all other variables inside the execution body are not */
     public VariableScope createInteratorBlock() {
         final VariableScope newScope = this.createLinkedScope();
-        newScope.mReadThrough        = true;
-        newScope.mWriteThrough       = true;
+        newScope.readThrough         = true;
+        newScope.writeThrough        = true;
         return newScope;
     }
 
     public VariableScope createFunctionsOnlyLinkedScope() {
-        final VariableScope newScope  = this.createLinkedScope();
-        newScope.mRestrictToFunctions = true;
+        final VariableScope newScope     = this.createLinkedScope();
+        newScope.isRestrictedToFunctions = true;
         return newScope;
     }
 
     /*package*/ void clear() {
-        mVarBindings.clear();
+        bindings.clear();
     }
 
     public void unlink() {
-        mObjectScope   = null;
-        mOriginalScope = null;
+        thisObject   = null;
+        originalScope = null;
     }
 
-    public void linkToOriginalScope(final VariableScope linkTarget) {
-        mOriginalScope = linkTarget;
+    public void linkToOriginalScope(final VariableScope originalScope) {
+        this.originalScope = originalScope;
     }
 
-    public void linkToObjectScope(final SetlObject linkTarget) {
-        mObjectScope   = linkTarget;
+    public void linkToThisObject(final SetlObject thisObject) {
+        this.thisObject   = thisObject;
     }
 
     public void setWriteThrough(final boolean writeThrough) {
-        mWriteThrough = writeThrough;
+        this.writeThrough = writeThrough;
     }
 
     public int size() {
-        return mVarBindings.size();
+        return bindings.size();
     }
 
     /*package*/ Value locateValue(final State state, final String var, final boolean check) throws SetlException {
@@ -121,30 +121,30 @@ public class VariableScope {
             final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
             return new SetlString(new String(v));
         }
-        if (var.equals("this") && mObjectScope != null) {
-            return mObjectScope;
+        if (var.equals("this") && thisObject != null) {
+            return thisObject;
         }
-        Value v = mVarBindings.get(var);
+        Value v = bindings.get(var);
         if (v != null) {
             return v;
         }
-        if (mObjectScope != null) {
-            v = mObjectScope.getObjectMemberUnCloned(state, var);
+        if (thisObject != null) {
+            v = thisObject.getObjectMemberUnCloned(state, var);
             if (v != Om.OM) {
                 return v;
             }
         }
-        if (mOriginalScope != null && (v = mOriginalScope.locateValue(state, var, false)) != null) {
+        if (originalScope != null && (v = originalScope.locateValue(state, var, false)) != null) {
             // found some value in outer scope
 
             // return nothing, if value is not allowed to be read from outer scopes
-            if (v != Om.OM && mRestrictToFunctions && ! (v instanceof ProcedureDefinition)) {
+            if (v != Om.OM && isRestrictedToFunctions && ! (v instanceof ProcedureDefinition)) {
                 return null;
             }
 
             // cache result, if this is allowed
-            if ( ! mReadThrough && v != Om.OM) {
-                mVarBindings.put(var, v);
+            if ( ! readThrough && v != Om.OM) {
+                bindings.put(var, v);
             }
 
             return v;
@@ -155,14 +155,14 @@ public class VariableScope {
     // collect all bindings reachable from current scope (except global variables!)
     public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
-        if (mObjectScope != null) {
-            mObjectScope.collectBindings(result, restrictToFunctions);
+        if (thisObject != null) {
+            thisObject.collectBindings(result, restrictToFunctions);
         }
-        if (mOriginalScope != null) {
-            mOriginalScope.collectBindings(result, restrictToFunctions || mRestrictToFunctions);
+        if (originalScope != null) {
+            originalScope.collectBindings(result, restrictToFunctions || isRestrictedToFunctions);
         }
         // add own bindings (possibly overwriting values from inner bindings)
-        for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
+        for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
             final Value val = entry.getValue();
             if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
                 result.put(entry.getKey(), val);
@@ -176,16 +176,16 @@ public class VariableScope {
                 "'this' may not be reassigned."
             );
         }
-        if ( ! mWriteThrough && mObjectScope != null && mObjectScope.isObjectMemberDefinied(var)) {
-            mObjectScope.setObjectMember(var, value);
-        } else if ( ! mWriteThrough || mVarBindings.get(var) != null) {
+        if ( ! writeThrough && thisObject != null && thisObject.isObjectMemberDefinied(var)) {
+            thisObject.setObjectMember(var, value);
+        } else if ( ! writeThrough || bindings.get(var) != null) {
             // this scope does not allow write through or variable is actually stored here
-            mVarBindings.put(var, value);
-        } else if (mWriteThrough          && // allowed to write into mOriginalScope
-                   mOriginalScope != null && // mOriginalScope exists
-                   ( ! mRestrictToFunctions || value instanceof ProcedureDefinition) // not restricted
+            bindings.put(var, value);
+        } else if (writeThrough          && // allowed to write into mOriginalScope
+                   originalScope != null && // mOriginalScope exists
+                   ( ! isRestrictedToFunctions || value instanceof ProcedureDefinition) // not restricted
         ) {
-            mOriginalScope.storeValue(var, value);
+            originalScope.storeValue(var, value);
         }
     }
 
@@ -196,9 +196,9 @@ public class VariableScope {
      * true otherwise.
      */
     /*package*/ boolean storeValueCheckUpTo(final State state, final String var, final Value value, final VariableScope outerScope) throws SetlException {
-        VariableScope toCheck = mOriginalScope;
+        VariableScope toCheck = originalScope;
         while (toCheck != null && toCheck != outerScope) {
-            final Value now = toCheck.mVarBindings.get(var);
+            final Value now = toCheck.bindings.get(var);
             if (now != null) { // already saved there
                 if (now.equalTo(value)) {
                     return true;
@@ -206,12 +206,12 @@ public class VariableScope {
                     return false;
                 }
             } else {
-                toCheck = toCheck.mOriginalScope;
+                toCheck = toCheck.originalScope;
             }
         }
         // also check in scopes of surrounding objects
-        if (mObjectScope != null) {
-            final Value now = mObjectScope.getObjectMemberUnCloned(state, var);
+        if (thisObject != null) {
+            final Value now = thisObject.getObjectMemberUnCloned(state, var);
             if (now != Om.OM) { // already saved there
                 if (now.equalTo(value)) {
                     return true;
@@ -221,7 +221,7 @@ public class VariableScope {
             }
         }
         // to get here, `var' is not stored in any upper scope up to outerScope
-        mVarBindings.put(var, value);
+        bindings.put(var, value);
         return true;
     }
 
@@ -229,11 +229,11 @@ public class VariableScope {
     // This also adds variables in outer scopes of `scope' until reaching this
     // as outer scope of `scope'.
     /*package*/ void storeAllValues(final VariableScope scope) throws IllegalRedefinitionException {
-        for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
+        for (final Map.Entry<String, Value> entry : scope.bindings.entrySet()) {
             storeValue(entry.getKey(), entry.getValue());
         }
-        if (scope.mOriginalScope != null && scope.mOriginalScope != this) {
-            storeAllValues(scope.mOriginalScope);
+        if (scope.originalScope != null && scope.originalScope != this) {
+            storeAllValues(scope.originalScope);
         }
     }
 
@@ -303,7 +303,7 @@ public class VariableScope {
         if (size < oSize) {
             return -1;
         } else if (size == oSize) {
-            return mVarBindings.toString().compareTo(other.mVarBindings.toString());
+            return bindings.toString().compareTo(other.bindings.toString());
         } else {
             return 1;
         }
@@ -323,8 +323,8 @@ public class VariableScope {
         if (this == other) {
             return true;
         } else if (this.size() == other.size()) {
-            for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
-                final Value otherV = other.mVarBindings.get(entry.getKey());
+            for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
+                final Value otherV = other.bindings.get(entry.getKey());
                 if (otherV == null || ! entry.getValue().equalTo(otherV)) {
                     return false;
                 }

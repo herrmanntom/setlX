@@ -141,8 +141,8 @@ public class ClassDefinition extends Value {
         final int nArguments = args.size();
         if (parameters.size() != nArguments) {
             throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with a different number of parameters " +
-                "(" + parameters.size() + ")."
+                "'" + this + "' is defined with "+ parameters.size()+" instead of " +
+                nArguments + " parameters."
             );
         }
 
@@ -169,20 +169,30 @@ public class ClassDefinition extends Value {
             }
         }
 
-        final WriteBackAgent wba         = new WriteBackAgent(parameters.size());
-        final boolean        stepThrough = state.isDebugStepThroughFunction;
+        final HashMap<String, Value> members     = new HashMap<String, Value>();
+        final SetlObject             newObject   = SetlObject.createNew(members, this);
+
+        newScope.linkToThisObject(newObject);
+
+        final WriteBackAgent         wba         = new WriteBackAgent(parameters.size());
+        final boolean                stepThrough = state.isDebugStepThroughFunction;
+
+        if (stepThrough) {
+            state.setDebugStepThroughFunction(false);
+            state.setDebugModeActive(false);
+        }
 
         try {
-            if (stepThrough) {
-                state.setDebugStepThroughFunction(false);
-                state.setDebugModeActive(false);
+
+            // compute static definition, if not already done
+            if (staticDefs == null) {
+                staticDefs = computeStaticDefinitions(state);
             }
 
             // execute, e.g. compute member definition
             initBlock.exec(state);
 
             // extract 'rw' arguments from scope, store them into WriteBackAgent
-            // and remove all parameters from scope
             for (int i = 0; i < parameters.size(); ++i) {
                 final ParameterDef param = parameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE) {
@@ -194,18 +204,13 @@ public class ClassDefinition extends Value {
                        expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);
                 }
-                // remove parameter from scope
-                param.assign(state, Om.OM);
-            }
-
-            // compute static definition, if not already done
-            if (staticDefs == null) {
-                staticDefs = computeStaticDefinitions(state);
             }
 
             newScope.unlink();
 
-            return SetlObject.createNew(extractBindings(state, initVars), this);
+            members.putAll(extractBindings(state, initVars));
+
+            return newObject;
 
         } finally { // make sure scope is always reset
             // restore old scope

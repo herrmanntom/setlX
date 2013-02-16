@@ -48,7 +48,7 @@ public class MemberAccess extends AssignableExpression {
 
     @Override
     /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
-        if (this.lhs instanceof AssignableExpression) {
+        if (lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             return lhs.getObjectMemberUnCloned(state, memberID);
         } else {
@@ -72,6 +72,24 @@ public class MemberAccess extends AssignableExpression {
         final List<String> usedVariables
     ) {
         lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+    }
+
+    /* Gather all bound and unbound variables in this expression and its siblings
+       when this expression gets assigned
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+    */
+    @Override
+    public void collectVariablesWhenAssigned (
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) {
+        if (lhs instanceof AssignableExpression) {
+            // lhs is read, not bound, so use collectVariablesAndOptimize()
+            lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        }
     }
 
     // sets this expression to the given value

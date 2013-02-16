@@ -1,8 +1,8 @@
 // this program demonstrates some object orientation features of setlX
 
 // define class
-class c(n) {
-    number := n;
+class c(number) {
+    this.number := number;
 
     static {
         // overload '+' operator
@@ -15,17 +15,13 @@ a := c(5);
 b := c(15);
 
 // do some work with objects
-print("a == $a$");
-print("b == $b$");
 print("a + b == $a + b$");
 
 print();
 // also overload '!' operator in object `a'
 a.factorial := procedure() { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache;};
 
-print("a == $a$");
 print("a! == $a!$");
-print("a == $a$");
 print("a! == $a!$");
 
 print();

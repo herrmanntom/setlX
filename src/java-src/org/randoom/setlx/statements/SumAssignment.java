@@ -2,6 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.AssignableExpression;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -29,29 +30,29 @@ public class SumAssignment extends StatementWithPrintableResult {
     // precedence level in SetlX-grammar
     private final static int        PRECEDENCE              = 1000;
 
-    private final Expr    mLhs;
-    private final Expr    mRhs;
-    private       boolean mPrintAfterEval;
+    private final AssignableExpression lhs;
+    private final Expr                 rhs;
+    private       boolean              printAfterEval;
 
-    public SumAssignment(final Expr lhs, final Expr rhs) {
-        mLhs            = lhs;
-        mRhs            = rhs;
-        mPrintAfterEval = false;
+    public SumAssignment(final AssignableExpression lhs, final Expr rhs) {
+        this.lhs            = lhs;
+        this.rhs            = rhs;
+        this.printAfterEval = false;
     }
 
     /*package*/ @Override
     void setPrintAfterEval() {
-        mPrintAfterEval = true;
+        printAfterEval = true;
     }
 
     @Override
     protected ReturnMessage execute(final State state) throws SetlException {
-        final Value assigned = mLhs.eval(state).sumAssign(state, mRhs.eval(state).clone());
-        mLhs.assignUncloned(state, assigned);
+        final Value assigned = lhs.eval(state).sumAssign(state, rhs.eval(state).clone());
+        lhs.assignUncloned(state, assigned);
 
         if (state.traceAssignments) {
-            state.outWriteLn("~< Trace: " + mLhs + " := " + assigned + " >~");
-        } else if (mPrintAfterEval) {
+            state.outWriteLn("~< Trace: " + lhs + " := " + assigned + " >~");
+        } else if (printAfterEval) {
             printResult(state, assigned);
         }
 
@@ -72,13 +73,11 @@ public class SumAssignment extends StatementWithPrintableResult {
         final List<String> usedVariables
     ) {
         // first we evaluate lhs and rhs as usual
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        // then assign to mLhs
-        // add all variables found to bound by not supplying unboundVariables
-        // as this expression is now used in an assignment
-        mLhs.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+        // then assign to lhs
+        lhs.collectVariablesWhenAssigned(boundVariables, boundVariables, boundVariables);
     }
 
     /* string operations */
@@ -86,9 +85,9 @@ public class SumAssignment extends StatementWithPrintableResult {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.getLineStart(sb, tabs);
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(" += ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
         sb.append(";");
     }
 
@@ -97,19 +96,20 @@ public class SumAssignment extends StatementWithPrintableResult {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 
     public static SumAssignment termToStatement(final Term term) throws TermConversionException {
-        if (term.size() != 2) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
+        if (term.size() == 2) {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
-            return new SumAssignment(lhs, rhs);
+            if (lhs instanceof AssignableExpression) {
+                return new SumAssignment((AssignableExpression) lhs, rhs);
+            }
         }
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
 }

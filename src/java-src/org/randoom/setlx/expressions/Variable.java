@@ -79,6 +79,23 @@ public class Variable extends AssignableExpression {
         }
     }
 
+    /* Gather all bound and unbound variables in this expression and its siblings
+       when this expression gets assigned
+          - bound   means "assigned" in this expression
+          - unbound means "not present in bound set when used"
+          - used    means "present in bound set when used"
+       NOTE: Use optimizeAndCollectVariables() when adding variables from
+             sub-expressions
+    */
+    @Override
+    public void collectVariablesWhenAssigned (
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) {
+        boundVariables.add(mId);
+    }
+
     // sets this expression to the given value
     @Override
     public void assignUncloned(final State state, final Value v) throws IllegalRedefinitionException {

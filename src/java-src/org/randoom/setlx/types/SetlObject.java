@@ -513,16 +513,20 @@ public class SetlObject extends Value {
             result = classDefinition.getObjectMemberUnCloned(state, variable);
         }
         if (result instanceof ProcedureDefinition) {
-            final ProcedureDefinition proc = (ProcedureDefinition) result;
+            final ProcedureDefinition proc = (ProcedureDefinition) result.clone();
             proc.addSurroundingObject(this);
-            proc.addClosure(null);
+            return proc;
+        } else {
+            return result;
         }
-        return result;
     }
 
     @Override
     public void setObjectMember(final String variable, final Value value) {
         separateFromOriginal();
+        if (value instanceof ProcedureDefinition) {
+            ((ProcedureDefinition) value).setClosure(null);
+        }
         members.put(variable, value);
     }
 

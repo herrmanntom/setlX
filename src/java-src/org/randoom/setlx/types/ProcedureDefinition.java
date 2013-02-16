@@ -37,9 +37,9 @@ implemented here as:
 
 public class ProcedureDefinition extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^procedure";
+    public  final static String   FUNCTIONAL_CHARACTER = "^procedure";
     // count how often procedures where executed before checking to replace the stack
-    private       static int    nrOfCalls            = 0;
+    private       static int      nrOfCalls            = 0;
 
     protected final List<ParameterDef>       mParameters;  // parameter list
     protected final Block                    mStatements;  // statements in the body of the definition
@@ -75,7 +75,7 @@ public class ProcedureDefinition extends Value {
         }
     }
 
-    public void addClosure(final HashMap<Variable, Value> closure) {
+    public void setClosure(final HashMap<Variable, Value> closure) {
         mClosure = closure;
     }
 
@@ -139,10 +139,10 @@ public class ProcedureDefinition extends Value {
         final SetlObject object = mObject;
         mObject = null;
 
-        if ((mParameters.size() != size && object == null) || (mParameters.size()-1 != size && object != null)) {
+        if (mParameters.size() != size) {
             throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with a different number of parameters " +
-                "(" + mParameters.size() + ")."
+                "'" + this + "' is defined with "+ mParameters.size()+" instead of " +
+                size + " parameters."
             );
         }
 
@@ -180,16 +180,7 @@ public class ProcedureDefinition extends Value {
         final int parametersSize = mParameters.size();
         for (int i = 0; i < parametersSize; ++i) {
             final ParameterDef param = mParameters.get(i);
-            final Value        value;
-            if (object != null) {
-                if (i == 0) {
-                    value = object;
-                } else {
-                    value = values.get(i - 1);
-                }
-            } else {
-                value = values.get(i);
-            }
+            final Value        value = values.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
                 param.assign(state, value);
             } else {
@@ -256,12 +247,7 @@ public class ProcedureDefinition extends Value {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
                     // expression used to fill parameter before execution
-                    final Expr  preExpr;
-                    if (object != null) {
-                        preExpr = args.get(i - 1);
-                    } else {
-                        preExpr = args.get(i);
-                    }
+                    final Expr  preExpr   = args.get(i);
                     /* if possible the WriteBackAgent will set the variable used in this
                        expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);

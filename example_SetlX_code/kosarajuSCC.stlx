@@ -9,7 +9,7 @@ class kosarajuSCC(nodeCount, edges, reverse) {
     mSccId     := [    -1 : _ in [1 .. mNodeCount] ];
     mCount     := 0;
     
-    scc := procedure(rw this) {
+    scc := procedure() {
         for (v in topologicalSort(mReverse)) {
             if (!mMarked[v]) {
                 mCount += 1;  // new scc found
@@ -23,7 +23,7 @@ class kosarajuSCC(nodeCount, edges, reverse) {
         return sccList;
     };
     // depth first search starting from node v
-    dfs := procedure(rw this, v) {
+    dfs := procedure(v) {
         mMarked[v] := true;
         mSccId [v] := mCount;
         for (w in mEdges[v]) {
@@ -32,7 +32,7 @@ class kosarajuSCC(nodeCount, edges, reverse) {
             }
         }
     };
-    topologicalSort := procedure(this, edges) {
+    topologicalSort := procedure(edges) {
         stack  := [];
         marked := [ false : _ in [1 .. mNodeCount] ];
         for (v in [1 .. mNodeCount]) {
@@ -42,7 +42,7 @@ class kosarajuSCC(nodeCount, edges, reverse) {
         }
         return stack;
     };
-    topologicalDFS := procedure(this, v, edges, rw marked, rw stack) {
+    topologicalDFS := procedure(v, edges, rw marked, rw stack) {
         marked[v] := true;
         for (w in edges[v]) {
             if (!marked[w]) {
@@ -51,7 +51,7 @@ class kosarajuSCC(nodeCount, edges, reverse) {
         }
         stack := [ v ] + stack;
     };
-    getCount := procedure(this) {
+    getCount := procedure() {
         return mCount;
     };
 }

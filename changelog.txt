@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + added hypot(numberValue, numberValue) and atan2(numberValue, numberValue) functions
  + make predefined math-functions (e.g. exp(x), sin(x)) overloadable in objects
  + allow write access to existing member variables for methods
+ + eliminated explicit "this" parameter for object-methods
  # fix some bugs when accessing methods of objects
 
 ---v1.4.99999--- 2013-02-12

@@ -46,10 +46,13 @@ public class ProcedureConstructor extends Expr {
         if (! mClosureVariables.isEmpty()) {
             final HashMap<Variable, Value> closure = new HashMap<Variable, Value>();
             for (final Variable var : mClosureVariables) {
+                if (var.getID().equals("this")) {
+                    continue;
+                }
                 final Value val = var.eval(state);
                 if (val != Om.OM) {
                     if (val instanceof PreDefinedFunction &&
-                       var.toString().equals(((PreDefinedFunction)val).getName())
+                       var.getID().equals(((PreDefinedFunction)val).getName())
                     ) {
                         // skip predefined Functions bound to their name
                     } else {
@@ -59,7 +62,7 @@ public class ProcedureConstructor extends Expr {
             }
             if (! closure.isEmpty()) {
                 final ProcedureDefinition result = mDefinition.createCopy();
-                result.addClosure(closure);
+                result.setClosure(closure);
                 return result;
             }
         }

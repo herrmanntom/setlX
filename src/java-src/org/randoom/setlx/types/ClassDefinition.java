@@ -117,19 +117,13 @@ public class ClassDefinition extends Value {
 
         int preBound = innerBoundVariables.size();
         initBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
-        final List<Variable> initVars = new ArrayList<Variable>();
-        for (int i = preBound; i < innerBoundVariables.size(); ++i) {
-            initVars.add(innerBoundVariables.get(i));
-        }
+        final List<Variable> initVars = new ArrayList<Variable>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
         preBound = innerBoundVariables.size();
         if (staticBlock != null) {
             staticBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
-        final List<Variable> staticVars = new ArrayList<Variable>();
-        for (int i = preBound; i < innerBoundVariables.size(); ++i) {
-            staticVars.add(innerBoundVariables.get(i));
-        }
+        final List<Variable> staticVars = new ArrayList<Variable>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
         this.initVars   = initVars;
         this.staticVars = staticVars;
@@ -302,6 +296,9 @@ public class ClassDefinition extends Value {
 
     @Override
     public void setObjectMember(final String variable, final Value value) {
+        if (value instanceof ProcedureDefinition) {
+            ((ProcedureDefinition) value).setClosure(null);
+        }
         if (staticBlock == null) {
             staticBlock = new Block();
         }

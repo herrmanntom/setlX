@@ -90,10 +90,10 @@ public class CachedProcedureDefinition extends ProcedureDefinition {
         final SetlObject object = mObject;
         mObject = null;
 
-        if ((mParameters.size() != size && object == null) || (mParameters.size()-1 != size && object != null)) {
+        if (mParameters.size() != size) {
             throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with a different number of parameters " +
-                "(" + mParameters.size() + ")."
+                "'" + this + "' is defined with "+ mParameters.size()+" instead of " +
+                size + " parameters."
             );
         }
 

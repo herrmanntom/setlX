@@ -6,7 +6,7 @@ class tsp(coordinates) {
     mCoordinates := coordinates;
 
     // Solve the traveling salesman problem.
-    solve := procedure(this) {
+    solve := procedure() {
         clearCache(minCycle);
         clearCache(distance);
         return minCycle({2 .. #mCoordinates});
@@ -15,7 +15,7 @@ class tsp(coordinates) {
     // Compute a path of minimal length that visits all nodes of the set s + {1}.
     // The path has to start and end at node 1.  Inbetween, all the nodes of s are
     // visited exactly once.  The node 1 must not to be an element of the set s.
-    minCycle := cachedProcedure(this, s) {
+    minCycle := cachedProcedure(s) {
         if (#s == 2) {
             [b, c] := [x : x in s];
             return [1,b,c,1];
@@ -35,7 +35,7 @@ class tsp(coordinates) {
 
     // Splice the vertex f into the cycle p so that the length of the new path
     // is as small as possible.
-    connect := procedure(this, p, f) {
+    connect := procedure(p, f) {
         n := #p;
         minDist := mathConst("Infinity");
         for (j in [1 .. n-1]) {
@@ -49,12 +49,12 @@ class tsp(coordinates) {
         return p[..minIdx] + [f] + p[minIdx+1..];
     };
 
-    pathLength := procedure(this, p) {
+    pathLength := procedure(p) {
         return +/ [ distance(p[i], p[i+1]) : i in [1 .. #p-1] ];
     };
 
     // Compute the distance between node j and node k.
-    distance := cachedProcedure(this, j, k) {
+    distance := cachedProcedure(j, k) {
         [xJ, yJ] := mCoordinates[j];
         [xK, yK] := mCoordinates[k];
         return sqrt((xJ - xK) ** 2 + (yJ - yK) ** 2);

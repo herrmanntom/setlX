@@ -6,7 +6,7 @@ class c(n) {
 
     static {
         // overload '+' operator
-        sum := [this, other]|-> number + other.number;
+        sum := other |-> number + other.number;
     }
 }
 
@@ -20,8 +20,8 @@ print("b == $b$");
 print("a + b == $a + b$");
 
 print();
-// also overload '!' operator in object `a'; note 'rw' and prefix of `this.' is required for write access
-a.factorial := procedure(rw this) { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache;};
+// also overload '!' operator in object `a'
+a.factorial := procedure() { if (cache == om) { print("uncached factorial"); this.cache := (number ** 2)!; } return cache;};
 
 print("a == $a$");
 print("a! == $a!$");
@@ -29,8 +29,8 @@ print("a == $a$");
 print("a! == $a!$");
 
 print();
-// finally overload the power operator (**) with something unusual for all objects of c; note `rw' again
-c.power := procedure(rw this, rw other) { [other.number, this.number] := [this.number, other.number]; return "swapped";};
+// finally overload the power operator (**) with something unusual for all objects of c
+c.power := procedure(rw other) { [other.number, number] := [number, other.number]; return "swapped";};
 
 print("a.number == $a.number$");
 print("b.number == $b.number$");

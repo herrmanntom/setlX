@@ -361,7 +361,7 @@ public class StateImplementation extends State {
             return v;
         }
         v = mVariableScope.locateValue(this, var, true);
-        if (v == null) {
+        if (v == null && ! var.equals("this")) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedFunction.class.getPackage().getName();
             final String className   = "PD_" + var;

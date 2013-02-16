@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.ClassDefinition;
@@ -120,6 +121,9 @@ public class VariableScope {
             final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
             return new SetlString(new String(v));
         }
+        if (var.equals("this") && mObjectScope != null) {
+            return mObjectScope;
+        }
         Value v = mVarBindings.get(var);
         if (v != null) {
             return v;
@@ -166,7 +170,12 @@ public class VariableScope {
         }
     }
 
-    /*package*/ void storeValue(final String var, final Value value) {
+    /*package*/ void storeValue(final String var, final Value value) throws IllegalRedefinitionException {
+        if (var.equals("this")) {
+            throw new IllegalRedefinitionException(
+                "'this' may not be reassigned."
+            );
+        }
         if ( ! mWriteThrough && mObjectScope != null && mObjectScope.isObjectMemberDefinied(var)) {
             mObjectScope.setObjectMember(var, value);
         } else if ( ! mWriteThrough || mVarBindings.get(var) != null) {
@@ -219,7 +228,7 @@ public class VariableScope {
     // Add bindings stored in `scope' into this scope or globals.
     // This also adds variables in outer scopes of `scope' until reaching this
     // as outer scope of `scope'.
-    /*package*/ void storeAllValues(final VariableScope scope) {
+    /*package*/ void storeAllValues(final VariableScope scope) throws IllegalRedefinitionException {
         for (final Map.Entry<String, Value> entry : scope.mVarBindings.entrySet()) {
             storeValue(entry.getKey(), entry.getValue());
         }
@@ -267,8 +276,12 @@ public class VariableScope {
                     if (val instanceof SetlList) {
                         final SetlList binding = (SetlList) val;
                         if (binding.size() == 2 && binding.firstMember() instanceof SetlString) {
-                            newScope.storeValue(binding.firstMember().getUnquotedString(), TermConverter.valueTermToValue(binding.lastMember()));
-                            continue;
+                            try {
+                                newScope.storeValue(binding.firstMember().getUnquotedString(), TermConverter.valueTermToValue(binding.lastMember()));
+                                continue;
+                            } catch (final IllegalRedefinitionException e) {
+                                /* throw TermConversionException later */
+                            }
                         }
                     }
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);

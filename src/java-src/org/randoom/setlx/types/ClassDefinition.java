@@ -204,16 +204,7 @@ public class ClassDefinition extends Value {
 
             newScope.unlink();
 
-            final HashMap<String, Value> members = new HashMap<String, Value>();
-
-            for (final Variable var : this.initVars) {
-                final Value value = var.evaluate(state);
-                if (value != Om.OM) {
-                    members.put(var.getID(), value.clone());
-                }
-            }
-
-            return SetlObject.createNew(members, this);
+            return SetlObject.createNew(extractBindings(state, initVars), this);
 
         } finally { // make sure scope is always reset
             // restore old scope
@@ -250,21 +241,27 @@ public class ClassDefinition extends Value {
 
             newScope.unlink();
 
-            final HashMap<String, Value> staticDefs = new HashMap<String, Value>();
-
-            for (final Variable var : this.staticVars) {
-                final Value value = var.evaluate(state);
-                if (value != Om.OM) {
-                    staticDefs.put(var.getID(), value.clone());
-                }
-            }
-
-            return staticDefs;
+            return extractBindings(state, staticVars);
 
         } finally { // make sure scope is always reset
             // restore old scope
             state.setScope(oldScope);
         }
+    }
+
+    private HashMap<String, Value> extractBindings(final State state, final List<Variable> vars) throws SetlException {
+        final HashMap<String, Value> bindings = new HashMap<String, Value>();
+
+        for (final Variable var : vars) {
+            final Value value = var.evaluate(state);
+            if (value instanceof ProcedureDefinition) {
+                ((ProcedureDefinition) value).setClosure(null);
+            }
+            if (value != Om.OM) {
+                bindings.put(var.getID(), value.clone());
+            }
+        }
+        return bindings;
     }
 
     /* type checks (sort of Boolean operation) */

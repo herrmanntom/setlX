@@ -3,11 +3,10 @@ class complex(real, imag) {
     mImag := imag;
     
   static {
-    f_str := [] |-> this.mReal + " + " + this.mImag + " * i";
+    f_str := [] |-> mReal + " + " + mImag + " * i";
 
     sum := 
-        that |-> complex(this.mReal + that.mReal, 
-                                 this.mImag + that.mImag);
+        that |-> complex(mReal + that.mReal, mImag + that.mImag);
     difference := 
         that |-> complex(mReal - that.mReal, 
                                  mImag - that.mImag);
@@ -16,7 +15,7 @@ class complex(real, imag) {
                        mReal * that.mImag + mImag * that.mReal);
     };
     quotient := procedure(that) {
-        denom := that.mReal * that.mReal + this.mImag * this.mImag;
+        denom := that.mReal * that.mReal + mImag * mImag;
         real  := (mReal * that.mReal + mImag * that.mImag) / denom;
         imag  := (mImag * that.mReal - mReal * that.mImag) / denom;
         return complex(real, imag);
@@ -25,12 +24,12 @@ class complex(real, imag) {
         return exp(that * log(this));
     };
     f_exp := procedure() {
-        r := exp(this.mReal);
-        return complex(r * cos(this.mImag), r * sin(this.mImag));
+        r := exp(mReal);
+        return complex(r * cos(mImag), r * sin(mImag));
     };
     f_log := procedure() {
-        r := log(this.mReal * this.mReal + this.mImag * this.mImag) / 2; 
-        return complex(r, atan2(this.mImag, this.mReal));
+        r := log(mReal * mReal + mImag * mImag) / 2; 
+        return complex(r, atan2(mImag, mReal));
     };
   }
 }

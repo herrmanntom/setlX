@@ -95,6 +95,11 @@ public abstract class State {
 
     public abstract boolean             areAssertsDisabled();
 
+    // 'secret' option to print stack trace of unhandled java exceptions
+    public abstract void                setUnhideExceptions(final boolean unhideExceptions);
+
+    public abstract boolean             unhideExceptions();
+
     public abstract void                getLineStart(final StringBuilder sb, final int tabs);
 
     public abstract String              getEndl();

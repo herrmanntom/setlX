@@ -51,6 +51,7 @@ public class StateImplementation extends State {
     private                 boolean             isInteractive;
     private                 boolean             printVerbose;
     private                 boolean             assertsDisabled;
+    private                 boolean             unhideExceptions;
 
     /* -- Debugger -- */
     private final           HashSet<String>     breakpoints;
@@ -76,6 +77,7 @@ public class StateImplementation extends State {
         printVerbose                     = false;
         super.traceAssignments           = false;
         assertsDisabled                  = false;
+        unhideExceptions                 = false;
         /* -- Debugger -- */
         breakpoints                      = new HashSet<String>();
         super.areBreakpointsEnabled      = false;
@@ -302,6 +304,17 @@ public class StateImplementation extends State {
     @Override
     public boolean areAssertsDisabled() {
         return assertsDisabled;
+    }
+
+    // 'secret' option to print stack trace of unhandled java exceptions
+    @Override
+    public void setUnhideExceptions(final boolean unhideExceptions) {
+        this.unhideExceptions = unhideExceptions;
+    }
+
+    @Override
+    public boolean unhideExceptions() {
+        return unhideExceptions;
     }
 
     @Override

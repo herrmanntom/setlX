@@ -11,22 +11,24 @@ import org.randoom.setlx.statements.Block;
 import org.antlr.runtime.*;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.LinkedList;
 
 public class ParseSetlX {
 
-    private final   static  int             EXPR            =  1337;
-    private final   static  int             BLOCK           = 31337;
+    private final static int EXPR  =  1337;
+    private final static int BLOCK = 31337;
 
     public static Block parseFile(final State state, String fileName) throws ParserException {
         try {
             // allow modification of fileName/path by environment provider
             fileName = state.filterFileName(fileName);
             if (new File(fileName).isFile()) {
-                // parse the file contents (ANTLR will print its parser errors into stderr ...)
+                // parse the file contents
                 return parseBlock(state, new ANTLRFileStream(fileName));
             } else {
                 throw new FileNotReadableException("File '" + fileName + "' could not be read.");
@@ -45,7 +47,7 @@ public class ParseSetlX {
                     return new Block();
                 } else {
                     state.libraryWasLoaded(name);
-                    // parse the file contents (ANTLR will print its parser errors into stderr ...)
+                    // parse the file contents
                     return parseBlock(state, new ANTLRFileStream(name));
                 }
             } else {
@@ -60,7 +62,7 @@ public class ParseSetlX {
         try {
             final InputStream stream = InputReader.getStream(state);
 
-            // parse the input (ANTLR will print its parser errors into stderr ...)
+            // parse the input
             return parseBlock(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
@@ -72,7 +74,7 @@ public class ParseSetlX {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
-            // parse the input (ANTLR will print its parser errors into stderr ...)
+            // parse the input
             return parseBlock(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
@@ -84,7 +86,7 @@ public class ParseSetlX {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
-            // parse the input (ANTLR will print its parser errors into stderr ...)
+            // parse the input
             return parseExpr(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
@@ -126,8 +128,12 @@ public class ParseSetlX {
 
             // start optimizing the fragment
             Thread optimizer = null;
-            if (frag != null) {// might happen if parser ran into errors
-                optimizer = new OptimizerThread(frag);
+            if (frag != null                          && // might happen if parser ran into errors
+                state.getParserErrorCount()      == 0 &&
+                parser.getNumberOfSyntaxErrors() == 0 &&
+                lexer.getNumberOfSyntaxErrors()  == 0
+            ) {
+                optimizer = new OptimizerThread(frag, state);
                 optimizer.start();
             }
 
@@ -227,15 +233,29 @@ public class ParseSetlX {
 
     // private subclass to execute optimization using a different thread
     private static class OptimizerThread extends Thread {
-        private final CodeFragment mFragment;
+        private final CodeFragment                      fragment;
+        private final org.randoom.setlx.utilities.State state;
 
-        public OptimizerThread(final CodeFragment fragment) {
-            mFragment = fragment;
+        public OptimizerThread(final CodeFragment fragment, final org.randoom.setlx.utilities.State state) {
+            this.fragment = fragment;
+            this.state    = state;
         }
 
         @Override
         public void run() {
-            mFragment.optimize();
+            try {
+               fragment.optimize();
+            } catch (final Exception e) {
+                state.errWriteLn(
+                    "Internal error during optimization. Please report this error " +
+                    "including steps and/or code to reproduce to `setlx@randoom.org'."
+                );
+                if (state.unhideExceptions()) {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    e.printStackTrace(new PrintStream(out));
+                    state.errWrite(out.toString());
+                }
+            }
         }
     }
 

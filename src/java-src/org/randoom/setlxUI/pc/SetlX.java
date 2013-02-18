@@ -18,6 +18,8 @@ import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,9 +37,6 @@ public class SetlX {
     private final static int        EXEC_ERROR      = 33;
     private final static int        EXEC_EXIT       = 42;
 
-    /* global parameters */
-    // 'secret' option to print stack trace of unhandled java exceptions
-    private       static boolean    unhideExceptions= false;
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
@@ -149,7 +148,7 @@ public class SetlX {
             } else if (s.equals("--real256")) {
                 Real.setPrecision256();
             } else if (s.equals("--unhideExceptions")) {
-                unhideExceptions = true;
+                state.setUnhideExceptions(true);
             } else if (s.equals("--verbose")) {
                 verbose = true;
             } else if (s.length() >= 2 && s.substring(0,2).equals("--")) { // invalid option
@@ -213,8 +212,10 @@ public class SetlX {
                 blk      = null;
             } catch (final Exception e) { // this should never happen...
                 printInternalError(state);
-                if (unhideExceptions) {
-                    e.printStackTrace();
+                if (state.unhideExceptions()) {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    e.printStackTrace(new PrintStream(out));
+                    state.errWrite(out.toString());
                 }
 
                 break;
@@ -277,8 +278,10 @@ public class SetlX {
 
         } catch (final Exception e) { // this should never happen...
             printInternalError(state);
-            if (unhideExceptions) {
-                e.printStackTrace();
+            if (state.unhideExceptions()) {
+                final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                e.printStackTrace(new PrintStream(out));
+                state.errWrite(out.toString());
             }
 
             System.exit(EXIT_ERROR);
@@ -372,8 +375,10 @@ public class SetlX {
             return EXEC_EXIT; // breaks loop while parsing interactively
         } catch (final Exception e) { // this should never happen...
             printInternalError(state);
-            if (unhideExceptions) {
-                e.printStackTrace();
+            if (state.unhideExceptions()) {
+                final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                e.printStackTrace(new PrintStream(out));
+                state.errWrite(out.toString());
             }
             return EXEC_ERROR;
         }
@@ -463,7 +468,7 @@ public class SetlX {
 
     private static void printInternalError(final State state) {
         state.errWriteLn(
-            "Internal Error. Please report this error including steps and/or code " +
+            "Internal error. Please report this error including steps and/or code " +
             "to reproduce to `setlx@randoom.org'."
         );
     }

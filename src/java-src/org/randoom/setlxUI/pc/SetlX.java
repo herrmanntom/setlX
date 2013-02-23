@@ -147,6 +147,12 @@ public class SetlX {
                 Real.setPrecision128();
             } else if (s.equals("--real256")) {
                 Real.setPrecision256();
+            } else if (s.equals("--realDefault")) {
+                state.setRealPrintMode_default();
+            } else if (s.equals("--realEngineering")) {
+                state.setRealPrintMode_engineering();
+            } else if (s.equals("--realPlain")) {
+                state.setRealPrintMode_plain();
             } else if (s.equals("--unhideExceptions")) {
                 state.setUnhideExceptions(true);
             } else if (s.equals("--verbose")) {
@@ -449,6 +455,10 @@ public class SetlX {
             "  --real128\n" +
             "  --real256\n" +
             "      sets the width of the real-type in bits (real64 is the default)\n" +
+            "  --realDefault\n" +
+            "  --realEngineering\n" +
+            "  --realPlain\n" +
+            "      sets how the exponent of reals is displayed\n" +
             "  --verbose\n" +
             "      display the parsed program before executing it\n" +
             "  --version\n" +

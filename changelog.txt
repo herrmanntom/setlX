@@ -1,9 +1,11 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.5.0--- 2013-02-23
  + added hypot(numberValue, numberValue) and atan2(numberValue, numberValue) functions
  + make predefined math-functions (e.g. exp(x), sin(x)) overloadable in objects
  + allow write access to existing member variables for methods
  + eliminated explicit "this" parameter for object-methods
+ + add engineering and plain mode for printing reals
  # fix some bugs when accessing methods of objects
  # fix crash of optimizer when code contains syntax errors
 

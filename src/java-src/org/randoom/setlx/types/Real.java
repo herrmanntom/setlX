@@ -13,6 +13,10 @@ import java.math.RoundingMode;
 
 public class Real extends NumberValue {
 
+    public final static int PRINT_MODE_DEFAULT     = 1;
+    public final static int PRINT_MODE_ENGINEERING = 2;
+    public final static int PRINT_MODE_PLAIN       = 3;
+
     private static MathContext mathContext = MathContext.DECIMAL64;
 
     public static void setPrecision32() { // rather stupid
@@ -350,7 +354,17 @@ public class Real extends NumberValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append(mReal.toString());
+        switch(state.realPrintMode) {
+            case PRINT_MODE_DEFAULT:
+                sb.append(mReal.toString());
+                break;
+            case PRINT_MODE_ENGINEERING:
+                sb.append(mReal.toEngineeringString());
+                break;
+            case PRINT_MODE_PLAIN:
+                sb.append(mReal.toPlainString());
+                break;
+        }
     }
 
     /* comparisons */

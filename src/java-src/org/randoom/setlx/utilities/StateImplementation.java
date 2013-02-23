@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedFunction;
 import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -22,9 +23,10 @@ public class StateImplementation extends State {
     // interface provider to the outer world
     private                 EnvironmentProvider envProvider;
 
-    private final           HashSet<String>     loadedLibraries;
     private                 LinkedList<String>  parserErrorCapture;
     private                 int                 parserErrorCount;
+
+    private final           HashSet<String>     loadedLibraries;
 
     /* This variable stores the root VariableScope:
        Predefined functions are dynamically loaded into this VariableScope and
@@ -64,9 +66,10 @@ public class StateImplementation extends State {
 
     public StateImplementation(final EnvironmentProvider envProvider) {
         this.envProvider                 = envProvider;
-        loadedLibraries                  = new HashSet<String>();
         parserErrorCapture               = null;
         parserErrorCount                 = 0;
+        super.realPrintMode              = Real.PRINT_MODE_DEFAULT;
+        loadedLibraries                  = new HashSet<String>();
         classDefinitions                 = new HashMap<String, ClassDefinition>();
         variableScope                    = ROOT_SCOPE.createLinkedScope();
         isHuman                          = false;
@@ -189,6 +192,22 @@ public class StateImplementation extends State {
     @Override
     public void promptUnchecked(final String prompt) {
         envProvider.promptForInput(prompt);
+    }
+
+    @Override
+    public void setRealPrintMode_default() {
+        super.realPrintMode = Real.PRINT_MODE_DEFAULT;
+        System.out.println("def");
+    }
+    @Override
+    public void setRealPrintMode_engineering() {
+        super.realPrintMode = Real.PRINT_MODE_ENGINEERING;
+        System.out.println("foo");
+    }
+    @Override
+    public void setRealPrintMode_plain() {
+        super.realPrintMode = Real.PRINT_MODE_PLAIN;
+        System.out.println("bar");
     }
 
     // allow modification of fileName/path when reading files

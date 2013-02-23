@@ -51,7 +51,7 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
         lhs.assignUncloned(state, assigned);
 
         if (state.traceAssignments) {
-            state.outWriteLn("~< Trace: " + lhs + " := " + assigned + " >~");
+            printTrace(state, lhs, assigned);
         } else if (printAfterEval) {
             printResult(state, assigned);
         }

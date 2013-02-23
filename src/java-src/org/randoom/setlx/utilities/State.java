@@ -44,6 +44,12 @@ public abstract class State {
 
     public abstract void                promptUnchecked(final String prompt);
 
+    public abstract void                setRealPrintMode_default();
+    public abstract void                setRealPrintMode_engineering();
+    public abstract void                setRealPrintMode_plain();
+
+    public          int                 realPrintMode;
+
     // allow modification of fileName/path when reading files
     public abstract String              filterFileName(final String fileName);
 
@@ -73,7 +79,7 @@ public abstract class State {
 
     public abstract void                stopExecution(final boolean stopExecution);
 
-    public boolean                      isExecutionStopped;
+    public          boolean             isExecutionStopped;
 
     public abstract void                setMultiLineMode(final boolean multiLineMode);
 
@@ -89,7 +95,7 @@ public abstract class State {
 
     public abstract void                setTraceAssignments(final boolean traceAssignments);
 
-    public boolean                      traceAssignments;
+    public          boolean             traceAssignments;
 
     public abstract void                setAssertsDisabled(final boolean assertsDisabled);
 
@@ -148,11 +154,11 @@ public abstract class State {
 
     public abstract void                setBreakpointsEnabled(final boolean enabled);
 
-    public boolean                      areBreakpointsEnabled;
+    public          boolean             areBreakpointsEnabled;
 
     public abstract void                setDebugModeActive(final boolean active);
 
-    public boolean                      isDebugModeActive;
+    public          boolean             isDebugModeActive;
 
     public abstract void                setDebugPromptActive(final boolean active);
 
@@ -160,19 +166,19 @@ public abstract class State {
 
     public abstract void                setDebugStepNextExpr(final boolean stepNextExpr);
 
-    public boolean                      isDebugStepNextExpr;
+    public          boolean             isDebugStepNextExpr;
 
     public abstract void                setDebugStepThroughFunction(final boolean stepThrough);
 
-    public boolean                      isDebugStepThroughFunction;
+    public          boolean             isDebugStepThroughFunction;
 
     public abstract void                setDebugFinishFunction(final boolean finish);
 
-    public boolean                      isDebugFinishFunction;
+    public          boolean             isDebugFinishFunction;
 
     public abstract void                setDebugFinishLoop(final boolean finish);
 
-    public boolean                      isDebugFinishLoop;
+    public          boolean             isDebugFinishLoop;
 
 }
 

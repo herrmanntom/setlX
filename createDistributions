@@ -26,12 +26,31 @@ else
     exit 1
 fi
 
+cd ..
+
 # get version from executable (jar)
 version=$("$setlXlaunchScript" --version)
+
+# warn if current release is not tagged in git
+gitWarning=""
+if [ -d ".git" -a $(which git >/dev/null 2>&1; echo $?) -eq 0 ]
+  then
+    if [ $(git tag | grep -c "v$version") -ne 1 ]
+      then
+        gitWarning="WARNING: Version number of created distribution is not tagged in git!"
+        version="$version.experimental"
+    elif [ $(git diff --name-only "v$version" | wc -l) -gt 0 ]
+      then
+        gitWarning="WARNING: Source differs from commit tagged with 'v$version' in git!"
+        version="$version.experimental"
+    fi
+fi
+
+# create version string for file names
 versionForFileNames=$(echo $version | tr "." "-")
 
 # goto documentation source
-cd ../documentation
+cd documentation
 
 # clean the documentation source
 echo "=> Cleaning the documentation's source ..."
@@ -142,14 +161,10 @@ echo -n "=> Creating development kit ... "
 zip -qr "$devel.zip" . -x \*.zip \*.git\*
 echo "done"
 
-# warn if current release is not tagged in git
-if [ -d ".git" -a $(which git > /dev/null 2>&1; echo $?) -eq 0 ]
+if [ -n "$gitWarning" ]
   then
-    if [ $(git tag | grep -c "$version") -ne 1 ]
-      then
-        echo >&2
-        echo "WARNING: Version number of created distribution is not tagged in git!" >&2
-        echo >&2
-    fi
+    echo >&2
+    echo "$gitWarning" >&2
+    echo >&2
 fi
 

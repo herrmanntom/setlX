@@ -49,10 +49,10 @@ import org.randoom.setlx.functions.PD_sort;
 import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
 import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -82,22 +82,22 @@ public class SetlObject extends Value {
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
 
-    private           HashMap<String, Value> members;
-    private     final ClassDefinition        classDefinition;
+    private           SetlHashMap<Value> members;
+    private     final ClassDefinition    classDefinition;
     // is this object a clone
     private           boolean       isCloned;
 
-    private SetlObject(final HashMap<String, Value> members, final ClassDefinition classDefinition) {
+    private SetlObject(final SetlHashMap<Value> members, final ClassDefinition classDefinition) {
         this.members         = members;
         this.classDefinition = classDefinition;
         isCloned             = false; // new objects are not a clone
     }
 
-    public static SetlObject createNew(final HashMap<String, Value> members, final ClassDefinition classDefinition) {
+    public static SetlObject createNew(final SetlHashMap<Value> members, final ClassDefinition classDefinition) {
         return new SetlObject(members, classDefinition);
     }
 
-    private static SetlObject createClone(final HashMap<String, Value> members, final ClassDefinition classDefinition) {
+    private static SetlObject createClone(final SetlHashMap<Value> members, final ClassDefinition classDefinition) {
         final SetlObject result = new SetlObject(members, classDefinition);
         result.isCloned         = true;
         return result;
@@ -125,7 +125,7 @@ public class SetlObject extends Value {
      */
     private void separateFromOriginal() {
         if (isCloned) {
-            final HashMap<String, Value> members = new HashMap<String, Value>();
+            final SetlHashMap<Value> members = new SetlHashMap<Value>();
             for (final Entry<String, Value> entry: this.members.entrySet()) {
                 members.put(entry.getKey(), entry.getValue().clone());
             }
@@ -602,7 +602,7 @@ public class SetlObject extends Value {
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-// TODO        result.addMember(state, members.toTerm(state, null));
+        members.addToTerm(state, result);
 
         result.addMember(state, classDefinition.toTerm(state));
 
@@ -610,17 +610,12 @@ public class SetlObject extends Value {
     }
 
     public static SetlObject termToValue(final Term term) throws TermConversionException {
-        if (term.size() != 2) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
- // TODO           final VariableScope members  = VariableScope.valueToScope(term.firstMember());
-//            final Value         classDef = TermConverter.valueTermToValue(term.lastMember());
-//            if (classDef instanceof ClassDefinition) {
-//                return createNew(members, (ClassDefinition) classDef);
-//            } else {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//            }
+        if (term.size() == 2 && term.lastMember() instanceof Term) {
+            final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(term.firstMember());
+            final ClassDefinition    classDefinition = ClassDefinition.termToValue((Term) term.lastMember());
+            return createNew(members, classDefinition);
         }
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
     /* comparisons */
@@ -636,43 +631,11 @@ public class SetlObject extends Value {
             return 0;
         } else if (v instanceof SetlObject) {
             final SetlObject other = (SetlObject) v;
-            int cmp = classDefinition.compareTo(other.classDefinition);
+            final int cmp = classDefinition.compareTo(other.classDefinition);
             if (cmp != 0) {
                 return cmp;
             }
-
-            final Integer thisSize = members.size();
-            final Integer otherSize = other.members.size();
-            cmp = thisSize.compareTo(otherSize);
-            if (cmp != 0) {
-                return cmp;
-            }
-
-            for (final Entry<String, Value> entry: members.entrySet()) {
-                final Value otherValue = other.members.get(entry.getKey());
-                if (otherValue != null) {
-                    cmp = entry.getValue().compareTo(otherValue);
-                    if (cmp != 0) {
-                        return cmp;
-                    }
-                } else {
-                    return 1;
-                }
-            }
-
-            for (final Entry<String, Value> entry: other.members.entrySet()) {
-                final Value thisValue = members.get(entry.getKey());
-                if (thisValue != null) {
-                    cmp = entry.getValue().compareTo(thisValue);
-                    if (cmp != 0) {
-                        return cmp;
-                    }
-                } else {
-                    return -1;
-                }
-            }
-
-            return 0;
+            return members.compareTo(other.members);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -697,8 +660,7 @@ public class SetlObject extends Value {
         } else if (v instanceof SetlObject) {
             final SetlObject other = (SetlObject) v;
             if (classDefinition.equalTo(other.classDefinition)) {
-                return members.size() == other.members.size() &&
-                       members.entrySet().containsAll(other.members.entrySet());
+                return members.equalTo(other.members);
             }
         }
         return false;
@@ -744,7 +706,7 @@ public class SetlObject extends Value {
     }
     final static String IS_LESS_THAN = "isLessThan";
 
-    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+    public void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
         classDefinition.collectBindings(result, restrictToFunctions);
 
         for (final Map.Entry<String, Value> entry : members.entrySet()) {

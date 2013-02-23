@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.ProcedureDefinition;
-import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
@@ -19,18 +18,18 @@ import java.util.Map;
 // This class collects the variable bindings and the function definitions in current scope.
 public class VariableScope {
     // functional characters used in terms
-    private final   static  String      FUNCTIONAL_CHARACTER_SCOPE = "^scope";
+    private final   static  String     FUNCTIONAL_CHARACTER_SCOPE = "^scope";
 
-    private final   Map<String, Value>  bindings;
+    private final   SetlHashMap<Value> bindings;
 
     // stores reference scope of object
-    private         SetlObject          thisObject;
+    private         SetlObject         thisObject;
 
     // stores reference to original scope object upon cloning
-    private         VariableScope       originalScope;
+    private         VariableScope      originalScope;
 
     // if set mOriginalScope is only searched for functions, not variables
-    private         boolean             isRestrictedToFunctions;
+    private         boolean            isRestrictedToFunctions;
 
     /* If set variables read from outer scopes will _not_ be copied to
        current one     and
@@ -41,12 +40,12 @@ public class VariableScope {
        because the iteration variables are local to each iteration, but other
        variables used inside the iteration are not local to the iteration
        (e.g. iteration do not introduce an inner scope!).                     */
-    private         boolean             readThrough;
-    private         boolean             writeThrough;
+    private         boolean            readThrough;
+    private         boolean            writeThrough;
 
     // scopes have to be cloned from current one, therefore don't use from outside!
     /*package*/ VariableScope() {
-        bindings                = new HashMap<String, Value>();
+        bindings                = new SetlHashMap<Value>();
         thisObject              = null;
         originalScope           = null;
         isRestrictedToFunctions = false;
@@ -153,13 +152,13 @@ public class VariableScope {
     }
 
     // collect all bindings reachable from current scope (except global variables!)
-    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+    public void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
-        if (thisObject != null) {
-            thisObject.collectBindings(result, restrictToFunctions);
-        }
         if (originalScope != null) {
             originalScope.collectBindings(result, restrictToFunctions || isRestrictedToFunctions);
+        }
+        if (thisObject != null) {
+            thisObject.collectBindings(result, restrictToFunctions);
         }
         // add own bindings (possibly overwriting values from inner bindings)
         for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
@@ -176,9 +175,7 @@ public class VariableScope {
                 "'this' may not be reassigned."
             );
         }
-        if ( ! writeThrough && thisObject != null && thisObject.isObjectMemberDefinied(var)) {
-            thisObject.setObjectMember(var, value);
-        } else if ( ! writeThrough || bindings.get(var) != null) {
+        if ( ! writeThrough || bindings.get(var) != null) {
             // this scope does not allow write through or variable is actually stored here
             bindings.put(var, value);
         } else if (writeThrough          && // allowed to write into mOriginalScope
@@ -240,7 +237,7 @@ public class VariableScope {
     /* term operations */
 
     /*package*/ public Term toTerm(final State state, final HashMap<String, ClassDefinition> classDefinitions) {
-        final Map<String, Value> allVars = new HashMap<String, Value>();
+        final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
         if (classDefinitions != null) {
@@ -250,18 +247,10 @@ public class VariableScope {
         }
 
         // term which represents the scope
-        final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE);
+        final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE, 1);
 
         // list of bindings in scope
-        final SetlSet   bindings    = new SetlSet();
-        for (final Map.Entry<String, Value> entry : allVars.entrySet()) {
-            final SetlList  binding = new SetlList(2);
-            binding.addMember(state, new SetlString(entry.getKey()));
-            binding.addMember(state, entry.getValue().toTerm(state));
-
-            bindings.addMember(state, binding);
-        }
-        result.addMember(state, bindings);
+        allVars.addToTerm(state, result);
 
         return result;
     }
@@ -270,69 +259,20 @@ public class VariableScope {
         if (value instanceof Term) {
             final Term term = (Term) value;
             if (term.size() == 1 || term.firstMember() instanceof SetlSet) {
-                final SetlSet       bindings = (SetlSet) term.firstMember();
-                final VariableScope newScope = new VariableScope();
-                for (final Value val : bindings) {
-                    if (val instanceof SetlList) {
-                        final SetlList binding = (SetlList) val;
-                        if (binding.size() == 2 && binding.firstMember() instanceof SetlString) {
-                            try {
-                                newScope.storeValue(binding.firstMember().getUnquotedString(), TermConverter.valueTermToValue(binding.lastMember()));
-                                continue;
-                            } catch (final IllegalRedefinitionException e) {
-                                /* throw TermConversionException later */
-                            }
-                        }
+                final SetlHashMap<Value> bindings = SetlHashMap.valueToSetlHashMap(term.firstMember());
+                final VariableScope      newScope = new VariableScope();
+                for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
+                    try {
+                        newScope.storeValue(entry.getKey(), entry.getValue());
+                        continue;
+                    } catch (final IllegalRedefinitionException e) {
+                        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
                     }
-                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
                 }
                 return newScope;
             }
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
-    }
-
-    /* comparisons */
-
-    public int compareTo(final VariableScope other) {
-        if (this == other) {
-            return 0;
-        }
-        final int size  = this.size();
-        final int oSize = other.size();
-        if (size < oSize) {
-            return -1;
-        } else if (size == oSize) {
-            return bindings.toString().compareTo(other.bindings.toString());
-        } else {
-            return 1;
-        }
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-        if (this == other) {
-            return true;
-        } else if (other instanceof VariableScope) {
-            return this.equalTo((VariableScope) other);
-        }
-        return false;
-    }
-
-    public boolean equalTo(final VariableScope other) {
-        if (this == other) {
-            return true;
-        } else if (this.size() == other.size()) {
-            for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
-                final Value otherV = other.bindings.get(entry.getKey());
-                if (otherV == null || ! entry.getValue().equalTo(otherV)) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
     }
 }
 

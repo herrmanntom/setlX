@@ -12,7 +12,7 @@ class kosarajuSCC(nodeCount, edges, reverse) {
     scc := procedure() {
         for (v in topologicalSort(mReverse)) {
             if (!mMarked[v]) {
-                mCount += 1;  // new scc found
+                this.mCount += 1;  // new scc found
                 dfs(v);
             }
         }
@@ -24,8 +24,8 @@ class kosarajuSCC(nodeCount, edges, reverse) {
     };
     // depth first search starting from node v
     dfs := procedure(v) {
-        mMarked[v] := true;
-        mSccId [v] := mCount;
+        this.mMarked[v] := true;
+        this.mSccId [v] := mCount;
         for (w in mEdges[v]) {
             if (!mMarked[w]) {
                 dfs(w);

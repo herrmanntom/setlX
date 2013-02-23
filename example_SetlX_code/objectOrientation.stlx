@@ -26,7 +26,7 @@ print("a! == $a!$");
 
 print();
 // finally overload the power operator (**) with something unusual for all objects of c
-c.power := procedure(rw other) { [other.number, number] := [number, other.number]; return "swapped";};
+c.power := procedure(rw other) { [other.number, this.number] := [number, other.number]; return "swapped";};
 
 print("a.number == $a.number$");
 print("b.number == $b.number$");

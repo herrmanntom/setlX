@@ -91,12 +91,12 @@ class stoerWagnerMinCut(edges) {
         a := s + t;
         b := { x : x in a };
         for (n in a) {
-            mEdges[n] := [ x in mEdges[n] | !(x in b) ];
+            this.mEdges[n] := [ x in mEdges[n] | !(x in b) ];
         }
         for (n in a) {
-            mEquivNodes[n] := a;
+            this.mEquivNodes[n] := a;
         }
-        mNodeCount -= 1;
+        this.mNodeCount -= 1;
     };
 }
 

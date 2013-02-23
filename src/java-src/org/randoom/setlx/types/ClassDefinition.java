@@ -10,13 +10,13 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,12 +40,12 @@ public class ClassDefinition extends Value {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = "^constructor";
 
-    private final List<ParameterDef>     parameters;  // parameter list
-    private final Block                  initBlock;   // statements in the body of the definition
-    private       HashSet<String>        initVars;    // member variables defined in the body
-    private       Block                  staticBlock; // statements in the static block
-    private       HashSet<String>        staticVars;  // variables defined in the static block
-    private       HashMap<String, Value> staticDefs;  // definitions from static block
+    private final List<ParameterDef> parameters;  // parameter list
+    private final Block              initBlock;   // statements in the body of the definition
+    private       HashSet<String>    initVars;    // member variables defined in the body
+    private       Block              staticBlock; // statements in the static block
+    private       HashSet<String>    staticVars;  // variables defined in the static block
+    private       SetlHashMap<Value> staticDefs;  // definitions from static block
 
     public ClassDefinition(final List<ParameterDef> parameters,
                            final Block              init,
@@ -54,12 +54,12 @@ public class ClassDefinition extends Value {
         this(parameters, init, null, staticBlock, null, null);
     }
 
-    private ClassDefinition(final List<ParameterDef>     parameters,
-                            final Block                  init,
-                            final HashSet<String>        initVars,
-                            final Block                  staticBlock,
-                            final HashSet<String>        staticVars,
-                            final HashMap<String, Value> staticDefs
+    private ClassDefinition(final List<ParameterDef> parameters,
+                            final Block              init,
+                            final HashSet<String>    initVars,
+                            final Block              staticBlock,
+                            final HashSet<String>    staticVars,
+                            final SetlHashMap<Value> staticDefs
     ) {
         this.parameters  = parameters;
         this.initBlock   = init;
@@ -83,9 +83,9 @@ public class ClassDefinition extends Value {
         if (this.staticVars != null) {
             staticVars = new HashSet<String>(this.staticVars);
         }
-        HashMap<String, Value> staticDefs = null;
+        SetlHashMap<Value> staticDefs = null;
         if (this.staticDefs != null) {
-            staticDefs = new HashMap<String, Value>();
+            staticDefs = new SetlHashMap<Value>();
             for (final Entry<String, Value> entry: this.staticDefs.entrySet()) {
                 staticDefs.put(entry.getKey(), entry.getValue().clone());
             }
@@ -174,13 +174,13 @@ public class ClassDefinition extends Value {
             }
         }
 
-        final HashMap<String, Value> members     = new HashMap<String, Value>();
-        final SetlObject             newObject   = SetlObject.createNew(members, this);
+        final SetlHashMap<Value> members     = new SetlHashMap<Value>();
+        final SetlObject         newObject   = SetlObject.createNew(members, this);
 
         newScope.linkToThisObject(newObject);
 
-        final WriteBackAgent         wba         = new WriteBackAgent(parameters.size());
-        final boolean                stepThrough = state.isDebugStepThroughFunction;
+        final WriteBackAgent     wba         = new WriteBackAgent(parameters.size());
+        final boolean            stepThrough = state.isDebugStepThroughFunction;
 
         if (stepThrough) {
             state.setDebugStepThroughFunction(false);
@@ -228,7 +228,7 @@ public class ClassDefinition extends Value {
         }
     }
 
-    private HashMap<String, Value> computeStaticDefinitions(final State state) throws SetlException {
+    private SetlHashMap<Value> computeStaticDefinitions(final State state) throws SetlException {
         if (staticVars == null) {
             optimize();
         }
@@ -255,8 +255,8 @@ public class ClassDefinition extends Value {
         }
     }
 
-    private HashMap<String, Value> extractBindings(final State state, final HashSet<String> vars) throws SetlException {
-        final HashMap<String, Value> bindings = new HashMap<String, Value>();
+    private SetlHashMap<Value> extractBindings(final State state, final HashSet<String> vars) throws SetlException {
+        final SetlHashMap<Value> bindings = new SetlHashMap<Value>();
 
         for (final String var : vars) {
             final Value value = state.findValue(var);

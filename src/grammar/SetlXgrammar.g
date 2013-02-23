@@ -640,7 +640,7 @@ atomicValue returns [Value av]
 TERM            : ('^'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
 ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
-REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') '-'? ('0' .. '9')+)? ;
+REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') ('+' | '-')? ('0' .. '9')+)? ;
 RANGE_SIGN      : '..';
 // fix parsing `list[2..]' by emitting two tokens for one rule. Otherwise ANTLR
 // gets confused and want's to parse a REAL and runs into an unexpected second dot.

@@ -49,6 +49,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> {
                 }
                 throw new TermConversionException("Malformed member of Term.");
             }
+            return result;
         }
         throw new TermConversionException("Malformed member of Term.");
     }

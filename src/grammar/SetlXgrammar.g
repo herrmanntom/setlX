@@ -24,14 +24,20 @@ grammar SetlXgrammar;
 
 @members {
     private final static String IGNORE_TOKEN_ERROR        = "ignore character ('_') is only valid inside assignments and match statements 'case' conditions";
-    private final static String SEMICOLON_FOLLOWING_CLASS = "statements which uses blocks are not terminated with a semicolon (';')";
+    private final static String SEMICOLON_FOLLOWING_CLASS = "statements which use blocks are not terminated with a semicolon (';')";
 
     private void customErrorHandling(String tokenTextToMatch, String message) {
         state.syntaxErrors++;
         // sometimes antr get ahead of itself and index is not on currently matched or next token
         for (int i = input.index(); i >= 0; --i) {
-            final Token t = input.get(i);
-            if (t.getText().equals(tokenTextToMatch)) {
+            final Token  t   = input.get(i);
+            final String txt;
+            if (t != null) {
+                txt = t.getText();
+            } else {
+                txt = null;
+            }
+            if (txt != null && txt.equals(tokenTextToMatch)) {
                 String sourceName = getSourceName();
                 if (sourceName != null) {
                     sourceName += " ";

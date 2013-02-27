@@ -1,0 +1,94 @@
+// ------------------------------------------------------------------------
+// This example shows how to use a trampoline function to simulate
+// tail-call optimization, which enables arbitrarily deep recursion.
+//
+// This program was created by Jeff Nye
+// ------------------------------------------------------------------------
+
+//
+// Return the result of a computation to the trampoline, 
+// which then will return it to the caller.
+//
+done := procedure(value) { throw(value); };
+
+//
+// Continue recursing using the trampoline
+//
+cont := procedure(f, args) { return makeTerm("^call", [f, args] ); };
+
+// 
+// This is the maximum recursion depth supported by the Java implementation.
+// On my machine, a recursion depth greater than 10000 causes a
+//"stack depth exceeded" exception from Java, so I set maxdepth to something
+// less, in this case 5000.
+// 
+// Using the native call stack as much as possible considerably improves 
+// performance.
+// 
+maxdepth := 5000; 
+
+//
+// The trampoline function
+//
+trampoline := procedure(f, args) {
+  try {
+    to_do := cont(f, args);
+
+    // loop forever (until we get a result via an exception)
+    while (1 == 1) {  
+      to_do := evalTerm(to_do); 
+    }
+
+  }   
+  catch(e) {return e;} 
+};
+
+
+//
+// The factorial in tail-recursive form. It uses
+// the native stack for maxdepth recursions, then
+// using the trampoline to unwind the return stack
+// before continuing to recurse.
+//
+fact := procedure(n, acc, depth) {
+   if (n == 1) {
+     done(acc);
+   }
+   else { 
+     if (depth < maxdepth) {
+        return fact(n-1, n*acc, depth+1);
+     } else {
+       return cont( "fact", [n-1, n*acc, 0]  ); 
+     }
+   }
+};
+
+
+//
+// A typical version of factorial that uses the native return stack.
+// This function will fail when n exceeds the maximum stack depth that 
+// Java can handle.
+//
+fact_with_stack := procedure(n) {
+   if (n == 1) 
+     { return(1); } 
+   else 
+     { return n*fact_with_stack(n-1); }
+};
+
+
+// -------------------- main code
+
+n := 20000;
+
+//
+// When n > 10000, the following call dies with a "stack size exceeded"
+// Java exception on my Macbook Air with Java 1.6.
+//
+//print(  fact_with_stack(n) );
+
+//
+// The following call succeeds for n > 10000
+//
+print(  trampoline( "fact", [n, 1, 0] ) );
+

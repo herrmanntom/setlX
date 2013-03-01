@@ -1,6 +1,5 @@
 package org.randoom.setlx.functions;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.randoom.setlx.exceptions.SetlException;

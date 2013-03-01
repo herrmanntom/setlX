@@ -36,7 +36,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import com.sun.java.swing.plaf.nimbus.SliderPainter;
 
 /**
  *  <i>Standard draw</i>. This class provides a basic capability for

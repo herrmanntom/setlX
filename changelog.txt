@@ -1,6 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
  + add syntax highlighting definition for gedit
+ + moved SETLX_LIBRARY_PATH definition into launcher script
+ # fixed some PDF layout issues
 
 ---v1.5.0--- 2013-02-23
  + added hypot(numberValue, numberValue) and atan2(numberValue, numberValue) functions

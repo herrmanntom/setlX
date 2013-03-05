@@ -8,6 +8,9 @@ REM
 REM insert full path to the setlX.jar file here
 set setlXJarLocation=setlX.jar
 
+REM insert full path to library location here
+set SETLX_LIBRARY_PATH=%HOMEDRIVE%%HOMEPATH%\setlXlibrary\
+
 REM ########################## additional options ##############################
 set javaParameters=
 
@@ -24,8 +27,5 @@ IF EXIST %setlXJarLocation% (
 ) ELSE (
     echo "The setlX.jar file can not be found!"
 )
-
-echo.
-pause
 
 @ECHO on

@@ -58,6 +58,10 @@ To comfortably use \setlX{} it may be installed into the search-path. After this
 \begin{lstlisting}[frame=none,numbers=none]
 setlXJarLocation="/usr/local/setlX/setlX.jar"
 \end{lstlisting}
+	\item \textbf{(Optional)} Change the `\command{setlXlibraryPath}'-variable to the path where \setlX{} should look for library files, e.g.
+\begin{lstlisting}[frame=none,numbers=none]
+setlXlibraryPath="$HOME/setlXlibrary/"
+\end{lstlisting}
 	\item Save and close the file.
 	\item Copy the modified `\command{setlX}'-script into some folder, which is in the search-path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/local/bin}').\\
 	When only used by one user, you may copy it into the `bin' directory in his home instead (e.g. `\command{/home/<user>/bin}').
@@ -65,18 +69,14 @@ setlXJarLocation="/usr/local/setlX/setlX.jar"
 \begin{lstlisting}[frame=none,numbers=none]
 chmod +x /usr/local/bin/setlX
 \end{lstlisting}
-	\item \textbf{(Optional)} Set the `\command{SETLX\_LIBRARY\_PATH}' environment variable to the path where \setlX{} should look for library files, e.g. add the line
-\begin{lstlisting}[frame=none,numbers=none]
-export SETLX_LIBRARY_PATH="/home/<user>/setlX/library";
-\end{lstlisting}
-to the configuration file of your shell (e.g. `\command{/home/<user>/.bashrc}').
+	
 \end{enumerate}
 
 \subsection{Microsoft Windows}
 
 \begin{center}
 \large
-``Here's a nickel kid. Go buy yourself a real computer.''\footnote{In reference to \url{http://dilbert.com/1995-06-24}}
+``Here's a nickel, kid. Go buy yourself a real computer.''\footnote{In reference to \url{http://dilbert.com/1995-06-24}}
 \end{center}
 
 \begin{enumerate}
@@ -85,6 +85,10 @@ to the configuration file of your shell (e.g. `\command{/home/<user>/.bashrc}').
 	\item Change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
+\end{lstlisting}
+	\item \textbf{(Optional)} Change the `\command{SETLX\_LIBRARY\_PATH}'-variable and set it to the path where \setlX{} should look for library files, e.g.
+\begin{lstlisting}[frame=none,numbers=none]
+set SETLX_LIBRARY_PATH=C:\Progam Files\setlX\library
 \end{lstlisting}
 	\item Save and close the file.
 	\item Add the folder you placed both files into to the search-path (requires Administrator privileges):
@@ -100,10 +104,6 @@ set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
 		\item Do not alter the existing content of the `\command{Variable value}' field, but add a semicolon (`\command{;}'), followed by the full path to the folder where you installed setlX, to its very end. Using the previous example path, the new value should look like:
 \begin{lstlisting}[frame=none,numbers=none]
 <previous value>;C:\Progam Files\setlX
-\end{lstlisting}
-		\item \textbf{(Optional)} Add the `\command{SETLX\_LIBRARY\_PATH}' environment variable and set it to the path where \setlX{} should look for library files, e.g.
-\begin{lstlisting}[frame=none,numbers=none]
-C:\Progam Files\setlX\library
 \end{lstlisting}
 		\item Accept all changes by clicking `\command{OK}' in all windows you opened before.
 		\item End you current session and login into Windows again.
@@ -194,39 +194,40 @@ java -jar setlX.jar
 
 However, the \command{setlX} and \command{setlX.cmd} scripts can also be used to launch the jar file created by this process.
 
-\subsection{Building for Java 1.5 (esp. a 1st Generation Intel Macintosh)}\label{MACj5}
-
-To create \setlX{} for a machine, which is limited to Java 1.5, you need another machine running both Java 1.5 and Java 1.6.
-
-The main example for such situation is a 1st generation Apple Macintosh with Intel CPU running Mac OS X 10.5 or earlier. These machines are artificially limited by Apple to Java 1.5 only. It is recommended that you try installing an unofficial ``Soylatte''\footnote{\url{http://landonf.bikemonkey.org/static/soylatte/}} port of Java 1.6 for these machines, or upgrade to Mac OS X 10.6 or higher. You should only attempt to rebuild \setlX{} for Java 1.5 if you can not, or do not want to install this port.
-
-On the second machine running Java 1.5 and 1.6, do the following:
-
-\begin{enumerate}
-	\item Activate Java 1.6.\\
-		On a Mac this can be done using:
-\begin{lstlisting}[frame=none,numbers=none]
-/Applications/Utilities/Java Preferences
-\end{lstlisting}
-	\item Switch to the sub-directory src and execute the following command:
-\begin{lstlisting}[frame=none,numbers=none]
-make java-src/grammar/SetlXgrammar*.java
-\end{lstlisting}
-	\item Activate Java 1.5.\\
-		On a Mac this can again be done using:
-\begin{lstlisting}[frame=none,numbers=none]
-/Applications/Utilities/Java Preferences
-\end{lstlisting}
-	\item Switch to the sub-directory src again and execute the following command:
-\begin{lstlisting}[frame=none,numbers=none]
-make
-\end{lstlisting}
-\end{enumerate}
-This will create the file `\command{setlX.jar}', which can be installed on the machine running Java 1.5 as stated in section \ref{Unix}.
+%\subsection{Building for Java 1.5 (esp. a 1st Generation Intel Macintosh)}\label{MACj5}
+%
+%To create \setlX{} for a machine, which is limited to Java 1.5, you need another machine running both Java 1.5 and Java 1.6.
+%
+%The main example for such situation is a 1st generation Apple Macintosh with Intel CPU running Mac OS X 10.5 or earlier. These machines are artificially limited by Apple to Java 1.5 only. It is recommended that you try installing an unofficial ``Soylatte''\footnote{\url{http://landonf.bikemonkey.org/static/soylatte/}} port of Java 1.6 for these machines, or upgrade to Mac OS X 10.6 or higher. You should only attempt to rebuild \setlX{} for Java 1.5 if you can not, or do not want to install this port.
+%
+%On the second machine running Java 1.5 and 1.6, do the following:
+%
+%\begin{enumerate}
+%	\item Activate Java 1.6.\\
+%		On a Mac this can be done using:
+%\begin{lstlisting}[frame=none,numbers=none]
+%/Applications/Utilities/Java Preferences
+%\end{lstlisting}
+%	\item Switch to the sub-directory src and execute the following command:
+%\begin{lstlisting}[frame=none,numbers=none]
+%make java-src/grammar/SetlXgrammar*.java
+%\end{lstlisting}
+%	\item Activate Java 1.5.\\
+%		On a Mac this can again be done using:
+%\begin{lstlisting}[frame=none,numbers=none]
+%/Applications/Utilities/Java Preferences
+%\end{lstlisting}
+%	\item Switch to the sub-directory src again and execute the following command:
+%\begin{lstlisting}[frame=none,numbers=none]
+%make
+%\end{lstlisting}
+%\end{enumerate}
+%This will create the file `\command{setlX.jar}', which can be installed on the machine running Java 1.5 as stated in section \ref{Unix}.
 
 \section{System Requirements}
 
-To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher. Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source is required and somewhat problematic (see section \ref{MACj5}).
+To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher.
+%Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source is required and somewhat problematic (see section \ref{MACj5}).
 
 When building from source, the corresponding Java Development Kit (JDK) has to be present as well.
 
@@ -248,7 +249,7 @@ Parsing errors are subpar, which make root cause of syntax errors sometimes hard
 
 \subsection{Input in Interactive Mode on Unix}
 
-On UNIX (-like) systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java Limitation and no platform independent solutions are available. You may use the `rlwrap' program to work around this issue.
+On UNIX (-like) systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java Limitation and no platform independent solutions are available. You may install the `rlwrap' program to work around this issue.
 
 %\subsection{Known Bugs}
 %The following bugs are known to be present in this version of the interpreter:

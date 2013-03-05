@@ -8,6 +8,9 @@
 # insert full path to the setlX.jar file here
 setlXJarLocation="setlX.jar"
 
+# insert full path to library location here
+setlXlibraryPath="$HOME/setlXlibrary/"
+
 ############################## additional options ##############################
 javaParameters=""
 
@@ -23,6 +26,11 @@ javaParameters=""
 javaParameters="$javaParameters -Xrunhprof:cpu=samples,depth=6,doe=y"
 
 ################################################################################
+
+if [ -z "$SETLX_LIBRARY_PATH" ]
+  then
+    export SETLX_LIBRARY_PATH="$setlXlibraryPath"
+fi
 
 java_call="java"
 

@@ -4,7 +4,7 @@ pdf: tutorial.pdf
 	ps2pdf $<
 
 %.ps:  %.dvi
-	dvips -o $@ $<
+	dvips -t a4 -o $@ $<
 
 %.dvi: %.tex
 	latex $<

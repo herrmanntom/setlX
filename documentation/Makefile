@@ -1,14 +1,11 @@
 pdf: developmentGuide.pdf manual.pdf
 
-developmentGuide.pdf: developmentGuide.tex version.tex
-	latex developmentGuide.tex
-	if [ -f developmentGuide.dvi ]; then latex developmentGuide.tex; fi
-	dvipdf developmentGuide.dvi
+%.pdf: %.dvi
+	dvipdf -sPAPERSIZE=a4 $<
 
-manual.pdf: manual.tex version.tex
-	latex manual.tex
-	if [ -f manual.dvi ]; then latex manual.tex; fi
-	dvipdf manual.dvi
+%.dvi: %.tex
+	latex $<
+	if [ -f $@ ]; then latex $< ; fi
 
 clean:
 	rm -f   *.aux   *.dvi   *.lof   *.log   *.out   *.lof   *.toc

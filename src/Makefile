@@ -6,7 +6,7 @@ setlX.jar:                                                   \
         java-src/MANIFEST.MF                                                    \
         build
 	rm -f setlX.jar
-	cd bin; jar xf ../antlr/antlr-*.jar org/antlr/runtime
+	cd bin; jar xf ../antlr/antlr-*.jar org/antlr/v4/runtime
 	jar cmf java-src/MANIFEST.MF setlX.jar -C bin/ .
 	rm -rf bin/org/antlr
 
@@ -19,7 +19,7 @@ test:                                                        \
         simpleTest/test.stlx
 	cp simpleTest/test.stlx simpleTest/test.windows.stlx
 	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos simpleTest/test.windows.stlx; fi
-	./setlX simpleTest/test.windows.stlx --verbose
+	./setlX --unhideExceptions simpleTest/test.windows.stlx --verbose
 	rm -f simpleTest/test.windows.stlx
 
 build:                                                      \
@@ -157,7 +157,7 @@ bin/org/randoom/setlx/exceptions/*.class :                  \
 
 java-src/org/randoom/setlx/grammar/SetlXgrammar*.java :     \
         grammar/SetlXgrammar.g
-	java  -cp $(CLASSPATH) org.antlr.Tool -fo java-src/org/randoom/setlx/grammar grammar/SetlXgrammar.g
+	java  -cp $(CLASSPATH) org.antlr.v4.Tool -no-listener -Werror -o java-src/org/randoom/setlx/ -package org.randoom.setlx.grammar grammar/SetlXgrammar.g
 
 clean:
 	rm -rf bin/

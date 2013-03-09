@@ -20,7 +20,7 @@ statement
 
 implemented here as:
                =======
-               mResult
+               result
 */
 
 public class Return extends Statement {

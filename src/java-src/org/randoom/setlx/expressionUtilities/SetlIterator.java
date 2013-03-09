@@ -33,28 +33,28 @@ implemented here as:
       mAssignable  mCollection    ||       mNext
 */
 
-public class Iterator extends CodeFragment {
+public class SetlIterator extends CodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = "^iterator";
 
     private final Expr      mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
     private final Expr      mCollection; // Rhs (should be Set/List)
-    private       Iterator  mNext;       // next iterator in iteratorChain
+    private       SetlIterator  mNext;       // next iterator in iteratorChain
 
-    public Iterator(final Expr assignable, final Expr collection) {
+    public SetlIterator(final Expr assignable, final Expr collection) {
         mAssignable = assignable;
         mCollection = collection;
         mNext       = null;
     }
 
-    private Iterator(final Expr assignable, final Expr collection, final Iterator next) {
+    private SetlIterator(final Expr assignable, final Expr collection, final SetlIterator next) {
         mAssignable = assignable;
         mCollection = collection;
         mNext       = next;
     }
 
     // adds next iterator to end of current iterator chain
-    public void add(final Iterator i) {
+    public void add(final SetlIterator i) {
         if (mNext == null) {
             mNext = i;
         } else {
@@ -68,7 +68,7 @@ public class Iterator extends CodeFragment {
              variable to be local
        note: variables inside the whole iteration are not _not_ local
              all will be written `through' these inner scopes                 */
-    public ReturnMessage eval(final State state, final IteratorExecutionContainer exec) throws SetlException {
+    public ReturnMessage eval(final State state, final SetlIteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = state.getScope();
         try {
             final ReturnMessage result = evaluate(state, exec, outerScope);
@@ -91,7 +91,7 @@ public class Iterator extends CodeFragment {
              sub-expressions
     */
     public void collectVariablesAndOptimize (
-        final IteratorExecutionContainer container,
+        final SetlIteratorExecutionContainer container,
         final List<String>             boundVariables,
         final List<String>             unboundVariables,
         final List<String>             usedVariables
@@ -155,7 +155,7 @@ public class Iterator extends CodeFragment {
         return result;
     }
 
-    public static Iterator valueToIterator(final Value value) throws TermConversionException {
+    public static SetlIterator valueToIterator(final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -170,11 +170,11 @@ public class Iterator extends CodeFragment {
 
                 final Expr      collection  = TermConverter.valueToExpr(term.getMember(2));
 
-                      Iterator  iterator    = null;
+                      SetlIterator  iterator    = null;
                 if (! term.lastMember().equals(new SetlString("nil"))) {
-                    iterator    = Iterator.valueToIterator(term.lastMember());
+                    iterator    = SetlIterator.valueToIterator(term.lastMember());
                 }
-                return new Iterator(assignable, collection, iterator);
+                return new SetlIterator(assignable, collection, iterator);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
@@ -183,7 +183,7 @@ public class Iterator extends CodeFragment {
 
     /* private functions */
 
-    private ReturnMessage evaluate(final State state, final IteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
+    private ReturnMessage evaluate(final State state, final SetlIteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
         if (state.isExecutionStopped) {
             throw new StopExecutionException("Interrupted");
         }

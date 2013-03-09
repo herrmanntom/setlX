@@ -19,8 +19,10 @@ prolog
       'options'?
       '@header'?
       '@lexer::header'?
+      '@parser::header'?
       '@members'?
       '@lexer::members'?
+      '@parser::members'?
     ;
 
 ebnfRule returns [Rule aRule]

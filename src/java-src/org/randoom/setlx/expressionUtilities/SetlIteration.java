@@ -2,8 +2,8 @@ package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Iterator;
-import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
+import org.randoom.setlx.expressionUtilities.SetlIterator;
+import org.randoom.setlx.expressionUtilities.SetlIteratorExecutionContainer;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
@@ -30,15 +30,15 @@ implemented here as:
        mExpr        mIterator        mCondition
 */
 
-public class Iteration extends CollectionBuilder {
+public class SetlIteration extends CollectionBuilder {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = "^iteration";
 
     private final Expr      mExpr;
-    private final Iterator  mIterator;
+    private final SetlIterator  mIterator;
     private final Condition mCondition;
 
-    private class Exec implements IteratorExecutionContainer {
+    private class Exec implements SetlIteratorExecutionContainer {
         private final Expr            mExpr;
         private final Condition       mCondition;
         private final CollectionValue mCollection;
@@ -83,7 +83,7 @@ public class Iteration extends CollectionBuilder {
         }
     }
 
-    public Iteration(final Expr expr, final Iterator iterator, final Condition condition) {
+    public SetlIteration(final Expr expr, final SetlIterator iterator, final Condition condition) {
         mExpr      = expr;
         mIterator  = iterator;
         mCondition = condition;
@@ -144,23 +144,23 @@ public class Iteration extends CollectionBuilder {
         collection.addMember(state, result);
     }
 
-    /*package*/ static Iteration termToIteration(final Term term) throws TermConversionException {
+    /*package*/ static SetlIteration termToIteration(final Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
                 final Expr        expr        = TermConverter.valueToExpr(term.firstMember());
 
-                      Iterator    iterator    = null;
+                      SetlIterator    iterator    = null;
                 if (! term.getMember(2).equals(new SetlString("nil"))) {
-                    iterator  = Iterator.valueToIterator(term.getMember(2));
+                    iterator  = SetlIterator.valueToIterator(term.getMember(2));
                 }
 
                       Condition   cond        = null;
                 if (! term.lastMember().equals(new SetlString("nil"))) {
                     cond    = TermConverter.valueToCondition(term.lastMember());
                 }
-                return new Iteration(expr, iterator, cond);
+                return new SetlIteration(expr, iterator, cond);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }

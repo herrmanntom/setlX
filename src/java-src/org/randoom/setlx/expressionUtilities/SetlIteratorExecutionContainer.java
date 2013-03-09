@@ -7,7 +7,7 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-public interface IteratorExecutionContainer {
+public interface SetlIteratorExecutionContainer {
 
     /* lastIterationValue is the very last value added to the environment
        before execution.                                                    */

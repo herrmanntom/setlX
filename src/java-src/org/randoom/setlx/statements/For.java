@@ -3,8 +3,8 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressionUtilities.Iterator;
-import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
+import org.randoom.setlx.expressionUtilities.SetlIterator;
+import org.randoom.setlx.expressionUtilities.SetlIteratorExecutionContainer;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -30,24 +30,24 @@ public class For extends Statement {
     // functional character used in terms (MUST be class name starting with lower case letter!)
     private final static String  FUNCTIONAL_CHARACTER   = "^for";
 
-    private final Iterator  mIterator;
-    private final Condition mCondition;
-    private final Block     mStatements;
-    private final Exec      mExec;
+    private final SetlIterator   iterator;
+    private final Condition      condition;
+    private final Block          statements;
+    private final Exec           exec;
 
-    private class Exec implements IteratorExecutionContainer {
-        private final Condition mCondition;
-        private final Block     mStatements;
+    private class Exec implements SetlIteratorExecutionContainer {
+        private final Condition condition;
+        private final Block     statements;
 
         public Exec(final Condition condition, final Block statements) {
-            mCondition  = condition;
-            mStatements = statements;
+            this.condition  = condition;
+            this.statements = statements;
         }
 
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
-            if (mCondition == null || mCondition.evalToBool(state)) {
-                return mStatements.exec(state);
+            if (condition == null || condition.evalToBool(state)) {
+                return statements.exec(state);
                 // ContinueException and BreakException are handled by outer iterator
             }
             return null;
@@ -66,18 +66,18 @@ public class For extends Statement {
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
-            if (mCondition != null) {
-                mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            if (condition != null) {
+                condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
             }
-            mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
-    public For(final Iterator iterator, final Condition condition, final Block statements) {
-        mIterator   = iterator;
-        mCondition  = condition;
-        mStatements = statements;
-        mExec       = new Exec(mCondition, mStatements);
+    public For(final SetlIterator iterator, final Condition condition, final Block statements) {
+        this.iterator   = iterator;
+        this.condition  = condition;
+        this.statements = statements;
+        this.exec       = new Exec(condition, statements);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class For extends Statement {
         if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
             state.setDebugFinishLoop(false);
         }
-        final ReturnMessage result = mIterator.eval(state, mExec);
+        final ReturnMessage result = iterator.eval(state, exec);
         if (state.isDebugFinishLoop) {
             state.setDebugModeActive(true);
             state.setDebugFinishLoop(false);
@@ -109,7 +109,7 @@ public class For extends Statement {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mIterator.collectVariablesAndOptimize(mExec, boundVariables, unboundVariables, usedVariables);
+        iterator.collectVariablesAndOptimize(exec, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -118,13 +118,13 @@ public class For extends Statement {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.getLineStart(sb, tabs);
         sb.append("for (");
-        mIterator.appendString(state, sb, 0);
-        if (mCondition != null) {
+        iterator.appendString(state, sb, 0);
+        if (condition != null) {
             sb.append(" | ");
-            mCondition.appendString(state, sb, 0);
+            condition.appendString(state, sb, 0);
         }
         sb.append(") ");
-        mStatements.appendString(state, sb, tabs, true);
+        statements.appendString(state, sb, tabs, true);
     }
 
     /* term operations */
@@ -132,13 +132,13 @@ public class For extends Statement {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
-        result.addMember(state, mIterator.toTerm(state));
-        if (mCondition != null) {
-            result.addMember(state, mCondition.toTerm(state));
+        result.addMember(state, iterator.toTerm(state));
+        if (condition != null) {
+            result.addMember(state, condition.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
-        result.addMember(state, mStatements.toTerm(state));
+        result.addMember(state, statements.toTerm(state));
         return result;
     }
 
@@ -147,7 +147,7 @@ public class For extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final Iterator  iterator  = Iterator.valueToIterator(term.firstMember());
+                final SetlIterator  iterator  = SetlIterator.valueToIterator(term.firstMember());
                       Condition condition = null;
                 if ( ! term.getMember(2).equals(new SetlString("nil"))) {
                     condition = TermConverter.valueToCondition(term.getMember(2));

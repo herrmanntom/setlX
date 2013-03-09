@@ -3,8 +3,8 @@ package org.randoom.setlx.boolExpressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressionUtilities.Iterator;
-import org.randoom.setlx.expressionUtilities.IteratorExecutionContainer;
+import org.randoom.setlx.expressionUtilities.SetlIterator;
+import org.randoom.setlx.expressionUtilities.SetlIteratorExecutionContainer;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
@@ -36,25 +36,25 @@ public class Forall extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private final Iterator  mIterator;
-    private final Condition mCondition;
+    private final SetlIterator  iterator;
+    private final Condition     condition;
 
-    private class Exec implements IteratorExecutionContainer {
-        private final Condition     mCondition;
-        public        SetlBoolean   mResult;
-        public        VariableScope mScope;
+    private class Exec implements SetlIteratorExecutionContainer {
+        private final Condition     condition;
+        public        SetlBoolean   result;
+        public        VariableScope scope;
 
         public Exec (final Condition condition) {
-            mCondition = condition;
-            mResult    = SetlBoolean.TRUE;
-            mScope     = null;
+            this.condition = condition;
+            this.result    = SetlBoolean.TRUE;
+            this.scope     = null;
         }
 
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
-            mResult = mCondition.eval(state);
-            if (mResult == SetlBoolean.FALSE) {
-                mScope = state.getScope();  // save state where result is true
+            result = condition.eval(state);
+            if (result == SetlBoolean.FALSE) {
+                scope = state.getScope();  // save state where result is true
                 return ReturnMessage.BREAK; // stop iteration
             }
             return null;
@@ -73,24 +73,24 @@ public class Forall extends Expr {
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
-            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
-    public Forall(final Iterator iterator, final Condition condition) {
-        mIterator  = iterator;
-        mCondition = condition;
+    public Forall(final SetlIterator iterator, final Condition condition) {
+        this.iterator  = iterator;
+        this.condition = condition;
     }
 
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
-        final Exec e = new Exec(mCondition);
-        mIterator.eval(state, e);
-        if (e.mResult == SetlBoolean.FALSE && e.mScope != null) {
+        final Exec e = new Exec(condition);
+        iterator.eval(state, e);
+        if (e.result == SetlBoolean.FALSE && e.scope != null) {
             // restore state in which mBoolExpr is false
-            state.putAllValues(e.mScope);
+            state.putAllValues(e.scope);
         }
-        return e.mResult;
+        return e.result;
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -106,9 +106,9 @@ public class Forall extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mIterator.collectVariablesAndOptimize(new Exec(mCondition), boundVariables, unboundVariables, usedVariables);
+        iterator.collectVariablesAndOptimize(new Exec(condition), boundVariables, unboundVariables, usedVariables);
 
-        // add dummy variable to prevent optimization, sideeffect variables cant be optimized
+        // add dummy variable to prevent optimization, side effect variables cannot be optimized
         unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
     }
 
@@ -117,9 +117,9 @@ public class Forall extends Expr {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("forall (");
-        mIterator.appendString(state, sb, 0);
+        iterator.appendString(state, sb, 0);
         sb.append(" | ");
-        mCondition.appendString(state, sb, 0);
+        condition.appendString(state, sb, 0);
         sb.append(")");
     }
 
@@ -128,8 +128,8 @@ public class Forall extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mIterator.toTerm(state));
-        result.addMember(state, mCondition.toTerm(state));
+        result.addMember(state, iterator.toTerm(state));
+        result.addMember(state, condition.toTerm(state));
         return result;
     }
 
@@ -137,7 +137,7 @@ public class Forall extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Iterator  iterator  = Iterator.valueToIterator(term.firstMember());
+            final SetlIterator  iterator  = SetlIterator.valueToIterator(term.firstMember());
             final Condition condition = TermConverter.valueToCondition(term.lastMember());
             return new Forall(iterator, condition);
         }

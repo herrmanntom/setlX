@@ -98,8 +98,8 @@ public abstract class CollectionBuilder extends CodeFragment {
         if (value.size() == 1 && value.firstMember() instanceof Term) {
             final Term    term    = (Term) value.firstMember();
             final String  fc      = term.functionalCharacter().getUnquotedString();
-            if (fc.equals(Iteration.FUNCTIONAL_CHARACTER)) {
-                return Iteration.termToIteration(term);
+            if (fc.equals(SetlIteration.FUNCTIONAL_CHARACTER)) {
+                return SetlIteration.termToIteration(term);
             } else if (fc.equals(Range.FUNCTIONAL_CHARACTER)) {
                 return Range.termToRange(term);
             } else if (fc.equals(ExplicitListWithRest.FUNCTIONAL_CHARACTER)) {

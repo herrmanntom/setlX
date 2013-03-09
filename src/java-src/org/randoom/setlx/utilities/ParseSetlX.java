@@ -8,7 +8,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.grammar.*;
 import org.randoom.setlx.statements.Block;
 
-import org.antlr.runtime.*;
+import org.antlr.v4.runtime.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -96,15 +96,15 @@ public class ParseSetlX {
 
     /* private methods */
 
-    private static Block parseBlock(final State state, final ANTLRStringStream input) throws SyntaxErrorException {
+    private static Block parseBlock(final State state, final ANTLRInputStream input) throws SyntaxErrorException {
         return (Block) handleFragmentParsing(state, input, BLOCK);
     }
 
-    private static Expr parseExpr(final State state, final ANTLRStringStream input) throws SyntaxErrorException {
+    private static Expr parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException {
         return (Expr) handleFragmentParsing(state, input, EXPR);
     }
 
-    private static CodeFragment handleFragmentParsing(final State state, final ANTLRStringStream input, final int type) throws SyntaxErrorException {
+    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final int type) throws SyntaxErrorException {
               SetlXgrammarLexer  lexer  = null;
               SetlXgrammarParser parser = null;
         final LinkedList<String> oldCap = state.getParserErrorCapture();
@@ -114,69 +114,26 @@ public class ParseSetlX {
                                     parser = new SetlXgrammarParser(ts);
             final long              startT = state.currentTimeMillis();
 
+            parser.setBuildParseTree(false);
+            parser.removeErrorListeners();
+            parser.addErrorListener(new SetlErrorListener(state));
+            if (state.unhideExceptions()) {
+                parser.addErrorListener(new DiagnosticErrorListener());
+            }
+
             // capture parser errors
             state.setParserErrorCapture(new LinkedList<String>());
 
-            // set state objects for lexer & parser
-            lexer.setSetlXState(state);
+            // set state objects for parser
             parser.setSetlXState(state);
 
             // parse the input
-            final CodeFragment      frag   = parseFragment(parser, type);
+            final CodeFragment frag = parseFragment(parser, type);
 
             // now ANTLR will add its parser errors into our capture ...
 
-            // start optimizing the fragment
-            Thread optimizer = null;
-            if (frag != null                          && // might happen if parser ran into errors
-                state.getParserErrorCount()      == 0 &&
-                parser.getNumberOfSyntaxErrors() == 0 &&
-                lexer.getNumberOfSyntaxErrors()  == 0
-            ) {
-                optimizer = new OptimizerThread(frag, state);
-                optimizer.start();
-            }
-
-            /* check for unparsed syntax errors at the end of the input stream */
-
-            // fill token stream until EOF is reached (parser fills only as far as its lookahead needs)
-            ts.fill();
-            // current index in stream of tokens
-            final int index = ts.index();
-
-            /*
-             *  If the index into the tokenStream (which was set by the parser)
-             *  is not equal to the number of tokens in the complete input
-             *  (minus EOF), some tokens where ignored by the parser.
-             *
-             *  Best guess: The parser encountered a syntax error after a valid rule.
-             */
-            if (index < (ts.size() - 1)) {
-                // parse again to force displaying syntax error in remaining tokenStream
-                parseFragment(parser, type);
-
-                // now ANTLR will (again) add its parser errors into our capture ...
-
-                // check if parser moved the index
-                if (index == ts.index()) {
-                    /*  Index was not moved. Probably epsilon can be and was
-                     *  derived from the start-rule.
-                     *  However there are still unparsed tokens left...
-                     *
-                     *  Note: In SetlX this can NEVER be the case, because
-                     *        epsilon can NOT be derived from any start-rule!
-                     */
-                    final Token t = ts.get(index);
-                    String error  = "line " + t.getLine() + ":" + t.getCharPositionInLine();
-                           error += " input '" + ts.toString(index, ts.size()) + "' includes unidentified errors";
-                    // fake ANTLR like error message
-                    state.addToParserErrorCount(1);
-                    parser.emitErrorMessage(error);
-                }
-            }
-
             // update error count
-            state.addToParserErrorCount(parser.getNumberOfSyntaxErrors() + lexer.getNumberOfSyntaxErrors());
+            state.addToParserErrorCount(parser.getNumberOfSyntaxErrors());
 
             if (state.getParserErrorCount() > 0) {
                 throw SyntaxErrorException.create(
@@ -185,22 +142,26 @@ public class ParseSetlX {
                 );
             }
 
-            // wait for optimization of the fragment, but max until 0.25s after start
-            while((state.currentTimeMillis() - startT) < 250 &&
-                  optimizer != null && optimizer.isAlive()
-            ) {
-                try {
-                    Thread.sleep(5);
-                } catch (final InterruptedException e) { /* don't care */ }
+            // start optimizing the fragment
+            Thread optimizer = null;
+            if (frag != null) {
+                optimizer = new OptimizerThread(frag, state);
+                optimizer.start();
+
+                // wait for optimization of the fragment, but max until 0.25s after start
+                while((state.currentTimeMillis() - startT) < 250 &&
+                      optimizer != null && optimizer.isAlive()
+                ) {
+                    try {
+                        Thread.sleep(5);
+                    } catch (final InterruptedException e) { /* don't care */ }
+                }
             }
 
             return frag;
         } catch (final RecognitionException re) {
             throw SyntaxErrorException.create(state.getParserErrorCapture(), re.getMessage());
         } catch (final NullPointerException npe) {
-            if (lexer != null) {
-                state.addToParserErrorCount(lexer.getNumberOfSyntaxErrors());
-            }
             if (parser != null) {
                 state.addToParserErrorCount(parser.getNumberOfSyntaxErrors());
             }
@@ -211,6 +172,11 @@ public class ParseSetlX {
                     state.getParserErrorCount() + " syntax error(s) encountered."
                 );
             } else { // NullPointer in parse tree itself
+                if (state.unhideExceptions()) {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    npe.printStackTrace(new PrintStream(out));
+                    state.errWrite(out.toString());
+                }
                 throw SyntaxErrorException.create(new LinkedList<String>(),"Parsed tree contains nullpointer.");
             }
         } finally {
@@ -222,9 +188,9 @@ public class ParseSetlX {
     private static CodeFragment parseFragment(final SetlXgrammarParser parser, final int type) throws RecognitionException {
         switch (type) {
             case EXPR:
-                return parser.initExpr();
+                return parser.initExpr().ae;
             case BLOCK:
-                return parser.initBlock();
+                return parser.initBlock().blk;
             default:
                 /* this should never be reached if surrounding code is correct */
                 return null;
@@ -236,7 +202,7 @@ public class ParseSetlX {
         private final CodeFragment                      fragment;
         private final org.randoom.setlx.utilities.State state;
 
-        public OptimizerThread(final CodeFragment fragment, final org.randoom.setlx.utilities.State state) {
+        /*package*/ OptimizerThread(final CodeFragment fragment, final org.randoom.setlx.utilities.State state) {
             this.fragment = fragment;
             this.state    = state;
         }
@@ -258,6 +224,26 @@ public class ParseSetlX {
             }
         }
     }
+
+    public static class SetlErrorListener extends BaseErrorListener {
+        private final State state;
+
+        /*package*/ SetlErrorListener(final State state) {
+            this.state = state;
+        }
+
+        @Override
+        public void syntaxError(final Recognizer<?, ?>     recognizer,
+                                final Object               offendingSymbol,
+                                final int                  line,
+                                final int                  charPositionInLine,
+                                final String               msg,
+                                final RecognitionException e
+        ) {
+            state.writeParserErrLn("line " + line + ":" + charPositionInLine + " " + msg);
+        }
+    }
+
 
 }
 

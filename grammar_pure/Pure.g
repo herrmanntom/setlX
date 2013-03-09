@@ -28,8 +28,8 @@ statement
     | 'exit' ';'
     | 'return' expr? ';'
     | 'assert' '(' condition ',' expr ')' ';'
-    | (assignmentOther)=> assignmentOther ';'
-    | (assignmentDirect)=> assignmentDirect ';'
+    | assignmentOther ';'
+    | assignmentDirect ';'
     | expr ';'
     ;
 
@@ -70,7 +70,7 @@ assignmentOther
     ;
 
 assignmentDirect
-    : assignable ':=' ((assignmentDirect)=> assignmentDirect | expr)
+    : assignable ':=' (assignmentDirect | expr)
     ;
 
 assignList
@@ -195,7 +195,7 @@ callParameters
     ;
 
 collectionAccessParams
-    : (expr RANGE_SIGN)=> expr RANGE_SIGN expr?
+    : expr RANGE_SIGN expr?
     | RANGE_SIGN expr
     | expr
     ;
@@ -218,9 +218,9 @@ set
     ;
 
 collectionBuilder
-    : (range)=> range
-    | (shortIterate)=> shortIterate
-    | (iterate)=> iterate
+    : range
+    | shortIterate
+    | iterate
     | explicitList
     ;
 
@@ -263,13 +263,10 @@ ID : 'a'..'z' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 NUMBER : '0' | '1'..'9' ('0'..'9')*;
 REAL : NUMBER? '.' ('0'..'9')+ (('e' | 'E') ('+' | '-')? ('0'..'9')+)?;
 RANGE_SIGN : '..';
-NUMBER_RANGE : NUMBER RANGE_SIGN;
 STRING : '"' ('\\"' | ~('"'))* '"';
 LITERAL : '\'' ('\\\'' | ~('\''))* '\'';
-LINE_COMMENT : '//' (~('\r\n' | '\n' | '\r'))*;
+LINE_COMMENT : '//' (~('\n' | '\r'))*;
 MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';
 
 WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
-// see SetlXgrammar.g for explanation of the following rule
-REMAINDER       : . { state.syntaxErrors++; emitErrorMessage(((getSourceName() != null)? getSourceName() + " " : "") + "line " + getLine() + ":" + getCharPositionInLine() + " character '" + getText() + "' is invalid"); skip(); } ;
 

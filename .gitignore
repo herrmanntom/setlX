@@ -16,9 +16,11 @@ Tutorial/auto
 grammar_pure/EBNF_extractor/*.class
 grammar_pure/EBNF_extractor/EBNF_Grammar.tokens
 grammar_pure/EBNF_extractor/EBNF_GrammarLexer.java
+grammar_pure/EBNF_extractor/EBNF_GrammarLexer.tokens
 grammar_pure/EBNF_extractor/EBNF_GrammarParser.java
 grammar_pure/Pure.tokens
 grammar_pure/PureLexer.java
+grammar_pure/PureLexer.tokens
 grammar_pure/PureParser.java
 grammar_pure/*.class
 src/bin

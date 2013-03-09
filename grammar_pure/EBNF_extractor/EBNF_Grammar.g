@@ -1,9 +1,5 @@
 grammar EBNF_Grammar;
 
-options {
-    k = 2;
-}
-
 @header {
     import java.util.List;
     import java.util.ArrayList;
@@ -12,9 +8,9 @@ options {
 ebnf_grammar returns [Grammar g]
     : prolog
       { List<Rule> rules = new ArrayList<Rule>(); }
-      (rule { rules.add($rule.rule); })+ 
+      (ebnfRule { rules.add($ebnfRule.aRule); })+ 
       { List<Rule> regexpRules = new ArrayList<Rule>(); }
-      (regexpDef { regexpRules.add($regexpDef.rule); })*
+      (regexpDef { regexpRules.add($regexpDef.aRule); })*
       { $g = new Grammar(rules, regexpRules); }
     ;
 
@@ -27,9 +23,9 @@ prolog
       '@lexer::members'?
     ;
 
-rule returns [Rule rule]
+ebnfRule returns [Rule aRule]
     : VAR type? ('returns' type)? '@init'? '@after'? ':' expr ';'
-      { $rule = new Rule($VAR.text, $expr.expr); }
+      { $aRule = new Rule($VAR.text, $expr.anExpr); }
     ;
 
 type
@@ -45,36 +41,36 @@ name
     | TOKEN
     ;
 
-expr returns [Expr expr]
-    : p = product { $expr = $p.expr; }
-      ('|' q = product { $expr = new Alternative($expr, $q.expr); })*
+expr returns [Expr anExpr]
+    : p = product      { $anExpr = $p.anExpr; }
+      ('|' q = product { $anExpr = new Alternative($anExpr, $q.anExpr); })*
     ;
 
-product returns [Expr expr]
-    : { $expr = new Epsilon(); }
-      (factor { if ($expr instanceof Epsilon) {
-                    $expr = $factor.expr;
+product returns [Expr anExpr]
+    : { $anExpr = new Epsilon(); }
+      (factor { if ($anExpr instanceof Epsilon) {
+                    $anExpr = $factor.anExpr;
                 } else {
-                    $expr = new Concatenation($expr, $factor.expr); 
+                    $anExpr = new Concatenation($anExpr, $factor.anExpr); 
                 }
               }
       )*
     ;
 
-factor returns [Expr expr]
-    : element { $expr = $element.expr; }
-      ( '*'  { $expr = new Postfix($expr, "*" ); }
-      | '+'  { $expr = new Postfix($expr, "+" ); }
-      | '?'  { $expr = new Postfix($expr, "?" ); }
-      | '=>' { $expr = new Postfix($expr, "=>"); }
+factor returns [Expr anExpr]
+    : element { $anExpr = $element.anExpr; }
+      ( '*'   { $anExpr = new Postfix($anExpr, "*" ); }
+      | '+'   { $anExpr = new Postfix($anExpr, "+" ); }
+      | '?'   { $anExpr = new Postfix($anExpr, "?" ); }
+      | '=>'  { $anExpr = new Postfix($anExpr, "=>"); }
       )?
     ;
 
-element returns [Expr expr]
-    : '(' expr { $expr = $expr.expr; } ')'
-    | (name '=')? ( VAR     { $expr = new Variable($VAR.text  );   } 
-                  | TOKEN   { $expr = new MyToken( $TOKEN.text);   }
-                  | LITERAL { $expr = new MyToken( $LITERAL.text); }
+element returns [Expr anExpr]
+    : '(' expr              { $anExpr = $expr.anExpr; } ')'
+    | (name '=')? ( VAR     { $anExpr = new Variable($VAR.text  );   } 
+                  | TOKEN   { $anExpr = new MyToken( $TOKEN.text);   }
+                  | LITERAL { $anExpr = new MyToken( $LITERAL.text); }
                   ) parameter?
     ;
 
@@ -83,44 +79,44 @@ parameter
     ;
 
 // regular expressions
-regexpDef returns [Rule rule]
-    : TOKEN ':' regexp { $rule = new Rule($TOKEN.text, $regexp.expr); } ';'
+regexpDef returns [Rule aRule]
+    : TOKEN ':' regexp { $aRule = new Rule($TOKEN.text, $regexp.anExpr); } ';'
     ;
 
-regexp returns [Expr expr]
-    : p = regexpProduct { $expr = $p.expr; }
-      ('|' q = regexpProduct { $expr = new Alternative($expr, $q.expr); })*
+regexp returns [Expr anExpr]
+    : p = regexpProduct      { $anExpr = $p.anExpr; }
+      ('|' q = regexpProduct { $anExpr = new Alternative($anExpr, $q.anExpr); })*
     ;
 
-regexpProduct returns [Expr expr]
-    : { $expr = new Epsilon(); }
-      (regexpFactor { if ($expr instanceof Epsilon) {
-                          $expr = $regexpFactor.expr;
+regexpProduct returns [Expr anExpr]
+    : { $anExpr = new Epsilon(); }
+      (regexpFactor { if ($anExpr instanceof Epsilon) {
+                          $anExpr = $regexpFactor.anExpr;
                       } else {
-                          $expr = new Concatenation($expr, $regexpFactor.expr);
+                          $anExpr = new Concatenation($anExpr, $regexpFactor.anExpr);
                       }
                     }
       )+
     ;
 
-regexpFactor returns [Expr expr]
-    : prefix { $expr = $prefix.expr; }
-      ( '*'  { $expr = new Postfix($prefix.expr, "*" ); }
-      | '+'  { $expr = new Postfix($prefix.expr, "+" ); }
-      | '?'  { $expr = new Postfix($prefix.expr, "?" ); }
+regexpFactor returns [Expr anExpr]
+    : prefix { $anExpr = $prefix.anExpr; }
+      ( '*'  { $anExpr = new Postfix($prefix.anExpr, "*" ); }
+      | '+'  { $anExpr = new Postfix($prefix.anExpr, "+" ); }
+      | '?'  { $anExpr = new Postfix($prefix.anExpr, "?" ); }
       )?
     ;
 
-prefix returns [Expr expr]
-    : '~' atom  { $expr = new Negation($atom.expr); }
-    | atom      { $expr = $atom.expr;               }
+prefix returns [Expr anExpr]
+    : '~' atom  { $anExpr = new Negation($atom.anExpr); }
+    | atom      { $anExpr = $atom.anExpr;               }
     ; 
 
-atom returns [Expr expr]
-    : '(' regexp ')' { $expr = $regexp.expr; }
-    | l = LITERAL { $expr = new MyToken($l.text); }
-      ('..' r = LITERAL { $expr = new Range($l.text, $r.text); })?
-    | (name '=')? TOKEN { $expr = new MyToken($TOKEN.text); }
+atom returns [Expr anExpr]
+    : '(' regexp ')'    { $anExpr = $regexp.anExpr; }
+    | l = LITERAL       { $anExpr = new MyToken($l.text); }
+      ('..' r = LITERAL { $anExpr = new Range($l.text, $r.text); })?
+    | (name '=')? TOKEN { $anExpr = new MyToken($TOKEN.text); }
     ;
 
 VAR      : ('a'..'z')('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
@@ -132,3 +128,4 @@ WS       : (' '|'\t'|'\n'|'\r') { skip(); };
 
 LINE_COMMENT  : '//' (~('\n'))*                              { skip(); };
 MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/'  { skip(); };
+

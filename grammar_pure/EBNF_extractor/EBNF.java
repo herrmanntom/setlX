@@ -1,4 +1,4 @@
-import org.antlr.runtime.*;
+import org.antlr.v4.runtime.*;
 
 public class EBNF {
 
@@ -7,7 +7,11 @@ public class EBNF {
         EBNF_GrammarLexer  lexer  = new EBNF_GrammarLexer(input);
         CommonTokenStream  ts     = new CommonTokenStream(lexer);
         EBNF_GrammarParser parser = new EBNF_GrammarParser(ts);
-        Grammar            g      = parser.ebnf_grammar();
+
+        parser.setBuildParseTree(false);
+
+        Grammar            g      = parser.ebnf_grammar().g;
+
         System.out.println(g);
     }
 }

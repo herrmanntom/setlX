@@ -522,7 +522,7 @@ public class SetlObject extends Value {
     }
 
     @Override
-    public void setObjectMember(final String variable, final Value value) {
+    public void setObjectMember(final State state, final String variable, final Value value) {
         separateFromOriginal();
         if (value instanceof ProcedureDefinition) {
             ((ProcedureDefinition) value).setClosure(null);

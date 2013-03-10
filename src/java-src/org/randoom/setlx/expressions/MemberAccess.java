@@ -97,7 +97,7 @@ public class MemberAccess extends AssignableExpression {
     public void assignUncloned(final State state, final Value v) throws SetlException {
         if (this.lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
-            lhs.setObjectMember(memberID, v);
+            lhs.setObjectMember(state, memberID, v);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + this + " := " + v + "\" is unusable for member assignment."

@@ -298,19 +298,29 @@ public class ClassDefinition extends Value {
     }
 
     @Override
-    public void setObjectMember(final String variable, final Value value) {
+    public void setObjectMember(final State state, final String variable, final Value value) throws SetlException {
+        if (staticVars == null) {
+            optimize();
+        }
+
         if (value instanceof ProcedureDefinition) {
             ((ProcedureDefinition) value).setClosure(null);
         }
-        if (staticBlock == null) {
-            staticBlock = new Block();
+
+        if (staticDefs == null) {
+            staticDefs = computeStaticDefinitions(state);
         }
-        final Variable var = new Variable(variable);
-        staticBlock.add(new ExpressionStatement(new Assignment(var, new ValueExpr(value))));
-        staticVars.add(var.getID());
-        if (staticDefs != null) {
-            staticDefs.put(variable, value);
+
+        staticDefs.put(variable, value);
+
+        staticVars.add(variable);
+
+        // rebuild static block
+        final Block sBlock = new Block();
+        for (final Entry<String, Value> entry : staticDefs.entrySet()) {
+            sBlock.add(new ExpressionStatement(new Assignment(new Variable(entry.getKey()), new ValueExpr(entry.getValue()))));
         }
+        staticBlock = sBlock;
     }
 
     /* string and char operations */

@@ -567,7 +567,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public void setObjectMember(final String variable, final Value value) throws IncompatibleTypeException {
+    public void setObjectMember(final State state, final String variable, final Value value) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not add member '" + variable + "' into operand; '" + this + "' is not an object."
         );

@@ -107,9 +107,9 @@ while read -r -d $'\0' path
         # execute with setlX
         if [ -e "$path.input" ]
           then
-            cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" --predictableRandom --unhideExceptions "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+            cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
         else
-            cd "$directoryname"; "$setlXlaunchScript" --predictableRandom --unhideExceptions "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+            cd "$directoryname"; "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
         fi
     )&
     pids[$threadID]=$!

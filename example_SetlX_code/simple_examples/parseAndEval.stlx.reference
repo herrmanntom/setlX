@@ -1,5 +1,6 @@
 Please enter some SetlX value
-line 1:0 no viable alternative at input '%'
+rule stack: [initExpr, expr]
+line 1:0 at [@0,0:0='%',<18>,1:0]: no viable alternative at input '%'
 1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!
@@ -8,7 +9,8 @@ Please enter some SetlX value
 value	:= om
 
 Please enter some SetlX expression using the 'value' variable
-line 1:0 no viable alternative at input '%'
+rule stack: [initExpr, expr]
+line 1:0 at [@0,0:0='%',<18>,1:0]: no viable alternative at input '%'
 1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!

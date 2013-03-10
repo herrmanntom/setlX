@@ -5,7 +5,7 @@
 /*5*/	//                                 representing a single line of the file read.
 /*6*/	//                                 When the optional parameter `listOfLineNumbers/
 /*7*/	//                                 is used, only lines in this list will be read.
-/*8*/	fileContent := readFile("../example_SetlX_code/fileAPI.stlx");  // will fail if relative path is wrong...
+/*8*/	fileContent := readFile("fileAPI.stlx");  // will fail if relative path is wrong...
 /*9*/	
 /*10*/	for (x in [1 .. #fileContent]) {
 /*11*/	    print("/*$x$*/\t" + fileContent[x]);
@@ -13,13 +13,13 @@
 /*13*/	
 /*14*/	// To prevent setlX running out of memory when reading huge files, only specific lines can be read:
 /*15*/	// lines 1 to 10 (inclusive)
-/*16*/	tmp := readFile("../example_SetlX_code/fileAPI.stlx", [1..10]);
+/*16*/	tmp := readFile("fileAPI.stlx", [1..10]);
 /*17*/	// line number which are not present in the file are simply ignored
-/*18*/	tmp := readFile("../example_SetlX_code/fileAPI.stlx", [7,39,1000]);
+/*18*/	tmp := readFile("fileAPI.stlx", [7,39,1000]);
 /*19*/	// when the number of lines is unknown, read in slices and check if the result is empty:
 /*20*/	i := 1;
 /*21*/	while(true) {
-/*22*/	    tmp := readFile("../example_SetlX_code/fileAPI.stlx", [i .. i + 999]);
+/*22*/	    tmp := readFile("fileAPI.stlx", [i .. i + 999]);
 /*23*/	    if (#tmp > 0) {
 /*24*/	        // do something with the data here
 /*25*/	    } else {

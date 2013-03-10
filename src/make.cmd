@@ -1,6 +1,6 @@
 @ECHO off
 
-set antlrJarLocation=antlr\antlr-3.4-complete-no-antlrv2.jar
+set antlrJarLocation=antlr\antlr-4.0-complete.jar
 set CLASSPATH="%antlrJarLocation%;%CLASSPATH%"
 
 IF EXIST java-src (
@@ -14,7 +14,7 @@ IF EXIST java-src (
     IF EXIST setlX.jar (
         del /F /Q setlX.jar
     )
-    java  -cp "%CLASSPATH%" org.antlr.Tool -fo java-src\org\randoom\setlx\grammar grammar\SetlXgrammar.g
+    java  -cp "%CLASSPATH%" org.antlr.v4.Tool -no-listener -Werror -o java-src\org\randoom\setlx -package org.randoom.setlx.grammar grammar\SetlXgrammar.g
     mkdir bin
     javac -cp "%CLASSPATH%" -d bin -sourcepath java-src java-src\org\randoom\setlx\exceptions\*.java
     javac -cp "%CLASSPATH%" -d bin -sourcepath java-src java-src\org\randoom\setlx\types\*.java
@@ -27,7 +27,7 @@ IF EXIST java-src (
     javac -cp "%CLASSPATH%" -d bin -sourcepath java-src java-src\org\randoom\setlx\functions\*.java
     javac -cp "%CLASSPATH%" -d bin -sourcepath java-src java-src\org\randoom\setlxUI\pc\SetlX.java
     cd bin
-    jar xf "..\%antlrJarLocation%" org/antlr/runtime
+    jar xf "..\%antlrJarLocation%" org/antlr/v4/runtime
     cd ..
     jar cmf java-src\MANIFEST.MF setlX.jar -C bin\ .
     rmdir /S /Q bin

@@ -1,7 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.5.1--- 2013-03-10
  + add syntax highlighting definition for gedit
  + moved SETLX_LIBRARY_PATH definition into launcher script
+ + updated antlr to v4.0, which should improve parser error messages
  # fixed some PDF layout issues
 
 ---v1.5.0--- 2013-02-23

@@ -66,6 +66,8 @@ statement returns [Statement stmnt]
         List<MatchAbstractBranch>       matchList  = new ArrayList<MatchAbstractBranch>();
         List<TryCatchAbstractBranch>    tryList    = new ArrayList<TryCatchAbstractBranch>();
         Condition                       condition  = null;
+        Block                           block      = null;
+        Expr                            expression = null;
     }
     : classDefinition                                                { $stmnt = $classDefinition.cd;                               }
     | 'if'          '(' c1 = condition[false] ')' '{' b1 = block '}' { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));             }
@@ -98,13 +100,13 @@ statement returns [Statement stmnt]
          'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));         }
       )?
       { $stmnt = new TryCatch($b1.blk, tryList); }
-    | 'check' '{' b1 = block '}' ('afterBacktrack' '{' b2 = block '}')?
-                                                                     { $stmnt = new Check($b1.blk, $b2.blk);                       }
+    | 'check' '{' b1 = block '}' ('afterBacktrack' '{' b2 = block { block = $b2.blk; } '}')?
+                                                                     { $stmnt = new Check($b1.blk, block);                         }
     | 'backtrack' ';'                                                { $stmnt = Backtrack.BT;                                      }
     | 'break' ';'                                                    { $stmnt = Break.B;                                           }
     | 'continue' ';'                                                 { $stmnt = Continue.C;                                        }
     | 'exit' ';'                                                     { $stmnt = Exit.E;                                            }
-    | 'return' expr[false]? ';'                                      { $stmnt = new Return($expr.ex);                              }
+    | 'return' (expr[false] { expression = $expr.ex; } )? ';'        { $stmnt = new Return(expression);                            }
     | 'assert' '(' condition[false] ',' expr[false] ')' ';'          { $stmnt = (setlXstate.areAssertsDisabled())?
                                                                                    null
                                                                                :
@@ -574,4 +576,17 @@ LITERAL         : '\'' ('\\\''|~('\''))* '\'';
 LINE_COMMENT    : '//' ~('\n' | '\r')*                      { skip(); } ;
 MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;
 WS              : (' '|'\t'|'\n'|'\r')                      { skip(); } ;
+
+/*
+ * This is the desperate attempt at counting mismatched characters as errors
+ * instead of the lexers default behavior of emitting an error message,
+ * consuming the character and continuing without counting it as an error.
+ *
+ * Using this rule all unknown characters are added to the token stream
+ * and the parser will stumble over them, reporting "mismatched input"
+ *
+ * Matching any character here works, because the lexer matches rules in order.
+ */
+
+REMAINDER       : . ;
 

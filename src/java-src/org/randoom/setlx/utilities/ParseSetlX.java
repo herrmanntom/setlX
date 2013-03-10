@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class ParseSetlX {
 
@@ -113,18 +115,23 @@ public class ParseSetlX {
             final CommonTokenStream ts     = new CommonTokenStream(lexer);
                                     parser = new SetlXgrammarParser(ts);
             final long              startT = state.currentTimeMillis();
+            final SetlErrorListener errorL = new SetlErrorListener(state);
 
-            parser.setBuildParseTree(false);
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(errorL);
+
             parser.removeErrorListeners();
-            parser.addErrorListener(new SetlErrorListener(state));
+            parser.addErrorListener(errorL);
             if (state.unhideExceptions()) {
                 parser.addErrorListener(new DiagnosticErrorListener());
             }
 
+            parser.setBuildParseTree(false);
+
             // capture parser errors
             state.setParserErrorCapture(new LinkedList<String>());
 
-            // set state objects for parser
+            // set state object for parser
             parser.setSetlXState(state);
 
             // parse the input
@@ -172,12 +179,10 @@ public class ParseSetlX {
                     state.getParserErrorCount() + " syntax error(s) encountered."
                 );
             } else { // NullPointer in parse tree itself
-                if (state.unhideExceptions()) {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    npe.printStackTrace(new PrintStream(out));
-                    state.errWrite(out.toString());
-                }
-                throw SyntaxErrorException.create(new LinkedList<String>(),"Parsed tree contains nullpointer.");
+                throw SyntaxErrorException.create(
+                    new LinkedList<String>(),
+                    handleInternalError(state, "Internal error while parsing.", npe)
+                );
             }
         } finally {
             // restore error capture
@@ -198,6 +203,17 @@ public class ParseSetlX {
     }
 
     // private subclass to execute optimization using a different thread
+    private static String handleInternalError(final State state, final String errorMsg, final Exception e) {
+        if (state.unhideExceptions()) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            e.printStackTrace(new PrintStream(out));
+            state.errWrite(out.toString());
+        }
+        return errorMsg + " Please report this error " +
+               "including steps and/or code to reproduce to `setlx@randoom.org'.";
+    }
+
+    // private subclass to execute optimization using a different thread
     private static class OptimizerThread extends Thread {
         private final CodeFragment                      fragment;
         private final org.randoom.setlx.utilities.State state;
@@ -212,15 +228,7 @@ public class ParseSetlX {
             try {
                fragment.optimize();
             } catch (final Exception e) {
-                state.errWriteLn(
-                    "Internal error during optimization. Please report this error " +
-                    "including steps and/or code to reproduce to `setlx@randoom.org'."
-                );
-                if (state.unhideExceptions()) {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    e.printStackTrace(new PrintStream(out));
-                    state.errWrite(out.toString());
-                }
+                state.errWriteLn(handleInternalError(state, "Internal error during optimization.", e));
             }
         }
     }
@@ -240,7 +248,16 @@ public class ParseSetlX {
                                 final String               msg,
                                 final RecognitionException e
         ) {
-            state.writeParserErrLn("line " + line + ":" + charPositionInLine + " " + msg);
+            if (state.unhideExceptions() && recognizer instanceof Parser) {
+                final List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
+                Collections.reverse(stack);
+                final StringBuilder buf = new StringBuilder();
+                buf.append("rule stack: "+stack+"\n");
+                buf.append("line "+line+":"+charPositionInLine+" at "+ offendingSymbol+": "+msg);
+                state.writeParserErrLn(buf.toString());
+            } else {
+                state.writeParserErrLn("line " + line + ":" + charPositionInLine + " " + msg);
+            }
         }
     }
 

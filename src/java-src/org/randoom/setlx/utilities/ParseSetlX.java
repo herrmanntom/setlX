@@ -9,6 +9,7 @@ import org.randoom.setlx.grammar.*;
 import org.randoom.setlx.statements.Block;
 
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.atn.PredictionMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -115,29 +116,65 @@ public class ParseSetlX {
             final CommonTokenStream ts     = new CommonTokenStream(lexer);
                                     parser = new SetlXgrammarParser(ts);
             final long              startT = state.currentTimeMillis();
-            final SetlErrorListener errorL = new SetlErrorListener(state);
-
-            lexer.removeErrorListeners();
-            lexer.addErrorListener(errorL);
-
-            parser.removeErrorListeners();
-            parser.addErrorListener(errorL);
-            if (state.unhideExceptions()) {
-                parser.addErrorListener(new DiagnosticErrorListener());
-            }
 
             parser.setBuildParseTree(false);
 
-            // capture parser errors
-            state.setParserErrorCapture(new LinkedList<String>());
+            lexer.removeErrorListeners();
 
-            // set state object for parser
-            parser.setSetlXState(state);
+            parser.removeErrorListeners();
 
-            // parse the input
-            final CodeFragment frag = parseFragment(parser, type);
+            // result of the parsing run
+            CodeFragment fragment = null;
 
-            // now ANTLR will add its parser errors into our capture ...
+            // try with simpler/faster SLL(*)
+            parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
+
+            // we don't want error messages or recovery during first try
+            parser.setErrorHandler(new BailErrorStrategy());
+            try {
+
+                // parse the input
+                fragment = parseFragment(parser, type);
+
+                // if we get here, there was no syntax error and SLL(*) was enough
+
+            } catch (final RuntimeException ex) {
+                // or it was not enough
+                fragment = null;
+            }
+
+            if (fragment == null || parser.getNumberOfSyntaxErrors() > 0 || state.getParserErrorCount() > 0) {
+                // try full LL(*)
+                parser.getInterpreter().setPredictionMode(PredictionMode.LL);
+
+                // rewind input stream
+                ts.reset();
+
+                // set to standard listeners/handlers
+                final SetlErrorListener errorL = new SetlErrorListener(state);
+
+                lexer.addErrorListener(errorL);
+                parser.addErrorListener(errorL);
+
+                if (state.isRuntimeDebuggingEnabled()) {
+                    parser.addErrorListener(new DiagnosticErrorListener());
+                    // use even more stringent parser
+                    parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+                }
+
+                parser.setErrorHandler(new DefaultErrorStrategy());
+
+                // capture parser errors
+                state.setParserErrorCapture(new LinkedList<String>());
+
+                // set state object for parser
+                parser.setSetlXState(state);
+
+                // parse the input
+                fragment = parseFragment(parser, type);
+
+                // now ANTLR will add its parser errors into our capture ...
+            }
 
             // update error count
             state.addToParserErrorCount(parser.getNumberOfSyntaxErrors());
@@ -151,8 +188,8 @@ public class ParseSetlX {
 
             // start optimizing the fragment
             Thread optimizer = null;
-            if (frag != null) {
-                optimizer = new OptimizerThread(frag, state);
+            if (fragment != null) {
+                optimizer = new OptimizerThread(fragment, state);
                 optimizer.start();
 
                 // wait for optimization of the fragment, but max until 0.25s after start
@@ -165,7 +202,7 @@ public class ParseSetlX {
                 }
             }
 
-            return frag;
+            return fragment;
         } catch (final RecognitionException re) {
             throw SyntaxErrorException.create(state.getParserErrorCapture(), re.getMessage());
         } catch (final NullPointerException npe) {
@@ -204,7 +241,7 @@ public class ParseSetlX {
 
     // private subclass to execute optimization using a different thread
     private static String handleInternalError(final State state, final String errorMsg, final Exception e) {
-        if (state.unhideExceptions()) {
+        if (state.isRuntimeDebuggingEnabled()) {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             e.printStackTrace(new PrintStream(out));
             state.errWrite(out.toString());
@@ -248,7 +285,7 @@ public class ParseSetlX {
                                 final String               msg,
                                 final RecognitionException e
         ) {
-            if (state.unhideExceptions() && recognizer instanceof Parser) {
+            if (state.isRuntimeDebuggingEnabled() && recognizer instanceof Parser) {
                 final List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
                 Collections.reverse(stack);
                 final StringBuilder buf = new StringBuilder();

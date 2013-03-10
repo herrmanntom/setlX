@@ -101,10 +101,10 @@ public abstract class State {
 
     public abstract boolean             areAssertsDisabled();
 
-    // 'secret' option to print stack trace of unhandled java exceptions
-    public abstract void                setUnhideExceptions(final boolean unhideExceptions);
+    // 'secret' option to print stack trace of unhandled java exceptions and use more checks
+    public abstract void                setRuntimeDebugging(final boolean isRuntimeDebuggingEnabled);
 
-    public abstract boolean             unhideExceptions();
+    public abstract boolean             isRuntimeDebuggingEnabled();
 
     public abstract void                getLineStart(final StringBuilder sb, final int tabs);
 

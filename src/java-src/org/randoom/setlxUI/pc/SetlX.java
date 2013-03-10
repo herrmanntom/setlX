@@ -154,7 +154,7 @@ public class SetlX {
             } else if (s.equals("--realPlain")) {
                 state.setRealPrintMode_plain();
             } else if (s.equals("--unhideExceptions")) {
-                state.setUnhideExceptions(true);
+                state.setRuntimeDebugging(true);
             } else if (s.equals("--verbose")) {
                 verbose = true;
             } else if (s.length() >= 2 && s.substring(0,2).equals("--")) { // invalid option
@@ -218,7 +218,7 @@ public class SetlX {
                 blk      = null;
             } catch (final Exception e) { // this should never happen...
                 printInternalError(state);
-                if (state.unhideExceptions()) {
+                if (state.isRuntimeDebuggingEnabled()) {
                     final ByteArrayOutputStream out = new ByteArrayOutputStream();
                     e.printStackTrace(new PrintStream(out));
                     state.errWrite(out.toString());
@@ -284,7 +284,7 @@ public class SetlX {
 
         } catch (final Exception e) { // this should never happen...
             printInternalError(state);
-            if (state.unhideExceptions()) {
+            if (state.isRuntimeDebuggingEnabled()) {
                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                 e.printStackTrace(new PrintStream(out));
                 state.errWrite(out.toString());
@@ -381,7 +381,7 @@ public class SetlX {
             return EXEC_EXIT; // breaks loop while parsing interactively
         } catch (final Exception e) { // this should never happen...
             printInternalError(state);
-            if (state.unhideExceptions()) {
+            if (state.isRuntimeDebuggingEnabled()) {
                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                 e.printStackTrace(new PrintStream(out));
                 state.errWrite(out.toString());

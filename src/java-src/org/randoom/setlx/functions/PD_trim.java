@@ -13,7 +13,7 @@ public class PD_trim extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_trim();
 
     private PD_trim() {
-        super("trim");
+        super();
         addParameter("string");
     }
 

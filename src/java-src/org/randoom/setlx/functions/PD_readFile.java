@@ -30,7 +30,7 @@ public class PD_readFile extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_readFile();
 
     private PD_readFile() {
-        super("readFile");
+        super();
         addParameter("fileName");
         addParameter("listOfLineNumbers");
         allowFewerParameters();

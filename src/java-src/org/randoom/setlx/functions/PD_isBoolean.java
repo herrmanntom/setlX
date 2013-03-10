@@ -11,7 +11,7 @@ public class PD_isBoolean extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isBoolean();
 
     private PD_isBoolean() {
-        super("isBoolean");
+        super();
         addParameter("value");
     }
 

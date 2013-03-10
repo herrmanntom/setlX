@@ -17,7 +17,7 @@ public class PD_loadLibrary extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_loadLibrary();
 
     private PD_loadLibrary() {
-        super("loadLibrary");
+        super();
         addParameter("name");
     }
 

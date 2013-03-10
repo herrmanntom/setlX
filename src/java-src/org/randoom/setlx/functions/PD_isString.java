@@ -11,7 +11,7 @@ public class PD_isString extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isString();
 
     private PD_isString() {
-        super("isString");
+        super();
         addParameter("value");
     }
 

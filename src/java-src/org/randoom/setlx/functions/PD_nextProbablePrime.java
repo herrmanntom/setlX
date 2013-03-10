@@ -17,7 +17,7 @@ public class PD_nextProbablePrime extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_nextProbablePrime();
 
     private PD_nextProbablePrime() {
-        super("nextProbablePrime");
+        super();
         addParameter("integer");
     }
 

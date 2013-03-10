@@ -14,7 +14,7 @@ public class PD_ceil extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_ceil();
 
     private PD_ceil() {
-        super("ceil");
+        super();
         addParameter("numberValue");
     }
 

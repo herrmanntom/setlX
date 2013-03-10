@@ -12,7 +12,7 @@ public class PD_sort extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_sort();
 
     private PD_sort() {
-        super("sort");
+        super();
         addParameter("collectionValue");
     }
 

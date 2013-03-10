@@ -11,7 +11,7 @@ public class PD_isMap extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isMap();
 
     private PD_isMap() {
-        super("isMap");
+        super();
         addParameter("value");
     }
 

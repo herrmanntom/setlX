@@ -12,7 +12,7 @@ public class PD_pow extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_pow();
 
     private PD_pow() {
-        super("pow");
+        super();
         addParameter("set");
     }
 

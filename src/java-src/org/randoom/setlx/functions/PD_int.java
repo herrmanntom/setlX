@@ -12,7 +12,7 @@ public class PD_int extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_int();
 
     private PD_int() {
-        super("int");
+        super();
         addParameter("value");
     }
 

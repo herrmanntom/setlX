@@ -13,7 +13,7 @@ public class PD_finish extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_finish();
 
     private PD_finish() {
-        super("finish");
+        super();
     }
 
     @Override

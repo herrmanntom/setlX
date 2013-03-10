@@ -14,7 +14,7 @@ public class PD_rmBreak extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_rmBreak();
 
     private PD_rmBreak() {
-        super("rmBreak");
+        super();
         addParameter("id");
     }
 

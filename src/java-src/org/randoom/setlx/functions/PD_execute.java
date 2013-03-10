@@ -17,7 +17,7 @@ public class PD_execute extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_execute();
 
     private PD_execute() {
-        super("execute");
+        super();
         addParameter("setlX_statements");
     }
 

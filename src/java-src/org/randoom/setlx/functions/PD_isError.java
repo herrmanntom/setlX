@@ -11,7 +11,7 @@ public class PD_isError extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isError();
 
     private PD_isError() {
-        super("isError");
+        super();
         addParameter("value");
     }
 

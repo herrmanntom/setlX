@@ -13,7 +13,7 @@ public class PD_finishLoop extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_finishLoop();
 
     private PD_finishLoop() {
-        super("finishLoop");
+        super();
     }
 
     @Override

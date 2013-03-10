@@ -14,7 +14,7 @@ public class PD_startsWith extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_startsWith();
 
     private PD_startsWith() {
-        super("startsWith");
+        super();
         addParameter("string");
         addParameter("prefix");
     }

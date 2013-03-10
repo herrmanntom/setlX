@@ -12,7 +12,7 @@ public class PD_min extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_min();
 
     private PD_min() {
-        super("min");
+        super();
         addParameter("collectionValue");
     }
 

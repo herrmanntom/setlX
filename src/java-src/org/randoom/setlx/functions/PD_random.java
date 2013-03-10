@@ -16,7 +16,7 @@ public class PD_random extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_random();
 
     private PD_random() {
-        super("random");
+        super();
         addParameter("numberOfChoices");
         allowFewerParameters();
     }

@@ -35,10 +35,10 @@ implemented here as:
 
 public class SetlIterator extends CodeFragment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "^iterator";
+    private final static String FUNCTIONAL_CHARACTER = "^setlIterator";
 
-    private final Expr      mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
-    private final Expr      mCollection; // Rhs (should be Set/List)
+    private final Expr          mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
+    private final Expr          mCollection; // Rhs (should be Set/List)
     private       SetlIterator  mNext;       // next iterator in iteratorChain
 
     public SetlIterator(final Expr assignable, final Expr collection) {

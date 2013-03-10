@@ -20,19 +20,27 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     // functional characters used in terms
     private final static String  FUNCTIONAL_CHARACTER = "^preDefinedProcedure";
 
-    private final String  mName;
-    private       boolean mUnlimitedParameters;
-    private       boolean mAllowFewerParameters;
+    private       String  name;
+    private       boolean unlimitedParameters;
+    private       boolean allowFewerParameters;
 
-    protected PreDefinedFunction(final String name) {
+    protected PreDefinedFunction() {
         super(new ArrayList<ParameterDef>(), new Block());
-        mName                   = name;
-        mUnlimitedParameters    = false;
-        mAllowFewerParameters   = false;
+        this.name                 = null;
+        this.unlimitedParameters  = false;
+        this.allowFewerParameters = false;
     }
 
     public final String getName() {
-        return mName;
+        if (name == null) {
+            name = this.getClass().getSimpleName().substring(3);
+        }
+        return name;
+    }
+
+    // only to be used by MathFunction.java & MathFunction2.java !
+    protected final void setName(final String name) {
+        this.name = name;
     }
 
     // add parameters to own definition
@@ -45,12 +53,12 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
 
     // allow an unlimited number of parameters
     protected void enableUnlimitedParameters() {
-        mUnlimitedParameters    = true;
+        unlimitedParameters    = true;
     }
 
     // allow an calling with fewer number of parameters then specified
     protected void allowFewerParameters() {
-        mAllowFewerParameters   = true;
+        allowFewerParameters   = true;
     }
 
     // this function is to be implemented by all predefined functions
@@ -62,26 +70,26 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         final int paramSize = mParameters.size();
         final int argsSize  = args.size();
         if (paramSize < argsSize) {
-            if (mUnlimitedParameters) {
+            if (unlimitedParameters) {
                 // unlimited means: at least the number of defined parameters or more
                 // no error
             } else {
                 String error = "Procedure is defined with fewer parameters ";
                 error +=       "(" + paramSize;
-                if (mAllowFewerParameters) {
+                if (allowFewerParameters) {
                     error +=   " or less";
                 }
                 error +=       ").";
                 throw new IncorrectNumberOfParametersException(error);
             }
         } else if (paramSize > argsSize) {
-            if (mAllowFewerParameters) {
+            if (allowFewerParameters) {
                 // fewer parameters are allowed
                 // no error
             } else {
                 String error = "Procedure is defined with more parameters ";
                 error +=       "(" + paramSize;
-                if (mUnlimitedParameters) {
+                if (unlimitedParameters) {
                     error +=   " or more";
                 }
                 error +=       ").";
@@ -140,7 +148,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
                 sb.append(", ");
             }
         }
-        if (mUnlimitedParameters) {
+        if (unlimitedParameters) {
             if (mParameters.size() > 0) {
                 sb.append(", ");
             }
@@ -150,7 +158,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
         sb.append(endl);
         state.getLineStart(sb, tabs + 1);
         sb.append("/* predefined procedure `");
-        sb.append(mName);
+        sb.append(getName());
         sb.append("' */");
         sb.append(endl);
         state.getLineStart(sb, tabs);
@@ -163,7 +171,7 @@ public abstract class PreDefinedFunction extends ProcedureDefinition {
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
 
-        result.addMember(state, new SetlString(mName));
+        result.addMember(state, new SetlString(getName()));
 
         return result;
     }

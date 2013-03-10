@@ -11,7 +11,7 @@ public class PD_getTerm extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_getTerm();
 
     private PD_getTerm() {
-        super("getTerm");
+        super();
         addParameter("value");
     }
 

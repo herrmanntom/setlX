@@ -11,7 +11,7 @@ public class PD_isReal extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isReal();
 
     private PD_isReal() {
-        super("isReal");
+        super();
         addParameter("value");
     }
 

@@ -12,7 +12,7 @@ public class PD_last extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_last();
 
     private PD_last() {
-        super("last");
+        super();
         addParameter("collectionValue");
     }
 

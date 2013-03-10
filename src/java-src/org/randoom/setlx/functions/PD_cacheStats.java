@@ -17,7 +17,7 @@ public class PD_cacheStats extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_cacheStats();
 
     private PD_cacheStats() {
-        super("cacheStats");
+        super();
         addParameter("cachedProcedure");
     }
 

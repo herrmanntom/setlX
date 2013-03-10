@@ -9,6 +9,7 @@ import java.lang.reflect.Method;
 
 public class PD_atan2 extends MathFunction2 {
     public final static PreDefinedFunction DEFINITION;
+
     static {
         Method function;
         try {

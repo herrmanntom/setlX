@@ -12,7 +12,7 @@ public class PD_str extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_str();
 
     private PD_str() {
-        super("str");
+        super();
         addParameter("value");
     }
 

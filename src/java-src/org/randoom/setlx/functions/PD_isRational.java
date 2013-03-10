@@ -11,7 +11,7 @@ public class PD_isRational extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isRational();
 
     private PD_isRational() {
-        super("isRational");
+        super();
         addParameter("value");
     }
 

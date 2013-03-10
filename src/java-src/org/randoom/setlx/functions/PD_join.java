@@ -12,7 +12,7 @@ public class PD_join extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_join();
 
     private PD_join() {
-        super("join");
+        super();
         addParameter("collection");
         addParameter("separator");
     }

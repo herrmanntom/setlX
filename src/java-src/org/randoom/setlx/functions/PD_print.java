@@ -11,12 +11,8 @@ import java.util.List;
 public class PD_print extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_print();
 
-    private PD_print() {
-        this("print");
-    }
-
-    protected PD_print(final String fName) {
-        super(fName);
+    protected PD_print() {
+        super();
         addParameter("value");
         enableUnlimitedParameters();
         allowFewerParameters();

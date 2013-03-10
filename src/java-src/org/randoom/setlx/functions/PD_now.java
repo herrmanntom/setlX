@@ -13,7 +13,7 @@ public class PD_now extends PreDefinedFunction {
                                             = new PD_now();
 
     private PD_now() {
-        super("now");
+        super();
     }
 
     @Override

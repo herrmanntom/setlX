@@ -17,7 +17,7 @@ public class PD_compare extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_compare();
 
     private PD_compare() {
-        super("compare");
+        super();
         addParameter("valueA");
         addParameter("valueB");
     }

@@ -17,7 +17,7 @@ public class PD_load extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_load();
 
     private PD_load() {
-        super("load");
+        super();
         addParameter("path_to_setlX_file");
     }
 

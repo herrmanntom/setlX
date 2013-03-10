@@ -12,7 +12,7 @@ public class PD_reset extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_reset();
 
     private PD_reset() {
-        super("reset");
+        super();
     }
 
     @Override

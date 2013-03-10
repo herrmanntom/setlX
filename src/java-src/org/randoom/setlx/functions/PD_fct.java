@@ -12,7 +12,7 @@ public class PD_fct extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fct();
 
     private PD_fct() {
-        super("fct");
+        super();
         addParameter("term");
     }
 

@@ -13,7 +13,7 @@ public class PD_fStep extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_fStep();
 
     private PD_fStep() {
-        super("fStep");
+        super();
     }
 
     @Override

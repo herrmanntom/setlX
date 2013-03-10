@@ -16,7 +16,7 @@ public class PD_parseStatements extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_parseStatements();
 
     private PD_parseStatements() {
-        super("parseStatements");
+        super();
         addParameter("setlX_statements");
     }
 

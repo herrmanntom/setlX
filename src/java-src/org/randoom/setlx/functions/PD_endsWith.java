@@ -14,7 +14,7 @@ public class PD_endsWith extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_endsWith();
 
     private PD_endsWith() {
-        super("endsWith");
+        super();
         addParameter("string");
         addParameter("suffix");
     }

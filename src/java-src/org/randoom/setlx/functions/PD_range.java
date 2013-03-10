@@ -12,7 +12,7 @@ public class PD_range extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_range();
 
     private PD_range() {
-        super("range");
+        super();
         addParameter("map");
     }
 

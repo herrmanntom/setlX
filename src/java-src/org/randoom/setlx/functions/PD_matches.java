@@ -23,7 +23,7 @@ public class PD_matches extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_matches();
 
     private PD_matches() {
-        super("matches");
+        super();
         addParameter("string");
         addParameter("pattern");
         addParameter("captureGroups");

@@ -12,7 +12,7 @@ public class PD_reverse extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_reverse();
 
     private PD_reverse() {
-        super("reverse");
+        super();
         addParameter("collectionValue");
     }
 

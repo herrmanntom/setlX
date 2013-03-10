@@ -15,7 +15,7 @@ public class PD_deleteFile extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_deleteFile();
 
     private PD_deleteFile() {
-        super("deleteFile");
+        super();
         addParameter("fileName");
     }
 

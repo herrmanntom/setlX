@@ -14,7 +14,7 @@ public class PD_mathConst extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_mathConst();
 
     private PD_mathConst() {
-        super("mathConst");
+        super();
         addParameter("name_of_constant");
     }
 

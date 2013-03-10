@@ -18,7 +18,7 @@ public class PD_from extends PreDefinedFunction {
                                             = new PD_from();
 
     private PD_from() {
-        super("from");
+        super();
         addParameter("collectionValue", ParameterDef.READ_WRITE);
     }
 

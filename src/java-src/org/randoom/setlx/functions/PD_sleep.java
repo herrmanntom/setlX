@@ -15,7 +15,7 @@ public class PD_sleep extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_sleep();
 
     private PD_sleep() {
-        super("sleep");
+        super();
         addParameter("time_in_ms");
     }
 

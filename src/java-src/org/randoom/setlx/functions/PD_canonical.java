@@ -12,7 +12,7 @@ public class PD_canonical extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_canonical();
 
     private PD_canonical() {
-        super("canonical");
+        super();
         addParameter("term");
     }
 

@@ -11,7 +11,7 @@ public class PD_isSet extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isSet();
 
     private PD_isSet() {
-        super("isSet");
+        super();
         addParameter("value");
     }
 

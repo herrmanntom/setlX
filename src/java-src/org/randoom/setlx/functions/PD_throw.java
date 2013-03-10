@@ -12,7 +12,7 @@ public class PD_throw extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_throw();
 
     private PD_throw() {
-        super("throw");
+        super();
         addParameter("value");
     }
 

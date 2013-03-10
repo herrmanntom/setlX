@@ -13,7 +13,7 @@ public class PD_arb extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_arb();
 
     private PD_arb() {
-        super("arb");
+        super();
         addParameter("collectionValue");
     }
 

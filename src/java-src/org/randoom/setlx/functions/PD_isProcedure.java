@@ -11,7 +11,7 @@ public class PD_isProcedure extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isProcedure();
 
     private PD_isProcedure() {
-        super("isProcedure");
+        super();
         addParameter("value");
     }
 

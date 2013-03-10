@@ -13,7 +13,7 @@ public class PD_resume extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_resume();
 
     private PD_resume() {
-        super("resume");
+        super();
     }
 
     @Override

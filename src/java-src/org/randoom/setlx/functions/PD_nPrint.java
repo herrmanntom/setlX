@@ -8,7 +8,7 @@ public class PD_nPrint extends PD_print {
     public final static PreDefinedFunction DEFINITION = new PD_nPrint();
 
     private PD_nPrint() {
-        super("nPrint");
+        super();
     }
 
     @Override

@@ -12,7 +12,7 @@ public class PD_domain extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_domain();
 
     private PD_domain() {
-        super("domain");
+        super();
         addParameter("map");
     }
 

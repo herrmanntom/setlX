@@ -14,7 +14,7 @@ public class PD_get extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_get();
 
     private PD_get() {
-        super("get");
+        super();
         addParameter("message");
         enableUnlimitedParameters();
         allowFewerParameters();

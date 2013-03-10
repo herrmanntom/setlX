@@ -14,7 +14,7 @@ public class PD_collect extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_collect();
 
     private PD_collect() {
-        super("collect");
+        super();
         addParameter("list");
     }
 

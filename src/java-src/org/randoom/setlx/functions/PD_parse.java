@@ -15,7 +15,7 @@ public class PD_parse extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_parse();
 
     private PD_parse() {
-        super("parse");
+        super();
         addParameter("setlX_expr");
     }
 

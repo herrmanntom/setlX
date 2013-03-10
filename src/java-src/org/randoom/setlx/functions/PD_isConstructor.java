@@ -11,7 +11,7 @@ public class PD_isConstructor extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isConstructor();
 
     private PD_isConstructor() {
-        super("isConstructor");
+        super();
         addParameter("value");
     }
 

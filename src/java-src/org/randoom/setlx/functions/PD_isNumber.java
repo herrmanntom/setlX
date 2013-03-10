@@ -12,7 +12,7 @@ public class PD_isNumber extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isNumber();
 
     private PD_isNumber() {
-        super("isNumber");
+        super();
         addParameter("value");
     }
 

@@ -12,7 +12,7 @@ public class PD_abs extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_abs();
 
     private PD_abs() {
-        super("abs");
+        super();
         addParameter("value");
     }
 

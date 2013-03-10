@@ -13,7 +13,7 @@ public class PD_multiLineMode extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_multiLineMode();
 
     private PD_multiLineMode() {
-        super("multiLineMode");
+        super();
         addParameter("toggle");
     }
 

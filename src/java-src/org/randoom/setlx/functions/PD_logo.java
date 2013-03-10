@@ -101,7 +101,7 @@ public class PD_logo extends PreDefinedFunction {
     private final static String[]           COINS       = {"Penny", "Nickel", "Dime", "Quarter"};
 
     private PD_logo() {
-        super("logo");
+        super();
     }
 
     @Override

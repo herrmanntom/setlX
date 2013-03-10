@@ -14,7 +14,7 @@ public class PD_clearCache extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_clearCache();
 
     private PD_clearCache() {
-        super("clearCache");
+        super();
         addParameter("cachedProcedure");
     }
 

@@ -16,7 +16,7 @@ public class PD_makeTerm extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_makeTerm();
 
     private PD_makeTerm() {
-        super("makeTerm");
+        super();
         addParameter("functionalCharacter");
         addParameter("body");
     }

@@ -17,7 +17,7 @@ public class PD_read extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_read();
 
     private PD_read() {
-        super("read");
+        super();
         addParameter("message");
         enableUnlimitedParameters();
         allowFewerParameters();

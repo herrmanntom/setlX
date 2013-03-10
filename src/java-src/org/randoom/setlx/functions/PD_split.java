@@ -12,7 +12,7 @@ public class PD_split extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_split();
 
     private PD_split() {
-        super("split");
+        super();
         addParameter("string");
         addParameter("pattern");
     }

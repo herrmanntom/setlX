@@ -32,11 +32,11 @@ implemented here as:
 
 public class SetlIteration extends CollectionBuilder {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "^iteration";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = "^setlIteration";
 
-    private final Expr      mExpr;
-    private final SetlIterator  mIterator;
-    private final Condition mCondition;
+    private final Expr         mExpr;
+    private final SetlIterator mIterator;
+    private final Condition    mCondition;
 
     private class Exec implements SetlIteratorExecutionContainer {
         private final Expr            mExpr;

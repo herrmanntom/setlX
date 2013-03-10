@@ -14,7 +14,7 @@ public class PD_round extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_round();
 
     private PD_round() {
-        super("round");
+        super();
         addParameter("numberValue");
     }
 

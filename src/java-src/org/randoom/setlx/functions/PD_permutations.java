@@ -12,7 +12,7 @@ public class PD_permutations extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_permutations();
 
     private PD_permutations() {
-        super("permutations");
+        super();
         addParameter("collectionValue");
     }
 

@@ -12,7 +12,7 @@ public class PD_rational extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_rational();
 
     private PD_rational() {
-        super("rational");
+        super();
         addParameter("value");
     }
 

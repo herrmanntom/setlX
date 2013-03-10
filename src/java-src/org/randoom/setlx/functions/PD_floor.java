@@ -14,7 +14,7 @@ public class PD_floor extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_floor();
 
     private PD_floor() {
-        super("floor");
+        super();
         addParameter("numberValue");
     }
 

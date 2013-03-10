@@ -11,7 +11,7 @@ public class PD_isObject extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isObject();
 
     private PD_isObject() {
-        super("isObject");
+        super();
         addParameter("value");
     }
 

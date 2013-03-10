@@ -11,7 +11,7 @@ public class PD_isInteger extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isInteger();
 
     private PD_isInteger() {
-        super("isInteger");
+        super();
         addParameter("value");
     }
 

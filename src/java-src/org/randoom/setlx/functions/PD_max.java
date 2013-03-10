@@ -12,7 +12,7 @@ public class PD_max extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_max();
 
     private PD_max() {
-        super("max");
+        super();
         addParameter("collectionValue");
     }
 

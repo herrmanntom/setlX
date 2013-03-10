@@ -11,7 +11,7 @@ public class PD_isInfinite extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isInfinite();
 
     private PD_isInfinite() {
-        super("isInfinite");
+        super();
         addParameter("value");
     }
 

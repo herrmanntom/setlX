@@ -19,7 +19,7 @@ public class PD_isProbablePrime extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isProbablePrime();
 
     private PD_isProbablePrime() {
-        super("isProbablePrime");
+        super();
         addParameter("integer");
     }
 

@@ -17,7 +17,7 @@ public class PD_evalTerm extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_evalTerm();
 
     private PD_evalTerm() {
-        super("evalTerm");
+        super();
         addParameter("term");
     }
 

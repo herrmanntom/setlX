@@ -23,7 +23,7 @@ public class PD_rnd extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_rnd();
 
     private PD_rnd() {
-        super("rnd");
+        super();
         addParameter("collectionValue");
         addParameter("numberOfChoices");
         allowFewerParameters();

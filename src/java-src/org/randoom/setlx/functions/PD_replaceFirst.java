@@ -17,7 +17,7 @@ public class PD_replaceFirst extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_replaceFirst();
 
     private PD_replaceFirst() {
-        super("replaceFirst");
+        super();
         addParameter("string");
         addParameter("pattern");
         addParameter("replacement");

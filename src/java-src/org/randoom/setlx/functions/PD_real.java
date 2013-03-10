@@ -12,7 +12,7 @@ public class PD_real extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_real();
 
     private PD_real() {
-        super("real");
+        super();
         addParameter("value");
     }
 

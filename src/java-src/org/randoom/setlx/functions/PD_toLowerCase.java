@@ -14,7 +14,7 @@ public class PD_toLowerCase extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_toLowerCase();
 
     private PD_toLowerCase() {
-        super("toLowerCase");
+        super();
         addParameter("string");
     }
 

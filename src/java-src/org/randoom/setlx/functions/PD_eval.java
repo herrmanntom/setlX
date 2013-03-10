@@ -16,7 +16,7 @@ public class PD_eval extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_eval();
 
     private PD_eval() {
-        super("eval");
+        super();
         addParameter("setlX_expr");
     }
 

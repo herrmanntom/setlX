@@ -12,7 +12,7 @@ public class PD_nextPermutation extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_nextPermutation();
 
     private PD_nextPermutation() {
-        super("nextPermutation");
+        super();
         addParameter("list");
     }
 

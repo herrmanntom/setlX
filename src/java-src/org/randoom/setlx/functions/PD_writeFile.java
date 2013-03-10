@@ -19,12 +19,8 @@ import java.util.List;
 public class PD_writeFile extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_writeFile();
 
-    private PD_writeFile() {
-        this("writeFile");
-    }
-
-    protected PD_writeFile(final String name) {
-        super(name);
+    protected PD_writeFile() {
+        super();
         addParameter("fileName");
         addParameter("contents");
     }

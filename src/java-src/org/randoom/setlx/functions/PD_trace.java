@@ -13,7 +13,7 @@ public class PD_trace extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_trace();
 
     private PD_trace() {
-        super("trace");
+        super();
         addParameter("toggle");
     }
 

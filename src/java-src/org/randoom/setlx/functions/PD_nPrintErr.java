@@ -8,7 +8,7 @@ public class PD_nPrintErr extends PD_print {
     public final static PreDefinedFunction DEFINITION = new PD_nPrintErr();
 
     private PD_nPrintErr() {
-        super("nPrintErr");
+        super();
     }
 
     @Override

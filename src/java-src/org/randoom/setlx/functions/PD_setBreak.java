@@ -14,7 +14,7 @@ public class PD_setBreak extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_setBreak();
 
     private PD_setBreak() {
-        super("setBreak");
+        super();
         addParameter("id");
     }
 

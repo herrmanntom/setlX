@@ -12,7 +12,7 @@ public class PD_dbgHelp extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_dbgHelp();
 
     private PD_dbgHelp() {
-        super("dbgHelp");
+        super();
     }
 
     @Override

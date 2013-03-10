@@ -11,7 +11,7 @@ public class PD_isList extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isList();
 
     private PD_isList() {
-        super("isList");
+        super();
         addParameter("value");
     }
 

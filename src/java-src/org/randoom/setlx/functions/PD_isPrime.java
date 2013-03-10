@@ -17,7 +17,7 @@ public class PD_isPrime extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_isPrime();
 
     private PD_isPrime() {
-        super("isPrime");
+        super();
         addParameter("n");
     }
 

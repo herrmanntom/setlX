@@ -118,7 +118,7 @@ This section describes specific implementations, which are scattered into multip
 
 All predefined functions in \setlX{}, like `\command{read()}' and `\command{isSet(x)}', are dynamically loaded at runtime on their first invocation using Java's reflection API. This makes it relatively easy to create new functionality without the need of changing (or even completely understanding) the rest of the interpreter.
 
-These functions are dynamically loaded by the `State' class\\ (\command{org/randoom/setlx/utilities/State.java}):
+These functions are dynamically loaded via the `State' class\\ (\command{org/randoom/setlx/utilities/State.java}):
 
 When resolving an identifier the current and global scopes are searched. If no matching value is found, the predefined functions are searched for the same identifier. If still no value can be retrieved, Java's Math functions are queried.
 
@@ -129,7 +129,7 @@ In order to be found by this algorithm, predefined functions have to follow stri
 	\item Each functions needs a separate class named `\command{PD\_<name>}', where \command{<name>} is the name of the function in the exact case and spelling as should be used in the interpreter.\\
 		E.g. the `\command{isSet()}' function is defined in a class called `\command{PD\_isSet}'.
 	\item The class needs to inherit from `\command{PreDefinedFunction}' in the same package.
-	\item The `\command{super("name");}' constructor must be called, where \command{"name"} is the name of the function.
+	\item The `\command{super();}' constructor must be called.
 	\item The following variable must be present in the class and set with the invocation of the classes constructor (the constructor itself should be private):
 \begin{lstlisting}[frame=none,numbers=none]
 public final static PreDefinedFunction DEFINITION

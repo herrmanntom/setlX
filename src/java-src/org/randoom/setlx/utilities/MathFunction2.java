@@ -18,7 +18,8 @@ public class MathFunction2 extends PreDefinedFunction {
     private final Method mFunction;
 
     public MathFunction2(final String name, final Method function) {
-        super(name);
+        super();
+        setName(name);
         addParameter("x");
         addParameter("y");
         mFunction = function;

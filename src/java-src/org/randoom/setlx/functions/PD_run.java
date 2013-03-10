@@ -18,7 +18,7 @@ public class PD_run extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_run();
 
     private PD_run() {
-        super("run");
+        super();
         addParameter("command");
     }
 

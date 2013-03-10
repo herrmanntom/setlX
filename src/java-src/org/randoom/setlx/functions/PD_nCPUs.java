@@ -12,7 +12,7 @@ public class PD_nCPUs extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_nCPUs();
 
     private PD_nCPUs() {
-        super("nCPUs");
+        super();
     }
 
     @Override

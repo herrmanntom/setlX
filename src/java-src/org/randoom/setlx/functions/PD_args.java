@@ -12,7 +12,7 @@ public class PD_args extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_args();
 
     private PD_args() {
-        super("args");
+        super();
         addParameter("term");
     }
 

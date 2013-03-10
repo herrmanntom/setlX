@@ -12,7 +12,7 @@ public class PD_shuffle extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_shuffle();
 
     private PD_shuffle() {
-        super("shuffle");
+        super();
         addParameter("collectionValue");
     }
 

@@ -14,7 +14,7 @@ public class PD_toUpperCase extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_toUpperCase();
 
     private PD_toUpperCase() {
-        super("toUpperCase");
+        super();
         addParameter("string");
     }
 

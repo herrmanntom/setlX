@@ -257,9 +257,9 @@ In addition to the options documented in the manual, \setlX{} has a few `undocum
 \begin{itemize}
 	\param{--dump <file-name>}
 	      {Writes loaded code into a file (has no effect in interactive mode).}
-	\param{--unhideExceptions}
+	\param{--runtimeDebugging}
 	      {Exceptions, which may occur unexpectedly in the Java code (e.g. \command{NullPointerException}), are hidden from the user and instead display a generic error message.
-		When setting this option, the interpreter will print the usual Java stack trace of all unexpected exceptions.}
+		When setting this option, the interpreter will print the usual Java stack trace of all unexpected exceptions and also perform a number of additional checks and may generate additional output.}
 \end{itemize}
 
 \section{Distribution}

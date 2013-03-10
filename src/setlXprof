@@ -42,7 +42,7 @@ fi
 if [ -f "$setlXJarLocation" ]
   then
     time (
-        $java_call -cp "$setlXJarLocation:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX --unhideExceptions "$@"
+        $java_call -cp "$setlXJarLocation:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
         # strip out uninteresting stuff from profiling dump
         lnumber=$(grep -n 'CPU SAMPLES BEGIN' java.hprof.txt | awk -F: '{print $1}')
         tail -n +$lnumber java.hprof.txt

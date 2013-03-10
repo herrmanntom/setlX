@@ -153,7 +153,7 @@ public class SetlX {
                 state.setRealPrintMode_engineering();
             } else if (s.equals("--realPlain")) {
                 state.setRealPrintMode_plain();
-            } else if (s.equals("--unhideExceptions")) {
+            } else if (s.equals("--runtimeDebugging")) {
                 state.setRuntimeDebugging(true);
             } else if (s.equals("--verbose")) {
                 verbose = true;

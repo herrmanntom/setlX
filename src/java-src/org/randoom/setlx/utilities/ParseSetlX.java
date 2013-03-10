@@ -116,65 +116,32 @@ public class ParseSetlX {
             final CommonTokenStream ts     = new CommonTokenStream(lexer);
                                     parser = new SetlXgrammarParser(ts);
             final long              startT = state.currentTimeMillis();
+            final SetlErrorListener errorL = new SetlErrorListener(state);
 
             parser.setBuildParseTree(false);
 
             lexer.removeErrorListeners();
-
             parser.removeErrorListeners();
 
+            lexer.addErrorListener(errorL);
+            parser.addErrorListener(errorL);
+
+            if (state.isRuntimeDebuggingEnabled()) {
+                parser.addErrorListener(new DiagnosticErrorListener());
+                // use more stringent parser mode
+                parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+            }
+
+            // capture parser errors
+            state.setParserErrorCapture(new LinkedList<String>());
+
+            // set state object for parser
+            parser.setSetlXState(state);
+
             // result of the parsing run
-            CodeFragment fragment = null;
+            final CodeFragment fragment = parseFragment(parser, type);
 
-            // try with simpler/faster SLL(*)
-            parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
-
-            // we don't want error messages or recovery during first try
-            parser.setErrorHandler(new BailErrorStrategy());
-            try {
-
-                // parse the input
-                fragment = parseFragment(parser, type);
-
-                // if we get here, there was no syntax error and SLL(*) was enough
-
-            } catch (final RuntimeException ex) {
-                // or it was not enough
-                fragment = null;
-            }
-
-            if (fragment == null || parser.getNumberOfSyntaxErrors() > 0 || state.getParserErrorCount() > 0) {
-                // try full LL(*)
-                parser.getInterpreter().setPredictionMode(PredictionMode.LL);
-
-                // rewind input stream
-                ts.reset();
-
-                // set to standard listeners/handlers
-                final SetlErrorListener errorL = new SetlErrorListener(state);
-
-                lexer.addErrorListener(errorL);
-                parser.addErrorListener(errorL);
-
-                if (state.isRuntimeDebuggingEnabled()) {
-                    parser.addErrorListener(new DiagnosticErrorListener());
-                    // use even more stringent parser
-                    parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
-                }
-
-                parser.setErrorHandler(new DefaultErrorStrategy());
-
-                // capture parser errors
-                state.setParserErrorCapture(new LinkedList<String>());
-
-                // set state object for parser
-                parser.setSetlXState(state);
-
-                // parse the input
-                fragment = parseFragment(parser, type);
-
-                // now ANTLR will add its parser errors into our capture ...
-            }
+            // now ANTLR will add its parser errors into our capture ...
 
             // update error count
             state.addToParserErrorCount(parser.getNumberOfSyntaxErrors());

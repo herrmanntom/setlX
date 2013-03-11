@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import java.lang.Thread.State;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -33,12 +32,12 @@ public class SetlXAnimationSpeedSlider extends JSlider implements ChangeListener
         setLabelTable(getLabelDictionary());
     }
     
-    private  Dictionary getLabelDictionary(){
-        Hashtable d = new Hashtable();
+    private  Dictionary<Integer,JLabel> getLabelDictionary(){
+        HashMap<Integer,JLabel> d = new HashMap<Integer,JLabel>();
         for( int i = getMinimum(); i <= getMaximum(); i++ ){
             d.put(i, new JLabel( getSpeedMultiplierLabel( i )));
         }
-        return d;
+        return new Hashtable<Integer,JLabel>(d);
     }
     
     

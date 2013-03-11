@@ -150,7 +150,12 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
     
     private static JButton playpause = null;
     private static boolean playpausevisible = false;
+    
+    private static JLabel draw = null;
 
+    private static JPanel content = null;
+    
+    
     // singleton pattern: client can't instantiate
     private StdDraw() { }
 
@@ -179,13 +184,15 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         init();
     }
 
-    // init
-    private static void init() {
-        if (frame != null) frame.setVisible(false);
-        frame = new JFrame();
-        offscreenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+    
+    
+    private static void initImage(){
+    	offscreenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         onscreenImage  = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         offscreen = offscreenImage.createGraphics();
+        RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		offscreen.addRenderingHints(hints);
         onscreen  = onscreenImage.createGraphics();
         setXscale();
         setYscale();
@@ -195,34 +202,49 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         setPenRadius();
         setFont();
         clear();
+    }
+    
+    private static void initIcon(){
+    	ImageIcon icon = new ImageIcon(onscreenImage);
+    	draw.setIcon(icon);
+    }
+    
+    // init
+    private static void init() {
+        if (frame != null){
+        	initImage();
+        	initIcon();
+        	frame.pack();
+        	return;
+        }
+        frame = new JFrame();
+        initImage();
 
         // add antialiasing
-        RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,
-                                                  RenderingHints.VALUE_ANTIALIAS_ON);
-        hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        offscreen.addRenderingHints(hints);
+        
 
         // frame stuff
-        ImageIcon icon = new ImageIcon(onscreenImage);
-        JLabel draw = new JLabel(icon);
+        
+        draw = new JLabel();
+        initIcon();
 
         draw.addMouseListener(std);
         draw.addMouseMotionListener(std);
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
+        content = new JPanel();
+        content.setLayout(new GridBagLayout());
         //Code added to this class for selX
-        
+        content.add( SetlXUserPanel.getInstance(),new GridBagConstraints(0,0,2,1,0.1,0.1,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
         playpause = createPlayPauseButton();
         playpause.setVisible(playpausevisible);
         playpause.setPreferredSize((new JButton(PAUSE)).getPreferredSize());
-        panel.add(playpause,new GridBagConstraints(0,0,1,1,0.1,0.1,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
+        content.add(playpause,new GridBagConstraints(0,1,1,1,0.1,0.1,GridBagConstraints.CENTER,GridBagConstraints.NONE,new Insets(0,0,0,0),0,0));
         animationSpeedSlider = new SetlXAnimationSpeedSlider();
         animationSpeedSlider.setVisible(animationSpeedSlidervisible);
-        panel.add(animationSpeedSlider,new GridBagConstraints(1,0,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
+        content.add(animationSpeedSlider,new GridBagConstraints(1,1,1,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.HORIZONTAL,new Insets(0,0,0,0),0,0));
         playpause.addActionListener(std);
         //End setlX code
-        panel.add(draw,new GridBagConstraints(0,1,2,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
-        frame.setContentPane(panel);
+        content.add(draw,new GridBagConstraints(0,2,2,1,1.0,1.0,GridBagConstraints.CENTER,GridBagConstraints.BOTH,new Insets(0,0,0,0),0,0));
+        frame.setContentPane(content);
         frame.addKeyListener(std);    // JLabel cannot get keyboard focus
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows
@@ -1152,6 +1174,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         animationSpeedSlidervisible = add;
         if ( animationSpeedSlider != null ){
              animationSpeedSlider.setVisible(animationSpeedSlidervisible);
+             frame.pack();
         }
     }
     
@@ -1159,6 +1182,7 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
         playpausevisible = add;
         if ( playpause != null ){
             playpause.setVisible(playpausevisible);
+            frame.pack();
         }
     }
     
@@ -1172,7 +1196,11 @@ public final class StdDraw implements ActionListener, MouseListener, MouseMotion
             playpause.setText(createPlayPauseButtonText());
         }
     }
-
     
+    public static void pack(){
+    	if( frame != null){
+    		frame.pack();
+    	}
+    }
 
 }

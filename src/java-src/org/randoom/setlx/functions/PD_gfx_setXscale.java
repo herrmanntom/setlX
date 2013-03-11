@@ -13,7 +13,7 @@ public class PD_gfx_setXscale extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_setXscale();
     
     private PD_gfx_setXscale(){
-        super("setXscale");
+        super("gfx_setXscale");
         addParameter("min");
         addParameter("max");
         allowFewerParameters();

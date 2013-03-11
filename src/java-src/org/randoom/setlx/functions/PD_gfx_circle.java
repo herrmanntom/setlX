@@ -9,7 +9,7 @@ public class PD_gfx_circle extends GfxXYRFunction{
     public final static PreDefinedFunction DEFINITION = new PD_gfx_circle();
 
     private PD_gfx_circle() {
-        super("circle");
+        super("gfx_circle");
     }
     
     protected void executeStdDrawFunction(Double x, Double y, Double r){

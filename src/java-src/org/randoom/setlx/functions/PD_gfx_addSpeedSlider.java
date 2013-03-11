@@ -12,7 +12,7 @@ public class PD_gfx_addSpeedSlider extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_addSpeedSlider();
     
     protected PD_gfx_addSpeedSlider() {
-        super("addSpeedSlider");
+        super("gfx_addSpeedSlider");
         addParameter("add");
         allowFewerParameters();
     }

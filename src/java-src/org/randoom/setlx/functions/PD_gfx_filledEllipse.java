@@ -13,7 +13,7 @@ public class PD_gfx_filledEllipse extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_filledEllipse();
     
     public PD_gfx_filledEllipse(){
-        super("filledEllipse");
+        super("gfx_filledEllipse");
         addParameter("x");
         addParameter("y");
         addParameter("semiMajorAxis");

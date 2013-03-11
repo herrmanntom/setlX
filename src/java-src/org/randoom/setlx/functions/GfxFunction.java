@@ -34,6 +34,6 @@ public abstract class GfxFunction extends PreDefinedFunction{
     }
     
     protected String stringFromValue(Value v){
-        return v.toString();
+        return v.getUnquotedString();
     }
 }

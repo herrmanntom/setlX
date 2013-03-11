@@ -14,7 +14,7 @@ public class PD_gfx_filledRectangle extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_filledRectangle();
     
     public PD_gfx_filledRectangle(){
-        super("filledRectangle");
+        super("gfx_filledRectangle");
         addParameter("x");
         addParameter("y");
         addParameter("halfWidth");

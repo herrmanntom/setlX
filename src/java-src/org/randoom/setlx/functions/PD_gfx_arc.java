@@ -15,7 +15,7 @@ public class PD_gfx_arc extends GfxFunction{
     public final static PreDefinedFunction DEFINITION = new PD_gfx_arc();
 
     private PD_gfx_arc() {
-        super("arc");
+        super("gfx_arc");
         addParameter("x");
         addParameter("y");
         addParameter("r");

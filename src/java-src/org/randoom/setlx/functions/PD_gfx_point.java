@@ -13,7 +13,7 @@ public class PD_gfx_point extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_point();
     
     public PD_gfx_point(){
-        super("point");
+        super("gfx_point");
         addParameter("x0");
         addParameter("y0");
     }

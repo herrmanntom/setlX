@@ -13,7 +13,7 @@ public class PD_gfx_rectangle extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_rectangle();
     
     public PD_gfx_rectangle(){
-        super("rectangle");
+        super("gfx_rectangle");
         addParameter("x");
         addParameter("y");
         addParameter("halfWidth");

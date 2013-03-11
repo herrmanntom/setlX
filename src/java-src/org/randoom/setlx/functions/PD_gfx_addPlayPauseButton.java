@@ -15,7 +15,7 @@ public class PD_gfx_addPlayPauseButton extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_addPlayPauseButton();
     
     protected PD_gfx_addPlayPauseButton() {
-        super("PD_addPlayPauseButton");
+        super("PD_gfx_addPlayPauseButton");
         addParameter("add");
         allowFewerParameters();
     }

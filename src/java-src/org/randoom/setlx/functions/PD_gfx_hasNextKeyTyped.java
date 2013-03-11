@@ -12,7 +12,7 @@ public class PD_gfx_hasNextKeyTyped extends PreDefinedFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_hasNextKeyTyped();
 
     private PD_gfx_hasNextKeyTyped() {
-        super("hasNextKeyTyped");
+        super("gfx_hasNextKeyTyped");
     }
 
     @Override

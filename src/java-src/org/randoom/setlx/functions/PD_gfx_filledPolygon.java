@@ -13,7 +13,7 @@ public class PD_gfx_filledPolygon extends GfxPolygonFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_filledPolygon();
     
     public PD_gfx_filledPolygon(){
-        super("filledPolygon");
+        super("gfx_filledPolygon");
         addParameter("x");
         addParameter("y");
     }

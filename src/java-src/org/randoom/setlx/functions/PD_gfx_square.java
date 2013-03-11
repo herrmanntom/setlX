@@ -9,7 +9,7 @@ public class PD_gfx_square extends GfxXYRFunction{
 	public final static PreDefinedFunction DEFINITION = new PD_gfx_square();
 
 	private PD_gfx_square() {
-	    super("square");
+	    super("gfx_square");
 	}
 	
 	protected void executeStdDrawFunction(Double x, Double y, Double r){

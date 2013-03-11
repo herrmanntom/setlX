@@ -13,7 +13,7 @@ public class PD_gfx_setCanvasSize extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_setCanvasSize();
     
     private PD_gfx_setCanvasSize(){
-        super("setCanvasSize");
+        super("gfx_setCanvasSize");
         addParameter("w");
         addParameter("h");
         allowFewerParameters();

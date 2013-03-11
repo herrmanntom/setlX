@@ -16,7 +16,7 @@ public class PD_gfx_setPenColor extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_setPenColor();
     
     public PD_gfx_setPenColor(){
-        super("setPenColor");
+        super("gfx_setPenColor");
         addParameter("r");
         addParameter("g");
         addParameter("b");

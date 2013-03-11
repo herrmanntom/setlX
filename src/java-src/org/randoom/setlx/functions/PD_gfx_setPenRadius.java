@@ -12,7 +12,7 @@ public class PD_gfx_setPenRadius extends GfxFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_setPenRadius();
     
     private PD_gfx_setPenRadius(){
-        super("setPenRadius");
+        super("gfx_setPenRadius");
         addParameter("r");
         allowFewerParameters();
     }

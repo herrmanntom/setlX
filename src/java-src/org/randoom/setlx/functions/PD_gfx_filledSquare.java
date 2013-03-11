@@ -7,7 +7,7 @@ public class PD_gfx_filledSquare extends GfxXYRFunction {
     public final static PreDefinedFunction DEFINITION = new PD_gfx_filledSquare();
     
     public PD_gfx_filledSquare(){
-        super("filledSquare");
+        super("gfx_filledSquare");
     }
     
     

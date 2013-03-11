@@ -1,7 +1,7 @@
 grammar Pure;
 
 initBlock
-    : statement*
+    : statement+
     ;
 
 initExpr

@@ -34,7 +34,7 @@ initBlock returns [Block blk]
     }
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
-      )*
+      )+
       { $blk = new Block(stmnts); }
     ;
 

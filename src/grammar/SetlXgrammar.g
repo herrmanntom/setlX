@@ -13,7 +13,6 @@ grammar SetlXgrammar;
 }
 
 @parser::members {
-    private final static String IGNORE_TOKEN_ERROR        = "ignore character ('_') is only valid inside assignments and match statements 'case' conditions";
     private final static String SEMICOLON_FOLLOWING_CLASS = "statements which use blocks are not terminated with a semicolon (';')";
 
     // state of the setlX interpreter
@@ -29,23 +28,18 @@ grammar SetlXgrammar;
     }
 }
 
-/* Require at least one statement to begin parsing and terminate only with EOF.
-   Otherwhise ANTLR runs into strange parser behavior ... */
 initBlock returns [Block blk]
     @init{
         List<Statement> stmnts = new ArrayList<Statement>();
     }
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
-      )+
-      EOF
+      )*
       { $blk = new Block(stmnts); }
     ;
 
-/* Require at termination with EOF.
-   Otherwhise ANTLR runs into strange parser behavior ... */
 initExpr returns [Expr ae]
-    : expr[false] EOF
+    : expr[false]
       { $ae = $expr.ex; }
     ;
 
@@ -252,13 +246,7 @@ assignable [boolean enableIgnore] returns [AssignableExpression a]
        | '[' expr[false] ']'   { $a = new CollectionAccess($a, $expr.ex);      }
       )*
     | assignList               { $a = $assignList.alc;                         }
-    | '_'                      { if ($enableIgnore) {
-                                    $a = VariableIgnore.VI;
-                                 } else {
-                                    customErrorHandling(IGNORE_TOKEN_ERROR);
-                                    $a = null;
-                                 }
-                               }
+    | {$enableIgnore}? '_'     { $a = VariableIgnore.VI;                       }
     ;
 
 expr [boolean enableIgnore] returns [Expr ex]
@@ -471,18 +459,12 @@ collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
     ;
 
 value [boolean enableIgnore, boolean quoted] returns [Expr v]
-    : list[$enableIgnore] { $v = $list.lc;                                                 }
-    | set[$enableIgnore]  { $v = $set.sc;                                                  }
-    | STRING              { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
-    | LITERAL             { $v = new LiteralConstructor($LITERAL.text);                    }
-    | atomicValue         { $v = new ValueExpr($atomicValue.av);                           }
-    | '_'                 { if ($enableIgnore){
-                                $v = VariableIgnore.VI;
-                             } else {
-                                customErrorHandling(IGNORE_TOKEN_ERROR);
-                                $v = null;
-                             }
-                          }
+    : list[$enableIgnore]  { $v = $list.lc;                                                 }
+    | set[$enableIgnore]   { $v = $set.sc;                                                  }
+    | STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
+    | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
+    | atomicValue          { $v = new ValueExpr($atomicValue.av);                           }
+    | {$enableIgnore}? '_' { $v = VariableIgnore.VI;                                        }
     ;
 
 list [boolean enableIgnore] returns [SetListConstructor lc]
@@ -565,8 +547,8 @@ atomicValue returns [Value av]
     | 'false'    { $av = SetlBoolean.FALSE;                    }
     ;
 
-TERM            : ('^'| 'A' .. 'Z')('a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9')* ;
 ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
+TERM            : ('^' ID | 'A' .. 'Z' ID?) ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
 REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') ('+' | '-')? ('0' .. '9')+)? ;
 RANGE_SIGN      : '..';

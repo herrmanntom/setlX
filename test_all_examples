@@ -12,11 +12,12 @@ export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"
+niceCmd="nice -n 15"
 diffDir="$PWD"
 
 # prepare the interpreter
 simpleTest=simpleTest/test.stlx
-cd src; make test >/dev/null 2>"$tmpFile"; cd ..
+cd src; $niceCmd make test >/dev/null 2>"$tmpFile"; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" "$tmpFile")
@@ -33,7 +34,7 @@ else
 fi
 
 # number of concurrent processes to start
-numberOfThreads=$("$setlXlaunchScript" --ev "nCPUs() \ 2")
+numberOfThreads=$($niceCmd "$setlXlaunchScript" --ev "nCPUs() \ 2")
 if [ ! -z "$1" ]
   then
     if [[ "$1" =~ ^[1-9][0-9]*$ ]]
@@ -107,9 +108,9 @@ while read -r -d $'\0' path
         # execute with setlX
         if [ -e "$path.input" ]
           then
-            cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+            cd "$directoryname"; cat "$filename.input" | $niceCmd "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
         else
-            cd "$directoryname"; "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+            cd "$directoryname"; $niceCm "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
         fi
     )&
     pids[$threadID]=$!
@@ -161,9 +162,9 @@ while read -r -d $'\0' path
           then
             if [ $(which usleep > /dev/null 2>&1; echo $?) -eq 0 ]
               then
-                usleep 100000
+                $niceCmd usleep 100000
             else
-                sleep 1
+                $niceCmd sleep 1
             fi
         fi
     done

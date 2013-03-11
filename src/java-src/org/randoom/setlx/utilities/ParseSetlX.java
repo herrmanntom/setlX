@@ -248,20 +248,39 @@ public class ParseSetlX {
         public void syntaxError(final Recognizer<?, ?>     recognizer,
                                 final Object               offendingSymbol,
                                 final int                  line,
-                                final int                  charPositionInLine,
+                                      int                  charPositionInLine,
                                 final String               msg,
                                 final RecognitionException e
         ) {
+            // display position, not index
+            ++charPositionInLine;
+
+            final StringBuilder buf = new StringBuilder();
+
             if (state.isRuntimeDebuggingEnabled() && recognizer instanceof Parser) {
                 final List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
                 Collections.reverse(stack);
-                final StringBuilder buf = new StringBuilder();
-                buf.append("rule stack: "+stack+"\n");
-                buf.append("line "+line+":"+charPositionInLine+" at "+ offendingSymbol+": "+msg);
-                state.writeParserErrLn(buf.toString());
+
+                buf.append("rule stack: ");
+                buf.append(stack);
+                buf.append("\nline ");
+                buf.append(line);
+                buf.append(":");
+                buf.append(charPositionInLine);
+                buf.append(" at ");
+                buf.append(offendingSymbol);
+                buf.append(": ");
+                buf.append(msg);
             } else {
-                state.writeParserErrLn("line " + line + ":" + charPositionInLine + " " + msg);
+                buf.append("line ");
+                buf.append(line);
+                buf.append(":");
+                buf.append(charPositionInLine);
+                buf.append(" ");
+                buf.append(msg);
             }
+
+            state.writeParserErrLn(buf.toString());
         }
     }
 

@@ -99,7 +99,6 @@ animateTransition := procedure( old, new, disks ){
 animate := procedure( disks ){
     algorithm := hanoi( disks ); 
     print( algorithm );
-    gfx_setCanvasSize( 600, 400 );
     xmax := (disks * 3) + 2;
     ymax := (disks * 2) + 2;
     gfx_setXscale( 0, xmax );
@@ -131,25 +130,23 @@ readInput := procedure(){
     gfx_setPaused(true);
 	gfx_setMessage( "Please enter the size of the hanoi towers!" );
 	gfx_addInputField( "Size" );
-	gfx_setCanvasSize();
 	gfx_addPlayPauseButton(true);
 	gfx_addSpeedSlider(true);
 	waitForStart();
-    input := gfx_getInput();
-    print( input );
-   /*
-   if ( !isNumber(input) ){
-        gfx_setMessage( "Please enter the size of the hanoi towers!" );
-		gfx_setPaused( true );
-		return readInput();
-    }
-	*/
-	return rational( input );
+    input := rational( gfx_getInput() );
+    while ( input == om ){
+	    gfx_setMessage("The given size is not a number! Please enter a number for the size of the hanoi towers!" );
+		gfx_setPaused(true);
+		waitForStart();
+		input := rational( gfx_getInput() );
+	}
+	gfx_setMessage("Animation starts after calculating the path with A* algorithm.");
+	return input;
 };
 
 loadLibrary("aStar_hanoi_exact_animation");
 
-
+gfx_setCanvasSize( 600, 400 );
 animate( readInput() );
 
 

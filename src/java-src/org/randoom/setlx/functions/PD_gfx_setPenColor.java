@@ -37,10 +37,18 @@ public class PD_gfx_setPenColor extends GfxFunction {
                 return SetlBoolean.FALSE;
             }
         }else if ( args.size() == 3 ){
-           c = new Color( integerFromValue( args.get(0)), 
-                          integerFromValue( args.get(1)),
-                          integerFromValue( args.get(2))
-                        );
+           if ( args.get(0).isInteger().equalTo(SetlBoolean.TRUE) ){
+	           c = new Color( integerFromValue( args.get(0)), 
+	                          integerFromValue( args.get(1)),
+	                          integerFromValue( args.get(2))
+	                        );
+           }
+           if ( args.get(0).isReal().equalTo(SetlBoolean.TRUE) ){
+	           c = new Color( doubleFromValue( args.get(0)).floatValue(), 
+	        		          doubleFromValue( args.get(1)).floatValue(),
+	        		          doubleFromValue( args.get(2)).floatValue()
+	                        );
+           }
         }
         StdDraw.setPenColor(c);
         return SetlBoolean.TRUE;

@@ -2,10 +2,6 @@
 
 tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
-manualTestFiles=""
-skippedTestFiles=""
-nSkipped=0
-
 # set overrides for setlX launcher script
 export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
 export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
@@ -98,6 +94,7 @@ outputFiles=( )
 filenames=( )
 pathnames=( )
 messages=( )
+failedTests=()
 for path in "${examplesAutomaticTest[@]}"
   do
     directoryname="$(dirname $path)"
@@ -147,8 +144,7 @@ for path in "${examplesAutomaticTest[@]}"
                     if [ $? -eq 1 ]
                       then
 
-                        skippedTestFiles="$skippedTestFiles${pathnames[$i]}, "
-                        nSkipped=$(bc <<< "$nSkipped + 1")
+                        failedTests=("${failedTests[@]}" "${pathnames[$i]}")
 
                         mv "$tmpFile" "$diffDir/diff.${filenames[$i]}.result"
                         message="${messages[$i]} failed ... (see diff.${filenames[$i]}.result)\n"
@@ -183,13 +179,16 @@ for path in "${examplesManualTest[@]}"
 done
 
 
-if [ $nSkipped -gt 0 ]
+if [ "${#failedTests[@]}" -gt "0" ]
   then
-    skippedTestFiles="${skippedTestFiles%, }"
     echo
-    echo "The following examples failed: $skippedTestFiles"
+    echo "The following examples failed:"
+    for path in "${failedTests[@]}"
+      do
+        echo $path
+    done
     echo
-    echo "!! $nSkipped examples did fail this test !!"
+    echo "!! ${#failedTests[@]} examples did fail this test !!"
 else
     echo
     echo "Everything is fabulous. Well done sir!"

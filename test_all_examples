@@ -13,12 +13,13 @@ export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"
 diffDir="$PWD"
+exampleDirs=("example_SetlX_code" "Tutorial/Examples")
 
 # be nice to the rest of the system
 renice -n 10 $$
 
 # prepare the interpreter
-simpleTest=simpleTest/test.stlx
+simpleTest="src/simpleTest/test.stlx"
 cd src; make test >/dev/null 2>"$tmpFile"; cd ..
 
 # check for failed tests
@@ -28,11 +29,11 @@ everythingOkCount=$(grep -c "Everything is fine. Move along sir!" "$tmpFile")
 # alert the user and stop
 if [ $failedCount -gt 0 -o $everythingOkCount -ne 1 ]
   then
-    echo "the initial testfile '$simpleTest' failed!"
+    echo "The initial testfile '$simpleTest' failed!"
     rm -f "$tmpFile"
     exit 1
 else
-    echo -e "executing file '$simpleTest' successful!\n"
+    echo -e "Test of file '$simpleTest' successful!\n"
 fi
 
 # number of concurrent processes to start
@@ -55,9 +56,20 @@ fi
 
 rm -f diff.*.result
 
-# count number of files
-count=0
-while read -r -d $'\0' path
+# discover all example files
+examples=()
+for directory in "${exampleDirs[@]}"
+  do
+    while read -r -d $'\0' path
+      do
+        examples=("${examples[@]}" "$path")
+    done < <( find -L "$directory" -name "*.stlx" -print0 )
+done
+
+# sort example files into automatic and tests
+examplesAutomaticTest=()
+examplesManualTest=()
+for path in "${examples[@]}"
   do
     directoryname="$(dirname $path)"
 
@@ -68,43 +80,33 @@ while read -r -d $'\0' path
 
     if [ ! -e "$path.reference" ]
       then
-        continue
+        examplesManualTest=("${examplesManualTest[@]}" "$path")
+    else
+        examplesAutomaticTest=("${examplesAutomaticTest[@]}" "$path")
     fi
+done
 
-    count=$(bc <<< "$count + 1")
+# number of examples that can be tested automatically
+count="${#examplesAutomaticTest[@]}"
 
-done < <( find -L example_SetlX_code -name "*.stlx" -print0 )
-
+# loop through all SetlX files, execute them and compare to reference result
 started=0
 threadID=0
 pids=( )
 references=( )
 outputFiles=( )
 filenames=( )
-shotnames=( )
+pathnames=( )
 messages=( )
-# loop through all SetlX files, execute them and compare to reference result
-while read -r -d $'\0' path
+for path in "${examplesAutomaticTest[@]}"
   do
-    shortname="${path#example_SetlX_code/}"
     directoryname="$(dirname $path)"
     filename="$(basename $path)"
     outputFile=$(mktemp -t setlx-XXXXXXXXXX)
 
-    if [ "$setlX_block_performance" == "1" -a "$directoryname" == "example_SetlX_code/performance_test_code" ]
-      then
-        continue
-    fi
-
-    if [ ! -e "$path.reference" ]
-      then
-        manualTestFiles="$manualTestFiles$filename, "
-        continue
-    fi
-
     started=$(bc <<< "$started + 1")
     echo -e "Starting test $started/$count.\n"
-    message="Test of file '$shortname' ($started/$count) "
+    message="Test of file '$path' ($started/$count)"
 
     (
         # execute with setlX
@@ -119,7 +121,7 @@ while read -r -d $'\0' path
     references[$threadID]="$path.reference"
     outputFiles[$threadID]="$outputFile"
     filenames[$threadID]="$filename"
-    shotnames[$threadID]="$shortname"
+    pathnames[$threadID]="$path"
     messages[$threadID]="$message"
 
     # get next free ID in array, which is smaller as $numberOfThreads
@@ -145,7 +147,7 @@ while read -r -d $'\0' path
                     if [ $? -eq 1 ]
                       then
 
-                        skippedTestFiles="$skippedTestFiles${shotnames[$i]}, "
+                        skippedTestFiles="$skippedTestFiles${pathnames[$i]}, "
                         nSkipped=$(bc <<< "$nSkipped + 1")
 
                         mv "$tmpFile" "$diffDir/diff.${filenames[$i]}.result"
@@ -170,13 +172,16 @@ while read -r -d $'\0' path
             fi
         fi
     done
-
-done < <( find -L example_SetlX_code -name "*.stlx" -print0 )
+done
 
 rm -f "$tmpFile"
 
-manualTestFiles="${manualTestFiles%, }"
-echo "The following examples need to be tested manually: $manualTestFiles"
+echo "The following examples need to be tested manually:"
+for path in "${examplesManualTest[@]}"
+  do
+    echo $path
+done
+
 
 if [ $nSkipped -gt 0 ]
   then

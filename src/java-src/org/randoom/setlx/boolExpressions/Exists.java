@@ -17,7 +17,6 @@ import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
 
-
 /*
 grammar rule:
 boolExpr
@@ -27,12 +26,12 @@ boolExpr
 
 implemented here as:
                    ========-----     =========
-                     iterator       condition
+                      iterator       condition
 */
 
 public class Exists extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^exists";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Exists.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 

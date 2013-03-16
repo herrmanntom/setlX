@@ -18,29 +18,29 @@ equivalence
 
 implemented here as:
       ====        ====
-      mLhs        mRhs
+      lhs          rhs
 */
 
-public class BoolEqual extends Expr {
+public class BoolEquals extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "^boolEqual";
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(BoolEquals.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1100;
 
-    private final Expr mLhs;
-    private final Expr mRhs;
+    private final Expr lhs;
+    private final Expr rhs;
 
-    public BoolEqual(final Expr lhs, final Expr rhs) {
-        mLhs = lhs;
-        mRhs = rhs;
+    public BoolEquals(final Expr lhs, final Expr rhs) {
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
-            return mLhs.eval(state).isEqualTo(state, mRhs.eval(state));
+            return lhs.eval(state).isEqualTo(state, rhs.eval(state));
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"" + mLhs + " == " + mRhs + "\":");
+            se.addToTrace("Error in substitute comparison \"" + lhs + " == " + rhs + "\":");
             throw se;
         }
     }
@@ -58,17 +58,17 @@ public class BoolEqual extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(" <==> ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -76,18 +76,18 @@ public class BoolEqual extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 
-    public static BoolEqual termToExpr(final Term term) throws TermConversionException {
+    public static BoolEquals termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
-            return new BoolEqual(lhs, rhs);
+            return new BoolEquals(lhs, rhs);
         }
     }
 

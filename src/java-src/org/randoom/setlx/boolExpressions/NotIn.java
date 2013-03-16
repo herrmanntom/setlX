@@ -23,25 +23,25 @@ implemented here as:
 
 public class NotIn extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "^notIn";
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(NotIn.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 
-    private final Expr mLhs;
-    private final Expr mRhs;
+    private final Expr lhs;
+    private final Expr rhs;
 
     public NotIn(final Expr lhs, final Expr rhs) {
-        mLhs = lhs;
-        mRhs = rhs;
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
             // note: rhs and lhs swapped!
-            return mRhs.eval(state).containsMember(state, mLhs.eval(state)).negation(state);
+            return rhs.eval(state).containsMember(state, lhs.eval(state)).not(state);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"!(" + mLhs + " in " + mRhs +  ")\":");
+            se.addToTrace("Error in substitute comparison \"!(" + lhs + " in " + rhs +  ")\":");
             throw se;
         }
     }
@@ -59,17 +59,17 @@ public class NotIn extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(" notin ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -77,8 +77,8 @@ public class NotIn extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 

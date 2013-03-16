@@ -274,10 +274,10 @@ lambdaParameters returns [List<ParameterDef> paramList]
     ;
 
 equation [boolean enableIgnore] returns [Expr eq]
-    : i1 = implication[$enableIgnore]           { $eq = $i1.i;                       }
+    : i1 = implication[$enableIgnore]           { $eq = $i1.i;                        }
       (
-         '<==>' i2 = implication[$enableIgnore] { $eq = new BoolEqual  ($eq, $i2.i); }
-       | '<!=>' i2 = implication[$enableIgnore] { $eq = new BoolUnEqual($eq, $i2.i); }
+         '<==>' i2 = implication[$enableIgnore] { $eq = new BoolEquals  ($eq, $i2.i); }
+       | '<!=>' i2 = implication[$enableIgnore] { $eq = new BoolNotEqual($eq, $i2.i); }
       )?
     ;
 
@@ -307,14 +307,14 @@ conjunction [boolean enableIgnore] returns [Expr c]
 comparison [boolean enableIgnore] returns [Expr comp]
     : s1 = sum[$enableIgnore]            { $comp = $s1.s;                         }
       (
-         '=='    s2 = sum[$enableIgnore] { $comp = new Equal      ($comp, $s2.s); }
-       | '!='    s2 = sum[$enableIgnore] { $comp = new UnEqual    ($comp, $s2.s); }
-       | '<'     s2 = sum[$enableIgnore] { $comp = new Less       ($comp, $s2.s); }
-       | '<='    s2 = sum[$enableIgnore] { $comp = new LessOrEqual($comp, $s2.s); }
-       | '>'     s2 = sum[$enableIgnore] { $comp = new More       ($comp, $s2.s); }
-       | '>='    s2 = sum[$enableIgnore] { $comp = new MoreOrEqual($comp, $s2.s); }
-       | 'in'    s2 = sum[$enableIgnore] { $comp = new In         ($comp, $s2.s); }
-       | 'notin' s2 = sum[$enableIgnore] { $comp = new NotIn      ($comp, $s2.s); }
+         '=='    s2 = sum[$enableIgnore] { $comp = new Equals        ($comp, $s2.s); }
+       | '!='    s2 = sum[$enableIgnore] { $comp = new NotEqual      ($comp, $s2.s); }
+       | '<'     s2 = sum[$enableIgnore] { $comp = new LessThan      ($comp, $s2.s); }
+       | '<='    s2 = sum[$enableIgnore] { $comp = new LessOrEqual   ($comp, $s2.s); }
+       | '>'     s2 = sum[$enableIgnore] { $comp = new GreaterThan   ($comp, $s2.s); }
+       | '>='    s2 = sum[$enableIgnore] { $comp = new GreaterOrEqual($comp, $s2.s); }
+       | 'in'    s2 = sum[$enableIgnore] { $comp = new In            ($comp, $s2.s); }
+       | 'notin' s2 = sum[$enableIgnore] { $comp = new NotIn         ($comp, $s2.s); }
       )?
     ;
 
@@ -363,7 +363,7 @@ power [boolean enableIgnore, boolean quoted] returns [Expr pow]
     ;
 
 factor [boolean enableIgnore, boolean quoted] returns [Expr f]
-    : '!' f2 = factor[$enableIgnore, $quoted] { $f = new Negation($f2.f);         }
+    : '!' f2 = factor[$enableIgnore, $quoted] { $f = new Not($f2.f);              }
     | term                                    { $f = $term.t;                     }
     | 'forall' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
       { $f = new Forall($iteratorChain.ic, $condition.cnd); }

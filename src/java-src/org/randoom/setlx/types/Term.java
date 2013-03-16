@@ -107,8 +107,8 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term negation(final State state) {
-        return (    new Negation(
+    public Term not(final State state) {
+        return (    new Not(
                         TermConverter.valueToExpr(this)
                     )
                ).toTerm(state);

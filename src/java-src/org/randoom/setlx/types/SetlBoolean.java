@@ -89,7 +89,7 @@ public class SetlBoolean extends Value {
     }
 
     @Override
-    public SetlBoolean negation(final State state) {
+    public SetlBoolean not(final State state) {
         if (this == TRUE) {
             return FALSE;
         } else {

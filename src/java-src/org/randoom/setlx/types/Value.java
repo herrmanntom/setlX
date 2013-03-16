@@ -53,7 +53,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    public Value negation(final State state) throws SetlException {
+    public Value not(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand of '!" + this + "' is not a Boolean value."
         );

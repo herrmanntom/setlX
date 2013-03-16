@@ -27,12 +27,12 @@ boolExpr
 
 implemented here as:
                    ========-----     =========
-                     mIterator       mCondition
+                      iterator       condition
 */
 
 public class Forall extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^forall";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Forall.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 

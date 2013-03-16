@@ -3,8 +3,8 @@ package org.randoom.setlx.boolExpressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -12,31 +12,32 @@ import java.util.List;
 
 /*
 grammar rule:
-boolFactor
-    : [...]
-    | '!' boolFactor
+comparison
+    : expr '==' expr
     ;
 
 implemented here as:
-          ==========
-            mExpr
+      ====      ====
+      lhs       rhs
 */
 
-public class Negation extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^negation";
+public class Equals extends Expr {
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Equals.class);
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 2200;
+    private final static int    PRECEDENCE           = 1500;
 
-    private final Expr mExpr;
+    private final Expr lhs;
+    private final Expr rhs;
 
-    public Negation(final Expr expr) {
-        mExpr = expr;
+    public Equals(final Expr lhs, final Expr rhs) {
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     @Override
-    protected Value evaluate(final State state) throws SetlException {
-        return mExpr.eval(state).negation(state);
+    protected SetlBoolean evaluate(final State state) throws SetlException {
+        return lhs.eval(state).isEqualTo(state, rhs.eval(state));
     }
 
     /* Gather all bound and unbound variables in this expression and its siblings
@@ -52,32 +53,36 @@ public class Negation extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append("!");
-        mExpr.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
+        sb.append(" == ");
+        rhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
     @Override
     public Term toTerm(final State state) {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, mExpr.toTerm(state));
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 
-    public static Negation termToExpr(final Term term) throws TermConversionException {
-        if (term.size() != 1) {
+    public static Equals termToExpr(final Term term) throws TermConversionException {
+        if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            return new Negation(expr);
+            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
+            return new Equals(lhs, rhs);
         }
     }
 

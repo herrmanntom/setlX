@@ -112,7 +112,7 @@ bin/org/randoom/setlx/expressionUtilities/*.class :         \
 
 bin/org/randoom/setlx/utilities/*.class :                   \
         java-src/org/randoom/setlx/utilities/*.java                             \
-        java-src/org/randoom/setlx/boolExpressions/Equal.java                   \
+        java-src/org/randoom/setlx/boolExpressions/Equals.java                  \
         java-src/org/randoom/setlx/expressions/Assignment.java                  \
         java-src/org/randoom/setlx/expressions/Call.java                        \
         java-src/org/randoom/setlx/expressions/CollectionAccessRangeDummy.java  \

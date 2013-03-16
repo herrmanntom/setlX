@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.5.2--- 2013-xx-yy
+ * refactored boolean expressions
+
 ---v1.5.1--- 2013-03-10
  + add syntax highlighting definition for gedit
  + moved SETLX_LIBRARY_PATH definition into launcher script

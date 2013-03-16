@@ -19,21 +19,21 @@ comparison
 
 implemented here as:
       ====      ====
-      mLhs      mRhs
+      lhs        rhs
 */
 
 public class LessOrEqual extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "^lessOrEqual";
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LessOrEqual.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 
-    private final Expr mLhs;
-    private final Expr mRhs;
+    private final Expr lhs;
+    private final Expr rhs;
 
     public LessOrEqual(final Expr lhs, final Expr rhs) {
-        mLhs    = lhs;
-        mRhs    = rhs;
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     /*
@@ -66,11 +66,11 @@ public class LessOrEqual extends Expr {
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
-            final Value lhs = mLhs.eval(state);
-            final Value rhs = mRhs.eval(state);
+            final Value lhs = this.lhs.eval(state);
+            final Value rhs = this.rhs.eval(state);
             return SetlBoolean.valueOf(lhs.isEqualTo(state, rhs) == SetlBoolean.TRUE || lhs.isLessThan(state, rhs) == SetlBoolean.TRUE);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"(" + mLhs + " == " + mRhs + ") || (" + mLhs + " < " + mRhs +  ")\":");
+            se.addToTrace("Error in substitute comparison \"(" + lhs + " == " + rhs + ") || (" + lhs + " < " + rhs +  ")\":");
             throw se;
         }
     }
@@ -88,17 +88,17 @@ public class LessOrEqual extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(" <= ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -106,8 +106,8 @@ public class LessOrEqual extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 

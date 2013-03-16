@@ -43,5 +43,10 @@ public abstract class CodeFragment {
     /* term operations */
 
     public abstract Value toTerm(final State state);
+
+    protected final static String generateFunctionalCharacter(final Class<? extends CodeFragment> _class) {
+        final String className = _class.getSimpleName();
+        return "^" + Character.toLowerCase(className.charAt(0)) + className.substring(1);
+    };
 }
 

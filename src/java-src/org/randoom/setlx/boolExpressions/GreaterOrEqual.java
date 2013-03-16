@@ -19,21 +19,21 @@ comparison
 
 implemented here as:
       ====      ====
-      mLhs      mRhs
+      lhs        rhs
 */
 
-public class MoreOrEqual extends Expr {
+public class GreaterOrEqual extends Expr {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "^moreOrEqual";
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(GreaterOrEqual.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
 
-    private final Expr mLhs;
-    private final Expr mRhs;
+    private final Expr lhs;
+    private final Expr rhs;
 
-    public MoreOrEqual(final Expr lhs, final Expr rhs) {
-        mLhs    = lhs;
-        mRhs    = rhs;
+    public GreaterOrEqual(final Expr lhs, final Expr rhs) {
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     /*
@@ -66,12 +66,12 @@ public class MoreOrEqual extends Expr {
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         try {
-            final Value lhs = mLhs.eval(state);
-            final Value rhs = mRhs.eval(state);
+            final Value lhs = this.lhs.eval(state);
+            final Value rhs = this.rhs.eval(state);
             // note: rhs and lhs swapped!
             return SetlBoolean.valueOf(rhs.isEqualTo(state, lhs) == SetlBoolean.TRUE || rhs.isLessThan(state, lhs) == SetlBoolean.TRUE);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"(" + mRhs + " == " + mLhs + ") || (" + mRhs + " < " + mLhs +  ")\":");
+            se.addToTrace("Error in substitute comparison \"(" + rhs + " == " + lhs + ") || (" + rhs + " < " + lhs +  ")\":");
             throw se;
         }
     }
@@ -89,17 +89,17 @@ public class MoreOrEqual extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(" >= ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -107,18 +107,18 @@ public class MoreOrEqual extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 
-    public static MoreOrEqual termToExpr(final Term term) throws TermConversionException {
+    public static GreaterOrEqual termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
             final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
-            return new MoreOrEqual(lhs, rhs);
+            return new GreaterOrEqual(lhs, rhs);
         }
     }
 

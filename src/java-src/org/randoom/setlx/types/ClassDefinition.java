@@ -38,7 +38,9 @@ implemented here as:
 
 public class ClassDefinition extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^constructor";
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ClassDefinition.class);
+
+    private final static Block  REBUILD_MARKER       = new Block(0);
 
     private final List<ParameterDef> parameters;  // parameter list
     private final Block              initBlock;   // statements in the body of the definition
@@ -69,6 +71,27 @@ public class ClassDefinition extends Value {
         this.staticDefs  = staticDefs;
     }
 
+    private Block getStaticBlock() {
+        if (staticBlock == REBUILD_MARKER) {
+            // rebuild static block
+            final Block sBlock = new Block();
+            for (final Entry<String, Value> entry : staticDefs.entrySet()) {
+                sBlock.add(new ExpressionStatement(new Assignment(new Variable(entry.getKey()), new ValueExpr(entry.getValue()))));
+            }
+            staticBlock = sBlock;
+        }
+        return staticBlock;
+    }
+
+    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+        for (final Map.Entry<String, Value> entry : staticDefs.entrySet()) {
+            final Value val = entry.getValue();
+            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
+                result.put(entry.getKey(), val);
+            }
+        }
+    }
+
     @Override
     public ClassDefinition clone() {
         HashSet<String> initVars = null;
@@ -76,8 +99,8 @@ public class ClassDefinition extends Value {
             initVars = new HashSet<String>(this.initVars);
         }
         Block staticBlock = null;
-        if (this.staticBlock != null) {
-            staticBlock = this.staticBlock.clone();
+        if (getStaticBlock() != null) {
+            staticBlock = getStaticBlock().clone();
         }
         HashSet<String> staticVars = null;
         if (this.staticVars != null) {
@@ -121,8 +144,8 @@ public class ClassDefinition extends Value {
         final HashSet<String> initVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
         preBound = innerBoundVariables.size();
-        if (staticBlock != null) {
-            staticBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        if (getStaticBlock() != null) {
+            getStaticBlock().collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
         final HashSet<String> staticVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
@@ -241,8 +264,8 @@ public class ClassDefinition extends Value {
 
         try {
             // execute, e.g. compute static definition
-            if (staticBlock != null) {
-                staticBlock.exec(state);
+            if (getStaticBlock() != null) {
+                getStaticBlock().exec(state);
             }
 
             newScope.unlink();
@@ -315,12 +338,8 @@ public class ClassDefinition extends Value {
 
         staticVars.add(variable);
 
-        // rebuild static block
-        final Block sBlock = new Block();
-        for (final Entry<String, Value> entry : staticDefs.entrySet()) {
-            sBlock.add(new ExpressionStatement(new Assignment(new Variable(entry.getKey()), new ValueExpr(entry.getValue()))));
-        }
-        staticBlock = sBlock;
+        // mark static block to be rebuild on access
+        staticBlock = REBUILD_MARKER;
     }
 
     /* string and char operations */
@@ -348,11 +367,11 @@ public class ClassDefinition extends Value {
         sb.append(") {");
         sb.append(endl);
         initBlock.appendString(state, sb, tabs + 1, /* brackets = */ false);
-        if (staticBlock != null) {
+        if (getStaticBlock() != null) {
             sb.append(endl);
             state.getLineStart(sb, tabs + 1);
             sb.append("static ");
-            staticBlock.appendString(state, sb, tabs + 1, /* brackets = */ true);
+            getStaticBlock().appendString(state, sb, tabs + 1, /* brackets = */ true);
         }
         sb.append(endl);
         state.getLineStart(sb, tabs);
@@ -372,7 +391,7 @@ public class ClassDefinition extends Value {
         result.addMember(state, paramList);
 
         result.addMember(state, initBlock.toTerm(state));
-        if (staticBlock != null) {
+        if (getStaticBlock() != null) {
             result.addMember(state, initBlock.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
@@ -424,14 +443,14 @@ public class ClassDefinition extends Value {
             if (cmp != 0) {
                 return cmp;
             }
-            if (staticBlock != null) {
-                if (other.staticBlock != null) {
-                    return staticBlock.toString().compareTo(other.staticBlock.toString());
+            if (getStaticBlock() != null) {
+                if (other.getStaticBlock() != null) {
+                    return getStaticBlock().toString().compareTo(other.getStaticBlock().toString());
                 } else {
                     return 1;
                 }
             } else {
-                if (other.staticBlock != null) {
+                if (other.getStaticBlock() != null) {
                     return -1;
                 } else {
                     return 0;
@@ -462,7 +481,7 @@ public class ClassDefinition extends Value {
             final ClassDefinition other = (ClassDefinition) v;
             if (parameters.toString().equals(other.parameters.toString())) {
                 if (initBlock.toString().equals(other.initBlock.toString())) {
-                    return staticBlock.toString().equals(other.staticBlock.toString());
+                    return getStaticBlock().toString().equals(other.getStaticBlock().toString());
                 }
             }
         }
@@ -474,15 +493,6 @@ public class ClassDefinition extends Value {
     @Override
     public int hashCode() {
         return initHashCode;
-    }
-
-    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
-        for (final Map.Entry<String, Value> entry : staticDefs.entrySet()) {
-            final Value val = entry.getValue();
-            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
-                result.put(entry.getKey(), val);
-            }
-        }
     }
 
 }

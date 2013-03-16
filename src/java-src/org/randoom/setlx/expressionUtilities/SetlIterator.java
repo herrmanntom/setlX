@@ -30,35 +30,33 @@ iterator
 
 implemented here as:
       ==========      ====        ||      ========
-      mAssignable  mCollection    ||       mNext
+      assignable   collection     ||        next
 */
 
 public class SetlIterator extends CodeFragment {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = "^setlIterator";
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIterator.class);
 
-    private final Expr          mAssignable; // Lhs is a simple variable or a list (hopefully only of (lists of) variables)
-    private final Expr          mCollection; // Rhs (should be Set/List)
-    private       SetlIterator  mNext;       // next iterator in iteratorChain
+    private final Expr          assignable; // simple variable or a list (hopefully only of (lists of) variables)
+    private final Expr          collection; // should be Set/List
+    private       SetlIterator  next;       // next iterator in iteratorChain
 
     public SetlIterator(final Expr assignable, final Expr collection) {
-        mAssignable = assignable;
-        mCollection = collection;
-        mNext       = null;
+        this(assignable, collection, null);
     }
 
     private SetlIterator(final Expr assignable, final Expr collection, final SetlIterator next) {
-        mAssignable = assignable;
-        mCollection = collection;
-        mNext       = next;
+        this.assignable = assignable;
+        this.collection = collection;
+        this.next       = next;
     }
 
     // adds next iterator to end of current iterator chain
     public void add(final SetlIterator i) {
-        if (mNext == null) {
-            mNext = i;
+        if (next == null) {
+            next = i;
         } else {
-            mNext.add(i);
+            next.add(i);
         }
     }
 
@@ -96,19 +94,19 @@ public class SetlIterator extends CodeFragment {
         final List<String>             unboundVariables,
         final List<String>             usedVariables
     ) {
-        mCollection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        collection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
         final List<String> tempAssigned = new ArrayList<String>();
-        mAssignable.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+        assignable.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempAssigned);
 
-        if (mNext != null) {
-            mNext.collectVariablesAndOptimize(container, boundVariables, unboundVariables, usedVariables);
+        if (next != null) {
+            next.collectVariablesAndOptimize(container, boundVariables, unboundVariables, usedVariables);
         } else {
             container.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
@@ -131,12 +129,12 @@ public class SetlIterator extends CodeFragment {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mAssignable.appendString(state, sb, 0);
+        assignable.appendString(state, sb, 0);
         sb.append(" in ");
-        mCollection.appendString(state, sb, 0);
-        if (mNext != null) {
+        collection.appendString(state, sb, 0);
+        if (next != null) {
             sb.append(", ");
-            mNext.appendString(state, sb, tabs);
+            next.appendString(state, sb, tabs);
         }
     }
 
@@ -145,10 +143,10 @@ public class SetlIterator extends CodeFragment {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
-        result.addMember(state, mAssignable.toTerm(state));
-        result.addMember(state, mCollection.toTerm(state));
-        if (mNext != null) {
-            result.addMember(state, mNext.toTerm(state));
+        result.addMember(state, assignable.toTerm(state));
+        result.addMember(state, collection.toTerm(state));
+        if (next != null) {
+            result.addMember(state, next.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
@@ -187,7 +185,7 @@ public class SetlIterator extends CodeFragment {
         if (state.isExecutionStopped) {
             throw new StopExecutionException("Interrupted");
         }
-        final Value iterationValue = mCollection.eval(state); // trying to iterate over this value
+        final Value iterationValue = collection.eval(state); // trying to iterate over this value
         if (iterationValue instanceof CollectionValue) {
             final CollectionValue   coll        = (CollectionValue) iterationValue;
             // scope for inner execution/next iterator
@@ -199,14 +197,22 @@ public class SetlIterator extends CodeFragment {
                 innerScope.setWriteThrough(false); // force iteration variables to be local to this block
 
                 // assign value from collection
-                final boolean successful = mAssignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
+                final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
 
+                /*
+                 * This check is done to allow the following statement to work as expected:
+                 *
+                 * for (x in s, [x,y] in t) {...}
+                 *
+                 * where the the loop is only executed, when the first
+                 * `x' is equal to the second `x'
+                 */
                 if ( ! successful) {
                     continue;
                 }
 
                 if (state.traceAssignments) {
-                    state.outWriteLn("~< Trace (iterator): " + mAssignable.toString() + " := " + v + " >~");
+                    state.outWriteLn("~< Trace (iterator): " + assignable.toString() + " := " + v + " >~");
                 }
 
                 // reset WriteThrough, because changes during execution are not strictly local
@@ -215,8 +221,8 @@ public class SetlIterator extends CodeFragment {
                    last iterator.
                    Stops iteration if requested by execution.                 */
                 ReturnMessage result = null;
-                if (mNext != null) {
-                    result = mNext.evaluate(state, exec, outerScope);
+                if (next != null) {
+                    result = next.evaluate(state, exec, outerScope);
                 } else {
                     result = exec.execute(state, v);
                 }

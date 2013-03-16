@@ -1,7 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v1.5.2--- 2013-xx-yy
- * refactored boolean expressions
+ * refactored boolean expressions and some other bits and peaces
 
 ---v1.5.1--- 2013-03-10
  + add syntax highlighting definition for gedit

@@ -1,5 +1,8 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.boolExpressions.Equals;
+import org.randoom.setlx.boolExpressions.In;
+import org.randoom.setlx.boolExpressions.LessThan;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -369,7 +372,7 @@ public class SetlObject extends Value {
             return (SetlBoolean) result;
         }
     }
-    final static String CONTAINS_MEMBER = "containsMember";
+    final static String CONTAINS_MEMBER = createOverloadVariable(In.functionalCharacter());
 
     @Override
     public Value domain(final State state) throws SetlException {
@@ -689,7 +692,7 @@ public class SetlObject extends Value {
             return (SetlBoolean) result;
         }
     }
-    final static String IS_EQUAL_TO = "isEqualTo";
+    final static String IS_EQUAL_TO = createOverloadVariable(Equals.functionalCharacter());
 
     /* this comparison is different than `this.compareTo(other) < 0' and should
        throw errors on seemingly incomparable types like `5 < TRUE'            */
@@ -704,7 +707,7 @@ public class SetlObject extends Value {
             return (SetlBoolean) result;
         }
     }
-    final static String IS_LESS_THAN = "isLessThan";
+    final static String IS_LESS_THAN = createOverloadVariable(LessThan.functionalCharacter());
 
     public void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
         classDefinition.collectBindings(result, restrictToFunctions);

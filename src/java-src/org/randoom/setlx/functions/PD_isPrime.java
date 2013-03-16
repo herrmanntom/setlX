@@ -13,8 +13,8 @@ import java.util.List;
 //                                 tests all possible factors, therefore has linear
 //                                 complexity.
 
-public class PD_isPrime extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isPrime();
+public class PD_isPrime extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isPrime();
 
     private PD_isPrime() {
         super();

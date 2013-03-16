@@ -8,8 +8,8 @@ import java.util.List;
 
 // abs(value)              : returns the absolute (e.g. positive) value of the parameter
 
-public class PD_abs extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_abs();
+public class PD_abs extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_abs();
 
     private PD_abs() {
         super();

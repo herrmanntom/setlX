@@ -8,8 +8,8 @@ import java.util.List;
 
 // shuffle(collectionValue)      : returns a randomly shuffled version of the collectionValue.
 
-public class PD_shuffle extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_shuffle();
+public class PD_shuffle extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_shuffle();
 
     private PD_shuffle() {
         super();

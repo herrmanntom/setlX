@@ -10,8 +10,8 @@ import java.util.List;
 
 // rmBreak("id")                 : DEBUG: removes breakpoint in function bound to "id"
 
-public class PD_rmBreak extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_rmBreak();
+public class PD_rmBreak extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_rmBreak();
 
     private PD_rmBreak() {
         super();

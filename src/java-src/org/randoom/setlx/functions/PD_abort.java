@@ -8,8 +8,8 @@ import java.util.List;
 
 // abort(message)          : stops execution and displays given error message(s)
 
-public class PD_abort extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_abort();
+public class PD_abort extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_abort();
 
     private PD_abort() {
         super();

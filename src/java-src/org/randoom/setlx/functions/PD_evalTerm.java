@@ -13,8 +13,8 @@ import java.util.List;
 
 // evalTerm(term)                : execute a term which represents SetlX statements and/or expressions
 
-public class PD_evalTerm extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_evalTerm();
+public class PD_evalTerm extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_evalTerm();
 
     private PD_evalTerm() {
         super();

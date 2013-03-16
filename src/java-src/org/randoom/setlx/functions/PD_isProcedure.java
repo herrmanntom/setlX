@@ -7,8 +7,8 @@ import java.util.List;
 
 // isProcedure(value)      : test if value-type is procedure
 
-public class PD_isProcedure extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isProcedure();
+public class PD_isProcedure extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isProcedure();
 
     private PD_isProcedure() {
         super();

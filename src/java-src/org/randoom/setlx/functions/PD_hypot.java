@@ -8,7 +8,7 @@ import java.lang.reflect.Method;
  */
 
 public class PD_hypot extends MathFunction2 {
-    public final static PreDefinedFunction DEFINITION;
+    public final static PreDefinedProcedure DEFINITION;
     static {
         Method function;
         try {

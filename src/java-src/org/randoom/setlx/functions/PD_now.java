@@ -8,8 +8,8 @@ import java.util.List;
 
 // now()                   : get current time since epoch in ms
 
-public class PD_now extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION
+public class PD_now extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION
                                             = new PD_now();
 
     private PD_now() {

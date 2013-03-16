@@ -8,8 +8,8 @@ import java.util.List;
 
 // range(map)              : get range of map
 
-public class PD_range extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_range();
+public class PD_range extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_range();
 
     private PD_range() {
         super();

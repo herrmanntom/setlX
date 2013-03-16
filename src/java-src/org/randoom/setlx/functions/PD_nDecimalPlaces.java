@@ -12,8 +12,8 @@ import java.util.List;
 
 // nDecimalPlaces(rational, n) : get string of rational number with max of n digits after decimal point
 
-public class PD_nDecimalPlaces extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_nDecimalPlaces();
+public class PD_nDecimalPlaces extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_nDecimalPlaces();
 
     private PD_nDecimalPlaces() {
         super();

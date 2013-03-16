@@ -8,8 +8,8 @@ import java.util.List;
 
 // lsBreak()                     : DEBUG: list breakpoints
 
-public class PD_lsBreak extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_lsBreak();
+public class PD_lsBreak extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_lsBreak();
 
     private PD_lsBreak() {
         super();

@@ -10,8 +10,8 @@ import java.util.List;
 
 // mathConst(name_of_constant)   : get the value of a mathematical constant (currently only pi and e)
 
-public class PD_mathConst extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_mathConst();
+public class PD_mathConst extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_mathConst();
 
     private PD_mathConst() {
         super();

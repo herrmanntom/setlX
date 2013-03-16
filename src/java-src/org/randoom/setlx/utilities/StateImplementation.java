@@ -3,7 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.ClassDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;
@@ -395,11 +395,11 @@ public class StateImplementation extends State {
         v = variableScope.locateValue(this, var, true);
         if (v == null && ! var.equals("this")) {
             // search if name matches a predefined function (which start with 'PD_')
-            final String packageName = PreDefinedFunction.class.getPackage().getName();
+            final String packageName = PreDefinedProcedure.class.getPackage().getName();
             final String className   = "PD_" + var;
             try {
                 final Class<?> c = Class.forName(packageName + '.' + className);
-                v                = (PreDefinedFunction) c.getField("DEFINITION").get(null);
+                v                = (PreDefinedProcedure) c.getField("DEFINITION").get(null);
             } catch (final Exception e) {
                 /* Name does not match predefined function.
                    But return value already is null, no change necessary.     */

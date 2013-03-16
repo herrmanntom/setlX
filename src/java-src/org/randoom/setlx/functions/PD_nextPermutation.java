@@ -8,8 +8,8 @@ import java.util.List;
 
 // nextPermutation(list)         : returns the next permutation of the list, om if there `list' already is the last permutation
 
-public class PD_nextPermutation extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_nextPermutation();
+public class PD_nextPermutation extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_nextPermutation();
 
     private PD_nextPermutation() {
         super();

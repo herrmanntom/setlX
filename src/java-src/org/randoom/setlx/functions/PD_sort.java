@@ -8,8 +8,8 @@ import java.util.List;
 
 // sort(collectionValue)         : returns a sorted version of collectionValue.
 
-public class PD_sort extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_sort();
+public class PD_sort extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_sort();
 
     private PD_sort() {
         super();

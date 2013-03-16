@@ -10,8 +10,8 @@ import java.util.List;
  * floor(numberValue)      : returns maximum integer which is lower or equal to numberValue
  */
 
-public class PD_floor extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_floor();
+public class PD_floor extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_floor();
 
     private PD_floor() {
         super();

@@ -8,8 +8,8 @@ import java.util.List;
 
 // canonical(term)         : returns a string of a term in its true form
 
-public class PD_canonical extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_canonical();
+public class PD_canonical extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_canonical();
 
     private PD_canonical() {
         super();

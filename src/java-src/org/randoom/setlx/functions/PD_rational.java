@@ -8,8 +8,8 @@ import java.util.List;
 
 // rational(stringOrNumber)      : convert string or number into a rational, returns om on failure
 
-public class PD_rational extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_rational();
+public class PD_rational extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_rational();
 
     private PD_rational() {
         super();

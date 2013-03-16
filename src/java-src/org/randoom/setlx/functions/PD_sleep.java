@@ -11,8 +11,8 @@ import java.util.List;
 
 // sleep(time_in_ms)             : pause execution for a number of milliseconds
 
-public class PD_sleep extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_sleep();
+public class PD_sleep extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_sleep();
 
     private PD_sleep() {
         super();

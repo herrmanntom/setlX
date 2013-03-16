@@ -19,8 +19,8 @@ import java.util.List;
 //                              c) If the argument is a collectionValue,
 //                                 a randomly selected member will be returned.
 
-public class PD_rnd extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_rnd();
+public class PD_rnd extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_rnd();
 
     private PD_rnd() {
         super();

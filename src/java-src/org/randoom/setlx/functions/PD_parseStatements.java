@@ -12,8 +12,8 @@ import java.util.List;
 
 // parseStatements(stmnts)       : parse SetlX statements into a term
 
-public class PD_parseStatements extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_parseStatements();
+public class PD_parseStatements extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_parseStatements();
 
     private PD_parseStatements() {
         super();

@@ -16,8 +16,8 @@ import java.util.List;
 // writeFile(fileName, content)  : writes a list of strings into a file, each
 //                                 string representing a single line
 
-public class PD_writeFile extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_writeFile();
+public class PD_writeFile extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_writeFile();
 
     protected PD_writeFile() {
         super();

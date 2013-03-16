@@ -7,8 +7,8 @@ import java.util.List;
 
 // isSet(value)            : test if value-type is set
 
-public class PD_isSet extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isSet();
+public class PD_isSet extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isSet();
 
     private PD_isSet() {
         super();

@@ -8,8 +8,8 @@ import java.util.List;
 
 // reset()                       : DEBUG: stop execution and return to interactive prompt
 
-public class PD_reset extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_reset();
+public class PD_reset extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_reset();
 
     private PD_reset() {
         super();

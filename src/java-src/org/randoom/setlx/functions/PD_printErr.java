@@ -5,7 +5,7 @@ import org.randoom.setlx.utilities.State;
 // printErr(value, ...)          : same as print, but prints into stderr
 
 public class PD_printErr extends PD_print {
-    public final static PreDefinedFunction DEFINITION = new PD_printErr();
+    public final static PreDefinedProcedure DEFINITION = new PD_printErr();
 
     private PD_printErr() {
         super();

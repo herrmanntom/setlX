@@ -10,8 +10,8 @@ import java.util.List;
 
 // endsWith(string, suffix)      : return true if string ends with prefix
 
-public class PD_endsWith extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_endsWith();
+public class PD_endsWith extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_endsWith();
 
     private PD_endsWith() {
         super();

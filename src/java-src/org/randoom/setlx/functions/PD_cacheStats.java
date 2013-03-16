@@ -13,8 +13,8 @@ import java.util.List;
 
 // cacheStats(cachedProcedure)   : return a map containing statistics of the given cachedFunction
 
-public class PD_cacheStats extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_cacheStats();
+public class PD_cacheStats extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_cacheStats();
 
     private PD_cacheStats() {
         super();

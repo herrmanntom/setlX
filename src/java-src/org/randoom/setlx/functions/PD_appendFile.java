@@ -11,7 +11,7 @@ import java.util.List;
 //                                 string representing a single line
 
 public class PD_appendFile extends PD_writeFile {
-    public final static PreDefinedFunction DEFINITION = new PD_appendFile();
+    public final static PreDefinedProcedure DEFINITION = new PD_appendFile();
 
     private PD_appendFile() {
         super();

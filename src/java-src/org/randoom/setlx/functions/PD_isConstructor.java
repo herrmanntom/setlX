@@ -7,8 +7,8 @@ import java.util.List;
 
 // isConstructor(value)    : test if value-type is constructor
 
-public class PD_isConstructor extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isConstructor();
+public class PD_isConstructor extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isConstructor();
 
     private PD_isConstructor() {
         super();

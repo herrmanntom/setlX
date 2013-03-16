@@ -7,8 +7,8 @@ import java.util.List;
 
 // isString(value)         : test if value-type is string
 
-public class PD_isString extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isString();
+public class PD_isString extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isString();
 
     private PD_isString() {
         super();

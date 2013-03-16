@@ -3,7 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlObject;
@@ -14,7 +14,7 @@ import java.util.List;
 
 // this class encapsulates functions from java.Math
 
-public class MathFunction2 extends PreDefinedFunction {
+public class MathFunction2 extends PreDefinedProcedure {
     private final Method mFunction;
 
     public MathFunction2(final String name, final Method function) {

@@ -7,7 +7,7 @@ import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ReturnMessage;
@@ -348,9 +348,9 @@ public class ProcedureDefinition extends Value {
             return 0;
         } else if (v instanceof ProcedureDefinition) {
             final ProcedureDefinition other = (ProcedureDefinition) v;
-            if (this instanceof PreDefinedFunction && other instanceof PreDefinedFunction) {
-                final PreDefinedFunction _this  = (PreDefinedFunction) this;
-                final PreDefinedFunction _other = (PreDefinedFunction) other;
+            if (this instanceof PreDefinedProcedure && other instanceof PreDefinedProcedure) {
+                final PreDefinedProcedure _this  = (PreDefinedProcedure) this;
+                final PreDefinedProcedure _other = (PreDefinedProcedure) other;
                 return _this.getName().compareTo(_other.getName());
             } else {
                 final int cmp = mParameters.toString().compareTo(other.mParameters.toString());
@@ -382,10 +382,10 @@ public class ProcedureDefinition extends Value {
         mObject = null;
         if (this == v) {
             return true;
-        } else if (v instanceof PreDefinedFunction) {
-            if (this instanceof PreDefinedFunction) {
-                final PreDefinedFunction _this  = (PreDefinedFunction) this;
-                final PreDefinedFunction _other = (PreDefinedFunction) v;
+        } else if (v instanceof PreDefinedProcedure) {
+            if (this instanceof PreDefinedProcedure) {
+                final PreDefinedProcedure _this  = (PreDefinedProcedure) this;
+                final PreDefinedProcedure _other = (PreDefinedProcedure) v;
                 return _this.getName().equals(_other.getName());
             } else {
                 return false;

@@ -9,8 +9,8 @@ import java.util.List;
 
 // fromB(rw collectionValue)     : selects and removes the first member from `collectionValue'
 
-public class PD_fromB extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_fromB();
+public class PD_fromB extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_fromB();
 
     private PD_fromB() {
         super();

@@ -7,8 +7,8 @@ import java.util.List;
 
 // isMap(value)            : test if value-type is map
 
-public class PD_isMap extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isMap();
+public class PD_isMap extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isMap();
 
     private PD_isMap() {
         super();

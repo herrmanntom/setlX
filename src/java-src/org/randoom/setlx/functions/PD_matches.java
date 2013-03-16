@@ -19,8 +19,8 @@ import java.util.regex.PatternSyntaxException;
 // matches(string, pattern [, captureGroups]) : returns true if `string' matches the regular expression pattern
 //                                              if `captureGroups' is true, the captured groups are returned instead
 
-public class PD_matches extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_matches();
+public class PD_matches extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_matches();
 
     private PD_matches() {
         super();

@@ -8,8 +8,8 @@ import java.util.List;
 
 // nCPUs()                       : get number of CPUs in current system
 
-public class PD_nCPUs extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_nCPUs();
+public class PD_nCPUs extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_nCPUs();
 
     private PD_nCPUs() {
         super();

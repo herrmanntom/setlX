@@ -8,8 +8,8 @@ import java.util.List;
 
 // int(stringOrNumber)     : convert string or number into an integer, returns om on failure
 
-public class PD_int extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_int();
+public class PD_int extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_int();
 
     private PD_int() {
         super();

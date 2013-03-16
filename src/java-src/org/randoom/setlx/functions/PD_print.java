@@ -8,8 +8,8 @@ import java.util.List;
 
 // print(value, ...)             : prints string representation of provided value into stdout
 
-public class PD_print extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_print();
+public class PD_print extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_print();
 
     protected PD_print() {
         super();

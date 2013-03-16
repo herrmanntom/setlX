@@ -128,7 +128,7 @@ bin/org/randoom/setlx/utilities/*.class :                   \
         java-src/org/randoom/setlx/statements/For.java                          \
         java-src/org/randoom/setlx/statements/Statement.java                    \
         java-src/org/randoom/setlx/statements/While.java                        \
-        java-src/org/randoom/setlx/functions/PreDefinedFunction.java            \
+        java-src/org/randoom/setlx/functions/PreDefinedProcedure.java           \
         java-src/org/randoom/setlx/grammar/SetlXgrammar*.java                   \
         java-src/org/randoom/setlx/exceptions/*.java                            \
         java-src/org/randoom/setlx/types/*.java
@@ -138,7 +138,7 @@ bin/org/randoom/setlx/types/*.class :                       \
         java-src/org/randoom/setlx/types/*.java                                 \
         java-src/org/randoom/setlx/boolExpressions/*.java                       \
         java-src/org/randoom/setlx/expressions/*.java                           \
-        java-src/org/randoom/setlx/functions/PreDefinedFunction.java            \
+        java-src/org/randoom/setlx/functions/PreDefinedProcedure.java           \
         java-src/org/randoom/setlx/statements/Block.java                        \
         java-src/org/randoom/setlx/statements/Return.java                       \
         java-src/org/randoom/setlx/utilities/MatchResult.java                   \

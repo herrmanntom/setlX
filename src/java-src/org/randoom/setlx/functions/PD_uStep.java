@@ -9,8 +9,8 @@ import java.util.List;
 
 // uStep()                       : DEBUG: halt before evaluating next expression
 
-public class PD_uStep extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_uStep();
+public class PD_uStep extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_uStep();
 
     private PD_uStep() {
         super();

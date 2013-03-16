@@ -8,8 +8,8 @@ import java.util.List;
 
 // max(collectionValue) : select maximum member from collection value
 
-public class PD_max extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_max();
+public class PD_max extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_max();
 
     private PD_max() {
         super();

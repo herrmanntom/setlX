@@ -8,8 +8,8 @@ import java.util.List;
 
 // join(collection, separator)   : returns a string with all the members in `collection' separated by `separator'.
 
-public class PD_join extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_join();
+public class PD_join extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_join();
 
     private PD_join() {
         super();

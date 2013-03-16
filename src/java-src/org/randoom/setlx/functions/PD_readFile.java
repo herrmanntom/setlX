@@ -26,8 +26,8 @@ import java.util.List;
 //                                 When the optional parameter `listOfLineNumbers/
 //                                 is used, only lines in this list will be read.
 
-public class PD_readFile extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_readFile();
+public class PD_readFile extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_readFile();
 
     private PD_readFile() {
         super();

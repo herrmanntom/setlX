@@ -14,8 +14,8 @@ import java.io.BufferedReader;
 
 // run(command)                  : executes a system command and returns the result as a list of output and error messages
 
-public class PD_run extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_run();
+public class PD_run extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_run();
 
     private PD_run() {
         super();

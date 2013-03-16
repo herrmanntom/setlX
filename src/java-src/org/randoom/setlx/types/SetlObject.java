@@ -48,7 +48,7 @@ import org.randoom.setlx.functions.PD_shuffle;
 import org.randoom.setlx.functions.PD_sort;
 import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
-import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
@@ -175,7 +175,7 @@ public class SetlObject extends Value {
     private static String createOverloadVariable(final String functionalCharacter) {
         return functionalCharacter.substring(1);
     }
-    private static String createOverloadVariable(final PreDefinedFunction function) {
+    private static String createOverloadVariable(final PreDefinedProcedure function) {
         return "f_" + function.getName();
     }
 

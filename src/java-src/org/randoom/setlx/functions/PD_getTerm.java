@@ -7,8 +7,8 @@ import java.util.List;
 
 // getTerm(value)          : convert a value into a term
 
-public class PD_getTerm extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_getTerm();
+public class PD_getTerm extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_getTerm();
 
     private PD_getTerm() {
         super();

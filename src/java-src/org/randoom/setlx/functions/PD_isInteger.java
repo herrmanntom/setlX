@@ -7,8 +7,8 @@ import java.util.List;
 
 // isInteger(value)        : test if value-type is integer
 
-public class PD_isInteger extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isInteger();
+public class PD_isInteger extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isInteger();
 
     private PD_isInteger() {
         super();

@@ -5,7 +5,7 @@ import org.randoom.setlx.utilities.State;
 // nPrint(value, ...)            : same as print, but does not add a new line
 
 public class PD_nPrint extends PD_print {
-    public final static PreDefinedFunction DEFINITION = new PD_nPrint();
+    public final static PreDefinedProcedure DEFINITION = new PD_nPrint();
 
     private PD_nPrint() {
         super();

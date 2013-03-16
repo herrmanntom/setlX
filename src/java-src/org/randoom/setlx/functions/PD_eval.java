@@ -12,8 +12,8 @@ import java.util.List;
 
 // eval(expr)                    : evaluate a String of a SetlX expression
 
-public class PD_eval extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_eval();
+public class PD_eval extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_eval();
 
     private PD_eval() {
         super();

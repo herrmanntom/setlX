@@ -8,8 +8,8 @@ import java.util.List;
 
 // domain(map)             : get domain of map
 
-public class PD_domain extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_domain();
+public class PD_domain extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_domain();
 
     private PD_domain() {
         super();

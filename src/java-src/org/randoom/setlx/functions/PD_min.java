@@ -8,8 +8,8 @@ import java.util.List;
 
 // min(collectionValue) : select minimum member from collection value
 
-public class PD_min extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_min();
+public class PD_min extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_min();
 
     private PD_min() {
         super();

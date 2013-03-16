@@ -44,8 +44,8 @@ import java.util.List;
 
 
 
-public class PD_logo extends PreDefinedFunction {
-    public  final static PreDefinedFunction DEFINITION  = new PD_logo();
+public class PD_logo extends PreDefinedProcedure {
+    public  final static PreDefinedProcedure DEFINITION  = new PD_logo();
     private       static int                count       = 0;
     private final static String             LOGO_BIG    = "\n" +
     "                                                                    " + "\n" +

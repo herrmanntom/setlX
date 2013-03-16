@@ -7,8 +7,8 @@ import java.util.List;
 
 // isTerm(value)           : test if value-type is term
 
-public class PD_isTerm extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isTerm();
+public class PD_isTerm extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isTerm();
 
     private PD_isTerm() {
         super();

@@ -10,8 +10,8 @@ import java.util.Locale;
 
 // toUpperCase(string)           : returns String in upper case letters
 
-public class PD_toUpperCase extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_toUpperCase();
+public class PD_toUpperCase extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_toUpperCase();
 
     private PD_toUpperCase() {
         super();

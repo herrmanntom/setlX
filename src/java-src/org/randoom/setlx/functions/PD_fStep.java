@@ -9,8 +9,8 @@ import java.util.List;
 
 // fStep()                       : DEBUG: continue execution of next function until it returns
 
-public class PD_fStep extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_fStep();
+public class PD_fStep extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_fStep();
 
     private PD_fStep() {
         super();

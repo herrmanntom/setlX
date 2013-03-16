@@ -10,8 +10,8 @@ import java.util.List;
 
 // clearCache(cachedProcedure)   : clears the cache of supplied function
 
-public class PD_clearCache extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_clearCache();
+public class PD_clearCache extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_clearCache();
 
     private PD_clearCache() {
         super();

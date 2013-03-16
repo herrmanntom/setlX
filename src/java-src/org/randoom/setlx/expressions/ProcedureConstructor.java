@@ -1,7 +1,7 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.functions.PreDefinedFunction;
+import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
@@ -50,8 +50,8 @@ public class ProcedureConstructor extends Expr {
                 }
                 final Value val = state.findValue(var);
                 if (val != Om.OM) {
-                    if (val instanceof PreDefinedFunction &&
-                       var.equals(((PreDefinedFunction)val).getName())
+                    if (val instanceof PreDefinedProcedure &&
+                       var.equals(((PreDefinedProcedure)val).getName())
                     ) {
                         // skip predefined Functions bound to their name
                     } else {

@@ -9,8 +9,8 @@ import java.util.List;
 
 // multiLineMode(toggle)         : only accept input after additional new line
 
-public class PD_multiLineMode extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_multiLineMode();
+public class PD_multiLineMode extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_multiLineMode();
 
     private PD_multiLineMode() {
         super();

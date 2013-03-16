@@ -10,8 +10,8 @@ import java.util.List;
 
 // startsWith(string, prefix)    : return true if string starts with prefix
 
-public class PD_startsWith extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_startsWith();
+public class PD_startsWith extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_startsWith();
 
     private PD_startsWith() {
         super();

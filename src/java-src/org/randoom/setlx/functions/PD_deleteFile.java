@@ -11,8 +11,8 @@ import java.util.List;
 
 // deleteFile(fileName)          : delete a file, return true on success
 
-public class PD_deleteFile extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_deleteFile();
+public class PD_deleteFile extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_deleteFile();
 
     private PD_deleteFile() {
         super();

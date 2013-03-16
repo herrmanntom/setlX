@@ -13,8 +13,8 @@ import java.util.regex.PatternSyntaxException;
 // replace(string, pattern, replacement) : returns a string in wich substrings matching
 //                                         `pattern' are replaced with `replacement'
 
-public class PD_replace extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_replace();
+public class PD_replace extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_replace();
 
     private PD_replace() {
         super();

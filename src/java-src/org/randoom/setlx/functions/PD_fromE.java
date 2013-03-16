@@ -9,8 +9,8 @@ import java.util.List;
 
 // fromE(rw collectionValue)     : selects and removes the last member from `collectionValue'
 
-public class PD_fromE extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_fromE();
+public class PD_fromE extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_fromE();
 
     private PD_fromE() {
         super();

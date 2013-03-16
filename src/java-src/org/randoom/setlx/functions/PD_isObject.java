@@ -7,8 +7,8 @@ import java.util.List;
 
 // isObject(Value)         : test if value-type is object
 
-public class PD_isObject extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isObject();
+public class PD_isObject extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isObject();
 
     private PD_isObject() {
         super();

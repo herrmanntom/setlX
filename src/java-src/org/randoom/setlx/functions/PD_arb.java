@@ -9,8 +9,8 @@ import java.util.List;
 // arb(collectionValue)          : Selects an arbitrary member from `collectionValue'.
 //                                 Note that 'arb' is deterministic, while rnd is not.
 
-public class PD_arb extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_arb();
+public class PD_arb extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_arb();
 
     private PD_arb() {
         super();

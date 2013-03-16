@@ -8,8 +8,8 @@ import java.util.List;
 
 // first(collectionValue)        : selects the first member from `collectionValue'
 
-public class PD_first extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_first();
+public class PD_first extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_first();
 
     private PD_first() {
         super();

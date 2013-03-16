@@ -16,15 +16,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class PreDefinedFunction extends ProcedureDefinition {
+public abstract class PreDefinedProcedure extends ProcedureDefinition {
     // functional characters used in terms
-    private final static String  FUNCTIONAL_CHARACTER = "^preDefinedProcedure";
+    private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
 
     private       String  name;
     private       boolean unlimitedParameters;
     private       boolean allowFewerParameters;
 
-    protected PreDefinedFunction() {
+    protected PreDefinedProcedure() {
         super(new ArrayList<ParameterDef>(), new Block());
         this.name                 = null;
         this.unlimitedParameters  = false;

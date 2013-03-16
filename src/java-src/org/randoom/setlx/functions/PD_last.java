@@ -8,8 +8,8 @@ import java.util.List;
 
 // last(collectionValue)         : selects the last member from `collectionValue'
 
-public class PD_last extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_last();
+public class PD_last extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_last();
 
     private PD_last() {
         super();

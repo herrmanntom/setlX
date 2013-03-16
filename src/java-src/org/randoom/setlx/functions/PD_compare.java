@@ -13,8 +13,8 @@ import java.util.List;
 //                                 Note that order between different types was chosen
 //                                 arbitrarily and implies no special meaning.
 
-public class PD_compare extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_compare();
+public class PD_compare extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_compare();
 
     private PD_compare() {
         super();

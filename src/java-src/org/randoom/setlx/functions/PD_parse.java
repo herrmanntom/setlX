@@ -11,8 +11,8 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 // parse(expr)             : parse SetlX expression into a term
-public class PD_parse extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_parse();
+public class PD_parse extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_parse();
 
     private PD_parse() {
         super();

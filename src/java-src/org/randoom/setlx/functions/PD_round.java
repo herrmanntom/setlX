@@ -10,8 +10,8 @@ import java.util.List;
  * round(numberValue)      : returns rounded numberValue
  */
 
-public class PD_round extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_round();
+public class PD_round extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_round();
 
     private PD_round() {
         super();

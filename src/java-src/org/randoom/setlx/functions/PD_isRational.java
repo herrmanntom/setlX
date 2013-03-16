@@ -7,8 +7,8 @@ import java.util.List;
 
 // isRational(value)       : test if value-type is rational
 
-public class PD_isRational extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isRational();
+public class PD_isRational extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isRational();
 
     private PD_isRational() {
         super();

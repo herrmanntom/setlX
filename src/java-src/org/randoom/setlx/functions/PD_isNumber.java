@@ -8,8 +8,8 @@ import java.util.List;
 
 // isNumber(value)         : test if value-type is a rational or real
 
-public class PD_isNumber extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isNumber();
+public class PD_isNumber extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isNumber();
 
     private PD_isNumber() {
         super();

@@ -10,8 +10,8 @@ import java.util.List;
 
 // get(message, ...)             : prompts the user with `message', then reads a single line from stdin
 
-public class PD_get extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_get();
+public class PD_get extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_get();
 
     private PD_get() {
         super();

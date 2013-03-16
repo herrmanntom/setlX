@@ -10,8 +10,8 @@ import java.util.List;
  * ceil(numberValue)       : returns minumum integer which is greater or equal to numberValue
  */
 
-public class PD_ceil extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_ceil();
+public class PD_ceil extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_ceil();
 
     private PD_ceil() {
         super();

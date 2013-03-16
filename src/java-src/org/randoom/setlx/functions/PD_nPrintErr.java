@@ -5,7 +5,7 @@ import org.randoom.setlx.utilities.State;
 // nPrintErr(value, ...)         : same as nPrint, but prints into stderr
 
 public class PD_nPrintErr extends PD_print {
-    public final static PreDefinedFunction DEFINITION = new PD_nPrintErr();
+    public final static PreDefinedProcedure DEFINITION = new PD_nPrintErr();
 
     private PD_nPrintErr() {
         super();

@@ -9,8 +9,8 @@ import java.util.List;
 
 // finish()                      : DEBUG: continue execution of current function until it returns
 
-public class PD_finish extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_finish();
+public class PD_finish extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_finish();
 
     private PD_finish() {
         super();

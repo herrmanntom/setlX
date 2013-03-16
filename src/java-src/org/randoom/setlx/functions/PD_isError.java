@@ -7,8 +7,8 @@ import java.util.List;
 
 // isError(value)          : test if value-type is error
 
-public class PD_isError extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isError();
+public class PD_isError extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isError();
 
     private PD_isError() {
         super();

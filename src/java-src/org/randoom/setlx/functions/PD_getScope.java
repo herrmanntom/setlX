@@ -8,8 +8,8 @@ import java.util.List;
 
 // getScope()                    : get a term representing all variables set in current scope
 
-public class PD_getScope extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_getScope();
+public class PD_getScope extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_getScope();
 
     private PD_getScope() {
         super();

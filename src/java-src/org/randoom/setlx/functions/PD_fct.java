@@ -8,8 +8,8 @@ import java.util.List;
 
 // fct(term)               : get functional char of a term
 
-public class PD_fct extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_fct();
+public class PD_fct extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_fct();
 
     private PD_fct() {
         super();

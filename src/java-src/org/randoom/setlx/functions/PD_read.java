@@ -13,8 +13,8 @@ import java.util.List;
 //                                 stdin until user enters at least one character,
 //                                 converts input into integer or real if possible
 
-public class PD_read extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_read();
+public class PD_read extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_read();
 
     private PD_read() {
         super();

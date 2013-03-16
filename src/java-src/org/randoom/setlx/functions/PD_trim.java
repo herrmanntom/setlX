@@ -9,8 +9,8 @@ import java.util.List;
 
 // trim(string)                  : return a trimmed string
 
-public class PD_trim extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_trim();
+public class PD_trim extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_trim();
 
     private PD_trim() {
         super();

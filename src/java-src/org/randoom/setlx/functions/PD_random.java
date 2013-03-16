@@ -12,8 +12,8 @@ import java.util.List;
 // random([real])                : Get random Real between 0.0 and argument (inclusive).
 //                                 If no argument is used, 1.0 is implied.
 
-public class PD_random extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_random();
+public class PD_random extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_random();
 
     private PD_random() {
         super();

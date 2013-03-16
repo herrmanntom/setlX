@@ -8,8 +8,8 @@ import java.util.List;
 
 // split(string, pattern)        : splits string at pattern into a list of strings
 
-public class PD_split extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_split();
+public class PD_split extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_split();
 
     private PD_split() {
         super();

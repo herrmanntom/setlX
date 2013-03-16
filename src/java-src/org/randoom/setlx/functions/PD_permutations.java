@@ -8,8 +8,8 @@ import java.util.List;
 
 // permutations(collectionValue) : computes all permutations of the element in `collectionValue'
 
-public class PD_permutations extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_permutations();
+public class PD_permutations extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_permutations();
 
     private PD_permutations() {
         super();

@@ -7,8 +7,8 @@ import java.util.List;
 
 // isBoolean(value)        : test if value-type is boolean
 
-public class PD_isBoolean extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isBoolean();
+public class PD_isBoolean extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isBoolean();
 
     private PD_isBoolean() {
         super();

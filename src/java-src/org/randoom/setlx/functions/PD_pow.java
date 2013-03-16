@@ -8,8 +8,8 @@ import java.util.List;
 
 // pow(set)                : computes the power-set
 
-public class PD_pow extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_pow();
+public class PD_pow extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_pow();
 
     private PD_pow() {
         super();

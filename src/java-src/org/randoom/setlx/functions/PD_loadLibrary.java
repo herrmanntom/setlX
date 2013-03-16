@@ -13,8 +13,8 @@ import java.util.List;
 
 // loadLibrary(name)             : loads SetlX library code file and executes it
 
-public class PD_loadLibrary extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_loadLibrary();
+public class PD_loadLibrary extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_loadLibrary();
 
     private PD_loadLibrary() {
         super();

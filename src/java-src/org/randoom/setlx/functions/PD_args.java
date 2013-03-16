@@ -8,8 +8,8 @@ import java.util.List;
 
 // args(term)              : get arguments of term
 
-public class PD_args extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_args();
+public class PD_args extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_args();
 
     private PD_args() {
         super();

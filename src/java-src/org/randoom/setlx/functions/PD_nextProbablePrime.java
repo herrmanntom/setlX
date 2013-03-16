@@ -13,8 +13,8 @@ import java.util.List;
 //                                 The probability that the returned number is not a prime does
 //                                 not exceed 2**-100.
 
-public class PD_nextProbablePrime extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_nextProbablePrime();
+public class PD_nextProbablePrime extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_nextProbablePrime();
 
     private PD_nextProbablePrime() {
         super();

@@ -7,8 +7,8 @@ import java.util.List;
 
 // isReal(value)           : test if value-type is real
 
-public class PD_isReal extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isReal();
+public class PD_isReal extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isReal();
 
     private PD_isReal() {
         super();

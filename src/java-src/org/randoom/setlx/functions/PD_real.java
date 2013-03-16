@@ -8,8 +8,8 @@ import java.util.List;
 
 // real(stringOrNumber)    : convert string or number into a real, returns om on failure
 
-public class PD_real extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_real();
+public class PD_real extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_real();
 
     private PD_real() {
         super();

@@ -15,8 +15,8 @@ import java.util.List;
 //                                 constant complexity.
 
 
-public class PD_isProbablePrime extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_isProbablePrime();
+public class PD_isProbablePrime extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isProbablePrime();
 
     private PD_isProbablePrime() {
         super();

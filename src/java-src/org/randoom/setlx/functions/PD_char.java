@@ -8,8 +8,8 @@ import java.util.List;
 
 // char(value)             : converts value into a single ascii character
 
-public class PD_char extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_char();
+public class PD_char extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_char();
 
     private PD_char() {
         super();

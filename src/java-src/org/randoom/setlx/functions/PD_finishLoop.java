@@ -9,8 +9,8 @@ import java.util.List;
 
 // finishLoop()                  : DEBUG: continue execution of current loop until it finishes
 
-public class PD_finishLoop extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_finishLoop();
+public class PD_finishLoop extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_finishLoop();
 
     private PD_finishLoop() {
         super();

@@ -10,8 +10,8 @@ import java.util.List;
 
 // setBreak("id")                : DEBUG: set breakpoint in first statement of function bound to "id"
 
-public class PD_setBreak extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_setBreak();
+public class PD_setBreak extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_setBreak();
 
     private PD_setBreak() {
         super();

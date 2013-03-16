@@ -10,8 +10,8 @@ import java.util.Locale;
 
 // toLowerCase(string)           : returns String in lower case letters
 
-public class PD_toLowerCase extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_toLowerCase();
+public class PD_toLowerCase extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_toLowerCase();
 
     private PD_toLowerCase() {
         super();

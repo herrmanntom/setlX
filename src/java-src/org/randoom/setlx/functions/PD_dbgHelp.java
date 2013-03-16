@@ -8,8 +8,8 @@ import java.util.List;
 
 // dbgHelp()                     : DEBUG: print debugger commands and their explanation
 
-public class PD_dbgHelp extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_dbgHelp();
+public class PD_dbgHelp extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_dbgHelp();
 
     private PD_dbgHelp() {
         super();

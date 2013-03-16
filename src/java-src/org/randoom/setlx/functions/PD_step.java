@@ -9,8 +9,8 @@ import java.util.List;
 
 // step()                        : DEBUG: execute next statement
 
-public class PD_step extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_step();
+public class PD_step extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_step();
 
     private PD_step() {
         super();

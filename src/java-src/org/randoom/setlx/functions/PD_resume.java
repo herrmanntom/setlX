@@ -9,8 +9,8 @@ import java.util.List;
 
 // resume()                      : DEBUG: resume normal execution
 
-public class PD_resume extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_resume();
+public class PD_resume extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_resume();
 
     private PD_resume() {
         super();

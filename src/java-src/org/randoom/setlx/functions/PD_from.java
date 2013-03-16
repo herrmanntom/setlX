@@ -13,8 +13,8 @@ import java.util.List;
  *                                 member from `collectionValue'
  */
 
-public class PD_from extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION
+public class PD_from extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION
                                             = new PD_from();
 
     private PD_from() {

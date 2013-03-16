@@ -9,8 +9,8 @@ import java.util.List;
 
 // trace(toggle)                 : configures output of all assignments
 
-public class PD_trace extends PreDefinedFunction {
-    public final static PreDefinedFunction DEFINITION = new PD_trace();
+public class PD_trace extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_trace();
 
     private PD_trace() {
         super();

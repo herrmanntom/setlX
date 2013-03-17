@@ -6,3 +6,6 @@ nomDenom := procedure(r) {
     return [int(xStr), int(yStr)];
 };
 
+for (i in [1..10]) {
+    print(nomDenom(i/(i+1)));
+}

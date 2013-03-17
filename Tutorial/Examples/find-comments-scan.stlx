@@ -7,7 +7,5 @@ printComments := procedure(file) {
     }
 };
 
-for (file in params) {
-    print("file: $file$");
-    printComments(file);
-}
+printComments("queens-backtrack.stlx");
+

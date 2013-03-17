@@ -1,0 +1,6 @@
+calling simplifyParts(^variable("a")) = ^variable("a")
+calling simplifyParts(^variable("b")) = ^variable("b")
+calling simplifyParts(^variable("c")) = ^variable("c")
+calling simplifyParts(^product(^variable("b"), ^variable("c"))) = ^product(^variable("b"), ^variable("c"))
+calling simplifyParts(^product(^variable("a"), ^product(^variable("b"), ^variable("c")))) = ^product(^variable("a"), ^product(^variable("b"), ^variable("c")))
+a * b * c

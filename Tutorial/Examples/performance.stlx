@@ -8,4 +8,4 @@ while (i < n) {
 }
 stop  := now();
 print("x = $x$");
-print("time = $(stop - start) * 0.001$ seconds");
+// print("time = $(stop - start) * 0.001$ seconds");

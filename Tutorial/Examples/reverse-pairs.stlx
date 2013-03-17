@@ -1,8 +1,0 @@
-reversePairs := procedure(s) {
-    match (s) {
-        case []     : return s;
-        case [c]    : return c;
-        case [a,b|r]: return b + a + reversePairs(r);
-    }
-};
-

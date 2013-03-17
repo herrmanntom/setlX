@@ -1,0 +1,52 @@
+class complex(real, imag) {
+    mReal := real;
+    mImag := imag;
+  static {    
+    sum := 
+        that |-> complex(mReal + that.mReal, mImag + that.mImag);
+    difference := 
+        that |-> complex(mReal - that.mReal, 
+                                 mImag - that.mImag);
+    product := procedure(that) {
+        return complex(mReal * that.mReal - mImag * that.mImag,
+                       mReal * that.mImag + mImag * that.mReal);
+    };
+    quotient := procedure(that) {
+        denom := that.mReal * that.mReal + mImag * mImag;
+        real  := (mReal * that.mReal + mImag * that.mImag) / denom;
+        imag  := (mImag * that.mReal - mReal * that.mImag) / denom;
+        return complex(real, imag);
+    };
+    power := procedure(that) {
+        return exp(that * log(this));
+    };
+    isEqualTo := procedure(that) {
+	  return mReal == that.mReal && mImag == that.mImag;
+    };
+    f_str := [] |-> mReal + " + " + mImag + " * i";
+    f_exp := procedure() {
+        r := exp(mReal);
+        return complex(r * cos(mImag), r * sin(mImag));
+    };
+    f_log := procedure() {
+        r := log(mReal * mReal + mImag * mImag) / 2; 
+        return complex(r, atan2(mImag, mReal));
+    };
+  }
+}
+
+x := complex(3,  4);
+y := complex(3, -4);
+
+print("$x$ + $y$ = $x + y$");
+print("$x$ - $y$ = $x - y$");
+print("($x$) * ($y$) = $x * y$");
+print("($x$) / ($y$) = $x / y$");
+print("($x$) ** ($y$) = $x ** y$");
+
+phi := complex(2/3, 1/2);
+for (i in [1..10]) {
+    n := complex(i, 0);
+    z := phi ** n;
+    print(z - exp(log(z)));
+}

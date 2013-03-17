@@ -7,3 +7,4 @@ reverse := procedure(s) {
     }
 };
 
+print(reverse("abcdefgh"));

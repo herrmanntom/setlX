@@ -77,6 +77,8 @@ public abstract class State {
 
     public abstract Random              getRandom();
 
+    public          int                 callStackDepth;
+
     public abstract void                stopExecution(final boolean stopExecution);
 
     public          boolean             isExecutionStopped;

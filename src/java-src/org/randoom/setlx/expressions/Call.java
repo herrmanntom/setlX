@@ -1,6 +1,5 @@
 package org.randoom.setlx.expressions;
 
-import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UnknownFunctionException;
@@ -34,33 +33,31 @@ implemented here as:
 */
 
 public class Call extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String     FUNCTIONAL_CHARACTER = "^call";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Call.class);
     // precedence level in SetlX-grammar
-    private final static int        PRECEDENCE           = 2100;
+    private final static int    PRECEDENCE           = 2100;
 
-    private final Expr       mLhs;  // left hand side
-    private final List<Expr> mArgs; // list of arguments
-    private final String     _this; // pre-computed toString(), which has less stack penalty in case of stack overflow error...
+    private final Expr       lhs;  // left hand side
+    private final List<Expr> args; // list of arguments
 
     public Call(final Expr lhs, final List<Expr> args) {
-        mLhs    = lhs;
-        mArgs   = args;
-        _this   = toString();
+        this.lhs  = lhs;
+        this.args = args;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        final Value lhs = mLhs.eval(state);
+        final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + mLhs + "\" is undefined."
+                "Left hand side \"" + lhs + "\" is undefined."
             );
         }
         final boolean finishOuterFunction = state.isDebugFinishFunction;
         try {
             if (state.areBreakpointsEnabled && ! state.isDebugPromptActive()) {
-                if (state.isBreakpoint(mLhs.toString())) {
+                if (state.isBreakpoint(lhs.toString())) {
                     state.setDebugModeActive(true);
                 }
             }
@@ -68,13 +65,7 @@ public class Call extends Expr {
                 state.setDebugFinishFunction(false);
             }
             // supply the original expressions (mArgs), which are needed for 'rw' parameters
-            return lhs.call(state, mArgs);
-        } catch (final StackOverflowError e) {
-            throw new JVMException(
-                "Stack overflow.\n" +
-                "Try preventing recursion and/or execute with larger stack size.\n" +
-                "(use '-Xss<size>' parameter for java loader, where <size> is like '32m')"
-            );
+            return lhs.call(state, args);
         } finally {
             if (finishOuterFunction) {
                 state.setDebugFinishFunction(true);
@@ -95,8 +86,8 @@ public class Call extends Expr {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        for (final Expr expr : mArgs) {
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        for (final Expr expr : args) {
             expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
         // add dummy variable to prevent optimization, behavior of called function is unknown here!
@@ -107,22 +98,18 @@ public class Call extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        if (_this != null && tabs == 0 && ! state.isPrintVerbose()) {
-            sb.append(_this);
-        } else {
-            mLhs.appendString(state, sb, tabs);
-            sb.append("(");
+        lhs.appendString(state, sb, tabs);
+        sb.append("(");
 
-            final Iterator<Expr> iter = mArgs.iterator();
-            while (iter.hasNext()) {
-                iter.next().appendString(state, sb, 0);
-                if (iter.hasNext()) {
-                    sb.append(", ");
-                }
+        final Iterator<Expr> iter = args.iterator();
+        while (iter.hasNext()) {
+            iter.next().appendString(state, sb, 0);
+            if (iter.hasNext()) {
+                sb.append(", ");
             }
-
-            sb.append(")");
         }
+
+        sb.append(")");
     }
 
     /* term operations */
@@ -131,14 +118,14 @@ public class Call extends Expr {
     public Term toTerm(final State state) {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        if (mLhs instanceof Variable) {
-            result.addMember(state, new SetlString(mLhs.toString()));
+        if (lhs instanceof Variable) {
+            result.addMember(state, new SetlString(lhs.toString()));
         } else {
-            result.addMember(state, mLhs.toTerm(state));
+            result.addMember(state, lhs.toTerm(state));
         }
 
-        final SetlList  arguments   = new SetlList(mArgs.size());
-        for (final Expr arg: mArgs) {
+        final SetlList  arguments   = new SetlList(args.size());
+        for (final Expr arg: args) {
             arguments.addMember(state, arg.toTerm(state));
         }
         result.addMember(state, arguments);
@@ -150,14 +137,14 @@ public class Call extends Expr {
     public Term toTermQuoted(final State state) throws SetlException {
         final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        if (mLhs instanceof Variable) {
-            result.addMember(state, new SetlString(mLhs.toString()));
+        if (lhs instanceof Variable) {
+            result.addMember(state, new SetlString(lhs.toString()));
         } else {
-            result.addMember(state, mLhs.toTerm(state));
+            result.addMember(state, lhs.toTerm(state));
         }
 
-        final SetlList  arguments   = new SetlList(mArgs.size());
-        for (final Expr arg: mArgs) {
+        final SetlList  arguments   = new SetlList(args.size());
+        for (final Expr arg: args) {
             arguments.addMember(state, arg.eval(state).toTerm(state));
         }
         result.addMember(state, arguments);

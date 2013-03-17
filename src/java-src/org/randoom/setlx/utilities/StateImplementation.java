@@ -74,6 +74,7 @@ public class StateImplementation extends State {
         variableScope                    = ROOT_SCOPE.createLinkedScope();
         isHuman                          = false;
         randoom                          = new Random();
+        super.callStackDepth             = 10; // add a bit to account for initialization stuff
         super.isExecutionStopped         = false;
         multiLineMode                    = false;
         isInteractive                    = false;

@@ -38,13 +38,13 @@ implemented here as:
 public class Procedure extends Value {
     // functional character used in terms
     public  final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
-    // count how often procedures where executed before checking to replace the stack
-    private       static int      nrOfCalls            = 0;
+    // how deep can the call stack be, before checking to replace the stack
+    private final static int      MAX_CALL_STACK_DEPTH = 400;
 
-    protected final List<ParameterDef>     parameters;  // parameter list
-    protected final Block                  statements;  // statements in the body of the definition
-    protected       HashMap<String, Value> closure;     // variables and values used in closure
-    protected       SetlObject             object;      // surrounding object for next call
+    protected final List<ParameterDef>     parameters;      // parameter list
+    protected final Block                  statements;      // statements in the body of the definition
+    protected       HashMap<String, Value> closure;         // variables and values used in closure
+    protected       SetlObject             object;          // surrounding object for next call
 
     public Procedure(final List<ParameterDef> parameters, final Block statements) {
         this(parameters, statements, null);
@@ -158,6 +158,10 @@ public class Procedure extends Value {
     }
 
     protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
+        // store and increase callStackDepth
+        final int oldCallStackDepth = state.callStackDepth;
+        ++(state.callStackDepth);
+
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
@@ -203,11 +207,9 @@ public class Procedure extends Value {
             }
 
             boolean executeInCurrentStack = true;
-            if (++nrOfCalls > 32) {
-                nrOfCalls = 0;
-                if (Thread.currentThread().getStackTrace().length > 768) {
-                    executeInCurrentStack = false;
-                }
+            if (state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
+                state.callStackDepth  = 0;
+                executeInCurrentStack = false;
             }
 
             // execute, e.g. perform real procedure call
@@ -228,6 +230,8 @@ public class Procedure extends Value {
                     );
                 } catch (final InterruptedException e) {
                     throw new StopExecutionException("Interrupted");
+                } finally {
+                    state.callStackDepth = oldCallStackDepth;
                 }
 
                 // handle exceptions thrown in thread
@@ -276,6 +280,9 @@ public class Procedure extends Value {
                     state.setDebugFinishFunction(false);
                 }
             }
+
+            // reset callStackDepth
+            state.callStackDepth = oldCallStackDepth;
         }
 
         if (result != null) {

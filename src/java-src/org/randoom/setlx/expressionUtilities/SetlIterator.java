@@ -182,64 +182,72 @@ public class SetlIterator extends CodeFragment {
     /* private functions */
 
     private ReturnMessage evaluate(final State state, final SetlIteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
-        if (state.isExecutionStopped) {
-            throw new StopExecutionException("Interrupted");
-        }
-        final Value iterationValue = collection.eval(state); // trying to iterate over this value
-        if (iterationValue instanceof CollectionValue) {
-            final CollectionValue   coll        = (CollectionValue) iterationValue;
-            // scope for inner execution/next iterator
-            final VariableScope     innerScope  = state.getScope().createInteratorBlock();
-            // iterate over items
-            for (final Value v: coll) {
-                // restore inner scope
-                state.setScope(innerScope);
-                innerScope.setWriteThrough(false); // force iteration variables to be local to this block
+        try {
+            // increase callStackDepth
+            ++(state.callStackDepth);
 
-                // assign value from collection
-                final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
-
-                /*
-                 * This check is done to allow the following statement to work as expected:
-                 *
-                 * for (x in s, [x,y] in t) {...}
-                 *
-                 * where the the loop is only executed, when the first
-                 * `x' is equal to the second `x'
-                 */
-                if ( ! successful) {
-                    continue;
-                }
-
-                if (state.traceAssignments) {
-                    state.outWriteLn("~< Trace (iterator): " + assignable.toString() + " := " + v + " >~");
-                }
-
-                // reset WriteThrough, because changes during execution are not strictly local
-                innerScope.setWriteThrough(true);
-                /* Starts iteration of next iterator or execution if this is the
-                   last iterator.
-                   Stops iteration if requested by execution.                 */
-                ReturnMessage result = null;
-                if (next != null) {
-                    result = next.evaluate(state, exec, outerScope);
-                } else {
-                    result = exec.execute(state, v);
-                }
-                if (result != null) {
-                    if (result == ReturnMessage.CONTINUE) {
-                        continue;
-                    } /* else if (result == ReturnMessage.BREAK) {
-                        return result; // also break next iterator
-                    } */
-                    return result;
-                }
+            if (state.isExecutionStopped) {
+                throw new StopExecutionException("Interrupted");
             }
-            return null;
-        } else {
-            throw new IncompatibleTypeException(
-                "Evaluation of iterator '" + iterationValue + "' is not a collection value."
-            );
+            final Value iterationValue = collection.eval(state); // trying to iterate over this value
+            if (iterationValue instanceof CollectionValue) {
+                final CollectionValue   coll        = (CollectionValue) iterationValue;
+                // scope for inner execution/next iterator
+                final VariableScope     innerScope  = state.getScope().createInteratorBlock();
+                // iterate over items
+                for (final Value v: coll) {
+                    // restore inner scope
+                    state.setScope(innerScope);
+                    innerScope.setWriteThrough(false); // force iteration variables to be local to this block
+
+                    // assign value from collection
+                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
+
+                    /*
+                     * This check is done to allow the following statement to work as expected:
+                     *
+                     * for (x in s, [x,y] in t) {...}
+                     *
+                     * where the the loop is only executed, when the first
+                     * `x' is equal to the second `x'
+                     */
+                    if ( ! successful) {
+                        continue;
+                    }
+
+                    if (state.traceAssignments) {
+                        state.outWriteLn("~< Trace (iterator): " + assignable.toString() + " := " + v + " >~");
+                    }
+
+                    // reset WriteThrough, because changes during execution are not strictly local
+                    innerScope.setWriteThrough(true);
+                    /* Starts iteration of next iterator or execution if this is the
+                       last iterator.
+                       Stops iteration if requested by execution.                 */
+                    ReturnMessage result = null;
+                    if (next != null) {
+                        result = next.evaluate(state, exec, outerScope);
+                    } else {
+                        result = exec.execute(state, v);
+                    }
+                    if (result != null) {
+                        if (result == ReturnMessage.CONTINUE) {
+                            continue;
+                        } /* else if (result == ReturnMessage.BREAK) {
+                            return result; // also break next iterator
+                        } */
+                        return result;
+                    }
+                }
+                return null;
+            } else {
+                throw new IncompatibleTypeException(
+                    "Evaluation of iterator '" + iterationValue + "' is not a collection value."
+                );
+            }
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
     }
 }

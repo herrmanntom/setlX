@@ -1,25 +1,25 @@
 #!/bin/bash
 
-testFile=$(mktemp -t setlx-XXXXXXXXXX)
+tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 # set overrides for setlX launcher script
 export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
-export OVERRIDE_setlXjavaParameters="-d64  -Xmx6144m"
+export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"
 
-$setlXlaunchScript --version > "$testFile"
+$setlXlaunchScript --version > "$tmpFile"
 if [ $? -ne 0 ]
   then
-    cat "$testFile"
+    cat "$tmpFile"
     echo "Please make sure the interpreter is already compiled and executable."
 
-    rm -f "$testFile"
+    rm -f "$tmpFile"
     exit 1
 fi
 
-version="v$(cat "$testFile" | tr '.' '-')"
+version="v$(cat "$tmpFile" | tr '.' '-')"
 
 resultFileName="example_SetlX_code/performance_test_code/results/$(hostname | tr '.' '-')_$version"
 
@@ -34,16 +34,19 @@ sumRealTime=0.0
 sumUserTime=0.0
 sumSysTime=0.0
 
-# count number of files
-count=0
+# discover all files
+examples=()
 while read -r -d $'\0' path
   do
-    count=$(bc <<< "$count + 1")
+    examples=("${examples[@]}" "$path")
 done < <( find -L "example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
+
+# count number of files
+count="${#examples[@]}"
 
 # loop through all SetlX files, execute them and compare to reference result
 started=0
-while read -r -d $'\0' path
+for path in "${examples[@]}"
   do
     shortname="${path#example_SetlX_code/performance_test_code/}"
     directoryname="$(dirname $path)"
@@ -56,16 +59,16 @@ while read -r -d $'\0' path
     execTime=$(
         time -p (
             # execute with setlX
-            $setlXlaunchScript --predictableRandom "$filename" > "$testFile" 2>&1
+            $setlXlaunchScript --predictableRandom "$filename" > "$tmpFile" 2>&1
         ) 2>&1
     )
     cd - >/dev/null
 
-    diff "$path.reference" "$testFile" > /dev/null
+    diff "$path.reference" "$tmpFile" > /dev/null
     if [ $? -eq 1 ]
       then
 
-        cat $testFile
+        cat $tmpFile
         echo "executing file '$filename' failed, skipping this test."
 
         nSkipped=$(bc <<< "$nSkipped + 1")
@@ -91,26 +94,26 @@ while read -r -d $'\0' path
         echo
     fi
 
-done < <( find -L "example_SetlX_code/performance_test_code" -name "*.stlx" -print0 )
+done
 
-cat "$resultFileNameReal" | sort > "$testFile"
+cat "$resultFileNameReal" | sort > "$tmpFile"
 echo "code example,$version - time in seconds (real)" > "$resultFileNameReal"
-cat "$testFile" >> "$resultFileNameReal"
+cat "$tmpFile" >> "$resultFileNameReal"
 echo "overall,$sumRealTime" >> "$resultFileNameReal"
 
-cat "$resultFileNameUser" | sort > "$testFile"
+cat "$resultFileNameUser" | sort > "$tmpFile"
 echo "code example,$version - time in seconds (user)" > "$resultFileNameUser"
-cat "$testFile" >> "$resultFileNameUser"
+cat "$tmpFile" >> "$resultFileNameUser"
 echo "overall,$sumUserTime" >> "$resultFileNameUser"
 
-cat "$resultFileNameSys" | sort > "$testFile"
+cat "$resultFileNameSys" | sort > "$tmpFile"
 echo "code example,$version - time in seconds (sys)" > "$resultFileNameSys"
-cat "$testFile" >> "$resultFileNameSys"
+cat "$tmpFile" >> "$resultFileNameSys"
 echo "overall,$sumSysTime" >> "$resultFileNameSys"
 
-rm -f "$testFile"
+rm -f "$tmpFile"
 
-echo "overall execution time (skipped $nSkipped tests):"
+echo "overall execution time (excluding $nSkipped tests, which failed):"
 echo "real: $sumRealTime, user: $sumUserTime, sys: $sumSysTime"
 echo
 

@@ -116,7 +116,7 @@ classDefinition returns [ClassDefiner cd]
         Block staticBlock = null;
     }
     : 'class' ID '(' procedureParameters ')' '{' b1 = block ('static' '{' b2 = block '}' {staticBlock = $b2.blk;})? '}'
-      { $cd = new ClassDefiner($ID.text, new ClassDefinition($procedureParameters.paramList, $b1.blk, staticBlock)); }
+      { $cd = new ClassDefiner($ID.text, new SetlClass($procedureParameters.paramList, $b1.blk, staticBlock)); }
       (
         ';' { customErrorHandling(SEMICOLON_FOLLOWING_CLASS); }
       )?
@@ -370,20 +370,20 @@ factor [boolean enableIgnore, boolean quoted] returns [Expr f]
     | 'exists' '(' iteratorChain[$enableIgnore] '|' condition[$enableIgnore] ')'
       { $f = new Exists($iteratorChain.ic, $condition.cnd); }
     | (
-         '(' expr[$enableIgnore] ')'   { $f = new BracketedExpr($expr.ex);                       }
-       | procedureDefinition           { $f = new ProcedureConstructor($procedureDefinition.pd); }
-       | variable                      { $f = $variable.v;                                       }
+         '(' expr[$enableIgnore] ')' { $f = new BracketedExpr($expr.ex);             }
+       | procedure                   { $f = new ProcedureConstructor($procedure.pd); }
+       | variable                    { $f = $variable.v;                             }
       )
       (
-         memberAccess[$f]              { $f = $memberAccess.ma;                                  }
-       | call[$enableIgnore, $f]       { $f = $call.c;                                           }
+         memberAccess[$f]            { $f = $memberAccess.ma;                        }
+       | call[$enableIgnore, $f]     { $f = $call.c;                                 }
       )*
       (
-        '!'                            { $f = new Factorial($f);                                 }
+        '!'                          { $f = new Factorial($f);                       }
       )?
-    | value[$enableIgnore, $quoted]    { $f = $value.v;                                          }
+    | value[$enableIgnore, $quoted]  { $f = $value.v;                                }
       (
-        '!'                            { $f = new Factorial($f);                                 }
+        '!'                          { $f = new Factorial($f);                       }
       )?
     ;
 
@@ -397,11 +397,11 @@ termArguments returns [List<Expr> args]
     |  /* epsilon */ { $args = new ArrayList<Expr>(); }
     ;
 
-procedureDefinition returns [ProcedureDefinition pd]
+procedure returns [Procedure pd]
     : 'procedure'       '(' procedureParameters ')' '{' block '}'
-      { $pd = new ProcedureDefinition($procedureParameters.paramList, $block.blk);       }
+      { $pd = new Procedure($procedureParameters.paramList, $block.blk);       }
     | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
-      { $pd = new CachedProcedureDefinition($procedureParameters.paramList, $block.blk); }
+      { $pd = new CachedProcedure($procedureParameters.paramList, $block.blk); }
     ;
 
 procedureParameters returns [List<ParameterDef> paramList]

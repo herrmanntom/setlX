@@ -5,10 +5,10 @@ import org.randoom.setlx.utilities.State;
 
 public class SetlError extends Value {
 
-    private final String mMessage;
+    private final String message;
 
     public SetlError(final String message) {
-        mMessage = message;
+        this.message = message;
     }
 
     public SetlError(final SetlException exception) {
@@ -32,7 +32,7 @@ public class SetlError extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append(mMessage);
+        sb.append(message);
     }
 
     /* comparisons */
@@ -48,7 +48,7 @@ public class SetlError extends Value {
             return 0;
         } else if (v instanceof SetlError) {
             final SetlError error = (SetlError) v;
-            return mMessage.compareTo(error.mMessage);
+            return message.compareTo(error.message);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -71,7 +71,7 @@ public class SetlError extends Value {
         if (this == v) {
             return true;
         } else if (v instanceof SetlError) {
-            return mMessage.equals(((SetlError) v).mMessage);
+            return message.equals(((SetlError) v).message);
         } else {
             return false;
         }
@@ -81,7 +81,7 @@ public class SetlError extends Value {
 
     @Override
     public int hashCode() {
-        return initHashCode * 31 + mMessage.hashCode();
+        return initHashCode * 31 + message.hashCode();
     }
 }
 

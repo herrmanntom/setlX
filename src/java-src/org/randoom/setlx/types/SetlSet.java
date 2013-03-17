@@ -41,17 +41,17 @@ public class SetlSet extends CollectionValue {
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
 
-    private TreeSet<Value> mSortedSet;
+    private TreeSet<Value> set;
     private boolean        isCloned; // is this set a clone?
 
     public SetlSet() {
-        mSortedSet      = new TreeSet<Value>();
-        isCloned        = false; // new sets are not a clone
+        this.set      = new TreeSet<Value>();
+        this.isCloned = false; // new sets are not a clone
     }
 
     private SetlSet(final TreeSet<Value> sortedSet){
-        mSortedSet      = sortedSet;
-        isCloned        = true;  // sets created from another set ARE a clone
+        this.set      = sortedSet;
+        this.isCloned = true;  // sets created from another set ARE a clone
     }
 
     @Override
@@ -64,7 +64,7 @@ public class SetlSet extends CollectionValue {
          * modifications of THIS original would bleed through to the clones.
          */
         isCloned = true;
-        return new SetlSet(mSortedSet);
+        return new SetlSet(set);
     }
 
     /* If the contents of THIS SetlSet is modified, the following function MUST
@@ -76,10 +76,10 @@ public class SetlSet extends CollectionValue {
      */
     private final void separateFromOriginal() {
         if (isCloned) {
-            final TreeSet<Value> original = mSortedSet;
-            mSortedSet = new TreeSet<Value>();
+            final TreeSet<Value> original = set;
+            set = new TreeSet<Value>();
             for (final Value v: original) {
-                mSortedSet.add(v.clone());
+                set.add(v.clone());
             }
             isCloned   = false;
         }
@@ -87,19 +87,19 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public Iterator<Value> iterator() {
-        return mSortedSet.iterator();
+        return set.iterator();
     }
 
     @Override
     public Iterator<Value> descendingIterator() {
-        return mSortedSet.descendingIterator();
+        return set.descendingIterator();
     }
 
     @Override
     public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
         if (other instanceof SetlSet) {
             final SetlSet otr = (SetlSet) other;
-            return SetlBoolean.valueOf((otr.mSortedSet.containsAll(mSortedSet)) && this.isEqualTo(state, otr) == SetlBoolean.FALSE);
+            return SetlBoolean.valueOf((otr.set.containsAll(set)) && this.isEqualTo(state, otr) == SetlBoolean.FALSE);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this + " < " + other + "' is not a set."
@@ -112,7 +112,7 @@ public class SetlSet extends CollectionValue {
     @Override
     public SetlBoolean isMap() {
         final TreeSet<Value> temp = new TreeSet<Value>();
-        for (final Value v: mSortedSet) {
+        for (final Value v: set) {
             if (v instanceof SetlList && ((SetlList) v).size() == 2) {
                 if ( ! temp.add(((SetlList) v).firstMember())) {
                     return SetlBoolean.FALSE;
@@ -132,7 +132,7 @@ public class SetlSet extends CollectionValue {
     /* type conversion */
 
     /*package*/ SetlList toList() {
-        return new SetlList(new ArrayList<Value>(mSortedSet));
+        return new SetlList(new ArrayList<Value>(set));
     }
 
     /* arithmetic operations */
@@ -142,7 +142,7 @@ public class SetlSet extends CollectionValue {
         if (subtrahend instanceof SetlSet) {
             final SetlSet result = clone();
             result.separateFromOriginal();
-            result.mSortedSet.removeAll(((SetlSet) subtrahend).mSortedSet);
+            result.set.removeAll(((SetlSet) subtrahend).set);
             return result;
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
@@ -157,7 +157,7 @@ public class SetlSet extends CollectionValue {
     public Value differenceAssign(final State state, final Value subtrahend) throws IncompatibleTypeException {
         if (subtrahend instanceof SetlSet) {
             separateFromOriginal();
-            mSortedSet.removeAll(((SetlSet) subtrahend).mSortedSet);
+            set.removeAll(((SetlSet) subtrahend).set);
             return this;
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
@@ -179,13 +179,13 @@ public class SetlSet extends CollectionValue {
 
             final SetlSet mClone = (SetlSet) modulo.clone();
             mClone.separateFromOriginal();
-            mClone.mSortedSet.removeAll(this.mSortedSet);
+            mClone.set.removeAll(this.set);
 
             final SetlSet result = clone();
             result.separateFromOriginal();
-            result.mSortedSet.removeAll(((SetlSet) modulo).mSortedSet);
+            result.set.removeAll(((SetlSet) modulo).set);
 
-            result.mSortedSet.addAll(mClone.mSortedSet);
+            result.set.addAll(mClone.set);
             return result;
         } else if (modulo instanceof Term) {
             return ((Term) modulo).productFlipped(state, this);
@@ -209,11 +209,11 @@ public class SetlSet extends CollectionValue {
 
             final SetlSet mClone = (SetlSet) modulo.clone();
             mClone.separateFromOriginal();
-            mClone.mSortedSet.removeAll(this.mSortedSet);
+            mClone.set.removeAll(this.set);
 
-            this.mSortedSet.removeAll(((SetlSet) modulo).mSortedSet);
+            this.set.removeAll(((SetlSet) modulo).set);
 
-            this.mSortedSet.addAll(mClone.mSortedSet);
+            this.set.addAll(mClone.set);
 
             return this;
         } else if (modulo instanceof Term) {
@@ -247,7 +247,7 @@ public class SetlSet extends CollectionValue {
         if (multiplier instanceof SetlSet) {
             final SetlSet result = clone();
             result.separateFromOriginal();
-            result.mSortedSet.retainAll(((SetlSet) multiplier).mSortedSet);
+            result.set.retainAll(((SetlSet) multiplier).set);
             return result;
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(state, this);
@@ -262,7 +262,7 @@ public class SetlSet extends CollectionValue {
     public Value productAssign(final State state, final Value multiplier) throws IncompatibleTypeException {
         if (multiplier instanceof SetlSet) {
             separateFromOriginal();
-            mSortedSet.retainAll(((SetlSet) multiplier).mSortedSet);
+            set.retainAll(((SetlSet) multiplier).set);
             return this;
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(state, this);
@@ -317,7 +317,7 @@ public class SetlSet extends CollectionValue {
     public void addMember(final State state, final Value element) {
         if (element != Om.OM) {
             separateFromOriginal();
-            mSortedSet.add(element.clone());
+            set.add(element.clone());
         }
     }
 
@@ -327,7 +327,7 @@ public class SetlSet extends CollectionValue {
 
             final SetlSet result = new SetlSet();
 
-            for (final Value first : mSortedSet) {
+            for (final Value first : set) {
                 for (final Value second : (SetlSet) other) {
                     final SetlList tuple = new SetlList(2);
                     tuple.addMember(state, first);
@@ -391,7 +391,7 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, arg);
         upperBound.addMember(state, Infinity.POSITIVE);
 
-        final NavigableSet<Value> navSubSet = mSortedSet.subSet(lowerBound, false, upperBound, true);
+        final NavigableSet<Value> navSubSet = set.subSet(lowerBound, false, upperBound, true);
 
         // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
         TreeSet<Value> subSet = null;
@@ -416,13 +416,13 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public SetlBoolean containsMember(final State state, final Value element) {
-        return SetlBoolean.valueOf(mSortedSet.contains(element));
+        return SetlBoolean.valueOf(set.contains(element));
     }
 
     @Override
     public SetlSet domain(final State state) throws SetlException {
         final TreeSet<Value> result = new TreeSet<Value>();
-        for (final Value v: mSortedSet) {
+        for (final Value v: set) {
             if (v instanceof SetlList && v.size() == 2) {
                 result.add(v.firstMember(state));
             } else {
@@ -439,7 +439,7 @@ public class SetlSet extends CollectionValue {
         if (size() < 1) {
             return Om.OM;
         }
-        return mSortedSet.first().clone();
+        return set.first().clone();
     }
 
     @Override
@@ -466,7 +466,7 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, element);
         upperBound.addMember(state, Infinity.POSITIVE);
 
-        final NavigableSet<Value> navSubSet = mSortedSet.subSet(lowerBound, false, upperBound, true);
+        final NavigableSet<Value> navSubSet = set.subSet(lowerBound, false, upperBound, true);
 
         // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
         TreeSet<Value>            subSet    = null;
@@ -500,7 +500,7 @@ public class SetlSet extends CollectionValue {
         if (size() < 1) {
             return Om.OM;
         }
-        return mSortedSet.last().clone();
+        return set.last().clone();
     }
 
     @Override
@@ -537,7 +537,7 @@ public class SetlSet extends CollectionValue {
             return power;
         }
         // get some arbitrary member
-        final Value      arb       = mSortedSet.iterator().next();
+        final Value      arb       = set.iterator().next();
         final SetlSet    rest      = clone();
         rest.removeMember(arb);
         // create power set of the rest
@@ -554,7 +554,7 @@ public class SetlSet extends CollectionValue {
     @Override
     public SetlSet range(final State state) throws SetlException {
         final SetlSet result = new SetlSet();
-        for (final Value v: mSortedSet) {
+        for (final Value v: set) {
             if (v instanceof SetlList && v.size() == 2) {
                 result.addMember(state, v.lastMember(state));
             } else {
@@ -584,7 +584,7 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, Infinity.POSITIVE);
 
         // remove all previously set pairs which first member matches index
-        mSortedSet.removeAll(new TreeSet<Value>(mSortedSet.subSet(lowerBound, true, upperBound, true)));
+        set.removeAll(new TreeSet<Value>(set.subSet(lowerBound, true, upperBound, true)));
 
         /* now this set must either be empty or a map without a pair matching the index */
         if (v != Om.OM) {
@@ -592,25 +592,25 @@ public class SetlSet extends CollectionValue {
             final SetlList pair = new SetlList(2);
             pair.addMember(state, index);
             pair.addMember(state, v);
-            mSortedSet.add(pair);
+            set.add(pair);
         }
     }
 
     @Override
     public int size() {
-        return mSortedSet.size();
+        return set.size();
     }
 
     @Override
     public void removeMember(final Value element) {
         separateFromOriginal();
-        mSortedSet.remove(element);
+        set.remove(element);
     }
 
     @Override
     public Value removeFirstMember() {
         separateFromOriginal();
-        final Value result = mSortedSet.pollFirst();
+        final Value result = set.pollFirst();
         if (result != null) {
             return result;
         } else {
@@ -621,7 +621,7 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value removeLastMember() {
         separateFromOriginal();
-        final Value result = mSortedSet.pollLast();
+        final Value result = set.pollLast();
         if (result != null) {
             return result;
         } else {
@@ -657,8 +657,8 @@ public class SetlSet extends CollectionValue {
             return new MatchResult(true);
         } else if ( ! (otr instanceof SetlSet)) {
             return new MatchResult(false);
-        } else if (mSortedSet.size() == 1 && mSortedSet.first() instanceof Term) {
-            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) mSortedSet.first(), (SetlSet) otr);
+        } else if (set.size() == 1 && set.first() instanceof Term) {
+            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) set.first(), (SetlSet) otr);
             if (result.isMatch()) {
                 return result;
             }
@@ -669,10 +669,10 @@ public class SetlSet extends CollectionValue {
         }
 
         // first match all atomic values
-        final TreeSet<Value> thisCopy   = new TreeSet<Value>(mSortedSet);
-        final TreeSet<Value> otherCopy  = new TreeSet<Value>(((SetlSet) otr).mSortedSet);
+        final TreeSet<Value> thisCopy   = new TreeSet<Value>(set);
+        final TreeSet<Value> otherCopy  = new TreeSet<Value>(((SetlSet) otr).set);
 
-        for (final Value v : mSortedSet) {
+        for (final Value v : set) {
             // remove value from both sets, if
             // a) it is contained in both sets
             if (otherCopy.contains(v)) {
@@ -722,7 +722,7 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value toTerm(final State state) {
         final SetlSet termSet = new SetlSet();
-        for (final Value v: mSortedSet) {
+        for (final Value v: set) {
             termSet.addMember(state, v.toTerm(state));
         }
         return termSet;
@@ -778,9 +778,9 @@ public class SetlSet extends CollectionValue {
         if (this == v) {
             return true;
         } else if (v instanceof SetlSet) {
-            final TreeSet<Value> other = ((SetlSet) v).mSortedSet;
-            if (mSortedSet.size() == other.size()) {
-                final Iterator<Value> iterFirst  = mSortedSet.iterator();
+            final TreeSet<Value> other = ((SetlSet) v).set;
+            if (set.size() == other.size()) {
+                final Iterator<Value> iterFirst  = set.iterator();
                 final Iterator<Value> iterSecond = other.iterator();
                 while (iterFirst.hasNext() && iterSecond.hasNext()) {
                     if ( ! iterFirst.next().equalTo(iterSecond.next())) {
@@ -800,12 +800,12 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public int hashCode() {
-        final int size = mSortedSet.size();
+        final int size = set.size();
         int hash = initHashCode + size;
         if (size >= 1) {
-            hash = hash * 31 + mSortedSet.first().hashCode();
+            hash = hash * 31 + set.first().hashCode();
             if (size >= 2) {
-                hash = hash * 31 + mSortedSet.last().hashCode();
+                hash = hash * 31 + set.last().hashCode();
             }
         }
         return hash;

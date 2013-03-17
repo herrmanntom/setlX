@@ -15,11 +15,11 @@ import org.randoom.setlx.expressions.VariableIgnore;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
-import org.randoom.setlx.types.CachedProcedureDefinition;
-import org.randoom.setlx.types.ClassDefinition;
+import org.randoom.setlx.types.CachedProcedure;
+import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaDefinition;
-import org.randoom.setlx.types.ProcedureDefinition;
+import org.randoom.setlx.types.Procedure;
 import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlObject;
@@ -45,14 +45,14 @@ public class TermConverter {
             if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
                 // special cases
                 // non-generic values
-                if (fc.equals(CachedProcedureDefinition.FUNCTIONAL_CHARACTER)) {
-                    return CachedProcedureDefinition.termToValue(term);
+                if (fc.equals(CachedProcedure.FUNCTIONAL_CHARACTER)) {
+                    return CachedProcedure.termToValue(term);
                 } else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
                     return LambdaDefinition.termToValue(term);
-                } else if (fc.equals(ProcedureDefinition.FUNCTIONAL_CHARACTER)) {
-                    return ProcedureDefinition.termToValue(term);
-                } else if (fc.equals(ClassDefinition.FUNCTIONAL_CHARACTER)) {
-                    return ClassDefinition.termToValue(term);
+                } else if (fc.equals(Procedure.FUNCTIONAL_CHARACTER)) {
+                    return Procedure.termToValue(term);
+                } else if (fc.equals(SetlClass.FUNCTIONAL_CHARACTER)) {
+                    return SetlClass.termToValue(term);
                 } else if (fc.equals(SetlObject.FUNCTIONAL_CHARACTER)) {
                     return SetlObject.termToValue(term);
                 }
@@ -142,9 +142,9 @@ public class TermConverter {
                     // special cases
                     final Value specialValue = valueTermToValue(value);
 
-                    if (specialValue instanceof ProcedureDefinition) {
-                        return new ProcedureConstructor((ProcedureDefinition) specialValue);
-                    } else if (specialValue instanceof ClassDefinition) {
+                    if (specialValue instanceof Procedure) {
+                        return new ProcedureConstructor((Procedure) specialValue);
+                    } else if (specialValue instanceof SetlClass) {
                         return new ValueExpr(specialValue);
                     } else if (specialValue instanceof SetlObject) {
                         return new ValueExpr(specialValue);

@@ -5,7 +5,7 @@ import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.types.ProcedureDefinition;
+import org.randoom.setlx.types.Procedure;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
@@ -29,16 +29,16 @@ public class ProcedureConstructor extends Expr {
     private final static int          LAMBDA_PRECEDENCE    = 1050;
     private final static int          PRECEDENCE           = 9999;
 
-    private final ProcedureDefinition mDefinition;
+    private final Procedure mDefinition;
     private       HashSet<String>     mClosureVariables;
 
-    public ProcedureConstructor(final ProcedureDefinition definition) {
+    public ProcedureConstructor(final Procedure definition) {
         mDefinition       = definition;
         mClosureVariables = null;
     }
 
     @Override
-    protected ProcedureDefinition evaluate(final State state) throws SetlException {
+    protected Procedure evaluate(final State state) throws SetlException {
         if (mClosureVariables == null) {
             this.optimize();
         }
@@ -60,7 +60,7 @@ public class ProcedureConstructor extends Expr {
                 }
             }
             if (! closure.isEmpty()) {
-                final ProcedureDefinition result = mDefinition.createCopy();
+                final Procedure result = mDefinition.createCopy();
                 result.setClosure(closure);
                 return result;
             }

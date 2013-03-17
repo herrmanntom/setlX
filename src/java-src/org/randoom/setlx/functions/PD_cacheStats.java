@@ -1,7 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.types.CachedProcedureDefinition;
+import org.randoom.setlx.types.CachedProcedure;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
@@ -24,13 +24,13 @@ public class PD_cacheStats extends PreDefinedProcedure {
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         final Value function  = args.get(0);
-        if ( ! (function instanceof CachedProcedureDefinition)) {
+        if ( ! (function instanceof CachedProcedure)) {
             throw new IncompatibleTypeException(
                 "Argument '" + function + "' is not a cached function."
             );
         }
 
-        final CachedProcedureDefinition f = (CachedProcedureDefinition) function;
+        final CachedProcedure f = (CachedProcedure) function;
 
         final SetlSet  result = new SetlSet();
 

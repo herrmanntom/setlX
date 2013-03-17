@@ -3,7 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.ClassDefinition;
+import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -136,7 +136,7 @@ public abstract class State {
     // scope as outer scope of `scope'.
     public abstract void                putAllValues(final VariableScope scope) throws SetlException;
 
-    public abstract void                putClassDefinition(final String var, final ClassDefinition classDef);
+    public abstract void                putClassDefinition(final String var, final SetlClass classDef);
 
     public abstract Term                scopeToTerm();
 

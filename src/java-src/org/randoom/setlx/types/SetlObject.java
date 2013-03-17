@@ -71,7 +71,7 @@ import java.util.Map.Entry;
 
 public class SetlObject extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^object";
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlObject.class);
 
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this object carries a isClone flag.
@@ -86,21 +86,21 @@ public class SetlObject extends Value {
      */
 
     private           SetlHashMap<Value> members;
-    private     final ClassDefinition    classDefinition;
+    private     final SetlClass          classDefinition;
     // is this object a clone
-    private           boolean       isCloned;
+    private           boolean            isCloned;
 
-    private SetlObject(final SetlHashMap<Value> members, final ClassDefinition classDefinition) {
+    private SetlObject(final SetlHashMap<Value> members, final SetlClass classDefinition) {
         this.members         = members;
         this.classDefinition = classDefinition;
         isCloned             = false; // new objects are not a clone
     }
 
-    public static SetlObject createNew(final SetlHashMap<Value> members, final ClassDefinition classDefinition) {
+    public static SetlObject createNew(final SetlHashMap<Value> members, final SetlClass classDefinition) {
         return new SetlObject(members, classDefinition);
     }
 
-    private static SetlObject createClone(final SetlHashMap<Value> members, final ClassDefinition classDefinition) {
+    private static SetlObject createClone(final SetlHashMap<Value> members, final SetlClass classDefinition) {
         final SetlObject result = new SetlObject(members, classDefinition);
         result.isCloned         = true;
         return result;
@@ -515,8 +515,8 @@ public class SetlObject extends Value {
         if (result == null) {
             result = classDefinition.getObjectMemberUnCloned(state, variable);
         }
-        if (result instanceof ProcedureDefinition) {
-            final ProcedureDefinition proc = (ProcedureDefinition) result.clone();
+        if (result instanceof Procedure) {
+            final Procedure proc = (Procedure) result.clone();
             proc.addSurroundingObject(this);
             return proc;
         } else {
@@ -527,8 +527,8 @@ public class SetlObject extends Value {
     @Override
     public void setObjectMember(final State state, final String variable, final Value value) {
         separateFromOriginal();
-        if (value instanceof ProcedureDefinition) {
-            ((ProcedureDefinition) value).setClosure(null);
+        if (value instanceof Procedure) {
+            ((Procedure) value).setClosure(null);
         }
         members.put(variable, value);
     }
@@ -615,7 +615,7 @@ public class SetlObject extends Value {
     public static SetlObject termToValue(final Term term) throws TermConversionException {
         if (term.size() == 2 && term.lastMember() instanceof Term) {
             final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(term.firstMember());
-            final ClassDefinition    classDefinition = ClassDefinition.termToValue((Term) term.lastMember());
+            final SetlClass    classDefinition = SetlClass.termToValue((Term) term.lastMember());
             return createNew(members, classDefinition);
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -662,8 +662,8 @@ public class SetlObject extends Value {
             return true;
         } else if (v instanceof SetlObject) {
             final SetlObject other = (SetlObject) v;
-            if (classDefinition.equalTo(other.classDefinition)) {
-                return members.equalTo(other.members);
+            if (members.equalTo(other.members)) {
+                return classDefinition.equalTo(other.classDefinition);
             }
         }
         return false;
@@ -678,7 +678,7 @@ public class SetlObject extends Value {
         if (size >= 1) {
             hash = hash * 31 + members.hashCode();
         }
-        return hash;
+        return hash * 31 + classDefinition.hashCode();
     }
 
     @Override
@@ -714,7 +714,7 @@ public class SetlObject extends Value {
 
         for (final Map.Entry<String, Value> entry : members.entrySet()) {
             final Value val = entry.getValue();
-            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
+            if ( ! restrictToFunctions || val instanceof Procedure) {
                 result.put(entry.getKey(), val);
             }
         }

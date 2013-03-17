@@ -2,7 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.types.ClassDefinition;
+import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -28,9 +28,9 @@ public class ClassDefiner extends Statement {
     private final static String   FUNCTIONAL_CHARACTER = "^classDefiner";
 
     private final String          name;
-    private final ClassDefinition classDefinition;
+    private final SetlClass classDefinition;
 
-    public ClassDefiner(final String name, final ClassDefinition classDefinition) {
+    public ClassDefiner(final String name, final SetlClass classDefinition) {
         this.name            = name;
         this.classDefinition = classDefinition;
     }
@@ -83,8 +83,8 @@ public class ClassDefiner extends Statement {
         } else {
             final String name            = term.firstMember().getUnquotedString();
             final Value  classDefinition = TermConverter.valueTermToValue(term.lastMember());
-            if (classDefinition instanceof ClassDefinition) {
-                return new ClassDefiner(name, (ClassDefinition) classDefinition);
+            if (classDefinition instanceof SetlClass) {
+                return new ClassDefiner(name, (SetlClass) classDefinition);
             } else {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }

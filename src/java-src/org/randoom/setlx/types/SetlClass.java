@@ -36,9 +36,9 @@ implemented here as:
                          parameters            initBlock           staticBlock
 */
 
-public class ClassDefinition extends Value {
+public class SetlClass extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ClassDefinition.class);
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlClass.class);
 
     private final static Block  REBUILD_MARKER       = new Block(0);
 
@@ -49,14 +49,14 @@ public class ClassDefinition extends Value {
     private       HashSet<String>    staticVars;  // variables defined in the static block
     private       SetlHashMap<Value> staticDefs;  // definitions from static block
 
-    public ClassDefinition(final List<ParameterDef> parameters,
+    public SetlClass(final List<ParameterDef> parameters,
                            final Block              init,
                            final Block              staticBlock
     ) {
         this(parameters, init, null, staticBlock, null, null);
     }
 
-    private ClassDefinition(final List<ParameterDef> parameters,
+    private SetlClass(final List<ParameterDef> parameters,
                             final Block              init,
                             final HashSet<String>    initVars,
                             final Block              staticBlock,
@@ -86,14 +86,14 @@ public class ClassDefinition extends Value {
     public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         for (final Map.Entry<String, Value> entry : staticDefs.entrySet()) {
             final Value val = entry.getValue();
-            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
+            if ( ! restrictToFunctions || val instanceof Procedure) {
                 result.put(entry.getKey(), val);
             }
         }
     }
 
     @Override
-    public ClassDefinition clone() {
+    public SetlClass clone() {
         HashSet<String> initVars = null;
         if (this.initVars != null) {
             initVars = new HashSet<String>(this.initVars);
@@ -113,7 +113,7 @@ public class ClassDefinition extends Value {
                 staticDefs.put(entry.getKey(), entry.getValue().clone());
             }
         }
-        return new ClassDefinition(parameters, initBlock, initVars, staticBlock, staticVars, staticDefs);
+        return new SetlClass(parameters, initBlock, initVars, staticBlock, staticVars, staticDefs);
     }
 
     /* Gather all bound and unbound variables in this value and its siblings
@@ -283,8 +283,8 @@ public class ClassDefinition extends Value {
 
         for (final String var : vars) {
             final Value value = state.findValue(var);
-            if (value instanceof ProcedureDefinition) {
-                ((ProcedureDefinition) value).setClosure(null);
+            if (value instanceof Procedure) {
+                ((Procedure) value).setClosure(null);
             }
             if (value != Om.OM) {
                 bindings.put(var, value.clone());
@@ -326,8 +326,8 @@ public class ClassDefinition extends Value {
             optimize();
         }
 
-        if (value instanceof ProcedureDefinition) {
-            ((ProcedureDefinition) value).setClosure(null);
+        if (value instanceof Procedure) {
+            ((Procedure) value).setClosure(null);
         }
 
         if (staticDefs == null) {
@@ -400,7 +400,7 @@ public class ClassDefinition extends Value {
         return result;
     }
 
-    public static ClassDefinition termToValue(final Term term) throws TermConversionException {
+    public static SetlClass termToValue(final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -415,7 +415,7 @@ public class ClassDefinition extends Value {
                 if (! term.lastMember().equals(new SetlString("nil"))) {
                     staticBlock    = TermConverter.valueToBlock(term.lastMember());
                 }
-                return new ClassDefinition(parameters, init, staticBlock);
+                return new SetlClass(parameters, init, staticBlock);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
@@ -433,8 +433,8 @@ public class ClassDefinition extends Value {
     public int compareTo(final Value v){
         if (this == v) {
             return 0;
-        } else if (v instanceof ClassDefinition) {
-            final ClassDefinition other = (ClassDefinition) v;
+        } else if (v instanceof SetlClass) {
+            final SetlClass other = (SetlClass) v;
             int cmp = parameters.toString().compareTo(other.parameters.toString());
             if (cmp != 0) {
                 return cmp;
@@ -477,8 +477,8 @@ public class ClassDefinition extends Value {
     public boolean equalTo(final Value v) {
         if (this == v) {
             return true;
-        } else if (v instanceof ClassDefinition) {
-            final ClassDefinition other = (ClassDefinition) v;
+        } else if (v instanceof SetlClass) {
+            final SetlClass other = (SetlClass) v;
             if (parameters.toString().equals(other.parameters.toString())) {
                 if (initBlock.toString().equals(other.initBlock.toString())) {
                     return getStaticBlock().toString().equals(other.getStaticBlock().toString());
@@ -488,11 +488,21 @@ public class ClassDefinition extends Value {
         return false;
     }
 
-    private final static int initHashCode = ClassDefinition.class.hashCode();
+    private final static int initHashCode = SetlClass.class.hashCode();
 
     @Override
     public int hashCode() {
-        return initHashCode;
+        int hash = initHashCode + parameters.size();
+        if (initVars != null) {
+            hash = hash * 31 + initVars.hashCode();
+        }
+        if (staticVars != null) {
+            hash = hash * 31 + staticVars.hashCode();
+        }
+        if (staticDefs != null) {
+            hash = hash * 31 + staticDefs.hashCode();
+        }
+        return hash;
     }
 
 }

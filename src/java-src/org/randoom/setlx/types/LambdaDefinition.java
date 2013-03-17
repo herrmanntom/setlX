@@ -23,39 +23,39 @@ lambdaDefinition
 
 implemented here as:
       ----------------          ===
-   mParameters (inherited)     mExpr
+   parameters (inherited)       expr
 */
 
-public class LambdaDefinition extends ProcedureDefinition {
+public class LambdaDefinition extends Procedure {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^lambdaProcedure";
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LambdaDefinition.class);
 
-    private final Expr mExpr; // expression in the body of the definition; used directly only for toString() and toTerm()
+    private final Expr expr; // expression in the body of the definition; used directly only for toString() and toTerm()
 
     public LambdaDefinition(final List<ParameterDef> parameters, final Expr expr) {
         super(parameters, new Block(1));
-        mExpr = expr;
-        mStatements.add(new Return(mExpr));
+        this.expr = expr;
+        statements.add(new Return(expr));
     }
-    protected LambdaDefinition(
+    private LambdaDefinition(
         final List<ParameterDef>     parameters,
         final Block                  statements,
         final HashMap<String, Value> closure,
         final Expr                   expr
     ) {
         super(parameters, statements, closure);
-        mExpr = expr;
+        this.expr = expr;
     }
 
     @Override
     public LambdaDefinition createCopy() {
-        return new LambdaDefinition(mParameters, mExpr);
+        return new LambdaDefinition(parameters, expr);
     }
 
     @Override
     public LambdaDefinition clone() {
-        if (mClosure != null || mObject != null) {
-            return new LambdaDefinition(mParameters, mStatements, mClosure, mExpr);
+        if (closure != null || object != null) {
+            return new LambdaDefinition(parameters, statements, closure, expr);
         } else {
             return this;
         }
@@ -65,12 +65,12 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mObject = null;
-        if (mParameters.size() == 1) {
-            mParameters.get(0).appendString(state, sb, 0);
+        object = null;
+        if (parameters.size() == 1) {
+            parameters.get(0).appendString(state, sb, 0);
         } else {
             sb.append("[");
-            final Iterator<ParameterDef> iter = mParameters.iterator();
+            final Iterator<ParameterDef> iter = parameters.iterator();
             while (iter.hasNext()) {
                 iter.next().appendString(state, sb, 0);
                 if (iter.hasNext()) {
@@ -80,23 +80,23 @@ public class LambdaDefinition extends ProcedureDefinition {
             sb.append("]");
         }
         sb.append(" |-> ");
-        mExpr.appendString(state, sb, tabs);
+        expr.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
     @Override
     public Value toTerm(final State state) {
-        mObject = null;
+        object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        final SetlList paramList = new SetlList(mParameters.size());
-        for (final ParameterDef param: mParameters) {
+        final SetlList paramList = new SetlList(parameters.size());
+        for (final ParameterDef param: parameters) {
             paramList.addMember(state, param.toTerm(state));
         }
         result.addMember(state, paramList);
 
-        result.addMember(state, mExpr.toTerm(state));
+        result.addMember(state, expr.toTerm(state));
 
         return result;
     }
@@ -119,8 +119,8 @@ public class LambdaDefinition extends ProcedureDefinition {
 
     @Override
     public int hashCode() {
-        mObject = null;
-        return initHashCode;
+        object = null;
+        return initHashCode + parameters.size();
     }
 }
 

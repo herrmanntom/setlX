@@ -21,9 +21,9 @@ import java.util.List;
 
 public class Term extends IndexedCollectionValue {
     // functional character of the term;    e.g. f
-    private final String      mFunctionalCharacter;
+    private final String   functionalCharacter;
     // arguments in inner body of the term; e.g. e1, e2, ..., en
-    private final SetlList    mBody;
+    private final SetlList body;
 
     public Term(final String functionalCharacter) {
         this(functionalCharacter, 4);
@@ -34,23 +34,23 @@ public class Term extends IndexedCollectionValue {
     }
 
     public Term(final String functionalCharacter, final SetlList body) {
-        mFunctionalCharacter = functionalCharacter;
-        mBody                = body;
+        this.functionalCharacter = functionalCharacter;
+        this.body                = body;
     }
 
     @Override
     public Term clone() {
-        return new Term(mFunctionalCharacter, mBody.clone());
+        return new Term(functionalCharacter, body.clone());
     }
 
     @Override
     public Iterator<Value> iterator() {
-        return mBody.iterator();
+        return body.iterator();
     }
 
     @Override
     public Iterator<Value> descendingIterator() {
-        return mBody.descendingIterator();
+        return body.descendingIterator();
     }
 
     /* Boolean operations */
@@ -264,12 +264,12 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public void addMember(final State state, final Value element) {
-        mBody.addMember(state, element);
+        body.addMember(state, element);
     }
 
     @Override
     public SetlList arguments(final State state) {
-        return mBody.clone();
+        return body.clone();
     }
 
     // viral operation
@@ -313,7 +313,7 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
-        return mBody.collectionAccessUnCloned(state, args);
+        return body.collectionAccessUnCloned(state, args);
     }
 
     // viral operation
@@ -333,7 +333,7 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public Value firstMember() {
-        return mBody.firstMember();
+        return body.firstMember();
     }
 
     @Override
@@ -342,50 +342,50 @@ public class Term extends IndexedCollectionValue {
     }
 
     public SetlString functionalCharacter() {
-        if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
+        if (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
             return new SetlString(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
         } else {
-            return new SetlString(mFunctionalCharacter);
+            return new SetlString(functionalCharacter);
         }
     }
 
     @Override
     public Value getMember(final int index) throws SetlException {
-        return mBody.getMember(index);
+        return body.getMember(index);
     }
 
     @Override
     public Value getMember(final State state, final Value index) throws SetlException {
-        return mBody.getMember(state, index);
+        return body.getMember(state, index);
     }
 
     public Value getMemberUnCloned(final State state, final int index) throws SetlException {
-        return mBody.getMemberUnCloned(index);
+        return body.getMemberUnCloned(index);
     }
 
     @Override
     public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
-        return mBody.getMemberUnCloned(state, index);
+        return body.getMemberUnCloned(state, index);
     }
 
     @Override
     public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
-        return mBody.getMembers(state, low, high);
+        return body.getMembers(state, low, high);
     }
 
     @Override
     public Value lastMember() {
-        return mBody.lastMember();
+        return body.lastMember();
     }
 
     @Override
     public Value maximumMember(final State state) throws SetlException {
-        return mBody.maximumMember(state);
+        return body.maximumMember(state);
     }
 
     @Override
     public Value minimumMember(final State state) throws SetlException {
-        return mBody.minimumMember(state);
+        return body.minimumMember(state);
     }
 
     // viral operation
@@ -407,27 +407,27 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public void removeMember(final Value element) {
-        mBody.removeMember(element);
+        body.removeMember(element);
     }
 
     @Override
     public Value removeFirstMember() {
-        return mBody.removeFirstMember();
+        return body.removeFirstMember();
     }
 
     @Override
     public Value removeLastMember() {
-        return mBody.removeLastMember();
+        return body.removeLastMember();
     }
 
     @Override
     public void setMember(final State state, final Value index, final Value v) throws SetlException {
-        mBody.setMember(state, index, v);
+        body.setMember(state, index, v);
     }
 
     @Override
     public int size() {
-        return mBody.size();
+        return body.size();
     }
 
     // viral operation
@@ -452,7 +452,7 @@ public class Term extends IndexedCollectionValue {
     // viral operation
     @Override
     public Term call(final State state, final List<Expr> args) throws IncompatibleTypeException {
-        if (mFunctionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
+        if (functionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
             return (    new Call(
                             new Variable(
                                 TermConverter.valueToExpr(this).toString()
@@ -476,14 +476,14 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public void canonical(final State state, final StringBuilder sb) {
-        if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
+        if (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
             sb.append(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
         } else {
-            sb.append(mFunctionalCharacter);
+            sb.append(functionalCharacter);
         }
 
         sb.append("(");
-        mBody.canonical(state, sb, /* brackets = */ false);
+        body.canonical(state, sb, /* brackets = */ false);
         sb.append(")");
     }
 
@@ -491,17 +491,17 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
-        if ( mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) ||
+        if ( functionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) ||
                 ( other instanceof Term &&
-                  ((Term) other).mFunctionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER)
+                  ((Term) other).functionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER)
                 )
            ) {
             return new MatchResult(true); // one of the terms is `ignore'
-        } else if (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) && mBody.size() == 1) {
+        } else if (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) && body.size() == 1) {
             // 'this' is a variable, which match anything (except ignore of course)
             final MatchResult result  = new MatchResult(true);
             // get name of variable
-            final Value       idStr   = mBody.firstMember(state);
+            final Value       idStr   = body.firstMember(state);
             if ( ! (idStr instanceof SetlString)) { // this is a wrong ^variable term
                 return new MatchResult(false);
             }
@@ -522,16 +522,16 @@ public class Term extends IndexedCollectionValue {
         // 'other' is a term
         final Term otherTerm = (Term) other;
 
-        if ( ! mFunctionalCharacter.equals(otherTerm.mFunctionalCharacter)) {
+        if ( ! functionalCharacter.equals(otherTerm.functionalCharacter)) {
             // functional characters do not match
-            if ( ! (mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
-                    otherTerm.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)   )
+            if ( ! (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
+                    otherTerm.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)   )
                ) {
                 // however this only unacceptable when ! (this == 'Variable AND other == 'variable)
                 // e.g 'Variable must match 'variable
                 return new MatchResult(false);
             }
-        } else if (mBody.size() != otherTerm.mBody.size()) {
+        } else if (body.size() != otherTerm.body.size()) {
             return new MatchResult(false);
         }
 
@@ -564,14 +564,14 @@ public class Term extends IndexedCollectionValue {
             return 0;
         } else if (v instanceof Term) {
             final Term other = (Term) v;
-                  int  cmp   = mFunctionalCharacter.compareTo(other.mFunctionalCharacter);
+                  int  cmp   = functionalCharacter.compareTo(other.functionalCharacter);
             if (cmp != 0 && (
                     (
-                        mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
-                        other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
+                        functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
+                        other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
                     ) || (
-                        mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
-                        other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
+                        functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
+                        other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
                     )
                 )
             ) {
@@ -581,7 +581,7 @@ public class Term extends IndexedCollectionValue {
             if (cmp != 0) {
                 return cmp;
             }
-            return mBody.compareTo(other.mBody);
+            return body.compareTo(other.body);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -605,16 +605,16 @@ public class Term extends IndexedCollectionValue {
             return true;
         } else if (v instanceof Term) {
             final Term other = (Term) v;
-            if (mFunctionalCharacter.equals(other.mFunctionalCharacter)
+            if (functionalCharacter.equals(other.functionalCharacter)
                   || (
-                    mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
-                    other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
+                    functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
+                    other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
                 ) || (
-                    mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
-                    other.mFunctionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
+                    functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
+                    other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
                 )
             ) {
-                return mBody.equalTo(other.mBody);
+                return body.equalTo(other.body);
             } else {
                 return false;
             }
@@ -627,7 +627,7 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public int hashCode() {
-        return initHashCode + mFunctionalCharacter.hashCode() * 31 + mBody.hashCode();
+        return initHashCode + functionalCharacter.hashCode() * 31 + body.hashCode();
     }
 }
 

@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.types.ProcedureDefinition;
+import org.randoom.setlx.types.Procedure;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class PreDefinedProcedure extends ProcedureDefinition {
+public abstract class PreDefinedProcedure extends Procedure {
     // functional characters used in terms
     private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
 
@@ -45,10 +45,10 @@ public abstract class PreDefinedProcedure extends ProcedureDefinition {
 
     // add parameters to own definition
     protected void addParameter(final String param) {
-        mParameters.add(new ParameterDef(param, ParameterDef.READ_ONLY));
+        parameters.add(new ParameterDef(param, ParameterDef.READ_ONLY));
     }
     protected void addParameter(final String param, final int type) {
-        mParameters.add(new ParameterDef(param, type));
+        parameters.add(new ParameterDef(param, type));
     }
 
     // allow an unlimited number of parameters
@@ -67,7 +67,7 @@ public abstract class PreDefinedProcedure extends ProcedureDefinition {
     // this function is called from within SetlX
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
-        final int paramSize = mParameters.size();
+        final int paramSize = parameters.size();
         final int argsSize  = args.size();
         if (paramSize < argsSize) {
             if (unlimitedParameters) {
@@ -117,7 +117,7 @@ public abstract class PreDefinedProcedure extends ProcedureDefinition {
         if (writeBackVars.size() > 0) {
             final WriteBackAgent wba = new WriteBackAgent(writeBackVars.size());
             for (int i = 0; i < paramSize; ++i) {
-                final ParameterDef param = mParameters.get(i);
+                final ParameterDef param = parameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
                     // value of parameter after execution
                     final Value postValue = writeBackVars.remove(0);
@@ -141,7 +141,7 @@ public abstract class PreDefinedProcedure extends ProcedureDefinition {
     public final void appendString(final State state, final StringBuilder sb, final int tabs) {
         final String endl = state.getEndl();
         sb.append("procedure(");
-        final Iterator<ParameterDef> iter = mParameters.iterator();
+        final Iterator<ParameterDef> iter = parameters.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
@@ -149,7 +149,7 @@ public abstract class PreDefinedProcedure extends ProcedureDefinition {
             }
         }
         if (unlimitedParameters) {
-            if (mParameters.size() > 0) {
+            if (parameters.size() > 0) {
                 sb.append(", ");
             }
             sb.append("...");

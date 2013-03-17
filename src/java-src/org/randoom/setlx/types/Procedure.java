@@ -26,61 +26,61 @@ import java.util.Map;
 
 /*
 grammar rule:
-procedureDefinition
+procedure
     : 'procedure' '(' procedureParameters ')' '{' block '}'
     ;
 
 implemented here as:
                       ===================         =====
-                          mParameters          mStatements
+                           parameters           statements
 */
 
-public class ProcedureDefinition extends Value {
+public class Procedure extends Value {
     // functional character used in terms
-    public  final static String   FUNCTIONAL_CHARACTER = "^procedure";
+    public  final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
     // count how often procedures where executed before checking to replace the stack
     private       static int      nrOfCalls            = 0;
 
-    protected final List<ParameterDef>     mParameters;  // parameter list
-    protected final Block                  mStatements;  // statements in the body of the definition
-    protected       HashMap<String, Value> mClosure;     // variables and values used in closure
-    protected       SetlObject             mObject;      // surrounding object for next call
+    protected final List<ParameterDef>     parameters;  // parameter list
+    protected final Block                  statements;  // statements in the body of the definition
+    protected       HashMap<String, Value> closure;     // variables and values used in closure
+    protected       SetlObject             object;      // surrounding object for next call
 
-    public ProcedureDefinition(final List<ParameterDef> parameters, final Block statements) {
+    public Procedure(final List<ParameterDef> parameters, final Block statements) {
         this(parameters, statements, null);
     }
 
-    protected ProcedureDefinition(final List<ParameterDef> parameters, final Block statements, final HashMap<String, Value> closure) {
-        mParameters = parameters;
-        mStatements = statements;
+    protected Procedure(final List<ParameterDef> parameters, final Block statements, final HashMap<String, Value> closure) {
+        this.parameters = parameters;
+        this.statements = statements;
         if (closure != null) {
-            mClosure = new HashMap<String, Value>(closure);
+            this.closure = new HashMap<String, Value>(closure);
         } else {
-            mClosure = null;
+            this.closure = null;
         }
-        mObject = null;
+        this.object = null;
     }
 
     // only to be used by ProcedureConstructor
-    public ProcedureDefinition createCopy() {
-        return new ProcedureDefinition(mParameters, mStatements);
+    public Procedure createCopy() {
+        return new Procedure(parameters, statements);
     }
 
     @Override
-    public ProcedureDefinition clone() {
-        if (mClosure != null || mObject != null) {
-            return new ProcedureDefinition(mParameters, mStatements, mClosure);
+    public Procedure clone() {
+        if (closure != null || object != null) {
+            return new Procedure(parameters, statements, closure);
         } else {
             return this;
         }
     }
 
     public void setClosure(final HashMap<String, Value> closure) {
-        mClosure = closure;
+        this.closure = closure;
     }
 
     public void addSurroundingObject(final SetlObject object) {
-        mObject = object;
+        this.object = object;
     }
 
     /* Gather all bound and unbound variables in this value and its siblings
@@ -102,11 +102,11 @@ public class ProcedureDefinition extends Value {
         final List<String> innerUsedVariables    = new ArrayList<String>();
 
         // add all parameters to bound
-        for (final ParameterDef def : mParameters) {
+        for (final ParameterDef def : parameters) {
             def.collectVariablesAndOptimize(innerBoundVariables, innerBoundVariables, innerBoundVariables);
         }
 
-        mStatements.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        statements.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
 
         /* compute variables as seen by the outside */
 
@@ -127,7 +127,7 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public SetlBoolean isProcedure() {
-        mObject = null;
+        object = null;
         return SetlBoolean.TRUE;
     }
 
@@ -136,12 +136,12 @@ public class ProcedureDefinition extends Value {
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         final int        size   = args.size();
-        final SetlObject object = mObject;
-        mObject = null;
+        final SetlObject object = this.object;
+        this.object = null;
 
-        if (mParameters.size() != size) {
+        if (parameters.size() != size) {
             throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with "+ mParameters.size()+" instead of " +
+                "'" + this + "' is defined with "+ parameters.size()+" instead of " +
                 size + " parameters."
             );
         }
@@ -170,16 +170,16 @@ public class ProcedureDefinition extends Value {
         }
 
         // assign closure contents
-        if (mClosure != null) {
-            for (final Map.Entry<String, Value> entry : mClosure.entrySet()) {
+        if (closure != null) {
+            for (final Map.Entry<String, Value> entry : closure.entrySet()) {
                 new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, entry.getValue(), oldScope);
             }
         }
 
         // put arguments into inner scope
-        final int parametersSize = mParameters.size();
+        final int parametersSize = parameters.size();
         for (int i = 0; i < parametersSize; ++i) {
-            final ParameterDef param = mParameters.get(i);
+            final ParameterDef param = parameters.get(i);
             final Value        value = values.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
                 param.assign(state, value);
@@ -193,7 +193,7 @@ public class ProcedureDefinition extends Value {
 
         // results of call to procedure
               ReturnMessage   result      = null;
-        final WriteBackAgent  wba         = new WriteBackAgent(mParameters.size());
+        final WriteBackAgent  wba         = new WriteBackAgent(parameters.size());
         final boolean         stepThrough = state.isDebugStepThroughFunction;
 
         try {
@@ -212,10 +212,10 @@ public class ProcedureDefinition extends Value {
 
             // execute, e.g. perform real procedure call
             if (executeInCurrentStack) {
-                result = mStatements.exec(state);
+                result = statements.exec(state);
             } else {
                 // prevent running out of stack by creating a new thread
-                final CallExecThread callExec = new CallExecThread(mStatements, state);
+                final CallExecThread callExec = new CallExecThread(statements, state);
 
                 try {
                     callExec.start();
@@ -242,7 +242,7 @@ public class ProcedureDefinition extends Value {
                 if (object != null && i == 0) {
                     continue;
                 }
-                final ParameterDef param = mParameters.get(i);
+                final ParameterDef param = parameters.get(i);
                 if (param.getType() == ParameterDef.READ_WRITE) {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
@@ -255,8 +255,8 @@ public class ProcedureDefinition extends Value {
             }
 
             // read closure variables and update their current state
-            if (mClosure != null) {
-                for (final Map.Entry<String, Value> entry : mClosure.entrySet()) {
+            if (closure != null) {
+                for (final Map.Entry<String, Value> entry : closure.entrySet()) {
                     entry.setValue(state.findValue(entry.getKey()));
                 }
             }
@@ -289,9 +289,9 @@ public class ProcedureDefinition extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mObject = null;
+        object = null;
         sb.append("procedure(");
-        final Iterator<ParameterDef> iter = mParameters.iterator();
+        final Iterator<ParameterDef> iter = parameters.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
@@ -299,28 +299,28 @@ public class ProcedureDefinition extends Value {
             }
         }
         sb.append(") ");
-        mStatements.appendString(state, sb, tabs, /* brackets = */ true);
+        statements.appendString(state, sb, tabs, /* brackets = */ true);
     }
 
     /* term operations */
 
     @Override
     public Value toTerm(final State state) {
-        mObject = null;
+        object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        final SetlList paramList = new SetlList(mParameters.size());
-        for (final ParameterDef param: mParameters) {
+        final SetlList paramList = new SetlList(parameters.size());
+        for (final ParameterDef param: parameters) {
             paramList.addMember(state, param.toTerm(state));
         }
         result.addMember(state, paramList);
 
-        result.addMember(state, mStatements.toTerm(state));
+        result.addMember(state, statements.toTerm(state));
 
         return result;
     }
 
-    public static ProcedureDefinition termToValue(final Term term) throws TermConversionException {
+    public static Procedure termToValue(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -330,7 +330,7 @@ public class ProcedureDefinition extends Value {
                 parameters.add(ParameterDef.valueToParameterDef(v));
             }
             final Block               block       = TermConverter.valueToBlock(term.lastMember());
-            return new ProcedureDefinition(parameters, block);
+            return new Procedure(parameters, block);
         }
     }
 
@@ -343,21 +343,21 @@ public class ProcedureDefinition extends Value {
      */
     @Override
     public int compareTo(final Value v) {
-        mObject = null;
+        object = null;
         if (this == v) {
             return 0;
-        } else if (v instanceof ProcedureDefinition) {
-            final ProcedureDefinition other = (ProcedureDefinition) v;
+        } else if (v instanceof Procedure) {
+            final Procedure other = (Procedure) v;
             if (this instanceof PreDefinedProcedure && other instanceof PreDefinedProcedure) {
                 final PreDefinedProcedure _this  = (PreDefinedProcedure) this;
                 final PreDefinedProcedure _other = (PreDefinedProcedure) other;
                 return _this.getName().compareTo(_other.getName());
             } else {
-                final int cmp = mParameters.toString().compareTo(other.mParameters.toString());
+                final int cmp = parameters.toString().compareTo(other.parameters.toString());
                 if (cmp != 0) {
                     return cmp;
                 }
-                return mStatements.toString().compareTo(other.mStatements.toString());
+                return statements.toString().compareTo(other.statements.toString());
             }
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
@@ -373,13 +373,13 @@ public class ProcedureDefinition extends Value {
      */
     @Override
     protected int compareToOrdering() {
-        mObject = null;
+        object = null;
         return 1000;
     }
 
     @Override
     public boolean equalTo(final Value v) {
-        mObject = null;
+        object = null;
         if (this == v) {
             return true;
         } else if (v instanceof PreDefinedProcedure) {
@@ -390,10 +390,10 @@ public class ProcedureDefinition extends Value {
             } else {
                 return false;
             }
-        } else if (v instanceof ProcedureDefinition) {
-            final ProcedureDefinition other = (ProcedureDefinition) v;
-            if (mParameters.toString().equals(other.mParameters.toString())) {
-                return mStatements.toString().equals(other.mStatements.toString());
+        } else if (v instanceof Procedure) {
+            final Procedure other = (Procedure) v;
+            if (parameters.toString().equals(other.parameters.toString())) {
+                return statements.toString().equals(other.statements.toString());
             } else {
                 return false;
             }
@@ -402,12 +402,12 @@ public class ProcedureDefinition extends Value {
         }
     }
 
-    private final static int initHashCode = ProcedureDefinition.class.hashCode();
+    private final static int initHashCode = Procedure.class.hashCode();
 
     @Override
     public int hashCode() {
-        mObject = null;
-        return initHashCode;
+        object = null;
+        return initHashCode + parameters.size();
     }
 
     // private subclass to cheat the end of the world... or stack, whatever comes first

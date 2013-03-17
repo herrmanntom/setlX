@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
-import org.randoom.setlx.types.ClassDefinition;
+import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Term;
@@ -35,7 +35,7 @@ public class StateImplementation extends State {
     private final   static  VariableScope       ROOT_SCOPE = new VariableScope();
 
     // this scope stores all global variables
-    private final           HashMap<String, ClassDefinition> classDefinitions;
+    private final           HashMap<String, SetlClass> classDefinitions;
 
     // this variable stores the variable assignment that is currently active
     private                 VariableScope       variableScope;
@@ -70,7 +70,7 @@ public class StateImplementation extends State {
         parserErrorCount                 = 0;
         super.realPrintMode              = Real.PRINT_MODE_DEFAULT;
         loadedLibraries                  = new HashSet<String>();
-        classDefinitions                 = new HashMap<String, ClassDefinition>();
+        classDefinitions                 = new HashMap<String, SetlClass>();
         variableScope                    = ROOT_SCOPE.createLinkedScope();
         isHuman                          = false;
         randoom                          = new Random();
@@ -476,7 +476,7 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void putClassDefinition(final String var, final ClassDefinition classDef) {
+    public void putClassDefinition(final String var, final SetlClass classDef) {
         classDefinitions.put(var, classDef);
     }
 

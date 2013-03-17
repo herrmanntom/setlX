@@ -3,9 +3,9 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.types.ClassDefinition;
+import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.ProcedureDefinition;
+import org.randoom.setlx.types.Procedure;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
@@ -137,7 +137,7 @@ public class VariableScope {
             // found some value in outer scope
 
             // return nothing, if value is not allowed to be read from outer scopes
-            if (v != Om.OM && isRestrictedToFunctions && ! (v instanceof ProcedureDefinition)) {
+            if (v != Om.OM && isRestrictedToFunctions && ! (v instanceof Procedure)) {
                 return null;
             }
 
@@ -163,7 +163,7 @@ public class VariableScope {
         // add own bindings (possibly overwriting values from inner bindings)
         for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
             final Value val = entry.getValue();
-            if ( ! restrictToFunctions || val instanceof ProcedureDefinition) {
+            if ( ! restrictToFunctions || val instanceof Procedure) {
                 result.put(entry.getKey(), val);
             }
         }
@@ -180,7 +180,7 @@ public class VariableScope {
             bindings.put(var, value);
         } else if (writeThrough          && // allowed to write into mOriginalScope
                    originalScope != null && // mOriginalScope exists
-                   ( ! isRestrictedToFunctions || value instanceof ProcedureDefinition) // not restricted
+                   ( ! isRestrictedToFunctions || value instanceof Procedure) // not restricted
         ) {
             originalScope.storeValue(var, value);
         }
@@ -236,12 +236,12 @@ public class VariableScope {
 
     /* term operations */
 
-    /*package*/ public Term toTerm(final State state, final HashMap<String, ClassDefinition> classDefinitions) {
+    /*package*/ public Term toTerm(final State state, final HashMap<String, SetlClass> classDefinitions) {
         final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
         if (classDefinitions != null) {
-            for (final Map.Entry<String, ClassDefinition> entry : classDefinitions.entrySet()) {
+            for (final Map.Entry<String, SetlClass> entry : classDefinitions.entrySet()) {
                 allVars.put(entry.getKey(), entry.getValue());
             }
         }

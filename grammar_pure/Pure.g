@@ -151,7 +151,7 @@ factor
     | term
     | 'forall' '(' iteratorChain '|' condition ')'
     | 'exists' '(' iteratorChain '|' condition ')'
-    | ('(' expr ')' | procedureDefinition | variable) (memberAccess | call)* '!'?
+    | ('(' expr ')' | procedure | variable) (memberAccess | call)* '!'?
     | value '!'?
     ;
 
@@ -164,7 +164,7 @@ termArguments
     | /* epsilon */
     ;
 
-procedureDefinition
+procedure
     : 'procedure' '(' procedureParameters ')' '{' block '}'
     | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
     ;

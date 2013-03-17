@@ -1,5 +1,5 @@
 CLASSPATH=antlr/antlr-*.jar
-JAVAC_CALL=javac -cp $(CLASSPATH) -d bin -sourcepath java-src -Xlint:all -Xlint:-classfile -source 1.6
+JAVAC_CALL=javac -cp $(CLASSPATH) -d bin -sourcepath java-src -Xlint:all -source 1.6
 
 setlX.jar:                                                   \
         antlr/antlr-*.jar                                                       \

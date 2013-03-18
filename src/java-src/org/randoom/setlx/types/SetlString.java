@@ -134,7 +134,7 @@ public class SetlString extends IndexedCollectionValue {
     private void separateFromOriginal() {
         if (isCloned) {
             final StringBuilder original = content;
-            content = new StringBuilder();
+            content = new StringBuilder(original.capacity());
             content.append(original);
             isCloned = false;
         }

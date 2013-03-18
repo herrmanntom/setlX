@@ -15,14 +15,14 @@ import java.util.List;
 // this class encapsulates functions from java.Math
 
 public class MathFunction2 extends PreDefinedProcedure {
-    private final Method mFunction;
+    private final Method function;
 
     public MathFunction2(final String name, final Method function) {
         super();
         setName(name);
         addParameter("x");
         addParameter("y");
-        mFunction = function;
+        this.function = function;
     }
 
     @Override
@@ -31,7 +31,7 @@ public class MathFunction2 extends PreDefinedProcedure {
         final Value arg1 = args.get(1);
         if (arg0 instanceof NumberValue && arg1 instanceof NumberValue) {
             try {
-                final double r = (Double) mFunction.invoke(null, args.get(0).toJDoubleValue(state), args.get(1).toJDoubleValue(state));
+                final double r = (Double) function.invoke(null, args.get(0).toJDoubleValue(state), args.get(1).toJDoubleValue(state));
                 return Real.valueOf(r);
             } catch (final SetlException se) {
                 throw se;

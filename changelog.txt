@@ -2,7 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.5.2--- 2013-xx-yy
  + some performance improvements
- * refactored boolean expressions and some other bits and peaces
+ * refactored Boolean expressions and some other bits and pieces
 
 ---v1.5.1--- 2013-03-10
  + add syntax highlighting definition for gedit

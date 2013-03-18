@@ -2,3 +2,4 @@ primes := procedure(n) {
     s := { 2..n }; 
     return s - { p*q : [p, q] in s >< s }; 
 };
+print(primes(100));

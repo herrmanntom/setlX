@@ -5,3 +5,5 @@ setSort := procedure(s) {
         case {x|r}: return [x] + setSort(r);
     }
 };
+
+print(setSort({3,2,1}));

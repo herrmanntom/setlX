@@ -1,8 +1,0 @@
-testRegexp := procedure(re, s) {
-    match (s) {
-        regex re as l: return l;
-        default      : return [];
-    }
-};
-
-        

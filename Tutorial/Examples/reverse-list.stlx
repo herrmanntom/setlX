@@ -7,3 +7,4 @@ reverse := procedure(l) {
     }
 };
 
+print(reverse([1..50]));

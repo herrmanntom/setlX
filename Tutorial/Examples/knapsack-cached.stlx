@@ -72,14 +72,14 @@ start  := now();
 stop   := now();
 print("naive algorithm using exhaustive search:");
 print("s = $s$, value = $v$, weight = $weight(s)$");
-print("$0.001 * (stop - start)$ seconds");
+// print("$0.001 * (stop - start)$ seconds");
 
 start  := now();
 [v, s] := knapsackDP(problem, maxWeight);
 stop   := now();
 print("greedy algorithm using dynamic programming:");
 print("s = $s$, value = $v$, weight = $weight(s)$");
-print("$0.001 * (stop - start)$ seconds");
+// print("$0.001 * (stop - start)$ seconds");
 print(cacheStats(knapsackDP));
 clearCache(knapsackDP);
 

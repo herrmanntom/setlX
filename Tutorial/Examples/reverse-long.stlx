@@ -11,3 +11,5 @@ reverse := procedure(s) {
     }
 };
 
+print(reverse("abcdefg"));
+

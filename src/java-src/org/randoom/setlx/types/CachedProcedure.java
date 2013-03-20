@@ -16,19 +16,24 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-// This class represents an automatically caching function definition
-
-/*
-grammar rule:
-procedure
-    : 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
-    ;
-
-implemented here as:
-                            ===================         =====
-                                 parameters           statements
-*/
-
+/**
+ * This class represents an automatically caching function definition.
+ *
+ * The cache is implemented as a hash map of
+ * call-parameters -> value
+ * and the values are linked via SoftReferences, which may get collected
+ * to prevent the JVM to run out of memory.
+ *
+ * grammar rule:
+ * procedure
+ *     : 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
+ *     ;
+ *
+ * implemented here as:
+ *                             ===================         =====
+ *                                 parameters            statements
+ *
+ */
 public class CachedProcedure extends Procedure {
     // functional character used in terms
     public  final static String                                  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CachedProcedure.class);
@@ -36,11 +41,26 @@ public class CachedProcedure extends Procedure {
     private final        HashMap<SetlList, SoftReference<Value>> cache;
     private              int                                     cacheHits;
 
+    /**
+     * Create new cached procedure definition.
+     * @param parameters procedure parameters
+     * @param statements statements in the body of the procedure
+     */
     public CachedProcedure(final List<ParameterDef> parameters, final Block statements) {
         super(parameters, statements);
         cache     = new HashMap<SetlList, SoftReference<Value>>();
         cacheHits = 0;
     }
+
+    /**
+     * Create new cached procedure definition, which replicates the complete
+     * internal state of another cached procedure.
+     * @param parameters procedure parameters
+     * @param statements statements in the body of the procedure
+     * @param closure
+     * @param cache
+     * @param cacheHits
+     */
     private CachedProcedure(
         final List<ParameterDef>                      parameters,
         final Block                                   statements,
@@ -67,12 +87,25 @@ public class CachedProcedure extends Procedure {
         }
     }
 
+    /**
+     * Remove references from cache, which where garbage collected.
+     */
+    private void validateCache() {
+        for (final SetlList key : cache.keySet()) {
+            final SoftReference<Value> valueRef = cache.get(key);
+            if (valueRef == null || valueRef.get() == null) {
+                cache.remove(key);
+            }
+        }
+    }
+
     public int getCacheHits() {
         object = null;
         return cacheHits;
     }
     public int getCacheSize() {
         object = null;
+        validateCache();
         return cache.size();
     }
     public void clearCache() {

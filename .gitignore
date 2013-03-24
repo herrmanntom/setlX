@@ -25,7 +25,9 @@ grammar_pure/PureParser.java
 grammar_pure/*.class
 src/bin
 src/java-src/org/randoom/setlx/grammar
-src/setlX.jar
+src/*.jar
+src_gfx/bin
+src_gfx/*.jar
 diff.*.result
 developmentGuide.pdf
 manual.pdf

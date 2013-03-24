@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
 # set overrides for setlX launcher script
-export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
+export OVERRIDE_setlXJarDirectory="$PWD/src/"
 
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"
@@ -15,13 +15,33 @@ make dist-clean
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
 make
-if [ -f "$OVERRIDE_setlXJarLocation" ]
+if [ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" ]
   then
     # clean it up again (does not remove the jar)
     make clean
     echo "=> The setlX interpreter was build correctly."
 else
     echo "=> Building the setlX interpreter failed ..."
+    # break
+    exit 1
+fi
+
+cd ../src_gfx
+
+# clean the interpreter source
+echo "=> Cleaning the setlX graphics library's source ..."
+make dist-clean
+
+# build the binary version
+echo "=> Rebuilding the setlX graphics library ..."
+make
+if [ -e "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" ]
+  then
+    # clean it up again (does not remove the jar)
+    make clean
+    echo "=> The setlX graphics library was build correctly."
+else
+    echo "=> Building the setlX graphics library failed ..."
     # break
     exit 1
 fi
@@ -130,6 +150,7 @@ examples="setlX_v$versionForFileNames.examples"
 
 # remove distribution zips if present
 rm -f "$binOnly.zip"
+rm -f "$examples.zip"
 rm -f "$devel.zip"
 # remove other stuff
 rm -f "diff.result"
@@ -138,7 +159,7 @@ rm -f diff.*.result
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "
 mkdir -p zipContents
-cp changelog.txt manual.pdf tutorial.pdf src/setlX src/setlX.cmd src/setlX.jar zipContents/.
+cp changelog.txt manual.pdf tutorial.pdf src/setlX src/setlX.cmd src/setlX.jar src_gfx/setlX-gfx.jar zipContents/.
 cp -r syntax_highlighting zipContents/.
 cd zipContents; zip -qr "../$binOnly.zip" . ; cd ..
 rm -rf zipContents
@@ -146,16 +167,22 @@ echo "done"
 
 # create examples zip
 echo -n "=> Creating example code distribution ... "
-mkdir -p zipContents zipContents/converted_Setl2_code zipContents/performance_test_code
-cp example_SetlX_code/*.stlx zipContents/.
-cp example_SetlX_code/converted_Setl2_code/*.stlx zipContents/converted_Setl2_code/.
-cp example_SetlX_code/performance_test_code/*.stlx zipContents/performance_test_code/.
+cp -r example_SetlX_code zipContents
+while read -r -d $'\0' filename
+  do
+    rm -f "$filename"
+done < <( find "zipContents" -type f ! -name "*.stlx" -print0 )
+while read -r -d $'\0' emptyDir
+  do
+    rmdir "$emptyDir"
+done < <( find "zipContents" -type d -empty -print0 )
 cd zipContents; zip -qr "../$examples.zip" . ; cd ..
 rm -rf zipContents
 echo "done"
 
-# remove the jar
+# remove the jars
 cd src;make dist-clean;cd ..
+cd src_gfx;make dist-clean;cd ..
 
 # create development zip
 echo -n "=> Creating development kit ... "

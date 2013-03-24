@@ -3,7 +3,7 @@
 tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 # set overrides for setlX launcher script
-export OVERRIDE_setlXJarLocation="$PWD/src/setlX.jar"
+export OVERRIDE_setlXJarDirectory="$PWD/src/"
 export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 
 # other locations for tests

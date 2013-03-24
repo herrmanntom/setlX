@@ -1,6 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.5.2--- 2013-xx-yy
+---v1.6.0--- 2013-03-24
+ + integrated graphics library by Markus Jagiella
+ * Note: setlX launcher scripts need to be updated
  + some performance improvements
  * refactored Boolean expressions and some other bits and pieces
 

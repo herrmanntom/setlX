@@ -1,12 +1,12 @@
-#!/bin/sh
+#!/bin/bash
 #
 #
 # totally UNSUPPORTED script for profiling the execution of the setlX interpreter
 #
 #
 
-# insert full path to the setlX.jar file here
-setlXJarLocation="setlX.jar"
+# insert path to the folder where you copied the jar files here
+setlXJarDirectory="."
 
 # insert full path to library location here
 setlXlibraryPath="$HOME/setlXlibrary/"
@@ -27,6 +27,14 @@ javaParameters="$javaParameters -Xrunhprof:cpu=samples,depth=6,doe=y"
 
 ################################################################################
 
+if [ -n "$OVERRIDE_setlXJarDirectory" ]
+  then
+    setlXJarDirectory="$OVERRIDE_setlXJarDirectory"
+fi
+if [ -n "$OVERRIDE_setlXjavaParameters" ]
+  then
+    javaParameters="$OVERRIDE_setlXjavaParameters"
+fi
 if [ -z "$SETLX_LIBRARY_PATH" ]
   then
     export SETLX_LIBRARY_PATH="$setlXlibraryPath"
@@ -39,15 +47,26 @@ if [ $(which rlwrap > /dev/null 2>&1; echo $?) -eq 0 ]
     java_call="rlwrap -C $(basename $0) $java_call"
 fi
 
-if [ -f "$setlXJarLocation" ]
+jarFiles=""
+while read -r -d $'\0' jarname
+  do
+    if [ -n "$jarFiles" ]
+      then
+        jarFiles="$jarFiles:"
+    fi
+    jarFiles="$jarFiles${jarname#./}"
+done < <( find "$setlXJarDirectory" -maxdepth 1 -name "*.jar" -print0 )
+
+if [ -n "$jarFiles" ]
   then
     time (
-        $java_call -cp "$setlXJarLocation:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
+        $java_call -cp "$jarFiles:$CLASSPATH" $javaParameters org.randoom.setlxUI.pc.SetlX "$@"
         # strip out uninteresting stuff from profiling dump
         lnumber=$(grep -n 'CPU SAMPLES BEGIN' java.hprof.txt | awk -F: '{print $1}')
         tail -n +$lnumber java.hprof.txt
     )
 else
-    echo "The setlX.jar file can not be found!"
+    echo "The setlX jar files cannot be found!"
+    exit 1
 fi
 

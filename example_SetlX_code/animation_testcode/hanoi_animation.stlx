@@ -14,15 +14,15 @@ drawState := procedure( state, disks ){
     for( i in [1 .. 3] ){
         diskNumber := 0;
         while( #state[i] > 0  ){
-		    disk := fromE( state[i] );
-			discfactor := disk/disks;
-			if ( disk == 1 ){
-			    discfactor := 0.0;
-			}
-			r := discfactor;
-			g := 1.0-discfactor;
-			b := 0.0;
-			gfx_setPenColorRGB( r, g, b ); 
+            disk := fromE( state[i] );
+            discfactor := disk/disks;
+            if ( disk == 1 ){
+                discfactor := 0.0;
+            }
+            r := discfactor;
+            g := 1.0-discfactor;
+            b := 0.0;
+            gfx_setPenColorRGB( r, g, b ); 
             gfx_filledRectangle(  disks/2 + disks*(i-1), diskNumber/2 + 0.25, disk/2, 0.25 ); 
             diskNumber := diskNumber + 1;
         }
@@ -131,28 +131,28 @@ animate := procedure( disks ){
 waitForStart := procedure(){
     while( gfx_isPaused() ){
         sleep(1000);
-    }    
+    }
 };
 
 readInput := procedure(){
     gfx_setPaused(true);
-	gfx_setMessage( "Please enter the size of the hanoi towers!" );
-	gfx_addInputField( "Size" );
-	gfx_addPlayPauseButton(true);
-	gfx_addSpeedSlider(true);
-	waitForStart();
+    gfx_setMessage( "Please enter the size of the hanoi towers!" );
+    gfx_addInputField( "Size" );
+    gfx_addPlayPauseButton(true);
+    gfx_addSpeedSlider(true);
+    waitForStart();
     input := rational( gfx_getInput() );
     while ( input == om ){
-	    gfx_setMessage("The given size is not a number! Please enter a number for the size of the hanoi towers!" );
-		gfx_setPaused(true);
-		waitForStart();
-		input := rational( gfx_getInput() );
-	}
-	gfx_setMessage("Animation starts after calculating the path with A* algorithm.");
-	return input;
+        gfx_setMessage("The given size is not a number! Please enter a number for the size of the hanoi towers!" );
+        gfx_setPaused(true);
+        waitForStart();
+        input := rational( gfx_getInput() );
+    }
+    gfx_setMessage("Animation starts after calculating the path with A* algorithm.");
+    return input;
 };
 
-loadLibrary("aStar_hanoi_exact_animation");
+load("aStar_hanoi_exact_animation.stlx");
 
 gfx_setCanvasSize( 600, 400 );
 animate( readInput() );

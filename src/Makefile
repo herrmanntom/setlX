@@ -19,7 +19,7 @@ test:                                                        \
         simpleTest/test.stlx
 	cp simpleTest/test.stlx simpleTest/test.windows.stlx
 	if [ $$(which unix2dos > /dev/null 2>&1; echo $$?) -eq 0 ]; then unix2dos simpleTest/test.windows.stlx; fi
-	./setlX --runtimeDebugging simpleTest/test.windows.stlx --verbose
+	./setlX --runtimeDebugging --verbose simpleTest/test.windows.stlx
 	rm -f simpleTest/test.windows.stlx
 
 build:                                                      \
@@ -165,5 +165,5 @@ clean:
 
 dist-clean:                                                 \
         clean
-	rm -f  setlX.jar
+	rm -f  *.jar
 

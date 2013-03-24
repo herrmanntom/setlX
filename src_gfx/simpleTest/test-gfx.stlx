@@ -1,0 +1,6 @@
+
+gfx_setCanvasSize( 300, 50 );
+gfx_setPaused(true);
+gfx_setMessage( "Hello amazingly graphical world!" );
+gfx_show(1);
+

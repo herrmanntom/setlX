@@ -1,4 +1,5 @@
 @ECHO off
+SetLocal
 
 set antlrJarLocation=antlr\antlr-4.0-complete.jar
 set CLASSPATH="%antlrJarLocation%;%CLASSPATH%"
@@ -40,4 +41,6 @@ IF EXIST java-src (
 echo.
 pause
 
+EndLocal
 @ECHO on
+

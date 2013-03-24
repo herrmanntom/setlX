@@ -56,12 +56,12 @@ To comfortably use \setlX{} it may be installed into the search-path. After this
 \subsection{Unix-like OS (Linux, MacOS X, etc.)}\label{Unix}
 
 \begin{enumerate}
-	\item Copy the `\command{setlX.jar}'-file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}').\\
-	You may also copy it into the home directory of some user, when he is the only \setlX-user on the system (e.g. `\command{/home/<user>/programs/setlX/}').
+	\item Copy all `\command{setlX*.jar}'-files into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{/usr/local/setlX/}').\\
+	You may also copy them into the home directory of some user, when she is the only \setlX-user on the system (e.g. `\command{/home/<user>/programs/setlX/}').
 	\item Open the `\command{setlX}'-script in your favorite editor (either `\command{vi}' or `\command{emacs}' of course).
-	\item Change the contents of the `\command{setlXJarLocation}'-variable to the full path of the copied jar-file, including the filename itself, e.g.
+	\item Change the contents of the `\command{setlXJarDirectory}'-variable to the path where you copied the jar-files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
-setlXJarLocation="/usr/local/setlX/setlX.jar"
+setlXJarDirectory="/usr/local/setlX/"
 \end{lstlisting}
 	\item \textbf{(Optional)} Change the `\command{setlXlibraryPath}'-variable to the path where \setlX{} should look for library files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
@@ -69,7 +69,7 @@ setlXlibraryPath="$HOME/setlXlibrary/"
 \end{lstlisting}
 	\item Save and close the file.
 	\item Copy the modified `\command{setlX}'-script into some folder, which is in the search-path of all users which should be able to execute \setlX{} (e.g. `\command{/usr/local/bin}').\\
-	When only used by one user, you may copy it into the `bin' directory in his home instead (e.g. `\command{/home/<user>/bin}').
+	When only used by one user, you may copy it into the `bin' directory in her home instead (e.g. `\command{/home/<user>/bin}').
 	\item Make the copied script executable, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
 chmod +x /usr/local/bin/setlX
@@ -85,11 +85,11 @@ chmod +x /usr/local/bin/setlX
 \end{center}
 
 \begin{enumerate}
-	\item Copy the `\command{setlX.jar}' and `\command{setlX.cmd}' files into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}').
+	\item Copy all `\command{setlX*.jar}' files and the `\command{setlX.cmd}' file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}').
 	\item Open the copied `\command{setlX.cmd}'-script in your favorite text editor.
-	\item Change the contents of the `\command{setlXJarLocation}'-variable to the full path of the jar-file, including the filename itself, e.g.
+	\item Change the contents of the `\command{setlXJarDirectory}'-variable to the path where you copied the jar-files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
-set setlXJarLocation=C:\Progam Files\setlX\setlX.jar
+set setlXJarDirectory=C:\Progam Files\setlX\
 \end{lstlisting}
 	\item \textbf{(Optional)} Change the `\command{SETLX\_LIBRARY\_PATH}'-variable and set it to the path where \setlX{} should look for library files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]

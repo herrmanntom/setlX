@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v1.6.1--- 2013-0x-xx
+ + added resetRandom() function, which reseeds the random number generator
+
 ---v1.6.0--- 2013-03-24
  + integrated graphics library by Markus Jagiella
  * Note: setlX launcher scripts need to be updated

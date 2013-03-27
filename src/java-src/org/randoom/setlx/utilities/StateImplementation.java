@@ -198,17 +198,14 @@ public class StateImplementation extends State {
     @Override
     public void setRealPrintMode_default() {
         super.realPrintMode = Real.PRINT_MODE_DEFAULT;
-        System.out.println("def");
     }
     @Override
     public void setRealPrintMode_engineering() {
         super.realPrintMode = Real.PRINT_MODE_ENGINEERING;
-        System.out.println("foo");
     }
     @Override
     public void setRealPrintMode_plain() {
         super.realPrintMode = Real.PRINT_MODE_PLAIN;
-        System.out.println("bar");
     }
 
     // allow modification of fileName/path when reading files

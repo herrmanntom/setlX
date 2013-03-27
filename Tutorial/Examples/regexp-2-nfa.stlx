@@ -1,0 +1,105 @@
+load("regexp-parser.stlx");
+load("nfa-2-string.stlx");
+
+genCharNFA := procedure(c, rw ctr) {
+    q0 := getNewState(ctr);
+    q1 := getNewState(ctr);
+    delta := procedure(q, d) { 
+                 if (q == q0 && d == c) { 
+                     return { q1 };
+                 } else { 
+                     return {};
+                 }
+             };
+    return [ {q0, q1}, delta, q0, q1 ];
+};
+
+catenate := procedure(f1, f2) {
+    [m1, delta1, q1, q2] := f1;
+    [m2, delta2, q3, q4] := f2;
+    delta := procedure(q, c) {
+                 if (q == q2 && c == "") {
+                     return { q3 };
+                 } else if (q in m1) {
+                     return delta1(q, c);
+                 } else if (q in m2) {
+                     return delta2(q, c);
+                 } else {
+                     return {};
+                 }
+             };
+    return [ m1 + m2, delta, q1, q4 ];
+};
+
+disjunction := procedure(f1, f2, rw ctr) {
+    [m1, delta1, q1, q3] := f1;
+    [m2, delta2, q2, q4] := f2;
+    q0 := getNewState(ctr); 
+    q5 := getNewState(ctr); 
+    delta := procedure(q, c) {
+                 if (q == q0 && c == "") {
+                     return { q1, q2 };
+                 } else if (q in { q3, q4 } && c == "") {
+                     return { q5 };
+                 } else if (q in m1) {
+                     return delta1(q, c);
+                 } else if (q in m2) {
+                     return delta2(q, c);
+                 } else {
+                     return {};
+                 } 
+             };
+    return [ { q0, q5 } + m1 + m2, delta, q0, q5 ];
+};
+
+kleene := procedure(f, rw ctr) {
+    [m, delta0, q1, q2] := f;
+    q0 := getNewState(ctr); 
+    q3 := getNewState(ctr); 
+    delta := procedure(q, c) {
+                 if (q == q0 && c == "") {
+                     return { q1, q3 };
+                 } else if (q == q2 && c == "") {
+                     return { q1, q3 };
+                 } else if (q in m) {
+                     return delta0(q, c);
+                 } else {
+                     return {};
+                 } 
+             };
+    return [ { q0, q3 } + m, delta, q0, q3 ];
+};
+
+getNewState := procedure(rw ctr) {
+    ctr += 1;
+    return "q" + ctr;
+};
+
+regexp2NFA := procedure(r, rw ctr) {
+    match (r) {
+        case c | isString(c): 
+	  return genCharNFA(c, ctr);
+        case Cat(r1, r2): 
+	  return catenate(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr)); 
+        case Or(r1, r2): 
+	  return disjunction(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr), ctr);
+        case Star(r0): 
+	  return kleene(regexp2NFA(r0, ctr), ctr);
+    }
+};
+
+// The input s is a string representing a regular expression.  This string is 
+// parsed into a term representing the regular expression. Then, the resulting
+// regular expression is transformed into an equivalent non-deterministic 
+// finite state
+testRegexp2NFA := procedure(s, sigma) {
+   re  := myParse(s);
+   ctr := -1;
+   nfa := regexp2NFA(re, ctr);
+   print("The regular expression $s$ is recognized by the following NFA:");
+   print(nfa2string(nfa, sigma));
+};
+
+testRegexp2NFA("(a+b)", {"a", "b"});
+testRegexp2NFA("a*", {"a", "b"});
+testRegexp2NFA("(a+b)*", {"a", "b"});

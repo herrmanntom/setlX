@@ -1,0 +1,19 @@
+// convert an NFA into a string
+nfa2string := procedure(nfa, sigma) {
+    [states, delta, q0, final] := nfa;
+    result := "";
+    n := 0;
+    result += "states: $states$\n\n";   
+    result += "start state: $q0$\n\n";
+    result += "transitions:\n";
+    for (q in states) {
+        for (c in sigma, p in delta(q, c)) {
+            result += "[$q$, $c$] |-> $p$\n";
+        }
+        for (p in delta(q, "")) {
+            result += "[$q$, \"\"] |-> $p$\n";
+        }
+    }
+    result += "\naccepting state: $final$\n";
+    return result;
+};

@@ -13,7 +13,7 @@ import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.utilities.DumpSetlX;
+import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
@@ -23,6 +23,9 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class containing main-function and other glue for the PC version of the setlX interpreter.
+ */
 public class SetlX {
     private final static String     VERSION         = "1.6.1";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
@@ -41,19 +44,17 @@ public class SetlX {
     private       static boolean    verbose         = false;
 
     public static void main(final String[] args) {
-        boolean             dump        = false; // writes loaded code into a file
-        String              dumpFile    = "";    // file to dump into
-        boolean             help        = false;
-        boolean             interactive = false;
-        boolean             noExecution = false;
-        String              expression  = null;  // expression to be evaluated using -ev option
-        String              statement   = null;  // code to be executed when using -ex option
-        final List<String>  files       = new ArrayList<String>();
-        final PcEnvProvider envProvider = new PcEnvProvider();
-        final State         state       = new StateImplementation();
+        String              dumpFile     = null;  // file to write loaded code into
+        String              dumpJavaFile = null;  // file to write loaded code converted to Java into
+        boolean             help         = false;
+        boolean             interactive  = false;
+        boolean             noExecution  = false;
+        String              expression   = null;  // expression to be evaluated using -ev option
+        String              statement    = null;  // code to be executed when using -ex option
+        final List<String>  files        = new ArrayList<String>();
+        final PcEnvProvider envProvider  = new PcEnvProvider();
+        final State         state        = new StateImplementation(envProvider);
 
-        // initialize Environment
-        state.setEnvironmentProvider(envProvider);
         final SetlList parameters = new SetlList(); // can/will be filled later
         try {
             state.putValue("params", parameters);
@@ -61,8 +62,8 @@ public class SetlX {
             // impossible
         }
 
-        if ((PcEnvProvider.sLibraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
-            PcEnvProvider.sLibraryPath = "";
+        if ((envProvider.libraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
+            envProvider.libraryPath = "";
         }
 
         for (int i = 0; i < args.length; ++i) {
@@ -73,7 +74,7 @@ public class SetlX {
                 System.exit(EXIT_OK);
 
             } else if (s.equals("--dump")) {
-                dump = true;
+                dumpFile = "";
                 ++i; // set to next argument
                 if (i < args.length) {
                     dumpFile = args[i];
@@ -82,8 +83,21 @@ public class SetlX {
                 if (  dumpFile.equals("") ||
                      (dumpFile.length() >= 2 && dumpFile.substring(0,2).equals("--"))
                    ) {
-                    help = true;
-                    dump = false;
+                    help     = true;
+                    dumpFile = null;
+                }
+            } else if (s.equals("--dumpJava")) {
+                dumpJavaFile = "";
+                ++i; // set to next argument
+                if (i < args.length) {
+                    dumpJavaFile = args[i];
+                }
+                // check for incorrect dumpJavaFile contents
+                if (  dumpJavaFile.equals("") ||
+                     (dumpJavaFile.length() >= 2 && dumpJavaFile.substring(0,2).equals("--"))
+                   ) {
+                    help         = true;
+                    dumpJavaFile = null;
                 }
             } else if (s.equals("--ev")) {
                 ++i; // set to next argument
@@ -114,13 +128,13 @@ public class SetlX {
             } else if (s.equals("--libraryPath")) {
                 ++i; // set to next argument
                 if (i < args.length) {
-                    PcEnvProvider.sLibraryPath = args[i];
+                    envProvider.libraryPath = args[i];
                 }
                 // check for incorrect contents
-                if (  PcEnvProvider.sLibraryPath.equals("") ||
+                if (  envProvider.libraryPath.equals("") ||
                       (
-                        PcEnvProvider.sLibraryPath.length() >= 2 &&
-                        PcEnvProvider.sLibraryPath.substring(0,2).equals("--")
+                          envProvider.libraryPath.length() >= 2 &&
+                          envProvider.libraryPath.substring(0,2).equals("--")
                       )
                    ) {
                     help = true;
@@ -179,7 +193,14 @@ public class SetlX {
             printInteractiveBegin(state);
             parseAndExecuteInteractive(state);
         } else if ( ! help ) {
-            final List<Block> programs = parseAndDumpCode(state, expression, statement, files, dump, dumpFile);
+            final List<Block> programs = parseAndEchoCode(
+                    state,
+                    expression,
+                    statement,
+                    files,
+                    dumpFile,
+                    dumpJavaFile
+            );
             if ( ! noExecution) {
                 executeFiles(state, programs);
             }
@@ -231,12 +252,14 @@ public class SetlX {
         printExecutionFinished(state);
     }
 
-    private static List<Block> parseAndDumpCode( final State        state,
-                                                 final String       expression,
-                                                 final String       statement,
-                                                 final List<String> files,
-                                                 final boolean      dump,
-                                                 final String       dumpFile) {
+    private static List<Block> parseAndEchoCode(
+            final State        state,
+            final String       expression,
+            final String       statement,
+            final List<String> files,
+            final String       dumpFile,
+            final String       dumpJavaFile
+    ) {
         // parsed programs
         int nPrograms = files.size();
         if (expression != null) {
@@ -253,14 +276,16 @@ public class SetlX {
                 exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(state, expression)));
                 exp.markLastExprStatement();
                 programs.add(exp);
-            } else if (statement != null) {
+            }
+
+            if (statement != null) {
                 final Block stmt = ParseSetlX.parseStringToBlock(state, statement);
                 stmt.markLastExprStatement();
                 programs.add(stmt);
-            } else {
-                for (final String fileName : files) {
-                    programs.add(ParseSetlX.parseFile(state, fileName));
-                }
+            }
+
+            for (final String fileName : files) {
+                programs.add(ParseSetlX.parseFile(state, fileName));
             }
         } catch (final ParserException pe) {
             if (verbose) {
@@ -301,22 +326,51 @@ public class SetlX {
         }
 
         // print and/or dump programs if needed
-        if (verbose || dump) {
+        if (verbose || dumpFile != null || dumpJavaFile != null) {
             state.setPrintVerbose(true); // enables correct indentation etc
             final int size = programs.size();
             for (int i = 0; i < size; ++i) {
                 // get program text
-                final String program = programs.get(i).toString(state) + '\n';
+                final String program     = programs.get(i).toString(state) + state.getEndl();
+                      String javaProgram = null;
 
-                //in verbose mode the parsed programs are echoed
+                if (dumpJavaFile != null) {
+                    // figure out Java class name
+                    if (Character.isLowerCase(dumpJavaFile.charAt(0)) ||
+                        ! dumpJavaFile.endsWith(".java")) {
+                        state.errWriteLn(
+                            "File to write Java code into must start with an " +
+                            "upper case letter and end in '.java'."
+                        );
+                        System.exit(EXIT_ERROR);
+                    }
+
+                    final String className = dumpJavaFile.substring(0, dumpJavaFile.lastIndexOf(".java"));
+
+                    javaProgram = programs.get(i).toJavaCode(state, className, PcEnvProvider.class);
+                }
+
+                // in verbose mode the parsed programs are echoed
                 if (verbose) {
                     state.outWriteLn(program);
                 }
 
-                // when dump is enabled, the program is appended to the dumpFile
-                if (dump) {
+                // append program to the dumpFile
+                if (dumpFile != null) {
                     try {
-                        DumpSetlX.dumpToFile(state, program, dumpFile, /* append = */ (i > 0) );
+                        WriteFile.writeToFile(state, program, dumpFile, /* append = */ (i > 0) );
+                    } catch (final FileNotWriteableException fnwe) {
+                        state.errWriteLn(fnwe.getMessage());
+
+                        System.exit(EXIT_ERROR);
+
+                    }
+                }
+
+                // append programs Java code equivalent to the dumpJavaFile
+                if (dumpJavaFile != null) {
+                    try {
+                        WriteFile.writeToFile(state, javaProgram, dumpJavaFile, /* append = */ (i > 0) );
                     } catch (final FileNotWriteableException fnwe) {
                         state.errWriteLn(fnwe.getMessage());
 

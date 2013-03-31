@@ -108,7 +108,7 @@ public abstract class State {
 
     public abstract boolean             isRuntimeDebuggingEnabled();
 
-    public abstract void                getLineStart(final StringBuilder sb, final int tabs);
+    public abstract void                appendLineStart(final StringBuilder sb, final int tabs);
 
     public abstract String              getEndl();
     public abstract String              getTab();

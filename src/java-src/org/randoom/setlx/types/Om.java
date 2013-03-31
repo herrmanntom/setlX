@@ -1,5 +1,7 @@
 package org.randoom.setlx.types;
 
+import java.util.Set;
+
 import org.randoom.setlx.utilities.State;
 
 public class Om extends Value {
@@ -19,6 +21,21 @@ public class Om extends Value {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("om");
+    }
+
+    /* Java Code generation */
+
+    @Override
+    public void appendJavaCode(
+            final State         state,
+            final Set<String>   header,
+            final StringBuilder code,
+            final int           tabs
+    ) {
+        header.add("import " + Om.class.getCanonicalName() + ";");
+
+        code.append(Om.class.getSimpleName());
+        code.append(".OM");
     }
 
     /* comparisons */

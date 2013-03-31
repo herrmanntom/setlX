@@ -85,7 +85,7 @@ public class TermConverter {
                         // string used for method look-up
                         final String    needle              = fc.substring(1, 2).toUpperCase(Locale.US) + fc.substring(2);
                         // look it up in [bool]expression and statement packages
-                        final String    packageNameBExpr    = Equals    .class.getPackage().getName();
+                        final String    packageNameBExpr    = Equals   .class.getPackage().getName();
                         final String    packageNameExpr     = Expr     .class.getPackage().getName();
                         final String    packageNameStmnt    = Statement.class.getPackage().getName();
                         // class which is searched

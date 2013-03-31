@@ -7,10 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class DumpSetlX {
+public class WriteFile {
 
-    public static void dumpToFile(final State state, final String content, String fileName, final boolean append) throws FileNotWriteableException {
-        // then dump to file
+    public static void writeToFile(final State state, final String content, String fileName, final boolean append) throws FileNotWriteableException {
         FileWriter     fWr = null;
         BufferedWriter out = null;
         try {

@@ -4,22 +4,24 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
+import java.util.Set;
 
-// this class wraps values into an expression
-
+/**
+ * Expression containing a single variable.
+ */
 public class ValueExpr extends Expr {
     // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 9999;
+    private final static int PRECEDENCE = 9999;
 
-    private final Value mValue;
+    private final Value value;
 
     public ValueExpr(final Value value) {
-        mValue  = value;
+        this.value = value;
     }
 
     @Override
     public Value eval(final State state) {
-        return mValue;
+        return value;
     }
 
     @Override
@@ -27,13 +29,6 @@ public class ValueExpr extends Expr {
         return eval(state);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -45,20 +40,31 @@ public class ValueExpr extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mValue.appendString(state, sb, tabs);
+        value.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
     @Override
     public Value toTerm(final State state) {
-        return mValue.toTerm(state);
+        return value.toTerm(state);
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
+    }
+
+    /* Java Code generation */
+
+    @Override
+    public void appendJavaCode(
+            final State         state,
+            final Set<String>   header,
+            final StringBuilder code,
+            final int           tabs
+    ) {
+        value.appendJavaCode(state, header, code, tabs);
     }
 }
 

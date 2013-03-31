@@ -8,61 +8,56 @@ import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
+import java.util.Set;
 
-/*
-grammar rule:
-sum
-    : product ('+' product | [...])*
-    ;
-
-implemented here as:
-      =======      =======
-       mLhs         mRhs
-*/
-
+/**
+ * An addition of two expressions.
+ *
+ * grammar rule:
+ * sum
+ *     : product ('+' product | [...])*
+ *     ;
+ *
+ * implemented here as:
+ *       =======      =======
+ *         lhs          rhs
+ */
 public class Sum extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^sum";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Sum.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1600;
 
-    private final Expr mLhs;
-    private final Expr mRhs;
+    private final Expr lhs;
+    private final Expr rhs;
 
     public Sum(final Expr lhs, final Expr rhs) {
-        mLhs = lhs;
-        mRhs = rhs;
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).sum(state, mRhs.eval(state));
+        return lhs.eval(state).sum(state, rhs.eval(state));
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append(" + ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -70,11 +65,18 @@ public class Sum extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 
+    /**
+     * Convert a term to a Sum-object.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting expression of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
     public static Sum termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -85,12 +87,31 @@ public class Sum extends Expr {
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
     }
 
+    /* Java Code generation */
+
+    @Override
+    public void appendJavaCode(
+            final State         state,
+            final Set<String>   header,
+            final StringBuilder code,
+            final int           tabs
+    ) {
+        lhs.appendJavaCode(state, header, code, tabs);
+        code.append(".sum(state, ");
+        rhs.appendJavaCode(state, header, code, tabs);
+        code.append(")");
+    }
+
+    /**
+     * Get the functional character used in terms for this expression.
+     *
+     * @return Functional character.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

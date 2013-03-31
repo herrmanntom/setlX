@@ -2,8 +2,9 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.JVMIOException;
 
-// This interface provides access to the I/O mechanisms of the target platform etc
-
+/**
+ * This interface provides access to the I/O mechanisms of the target platform.
+ */
 public interface EnvironmentProvider {
 
     // read from input

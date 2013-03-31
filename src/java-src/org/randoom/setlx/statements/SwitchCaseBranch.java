@@ -70,7 +70,7 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("case ");
         mCondition.appendString(state, sb, tabs);
         sb.append(":");

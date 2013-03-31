@@ -77,7 +77,7 @@ public class Check extends Statement {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("check ");
         mStatements.appendString(state,sb, tabs, true);
         if (mRecovery != null) {

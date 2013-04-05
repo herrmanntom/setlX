@@ -8,11 +8,13 @@ import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
@@ -50,9 +52,12 @@ public class SetlX {
         boolean             help         = false;
         boolean             interactive  = false;
         boolean             noExecution  = false;
+        boolean             termLoop     = false;  // convert loaded code to term and back
+
         String              expression   = null;  // expression to be evaluated using -ev option
         String              statement    = null;  // code to be executed when using -ex option
         final List<String>  files        = new ArrayList<String>();
+
         final PcEnvProvider envProvider  = new PcEnvProvider();
         final State         state        = new StateImplementation(envProvider);
 
@@ -183,6 +188,8 @@ public class SetlX {
                 state.setRealPrintMode_plain();
             } else if (s.equals("--runtimeDebugging")) {
                 state.setRuntimeDebugging(true);
+            } else if (s.equals("--termLoop")) {
+                termLoop = true;
             } else if (s.equals("--verbose")) {
                 verbose = true;
             } else if (s.length() >= 2 && s.substring(0,2).equals("--")) { // invalid option
@@ -214,7 +221,8 @@ public class SetlX {
                     files,
                     dumpFile,
                     dumpJavaFile,
-                    dumpTermFile
+                    dumpTermFile,
+                    termLoop
             );
             if ( ! noExecution) {
                 executeFiles(state, programs);
@@ -274,7 +282,8 @@ public class SetlX {
             final List<String> files,
             final String       dumpFile,
             final String       dumpJavaFile,
-            final String       dumpTermFile
+            final String       dumpTermFile,
+            final boolean      termLoop
     ) {
         // parsed programs
         int nPrograms = files.size();
@@ -344,8 +353,7 @@ public class SetlX {
         // print and/or dump programs if needed
         if (verbose || dumpFile != null || dumpJavaFile != null || dumpTermFile != null) {
             state.setPrintVerbose(true); // enables correct indentation etc
-            final int size = programs.size();
-            for (int i = 0; i < size; ++i) {
+            for (int i = 0; i < programs.size(); ++i) {
                 // get program text
                 final String program     = programs.get(i).toString(state) + state.getEndl();
                       String javaProgram = null;
@@ -415,6 +423,21 @@ public class SetlX {
                 }
             }
             state.setPrintVerbose(false);
+        }
+
+        if (termLoop) {
+            for (int i = 0; i < programs.size(); ++i) {
+                try {
+                    programs.set(i, (Block) TermConverter.valueToStatement(programs.get(i).toTerm(state)));
+                } catch (final TermConversionException tce) {
+                    state.errWriteLn("Error during termLoop!");
+                    if (state.isRuntimeDebuggingEnabled()) {
+                        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        tce.printStackTrace(new PrintStream(out));
+                        state.errWrite(out.toString());
+                    }
+                }
+            }
         }
 
         return programs;

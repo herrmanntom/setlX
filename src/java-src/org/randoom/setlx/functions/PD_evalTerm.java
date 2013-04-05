@@ -9,6 +9,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
+//import org.randoom.setlx.utilities.WriteFile;
 
 import java.util.List;
 
@@ -31,6 +32,10 @@ public class PD_evalTerm extends PreDefinedProcedure {
 
         // Value to be returned
         Value               result      = Om.OM;
+
+//        state.setPrintVerbose(true);
+//        WriteFile.writeToFile(state, fragment.toString(state), "foo2.txt", false);
+//        state.setPrintVerbose(false);
 
         // execute the contents
         if (fragment instanceof Expr) {

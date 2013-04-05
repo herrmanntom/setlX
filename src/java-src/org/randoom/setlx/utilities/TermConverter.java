@@ -16,6 +16,7 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedure;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaDefinition;
@@ -55,6 +56,8 @@ public class TermConverter {
                     return SetlClass.termToValue(term);
                 } else if (fc.equals(SetlObject.FUNCTIONAL_CHARACTER)) {
                     return SetlObject.termToValue(term);
+                } else if (fc.equals(Om.FUNCTIONAL_CHARACTER)) {
+                    return Om.OM;
                 }
             }
             throw new TermConversionException(

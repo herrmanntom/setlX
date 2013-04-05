@@ -5,8 +5,10 @@ import java.util.Set;
 import org.randoom.setlx.utilities.State;
 
 public class Om extends Value {
+    // functional character used in terms
+    public final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Om.class);
 
-    public final static Om OM = new Om();
+    public final static Om     OM = new Om();
 
     private Om() {  }
 
@@ -21,6 +23,13 @@ public class Om extends Value {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("om");
+    }
+
+    /* term operations */
+
+    @Override
+    public Value toTerm(final State state) {
+        return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
     /* Java Code generation */

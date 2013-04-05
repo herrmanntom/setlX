@@ -7,27 +7,38 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
-// This interface class provides access to the I/O mechanisms of the target platform etc
-/*package*/ class PcEnvProvider implements EnvironmentProvider {
+/**
+ * This implementation provides access to the I/O mechanisms of PCs
+ */
+public class PcEnvProvider implements EnvironmentProvider {
 
-    private final static String         sTAB            = "\t";
-    private       static String         sENDL           = null;
+    private final static String TAB = "\t";
 
-  /*package*/     static String         sLibraryPath    = "";
+    private final String         endl;
+  /*package*/     String         libraryPath;
 
     // buffered reader for stdin
-    private       static BufferedReader sStdInReader    = null;
+    private       BufferedReader stdInReader;
 
-    private static BufferedReader getStdIn() {
-        if (sStdInReader == null) {
-            sStdInReader = new BufferedReader(new InputStreamReader(System.in));
+    public PcEnvProvider() {
+        this.endl        = System.getProperty("line.separator");
+        this.libraryPath = "";
+        this.stdInReader = null;
+    }
+
+    /**
+     * Get current StdIn reader.
+     * @return StdIn reader.
+     */
+    private BufferedReader getStdIn() {
+        if (stdInReader == null) {
+            stdInReader = new BufferedReader(new InputStreamReader(System.in));
         }
-        return sStdInReader;
+        return stdInReader;
     }
 
     /* interface functions */
 
-    // read from input
     @Override
     public boolean  inReady() throws JVMIOException {
         try {
@@ -46,52 +57,43 @@ import java.io.IOException;
         }
     }
 
-    // write to standard output
     @Override
     public void     outWrite(final String msg) {
         System.out.print(msg);
     }
 
-    // write to standard error
     @Override
     public void     errWrite(final String msg) {
         System.err.print(msg);
     }
 
-    // prompt for user input
     @Override
     public void    promptForInput(final String msg) {
         System.out.print(msg);
         System.out.flush();
     }
 
-    // some text format stuff
     @Override
     public String   getTab() {
-        return sTAB;
+        return TAB;
     }
     @Override
     public String   getEndl() {
-        if (sENDL == null) {
-            sENDL = System.getProperty("line.separator");
-        }
-        return sENDL;
+        return endl;
     }
 
-    // allow modification of fileName/path when reading files
     @Override
     public String   filterFileName(final String fileName) {
-        return fileName; // not required on PC
+        return fileName; // not required on PCs
     }
 
-    // allow modification of library name
     @Override
     public String   filterLibraryName(String name) {
         name = name.trim();
         if (name.length() < 1 || name.charAt(0) == '/') {
             return name;
         } else {
-            return sLibraryPath + name;
+            return libraryPath + name;
         }
     }
 }

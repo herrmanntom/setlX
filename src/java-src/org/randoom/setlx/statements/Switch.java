@@ -80,13 +80,13 @@ public class Switch extends Statement {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("switch {");
         sb.append(state.getEndl());
         for (final SwitchAbstractBranch br : mBranchList) {
             br.appendString(state, sb, tabs + 1);
         }
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("}");
     }
 

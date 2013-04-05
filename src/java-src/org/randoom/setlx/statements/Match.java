@@ -121,7 +121,7 @@ public class Match extends Statement {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("match (");
         mExpr.appendString(state, sb, 0);
         sb.append(") {");
@@ -129,7 +129,7 @@ public class Match extends Statement {
         for (final MatchAbstractBranch br : mBranchList) {
             br.appendString(state, sb, tabs + 1);
         }
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("}");
     }
 

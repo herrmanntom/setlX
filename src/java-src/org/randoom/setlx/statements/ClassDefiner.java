@@ -12,22 +12,23 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-classDefinition
-    : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
-    ;
-
-implemented here as:
-              ==  ==================================================================
-             name                            classDefinition
-*/
-
+/**
+ * A wrapper statement for SetlX class definitions.
+ *
+ * grammar rule:
+ * classDefinition
+ *     : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
+ *     ;
+ *
+ * implemented here as:
+ *               ==  ==================================================================
+ *              name                            classDefinition
+ */
 public class ClassDefiner extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String   FUNCTIONAL_CHARACTER = "^classDefiner";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ClassDefiner.class);
 
-    private final String          name;
+    private final String    name;
     private final SetlClass classDefinition;
 
     public ClassDefiner(final String name, final SetlClass classDefinition) {
@@ -41,13 +42,6 @@ public class ClassDefiner extends Statement {
         return null;
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -62,7 +56,7 @@ public class ClassDefiner extends Statement {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         classDefinition.appendString(name, state, sb, tabs);
     }
 
@@ -72,11 +66,19 @@ public class ClassDefiner extends Statement {
     public Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
+        result.addMember(state, new SetlString(name));
         result.addMember(state, classDefinition.toTerm(state));
 
         return result;
     }
 
+    /**
+     * Re-generate a ClassDefiner statement from a term.
+     *
+     * @param  term                    Term to regenerate from.
+     * @return                         ClassDefiner statement.
+     * @throws TermConversionException In case of error
+     */
     public static ClassDefiner termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

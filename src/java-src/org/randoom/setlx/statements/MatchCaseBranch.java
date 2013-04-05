@@ -31,34 +31,30 @@ implemented here as:
 
 public class MatchCaseBranch extends MatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchCaseBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchCaseBranch.class);
 
-    private final List<Expr>  mExprs;      // expressions which creates terms to match
-    private final List<Value> mTerms;      // terms to match
-    private final Condition   mCondition;  // optional condition to confirm match
-    private final Block       mStatements; // block to execute after match
+    private final List<Expr>  exprs;      // expressions which creates terms to match
+    private final List<Value> terms;      // terms to match
+    private final Condition   condition;  // optional condition to confirm match
+    private final Block       statements; // block to execute after match
 
     public MatchCaseBranch(final List<Expr> exprs, final Condition condition, final Block statements){
-        this(exprs, new ArrayList<Value>(exprs.size()), condition, statements);
-    }
-
-    private MatchCaseBranch(final List<Expr> exprs, final List<Value> terms, final Condition condition, final Block statements){
-        mExprs      = exprs;
-        mTerms      = terms;
-        mCondition  = condition;
-        mStatements = statements;
+        this.exprs      = exprs;
+        this.terms      = new ArrayList<Value>(exprs.size());
+        this.condition  = condition;
+        this.statements = statements;
     }
 
     @Override
     public MatchResult matches(final State state, final Value term) throws SetlException {
-        if (mExprs.size() > mTerms.size()) {
-            for (final Expr expr: mExprs) {
-                mTerms.add(expr.toTerm(state));
+        if (exprs.size() > terms.size()) {
+            for (final Expr expr: exprs) {
+                terms.add(expr.toTerm(state));
             }
         }
 
         MatchResult last = new MatchResult(false);
-        for (final Value v : mTerms) {
+        for (final Value v : terms) {
             last = v.matchesTerm(state, term);
             if (last.isMatch()) {
                 return last;
@@ -69,8 +65,8 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
-        if (mCondition != null) {
-            return mCondition.evalToBool(state);
+        if (condition != null) {
+            return condition.evalToBool(state);
         } else {
             return true;
         }
@@ -78,7 +74,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     @Override
     public ReturnMessage exec(final State state) throws SetlException {
-        return mStatements.exec(state);
+        return statements.exec(state);
     }
 
     @Override
@@ -103,18 +99,18 @@ public class MatchCaseBranch extends MatchAbstractBranch {
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
         final List<String> tempAssigned = new ArrayList<String>();
-        for (final Expr expr : mExprs) {
+        for (final Expr expr : exprs) {
             expr.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempAssigned);
 
-        if (mCondition != null) {
-            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (condition != null) {
+            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
 
-        mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
         for (int i = tempAssigned.size(); i > 0; --i) {
@@ -126,10 +122,10 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("case ");
 
-        final Iterator<Expr> iter = mExprs.iterator();
+        final Iterator<Expr> iter = exprs.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(state, sb, tabs);
             if (iter.hasNext()) {
@@ -137,14 +133,14 @@ public class MatchCaseBranch extends MatchAbstractBranch {
             }
         }
 
-        if (mCondition != null) {
+        if (condition != null) {
             sb.append(" | ");
-            mCondition.appendString(state, sb, tabs);
+            condition.appendString(state, sb, tabs);
         }
 
         sb.append(":");
         sb.append(state.getEndl());
-        mStatements.appendString(state, sb, tabs + 1);
+        statements.appendString(state, sb, tabs + 1);
         sb.append(state.getEndl());
     }
 
@@ -154,20 +150,19 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     public Term toTerm(final State state) {
         final Term     result   = new Term(FUNCTIONAL_CHARACTER, 3);
 
-        final SetlList termList = new SetlList(mTerms.size());
-
-        for (final Expr expr: mExprs) {
+        final SetlList termList = new SetlList(terms.size());
+        for (final Expr expr: exprs) {
             termList.addMember(state, expr.toTerm(state));
         }
         result.addMember(state, termList);
 
-        if (mCondition != null) {
-            result.addMember(state, mCondition.toTerm(state));
+        if (condition != null) {
+            result.addMember(state, condition.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
 
-        result.addMember(state, mStatements.toTerm(state));
+        result.addMember(state, statements.toTerm(state));
 
         return result;
     }
@@ -179,17 +174,15 @@ public class MatchCaseBranch extends MatchAbstractBranch {
             try {
                 final SetlList    termList  = (SetlList) term.firstMember();
                 final List<Expr>  exprs     = new ArrayList<Expr>(termList.size());
-                final List<Value> terms     = new ArrayList<Value>(termList.size());
                 for (final Value v : termList) {
                     exprs.add(TermConverter.valueToExpr(v));
-                    terms.add(v);
                 }
                 Condition condition = null;
                 if (! term.getMember(2).equals(new SetlString("nil"))) {
                     condition = TermConverter.valueToCondition(term.getMember(2));
                 }
                 final Block block = TermConverter.valueToBlock(term.lastMember());
-                return new MatchCaseBranch(exprs, terms, condition, block);
+                return new MatchCaseBranch(exprs, condition, block);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }

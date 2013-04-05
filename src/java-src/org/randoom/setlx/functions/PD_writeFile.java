@@ -8,7 +8,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.DumpSetlX;
+import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public class PD_writeFile extends PreDefinedProcedure {
             v.appendUnquotedString(state, sb, 0);
             sb.append(endl);
         }
-        DumpSetlX.dumpToFile(state, sb.toString(), fileName, append);
+        WriteFile.writeToFile(state, sb.toString(), fileName, append);
 
         return SetlBoolean.TRUE;
     }

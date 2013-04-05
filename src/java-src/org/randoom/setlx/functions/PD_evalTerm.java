@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.Om;
@@ -34,8 +35,12 @@ public class PD_evalTerm extends PreDefinedProcedure {
         // execute the contents
         if (fragment instanceof Expr) {
             result  = ((Expr) fragment).eval(state);
-        } else /* if (fragment instanceof Statement) */ {
+        } else if (fragment instanceof Statement) {
             ((Statement) fragment).exec(state);
+        } else {
+            throw new UndefinedOperationException(
+                "This term does not represent an expression or a statement."
+            );
         }
 
         // everything seems fine

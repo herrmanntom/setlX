@@ -14,21 +14,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Base class for all expressions.
+ */
 public abstract class Expr extends CodeFragment {
 
     // collection of reusable replacement values
-    private final static HashMap<String, SoftReference<Value>> sReplacements = new HashMap<String, SoftReference<Value>>();
+    private final static HashMap<String, SoftReference<Value>> REPLACEMENTS = new HashMap<String, SoftReference<Value>>();
 
     // value which is the result of this expression, iff expression is `static' (does not contain variables)
-    protected Value mReplacement = null;
+    protected Value replacement = null;
 
     public Value eval(final State state) throws SetlException {
         try {
             if (state.isDebugStepNextExpr && state.isDebugModeActive && ! state.isDebugPromptActive()) {
                 state.setDebugStepNextExpr(false);
                 DebugPrompt.prompt(state, this);
-            } else if (mReplacement != null) {
-                return mReplacement.clone();
+            } else if (replacement != null) {
+                return replacement.clone();
             }
             return this.evaluate(state);
         } catch (final SetlException se) {
@@ -40,7 +43,7 @@ public abstract class Expr extends CodeFragment {
     protected abstract Value evaluate(final State state) throws SetlException;
 
     protected void calculateReplacement(final List<String> unboundVariables) {
-        if (mReplacement == null) {
+        if (replacement == null) {
             try {
                 // bubble state which is not connected to anything useful
                 final State bubble = new StateImplementation();
@@ -48,26 +51,26 @@ public abstract class Expr extends CodeFragment {
                 // string representation of this expression
                 final String _this = this.toString(bubble);
 
-                synchronized (sReplacements) {
+                synchronized (REPLACEMENTS) {
                     // look up if same expression was already evaluated
-                    final SoftReference<Value> result = sReplacements.get(_this);
+                    final SoftReference<Value> result = REPLACEMENTS.get(_this);
                     if (result != null) {
-                        mReplacement = result.get();
+                        replacement = result.get();
 
-                        if (mReplacement == null) { // reference was cleared up
-                            sReplacements.remove(_this);
+                        if (replacement == null) { // reference was cleared up
+                            REPLACEMENTS.remove(_this);
                         }
                     }
 
-                    if (mReplacement == null) { // not found
+                    if (replacement == null) { // not found
                         // evaluate in bubble state
-                        mReplacement = evaluate(bubble);
-                        sReplacements.put(_this, new SoftReference<Value>(mReplacement));
+                        replacement = evaluate(bubble);
+                        REPLACEMENTS.put(_this, new SoftReference<Value>(replacement));
                     }
                 }
             } catch (final SetlException se) {
                 // ignore error
-                mReplacement = null;
+                replacement = null;
 
                 // add dummy variable to prevent optimization at later point
                 unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
@@ -76,8 +79,8 @@ public abstract class Expr extends CodeFragment {
     }
 
     public Value getReplacement() {
-        if (mReplacement != null) {
-            return mReplacement.clone();
+        if (replacement != null) {
+            return replacement.clone();
         } else {
             return null;
         }
@@ -104,7 +107,7 @@ public abstract class Expr extends CodeFragment {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        if (mReplacement != null) {
+        if (replacement != null) {
             // already optimized, no variables are needed during execution
             return;
         }
@@ -182,12 +185,28 @@ public abstract class Expr extends CodeFragment {
     @Override
     public abstract Value toTerm(final State state);
 
-    // toTerm when quoted ('@') expression is evaluated
+    /**
+     * Generate term representing the code this expression represents, when
+     * this expression is quoted ('@').
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toTerm(State)
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Generated term.
+     * @throws SetlException When some error happens.
+     */
     public          Value toTermQuoted(final State state) throws SetlException  {
         return toTerm(state);
     }
 
-    // precedence level in SetlX-grammar
+    /**
+     * Precedence level in SetlX-grammar. Manly used for automatic bracket insertion
+     * when converting terms to expressions.
+     *
+     * (See src/java-src/org/randoom/setlx/expressions/termConversionPrecedences.txt)
+     *
+     * @return Precedence level.
+     */
     public abstract int   precedence();
 }
 

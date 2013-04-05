@@ -16,6 +16,7 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedure;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaDefinition;
@@ -55,6 +56,8 @@ public class TermConverter {
                     return SetlClass.termToValue(term);
                 } else if (fc.equals(SetlObject.FUNCTIONAL_CHARACTER)) {
                     return SetlObject.termToValue(term);
+                } else if (fc.equals(Om.FUNCTIONAL_CHARACTER)) {
+                    return Om.OM;
                 }
             }
             throw new TermConversionException(
@@ -85,7 +88,7 @@ public class TermConverter {
                         // string used for method look-up
                         final String    needle              = fc.substring(1, 2).toUpperCase(Locale.US) + fc.substring(2);
                         // look it up in [bool]expression and statement packages
-                        final String    packageNameBExpr    = Equals    .class.getPackage().getName();
+                        final String    packageNameBExpr    = Equals   .class.getPackage().getName();
                         final String    packageNameExpr     = Expr     .class.getPackage().getName();
                         final String    packageNameStmnt    = Statement.class.getPackage().getName();
                         // class which is searched
@@ -142,7 +145,9 @@ public class TermConverter {
                     // special cases
                     final Value specialValue = valueTermToValue(value);
 
-                    if (specialValue instanceof Procedure) {
+                    if (specialValue == Om.OM) {
+                        return new ValueExpr(specialValue);
+                    } else if (specialValue instanceof Procedure) {
                         return new ProcedureConstructor((Procedure) specialValue);
                     } else if (specialValue instanceof SetlClass) {
                         return new ValueExpr(specialValue);

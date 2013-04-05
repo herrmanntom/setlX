@@ -156,12 +156,12 @@ public abstract class PreDefinedProcedure extends Procedure {
         }
         sb.append(") {");
         sb.append(endl);
-        state.getLineStart(sb, tabs + 1);
+        state.appendLineStart(sb, tabs + 1);
         sb.append("/* predefined procedure `");
         sb.append(getName());
         sb.append("' */");
         sb.append(endl);
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("}");
     }
 

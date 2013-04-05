@@ -9,6 +9,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.StateImplementation;
 
 import java.util.List;
 
@@ -594,6 +595,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public void canonical(final State state, final StringBuilder sb) {
         appendString(state, sb, 0);
+    }
+
+    public final String canonical() {
+        final State         bubble = new StateImplementation();
+        final StringBuilder sb     = new StringBuilder();
+        canonical(bubble, sb);
+        return sb.toString();
     }
 
     public Value charConvert(final State state) throws SetlException {

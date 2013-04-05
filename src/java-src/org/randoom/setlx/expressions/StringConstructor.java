@@ -17,16 +17,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Wrapper Expression for SetlX Strings, which parses and expands $$-expressions
+ * at runtime.
+ */
 public class StringConstructor extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^stringConstructor";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(StringConstructor.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
-    private final String            mOriginalStr; // original String
-    private final ArrayList<String> mFragments;   // list of string fragments for after and between expressions
-    private final ArrayList<Expr>   mExprs;       // list of $-Expressions
+    private final String            originalStr; // original String
+    private final ArrayList<String> fragments;   // list of string fragments for after and between expressions
+    private final ArrayList<Expr>   exprs;       // list of $-Expressions
 
+    /**
+     * Constructor, which parses $-Expressions in the string to create.
+     *
+     * @param state       Current state of the running SetlX program.
+     * @param quoted      Is the created string quoted (via @-char)?
+     * @param originalStr String read by the parser.
+     */
     public StringConstructor(final State state, final boolean quoted, String originalStr) {
         this(originalStr, new ArrayList<String>(), new ArrayList<Expr>());
 
@@ -52,7 +63,7 @@ public class StringConstructor extends Expr {
                             final String eStr = SetlString.parseString(expr.toString());
                             final Expr   exp  = ParseSetlX.parseStringToExpr(state, eStr);
                             // add inner expr to mExprs
-                            mExprs.add(exp);
+                            this.exprs.add(exp);
                         } catch (final ParserException pe) {
                             /* Doing error handling here is futile, as outer parsing run,
                              * which called this constructor, will notice via the global
@@ -92,7 +103,7 @@ public class StringConstructor extends Expr {
                         i++; // jump over next char
                     } else if (c == '$') {
                         // end outer string
-                        mFragments.add(fragment.toString());
+                        this.fragments.add(fragment.toString());
                         fragment.setLength(0);
                         // start inner expression
                         innerExpr = true;
@@ -116,25 +127,25 @@ public class StringConstructor extends Expr {
                 );
             }
             // outer string must always be appended, even if empty
-            mFragments.add(fragment.toString());
+            this.fragments.add(fragment.toString());
 
-            mFragments.trimToSize();
-            mExprs.trimToSize();
+            this.fragments.trimToSize();
+            this.exprs.trimToSize();
         } else {
-            mFragments.add(originalStr);
+            this.fragments.add(originalStr);
         }
     }
 
     private StringConstructor(final String originalStr, final ArrayList<String> fragments, final ArrayList<Expr> exprs) {
-        mOriginalStr    = originalStr;
-        mFragments      = fragments;
-        mExprs          = exprs;
+        this.originalStr    = originalStr;
+        this.fragments      = fragments;
+        this.exprs          = exprs;
     }
 
     @Override
     protected SetlString evaluate(final State state) throws SetlException {
-        final Iterator<String>  fIter   = mFragments.iterator();
-        final Iterator<Expr>    eIter   = mExprs.iterator();
+        final Iterator<String>  fIter   = fragments.iterator();
+        final Iterator<Expr>    eIter   = exprs.iterator();
         final StringBuilder     data    = new StringBuilder();
 
         // there always is at least one fragment, even if empty; add it to data
@@ -168,20 +179,13 @@ public class StringConstructor extends Expr {
         return SetlString.newSetlStringFromSB(data);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        for (final Expr expr : mExprs) {
+        for (final Expr expr : exprs) {
             expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
@@ -190,27 +194,27 @@ public class StringConstructor extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append(mOriginalStr);
+        sb.append(originalStr);
     }
 
     /* term operations */
 
     @Override
     public Value toTerm(final State state) {
-        if (mFragments.size() == 1 && mExprs.size() == 0) {
+        if (fragments.size() == 1 && exprs.size() == 0) {
             // simple string without $-expression
-            return new SetlString(mFragments.get(0));
+            return new SetlString(fragments.get(0));
         } else {
             final Term result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
-            final SetlList strList = new SetlList(mFragments.size());
-            for (final String str: mFragments) {
+            final SetlList strList = new SetlList(fragments.size());
+            for (final String str: fragments) {
                 strList.addMember(state, new SetlString(str));
             }
             result.addMember(state, strList);
 
-            final SetlList expList = new SetlList(mExprs.size());
-            for (final Expr expr: mExprs) {
+            final SetlList expList = new SetlList(exprs.size());
+            for (final Expr expr: exprs) {
                 expList.addMember(state, expr.toTerm(state));
             }
             result.addMember(state, expList);
@@ -223,7 +227,6 @@ public class StringConstructor extends Expr {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-                  boolean             quoted      = false;
             final StringBuilder       originalStr = new StringBuilder();
             final SetlList            frags       = (SetlList) term.firstMember();
             final SetlList            exps        = (SetlList) term.lastMember();
@@ -239,9 +242,6 @@ public class StringConstructor extends Expr {
             while (fIter.hasNext()) {
                 final SetlString  sstring = (SetlString) fIter.next();
                 final String      string  = sstring.getUnquotedString();
-                if ( ! quoted && string.contains("$")) {
-                    quoted = true;
-                }
                 originalStr.append(sstring.getEscapedString());
                 fragments.add(string);
 
@@ -258,11 +258,7 @@ public class StringConstructor extends Expr {
             }
             originalStr.append("\"");
             final Expr result = new StringConstructor(originalStr.toString(), fragments, exprs);
-            if (quoted) {
-                return new Quote(result);
-            } else {
-                return result;
-            }
+            return result;
         }
     }
 
@@ -272,21 +268,14 @@ public class StringConstructor extends Expr {
         }
         final SetlString        sstring     = (SetlString) value;
         final String            string      = sstring.getUnquotedString();
-        // string was quoted when it contains a $, otherwise it would have been split
-              final boolean           quoted      = string.contains("$");
         final String            originalStr = "\"" + sstring.getEscapedString() + "\"";
         final ArrayList<String> fragments   = new ArrayList<String>(1);
         fragments.add(string);
         final ArrayList<Expr>   exprs       = new ArrayList<Expr>(0);
         final Expr              result      = new StringConstructor(originalStr, fragments, exprs);
-        if (quoted) {
-            return new Quote(result);
-        } else {
-            return result;
-        }
+        return result;
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

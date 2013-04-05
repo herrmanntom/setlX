@@ -232,10 +232,10 @@ Note that to succeed a 64-bit java installation and about 6GB of free memory are
 The logic of the script is as follows:
 \begin{itemize}
 	\item First \command{make test} is executed and its result verified.
-	\item Each source file ending in \command{.stlx} inside the \command{example\_SetX\_code} folder will be executed, if a file with the same basename, but ending in \command{.stlx.reference} exists.
+	\item Each source file ending in \command{.stlx} inside the \command{example\_SetX\_code} folder will be executed, if a file with the same basename, but ending in \command{.stlx.reference} or \command{.stlx.noTermLoop.reference} exists.
 	\item If the executed program requires user input, a file with the same basename, but ending in \command{.stlx.input} must be created, including an input per line. This file will be piped into the interpreter when executing the source file.
-	\item Execution uses the \command{src} folder as working directory and starts \setlX{} with the\\
-	      \command{--predictableRandom} option, thus ensuring predictable results. 
+	\item Execution switches the working directory to the location of the example and starts \setlX{} with the\\
+	      \command{--predictableRandom} option, thus ensuring predictable results. By default, the example program gets converted to a term and back to a program before execution, using the \command{--termLoop} option. This can be prevented by using a \command{.stlx.noTermLoop.reference} file as reference.
 	\item The output (on both stdout and stderr) of the execution and the reference file are compared using diff.
 	\item When the resulting diff is empty, the next source file is executed.
 	\item Should the resulting diff file not be empty, the script stops. The diff result should then be examined.
@@ -256,10 +256,14 @@ In addition to the options documented in the manual, \setlX{} has a few `undocum
 
 \begin{itemize}
 	\param{--dump <file-name>}
-	      {Writes loaded code into a file (has no effect in interactive mode).}
+	      {Writes loaded code into a file. Has no effect in interactive mode.}
+	\param{--dumpTerm <file-name>}
+	      {Writes loaded code as term into a file. Has no effect in interactive mode.}
 	\param{--runtimeDebugging}
 	      {Exceptions, which may occur unexpectedly in the Java code (e.g. \command{NullPointerException}), are hidden from the user and instead display a generic error message.
 		When setting this option, the interpreter will print the usual Java stack trace of all unexpected exceptions and also perform a number of additional checks and may generate additional output.}
+	\param{--termLoop}
+	      {Converts loaded code into a term and back into statements, before execution and output from \command{--verbose}.  Has no effect in interactive mode.}
 \end{itemize}
 
 \section{Distribution}

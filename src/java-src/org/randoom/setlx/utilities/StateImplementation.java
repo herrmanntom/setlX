@@ -335,7 +335,7 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void getLineStart(final StringBuilder sb, final int tabs) {
+    public void appendLineStart(final StringBuilder sb, final int tabs) {
         if (printVerbose && tabs > 0) {
             final String tab = envProvider.getTab();
             for (int i = 0; i < tabs; ++i) {

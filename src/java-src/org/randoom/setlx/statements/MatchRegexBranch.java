@@ -22,72 +22,71 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'match' '(' expr ')' '{' ('regex' expr ('as' expr)? ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
-    ;
-
-implemented here as:
-                                        ====       ====        =========       =====
-                                      mPattern   mAssignTo     mCondition   mStatements
-*/
-
+/**
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'match' '(' expr ')' '{' ('regex' expr ('as' expr)? ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
+ *     ;
+ *
+ * implemented here as:
+ *                                         ====       ====        =========       =====
+ *                                       mPattern   mAssignTo     mCondition   mStatements
+ */
 public class MatchRegexBranch extends MatchAbstractScanBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchRegexBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
 
-    private final Expr        mPattern;        // pattern to match
-    private       Pattern     mRuntimePattern; // compiled pattern to match
-    private final Expr        mAssignTo;       // variable to store groups
-    private       Value       mAssignTerm;     // term of variable to store groups
-    private final Condition   mCondition;      // optional condition to confirm match
-    private final Block       mStatements;     // block to execute after match
-    private       int         mEndOffset;      // Offset of last match operation (i.e. how far match progressed the input)
+    private final Expr      pattern;        // pattern to match
+    private       Pattern   runtimePattern; // compiled pattern to match
+    private final Expr      assignTo;       // variable to store groups
+    private       Value     assignTerm;     // term of variable to store groups
+    private final Condition condition;      // optional condition to confirm match
+    private final Block     statements;     // block to execute after match
+    private       int       endOffset;      // Offset of last match operation (i.e. how far match progressed the input)
 
     public MatchRegexBranch(final State state, final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
         this(pattern, assignTo, condition, statements);
 
         // if pattern is static (fully optimized), it can be compiled now
-        final Value patternReplacement = mPattern.getReplacement();
+        final Value patternReplacement = pattern.getReplacement();
         if (patternReplacement != null) {
             try {
-                mRuntimePattern = Pattern.compile(
+                this.runtimePattern = Pattern.compile(
                     patternReplacement.getUnquotedString()
                 );
             } catch (final PatternSyntaxException pse) {
                 state.writeParserErrLn(
-                    "Error while parsing regex-pattern " + mPattern + " {\n"
+                    "Error while parsing regex-pattern " + pattern + " {\n"
                   + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
                   + "}"
                 );
                 state.addToParserErrorCount(1);
-                mRuntimePattern = null;
+                this.runtimePattern = null;
             }
         } else {
-            mRuntimePattern = null;
+            this.runtimePattern = null;
         }
     }
 
     private MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
-        mPattern        = pattern;
-        mRuntimePattern = null;
-        mAssignTo       = assignTo;
-        mAssignTerm     = null;
-        mCondition      = condition;
-        mStatements     = statements;
-        mEndOffset      = -1;
+        this.pattern        = pattern;
+        this.runtimePattern = null;
+        this.assignTo       = assignTo;
+        this.assignTerm     = null;
+        this.condition      = condition;
+        this.statements     = statements;
+        this.endOffset      = -1;
 
         // optimize pattern
-        mPattern.optimize();
+        this.pattern.optimize();
     }
 
     @Override
     public MatchResult matches(final State state, final Value term) throws SetlException {
         if (term instanceof SetlString) {
             final MatchResult result = scannes(state, (SetlString) term);
-            if (result.isMatch() && ((SetlString) term).size() == mEndOffset) {
+            if (result.isMatch() && ((SetlString) term).size() == endOffset) {
                 return result;
             }
         }
@@ -96,8 +95,8 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
-        if (mCondition != null) {
-            return mCondition.evalToBool(state);
+        if (condition != null) {
+            return condition.evalToBool(state);
         } else {
             return true;
         }
@@ -105,19 +104,19 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     @Override
     public MatchResult scannes(final State state, final SetlString string) throws SetlException {
-        Pattern pattern = null;
+        Pattern pttrn = null;
 
-        if (mRuntimePattern != null) {
-            pattern = mRuntimePattern;
+        if (runtimePattern != null) {
+            pttrn = runtimePattern;
         } else {
             final Value patternStr;
-            final Value patternReplacement = mPattern.getReplacement();
+            final Value patternReplacement = pattern.getReplacement();
             if (patternReplacement != null) {
                 // static pattern
                 patternStr = patternReplacement;
             } else {
                 // dynamic pattern
-                patternStr = mPattern.eval(state);
+                patternStr = pattern.eval(state);
             }
             if ( ! (patternStr instanceof SetlString)) {
                 throw new IncompatibleTypeException(
@@ -126,10 +125,10 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             }
             // parse pattern
             try {
-                pattern = Pattern.compile(patternStr.getUnquotedString());
+                pttrn = Pattern.compile(patternStr.getUnquotedString());
                 // store pattern if it is static
                 if (patternReplacement != null) {
-                    mRuntimePattern = pattern;
+                    runtimePattern = pttrn;
                 }
             } catch (final PatternSyntaxException pse) {
                 final LinkedList<String> errors = new LinkedList<String>();
@@ -144,35 +143,35 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         }
 
         // match pattern
-        final Matcher  m = pattern.matcher(string.getUnquotedString());
+        final Matcher  m = pttrn.matcher(string.getUnquotedString());
         final boolean  r = m.lookingAt();
         if (r) {
-            if (mAssignTo != null && mAssignTerm == null) {
-                mAssignTerm = mAssignTo.toTerm(state);
+            if (assignTo != null && assignTerm == null) {
+                assignTerm = assignTo.toTerm(state);
             }
-            mEndOffset = m.end();
-            if (mAssignTerm != null) {
+            endOffset = m.end();
+            if (assignTerm != null) {
                 final int      count  = m.groupCount() + 1;
                 final SetlList groups = new SetlList(count);
                 for (int i = 0; i < count; ++i) {
                     groups.addMember(state, new SetlString(m.group(i)));
                 }
-                return mAssignTerm.matchesTerm(state, groups);
+                return assignTerm.matchesTerm(state, groups);
             }
         } else {
-            mEndOffset = -1;
+            endOffset = -1;
         }
         return new MatchResult(r);
     }
 
     @Override
     public int getEndOffset() {
-        return mEndOffset;
+        return endOffset;
     }
 
     @Override
     public ReturnMessage exec(final State state) throws SetlException {
-        return mStatements.exec(state);
+        return statements.exec(state);
     }
 
     @Override
@@ -180,40 +179,33 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return exec(state);
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mPattern.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        pattern.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
         final List<String> tempAssigned = new ArrayList<String>();
-        if (mAssignTo != null) {
-            mAssignTo.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+        if (assignTo != null) {
+            assignTo.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempAssigned);
 
-        if (mCondition != null) {
-            mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (condition != null) {
+            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
 
-        mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
 
-        if (mAssignTo != null) {
+        if (assignTo != null) {
             // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
             for (int i = tempAssigned.size(); i > 0; --i) {
                 boundVariables.remove(preIndex + (i - 1));
@@ -225,24 +217,24 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("regex ");
 
-        sb.append(mPattern);
+        sb.append(pattern);
 
-        if (mAssignTo != null) {
+        if (assignTo != null) {
             sb.append(" as ");
-            mAssignTo.appendString(state, sb, tabs);
+            assignTo.appendString(state, sb, tabs);
         }
 
-        if (mCondition != null) {
+        if (condition != null) {
             sb.append(" | ");
-            mCondition.appendString(state, sb, tabs);
+            condition.appendString(state, sb, tabs);
         }
 
         sb.append(":");
         sb.append(state.getEndl());
-        mStatements.appendString(state, sb, tabs + 1);
+        statements.appendString(state, sb, tabs + 1);
         sb.append(state.getEndl());
     }
 
@@ -252,40 +244,44 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     public Term toTerm(final State state) {
         final Term     result   = new Term(FUNCTIONAL_CHARACTER, 4);
 
-        result.addMember(state, mPattern.toTerm(state));
+        result.addMember(state, pattern.toTerm(state));
 
-        if (mAssignTo != null) {
-            result.addMember(state, mAssignTo.toTerm(state));
+        if (assignTo != null) {
+            result.addMember(state, assignTo.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
 
-        if (mCondition != null) {
-            result.addMember(state, mCondition.toTerm(state));
+        if (condition != null) {
+            result.addMember(state, condition.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
 
-        result.addMember(state, mStatements.toTerm(state));
+        result.addMember(state, statements.toTerm(state));
 
         return result;
     }
 
     public static MatchRegexBranch termToBranch(final Term term) throws TermConversionException {
-        if (term.size() != 4 || ! (term.firstMember() instanceof SetlString)) {
+        if (term.size() != 4) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
                 final Expr pattern = TermConverter.valueToExpr(term.firstMember());
+
                 Expr assignTo = null;
                 if (! term.getMember(2).equals(new SetlString("nil"))) {
                     assignTo = TermConverter.valueToExpr(term.getMember(2));
                 }
+
                 Condition condition = null;
                 if (! term.getMember(3).equals(new SetlString("nil"))) {
                     condition = TermConverter.valueToCondition(term.getMember(3));
                 }
+
                 final Block block = TermConverter.valueToBlock(term.lastMember());
+
                 return new MatchRegexBranch(pattern, assignTo, condition, block);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

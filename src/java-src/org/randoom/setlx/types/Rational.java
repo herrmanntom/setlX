@@ -9,6 +9,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
+import java.util.Set;
 
 // This class represents a rational number
 public class Rational extends NumberValue {
@@ -89,6 +90,10 @@ public class Rational extends NumberValue {
 
     public static Rational valueOf(final BigInteger nominator, final BigInteger denominator) {
         return new Rational(nominator, denominator);
+    }
+
+    public static Rational valueOf(final long nominator, final long denominator) {
+        return new Rational(BigInteger.valueOf(nominator), BigInteger.valueOf(denominator));
     }
 
     @Override
@@ -625,6 +630,25 @@ public class Rational extends NumberValue {
                 " (it is > 127 or negative or has a denominator != 1)."
             );
         }
+    }
+
+    /* Java Code generation */
+
+    @Override
+    public void appendJavaCode(
+            final State         state,
+            final Set<String>   header,
+            final StringBuilder code,
+            final int           tabs
+    ) {
+        header.add("import " + Rational.class.getCanonicalName() + ";");
+
+        code.append(Rational.class.getSimpleName());
+        code.append(".valueOf(");
+        code.append(nominator.toString());
+        code.append(", ");
+        code.append(denominator.toString());
+        code.append(")");
     }
 
     /* comparisons */

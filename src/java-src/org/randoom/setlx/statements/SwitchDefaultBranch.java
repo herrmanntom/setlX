@@ -66,7 +66,7 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.getLineStart(sb, tabs);
+        state.appendLineStart(sb, tabs);
         sb.append("default:");
         sb.append(state.getEndl());
         mStatements.appendString(state, sb, tabs + 1);

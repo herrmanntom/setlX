@@ -46,6 +46,7 @@ public class SetlX {
     public static void main(final String[] args) {
         String              dumpFile     = null;  // file to write loaded code into
         String              dumpJavaFile = null;  // file to write loaded code converted to Java into
+        String              dumpTermFile = null;  // file to write loaded code as term into
         boolean             help         = false;
         boolean             interactive  = false;
         boolean             noExecution  = false;
@@ -98,6 +99,19 @@ public class SetlX {
                    ) {
                     help         = true;
                     dumpJavaFile = null;
+                }
+            } else if (s.equals("--dumpTerm")) {
+                dumpTermFile = "";
+                ++i; // set to next argument
+                if (i < args.length) {
+                    dumpTermFile = args[i];
+                }
+                // check for incorrect dumpTermFile contents
+                if (  dumpTermFile.equals("") ||
+                     (dumpTermFile.length() >= 2 && dumpTermFile.substring(0,2).equals("--"))
+                   ) {
+                    help         = true;
+                    dumpTermFile = null;
                 }
             } else if (s.equals("--ev")) {
                 ++i; // set to next argument
@@ -199,7 +213,8 @@ public class SetlX {
                     statement,
                     files,
                     dumpFile,
-                    dumpJavaFile
+                    dumpJavaFile,
+                    dumpTermFile
             );
             if ( ! noExecution) {
                 executeFiles(state, programs);
@@ -258,7 +273,8 @@ public class SetlX {
             final String       statement,
             final List<String> files,
             final String       dumpFile,
-            final String       dumpJavaFile
+            final String       dumpJavaFile,
+            final String       dumpTermFile
     ) {
         // parsed programs
         int nPrograms = files.size();
@@ -326,13 +342,14 @@ public class SetlX {
         }
 
         // print and/or dump programs if needed
-        if (verbose || dumpFile != null || dumpJavaFile != null) {
+        if (verbose || dumpFile != null || dumpJavaFile != null || dumpTermFile != null) {
             state.setPrintVerbose(true); // enables correct indentation etc
             final int size = programs.size();
             for (int i = 0; i < size; ++i) {
                 // get program text
                 final String program     = programs.get(i).toString(state) + state.getEndl();
                       String javaProgram = null;
+                      String programTerm = null;
 
                 if (dumpJavaFile != null) {
                     // figure out Java class name
@@ -348,6 +365,12 @@ public class SetlX {
                     final String className = dumpJavaFile.substring(0, dumpJavaFile.lastIndexOf(".java"));
 
                     javaProgram = programs.get(i).toJavaCode(state, className, PcEnvProvider.class);
+                }
+
+                if (dumpTermFile != null) {
+                    final StringBuilder sb = new StringBuilder();
+                    programs.get(i).toTerm(state).canonical(state, sb);
+                    programTerm = sb.toString();
                 }
 
                 // in verbose mode the parsed programs are echoed
@@ -371,6 +394,18 @@ public class SetlX {
                 if (dumpJavaFile != null) {
                     try {
                         WriteFile.writeToFile(state, javaProgram, dumpJavaFile, /* append = */ (i > 0) );
+                    } catch (final FileNotWriteableException fnwe) {
+                        state.errWriteLn(fnwe.getMessage());
+
+                        System.exit(EXIT_ERROR);
+
+                    }
+                }
+
+                // append programs term equivalent to the dumpJavaFile
+                if (dumpTermFile != null) {
+                    try {
+                        WriteFile.writeToFile(state, programTerm, dumpTermFile, /* append = */ (i > 0) );
                     } catch (final FileNotWriteableException fnwe) {
                         state.errWriteLn(fnwe.getMessage());
 

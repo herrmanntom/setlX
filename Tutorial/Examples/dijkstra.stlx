@@ -53,4 +53,13 @@ test := procedure(file, source, target) {
     print("distance from $source$ to $target$ is $dist[target]$");
 };
 
+test2 := procedure(source, target) {
+    g    := graph(5, { [1, {[5,3], [3,5]}], [5, {[2,1]}], [3, {[2,2], [4,7]}], [2, {[4,4]}], [4, {}] });
+    dist := (g.shortestPath)(source);
+    print(dist);
+};
+
 test("dijkstraData.txt", 1, 113);
+test2(1, 5);
+
+

@@ -8,6 +8,7 @@ export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"
+setlXOptions="--predictableRandom --runtimeDebugging" # and --termLoop on most examples!
 diffDir="$PWD"
 exampleDirs=("example_SetlX_code" "Tutorial/Examples")
 
@@ -74,7 +75,7 @@ for path in "${examples[@]}"
         continue
     fi
 
-    if [ ! -e "$path.reference" ]
+    if [ ! -e "$path.reference" -a ! -e "$path.noTermLoop.reference" ]
       then
         examplesManualTest=("${examplesManualTest[@]}" "$path")
     else
@@ -104,18 +105,27 @@ for path in "${examplesAutomaticTest[@]}"
     started=$(bc <<< "$started + 1")
     echo -e "Starting test $started/$count.\n"
     message="Test of file '$path' ($started/$count)"
+    
+    if [ -e "$path.noTermLoop.reference" ]
+      then
+        referenceFile="$path.noTermLoop.reference"
+        setlXOpts="$setlXOptions"
+    else
+        referenceFile="$path.reference"
+        setlXOpts="$setlXOptions --termLoop"
+    fi
 
     (
         # execute with setlX
         if [ -e "$path.input" ]
           then
-            cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+            cd "$directoryname"; cat "$filename.input" | "$setlXlaunchScript" $setlXOpts "$filename" > "$outputFile" 2>&1; cd - >/dev/null
         else
-            cd "$directoryname"; "$setlXlaunchScript" --predictableRandom --runtimeDebugging "$filename" > "$outputFile" 2>&1; cd - >/dev/null
+            cd "$directoryname"; "$setlXlaunchScript" $setlXOpts "$filename" > "$outputFile" 2>&1; cd - >/dev/null
         fi
     )&
     pids[$threadID]=$!
-    references[$threadID]="$path.reference"
+    references[$threadID]="$referenceFile"
     outputFiles[$threadID]="$outputFile"
     filenames[$threadID]="$filename"
     pathnames[$threadID]="$path"

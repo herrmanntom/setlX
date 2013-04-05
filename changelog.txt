@@ -2,6 +2,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 
 ---v1.6.1--- 2013-0x-xx
  + added resetRandom() function, which reseeds the random number generator
+ + improve automated tests to include term conversion
 
 ---v1.6.0--- 2013-03-24
  + integrated graphics library by Markus Jagiella

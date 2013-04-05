@@ -350,6 +350,21 @@ public class SetlX {
             );
         }
 
+        if (termLoop) {
+            for (int i = 0; i < programs.size(); ++i) {
+                try {
+                    programs.set(i, (Block) TermConverter.valueToStatement(programs.get(i).toTerm(state)));
+                } catch (final TermConversionException tce) {
+                    state.errWriteLn("Error during termLoop!");
+                    if (state.isRuntimeDebuggingEnabled()) {
+                        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                        tce.printStackTrace(new PrintStream(out));
+                        state.errWrite(out.toString());
+                    }
+                }
+            }
+        }
+
         // print and/or dump programs if needed
         if (verbose || dumpFile != null || dumpJavaFile != null || dumpTermFile != null) {
             state.setPrintVerbose(true); // enables correct indentation etc
@@ -423,21 +438,6 @@ public class SetlX {
                 }
             }
             state.setPrintVerbose(false);
-        }
-
-        if (termLoop) {
-            for (int i = 0; i < programs.size(); ++i) {
-                try {
-                    programs.set(i, (Block) TermConverter.valueToStatement(programs.get(i).toTerm(state)));
-                } catch (final TermConversionException tce) {
-                    state.errWriteLn("Error during termLoop!");
-                    if (state.isRuntimeDebuggingEnabled()) {
-                        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        tce.printStackTrace(new PrintStream(out));
-                        state.errWrite(out.toString());
-                    }
-                }
-            }
         }
 
         return programs;

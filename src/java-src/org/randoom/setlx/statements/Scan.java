@@ -21,35 +21,36 @@ import org.randoom.setlx.utilities.VariableScope;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'scan' '(' expr ')' ('using' variable)? '{' [...] '}'
-    ;
-
-implemented with different classes which inherit from MatchAbstractScanBranch:
-                 ====              ========       =====
-                 mExpr             mPosVarm    mBranchList
-*/
-
+/**
+ * Implementation for the SetlX scan statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'scan' '(' expr ')' ('using' variable)? '{' [...] '}'
+ *     ;
+ *
+ * implemented with different classes which inherit from MatchAbstractScanBranch:
+ *                  ====              ========       =====
+ *                  mExpr             mPosVarm    mBranchList
+ */
 public class Scan extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^scan";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Scan.class);
 
-    private final Expr                          mExpr;
-    private final Variable                      mPosVar;
-    private final List<MatchAbstractScanBranch> mBranchList;
+    private final Expr                          expr;
+    private final Variable                      posVar;
+    private final List<MatchAbstractScanBranch> branchList;
 
     public Scan(final Expr expr, final Variable posVar, final List<MatchAbstractScanBranch> branchList) {
-        mExpr       = expr;
-        mPosVar     = posVar;
-        mBranchList = branchList;
+        this.expr       = expr;
+        this.posVar     = posVar;
+        this.branchList = branchList;
     }
 
     @Override
     protected ReturnMessage execute(final State state) throws SetlException {
-        final Value value = mExpr.eval(state);
+        final Value value = expr.eval(state);
         if ( ! (value instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "The value '" + value + "' is not a string and cannot be scaned."
@@ -85,7 +86,7 @@ public class Scan extends Statement {
                 position.addMember(state, column);
 
                 // find branch which matches largest string
-                for (final MatchAbstractScanBranch br : mBranchList) {
+                for (final MatchAbstractScanBranch br : branchList) {
                     final MatchResult result = br.scannes(state, string);
                     if (result.isMatch()) {
                         final int offset = br.getEndOffset();
@@ -95,8 +96,8 @@ public class Scan extends Statement {
                             state.setScope(innerScope);
 
                             // put current position into scope
-                            if (mPosVar != null) {
-                                mPosVar.assignUncloned(state, position);
+                            if (posVar != null) {
+                                posVar.assignUncloned(state, position);
                             }
 
                             // put all matching variables into scope
@@ -123,8 +124,8 @@ public class Scan extends Statement {
                     // force match variables to be local to this block
                     innerScope.setWriteThrough(false);
                     // put current position into scope
-                    if (mPosVar != null) {
-                        mPosVar.assignUncloned(state, position);
+                    if (posVar != null) {
+                        posVar.assignUncloned(state, position);
                     }
                     // put all matching variables into current scope
                     largestMatchResult.setAllBindings(state);
@@ -182,26 +183,19 @@ public class Scan extends Statement {
         }
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* The Variable in this statement get assigned temporarily.
            Collect it into a temporary list and remove it again before returning. */
         final List<String> tempAssigned = new ArrayList<String>();
-        if (mPosVar != null) {
-            mPosVar.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+        if (posVar != null) {
+            posVar.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }
         final int preBound = boundVariables.size();
         boundVariables.addAll(tempAssigned);
@@ -209,7 +203,7 @@ public class Scan extends Statement {
         // binding inside an scan are only valid if present in all branches
         // and last branch is an default-branch
         List<String> boundHere = null;
-        for (final MatchAbstractBranch br : mBranchList) {
+        for (final MatchAbstractBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
@@ -223,7 +217,7 @@ public class Scan extends Statement {
         while (boundVariables.size() > preBound) {
             boundVariables.remove(boundVariables.size() - 1);
         }
-        if (mBranchList.get(mBranchList.size() - 1) instanceof MatchDefaultBranch) {
+        if (branchList.get(branchList.size() - 1) instanceof MatchDefaultBranch) {
             boundHere.removeAll(tempAssigned);
             boundVariables.addAll(boundHere);
         }
@@ -235,15 +229,15 @@ public class Scan extends Statement {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
         sb.append("scan (");
-        mExpr.appendString(state, sb, 0);
+        expr.appendString(state, sb, 0);
         sb.append(") ");
-        if (mPosVar != null) {
+        if (posVar != null) {
             sb.append("using ");
-            mPosVar.appendString(state, sb, 0);
+            posVar.appendString(state, sb, 0);
         }
         sb.append("{");
         sb.append(state.getEndl());
-        for (final MatchAbstractBranch br : mBranchList) {
+        for (final MatchAbstractBranch br : branchList) {
             br.appendString(state, sb, tabs + 1);
         }
         state.appendLineStart(sb, tabs);
@@ -256,25 +250,25 @@ public class Scan extends Statement {
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
-        if (mPosVar != null) {
-            result.addMember(state, mPosVar.toTerm(state));
+        if (posVar != null) {
+            result.addMember(state, posVar.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
 
-        result.addMember(state, mExpr.toTerm(state));
+        result.addMember(state, expr.toTerm(state));
 
-        final SetlList branchList = new SetlList(mBranchList.size());
-        for (final MatchAbstractBranch br: mBranchList) {
-            branchList.addMember(state, br.toTerm(state));
+        final SetlList bList = new SetlList(branchList.size());
+        for (final MatchAbstractBranch br: branchList) {
+            bList.addMember(state, br.toTerm(state));
         }
-        result.addMember(state, branchList);
+        result.addMember(state, bList);
 
         return result;
     }
 
     public static Scan termToStatement(final Term term) throws TermConversionException {
-        if (term.size() != 3 || ! (term.firstMember() instanceof Term || ! (term.lastMember() instanceof SetlList))) {
+        if (term.size() != 3 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {

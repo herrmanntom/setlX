@@ -145,7 +145,9 @@ public class TermConverter {
                     // special cases
                     final Value specialValue = valueTermToValue(value);
 
-                    if (specialValue instanceof Procedure) {
+                    if (specialValue == Om.OM) {
+                        return new ValueExpr(specialValue);
+                    } else if (specialValue instanceof Procedure) {
                         return new ProcedureConstructor((Procedure) specialValue);
                     } else if (specialValue instanceof SetlClass) {
                         return new ValueExpr(specialValue);

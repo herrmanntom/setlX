@@ -392,7 +392,7 @@ public class SetlClass extends Value {
 
         result.addMember(state, initBlock.toTerm(state));
         if (getStaticBlock() != null) {
-            result.addMember(state, initBlock.toTerm(state));
+            result.addMember(state, staticBlock.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }

@@ -1,23 +1,23 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v1.6.1--- 2013-0x-xx
+---v1.6.1--- 2013-04-07 (unreleased)
  + added resetRandom() function, which reseeds the random number generator
  + improve automated tests to include term conversion
 
----v1.6.0--- 2013-03-24
+---v1.6.0--- 2013-03-24 (unreleased)
  + integrated graphics library by Markus Jagiella
  * Note: setlX launcher scripts need to be updated
  + some performance improvements
  * refactored Boolean expressions and some other bits and pieces
 
----v1.5.1--- 2013-03-10
+---v1.5.1--- 2013-03-10 (unreleased)
  + add syntax highlighting definition for gedit
  + moved SETLX_LIBRARY_PATH definition into launcher script
  + updated antlr to v4.0, which should improve parser error messages
  + simplified PreDefinedFunction API a little bit
  # fixed some PDF layout issues
 
----v1.5.0--- 2013-02-23
+---v1.5.0--- 2013-02-23 (unreleased)
  + added hypot(numberValue, numberValue) and atan2(numberValue, numberValue) functions
  + make predefined math-functions (e.g. exp(x), sin(x)) overloadable in objects
  + eliminated explicit "this" parameter for object-methods
@@ -25,19 +25,19 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  # fix some bugs when accessing methods of objects
  # fix crash of optimizer when code contains syntax errors
 
----v1.4.99999--- 2013-02-12
+---v1.4.99999--- 2013-02-12 (unreleased)
  + removed global definitions ('var')
  + changed class definition syntax
 
----v1.4.9999--- 2013-02-10
+---v1.4.9999--- 2013-02-10 (unreleased)
  + added nCPUs() functions, returning the number of CPUs (/cores) in the system
  + allow overloading of more functions for objects
 
----v1.4.999--- 2013-02-05
+---v1.4.999--- 2013-02-05 (unreleased)
  + implementation of object orientation extension almost feature complete
    (missing a number of overloadable operators)
 
----v1.4.99--- 2013-02-03
+---v1.4.99--- 2013-02-03 (unreleased)
  + first iteration of object orientation extension
  + use multithreaded test script
  + add latex source for tutorial

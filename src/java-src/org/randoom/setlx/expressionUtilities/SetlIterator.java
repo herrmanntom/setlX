@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.AssignableExpression;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
@@ -18,54 +19,68 @@ import org.randoom.setlx.utilities.VariableScope;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-grammar rule:
-iteratorChain
-    : iterator                       (',' iterator)*
-    ;
-
-iterator
-    : assignable 'in' expr
-    ;
-
-implemented here as:
-      ==========      ====        ||      ========
-      assignable   collection     ||        next
-*/
-
+/**
+ * This class represents a chainable SetlX iterator element.
+ *
+ * grammar rules:
+ * iteratorChain
+ *     : iterator                       (',' iterator)*
+ *     ;
+ *
+ * iterator
+ *     : assignable 'in' expr
+ *     ;
+ *
+ * implemented here as:
+ *       ==========      ====        ||      ========
+ *       assignable   collection     ||        next
+ */
 public class SetlIterator extends CodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIterator.class);
 
-    private final Expr          assignable; // simple variable or a list (hopefully only of (lists of) variables)
-    private final Expr          collection; // should be Set/List
-    private       SetlIterator  next;       // next iterator in iteratorChain
+    private final AssignableExpression assignable;
+    private final Expr                 collection;
+    private       SetlIterator         next;       // next iterator in iteratorChain
 
-    public SetlIterator(final Expr assignable, final Expr collection) {
+    public SetlIterator(final AssignableExpression assignable, final Expr collection) {
         this(assignable, collection, null);
     }
 
-    private SetlIterator(final Expr assignable, final Expr collection, final SetlIterator next) {
+    private SetlIterator(final AssignableExpression assignable, final Expr collection, final SetlIterator next) {
         this.assignable = assignable;
         this.collection = collection;
         this.next       = next;
     }
 
-    // adds next iterator to end of current iterator chain
-    public void add(final SetlIterator i) {
+    /**
+     * Add next iterator to end of current iterator chain.
+     *
+     * @param nextIterator Iterator element to add.
+     */
+    public void add(final SetlIterator nextIterator) {
         if (next == null) {
-            next = i;
+            next = nextIterator;
         } else {
-            next.add(i);
+            next.add(nextIterator);
         }
     }
 
-    /* executes container in scope created by this iteration
-       note: resets to outer scope after iteration is finished!
-       note: each iterator introduces a new scope to allow its iteration
-             variable to be local
-       note: variables inside the whole iteration are not _not_ local
-             all will be written `through' these inner scopes                 */
+    /**
+     * Evaluate this iteration, by executing provided container in scope created
+     *  by this iteration.
+     *
+     * Note: Resets to outer scope after iteration is finished!
+     * Note: Each iterator introduces a new scope to allow its iteration
+     *       variable to be local.
+     * Note: Variables inside the whole iteration are not _not_ local
+     *       and will be written `through' these inner scopes.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param exec           Code fragments inside this specific iteration.
+     * @return               Result of the evaluation.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public ReturnMessage eval(final State state, final SetlIteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = state.getScope();
         try {
@@ -81,13 +96,15 @@ public class SetlIterator extends CodeFragment {
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
+    /**
+     * Gather all bound and unbound variables in this fragment and its siblings.
+     * Optimizes this fragment, if this can be safely done.
+     *
+     * @param container        Code fragments inside this specific iteration.
+     * @param boundVariables   Variables "assigned" in this fragment.
+     * @param unboundVariables Variables not present in bound when used.
+     * @param usedVariables    Variables present in bound when used.
+     */
     public void collectVariablesAndOptimize (
         final SetlIteratorExecutionContainer container,
         final List<String>             boundVariables,
@@ -116,6 +133,7 @@ public class SetlIterator extends CodeFragment {
             boundVariables.remove(preIndex + (i - 1));
         }
     }
+
     @Override
     public void collectVariablesAndOptimize (
         final List<String>             boundVariables,
@@ -165,6 +183,9 @@ public class SetlIterator extends CodeFragment {
                 }
 
                 final Expr      assignable  = TermConverter.valueToExpr(term.firstMember());
+                if ( ! (assignable instanceof AssignableExpression)) {
+                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                }
 
                 final Expr      collection  = TermConverter.valueToExpr(term.getMember(2));
 
@@ -172,7 +193,7 @@ public class SetlIterator extends CodeFragment {
                 if (! term.lastMember().equals(new SetlString("nil"))) {
                     iterator    = SetlIterator.valueToIterator(term.lastMember());
                 }
-                return new SetlIterator(assignable, collection, iterator);
+                return new SetlIterator((AssignableExpression) assignable, collection, iterator);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
@@ -189,6 +210,7 @@ public class SetlIterator extends CodeFragment {
             if (state.isExecutionStopped) {
                 throw new StopExecutionException("Interrupted");
             }
+
             final Value iterationValue = collection.eval(state); // trying to iterate over this value
             if (iterationValue instanceof CollectionValue) {
                 final CollectionValue   coll        = (CollectionValue) iterationValue;

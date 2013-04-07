@@ -9,8 +9,18 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
+/**
+ * Base class for all SetlX statements.
+ */
 public abstract class Statement extends CodeFragment {
 
+    /**
+     * Execute this statement.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Result of the execution (e.g. return value, continue, etc).
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public          ReturnMessage exec(final State state) throws SetlException {
         if (state.isDebugModeActive && ! state.isDebugPromptActive()) {
             DebugPrompt.prompt(state, this);
@@ -21,15 +31,15 @@ public abstract class Statement extends CodeFragment {
         }
     }
 
+    /**
+     * Execute-method to be implemented by classes representing actual statements.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Result of the execution (e.g. return value, continue, etc).
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     protected abstract ReturnMessage execute(final State state) throws SetlException;
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public abstract void collectVariablesAndOptimize (
         final List<String> boundVariables,

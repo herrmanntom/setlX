@@ -11,28 +11,33 @@ import org.randoom.setlx.utilities.State;
 import java.math.BigInteger;
 import java.util.Set;
 
-// This class represents a rational number
+/**
+ * This class represents a rational number.
+ */
 public class Rational extends NumberValue {
+
+    public  final static    Rational    ZERO              = new Rational(0);
+    public  final static    Rational    ONE               = new Rational(1);
+    public  final static    Rational    TWO               = new Rational(2);
+    public  final static    Rational    THREE             = new Rational(3);
+    public  final static    Rational    FOUR              = new Rational(4);
+    public  final static    Rational    FIVE              = new Rational(5);
+    public  final static    Rational    SIX               = new Rational(6);
+    public  final static    Rational    SEVEN             = new Rational(7); // of nine?
+    public  final static    Rational    EIGHT             = new Rational(8);
+    public  final static    Rational    NINE              = new Rational(9);
+    public  final static    Rational    TEN               = new Rational(10);
+
+    private final static    Rational[]  NUMBERS           = {ZERO,  ONE,  TWO, THREE,
+                                                             FOUR,  FIVE, SIX, SEVEN,
+                                                             EIGHT, NINE, TEN };
+
+    private final static    BigInteger  INTEGER_MAX_VALUE = BigInteger.valueOf(Integer.MAX_VALUE);
+    private final static    BigInteger  INTEGER_MIN_VALUE = BigInteger.valueOf(Integer.MIN_VALUE);
 
     private final           BigInteger  nominator;
     private final           BigInteger  denominator;
     private final           boolean     isInteger;
-
-    public  final static    Rational    ZERO            = new Rational(0);
-    public  final static    Rational    ONE             = new Rational(1);
-    public  final static    Rational    TWO             = new Rational(2);
-    public  final static    Rational    THREE           = new Rational(3);
-    public  final static    Rational    FOUR            = new Rational(4);
-    public  final static    Rational    FIVE            = new Rational(5);
-    public  final static    Rational    SIX             = new Rational(6);
-    public  final static    Rational    SEVEN           = new Rational(7); // of nine?
-    public  final static    Rational    EIGHT           = new Rational(8);
-    public  final static    Rational    NINE            = new Rational(9);
-    public  final static    Rational    TEN             = new Rational(10);
-
-    private final static    Rational[]  NUMBERS         = {ZERO,  ONE,  TWO, THREE,
-                                                           FOUR,  FIVE, SIX, SEVEN,
-                                                           EIGHT, NINE, TEN };
 
     private Rational(final long number) {
         this(BigInteger.valueOf(number));
@@ -44,9 +49,14 @@ public class Rational extends NumberValue {
         this.isInteger      = true;
     }
 
-    // This constructor creates a new rational number with nominator n and
-    // denominator d.  Care is taken, that the denominator is always positive
-    // and that the rational number is in lowest terms.
+    /**
+     * This constructor creates a new rational number with nominator n and
+     * denominator d.  Care is taken, that the denominator is always positive
+     * and that the rational number is in lowest terms.
+     *
+     * @param n Nominator of the new rational number.
+     * @param d Denominator of the new rational number.
+     */
     private Rational(BigInteger n, BigInteger d) {
         if (d.signum() == -1) {
             n = n.negate();
@@ -157,7 +167,7 @@ public class Rational extends NumberValue {
     public boolean isProbablePrime() {
         if ( ! isInteger ) {
             return false;
-        } else if (nominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0) {
+        } else if (nominator.compareTo(INTEGER_MAX_VALUE) < 0) {
             return nominator.isProbablePrime(15);
         }
         return nominator.isProbablePrime(30);
@@ -218,8 +228,8 @@ public class Rational extends NumberValue {
     @Override
     public boolean jIntConvertable() {
         return (isInteger &&
-                nominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) < 0 &&
-                nominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) > 0
+                nominator.compareTo(INTEGER_MAX_VALUE) < 0 &&
+                nominator.compareTo(INTEGER_MIN_VALUE) > 0
                );
     }
 
@@ -233,11 +243,11 @@ public class Rational extends NumberValue {
                 " to an integer as the denominator is not 1."
             );
         }
-        if (nominator.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0 ||
-            nominator.compareTo(BigInteger.valueOf(Integer.MIN_VALUE)) < 0)
+        if (nominator.compareTo(INTEGER_MAX_VALUE) > 0 ||
+            nominator.compareTo(INTEGER_MIN_VALUE) < 0)
         {
             throw new NumberToLargeException(
-                "The absolute value of " + nominator + " is too large or to small for " +
+                "The value of " + nominator + " is too large or to small for " +
                 "this operation."
             );
         } else {

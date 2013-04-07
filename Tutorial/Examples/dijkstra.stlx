@@ -1,0 +1,56 @@
+class graph(numberNodes, edges) {
+    mNumberNodes := numberNodes;
+    mEdges       := edges;
+
+  static {
+    // Dijkstra's algorithm for computing the shortest path function.
+    shortestPath := procedure(source) {
+        oo   := mathConst("Infinity");
+        dist := { [ x, oo ]: x in [1 .. mNumberNodes] };
+        dist[source] := 0;
+        fringe  := { [0, source] };
+        visited := {};
+        while (fringe != {}) {
+            [d, u] := first(fringe);
+            fringe -= { [d, u] };
+            for ([v,l] in mEdges[u] | !(v in visited)) {
+                if (d + l < dist[v]) {
+                    dvOld := dist[v];
+                    dvNew := d + l;
+                    dist[v] := dvNew;
+                    fringe -= { [dvOld, v] };
+                }
+                fringe += { [dist[v], v] };
+            }
+            visited += { u };
+        }
+        return dist;
+    };
+  }
+}
+
+// Read a graph as nodes and edges.
+readGraph := procedure(file) {
+    lines       := readFile(file);
+    numberNodes := #lines;
+    edges       := [ {} : _ in [1 .. numberNodes] ]; 
+    for (l in lines) {
+        numbers := split(l, " ");
+        x       := int(numbers[1]);
+        numberEdges := (#numbers - 1) / 2;
+        for (i in [1 .. numberEdges]) {
+            y := int(numbers[2 * i]);
+            w := int(numbers[2 * i + 1]);
+            edges[x] += { [y, w] };
+        }
+    }
+    return graph(numberNodes, edges);
+};
+
+test := procedure(file, source, target) {
+    g    := readGraph(file);
+    dist := g.shortestPath(source);
+    print("distance from $source$ to $target$ is $dist[target]$");
+};
+
+test("dijkstraData.txt", 1, 113);

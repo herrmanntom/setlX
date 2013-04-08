@@ -1,19 +1,19 @@
-findPalindrom := procedure(file) {
+findPalindrome := procedure(file) {
     all := split(join(readFile(file), "\n"), '[^a-zA-Z]+');
-    palindroms := {};
+    palindromes := {};
     for (s in all) {
         match (s) {
-            regex '[a-zA-Z]+' as c | isPalindrom(c[1]): 
-                  palindroms += { c[1] };
+            regex '[a-zA-Z]+' as c | isPalindrome(c[1]): 
+                  palindromes += { c[1] };
             regex '.|\n': 
                   // skip rest
         }
     }
-    return palindroms;
+    return palindromes;
     
 };
 
-isPalindrom := procedure(s) {
+isPalindrome := procedure(s) {
     if (#s <= 2) {
         return false;
     }
@@ -21,4 +21,4 @@ isPalindrom := procedure(s) {
     return +/ [s[n - i] : i in [1 .. #s]] == s;
 };
 
-print(findPalindrom("alice.txt"));
+print(findPalindrome("alice.txt"));

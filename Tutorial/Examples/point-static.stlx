@@ -1,0 +1,31 @@
+class point(x, y) {
+    mX := x;
+    mY := y;
+
+  static {
+    distance := procedure(p) {
+        return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2);
+    };
+    getX := procedure() {
+        return mX;
+    };
+    getY := procedure() {
+        return mY;
+    };
+    setX := procedure(x) {
+        this.mX := x;
+    };
+    setY := procedure(y) {
+        this.mY := y;
+    };
+    toStr := procedure() {
+        return "<$mX$, $mY$>";
+    };
+  }
+}
+
+origin := point(0, 0);
+print(origin.toStr());
+other  := point(3, 4);
+print(other.toStr());
+print( origin.distance(other) );

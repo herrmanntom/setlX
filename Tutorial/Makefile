@@ -6,7 +6,9 @@ pdf: tutorial.pdf
 %.ps:  %.dvi
 	dvips -t a4 -o $@ $<
 
-%.dvi: %.tex
+%.dvi: tutorial.tex backtracking.tex basics.tex closures.tex introduction.tex \
+       oo.tex predefined-functions.tex regular-expressions.tex statements.tex \
+       tutorial.tex types.tex
 	latex $<
 	if [ -f $@ ]; then latex $< ; fi
 	if [ -f $@ ]; then latex $< ; fi

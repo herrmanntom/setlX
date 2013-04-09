@@ -10,6 +10,11 @@ Ivan Bratko.
 \newblock {\em {PROLOG} Programming for Artificial Intelligence}.
 \newblock Addison-Wesley, 2nd edition, 1990.
 
+\bibitem[Dij59]{dijkstra:59}
+Edsger~W. Dijkstra.
+\newblock A note on two problems in connexion with graphs.
+\newblock {\em Numerische Mathematik}, 1:269--271, 1959.
+
 \bibitem[FM08]{flanagan:2008}
 David Flanagan and Yukihiro Matsumoto.
 \newblock {\em The Ruby Programming Language}.
@@ -28,7 +33,7 @@ John~E. Hopcroft, Rajeev Motwani, and Jeffrey~D. Ullman.
 \bibitem[Kle09]{klein:2009}
 Gerwin Klein.
 \newblock {JFlex User's Manual: Version 1.4.3}.
-\newblock Technical report, 2009.
+\newblock Technical report, Technische Universit\"at M\"unchen, 2009.
 \newblock Available at: \texttt{http://jflex.de/jflex.pdf}.
 
 \bibitem[Les75]{lesk:1975}
@@ -36,6 +41,11 @@ Michael~E. Lesk.
 \newblock Lex -- {A} lexical analyzer generator.
 \newblock Comp. Sci. Tech. Rep. No.~39, Bell Laboratories, Murray Hill, New
   Jersey, 1975.
+
+\bibitem[MTH90]{milner:90}
+Robin Milner, Mads Tofte, and Robert Harper.
+\newblock {\em The Definition of Standard ML}.
+\newblock MIT Press, 1990.
 
 \bibitem[Sch70]{schwartz:1970}
 Jacob~T. Schwartz.
@@ -66,9 +76,24 @@ Leon Sterling and Ehud Shapiro.
 \newblock {\em The Art of Prolog}.
 \newblock MIT Press, 1986.
 
+\bibitem[SS94]{sterling:94}
+Leon Sterling and Ehud~Y. Shapiro.
+\newblock {\em The Art of Prolog - Advanced Programming Techniques, 2nd Ed}.
+\newblock MIT Press, 1994.
+
+\bibitem[SW11]{sedgewick:11}
+Robert Sedgewick and Kevin Wayne.
+\newblock {\em Algorithms}.
+\newblock Addison-Wesley, 4th edition, 2011.
+
 \bibitem[vR95]{vanRossum:95}
 Guido van Rossum.
 \newblock Python tutorial.
 \newblock Technical report, Centrum Wiskunde \& Informatica, Amsterdam, 1995.
+
+\bibitem[WS92]{Wall92}
+L.~Wall and R.~L. Schwartz.
+\newblock {\em Programming Perl.}
+\newblock O'Reilly and Assoc., 1992.
 
 \end{thebibliography}

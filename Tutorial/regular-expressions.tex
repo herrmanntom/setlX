@@ -1,27 +1,28 @@
 \chapter{Regular Expressions \label{chapter:regular-expressions}}
-\emph{Regular expressions} are a very powerful tool when processing strings.
+\href{http://en.wikipedia.org/wiki/Regular_expression}{\emph{Regular expressions}}
+are a very powerful tool when processing strings.
 Therefore, most modern programming languages support them.  \setlx\ is no exception.  
-As \setlx\ is based on \textsl{Java}, the syntax of the regular expressions supported by
-\setlx\ is the same as the syntax of regular expressions in \textsl{Java}.  Therefore, it
-is not necessary to describe the syntax of regular expressions in this document.  The
-documentation of the \textsl{Java} class \texttt{java.util.regex.Pattern} which can
+As the \setlx\ interpreter is impemented in \textsl{Java}, the syntax of the regular expressions supported by
+\setlx\ is the same as the syntax of regular expressions in \textsl{Java}.  Therefore, 
+we will not to describe the syntax of regular expressions in this document.  The
+documentation of the \textsl{Java} class \texttt{java.util.regex.Pattern}, which can
 be found at
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}{\texttt{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}}
+\href{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}{\texttt{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}},
 \\[0.2cm]
 contains a concise description of the syntax and semantics of regular expressions.
 For a more general discussion of the use of regular expression, the book of Friedl
 \cite{friedl:2006} is an excellent choice.
-Therefore, we will confine ourselves to show how regular expressions can be used in
-\setlx.  In \setlx, there are two control structures that make use of regular expressions.
+Here, we will confine ourselves to show how regular expressions can be used in
+\setlx programs.  \setlx provides two control structures that make use of regular expressions.
 The first is the \texttt{match} statement and the second is the \texttt{scan} statement.
 
 \section{Using Regular Expressions in a \texttt{match} Statement}
 Instead of the keyword ``\texttt{case}'', a branch in a \texttt{match} statement can begin
 with the keyword ``\texttt{regex}''.  Figure \ref{fig:regexp.stlx} shows the definition of
-a function named \texttt{classify} that can takes a string and tries to classify this
-string as either a word or a number.  
+a function named \texttt{classify} that takes a string as its argument
+and tries to classify this string as either a word or a number.  
 
 
 \begin{figure}[!ht]
@@ -50,8 +51,8 @@ string as either a word or a number.
 \end{figure}
 
 Note that we have specified the regular expressions
-using literal strings, i.e.~strings enclosed in single quote characters. This is necessary
-in line 5, since the regular expression \\[0.2cm]
+using literal strings, i.e.~strings enclosed in single quote characters. This is necessary,
+since the regular expression in line 5 \\[0.2cm]
 \hspace*{1.3cm}
 \verb|'\s+'|
 \\[0.2cm]
@@ -94,7 +95,7 @@ the area code, the substring ``\texttt{6673}'' is the company code, and finally
 \hspace*{1.3cm}
 \verb|\+([0-9]+)-([0-9]+)-([0-9]+)-([0-9]+)|
 \\[0.2cm]
-specifies this format and the different blocks of parentheses correspond to the diffferent
+specifies this format and the different blocks of parentheses correspond to the different
 codes. If  a phone number is given and the task is to
 extract, say, the country code and the area code, then this can be achieved with the 
 \setlx\ function shown in Figure \ref{fig:extract-phone-code.stlx}.
@@ -140,11 +141,11 @@ against the pattern
 \texttt{[\_, c, a, \_, \_]}.
 \\[0.2cm]
 Therefore, if the match is successful, the variable \texttt{c} will contain the country
-code and the variable \texttt{a} is instantiated with the country code.  The groups of
+code and the variable \texttt{a} is set to the area code.  The groups of
 regular expressions that are not needed are matched against the anonymous variable
 ``\texttt{\_}''. 
 
-If there a regular expression contains  nested groups of parentheses, then the order of
+If a regular expression contains  nested groups of parentheses, then the order of
 the groups is determined by the left parenthesis of a group.  For example, the regular
 expression 
 \\[0.2cm]
@@ -239,6 +240,12 @@ reasons:
       \end{enumerate}
       Concatenating any number of these parts will never produce a string containing the
       substring ``\texttt{*/}''.
+\item Lastly, we have to ensure that we can match a string of the form
+      ``\texttt{***}$\cdots$\texttt{***/}'' that ends the comment.  The problem here is that
+      we need not only be able to recognize the string ``\texttt{*/}'' but also have to deal with
+      the case that this string is preceded by an arbitrary number of ``\texttt{*}''-characters,
+      since the regular expression \verb"([^*]|\*+[^*/])*" does not accept any trailing
+      ``\texttt{*}''-characters that are followed by the string ``\texttt{*/}''.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -278,8 +285,10 @@ If the code shown in Figure \ref{fig:find-comments.stlx} is stored in the file
 \texttt{setlx find-comments.stlx --params file.stlx}
 \\[0.2cm]
 The option ``\texttt{--params}'' creates the global variable \texttt{params} that contains
-a list of length one.  The first element of this list is the string
-``\texttt{file.stlx}''.  Therefore, the \texttt{for} loop in line 11 will call the
+a list containing all the remaining arguments given to the program.   In this case, there is just
+one argument, which is the string ``\texttt{file.stlx}''.   Therefore, \texttt{params} is a list
+of length one.  The first element of this list is the string
+``\texttt{file.stlx}''.  Hence the \texttt{for} loop in line 11 will call the
 function \texttt{printComments} with the string ``\texttt{file.stlx}''.  If we invoke the
 program using the command
 \\[0.2cm]
@@ -292,7 +301,9 @@ instead, then the function \texttt{printComments} will be called for all files e
 \subsection{Conditions in \texttt{match} Statements}
 A clause of a \texttt{match} statement can contain an optional Boolean condition that is
 separated from the regular expression by the string ``\texttt{|}''.   Figure
-\ref{fig:find-palindrom.stlx} shows a program to search for palindroms in a given file.
+\ref{fig:find-palindrome.stlx} shows a program to search for 
+\href{http://en.wikipedia.org/wiki/Palindrome}{\emph{palindromes}} 
+in a given file.
 Line 6 shows how a condition can be attached to a \texttt{regex} clause. The regular
 expression 
 \\[0.2cm]
@@ -300,7 +311,7 @@ expression
 \verb|'[a-zA-Z]+'|
 \\[0.2cm]
 matches any number of letters, but the string \texttt{c[1]} corresponding to the match
-is only added to the set of palindroms if the predicate \texttt{isPalindrom[c[1])} yields
+is only added to the set of palindromes if the predicate \texttt{isPalindrome[c[1])} yields
 \texttt{true}. 
 
 \begin{figure}[!ht]
@@ -314,46 +325,32 @@ is only added to the set of palindroms if the predicate \texttt{isPalindrom[c[1]
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    findPalindrom := procedure(file) {
+    findPalindrome := procedure(file) {
         all := split(join(readFile(file), "\n"), '[^a-zA-Z]+');
-        palindroms := {};
+        palindromes := {};
         for (s in all) {
             match (s) {
-                regex '[a-zA-Z]+' as c | isPalindrom(c[1]): 
-                      palindroms += { c[1] };
+                regex '[a-zA-Z]+' as c | isPalindrome(c[1]): 
+                      palindromes += { c[1] };
                 regex '.|\n': 
                       // skip rest
             }
         }
-        return palindroms;        
+        return palindromes;        
     };
     
-    isPalindrom := procedure(s) {
+    isPalindrome := procedure(s) {
         n := #s + 1;
         return +/ [s[n - i] : i in [1 .. #s]] == s;
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{A program to find palindroms in a file.}
-\label{fig:find-palindrom.stlx}
+\caption{A program to find palindromes in a file.}
+\label{fig:find-palindrome.stlx}
 \end{figure}
 
 
 \section{The \texttt{scan} Statement}
-The program to extract comments that was presented in the previous subsection is quite
-unsatisfactory as it will only recognize those strings that span a single line.
-Figure \ref{fig:find-comments-scan.stlx} shows a function that instead extracts all
-comments form a given file.  The function \texttt{printComments} takes a string as
-argument.  This string is interpreted as the name of a file.  In line 2, the function 
-\texttt{readFile} reads this file.  The function produces a list of strings.  Each string
-corresponds to a single line of the file without the trailing line break.  The function
-\texttt{join} joins all these lines into a single string.  As the second argument of
-\texttt{join} is the string ``\texttt{\symbol{92}n}'', a newline is put inbetween the
-lines that are joined.  The end result is that the variable \texttt{s} contains the
-content of the file as one string.  This string is the scanned using the \texttt{scan}
-statement in line 3.  The \texttt{scan} statement is explained in more detail below.
-
-
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -379,7 +376,19 @@ statement in line 3.  The \texttt{scan} statement is explained in more detail be
 \label{fig:find-comments-scan.stlx}
 \end{figure}
 
-The general form of a scan statement is as follows:
+\noindent 
+The program to extract comments that was presented in the previous subsection is quite
+unsatisfactory as it will only recognize those strings that span a single line.
+Figure \ref{fig:find-comments-scan.stlx} shows a function that instead extracts all
+comments form a given file.  The function \texttt{printComments} takes a string as
+argument.  This string is interpreted as the name of a file.  In line 2, the function 
+\texttt{readFile} reads this file.  This function produces a list of strings.  Each string
+corresponds to a single line of the file without the trailing line break.  The function
+\texttt{join} joins all these lines into a single string.  As the second argument of
+\texttt{join} is the string ``\texttt{\symbol{92}n}'', a newline is put inbetween the
+lines that are joined.  The end result is that the variable \texttt{s} contains the
+content of the file as one string.  This string is then scanned using the \texttt{scan}
+statement in line 3. The general form of a scan statement is as follows:
 \\[0.2cm]
 \hspace*{1.3cm} \texttt{scan ($s$) \{}  \\
 \hspace*{1.8cm} \texttt{regex} $r_1$ \texttt{as} $l$ : $b_1$ \\
@@ -387,7 +396,7 @@ The general form of a scan statement is as follows:
 \hspace*{1.8cm} \texttt{regex} $r_n$ \texttt{as} $l$ : $b_n$ \\
 \hspace*{1.3cm} \texttt{\}}             
 \\[0.2cm]
-Here, $s$ is a string to be analyzed, the variables $r_1$, $\cdots$, $r_n$ are regular
+Here, $s$ is a string to be analyzed, $r_1$, $\cdots$, $r_n$ denote regular
 expressions, while $b_1$, $\cdots$, $b_n$ are lists of statements.  The \texttt{scan}
 statement works as follows:
 \begin{enumerate}
@@ -418,15 +427,16 @@ The clauses in a \texttt{scan} statement can also have Boolean conditions attach
 works the same way as it works for a \texttt{match} statement.
 
 The \texttt{scan} statement provides a functionality that is similar to the functionality
-provided  by tools like \texttt{lex} \cite{lesk:1975} or
+provided  by tools like 
+\href{http://en.wikipedia.org/wiki/Lex_(software)}{\texttt{lex}} \cite{lesk:1975} or
 \href{http://jflex.de}{\textsl{JFlex}} \cite{klein:2009}. 
 In order to support this claim, we present an example program that computes the marks of
 an exam.  Assume the results of an exam are collected in a text file like the one shown in
 Figure \ref{fig:result.txt}.  The first line of this file shows that this is an exam about
-algorithms and the secomnd line gives the name of the group.  The fourth line tells us
+algorithms.  The third line tells us
 that there are 6 exercises in the given exam and the remaining lines list the points that
-have been achieved by individual students.  A hyphen signals that an exercise has not been
-worked on.  In order to calculate marks, we just have to add up all the points.  From
+have been achieved by individual students.  A hyphen signals that the student did not do
+the corresponding exercise.  In order to calculate marks, we just have to add up all the points.  From
 this, the mark can easily be calculated.
 
 \begin{figure}[!ht]
@@ -441,7 +451,6 @@ this, the mark can easily be calculated.
                   xrightmargin  = 0.8cm,
                 ]
     Exam:  Algorithms
-    Group: TIT07AIX
     
     Exercises:                1. 2. 3. 4. 5. 6.
     Max Müller-Lüdenscheidt:  8  9  8  -  7  6
@@ -526,23 +535,32 @@ program line by line.
             the output.
       \end{enumerate}
       Line 3 therefore initializes the variable \texttt{state} to \texttt{"normal"}.
-\item The regular expression in line 5 is needed to skip the header of the file.  These
-      header lines can be recognized that there is a single word followed by a colon
+\item The regular expression in line 5 is needed to skip the header of the file.  The
+      header line can be recognized by the fact that there is a single word followed by a colon
       `\texttt{:}''.   In contrast, the names of students always consist of two words.
-\item The regular expression inline 5 matches the name of a student. 
+\item The regular expression in line 5 matches the name of a student. 
       This name is printed and the number of points for this student is set to $0$.
       Furthermore, when the name of a student is seen, the state is changed to the state
       \texttt{"printBlanks"}.
 \item The regular expression in line 10 matches the white space following the name of a
-      student.  This white space is then printed and the state is switched back to
+      student.  Notice that this regular expression has a condition attached to it: 
+      The condition is the formula
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{state == \symbol{34}printBlanks\symbol{34}}.
+      \\[0.2cm]
+      The white space matched by the regular expression is then printed and the state is switched back to
       \texttt{"normal"}.
+
+      In effect, this rule will guarantee that the output is formated in the same way as
+      the input, as the white space following a student's name is just copied to the output.
 \item Line 13 skips over white space that is encountered in state \texttt{"normal"}.
 \item The clause in line 15 recognizes strings that can be interpreted as numbers.  These
       strings are converted into numbers with the help of the function \texttt{int} and
       then this number is added to the number of points achieved by this student.
-\item Line 17 skips hyphens as these correspond to an exercise that has not been attempted
+\item Line 17 skips over hyphens as these correspond to an exercise that has not been attempted
       by the student.
-\item Line 19 checks whether we are at the end of a line listingthe points of a student.
+\item Line 19 checks whether we are at the end of a line listing the points of a particular student.
       This is the case if we encounter a newline and the variable \texttt{sumPoints}
       is not undefined.  In this case, the mark for this student is computed and printed.
       Furthermore, the variable \texttt{sumPoints} is set back to the undefined status.

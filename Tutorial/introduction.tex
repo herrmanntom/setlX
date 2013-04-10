@@ -1,7 +1,7 @@
 \chapter{Introduction}
 Every year, dozens of new programming languages are proposed and each time this
 happens,  the inventors of the new language have to answer the same question: 
-There are hundreds of programming lanuages already, why do we need yet another one?  
+There are hundreds of programming languages already, why do we need yet another one?  
 Of course, the answer is always the same.  It consists of an economical argument, a
 theological argument and a practical argument. For the
 convenience of the reader, let us brievely review these arguments as they read for \setlx.  
@@ -20,24 +20,25 @@ detailed proof of the second claim.  Nevertheless, we hope the examples given in
 tutorial will convince the reader of the truth of the third claim.
   One of the reasons for this is that \setlx\ programs are both very concise and
 readable.  This often makes it possible to fit the implementation of complex algorithms in \setlx\ on a
-single slide because the \setlx\ program is as concise as the pseudocode that is usually used to
+single slide because the \setlx\ program is no longer than the pseudocode that is usually used to
 present algorithms in lectures.  The benefit of this is that instead of pseudocode, students have a
-running program.  Indeed, the conciseness of \setlx\ programs was one of the reasons for
+running program that they can modify and test. This and the
+conciseness of \textsc{SetlX} programs was one of the reasons for
 the first author to adopt \setlx\ as a programming language in his courses on computer
 science: It is often feasible to write a complete \setlx\ program in a few lines 
-onto the blackboard, since \setlx\ programs are as concise as mathematical formulae.
+onto the blackboard, since \setlx\ programs are nearly as compact as mathematical formulae.
 
 
 \setlx\ is well suited to implement complex algorithms. This is achieved because SetlX
 provides a number of sophisticated builtin data types that enable the user to code at a very high
 abstraction level.
-These types are sets, lists, first-order terms, and functions.  
+These data types are sets, lists, first-order terms, and functions.  
 As sets are implemented as ordered binary trees, sets of pairs can be used both as symbol
-tables and as priority queues.  This enables a very concise implementation 
+tables and as priority queues.  This enables a very neat implementations 
 of a number of graph theoretical algorithms.
 
 The purpose of this tutorial is to introduce the most important features of \setlx\ and to
-show how the use of the above mentioned data types leads to programs that are both shorter
+show, how the use of the above mentioned data types leads to programs that are both shorter
 and clearer than the corresponding programs in other programming languages.  This was the
 prime motivation of the first author to develop \setlx:  It turns out that \setlx\ is very
 convenient as a tool to present algorithms at a high abstraction level in a class room. 
@@ -52,9 +53,13 @@ of this tutorial is structured as follows:
 \item In the second chapter, we discuss the data types available in \setlx.
 \item The third chapter provides the control structures.
 \item The fourth chapter deals with regular expressions.
-\item The fifth chapter discusses the \texttt{try-}\texttt{catch} and \texttt{throw}
+\item The fifth chapter discusses functional programming an closures.
+\item The sixth chapter discusses the \texttt{try-}\texttt{catch} and \texttt{throw}
       mechanism and demonstrates the use of \emph{backtracking}.
-\item The final chapter explains the predefined functions.
+\item Chapter number seven introduces classes and demonstrates that \textsc{SetlX}
+         supports an object-oriented programming style.
+\item The final chapter lists and explains the predefined functions.
+\item The appendix discusses the graphical primitives provided by \textsc{SetlX}.
 \end{enumerate}
 This tutorial is not meant as an introduction to programming.  It assumes that the reader
 has had some preliminary exposure to programming and has already written a few programs in
@@ -74,11 +79,17 @@ or
 \setlx\ is
 written in \textsl{Java} and is therefore supported on a number of different operating
 systems.  Currently, \setlx\ is supported on \textsl{Linux}, \textsl{Mac OS X},
-\textsl{Microsoft Windows}, and \textsl{Android}.
-
+\textsl{Microsoft Windows}, and \textsl{Android}.  
 The websites given above explain how to install the language on various platforms.  
 The distribution contains the \textsl{Java} code and a development guide that gives an
-overview of the implementation. 
+overview of the implementation. For those
+interested in peeking under the hood, the source code of \textsc{SetlX}
+is available at
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{http://gitorious.org/setlx}{\texttt{http://gitorious.org/setlx}}.
+
+
 
 \subsection*{Disclaimer}
 The development of \setlx\ is an ongoing project.  Therefore some of the material presented in

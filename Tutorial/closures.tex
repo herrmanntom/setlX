@@ -1,10 +1,11 @@
 \chapter{Functional Programming and Closures \label{chapter:closures}}
 We have already stated earlier that \setlx\ is a full-fledged functional language:
 Functions can be used both as arguments to other functions and as return values.  There is
-no fundamental difference in the type of a function or, say, the type of a rational
+no fundamental difference between the type of a function and, say, the type of a rational
 number, as both can be assigned to variables, converted to strings, parsed, etc.
-This works because functions are actually implemented as \emph{closures} similar to the
-way this is done in languages like \textsl{Scheme} \cite{sussman:75}. 
+This works because functions are actually implemented as 
+\href{http://en.wikipedia.org/wiki/Closure_(computer_science)}{\emph{closures}}
+similar to the way this is done in languages like \textsl{Scheme} \cite{sussman:75}. 
 In order to present closures, we present some simple examples first.  After that, we show
 a more complex case study: We discuss a program that transforms a regular expression into a
 non-deterministic finite state machine.
@@ -44,7 +45,7 @@ the function \texttt{reduce} that takes two arguments:
     multiply := procedure(a, b) { return a * b; };
     
     l := [1 .. 36];
-    x := reduce(l, add,    );
+    x := reduce(l, add     );
     y := reduce(l, multiply);
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -53,9 +54,15 @@ the function \texttt{reduce} that takes two arguments:
 \end{figure}
 The function \texttt{reduce} combines successive arguments of the list $l$ and thereby reduces
 the list $l$ into a single value.  For example, if the function $f$ is the function
-\texttt{add} that just adds its arguments, then $\texttt{reduce}(l, \texttt{add})$ sums up
-all the arguments of $l$.  Therefore, in line 11 the sum $\sum_{i=1}^n i$ is assigned to the
-variable $x$.  If instead the second arguments of the function \texttt{reduce} is the function
+\texttt{add} that just adds its arguments, then $\texttt{reduce}(l,
+\texttt{add})$ computes the sum of
+the elements of $l$.  Therefore, in line 12 the invocation of
+\texttt{reduce(l, add)} computes the sum
+\\[0.2cm]
+\hspace*{1.3cm}
+ $\sum\limits_{i=1}^n i$. 
+\\[0.2cm] 
+If instead the second arguments of the function \texttt{reduce} is the function
 \texttt{multiply} that returns the product of its arguments, then 
 $\texttt{reduce}(l, \texttt{multiply})$ computes the product of all elements of the list
 $l$.  Finally, it should be noted that in the case that the list $l$ is empty,
@@ -95,7 +102,7 @@ $l$.  Finally, it should be noted that in the case that the list $l$ is empty,
     less    := procedure(x, y) { return x < y; };
     greater := procedure(x, y) { return y < x; };
     l  := [1,3,5,4,2];    
-    s1 := sort(l, less);
+    s1 := sort(l, less   );
     s2 := sort(l, greater);
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -118,18 +125,19 @@ arguments:
       If instead we use the function \texttt{greater} defined in line 21 as the second
       argument, then the list $l$ will be sorted descendingly.
 
-      The second argument enables us to sort a list that contains elements that are not
-      numbers.  In order to do so, we just have to implement an appropriate version of the
-      function \texttt{cmp}.
+      The second argument \texttt{cmp} of the procedure \texttt{sort} enables us to sort a list that
+      contains elements that are not numbers.  In order to do so, we just have to implement an
+      appropriate version of the function \texttt{cmp}.
 \end{enumerate}
-So far, the function we have discussed did not return functions.  The next example will change
+So far, the functions we have discussed did not return functions.  The next example will change
 that.  In mathematics, given a function
 \\[0.2cm]
 \hspace*{1.3cm}
 $f: \mathbb{N} \rightarrow \mathbb{N}$
 \\[0.2cm]
-mapping natural numbers into natural numbers, the \emph{discrete derivative} of $f$ is denoted
-as $\Delta f$ and is defined as
+mapping natural numbers into natural numbers, the \emph{discrete derivative} of $f$ is again a
+function mapping natural numbers to natural numbers and is denoted
+as $\Delta f$.  For $n \in \mathbb{N}$, the value $(\Delta f)(n)$ is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
 $(\Delta f)(n) := f(n+1) - f(n)$.
@@ -233,14 +241,16 @@ respectively.
 You should also notice that the function \texttt{ctr9} created in line 10 gets its
 \underline{own} copy of the variable \texttt{count}.  In the case of the function
 \texttt{ctr9}, this copy of \texttt{count} is initialized with the value 9.  Therefore, after
-we have called the function \texttt{ctr9} in line 13, the variables \texttt{u}, \texttt{v}, and
-\texttt{w} have the values $10$, $11$, and $12$. 
+we have called the function \texttt{ctr9} in line 13, the variables \texttt{x}, \texttt{y}, and
+\texttt{z} will have the values $10$, $11$, and $12$. 
 
 \section[Closures in Action]{Closures in Action: Generating Finite State Machines from Regular Expressions}
 In this section we demonstrate a non-trivial application of closures.  We present a program that
 takes a regular expression $r$ as input and that converts this regular expression into a
-non-deterministic finite state machine using the \emph{Thompson construction} \cite{hopcroft:06}.
-For the purpose of this section, \emph{regular expressions} are defined inductively as
+\href{http://en.wikipedia.org/wiki/Nondeterministic_finite_automaton}{\emph{non-deterministic finite state machine}} 
+using the 
+\href{http://en.wikipedia.org/wiki/Thompson's_construction_algorithm}{\emph{Thompson construction}}
+\cite{hopcroft:06}.  For the purpose of this section, \emph{regular expressions} are defined inductively as
 follows.
 \begin{enumerate}
 \item Every character $c$ is a regular expression matching exactly this character and
@@ -340,9 +350,9 @@ abbreviate the notion of a
                         xleftmargin   = 0.8cm,
                         xrightmargin  = 0.8cm,
                       ]
-    genCharNFA := procedure(c) {
-        q0 := getNewState();
-        q1 := getNewState();
+    genCharNFA := procedure(c, rw ctr) {
+        q0 := getNewState(ctr);
+        q1 := getNewState(ctr);
         delta := procedure(q, d) { 
                      if (q == q0 && d == c) { 
                          return { q1 };
@@ -377,7 +387,7 @@ abbreviate the notion of a
 \item In order to compute the fsm $A(r_1 \cdot r_2)$ 
       we have to assume that the states of the fsms
       $A(r_1)$ and $A(r_2)$ are different.  
-      Let us assume that  $A(r_1)$ and $A(r_2)$ have the following form:
+      Let us assume that the fsms  $A(r_1)$ and $A(r_2)$ have the following form:
       \begin{enumerate}
       \item $A(r_1) = \langle Q_1, \delta_1, q_1, q_2 \rangle$,
       \item $A(r_2) = \langle Q_2, \delta_2, q_3, q_4 \rangle$, \quad where
@@ -463,7 +473,7 @@ abbreviate the notion of a
       $A(r_1) = \langle Q_1, \delta_1, q_1, q_3 \rangle$ \quad and \quad
       $A(r_2) = \langle Q_2, \delta_2, q_2, q_4 \rangle$
       \\[0.2cm]
-      the the fsm $A(r_1 + r_2)$ can be defined as
+      then the fsm $A(r_1 + r_2)$ can be defined as
       \\[0.2cm]
       \hspace*{0.0cm}
        $\langle \{ q_0, q_5 \} \cup Q_1 \cup Q_2, 
@@ -502,11 +512,11 @@ abbreviate the notion of a
                       xleftmargin   = 0.8cm,
                       xrightmargin  = 0.8cm,
                     ]
-    disjunction := procedure(f1, f2) {
+    disjunction := procedure(f1, f2, rw ctr) {
         [m1, delta1, q1, q3] := f1;
         [m2, delta2, q2, q4] := f2;
-        q0 := getNewState(); 
-        q5 := getNewState(); 
+        q0 := getNewState(ctr); 
+        q5 := getNewState(ctr); 
         delta := procedure(q, c) {
                      if (q == q0 && c == "") {
                          return { q1, q2 };
@@ -535,7 +545,7 @@ abbreviate the notion of a
       to compute $A(r_1 + r_2)$, since we have
       \\[0.2cm]
       \hspace*{1.3cm}
-      $A(r_1 +r_2) = \mathtt{catenate}\bigl(A(r_1), A(r_2)\bigr)$.
+      $A(r_1 +r_2) = \mathtt{disjunction}\bigl(A(r_1), A(r_2)\bigr)$.
 \item In order to define $A(r^*)$ we assume $A(r)$ is given as
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -589,10 +599,10 @@ abbreviate the notion of a
                       xleftmargin   = 0.8cm,
                       xrightmargin  = 0.8cm,
                     ]
-    kleene := procedure(f) {
+    kleene := procedure(f, rw ctr) {
         [m, delta0, q1, q2] := f;
-        q0 := getNewState(); 
-        q3 := getNewState(); 
+        q0 := getNewState(ctr); 
+        q3 := getNewState(ctr); 
         delta := procedure(q, c) {
                      if (q == q0 && c == "") {
                          return { q1, q3 };
@@ -613,6 +623,12 @@ abbreviate the notion of a
     \end{figure}
 \end{enumerate}
 
+Figure \ref{fig:getNewState.stlx} shows the procedure \texttt{getNewState} that is used to create
+new states.  Since the parameter \texttt{ctr} of this procedure is preceded by the keyword
+\texttt{rw}, this parameter has a \emph{call-by-name} semantics and therefore the procedure
+\texttt{getNewState} is able to increment this variable.  Hence, the states generated
+by \texttt{getNewState} are unique. 
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -624,12 +640,9 @@ abbreviate the notion of a
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    var gStateCount;
-    gStateCount := -1;
-    
-    getNewState := procedure() {
-        gStateCount += 1;
-        return "q" + gStateCount;
+    getNewState := procedure(rw ctr) {
+        ctr += 1;
+        return "q" + ctr;
     };
 \end{Verbatim}
 \vspace*{-0.3cm}
@@ -664,19 +677,19 @@ The reader should note that we have made heavy use of closures to implement the 
                   labelposition = bottomline,
                   numbers       = left,
                   numbersep     = -0.2cm,
-                  xleftmargin   = 0.8cm,
-                  xrightmargin  = 0.8cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
                 ]
-    regexp2NFA := procedure(r) {
+    regexp2NFA := procedure(r, rw ctr) {
         match (r) {
             case c | isString(c): 
-                 return genCharNFA(c);
-            case Cat(r1, r2): 
-                 return catenate(regexp2NFA(r1), regexp2NFA(r2));        
-            case Or(r1, r2): 
-                 return disjunction(regexp2NFA(r1), regexp2NFA(r2));
-            case Star(r0): 
-                 return kleene(regexp2NFA(r0));
+                 return genCharNFA(c, ctr);
+            case Cat(r1, r2):
+                 return catenate(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr)); 
+            case Or(r1, r2):
+                 return disjunction(regexp2NFA(r1, ctr), regexp2NFA(r2, ctr), ctr);
+            case Star(r0):
+                 return kleene(regexp2NFA(r0, ctr), ctr);
         }
     };
 \end{Verbatim}

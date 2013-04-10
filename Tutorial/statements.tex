@@ -1,7 +1,7 @@
-\chapter{Writing Statements in \setlx}
+\chapter{Statements}
 This section discusses the various possibilities to write statements and the 
 features offered by \setlx\ to steer the control flow in a program.
-\setlx\ supports the follwing statements to control the flow of execution:
+\setlx\ supports the follwing means to control the order of statement execution:
 \begin{enumerate}
 \item branching statements like \texttt{if-then-else}, \texttt{switch}, and \texttt{match},
 \item the looping statements \texttt{for} and \texttt{while} together with \texttt{break} and
@@ -55,9 +55,7 @@ increments the value of the variable \texttt{x} by one,  while the statement
 \hspace*{1.3cm}
 \texttt{x *= 2;}
 \\[0.2cm]
-doubles the value of \texttt{x}.   
-
-Finally,
+doubles the value of \texttt{x}.   Finally,
 assignment statements can be chained.  For example, the statement
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -78,7 +76,8 @@ set of all those prime numbers that are less or equal to $n$.
 The idea is that a number $p$ is prime
 iff the set of all  factors of $p$ contains just $1$ and $p$.  
 Note that, as \setlx\ is a functional language, the functions that are defined by the
-keyword \texttt{procedure}  are assigned to variables.  These functions can be used like
+keyword \texttt{procedure}  are assigned to variables.  As already
+mentioned n the previous chapter, these functions can be used like
 any other values.
 
 
@@ -132,8 +131,13 @@ The meaning of the symbols used in this grammar rule are as follows:
       \\[0.2cm]  
       If the parameter is preceded by the keyword \texttt{rw}, then this parameter is a 
       \emph{read-write parameter}, which means that the function can change the value of the
-      variable given as argument.  Parameters not specified as read-write parameters have a strict
-      \emph{call by value semantics}, and therefore changes to those parameters will not be
+      variable given as argument and this change will then be visible
+      outside of the function.  Therefore, parameters prefixed with
+      the keyword \texttt{rw} have a 
+      \href{http://en.wikipedia.org/wiki/Call_by_name#Call_by_name}{\emph{call by name}}
+      semantics.  Parameters not specified as read-write parameters have a strict
+      \href{http://en.wikipedia.org/wiki/Call_by_value#Call_by_value}{\emph{call by value}} 
+      semantics, and therefore changes to those parameters will not be
       visible outside the function.
 \item \textsl{block} is a sequence of statements.
 \end{enumerate}
@@ -157,7 +161,7 @@ can be defined as follows:
 The syntax for a lambda definition is given by the follwing grammar rule:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\textsl{fctDef} \;\rightarrow\; \mathtt{ID} \quoted{:=} \textsl{lambdaParams} \quoted{|->} \textsl{expr}$
+$\textsl{fctDef} \;\rightarrow\; \mathtt{ID} \quoted{:=} \textsl{lambdaParams} \quoted{|->} \textsl{expr} \quoted{;}$
 \\[0.2cm]
 Here, \textsl{lambdaParams} is either just a single parameter or a list of parameters, where the
 parameters are enclosed in square brackets and are separated by commas, while
@@ -199,8 +203,10 @@ Of course, it is much easier to build the list of the first 10 squares using the
 \texttt{t := [x*x : $\hspace*{-0.3cm}$x in [1..10]];}
 
 \subsection{Memoization}
-The Fibonacci function $\textsl{fib}: \mathbb{N} \rightarrow \mathbb{N}$ is defined
-recursivly by the following equations:
+The function $\textsl{fib}: \mathbb{N} \rightarrow
+\mathbb{N}$ computing the
+\href{http://en.wikipedia.org/wiki/Fibonacci_numbers}{\emph{Fibonacci numbers}}
+is defined recursivly by the following set of recurrence equations:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\textsl{fib}(0) = 0$, \quad
@@ -234,8 +240,6 @@ computation of $\textsl{fib}(4)$.
 \caption{A naive implementation of the Fibonacci function.}
 \label{fig:fibonacci.stlx}
 \end{figure}
-
-\pagebreak 
 
 \begin{figure}[!ht]
 \centering
@@ -316,7 +320,10 @@ time the function $f$ is evaluated for an argument $x$, the computed value $f(x)
 memorized and stored in a table.  The next time the function $f$ is used to compute
 $f(x)$, the interpreter first checks whether the value of $f(x)$ has already been
 computed.  In this case, instead of computing $f(x)$ again,  the function returns the
-value stored in the table.  Figure
+value stored in the table.  This technique is known as
+\href{http://en.wikipedia.org/wiki/Memoization}{\emph{memoization}}.
+Fortunately, memoization is directly supported in \setlx\ via cached functions.
+Figure
 \ref{fig:fibonacci-cached.stlx} shows an implementation of the Fibonacci function as a
 cached function.  If we compare the program in Figure
 \ref{fig:fibonacci-cached.stlx} with our first attempt shown in Figure
@@ -355,16 +362,8 @@ guaranteed to always produce the same result when called with the same argument.
 Therefore, a function should not be declared as a \texttt{cachedProcedure} if it does one
 of the following things:
 \begin{enumerate}
-\item The function reads global variables that might change.
-
-      A variable \texttt{x} can be declared to be a global variable by writing
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{var x;}
-      \\[0.2cm]
-      In that case, the variable is visible in the scope of all functions.
 \item The function makes use of random numbers.
-\item The function reads input either form a file or from the command line.
+\item The function reads input either from a file or from the command line.
 \end{enumerate}
 To further support cached procedures,  \setlx\ provides the function \texttt{cacheStats},
 which is called with a single argument that must be a cached function.  For example, if
@@ -381,7 +380,8 @@ now stores the values
 \hspace*{1.3cm}
 \texttt{fibonacci($n$)} \quad for all $n \in \{0,\cdots,100\}$.
 \\[0.2cm]
-Furthermore, we see that 98 of these 101 argument/value pairs have been used in order to
+Furthermore, we see that 98 of these 101 argument/value pairs have
+been used more than once in order to
 compute the values of \texttt{fibonacci} for different arguments.  The reason is that the
 values for the last three arguments 99, 100, and 101 have not yet been used for the
 computation of different values, but all other arguments have been used at least once for
@@ -407,7 +407,10 @@ Like most modern languages, \setlx\ supports \texttt{if-then-else} statements an
 In order to support branching, \setlx\ supports \texttt{if-then-else} statements.  The syntax is 
 similar to the corresponding syntax in the programming language \texttt{C}.  However, braces are
 required.  For example, figure \ref{fig:toBin.stlx} on page \pageref{fig:toBin.stlx} shows a
-recursive function that computes the binary representation of a natural number.  
+recursive function that computes the binary representation of a
+natural number.  Here, the function \texttt{str} converts its argument
+into a string while the function $\texttt{floor}(x)$ computes the largest
+natural number that is less or equal to its argument $x$.
 
 \begin{figure}[!ht]
 \centering
@@ -435,12 +438,14 @@ recursive function that computes the binary representation of a natural number.
 \label{fig:toBin.stlx}
 \end{figure}
 
-As in the programming languages \texttt{C} and \textsl{Java}, the \texttt{else} clause is optional.
+As in the programming languages \texttt{C} and \textsl{Java}, the
+\texttt{else} clause is optional.
 
 \subsection{\texttt{switch} Statements}
 Figure \ref{fig:sort3.stlx} shows a function that takes a list of length 3.  The function sorts
-the resulting list.  In effect, the function \texttt{sort3} implements a decision tree.
-This example shows how \texttt{if-else} statements can be cascaded.
+the resulting list.  In effect, the function \texttt{sort3} implements a 
+\href{http://en.wikipedia.org/wiki/Decision_tree}{\emph{decision tree}}.
+This example shows how \texttt{if-then-else} statements can be cascaded.
 
 \begin{figure}[!ht]
 \centering
@@ -478,8 +483,9 @@ This example shows how \texttt{if-else} statements can be cascaded.
 \end{figure}
 
 Figure \ref{fig:sort3switch.stlx} on page \pageref{fig:sort3switch.stlx} 
-shows how to sort a list of length 3 using a switch
-statement.  Although this implementation is easier to understand, it is less efficient than the
+shows an equivalent program that uses a \texttt{switch} statement instead of an
+\texttt{if-then-else} statement to sort a list of three elements.  Although this implementation is
+easier to understand, it is less efficient than the 
 previous version.  The reason is that some of the tests are redundant.  This is most obvious for the
 last case in line 9 since at the time when control arrives in line 9 it is already known that $z$ must be
 less or equal than $y$ and that, furthermore, $y$ must be less or equal than $x$, since all other
@@ -513,8 +519,8 @@ cases are already covered.
 \caption{Sorting a list of 3 elements using a \texttt{switch} statement.}
 \label{fig:sort3switch.stlx}
 \end{figure}
-
-The grammar rule for \texttt{switch} statements is as follows:
+\noindent
+The grammar rule describing the syntax of \texttt{switch} statements is as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\textsl{stmnt} \;\rightarrow\; \quoted{switch} \quoted{\{} \textsl{caseList} \quoted{\}}$
@@ -525,7 +531,7 @@ where the syntactical variable \textsl{caseList} is defined via the rule:
 $\textsl{caseList} \;\rightarrow\; (\squoted{case}\; \textsl{boolExpr} \quoted{:} \textsl{block})^* 
  (\squoted{default} \quoted{:} \textsl{block})?$
 \\[0.2cm]
-Here, \textsl{boolExpr} is a boolean expression and \textsl{block} is a list of statements.
+Here, \textsl{boolExpr} is a boolean expression and \textsl{block} represents a sequence of statements.
 
 In contrast to the programming languages \texttt{C} and \textsl{Java}, the \texttt{switch}
 statement in \setlx\ doesn't have a fall through.  Therefore, we don't need a \texttt{break} statement in the
@@ -533,8 +539,8 @@ block of statements following a case condition.
 There are two other important distinction between the \texttt{switch} statement in
 \textsl{Java} and the \texttt{switch} statement in \setlx:  
 \begin{enumerate}
-\item The keyword switch is not followed by a value.
-\item The conditions following the keyword \texttt{case} have to be Boolean values.  
+\item In \textsc{SetlX}, the keyword switch is not followed by a value and
+\item the conditions following the keyword \texttt{case} have to be Boolean values.  
 \end{enumerate}
 There is a another type of switching
 statements that is much more powerful than the \texttt{switch} statement.  This is called
@@ -542,9 +548,9 @@ statements that is much more powerful than the \texttt{switch} statement.  This 
 
 \section{Matching}
 One of the most powerful branching construct is \emph{matching}.  Although the syntax for the
-matching statement is always the same, there are really four different types of matching for each of the
-types that matching has been implemented.  Matching has been implemented for
- strings, list, sets, and terms.  We discuss \emph{string matching} first.
+matching statement is always the same, there are really four different variants of matching for each of the
+data types that support matching.  Matching has been implemented for the data types
+ \emph{strings}, \emph{lists}, \emph{sets}, and \emph{terms}.  We discuss \emph{string matching} first.
 
 \subsection{String Matching}
 Many algorithms that deal with a given string $s$ have to deal with two cases:  Either the string $s$ is
@@ -569,7 +575,7 @@ This function reverses its input argument, so the expression
 yields the result \texttt{"cba"}.  In order to reverse a string $s$, the function has to deal with two
 cases:
 \begin{enumerate}
-\item If the string $s$ is empty.  In this case, we can just return the string $s$ as it is.
+\item The string $s$ is empty.  In this case, we can just return the string $s$ as it is.
       This case is dealt with in line 3.  There, we have used the pattern ``\texttt{[]}'' to match
       the empty string.  Instead, we could have used the empty string itself.  Using the pattern
       ``\texttt{[]}'' will prove beneficial when dealing with lists because it turns out that the
@@ -580,7 +586,7 @@ cases:
       this string.  This case is dealt with in line 4.
 \end{enumerate}
 The \texttt{match} statement in function \texttt{reverse}  has a default case in line 5 to deal with
-those cases where $s$ is not a string. 
+those cases where $s$ is neither a string nor a list. 
 
 \begin{figure}[!ht]
 \centering
@@ -609,8 +615,12 @@ those cases where $s$ is not a string.
 The last example shows that the syntax for the match statement  is similar to the syntax for the switch
 statement.  The main difference is that the keyword is now ``\texttt{match}'' instead of
 ``\texttt{switch}'' and that the cases no longer contain Boolean values but instead contain
-\emph{patterns} that can be used to check whether a string has a given form and to extract the
-corresponding components.  Basically, the function \texttt{reverse} given above is interpreted as if it
+\emph{patterns} that can be used 
+\begin{itemize}
+\item to check whether a string has a given form and 
+\item to extract certain components (like the first character or everything but the first character).  
+\end{itemize}
+Basically, for strings the function \texttt{reverse} given above is interpreted as if it
 had been written in the way shown in Figure \ref{fig:reverse-long.stlx} on page \pageref{fig:reverse-long.stlx}.
 This example shows that the use of the \texttt{match} statement can make programs more compact while
 increasing their legibility.
@@ -652,10 +662,10 @@ of characters, so for example we have
 \\[0.2cm]
 This function can be implemented as shown in Figure \ref{fig:reverse-pairs.stlx} on page
 \pageref{fig:reverse-pairs.stlx}.  Notice that we can match the empty string with the pattern
-``\texttt{[]}'' in line 3.  The pattern ``\texttt{[c]}'' matches a string consisting of one
+``\texttt{[]}'' in line 3.  The pattern ``\texttt{[c]}'' matches a string consisting of a single
 character $c$.  In line 5 the pattern \texttt{[a,b|r]} extracts the first two
 characters from the string $s$ and binds them to the variables $a$ and $b$.  The rest of the string is
-then bound to $r$.
+bound to $r$.
 
 \begin{figure}[!ht]
 \centering
@@ -697,14 +707,14 @@ then after the assignment
 the variables $u$, $v$, and $w$ have the values
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{$u$ =} \verb|"a"|,
-\texttt{$v$ =} \verb|"b"|, \quad and
-\texttt{$W$ =} \verb|"c"|. 
+\texttt{$u$ =} \verb|"a"|, \quad
+\texttt{$v$ =} \verb|"b"|, \quad and \quad
+\texttt{$w$ =} \verb|"c"|. 
 \\[0.2cm]
-Therefore, list assignment can be seen as a lightweight alternative to matching.
+Therefore, for strings, list assignment can be seen as a lightweight alternative to matching.
 
 \subsection{List Matching}
-As strings can be seen as lists of characters, the matching of lists is very similar to the matching of
+As strings can be regarded as lists of characters, the matching of lists is very similar to the matching of
 strings.  The function \texttt{reverse} shown in Figure \ref{fig:reverse.stlx} can also be used to
 reverse a list.
  If the argument $s$ of \texttt{reverse} is a list instead of a string, we match the empty list with
@@ -772,8 +782,11 @@ $s$.  Then, the elements of $l$ are inserted into this set.
 
 \subsection{Term Matching}
 The most elaborate form of matching is the matching of terms.  This kind of matching is similar to
-the kind of matching provided in the programming languages \textsl{Prolog} and \textsc{Ml}.
-Figure \ref{fig:binary-tree.stlx} shows an implementation of the function \texttt{insert} that uses
+the kind of matching provided in the programming languages 
+\href{http://en.wikipedia.org/wiki/Prolog}{\textsl{Prolog}} and 
+\href{http://en.wikipedia.org/wiki/ML_(programming_language)}{\textsc{Ml}} \cite{milner:90}.
+Figure \ref{fig:binary-tree.stlx} shows an implementation of the function \texttt{insert} to insert
+a number into an ordered binary tree.  This implementation uses
 term matching instead of the functions ``\texttt{fct}'' and ``\texttt{args}'' that had been used in
 the previous implementation shown in Figure \ref{fig:binary-tree-no-matching.stlx} on page
 \pageref{fig:binary-tree-no-matching.stlx}.  In line 3 of Figure \ref{fig:binary-tree.stlx}, the
@@ -860,7 +873,7 @@ the arguments of $m$.
 \label{fig:diff.stlx}
 \end{figure}
 
-\noindent
+
 Let us discuss a more complex example of matching.  The function \texttt{diff} shown in Figure
 \ref{fig:diff.stlx} on page \pageref{fig:diff.stlx} is supposed to be called with two arguments:
 \begin{enumerate}
@@ -908,7 +921,7 @@ term of the form
 \texttt{\symbol{94}variable(\symbol{34}x\symbol{34})}.
 \\[0.2cm]
 This should explain the patterns used in line 19 and line 21 of Figure \ref{fig:diff.stlx}.
-In order to inspect the internal representation of a term, we  use the function
+In order to inspect the internal representation of a term, we can use the function
 ``\texttt{canonical}''.  For example, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -981,14 +994,15 @@ Of course, the function \texttt{args} achieves a similar effect.  We have that
 \subsection{\texttt{while} Loops}
 The syntax and semantics of \texttt{while} loops in \setlx\ is really the same as in the programming
 language \texttt{C}.  To demonstrate a \texttt{while} loop,
-let us implement a function testing the \emph{Ulam conjecture}:  Define the function
+let us implement a function testing the 
+\href{http://en.wikipedia.org/wiki/Collatz_conjecture}{\emph{Collatz conjecture}}:  Define the function
 \\[0.2cm]
 \hspace*{1.3cm}
 $f: \mathbb{N} \rightarrow \mathbb{N}$
 \\[0.2cm]
 recursively as follows:
 \begin{enumerate}
-\item $f(n) := 1$ if $n \leq 1$,
+\item $f(n) := 1$ \hspace*{2.13cm} if $n \leq 1$,
 \item $f(n) := \left\{
        \begin{array}[c]{ll}
          f(n/2)           & \mbox{if $n \,\texttt{\symbol{37}}\, 2 = 0$;} \\[0.2cm]  
@@ -997,7 +1011,7 @@ recursively as follows:
        \right.
       $ 
 \end{enumerate}
-Then $f$ is well-defined and, furthermore, $f(n) = 1$ for all $n \in \mathbb{N}$.  Figure
+Then $f$ is well-defined and, furthermore, it is claimed that $f(n) = 1$ for all $n \in \mathbb{N}$.  Figure
 \ref{fig:ulam.stlx} shows an implementation of this function in \setlx.  
 
 \begin{figure}[!ht]
@@ -1041,7 +1055,8 @@ $.
 \\[0.2cm]
 Here, \textsl{boolExpr} is a Boolean expression returning either \texttt{true} or
 \texttt{false}.  This condition is called the \emph{guard} of the \texttt{while} loop.
-\textsl{block} is a list of statements.  Note that the
+The syntactical variable \textsl{block} denotes a sequence of statements.  Note that, 
+in contrast to the programming languages \texttt{C} and \textsl{Java}, the
 block of statements always has to be enclosed in curly braces, even if it consists only of a
 single statement.  The semantics of a \texttt{while} loop is the same as in \texttt{C}:
 The loop is executed as long as the guard is true.  In order to abort an iteration
@@ -1168,9 +1183,9 @@ Here an iterator is either a \emph{simple iterator} or a \emph{tuple iterator}. 
 \emph{simple iterator} has the form
 \\[0.2cm]
 \hspace*{1.3cm}
-$x \quoted{in} s$.  
+$x \quoted{in} s$
 \\[0.2cm]
-Here $s$ is either a set, a list, or a string and $x$ is the name of a variable.
+where $s$ is either a set, a list, or a string and $x$ is the name of a variable.
 This variable is bound to the elements of $s$ in turn.  For example,  the statement
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1237,7 +1252,7 @@ an implementation that is based on set comprehension.  It is a bit shorter as th
 line 4 of Figure \ref{fig:relational-product-for.stlx} is essentially integrated in the
 definition of the set in line 2 of Figure \ref{fig:relational-product.stlx}.
 In general, most occurences of \texttt{for} loops can be replaced by equivalent set
-definitions.  In most cases, the resulting code will be both shorter and easier to understand.
+definitions. Our experience shows that the resulting code will be both shorter and easier to understand.
 
 
 \begin{figure}[!ht]
@@ -1265,10 +1280,14 @@ Iterators can be even more complex, since the tuples can be nested, so something
 \hspace*{1.3cm}
 \texttt{for ([[x,y],z] in s) \{ $\cdots$ \}}
 \\[0.2cm]
-is possible.  However, as this feature is rarely needed, we won't discuss it further.
+is possible.  However, as this feature is rarely needed, we won't discuss it in more detail.
 
 
-A \texttt{for} loop creates a local scope for the iteration variable.  Therefore, the last
+A \texttt{for} loop creates a 
+\href{http://en.wikipedia.org/wiki/Variable_scope}{\emph{local scope} }
+for the iteration variable.  This means that changes to the variable \texttt{x} that occur in the
+\texttt{for} loop are not visible outside of the \texttt{for} loop.
+Therefore, the last
 line of the program shown in Figure \ref{fig:scope-for-loop.stlx} prints the message
 \\[0.2cm]
 \hspace*{1.3cm}

@@ -14,10 +14,10 @@
 \usepackage[all]{hypcap}
 
 \hypersetup{
-		colorlinks=true, % comment this to make xdvi work properly
-		linkcolor=blue,
-		citecolor=red,
-		pdfborder={0 0 0} 
+    colorlinks=true, % comment this to make xdvi work properly
+    linkcolor=blue,
+    citecolor=red,
+    pdfborder={0 0 0} 
 }
 
 \pagestyle{fancy}
@@ -53,7 +53,7 @@
 \title{\vspace*{-1cm}
   \epsfig{file=aleph0,scale=0.21} \\[0.5cm]
 \textsc{SetlX} --- A Tutorial \\[0.5cm]
-Version 1.4.5
+Version 1.6.0
 }
 \author{Karl Stroetmann \\[0.2cm]
 Duale Hochschule Baden-Württemberg Stuttgart  \\[0.2cm]
@@ -86,7 +86,7 @@ Duale Hochschule Baden-Württemberg Stuttgart  \\[0.2cm]
 \stepcounter{exercise}
 
 \noindent
-\textbf{Exercise \arabic{exercise}}: }
+\textbf{Exercise  \arabic{exercise}}: }
 
 \newcommand{\qed}{\hspace*{\fill} $\Box$}
 \newcommand{\exend}{\hspace*{\fill} $\diamond$}
@@ -125,7 +125,7 @@ fact hasn't impeded their success.
 
 At the Baden-Württemberg Corporate State University, the first author has used
 \textsc{Setl2} \cite{snyder90b} 
-for some years in a number of his introductory computer science courses.  He has 
+for several years in a number of introductory computer science courses.  He has 
 noticed that the adoption of \textsc{Setl} has made the abstract concepts of set theory
 tangible to the students.
  Nevertheless, as the original version of
@@ -137,11 +137,16 @@ Furthermore,  \textsc{Setl} lacks any immediate support for first order terms.  
 been changed or added are as follows: 
 \begin{itemize}
 \item \textsc{SetlX} supports terms in a way similar to the language \textsl{Prolog}.  In
-      particular, \textsc{SetlX} supports matching.
-\item \textsc{SetlX} supports some ideas from functional programming.  In particular,
+      particular, \textsc{SetlX} supports matching.  This makes \textsc{SetlX} well suited 
+      for symbolic computations.
+\item \textsc{SetlX} supports several ideas from functional programming.  In particular,
       functions can be used as a primitive data type.  Furthermore, \textsc{SetlX}
       supports \emph{closures} and the \emph{memoization} of functions.
-\item \textsc{SetlX} provides some means to support backtracking.
+\item \textsc{SetlX} has support for regular expressions.
+\item \textsc{SetlX} provides backtracking.
+\item \textsc{SetlX} supports object oriented programming concepts.
+\item \textsc{SetlX} provides a small set of graphical primitives that support
+      the animation of algorithms.
 \item Lastly, while \textsc{Setl} has a syntax that is reminiscent of Algol,
       \textsc{SetlX} has a syntax that is more akin to languages like \texttt{C} or
       \textsl{Java}.  
@@ -160,11 +165,13 @@ and even implements new features.
 \include{regular-expressions}
 \include{closures}
 \include{backtracking}
+\include{oo}
 \include{predefined-functions}    
 
 \bibliographystyle{alpha}
-%\bibliography{/Users/stroetma/Dropbox/Kurse/cs}
-\bibliography{/Users/karldrstroetmann/Dropbox/Kurse/cs}
+\bibliography{/Users/stroetma/Dropbox/Kurse/cs}
+
+\include{graphics}
 
 \end{document}
 

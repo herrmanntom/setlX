@@ -64,7 +64,7 @@ solve := procedure(l, n, rw all) {
         check {
             testNext(l, x);
             // if this has worked so far, try to add more queens
-            return solve(l + [x], n, all);
+            solve(l + [x], n, all);
         } 
     }
     backtrack;

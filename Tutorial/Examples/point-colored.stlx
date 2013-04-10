@@ -1,0 +1,44 @@
+class point(x, y) {
+    mX := x;
+    mY := y;
+
+    distance := procedure(p) {
+        return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2);
+    };
+    getX := procedure() {
+        return mX;
+    };
+    getY := procedure() {
+        return mY;
+    };
+    setX := procedure(x) {
+        this.mX := x;
+    };
+    setY := procedure(y) {
+        this.mY := y;
+    };
+    toStr := procedure() {
+        return "<$mX$, $mY$>";
+    };
+}
+
+class color(r, g, b) {
+    mR := r;
+    mG := g;
+    mB := b;
+}
+
+coloredPoint := procedure(x, y, c) {
+    p := point(x, y);
+    p.mColor := c;
+    
+    p.toStr := procedure() {
+	return "<$mX$, $mY$>: $mColor.mR$, $mColor.mG$, $mColor.mB$";
+    };
+    return p;
+};
+
+c := color(0, 127, 255);
+p := coloredPoint(0, 0, c);
+print(p.toStr());
+ 

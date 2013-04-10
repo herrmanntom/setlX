@@ -20,9 +20,11 @@ while the variable \texttt{x} is undefined, \setlx\ reports the following error:
 Here, evaluation of the expression \texttt{x + 1} has raised an \emph{exception} 
 as it is not possible to add a number to the undefined value \texttt{om}.  This exception is then
 propagated to the enclosing assignment statement. \setlx\ offers to handle exceptions like the
-one described above.  The mechanism is similar as in \textsl{Java} and uses the keywords
+one described above.  The mechanism is similar to the way exceptions
+are implemented in 
+\href{http://docs.oracle.com/javase/tutorial/essential/exceptions/}{\textsl{Java}} and uses the keywords
 ``\texttt{try}'' and ``\texttt{catch}''.   If we have a sequence of statements
-\textsl{stmntList} and we fear that 
+\textsl{stmntList} and we suspect that 
 something might go wrong with these statements, then we can put the list of statements into a
 \texttt{try}/\texttt{catch}-block as follows:
 \\[0.2cm]
@@ -38,7 +40,7 @@ something might go wrong with these statements, then we can put the list of stat
 If the execution of \textsl{stmntList} executes without errors, then the
 \texttt{try/catch}-block does nothing besides the execution of \textsl{stmntList}.  However, if
 one of the statements in \textsl{stmntList} does raise an exception, then the execution of 
-\textsl{stmntList} is aborted and instead the statement \textsl{errorCode} is executed.
+\textsl{stmntList} is aborted and instead the statements in \textsl{errorCode} are executed.
 
 Typically, exception handling is necessary when  processing user input.  Consider the program
 shown in Figure \ref{fig:bisection-exception.stlx}.  The function \texttt{findZero} implements
@@ -123,8 +125,8 @@ in the command line.
 \end{figure}
  
 There are a couple of things that can go wrong with the function \texttt{askUser}.  First,
-the string \texttt{s} input by the user might not be a proper function and then
-we would probably get a parse error in line 4.  In this case, the function \texttt{parse}
+the string \texttt{s} that is input by the user might not be a proper function and then
+we would presumably get a parse error in line 4.  In this case, the function \texttt{parse}
 invoked in line 4 will raise an exception. Next, if the user enters a string of the form
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -141,13 +143,14 @@ Furthermore, either of the two conditions
 \hspace*{1.3cm}
 $a < b$ \quad or \quad $f(a) * f(b) \leq 0$
 \\[0.2cm]
-might be violated.  In this case, we raise an exception in either line 17 or line 21.  
+might be violated.  In this case, we raise an exception in line 17 or
+line 21 of the function \texttt{findZero}.  
 Since we don't want to abort the program on the occurrence of an exception, the whole block of
-code in lines 3 up to line 8 is enclosed in a \texttt{try}/\texttt{catch}-block.  In case there is
+code in line 3 up to line 8 is enclosed in a \texttt{try}/\texttt{catch}-block.  In case there is
 an exception, the value of this exception, which is a string containing an error message, is
 caught in the variable \texttt{e} in line 9.  To continue our program, we print the error message
 in line 10 and then invoke the function \texttt{askUser} recursively so that the user of
-the program gets another chance.
+the program gets another chance to enter a correct function.
 
 \subsection{Different Kinds of Exceptions}
 \setlx\ supports two different kinds of exceptions:
@@ -193,7 +196,7 @@ by offering two variants of \texttt{catch}:
       \hspace*{1.3cm}
       \texttt{try \{ throw(1); \} catchLng(e) \{ print(e); \}}
       \\[0.2cm]
-      is a user generated exception and is therefore not caught.
+      is a user generated exception and would therefore not be caught.
 \end{enumerate}
 Being able to distinguish between user generated  and language generated exceptions is
 quite valuable and we strongly advocate that user generated exceptions should only be
@@ -203,19 +206,22 @@ in fact, catch
 other exceptions and thus mask real errors.  In general, the \setlx\ interpreter
 implements a \emph{fail fast} strategy:  Once an error is discovered, the execution of the
 program is aborted.  The interpreter does a lot of effort to detect errors as early as
-possible.  However, using unrestricted \texttt{catch} clauses counters this strategy and
+possible.  However, using unrestricted \texttt{catch} clauses thwarts this strategy and
 might lead to errors that are very difficult to locate.
 
 \section{Backtracking}
-One of the distinguishing features of the programming language \textsl{Prolog} is the fact
-that \textsl{Prolog} supports \emph{backtracking}.  However, on closer inspection of the
+One of the distinguishing features of the programming language 
+\href{http://en.wikipedia.org/wiki/Prolog}{\textsl{Prolog}}
+is the fact that \textsl{Prolog} supports 
+\href{http://en.wikipedia.org/wiki/Backtracking}{\emph{backtracking}}.  
+However, on closer inspection of the
 \textsl{Prolog} programs that are shown in the text books describing \textsl{Prolog}
-\cite{sterling86, bratko:90} it can be seen that very few programs actually make use of
+\cite{sterling86, bratko:90} it becomes obvious that very few programs actually make use of
 backtracking in its most general form.  Also, the personal experience of the first author, who
 has programmed in \textsl{Prolog} for more than 10 years, suggests that \textsl{Prolog}
 programs that use backtracking in an unrestricted fashion tend to be very hard to maintain.  
 In general, it is our believe that the use of backtracking should always follow the
-paradigm \emph{generate and test}:
+\emph{generate and test} paradigm:
 \begin{enumerate}
 \item The set of possible values should be generated by a \emph{generating function}.  
 \item These values should then be tested.  If a test fails, the program backtracks
@@ -238,7 +244,8 @@ Backtracking is implemented  via the keywords ``\texttt{check}'' and
 \\[0.2cm]
 is more or less\footnote{
 Technically, instead of the string \texttt{\symbol{34}fail\symbol{34}}, \setlx\ 
-generates a unique exception, which can only be catched using \texttt{check}. 
+generates a unique exception, which is referred to as a \emph{fail-exception}.
+This exception can only be catched using \texttt{check}. 
 }
 converted into a block of the form
 \\[0.2cm]
@@ -303,7 +310,8 @@ while the keyword ``\texttt{backtrack}'' is translated into
 \end{figure}
 
 The program in Figure \ref{fig:queens-nice.stlx} on page
-\pageref{fig:queens-nice.stlx} solves the \emph{8 queens puzzle}.  This problem asks to
+\pageref{fig:queens-nice.stlx} solves the 
+\href{http://en.wikipedia.org/wiki/Eight_queens_puzzle}{\emph{8 queens puzzle}}.  This problem asks to
 position 8 queens on a chessboard such that no queen can attack another queen.  In chess, a queen
 can attack all those positions that are either on the same row, on the same column, or on the
 same diagonal as the queen.  The details of the program in Figure \ref{fig:queens-nice.stlx}
@@ -349,8 +357,7 @@ are as follows.
  
       \item The second parameter \texttt{n} is the size of the board.  
       \end{enumerate}
-      In order to solve the 8 queens puzzle, the procedure \texttt{solve} is called in line 26 in
-      the form
+      In order to solve the 8 queens puzzle, the procedure \texttt{solve} can be called as 
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{solve([], 8)}.
@@ -383,7 +390,7 @@ are as follows.
 \item On the other hand, if the call to \texttt{testNext} in line 7 fails, we have to try
       the next value of \texttt{x}.  Now the function \texttt{testNext} does not return a 
       Boolean value to indicate success or failure so at this point you might well
-      ask how we know that the call to check has failed.  The answer is that the function
+      ask how we know that the call to \texttt{testNext} has failed.  The answer is that the function
       \texttt{testNext} includes a call to \texttt{backtrack} if it is not possible to
       place a queen in position \texttt{x}.  Technically, calling \texttt{backtrack}
       raises an exception that is caught by the \texttt{check} statement in line 6.
@@ -429,18 +436,27 @@ It is easy to change the program in Figure \ref{fig:queens-nice.stlx} such that 
 solutions are completed.   Figure \ref{fig:queens-all.stlx} on page
 \pageref{fig:queens-all.stlx} shows how this is done.
 \begin{enumerate}
-\item We have added a function \texttt{allSolutions}.  This function gets on parameter
+\item We have added a function \texttt{allSolutions}.  This function gets the parameter
       \texttt{n}, which is the size of the board.
       The function returns the set of all solutions of the $n$ queens puzzle.
       To do so, it first initializes the variable \texttt{all} to the empty set.
       The solutions are then collected in this set.
-\item The function \texttt{solve} gets \texttt{all} as an additional parameter.
+\item The function \texttt{solve} now gets \texttt{all} as an additional parameter.
       Note that this parameter is specified in line 2 as an \texttt{rw} parameter, so 
       the value of \texttt{all} is actually changed by the procedure \texttt{solve}.
 \item The important change in the implementation of \texttt{solve} is that instead of
       returning a solution,  a solution that is found is added to the set \texttt{all} in
       line 10. After that, the function \texttt{solve} backtracks to look for more
-      solutions. 
+      solutions.   Note that this backtracking here in effect asks the \texttt{for}-loop in line 13 
+      to look for another solution.
+\item Note that we have to enclose the call to \texttt{solve} in line 4 in a \texttt{check}
+      statement.  The reason is that the function \texttt{solve} will never return anything.
+      Instead, it will continue to add solutions to the set \texttt{all}.   If this is no longer
+      possible, the call to \texttt{solve} will backtrack in line 19.  The \texttt{check} statement 
+      in the procedure \texttt{allSolutions} is meant to catch the corresponding fail-exception.
+
+      
+
 \item The implementation of the function \texttt{testNext} has not changed.
 \end{enumerate}
 This program finds all 92 solutions to the $8$ queens puzzle.
@@ -471,7 +487,7 @@ This program finds all 92 solutions to the $8$ queens puzzle.
         for (x in {1 .. n} - {i : i in l}) {
             check {
                 testNext(l, x);
-                return solve(l + [x], n, all);
+                solve(l + [x], n, all);
             } 
         }
         backtrack;

@@ -592,6 +592,19 @@ The function \setlx\ provides the following mathematical functions.
       \texttt{sin(mathConst(\symbol{34}pi\symbol{34})/2);}
       \\[0.2cm]
       yields $1.0$.
+\item The functions $\texttt{atan2}(y,x)$ and $\texttt{hypot}(x,y)$ are usefull when converting 
+      a point $\langle x, y \rangle$ from cartesian coordinates into polar coordinates.  If a
+      point $p$ has cartesian coordinates $\langle x, y \rangle$ and polar coordinates 
+      $\langle r, \varphi \rangle$, then 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\varphi = \mathtt{atan2}(y,x)$ \quad and \quad $r = \mathtt{hypot}(x, y)$.
+      \\[0.2cm]
+      Therefore, $\texttt{hypot}(x,y) = \sqrt{x^2 + y^2}$, while as long as both $x > 0$ and $y > 0$
+      we have
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\mathtt{atan2}(y,x) = \mathtt{atan}\bigl(\frac{y}{x}\bigr)$.
 \item \texttt{exp($x$)} computes $e^x$ where $e$ is Euler's number.  Therefore, the
       expression 
       \\[0.2cm]
@@ -599,6 +612,8 @@ The function \setlx\ provides the following mathematical functions.
       \texttt{exp(1)}
       \\[0.2cm]
       yields $2.718281828459046$.
+\item $\texttt{expm1}(x)$ computes $e^x - 1$.  This function is usefull when computing values of
+      $e^x$ where the absolute value of $x$ is very small.
 \item \texttt{log($x$)} computes the natural logarithm of $x$.  This function is the
       inverse function of the exponential function \texttt{exp}.  Therefore, we have
       the equation
@@ -608,6 +623,9 @@ The function \setlx\ provides the following mathematical functions.
       \\[0.2cm]
       This equation is valid as long as there is no overflow in the computation of
       $\mathtt{exp}(x)$.
+\item $\mathtt{log1p}(x)$ computes $\mathtt{ln}(x + 1)$, where $\mathtt{ln}$ denotes the natural
+      logarithm.  This function should be used to compute logarithms for values that are very near
+      to $1$.
 \item \texttt{log10($x$)} computes the base 10 logarithm of $x$.
 \item \texttt{sqrt($x$)} computes the square root $\sqrt{x}$.  Therefore, as long as $x$
       is not too large, the equation

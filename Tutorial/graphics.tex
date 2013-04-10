@@ -1,0 +1,481 @@
+\appendix
+\chapter{Graphical Library Functions}
+The following appendix lists the name of the functions that support the
+animation of algorithms in \textsc{SetlX}.  The functions are listed in
+alphabetical order.  It should be noted that the graphical library is an experimental feature that
+might be subject to considerable changes in the future.  It should also be noted that this library
+has been derived by Markus Jagiella from the file
+\href{http://introcs.cs.princeton.edu/java/stdlib/StdDraw.java.html}{StdDraw.java}
+that is part of the 
+\href{http://algs4.cs.princeton.edu/home/}{booksite}
+accompanying the excellent book on algorithms written by Robert Sedgewick and Kevin Wayne
+\cite{sedgewick:11}.   
+\begin{enumerate}
+\item \texttt{gfx\_addPlayPauseButton}
+
+      \texttt{gfx\_addPlayPauseButton()}
+
+      \texttt{gfx\_addPlayPauseButton(boolean add)}
+
+      Sets the Play/Pause Button on the animation frame visible (no
+      parameter or true) or invisible (false).   Default is
+      invisible. 
+
+      Parameters:
+
+      \texttt{add} -- the flag to set the visibility
+\item \texttt{gfx\_addSpeedSlider}
+
+      \texttt{gfx\_addSpeedSlider()}
+
+      \texttt{gfx\_addSpeedSlider(boolean add)}
+
+      Creates a speed slider on the animation frame if called with either no 
+      parameter or arguments \texttt{true}.
+      Set the slider to invisible if the argument is \texttt{false}. 
+
+      Parameters:
+
+      \texttt{add} -- the flag to set the visibility
+\item \texttt{gfx\_arc}
+
+      \texttt{gfx\_arc(double x, double y, double r, double phi1, double phi2)}
+
+      Draws an arc of radius \texttt{r}, centered on the point $\langle x, y \rangle$, 
+      from angle \texttt{phi1} to \texttt{phi2}. The angles are given in degrees.
+
+      Parameters:
+      \begin{description}
+        \item[\texttt{x}] -- the x coordinate of the center of the circle
+        \item[\texttt{y}] -- the y coordinate of the center of the circle
+        \item[\texttt{r}] -- the radius of the circle
+        \item[\texttt{phi1}] -- the starting angle. 0 would mean an arc beginning at 3 o'clock.
+        \item[\texttt{phi2}] -- the angle at the end of the arc.  
+
+              For example, in order to get a 90 degree arc, \texttt{phi2} should be
+              \texttt{phi1} + 90. 
+      \end{description}
+\item \texttt{gfx\_circle}
+
+      \texttt{gfx\_circle(double x, double y, double r)}
+
+      Draws a circle of radius \texttt{r}, centered on the point $\langle x, y \rangle$.
+      The circle degenerates to a pixel if the radius is too small.
+
+      Parameters: 
+
+      \texttt{x} -- the $x$-coordinate of the center of the circle 
+
+      \texttt{y} -- the $y$-coordinate of the center of the circle 
+
+      \texttt{r} -- the radius of the circle
+\item \texttt{gfx\_clear}
+
+       \texttt{gfx\_clear()}
+
+       \texttt{gfx\_clear(String color)}
+
+       Clear the screen with the given color or the default color (white). Calls \texttt{gfx\_show()}.
+
+       Parameters: 
+       
+       \texttt{color} -- the color of the background
+\item \texttt{gfx\_ellipse}
+
+      \texttt{gfx\_ellipse(double x, double y, double semiMajorAxis, double semiMinorAxis)}
+
+      Draws an ellipse with given semimajor and semiminor axis centered on $\langle x,y \rangle$.
+
+      Parameters: 
+
+      \texttt{x} -- the $x$-coordinate of the center of the ellipse
+
+      \texttt{y} -- the $y$ coordinate of the center of the ellipse 
+
+      \texttt{semiMajorAxis} -- the length of the semimajor axis of the ellipse 
+
+      \texttt{semiMinorAxis} -- the length of the semiminor axis of the ellipse
+\item \texttt{gfx\_filledCircle}
+
+      \texttt{gfx\_filledCircle(double x, double y, double r)}
+
+      Draws a filled circle of radius \texttt{r}, centered on $\langle x, y \rangle$.  The circle
+      degenerates to a pixel if the radius is too small.
+
+      Parameters:
+
+      \texttt{x} -- the $x$-coordinate of the center of the circle
+
+      \texttt{y} -- the $y$-coordinate of the center of the circle 
+
+      \texttt{r} -- the radius of the circle
+
+\item \texttt{gfx\_filledEllipse}
+
+      \texttt{gfx\_filledEllipse(double x, double y, double semiMajorAxis, double semiMinorAxis)}
+
+      Draws an ellipse with given semimajor and semiminor axis centered on $\langle x,y \rangle$.
+
+      Parameters: 
+
+      \texttt{x} -- the $x$-coordinate of the center of the ellipse
+
+      \texttt{y} -- the $y$-coordinate of the center of the ellipse 
+
+      \texttt{semiMajorAxis} -- the length of the semimajor axis of the ellipse 
+
+      \texttt{semiMinorAxis} -- the length of the semiminor axis of the ellipse
+\item \texttt{gfx\_filledPolygon}
+
+      \texttt{gfx\_filledPolygon(double[] x, double[] y)}
+
+      Draws a filled polygon with the given $\langle x[i], y[i] \rangle$ coordinates.
+
+      Parameters:
+
+      \texttt{x} -- an array of all the $x$-coordinates of the polygon 
+
+      \texttt{y} -- an array of all the $y$-coordinates of the polygon
+\item \texttt{gfx\_filledSquare}
+
+      \texttt{gfx\_filledSquare(double x, double y, double r)}
+
+      Draws a filled square of side length $2 \cdot r$, centered on $\langle x, y \rangle$.
+      This square degenerates to a pixel if $r$ is too small.
+
+      Parameters:
+
+      \texttt{x} - the $x$-coordinate of the center of the square 
+
+      \texttt{y} - the $y$ coordinate of the center of the square 
+
+      \texttt{r} - the radius $r$ is half the length of any side of the square
+\item \texttt{gfx\_getFont}
+
+      \texttt{String gfx\_getFont()}
+
+      Returns the name of the current font i.e. ``\texttt{Arial}''.
+\item \texttt{gfx\_getPenColor}
+
+      \texttt{String gfx\_getPenColor()}
+
+      Returns the current color of the pen i.e.: ``\texttt{BLACK}''.
+\item \texttt{gfx\_getPenRadius}
+
+      \texttt{double gfx\_getPenRadius()}
+
+      Returns the current pen radius.
+\item \texttt{gfx\_hasNextKeyTyped}
+
+      \texttt{boolean gfx\_hasNextKeyTyped()}
+
+      Returns \texttt{true} if the user has typed a key, \texttt{false} otherwise.
+\item \texttt{gfx\_isKeyPressed}
+
+      \texttt{gfx\_isKeyPressed(int keyCode)}
+
+      Returns \texttt{true} if the key with the given \texttt{keycode} is currently pressed and
+      \texttt{false} otherwise. 
+
+      Parameters:
+
+      \texttt{keyCode} -- the physical key code of the Java programming language
+\item \texttt{gfx\_isPaused}
+
+      \texttt{boolean gfx\_isPaused()}
+
+      Returns \texttt{true} if the animation is paused when this statement is executed and
+      \texttt{false} otherwise.
+\item \texttt{gfx\_line}
+
+      \texttt{gfx\_line(double x0, double y0, double x1, double y1)}
+
+      Draws a line from the point $\langle x_0, y_0 \rangle$ to the point $\langle x_1, y_1 \rangle$.
+
+      Parameters:
+
+      \texttt{x0} -- the $x$-coordinate of the starting point 
+
+      \texttt{y0} -- the $y$-coordinate of the starting point 
+
+      \texttt{x1} -- the $x$-coordinate of the destination point 
+
+      \texttt{y1} -- the $y$ coordinate of the destination point
+\item \texttt{gfx\_mouseX}
+
+      \texttt{double gfx\_mouseX()}
+
+      Returns the value of the $x$-coordinate of the mouse.
+\item \texttt{gfx\_mouseY}
+
+      \texttt{double gfx\_mouseY()}
+
+      Returns the value of the $y$-coordinate of the mouse.
+\item \texttt{gfx\_nextKeyTyped}
+
+      \texttt{String gfx\_nextKeyTyped()}
+
+      Returns the next unicode character that was typed by the user. This function cannot
+      identify action keys such as ``F1'' or arrow keys.
+\item \texttt{gfx\_picture}
+
+      \texttt{gfx\_picture(double x, double y, String s)}
+
+      \texttt{gfx\_picture(double x, double y, String s, double w, double h)}
+
+      Draws a picture in \texttt{gif}, \texttt{jpg}, or \texttt{png} format centered 
+      on the point $\langle x, y \rangle$.  If the parameters \texttt{w} and \texttt{h}
+      are given, the picture is rescaled to a width of \texttt{w} and a height of $h$. 
+      If \texttt{w} or \texttt{h} is too small, the picture degenerates into a pixel. 
+      This function calls \texttt{gfx\_show()}.
+
+      Parameters:
+
+      \texttt{x} -- the $x$-coordinate of the  center  of the image 
+
+      \texttt{y} -- the $y$-coordinate of the  center  of the image 
+
+      \texttt{s} -- the name of the file containing the image, i.e. ``\texttt{flower.gif}'' 
+
+      \texttt{w} -- the width of the image 
+      
+      \texttt{h} -- the height of the image
+\item \texttt{gfx\_point}
+
+      \texttt{gfx\_point(double x, double y)}
+
+      Draws a point at the coordinates $\langle x, y \rangle$.
+      
+      Parameters:
+
+      \texttt{x} - the $x$-coordinate of the point to be drawn
+
+      \texttt{y} - the $y$-coordinate of the point to be drawn
+\item \texttt{gfx\_polygon}
+
+      \texttt{gfx\_polygon(double[] x, double[] y)}
+
+      Draws a polygon with the given $\langle x[i], y[i]\rangle$ coordinates.
+
+      Parameters:
+
+      \texttt{x} - an array of all the $x$-coordinates of the polygon
+
+      \texttt{y} - an array of all the $y$-coordinates of the polygon
+\item \texttt{gfx\_rectangle}
+
+      \texttt{gfx\_rectangle(double x, double y, double halfWidth, double halfHeight)}
+
+      Draws a rectangle of given half width and half height centered on $\langle x,y \rangle$.
+
+      Parameters:
+
+      \texttt{x} -- the $x$-coordinate of the center of the rectangle
+
+      \texttt{y} -- the $y$-coordinate of the center of the rectangle
+
+      \texttt{halfWidth} -- the width of the rectangle is given as $2 \cdot \mathtt{halfWidth}$
+
+      \texttt{halfHeight} -- the height of the rectangle is given as $2 \cdot \mathtt{halfHeight}$
+\item \texttt{gfx\_setCanvasSize}
+      \texttt{gfx\_setCanvasSize(int w, int h)}
+
+      Sets the window size to \texttt{w}$\times$\texttt{h} pixels.
+
+      Parameters:
+      
+      \texttt{w} -- the width as a number of pixels 
+
+      \texttt{h} -- the height as a number of pixels
+\item \texttt{gfx\_setPaused}
+
+      \texttt{gfx\_setPaused(boolean paused)}
+
+      Sets the start value of the \texttt{Play/Pause} button and determines whether the animation 
+      is started in running or paused mode.
+
+      Parameters:
+
+      \texttt{paused} -- if this is true the animation is paused
+\item \texttt{gfx\_setPenColor}
+
+      \texttt{gfx\_setPenColor()}
+
+      \texttt{gfx\_setPenColor(String color)}
+
+      Sets the pen color to the given color or the default (\texttt{BLACK}) if no color is given. 
+      The available pen colors are \texttt{BLACK}, 
+      \texttt{BLUE},
+      \texttt{CYAN},
+      \texttt{DARKGRAY},
+      \texttt{GRAY},
+      \texttt{GREEN},
+      \texttt{LIGHT\_GRAY},
+      \texttt{MAGENTA},
+      \texttt{ORANGE},
+      \texttt{PINK},
+      \texttt{RED},
+      \texttt{WHITE}, and 
+      \texttt{YELLOW}.
+
+      Parameters:
+
+      \texttt{color} -- the color of the pen
+\item \texttt{gfx\_setPenColorRGB}
+
+      \texttt{gfx\_setPenColorRGB(double r, double g, double b)}
+
+      Sets the pen color to the color specified by the values of \texttt{r},
+      \texttt{g}, and \texttt{b}.
+
+      Parameters:
+
+      \texttt{r} -- the luminosity of the red component of the color
+
+      \texttt{g} -- the luminosity of the green component of the color
+
+      \texttt{b} -- the luminosity of the blue component of the color
+
+\item \texttt{gfx\_setPenRadius}
+
+      \texttt{gfx\_setPenRadius()}
+
+      \texttt{gfx\_setPenRadius(double r)}
+
+      Sets the pen size to the given size or the default if no parameters are passed.
+
+      Parameters:
+
+      \texttt{r} -- the radius of the pen
+\item \texttt{gfx\_setFont}
+
+      \texttt{gfx\_setFont(String fontName)}
+
+      \texttt{gfx\_setFont()}
+
+      Changes the current font or restores the default font if no argument is passed.
+      
+      Parameters:
+
+      \texttt{fontName} -- the name of the font i.e. ``Arial''
+\item \texttt{gfx\_setScale}
+
+      \texttt{gfx\_setScale(double min, double max)}
+
+      Set the $x$ and $y$ scale to the given values or the default 
+      if no parameters are passed (a border is added to the values). 
+      Has the same effect as the calls  \texttt{setXscale(min,max)} and \texttt{setYscale(min,max)}
+      combined.
+
+      Parameters:
+
+      \texttt{min} -- the minimum value of the $x$ and $y$ scale 
+
+      \texttt{max} -- the maximum value of the X and Y scale
+\item \texttt{gfx\_setXscale}
+
+      \texttt{gfx\_setXscale()}
+
+      \texttt{gfx\_setXscale(double min, double max)}
+
+      Set the $x$ scale to the given values or the default if no parameters are passed (a border is
+      added to the values). 
+
+      Parameters:
+      
+      \texttt{min} -- the minimum value of the $x$ scale 
+
+      \texttt{max} -- the maximum value of the $x$ scale
+\item \texttt{gfx\_setYscale}
+
+      \texttt{gfx\_setYscale()}
+
+      \texttt{gfx\_setYscale(double min, double max)}
+
+      Set the $y$ scale to the given values or the default if no parameters are passed (a border is
+      added to the values). 
+
+      Parameters:
+      
+      \texttt{min} -- the minimum value of the $y$ scale 
+
+      \texttt{max} -- the maximum value of the $y$ scale
+\item \texttt{gfx\_show}
+
+      \texttt{gfx\_show()}
+
+      Displays the animation on the screen.   
+      Calling this method means that the screen will be redrawn after each 
+      invocation of \texttt{line()}, \texttt{circle()}, or \texttt{square()}. This is the default.
+\item \texttt{gfx\_show(int t)}
+  
+      Displays the animation on screen and pause for \texttt{t} milliseconds. Calling this method
+      means that the screen will \underline{not} be redrawn after each invocation of 
+      \texttt{line()}, \texttt{circle()}, or \texttt{square()}. This is
+      useful when there are many invocation of these function necessary to draw a complete picture. 
+
+      Parameters:
+
+      \texttt{t} -- number of milliseconds to pause
+\item \texttt{gfx\_square}
+
+      \texttt{gfx\_square(double x, double y, double r)}
+
+      Draws a square of side length $2 \cdot r$, centered on $\langle x, y \rangle$. 
+      The square degenerates to a pixel if small $r$ is too small.
+
+      Parameters:
+
+      \texttt{x} -- the $x$-coordinate of the center of the square 
+
+      \texttt{y} -- the $y$ coordinate of the center of the square 
+
+      \texttt{r} -- the side length of the square is $2 \cdot r$
+\item \texttt{gfx\_text}
+
+      \texttt{gfx\_text(double x, double y, String s)}
+
+      Write the given text string in the current font, centered on $\langle x, y \rangle$. 
+      Calls \texttt{gfx\_show()}.
+      
+      Parameters:
+
+      \texttt{x} -- the $x$ coordinate of the center of the text 
+
+      \texttt{y} -- the $y$ coordinate of the center of the text 
+
+      \texttt{s} -- the string
+\item \texttt{gfx\_textLeft}
+
+      \texttt{gfx\_textLeft(double x, double y, String s)}
+
+      Write the given text string in the current font, right aligned at $\langle x, y \rangle$. 
+      Calls \texttt{gfx\_show()}.
+
+      Parameters:
+
+      \texttt{x} -- the $x$ coordinate of the end of the text 
+
+      \texttt{y} -- the $y$ coordinate of the end of the text 
+
+      \texttt{s} -- the string
+\item \texttt{gfx\_textRight}
+
+      \texttt{gfx\_textRight(double x, double y, String s)}
+
+      Write the given text string in the current font, left aligned at $\langle x, y \rangle$. 
+      Calls \texttt{gfx\_show()}.
+
+      Parameters:
+
+      \texttt{x} -- the $x$ coordinate of the beginning of the text 
+
+      \texttt{y} -- the $y$ coordinate of the beginning of the text 
+
+      \texttt{s} -- the string
+\end{enumerate}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial"
+%%% End: 

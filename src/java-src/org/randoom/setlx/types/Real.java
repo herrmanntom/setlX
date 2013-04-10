@@ -11,13 +11,19 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+/**
+ * This class represents a floating point number.
+ */
 public class Real extends NumberValue {
 
-    public final static int PRINT_MODE_DEFAULT     = 1;
-    public final static int PRINT_MODE_ENGINEERING = 2;
-    public final static int PRINT_MODE_PLAIN       = 3;
+    public  final static int         PRINT_MODE_DEFAULT     = 1;
+    public  final static int         PRINT_MODE_ENGINEERING = 2;
+    public  final static int         PRINT_MODE_PLAIN       = 3;
 
-    private static MathContext mathContext = MathContext.DECIMAL64;
+    private final static BigDecimal  DOUBLE_MAX_VALUE       = BigDecimal.valueOf(Double.MAX_VALUE);
+    private final static BigDecimal  DOUBLE_MIN_VALUE       = BigDecimal.valueOf(Double.MIN_VALUE);
+
+    private       static MathContext mathContext            = MathContext.DECIMAL64;
 
     public static void setPrecision32() { // rather stupid
         mathContext = MathContext.DECIMAL32;
@@ -118,9 +124,10 @@ public class Real extends NumberValue {
 
     @Override
     public boolean jDoubleConvertable() {
-        return ( real.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) < 0 &&
+        final BigDecimal absValue = real.abs();
+        return ( absValue.compareTo(DOUBLE_MAX_VALUE) < 0 &&
                     (
-                        real.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) > 0 ||
+                        absValue.compareTo(DOUBLE_MIN_VALUE) > 0 ||
                         real.compareTo(BigDecimal.ZERO) == 0
                     )
                );
@@ -130,9 +137,10 @@ public class Real extends NumberValue {
 
     @Override
     public double jDoubleValue() throws NumberToLargeException {
-        if ( real.abs().compareTo(BigDecimal.valueOf(Double.MAX_VALUE)) > 0 ||
+        final BigDecimal absValue = real.abs();
+        if ( absValue.compareTo(DOUBLE_MAX_VALUE) > 0 ||
              (
-               real.abs().compareTo(BigDecimal.valueOf(Double.MIN_VALUE)) < 0 &&
+               absValue.compareTo(DOUBLE_MIN_VALUE) < 0 &&
                real.compareTo(BigDecimal.ZERO) != 0
              )
            )

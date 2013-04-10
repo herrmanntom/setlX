@@ -10,17 +10,18 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-implication
-    : disjunction ('=>' implication)?
-    ;
-
-implemented here as:
-      ===========       ===========
-          lhs               rhs
-*/
-
+/**
+ * Class representing a Boolean implication expression.
+ *
+ * grammar rule:
+ * implication
+ *     : disjunction ('=>' implication)?
+ *     ;
+ *
+ * implemented here as:
+ *       ===========       ===========
+ *           lhs               rhs
+ */
 public class Implication extends Expr {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Implication.class);
@@ -90,6 +91,10 @@ public class Implication extends Expr {
     @Override
     public int precedence() {
         return PRECEDENCE;
+    }
+
+    public static String functionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

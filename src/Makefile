@@ -151,7 +151,8 @@ bin/org/randoom/setlx/types/*.class :                       \
 
 bin/org/randoom/setlx/exceptions/*.class :                  \
         java-src/org/randoom/setlx/exceptions/*.java                            \
-        java-src/org/randoom/setlx/types/Value.java
+        java-src/org/randoom/setlx/types/Value.java                             \
+        java-src/org/randoom/setlx/utilities/State.java
 	mkdir -p bin/
 	$(JAVAC_CALL) java-src/org/randoom/setlx/exceptions/*.java
 

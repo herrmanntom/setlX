@@ -1,13 +1,11 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
-import org.randoom.setlx.utilities.VariableScope;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -15,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Base class for all expressions.
+ * Base class for all SetlX expressions.
  */
 public abstract class Expr extends CodeFragment {
 
@@ -25,6 +23,13 @@ public abstract class Expr extends CodeFragment {
     // value which is the result of this expression, iff expression is `static' (does not contain variables)
     protected Value replacement = null;
 
+    /**
+     * Evaluate this expression.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Result of the evaluation.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value eval(final State state) throws SetlException {
         try {
             if (state.isDebugStepNextExpr && state.isDebugModeActive && ! state.isDebugPromptActive()) {
@@ -40,8 +45,22 @@ public abstract class Expr extends CodeFragment {
         }
     }
 
+    /**
+     * Evaluation-method to be implemented by classes representing actual expressions.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Result of the evaluation.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     protected abstract Value evaluate(final State state) throws SetlException;
 
+    /**
+     * Calculate static replacement value of this expression.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
+     *
+     * @param unboundVariables Variables not present in bound when used.
+     */
     protected void calculateReplacement(final List<String> unboundVariables) {
         if (replacement == null) {
             try {
@@ -78,6 +97,11 @@ public abstract class Expr extends CodeFragment {
         }
     }
 
+    /**
+     * Get static replacement value for this expression.
+     *
+     * @return Replacement value, or null.
+     */
     public Value getReplacement() {
         if (replacement != null) {
             return replacement.clone();
@@ -86,21 +110,24 @@ public abstract class Expr extends CodeFragment {
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
+    /**
+     * Gather all bound and unbound variables in this expression and its siblings.
+     *
+     * NOTE: Use optimizeAndCollectVariables() when adding variables from
+     *       sub-expressions.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
+     *
+     * @param boundVariables   Variables "assigned" in this fragment.
+     * @param unboundVariables Variables not present in bound when used.
+     * @param usedVariables    Variables present in bound when used.
+     */
     protected abstract void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     );
 
-    /* Gather variables and optimize this expression by setting replacement value
-       for this expression, if this can be safely done */
     @Override
     public final void collectVariablesAndOptimize(
         final List<String> boundVariables,
@@ -140,39 +167,6 @@ public abstract class Expr extends CodeFragment {
                 }
             }
         }
-    }
-
-    /* sets this expression to the given value
-       (only makes sense for variables and id-lists) */
-    public final Value assign(final State state, final Value v) throws SetlException {
-        assignUncloned(state, v);
-        return v.clone();
-    }
-
-    /* Sets this expression to the given value
-       (only makes sense for variables and id-lists)
-       Does not clone v and does not return value for chained assignment */
-    public void assignUncloned(final State state, final Value v) throws SetlException {
-        throw new UndefinedOperationException(
-            "Error in \"" + this + "\":\n" +
-            "This expression can not be used as target for assignments."
-        );
-    }
-
-    /* Similar to assignUncloned(),
-       However, also checks if the variable is already defined in scopes up to
-       (but EXCLUDING) `outerScope'.
-       Returns true and sets `v' if variable is undefined or already equal to `v'.
-       Returns false, if variable is defined and different from `v'. */
-    public boolean assignUnclonedCheckUpTo(
-        final State         state,
-        final Value         v,
-        final VariableScope outerScope
-    ) throws SetlException {
-        throw new UndefinedOperationException(
-            "Error in \"" + this + "\":\n" +
-            "This expression can not be used as target for assignments."
-        );
     }
 
     /* string operations */

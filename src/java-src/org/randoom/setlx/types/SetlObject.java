@@ -1,8 +1,12 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.boolExpressions.Conjunction;
+import org.randoom.setlx.boolExpressions.Disjunction;
 import org.randoom.setlx.boolExpressions.Equals;
+import org.randoom.setlx.boolExpressions.Implication;
 import org.randoom.setlx.boolExpressions.In;
 import org.randoom.setlx.boolExpressions.LessThan;
+import org.randoom.setlx.boolExpressions.Not;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -61,14 +65,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-/* This class implements a object which can store arbitrary SetlX values.
+/**
+ * This class implements a object which can store arbitrary SetlX values.
  * It will most likely be created by a ConstructorDefinition
  * (or is result of an operation).
  *
- * Also see:
- *   interpreter.types.ConstructorDefinition
+ * @see org.randoom.setlx.types.SetlClass
  */
-
 public class SetlObject extends Value {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlObject.class);
@@ -119,7 +122,8 @@ public class SetlObject extends Value {
         return createClone(members, classDefinition);
     }
 
-    /* If the contents of THIS SetlList is modified, the following function MUST
+    /**
+     * If the contents of THIS SetlList is modified, the following function MUST
      * be called before the modification. It performs the real cloning,
      * if THIS is actually marked as a clone.
      *
@@ -181,6 +185,32 @@ public class SetlObject extends Value {
     private static String createOverloadVariable(final PreDefinedProcedure function) {
         return "f_" + function.getName();
     }
+
+    /* Boolean operations */
+
+    @Override
+    public Value conjunction(final State state, final Expr other) throws SetlException {
+        return overload(state, CONJUNCTION, other.eval(state));
+    }
+    final static String CONJUNCTION = createOverloadVariable(Conjunction.functionalCharacter());
+
+    @Override
+    public Value disjunction(final State state, final Expr other) throws SetlException {
+        return overload(state, DISJUNCTION, other.eval(state));
+    }
+    final static String DISJUNCTION = createOverloadVariable(Disjunction.functionalCharacter());
+
+    @Override
+    public Value implication(final State state, final Expr other) throws SetlException {
+        return overload(state, IMPLICATION, other.eval(state));
+    }
+    final static String IMPLICATION = createOverloadVariable(Implication.functionalCharacter());
+
+    @Override
+    public Value not(final State state) throws SetlException {
+        return overload(state, NOT);
+    }
+    final static String NOT = createOverloadVariable(Not.functionalCharacter());
 
     /* type checks (sort of boolean operation) */
 

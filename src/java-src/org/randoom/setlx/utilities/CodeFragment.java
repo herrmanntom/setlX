@@ -16,6 +16,7 @@ public abstract class CodeFragment {
 
     /**
      * Gather all bound and unbound variables in this fragment and its siblings.
+     * Optimizes this fragment, if this can be safely done.
      *
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.

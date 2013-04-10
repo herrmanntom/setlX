@@ -29,7 +29,7 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String     VERSION         = "1.6.1";
+    private final static String     VERSION         = "1.6.2";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2013";
     private final static String     VERSION_PREFIX  = "v";
@@ -486,7 +486,7 @@ public class SetlX {
             }
             return EXEC_OK;
         } catch (final SetlException se) { // user/code did something wrong
-            printExceptionsTrace(state, se.getTrace());
+            se.printExceptionsTrace(state, 40);
             return EXEC_ERROR;
         } catch (final OutOfMemoryError oome) {
             printOoError(state);
@@ -605,22 +605,6 @@ public class SetlX {
         state.outWriteLn(
             "\n-==============================Execution=Finished=============================-\n"
         );
-    }
-
-    private static void printExceptionsTrace(final State state, final List<String> trace) {
-        final int end = trace.size();
-        final int max = 40;
-        final int m_2 = max / 2;
-        for (int i = end - 1; i >= 0; --i) {
-            // leave out some messages in the middle, which are most likely just clutter
-            if (end > max && i > m_2 - 1 && i < end - (m_2 + 1)) {
-                if (i == m_2) {
-                    state.errWriteLn(" ... \n     omitted " + (end - max) + " messages\n ... ");
-                }
-            } else {
-                state.errWriteLn(trace.get(i));
-            }
-        }
     }
 }
 

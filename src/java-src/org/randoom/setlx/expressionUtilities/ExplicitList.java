@@ -16,119 +16,120 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/*
-grammar rule:
-explicitList
-    : anyExpr (',' anyExpr)*
-    ;
-
-implemented here as:
-      =======......=======
-             mList
-*/
-
+/**
+ * An explicit list of expressions, used to fill collections.
+ *
+ * grammar rule:
+ * explicitList
+ *     : anyExpr (',' anyExpr)*
+ *     ;
+ *
+ * implemented here as:
+ *       =======......=======
+ *              mList
+ */
 public class ExplicitList extends CollectionBuilder {
-    private final List<Expr> mList;
+    private final List<Expr> list;
 
     public ExplicitList(final List<Expr> exprList) {
-        mList = exprList;
+        this.list = exprList;
     }
 
     @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
-        for (final Expr e: mList) {
+        for (final Expr e: list) {
             collection.addMember(state, e.eval(state));
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        for (final Expr expr : mList) {
+        for (final Expr expr : list) {
             expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-       when this expression gets assigned
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-    */
     @Override
     public void collectVariablesWhenAssigned (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        for (final Expr expr : mList) {
+        for (final Expr expr : list) {
             if (expr instanceof AssignableExpression) {
                 ((AssignableExpression) expr).collectVariablesWhenAssigned(boundVariables, unboundVariables, usedVariables);
             }
         }
     }
 
-    // sets the variables used to form this list to the variables from the list given as a parameter
     @Override
     public void assignUncloned(
         final State                  state,
         final IndexedCollectionValue collection
     ) throws SetlException {
-        final int size = mList.size();
+        final int size = list.size();
         if (collection.size() != size) {
             throw new IncompatibleTypeException(
                 "Members of '" + collection + "' are unusable for list assignment."
             );
         }
         for (int i = 0; i < size; ++i) {
-            mList.get(i).assignUncloned(state, collection.getMember(i + 1));
+            final Expr expr = list.get(i);
+            if (expr instanceof AssignableExpression) {
+                ((AssignableExpression) expr).assignUncloned(state, collection.getMember(i + 1));
+            } else {
+                throw new IncompatibleTypeException(
+                    "Members of '" + collection + "' are unusable for list assignment."
+                );
+            }
         }
     }
 
-    /* Similar to assignUncloned(),
-       However, also checks if the variable is already defined in scopes up to
-       (but EXCLUDING) `outerScope'.
-       Returns true and sets `v' if variable is undefined or already equal to `v'.
-       Returns false, if variable is defined and different from `v'. */
     @Override
     public boolean assignUnclonedCheckUpTo(
         final State                  state,
         final IndexedCollectionValue collection,
         final VariableScope          outerScope
     ) throws SetlException {
-        final int size = mList.size();
+        final int size = list.size();
         if (collection.size() != size) {
             throw new IncompatibleTypeException(
                 "Members of '" + collection + "' are unusable for list assignment."
             );
         }
         for (int i = 0; i < size; ++i) {
-            if ( ! mList.get(i).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope)) {
-                return false;
+            final Expr expr = list.get(i);
+            if (expr instanceof AssignableExpression) {
+                if ( ! ((AssignableExpression) expr).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope)) {
+                    return false;
+                }
+            } else {
+                throw new IncompatibleTypeException(
+                    "Members of '" + collection + "' are unusable for list assignment."
+                );
             }
         }
         return true;
     }
 
+    /**
+     * Get number of expressions contained in this explicit list.
+     *
+     * @return Number of expressions contained.
+     */
     public int size() {
-        return mList.size();
+        return list.size();
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb) {
-        final Iterator<Expr> iter = mList.iterator();
+        final Iterator<Expr> iter = list.iterator();
         while (iter.hasNext()) {
             iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
@@ -141,7 +142,7 @@ public class ExplicitList extends CollectionBuilder {
 
     @Override
     public void addToTerm(final State state, final CollectionValue collection) {
-        for (final Expr member: mList) {
+        for (final Expr member: list) {
             collection.addMember(state, member.toTerm(state));
         }
     }

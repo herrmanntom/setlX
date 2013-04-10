@@ -1,42 +1,62 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.expressions.AssignableExpression;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Collection of assignments to perform at a later point in time.
+ */
 public class WriteBackAgent {
 
-    private final List<Expr>  mExpressions;
-    private final List<Value> mValues;
+    private final List<AssignableExpression> expressions;
+    private final List<Value>                values;
 
     public WriteBackAgent(final int size) {
-        mExpressions = new ArrayList<Expr>(size);
-        mValues      = new ArrayList<Value>(size);
+        this.expressions = new ArrayList<AssignableExpression>(size);
+        this.values      = new ArrayList<Value>(size);
     }
 
-    public void add(final Expr expression, final Value value) {
-        mExpressions.add(expression);
-        mValues.add(value);
+    /**
+     * Add a pair of expression and value to write back.
+     *
+     * @param expression Expression to assign to.
+     * @param value      Value to assign.
+     * @return           True if expression is assignable.
+     */
+    public boolean add(final Expr expression, final Value value) {
+        if (expression instanceof AssignableExpression) {
+            this.expressions.add((AssignableExpression) expression);
+            this.values.add(value);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    /* This functions tries to writes the stored values into the variables used
-       in expressions to initialize the parameters of the previously executed
-       SetlDefinition. Hereby 'rw' parameters are possible without pointers...
-       Two types of expressions are supported:
-         simple variables
-       and
-         lists of (lists of) simple variables
-       If the expressions used are more complex or it is otherwise not possible
-       to write the values back, the current pair of expr+value is ignored. */
+    /**
+     * This functions tries to writes the stored values into the variables used
+     * in expressions to initialize the parameters of the previously executed
+     * SetlDefinition. Hereby 'rw' parameters are possible without pointers...
+     * Two types of expressions are supported:
+     *   simple variables
+     * and
+     *   lists of (lists of) simple variables
+     * If the expressions used are more complex or it is otherwise not possible
+     * to write the values back, the current pair of expr+value is ignored.
+     *
+     * @param state Current state of the running setlX program.
+     */
     public void writeBack(final State state) {
-        final int size = mExpressions.size();
+        final int size = expressions.size();
         for (int i = 0; i < size; ++i) {
             try {
-                mExpressions.get(i).assign(state, mValues.get(i).clone());
-            } catch (SetlException se) {
+                expressions.get(i).assign(state, values.get(i).clone());
+            } catch (final SetlException se) {
                 // assignment failed => just ignore it
             }
         }

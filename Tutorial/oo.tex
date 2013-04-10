@@ -255,9 +255,27 @@ If we now define \texttt{origin} as
 \\[0.2cm]
 and print \texttt{origin}, then the resulting output would be as shown in Figure
 \ref{fig:point-static.stlx-origin} on page \pageref{fig:point-static.stlx-origin}.
-Note that now only the member variables are stored in the object \texttt{origin}.  On the positive
-side, this saves some space.  On the negative side, we are less flexible since it is no longer
-possible to change methods on a per-object basis.  Furthermore, note that in order to invoke one of these
+Note that now only the member variables are stored in the object
+\texttt{origin}.  This saves some space.  
+Fortunately, we can still overwrite the static methods on a per-object
+basis, i.e.~the assignments
+\begin{verbatim}
+    origin.getX := procedure() { return 0; };
+    origin.getY := procedure() { return 0; };
+    origin.setX := om;
+    origin.setY := om;
+\end{verbatim}
+will now make create member variables \texttt{getX}, \texttt{getY}, \texttt{setX}, and \texttt{setY}
+that are attributes of the object \texttt{origin}.  The static variables of the same name would be
+unchanged but an expression of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{origin.getX()}
+\\[0.2cm]
+would now invoke the function bound to the member variable \texttt{getX} and would no longer invoke
+the function bound to the static variable \texttt{getX}.
+
+Going back to the code in Figure \ref{fig:point-static.stlx}, note that in order to invoke one of these
 static methods we still need an object of class \texttt{point}.  The reason is that otherwise the
 variables \texttt{mX} and \texttt{mY}, which are used in these methods, would be undefined.
 
@@ -313,7 +331,7 @@ then we can issue the command
 and get the result
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{procedure(x) \{ return mX; \}}.
+\texttt{procedure() \{ return mX; \}}.
 \\[0.2cm]
 This shows that the method \texttt{getX} is indeed a property of the class \texttt{point}.  However, 
 we cannot invoke this method on the class \texttt{point} because this method needs access to the
@@ -444,7 +462,8 @@ shows how to implement both ordinary points and colored points in \textsc{SetlX}
       \item Finally, the object $p$ is returned.
       \end{enumerate}
       Note that the procedure \texttt{coloredPoint} is effectively a constructor for objects
-      that have class \texttt{point} but also have a color attribute.
+      that have class \texttt{point} but also have a color attribute.  It could be called a
+      \href{http://en.wikipedia.org/wiki/Factory_method_pattern}{\emph{factory method}}.
 \end{enumerate}
 
 
@@ -530,6 +549,7 @@ defined in \textsc{SetlX} as follows:
 \texttt{edges := \{ [1, \{[5,3]], [3,5]\}], [5, \{[2,1]\}], \\
 \hspace*{3.25cm} 
 [3, \{[2,2], [4,7]\}], [2, \{[4,4]\}], [4, \{\}] \};}
+
 
 \begin{figure}[!ht]
 \centering
@@ -725,7 +745,18 @@ can in turn deal with those nodes that are reachable from node $v$.  The thing t
 algorithm fast is the fact that once a node is visited we know that its distance can not be improved
 in the future.  A proof of this fact can be found in a 
 \href{http://www-m3.ma.tum.de/foswiki/pub/MN0506/WebHome/dijkstra.pdf}{paper} of Dijkstra \cite{dijkstra:59}.
+\vspace*{0.3cm}
 
+\noindent
+\textbf{Remark}:  At this point you might feel a little disappointed because the previous example
+has not made much use of the object-oriented features of \textsc{SetlX}.  However, that is exactly
+the point of this example: Of course we could have implemented graph nodes as object of some class
+and do the same for edges.  However, the resulting program would then suffer from code bloat.  We do
+not think that object-oriented programming should be used for the sake of object-oriented
+programming but rather see it as a convenient method to encapsulate data, nothing more.  In
+particular, an object-oriented program is not, in general, better than a program that does not use
+object-oriented features.  We therefore advocate to use classes when this is either necessary or 
+convenient but not for the sake of nothing.
 
 \section{Representing Complex Numbers as Objects}
 Our next example deals with 
@@ -739,6 +770,7 @@ Assume that we have to perform a number of intricate calculations using complex 
 we could do this is by representing a complex number $x + y \cdot i$ as a pair $[x,y]$.  Then we
 would have to implement functions to add, subtract, multiply,  and divide complex numbers.  For
 example, methods to add and multiply two complex numbers would have the following form: 
+
 \begin{figure}[!ht]
 \centering
 \begin{Verbatim}[ frame         = lines, 
@@ -887,8 +919,16 @@ them next.
       \textbf{Note}:  For operator overloading to work out we have to use the same method
       name that is used when \textsc{SetlX} eveluate the corresponding operator addition.  
       For the operator ``\texttt{+}'' performing addition, the corresponding name
-      is \texttt{sum}.  Below is a table listing the names corresponding to the operators
-      provided by \textsc{SetlX}.
+      is \texttt{sum}.  Table \ref{tab:operator-names} lists the names corresponding to the operators
+      provided by \textsc{SetlX}.  Note that certain operators cannot be overloaded because they are
+      implicitly reduced to other operators.  In particular
+      \begin{enumerate}
+      \item \texttt{a != b} \quad is reduced to \quad \texttt{!(a == b)},
+      \item \texttt{a <= b} \quad is reduced to \quad \texttt{a == b || a < b},
+      \item \texttt{a >= b} \quad is reduced to \quad \texttt{a == b || b < a}, \quad and
+      \item \texttt{a > \ b} \quad is reduced to \quad \texttt{b < a}.
+      \end{enumerate}
+      
       
       \begin{table}[!hbt]
         \centering
@@ -901,22 +941,56 @@ them next.
           \hline
           \texttt{-}  & \texttt{difference}  & \texttt{\symbol{124}\symbol{124}}  & \texttt{disjunction} \\
           \hline
-          \texttt{*}  & \texttt{product}  & \texttt{!}  & \texttt{negation} \\
+          \texttt{*}  & \texttt{product}  & \texttt{!}  & \texttt{not} \\
           \hline
           \texttt{/}  & \texttt{quotient}    & \texttt{==}  & \texttt{equals} \\
           \hline
-          \texttt{\%}  & \texttt{modulo}     & \texttt{!=}  & \texttt{notEquals} \\
+          \texttt{\%}  & \texttt{modulo}     & \texttt{**}  & \texttt{power}  \\
           \hline
           \texttt{\symbol{92}}  & \texttt{integerDivision}    & \texttt{<}  & \texttt{lessThan}   \\
           \hline
-          \texttt{**}  & \texttt{power}     & \texttt{>}  & \texttt{greaterThan}    \\
-          \hline
-          \texttt{<=}  & \texttt{lessOrEqual}     & \texttt{>=}  & \texttt{greaterOrEqual}    \\
-          \hline
         \end{tabular}
+
         \caption{Operator names.}
         \label{tab:operator-names}
       \end{table}
+      
+      In case you want to find the names of these operators by yourself and do not have access to
+      this manual, then there is a neat trick to figure out these names.  Define the class
+      \texttt{empty} as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{class empty() \{\}}
+      \\[0.2cm]
+      Then, evaluating the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{a == a}
+      \\[0.2cm]
+      will result in the error message
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Error in "a == a":}       \\
+      \hspace*{1.3cm}
+      \texttt{Member 'equals' is undefined in 'object<\{ class () \{\} \}>'.}
+      \\[0.2cm]
+      This message shows that the operator \texttt{==} has the name ``\texttt{equals}''.  Evaluating
+      the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{a <= a;}
+      \\[0.2cm]
+      yields the error message
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{Error in "a <= a":} \\
+      \hspace*{1.3cm}
+      \texttt{Error in substitute comparison "(a == a) || (a < a)":} \\
+      \hspace*{1.3cm}
+      \texttt{Member 'equals' is undefined in 'object<{ class () {  } }>'.}
+      \\[0.2cm]
+      This error message shows that the expression ``\texttt{a <= b}'' is reduced to the expression \\
+      ``\texttt{(a == b) || (a < b)}''.
 \item The implementation of the method \texttt{difference} in line 7 and 8 is similar to
       the implementation of \texttt{sum}.
 \item The method \texttt{product} in line 9 takes two objects of class \texttt{complex}
@@ -990,6 +1064,8 @@ them next.
 \item Finally, we define the method \texttt{equals} in line 31.  This method is automatically
       invoked when two objects of class \texttt{complex} are compared using either the
       operator ``\texttt{==}'' or the operator ``\texttt{!=}''.
+\item Unfortunately, it does not make sense to define the operator ``\texttt{<}'' for complex
+      numbers.  Therefore, this operator has not been overloaded.
 \end{enumerate}
 
 

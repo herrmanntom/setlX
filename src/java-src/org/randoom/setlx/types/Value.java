@@ -13,25 +13,21 @@ import org.randoom.setlx.utilities.StateImplementation;
 
 import java.util.List;
 
+/**
+ * Base class for all value-types used in SetlX.
+ */
 public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     @Override
     public abstract Value clone();
 
-    /* Gather all bound and unbound variables in this value and its siblings
-          - bound   means "assigned" in this value
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
       final List<String> boundVariables,
       final List<String> unboundVariables,
       final List<String> usedVariables
     ) {
-        /* nothing to collect */
+        /* nothing to collect or optimize (for most, but not all, values) */
     }
 
     /* Boolean operations */

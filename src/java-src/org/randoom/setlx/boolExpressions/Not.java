@@ -10,18 +10,19 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-boolFactor
-    : [...]
-    | '!' boolFactor
-    ;
-
-implemented here as:
-          ==========
-             expr
-*/
-
+/**
+ * Class representing a Boolean negation expression.
+ *
+ * grammar rule:
+ * factor
+ *     : '!' factor
+ *     | [...]
+ *     ;
+ *
+ * implemented here as:
+ *           ======
+ *            expr
+ */
 public class Not extends Expr {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Not.class);
@@ -39,13 +40,6 @@ public class Not extends Expr {
         return expr.eval(state).not(state);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -81,10 +75,13 @@ public class Not extends Expr {
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
+    }
+
+    public static String functionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

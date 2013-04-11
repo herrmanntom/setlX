@@ -19,10 +19,10 @@ getInput := procedure() {
     print();
 
     getExpr := procedure() {
-        print("Please enter some SetlX expression using the 'value' variable");
+        print("Please enter some SetlX expression using 'value' as variable");
         try {
             expr:= parse(get());
-            if (! isTerm(expr) || ^variable("value") notin expr) {
+            if (! isTerm(expr) || "^variable(\"value\")" notin canonical(expr)) {
                 throw("wrong!");
             }
             return expr;

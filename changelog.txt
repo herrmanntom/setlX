@@ -1,5 +1,10 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.0.0--- 2013-04-11
+ + updated the tutorial to reflect the major new features
+   (basic object orientation and graphics support)
+ + all Boolean operators are overloadable
+
 ---v1.6.1--- 2013-04-07 (unreleased)
  + added resetRandom() function, which reseeds the random number generator
  + improve automated tests to include term conversion

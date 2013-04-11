@@ -8,14 +8,14 @@ Oh... you did that wrong... try again!
 Please enter some SetlX value
 value	:= om
 
-Please enter some SetlX expression using the 'value' variable
+Please enter some SetlX expression using 'value' as variable
 rule stack: [initExpr, expr]
 line 1:1 at [@0,0:0='%',<18>,1:0]: no viable alternative at input '%'
 1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!
 
-Please enter some SetlX expression using the 'value' variable
+Please enter some SetlX expression using 'value' as variable
 expr	:= value + value
 Syntax-Tree:
 expr	:= ^sum(^variable("value"), ^variable("value"))
@@ -28,7 +28,7 @@ Try again from the beginning, but don't make this error again:
 Please enter some SetlX value
 value	:= 5
 
-Please enter some SetlX expression using the 'value' variable
+Please enter some SetlX expression using 'value' as variable
 expr	:= value ** value
 Syntax-Tree:
 expr	:= ^power(^variable("value"), ^variable("value"))

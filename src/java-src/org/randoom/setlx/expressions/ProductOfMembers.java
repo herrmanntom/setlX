@@ -10,47 +10,43 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-//  grammar rule:
-//  prefixOperation
-//      : '*/' factor
-//      | [...]
-//      ;
-//
-//  implemented here as:
-//             ======
-//             mExpr
-
+/**
+ * This class implements the expression representing the ProductOfMembers operator.
+ */
+///  grammar rule:
+///  prefixOperation
+///      : '*/' factor
+///      | [...]
+///      ;
+///
+///  implemented here as:
+///             ======
+///             mExpr
+///
 public class ProductOfMembers extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^productOfMembers";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ProductOfMembers.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private final Expr mExpr;
+    private final Expr expr;
 
     public ProductOfMembers(final Expr expr) {
-        mExpr = expr;
+        this.expr = expr;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mExpr.eval(state).productOfMembers(state, Om.OM);
+        return expr.eval(state).productOfMembers(state, Om.OM);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -58,7 +54,7 @@ public class ProductOfMembers extends Expr {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("*/");
-        mExpr.appendString(state, sb, tabs);
+        expr.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -66,7 +62,7 @@ public class ProductOfMembers extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, mExpr.toTerm(state));
+        result.addMember(state, expr.toTerm(state));
         return result;
     }
 
@@ -79,7 +75,6 @@ public class ProductOfMembers extends Expr {
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

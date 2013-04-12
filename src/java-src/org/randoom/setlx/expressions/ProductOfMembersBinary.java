@@ -9,59 +9,55 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-
-// grammar rule:
-// reduce
-//     : factor ([..] | '*/' factor)*
-//     ;
-//
-// implemented here as:
-//       ======              ======
-//      mNeutral           mCollection
-
+/**
+ * This class implements the expression representing the binary version of the
+ * ProductOfMembers operator.
+ */
+/// grammar rule:
+/// reduce
+///     : factor ([..] | '*/' factor)*
+///     ;
+///
+/// implemented here as:
+///       ======              ======
+///      mNeutral           mCollection
+///
 public class ProductOfMembersBinary extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^multiplyMembersBinary";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ProductOfMembersBinary.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1800;
 
-    private final Expr mNeutral;
-    private final Expr mCollection;
+    private final Expr neutral;
+    private final Expr collection;
 
     public ProductOfMembersBinary(final Expr neutral, final Expr collection) {
-        mNeutral    = neutral;
-        mCollection = collection;
+        this.neutral    = neutral;
+        this.collection = collection;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mCollection.eval(state).productOfMembers(state, mNeutral.eval(state));
+        return collection.eval(state).productOfMembers(state, neutral.eval(state));
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mCollection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mNeutral.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        collection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        neutral.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mNeutral.appendString(state, sb, tabs);
+        neutral.appendString(state, sb, tabs);
         sb.append(" */ ");
-        mCollection.appendString(state, sb, tabs);
+        collection.appendString(state, sb, tabs);
     }
 
     /* term operations */
@@ -69,8 +65,8 @@ public class ProductOfMembersBinary extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mNeutral.toTerm(state));
-        result.addMember(state, mCollection.toTerm(state));
+        result.addMember(state, neutral.toTerm(state));
+        result.addMember(state, collection.toTerm(state));
         return result;
     }
 
@@ -84,7 +80,6 @@ public class ProductOfMembersBinary extends Expr {
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

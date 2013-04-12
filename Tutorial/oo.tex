@@ -2,7 +2,7 @@
 These days, everything is
 \href{http://en.wikipedia.org/wiki/Object-oriented_programming}{\emph{object-oriented}}.  
 After having spotted
-\href{http://www.gi-news.com/classic-jokes/180-the-object-oriented-toaster}{object oriented toasters}  
+\href{http://www.danielsen.com/jokes/objecttoaster.txt}{object oriented toasters}  
 on the loose, we have decided that \textsc{SetlX} should not be an exception.  Therefore,
 \textsc{SetlX} supports some basic means for object oriented programming.  Most importantly,
 \textsc{SetlX} supports classes.  In \textsc{SetlX} a  
@@ -748,7 +748,7 @@ in the future.  A proof of this fact can be found in a
 \vspace*{0.3cm}
 
 \noindent
-\textbf{Remark}:  At this point you might feel a little disappointed because the previous example
+\textbf{Remark}:  At this point you might feel a little bit disappointed because the previous example
 has not made much use of the object-oriented features of \textsc{SetlX}.  However, that is exactly
 the point of this example: Of course we could have implemented graph nodes as object of some class
 and do the same for edges.  However, the resulting program would then suffer from code bloat.  We do
@@ -756,7 +756,7 @@ not think that object-oriented programming should be used for the sake of object
 programming but rather see it as a convenient method to encapsulate data, nothing more.  In
 particular, an object-oriented program is not, in general, better than a program that does not use
 object-oriented features.  We therefore advocate to use classes when this is either necessary or 
-convenient but not for the sake of nothing.
+convenient but not for the sake of object-oriented programming.
 
 \section{Representing Complex Numbers as Objects}
 Our next example deals with 
@@ -917,19 +917,23 @@ them next.
       in order to compute the sum of \texttt{z1} and \texttt{z2}.  
 
       \textbf{Note}:  For operator overloading to work out we have to use the same method
-      name that is used when \textsc{SetlX} eveluate the corresponding operator addition.  
+      name that is used when \textsc{SetlX} evaluates the corresponding operator.  
       For the operator ``\texttt{+}'' performing addition, the corresponding name
       is \texttt{sum}.  Table \ref{tab:operator-names} lists the names corresponding to the operators
       provided by \textsc{SetlX}.  Note that certain operators cannot be overloaded because they are
       implicitly reduced to other operators.  In particular
       \begin{enumerate}
+      \item \texttt{a <==> b} \quad is reduced to \quad \texttt{a == b},
+      \item \texttt{a <!=> b} \quad is reduced to \quad \texttt{!(a == b)},
       \item \texttt{a != b} \quad is reduced to \quad \texttt{!(a == b)},
       \item \texttt{a <= b} \quad is reduced to \quad \texttt{a == b || a < b},
       \item \texttt{a >= b} \quad is reduced to \quad \texttt{a == b || b < a}, \quad and
       \item \texttt{a > \ b} \quad is reduced to \quad \texttt{b < a}.
       \end{enumerate}
-      
-      
+      Furthermore, the operators ``\texttt{+/}'' and ``\texttt{*/}'' are reduced to applications of
+      the operators ``\texttt{+}'' and ``\texttt{*}''.  Therefore, it does not make sense to
+      overload these operators on their own.  They are implictitly overloaded when the operators 
+      ``\texttt{+}'' and ``\texttt{*}'' are overloaded.
       \begin{table}[!hbt]
         \centering
         \begin{tabular}[t]{|l|l||l|l|}
@@ -941,13 +945,15 @@ them next.
           \hline
           \texttt{-}  & \texttt{difference}  & \texttt{\symbol{124}\symbol{124}}  & \texttt{disjunction} \\
           \hline
-          \texttt{*}  & \texttt{product}  & \texttt{!}  & \texttt{not} \\
+          \texttt{*}  & \texttt{product}  & \texttt{=>}  & \texttt{implication} \\
           \hline
           \texttt{/}  & \texttt{quotient}    & \texttt{==}  & \texttt{equals} \\
           \hline
           \texttt{\%}  & \texttt{modulo}     & \texttt{**}  & \texttt{power}  \\
           \hline
           \texttt{\symbol{92}}  & \texttt{integerDivision}    & \texttt{<}  & \texttt{lessThan}   \\
+          \hline
+          \texttt{><}  & \texttt{cartesianProduct}    &   &    \\
           \hline
         \end{tabular}
 
@@ -991,6 +997,16 @@ them next.
       \\[0.2cm]
       This error message shows that the expression ``\texttt{a <= b}'' is reduced to the expression \\
       ``\texttt{(a == b) || (a < b)}''.
+
+      Finally, note that Table \ref{tab:operator-names} only lists the binary operators.  
+      There are three unary operators that can be overloaded, too.
+      \begin{enumerate}
+      \item The operator ``\texttt{-}'' has the name ``\texttt{minus}'' when used as a unary prefix
+            operator. 
+      \item The operator ``\texttt{!}'' has the name ``\texttt{not}'' when used as a unary prefix
+            operator.  This same operator has the name ``\texttt{factorial}'' when used as a unary
+            postfix operator.
+      \end{enumerate}
 \item The implementation of the method \texttt{difference} in line 7 and 8 is similar to
       the implementation of \texttt{sum}.
 \item The method \texttt{product} in line 9 takes two objects of class \texttt{complex}

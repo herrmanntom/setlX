@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.0.1--- 2013-04-28
+ # removed redundant quotes in objects
+
 ---v2.0.0--- 2013-04-11
  + updated the tutorial to reflect the major new features
    (basic object orientation and graphics support)

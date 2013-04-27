@@ -577,7 +577,7 @@ public class SetlObject extends Value {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         try {
             if (getObjectMemberUnClonedUnSafe(state, STR) != Om.OM) {
-                str(state).appendString(state, sb, tabs);
+                str(state).appendUnquotedString(state, sb, tabs);
                 return;
             }
         } catch (final SetlException e) {

@@ -53,6 +53,7 @@ public class StateImplementation extends State {
     private                 boolean             multiLineMode;
     private                 boolean             isInteractive;
     private                 boolean             printVerbose;
+    private                 boolean             traceAssignments;
     private                 boolean             assertsDisabled;
     private                 boolean             isRuntimeDebuggingEnabled;
 
@@ -80,7 +81,7 @@ public class StateImplementation extends State {
         multiLineMode                    = false;
         isInteractive                    = false;
         printVerbose                     = false;
-        super.traceAssignments           = false;
+        traceAssignments                 = false;
         assertsDisabled                  = false;
         isRuntimeDebuggingEnabled        = false;
         /* -- Debugger -- */
@@ -311,7 +312,12 @@ public class StateImplementation extends State {
 
     @Override
     public void setTraceAssignments(final boolean traceAssignments) {
-        super.traceAssignments = traceAssignments;
+        this.traceAssignments = traceAssignments;
+    }
+
+    @Override
+    public boolean getTraceAssignments() {
+        return traceAssignments;
     }
 
     @Override
@@ -437,7 +443,7 @@ public class StateImplementation extends State {
             );
         } else {
             variableScope.storeValue(var, value);
-            if (super.traceAssignments) {
+            if (traceAssignments) {
                 printTrace(var, value, context);
             }
         }
@@ -471,7 +477,7 @@ public class StateImplementation extends State {
                 return false;
             }
         }
-        if (super.traceAssignments) {
+        if (traceAssignments) {
             final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope);
             if (result) {
                 printTrace(var, value, context);
@@ -491,7 +497,7 @@ public class StateImplementation extends State {
                 );
             }
         }
-        if (super.traceAssignments) {
+        if (traceAssignments) {
             final HashMap<String, Value> assignments = new HashMap<String, Value>();
             variableScope.storeAllValuesTrace(scope, assignments);
             for (final Map.Entry<String, Value> entry : assignments.entrySet()) {
@@ -505,7 +511,7 @@ public class StateImplementation extends State {
     @Override
     public void putClassDefinition(final String var, final SetlClass classDef, final String context) {
         classDefinitions.put(var, classDef);
-        if (super.traceAssignments) {
+        if (traceAssignments) {
             printTrace(var, classDef, context);
         }
     }

@@ -99,7 +99,7 @@ public abstract class State {
 
     public abstract void                setTraceAssignments(final boolean traceAssignments);
 
-    protected       boolean             traceAssignments;
+    public abstract boolean             getTraceAssignments();
 
     public abstract void                setAssertsDisabled(final boolean assertsDisabled);
 

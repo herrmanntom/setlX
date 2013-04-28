@@ -37,10 +37,6 @@ public class Condition extends CodeFragment {
         }
     }
 
-    public boolean evalToBool(final State state) throws SetlException {
-        return eval(state) == SetlBoolean.TRUE;
-    }
-
     /* Gather all bound and unbound variables in this expression and its siblings
           - bound   means "assigned" in this expression
           - unbound means "not present in bound set when used"
@@ -59,12 +55,14 @@ public class Condition extends CodeFragment {
 
     /* string operations */
 
+    @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         mExpr.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
+    @Override
     public Value toTerm(final State state) {
         return mExpr.toTerm(state);
     }

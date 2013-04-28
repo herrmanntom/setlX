@@ -88,7 +88,7 @@ public class Forall extends Expr {
         iterator.eval(state, e);
         if (e.result == SetlBoolean.FALSE && e.scope != null) {
             // restore state in which mBoolExpr is false
-            state.putAllValues(e.scope);
+            state.putAllValues(e.scope, FUNCTIONAL_CHARACTER);
         }
         return e.result;
     }

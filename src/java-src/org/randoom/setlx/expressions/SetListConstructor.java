@@ -104,10 +104,10 @@ public class SetListConstructor extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v) throws SetlException {
+    public void assignUncloned(final State state, final Value v, final String context) throws SetlException {
         if (v instanceof IndexedCollectionValue) {
             if (mType == LIST && mBuilder != null) {
-                mBuilder.assignUncloned(state, (IndexedCollectionValue) v);
+                mBuilder.assignUncloned(state, (IndexedCollectionValue) v, context);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."
@@ -126,10 +126,10 @@ public class SetListConstructor extends AssignableExpression {
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v'. */
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) throws SetlException {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) throws SetlException {
         if (v instanceof IndexedCollectionValue) {
             if (mType == LIST && mBuilder != null) {
-               return mBuilder.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope);
+               return mBuilder.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope, context);
             } else {
                 throw new UndefinedOperationException(
                     "Only explicit lists can be used as targets for list assignments."

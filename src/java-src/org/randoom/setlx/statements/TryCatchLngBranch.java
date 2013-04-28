@@ -57,7 +57,7 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
     @Override
     public ReturnMessage exec(final State state) throws SetlException {
         // wrap into error
-        mErrorVar.assign(state, new SetlError(mException));
+        mErrorVar.assign(state, new SetlError(mException), FUNCTIONAL_CHARACTER);
         // remove stored exception
         mException = null;
         // execute

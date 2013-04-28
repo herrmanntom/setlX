@@ -49,13 +49,14 @@ public class WriteBackAgent {
      * If the expressions used are more complex or it is otherwise not possible
      * to write the values back, the current pair of expr+value is ignored.
      *
-     * @param state Current state of the running setlX program.
+     * @param state   Current state of the running setlX program.
+     * @param context Context of this assignment for trace.
      */
-    public void writeBack(final State state) {
+    public void writeBack(final State state, final String context) {
         final int size = expressions.size();
         for (int i = 0; i < size; ++i) {
             try {
-                expressions.get(i).assign(state, values.get(i).clone());
+                expressions.get(i).assign(state, values.get(i).clone(), context);
             } catch (final SetlException se) {
                 // assignment failed => just ignore it
             }

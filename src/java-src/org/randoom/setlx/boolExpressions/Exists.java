@@ -87,7 +87,7 @@ public class Exists extends Expr {
         iterator.eval(state, e);
         if (e.result == SetlBoolean.TRUE && e.scope != null) {
             // restore state in which condition is true
-            state.putAllValues(e.scope);
+            state.putAllValues(e.scope, FUNCTIONAL_CHARACTER);
         }
         return e.result;
     }

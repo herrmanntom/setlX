@@ -98,8 +98,8 @@ public class Variable extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v) throws IllegalRedefinitionException {
-        state.putValue(mId, v);
+    public void assignUncloned(final State state, final Value v, final String context) throws IllegalRedefinitionException {
+        state.putValue(mId, v, context);
     }
 
     /* Similar to assignUncloned(),
@@ -108,8 +108,8 @@ public class Variable extends AssignableExpression {
        Returns true and sets `v' if variable is undefined or already equal to `v'.
        Returns false, if variable is defined and different from `v' */
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) throws SetlException {
-        return state.putValueCheckUpTo(mId, v, outerScope);
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) throws SetlException {
+        return state.putValueCheckUpTo(mId, v, outerScope, context);
     }
 
     /* string operations */

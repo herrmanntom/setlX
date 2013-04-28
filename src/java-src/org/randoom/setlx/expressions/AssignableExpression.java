@@ -33,10 +33,11 @@ public abstract class AssignableExpression extends Expr {
      * @param state          Current state of the running setlX program.
      * @param value          Value to assign.
      * @return               Clone of assigned value.
+     * @param context        Context description of the assignment for trace.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public final Value assign(final State state, final Value value) throws SetlException {
-        assignUncloned(state, value);
+    public final Value assign(final State state, final Value value, final String context) throws SetlException {
+        assignUncloned(state, value, context);
         return value.clone();
     }
 
@@ -48,9 +49,10 @@ public abstract class AssignableExpression extends Expr {
      *
      * @param state          Current state of the running setlX program.
      * @param value          Value to assign.
+     * @param context        Context description of the assignment for trace.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract void assignUncloned(final State state, final Value value) throws SetlException;
+    public abstract void assignUncloned(final State state, final Value value, final String context) throws SetlException;
 
     /**
      * Sets this expression to the given value. Does not clone 'value' and does
@@ -71,7 +73,8 @@ public abstract class AssignableExpression extends Expr {
     public boolean assignUnclonedCheckUpTo(
         final State         state,
         final Value         value,
-        final VariableScope outerScope
+        final VariableScope outerScope,
+        final String        context
     ) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":" + state.getEndl() +

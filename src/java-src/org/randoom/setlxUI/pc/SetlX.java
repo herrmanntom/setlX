@@ -63,7 +63,7 @@ public class SetlX {
 
         final SetlList parameters = new SetlList(); // can/will be filled later
         try {
-            state.putValue("params", parameters);
+            state.putValue("params", parameters, "init");
         } catch (final IllegalRedefinitionException e) {
             // impossible
         }

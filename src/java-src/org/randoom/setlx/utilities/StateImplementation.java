@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 // This class represents the current state of the interpreter.
@@ -429,24 +430,39 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void putValue(final String var, final Value value) throws IllegalRedefinitionException {
+    public void putValue(final String var, final Value value, final String context) throws IllegalRedefinitionException {
         if (classDefinitions.containsKey(var)) {
             throw new IllegalRedefinitionException(
                 "Redefinition of classes is not allowed."
             );
         } else {
             variableScope.storeValue(var, value);
+            if (super.traceAssignments) {
+                printTrace(var, value, context);
+            }
         }
     }
 
-    /*
-     * Store `value' for variable into current scope, but only if scopes linked
-     * from current one up until `outerScope' do not have this value defined already.
-     * Return false if linked scope contained a different value under this variable,
-     * true otherwise.
-     */
+    /*private*/ void printTrace(final String var, final Value result, final String context) {
+        final StringBuilder out = new StringBuilder();
+
+        out.append("~< Trace");
+        if (context != null && ! context.equals("")) {
+            out.append(" (");
+            out.append(context);
+            out.append(")");
+        }
+        out.append(": ");
+        out.append(var);
+        out.append(" := ");
+        result.appendUnquotedString(this, out, 0);
+        out.append(" >~");
+
+        this.outWriteLn(out.toString());
+    }
+
     @Override
-    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) throws SetlException {
+    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final String context) throws SetlException {
         final Value now = classDefinitions.get(var);
         if (now != null) {
             if (now.equalTo(value)) {
@@ -455,14 +471,19 @@ public class StateImplementation extends State {
                 return false;
             }
         }
-        return variableScope.storeValueCheckUpTo(this, var, value, outerScope);
+        if (super.traceAssignments) {
+            final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope);
+            if (result) {
+                printTrace(var, value, context);
+            }
+            return result;
+        } else {
+            return variableScope.storeValueCheckUpTo(this, var, value, outerScope);
+        }
     }
 
-    // Add bindings stored in `scope' into current scope.
-    // This also adds vars in outer scopes of `scope' until reaching the current
-    // scope as outer scope of `scope'.
     @Override
-    public void putAllValues(final VariableScope scope) throws SetlException {
+    public void putAllValues(final VariableScope scope, final String context) throws SetlException {
         for (final String key : classDefinitions.keySet()) {
             if (scope.locateValue(this, key, false) != null) {
                 throw new IllegalRedefinitionException(
@@ -470,12 +491,23 @@ public class StateImplementation extends State {
                 );
             }
         }
-        variableScope.storeAllValues(scope);
+        if (super.traceAssignments) {
+            final HashMap<String, Value> assignments = new HashMap<String, Value>();
+            variableScope.storeAllValuesTrace(scope, assignments);
+            for (final Map.Entry<String, Value> entry : assignments.entrySet()) {
+                printTrace(entry.getKey(), entry.getValue(), context);
+            }
+        } else {
+            variableScope.storeAllValues(scope);
+        }
     }
 
     @Override
-    public void putClassDefinition(final String var, final SetlClass classDef) {
+    public void putClassDefinition(final String var, final SetlClass classDef, final String context) {
         classDefinitions.put(var, classDef);
+        if (super.traceAssignments) {
+            printTrace(var, classDef, context);
+        }
     }
 
     @Override

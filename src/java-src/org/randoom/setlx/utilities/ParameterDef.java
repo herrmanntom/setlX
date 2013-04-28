@@ -66,8 +66,8 @@ public class ParameterDef extends CodeFragment {
         mVar.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
-    public void assign(final State state, final Value v) throws SetlException {
-        mVar.assign(state, v);
+    public void assign(final State state, final Value v, final String context) throws SetlException {
+        mVar.assign(state, v, context);
     }
 
     public Value getValue(final State state) throws SetlException {

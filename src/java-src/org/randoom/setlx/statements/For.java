@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressionUtilities.SetlIterator;
 import org.randoom.setlx.expressionUtilities.SetlIteratorExecutionContainer;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -46,7 +47,7 @@ public class For extends Statement {
 
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
-            if (condition == null || condition.evalToBool(state)) {
+            if (condition == null || condition.eval(state) == SetlBoolean.TRUE) {
                 return statements.exec(state);
                 // ContinueException and BreakException are handled by outer iterator
             }

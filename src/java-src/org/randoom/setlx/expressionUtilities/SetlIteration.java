@@ -6,6 +6,7 @@ import org.randoom.setlx.expressionUtilities.SetlIterator;
 import org.randoom.setlx.expressionUtilities.SetlIteratorExecutionContainer;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -50,7 +51,7 @@ public class SetlIteration extends CollectionBuilder {
 
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
-            if (condition == null || condition.evalToBool(state)) {
+            if (condition == null || condition.eval(state) == SetlBoolean.TRUE) {
                 if (expr != null) {
                     collection.addMember(state, expr.eval(state));
                 } else { // is simple iteration

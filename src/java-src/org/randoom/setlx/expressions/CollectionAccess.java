@@ -131,7 +131,7 @@ public class CollectionAccess extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v) throws SetlException {
+    public void assignUncloned(final State state, final Value v, final String context) throws SetlException {
         if (args.size() == 1 && lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {

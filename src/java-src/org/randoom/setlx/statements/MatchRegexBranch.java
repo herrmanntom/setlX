@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -96,7 +97,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
         if (condition != null) {
-            return condition.evalToBool(state);
+            return condition.eval(state) == SetlBoolean.TRUE;
         } else {
             return true;
         }

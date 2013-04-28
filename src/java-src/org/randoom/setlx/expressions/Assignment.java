@@ -22,7 +22,7 @@ implemented here as:
 
 public class Assignment extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^assignment";
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assignment.class);
 
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1000;
@@ -37,11 +37,7 @@ public class Assignment extends Expr {
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        final Value assigned = lhs.assign(state, rhs.eval(state).clone());
-
-        if (state.traceAssignments) {
-            state.outWriteLn("~< Trace: " + lhs + " := " + assigned + " >~");
-        }
+        final Value assigned = lhs.assign(state, rhs.eval(state).clone(), FUNCTIONAL_CHARACTER);
 
         return assigned;
     }

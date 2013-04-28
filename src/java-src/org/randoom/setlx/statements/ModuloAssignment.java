@@ -48,11 +48,9 @@ public class ModuloAssignment extends StatementWithPrintableResult {
     @Override
     protected ReturnMessage execute(final State state) throws SetlException {
         final Value assigned = lhs.eval(state).moduloAssign(state, rhs.eval(state).clone());
-        lhs.assignUncloned(state, assigned);
+        lhs.assignUncloned(state, assigned, FUNCTIONAL_CHARACTER);
 
-        if (state.traceAssignments) {
-            printTrace(state, lhs, assigned);
-        } else if (printAfterEval) {
+        if (printAfterEval) {
             printResult(state, assigned);
         }
 

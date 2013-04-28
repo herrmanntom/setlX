@@ -176,7 +176,7 @@ public class Procedure extends Value {
         // assign closure contents
         if (closure != null) {
             for (final Map.Entry<String, Value> entry : closure.entrySet()) {
-                new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, entry.getValue(), oldScope);
+                new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, entry.getValue(), oldScope, FUNCTIONAL_CHARACTER);
             }
         }
 
@@ -186,9 +186,9 @@ public class Procedure extends Value {
             final ParameterDef param = parameters.get(i);
             final Value        value = values.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
-                param.assign(state, value);
+                param.assign(state, value, FUNCTIONAL_CHARACTER);
             } else {
-                param.assign(state, value.clone());
+                param.assign(state, value.clone(), FUNCTIONAL_CHARACTER);
             }
         }
 
@@ -272,7 +272,7 @@ public class Procedure extends Value {
             newScope.unlink();
 
             // write values in WriteBackAgent into restored scope
-            wba.writeBack(state);
+            wba.writeBack(state, FUNCTIONAL_CHARACTER);
 
             if (stepThrough || state.isDebugFinishFunction) {
                 state.setDebugModeActive(true);

@@ -52,10 +52,10 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
     public ReturnMessage exec(final State state) throws SetlException {
         if (mException instanceof ThrownInSetlXException) {
             // assign directly
-            mErrorVar.assign(state, ((ThrownInSetlXException) mException).getValue().clone() );
+            mErrorVar.assign(state, ((ThrownInSetlXException) mException).getValue().clone(), FUNCTIONAL_CHARACTER);
         } else {
             // wrap into error
-            mErrorVar.assign(state, new SetlError(mException));
+            mErrorVar.assign(state, new SetlError(mException), FUNCTIONAL_CHARACTER);
         }
         // remove stored exception
         mException = null;

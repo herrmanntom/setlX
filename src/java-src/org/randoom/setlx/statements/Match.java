@@ -28,8 +28,8 @@ implemented with different classes which inherit from MatchAbstractBranch:
 */
 
 public class Match extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^match";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Match.class);
 
     private final Expr                        mExpr;
     private final List<MatchAbstractBranch>   mBranchList;
@@ -54,7 +54,7 @@ public class Match extends Statement {
                     // force match variables to be local to this block
                     innerScope.setWriteThrough(false);
                     // put all matching variables into current scope
-                    result.setAllBindings(state);
+                    result.setAllBindings(state, FUNCTIONAL_CHARACTER);
                     // reset WriteThrough, because changes during execution are not strictly local
                     innerScope.setWriteThrough(true);
 

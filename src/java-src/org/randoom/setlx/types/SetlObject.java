@@ -555,11 +555,12 @@ public class SetlObject extends Value {
     }
 
     @Override
-    public void setObjectMember(final State state, final String variable, final Value value) {
+    public void setObjectMember(final State state, final String variable, final Value value, final String context) {
         separateFromOriginal();
         if (value instanceof Procedure) {
             ((Procedure) value).setClosure(null);
         }
+        // TODO add trace
         members.put(variable, value);
     }
 

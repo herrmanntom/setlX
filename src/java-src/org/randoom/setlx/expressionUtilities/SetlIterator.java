@@ -223,7 +223,7 @@ public class SetlIterator extends CodeFragment {
                     innerScope.setWriteThrough(false); // force iteration variables to be local to this block
 
                     // assign value from collection
-                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope);
+                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, FUNCTIONAL_CHARACTER);
 
                     /*
                      * This check is done to allow the following statement to work as expected:
@@ -235,10 +235,6 @@ public class SetlIterator extends CodeFragment {
                      */
                     if ( ! successful) {
                         continue;
-                    }
-
-                    if (state.traceAssignments) {
-                        state.outWriteLn("~< Trace (iterator): " + assignable.toString() + " := " + v + " >~");
                     }
 
                     // reset WriteThrough, because changes during execution are not strictly local

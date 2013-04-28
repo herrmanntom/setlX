@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
@@ -36,7 +37,7 @@ public class IfThenBranch extends IfThenAbstractBranch {
 
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
-        return mCondition.evalToBool(state);
+        return mCondition.eval(state) == SetlBoolean.TRUE;
     }
 
     @Override

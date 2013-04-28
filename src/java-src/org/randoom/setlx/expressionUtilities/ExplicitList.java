@@ -69,7 +69,8 @@ public class ExplicitList extends CollectionBuilder {
     @Override
     public void assignUncloned(
         final State                  state,
-        final IndexedCollectionValue collection
+        final IndexedCollectionValue collection,
+        final String                 context
     ) throws SetlException {
         final int size = list.size();
         if (collection.size() != size) {
@@ -80,7 +81,7 @@ public class ExplicitList extends CollectionBuilder {
         for (int i = 0; i < size; ++i) {
             final Expr expr = list.get(i);
             if (expr instanceof AssignableExpression) {
-                ((AssignableExpression) expr).assignUncloned(state, collection.getMember(i + 1));
+                ((AssignableExpression) expr).assignUncloned(state, collection.getMember(i + 1), context);
             } else {
                 throw new IncompatibleTypeException(
                     "Members of '" + collection + "' are unusable for list assignment."
@@ -93,7 +94,8 @@ public class ExplicitList extends CollectionBuilder {
     public boolean assignUnclonedCheckUpTo(
         final State                  state,
         final IndexedCollectionValue collection,
-        final VariableScope          outerScope
+        final VariableScope          outerScope,
+        final String                 context
     ) throws SetlException {
         final int size = list.size();
         if (collection.size() != size) {
@@ -104,7 +106,7 @@ public class ExplicitList extends CollectionBuilder {
         for (int i = 0; i < size; ++i) {
             final Expr expr = list.get(i);
             if (expr instanceof AssignableExpression) {
-                if ( ! ((AssignableExpression) expr).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope)) {
+                if ( ! ((AssignableExpression) expr).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope, context)) {
                     return false;
                 }
             } else {

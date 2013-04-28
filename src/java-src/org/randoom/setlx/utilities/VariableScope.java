@@ -234,6 +234,19 @@ public class VariableScope {
         }
     }
 
+    // Add bindings stored in `scope' into this scope or globals.
+    // This also adds variables in outer scopes of `scope' until reaching this
+    // as outer scope of `scope'.
+    /*package*/ void storeAllValuesTrace(final VariableScope scope, final HashMap<String, Value> assignments) throws IllegalRedefinitionException {
+        for (final Map.Entry<String, Value> entry : scope.bindings.entrySet()) {
+            storeValue(entry.getKey(), entry.getValue());
+            assignments.put(entry.getKey(), entry.getValue());
+        }
+        if (scope.originalScope != null && scope.originalScope != this) {
+            storeAllValuesTrace(scope.originalScope, assignments);
+        }
+    }
+
     /* term operations */
 
     /*package*/ public Term toTerm(final State state, final HashMap<String, SetlClass> classDefinitions) {

@@ -52,7 +52,8 @@ public abstract class CollectionBuilder extends CodeFragment {
     // collection given as a parameter
     public          void assignUncloned(
         final State                  state,
-        final IndexedCollectionValue collection
+        final IndexedCollectionValue collection,
+        final String                 context
     ) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +
@@ -68,7 +69,8 @@ public abstract class CollectionBuilder extends CodeFragment {
     public          boolean assignUnclonedCheckUpTo(
         final State                  state,
         final IndexedCollectionValue collection,
-        final VariableScope          outerScope
+        final VariableScope          outerScope,
+        final String                 context
     ) throws SetlException {
         throw new UndefinedOperationException(
             "Error in \"" + this + "\":\n" +

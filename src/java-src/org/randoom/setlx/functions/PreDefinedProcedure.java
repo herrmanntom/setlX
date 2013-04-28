@@ -129,7 +129,7 @@ public abstract class PreDefinedProcedure extends Procedure {
                 }
             }
             // assign variables
-            wba.writeBack(state);
+            wba.writeBack(state, FUNCTIONAL_CHARACTER);
         }
 
         return result;

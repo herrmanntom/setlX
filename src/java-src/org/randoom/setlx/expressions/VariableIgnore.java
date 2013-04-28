@@ -9,23 +9,23 @@ import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
 
-/*
-grammar rules:
-assignable
-    : variable   | idList      | '_'
-    ;
-
-value
-    : list | set | atomicValue | '_'
-    ;
-
-this class implements an ignored variable inside an idList or expression:
-                                 ===
-*/
-
+/**
+ * This class implements an ignored variable inside an assignable expression
+ *
+ * grammar rules:
+ * assignable
+ *     : variable   | idList      | '_'
+ *     ;
+ *
+ * value
+ *     : list | set | atomicValue | '_'
+ *     ;
+ *
+ *                                  ===
+ */
 public class VariableIgnore extends AssignableExpression {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    public  final static String         FUNCTIONAL_CHARACTER = "^variableIgnore";
+    // functional character used in terms
+    public  final static String         FUNCTIONAL_CHARACTER = generateFunctionalCharacter(VariableIgnore.class);
     // precedence level in SetlX-grammar
     private final static int            PRECEDENCE           = 9999;
 
@@ -43,13 +43,6 @@ public class VariableIgnore extends AssignableExpression {
         return IgnoreDummy.ID;
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -57,14 +50,6 @@ public class VariableIgnore extends AssignableExpression {
         final List<String> usedVariables
     ) { /* nothing to collect */ }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-       when this expression gets assigned
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesWhenAssigned (
         final List<String> boundVariables,
@@ -74,17 +59,12 @@ public class VariableIgnore extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v) {
+    public void assignUncloned(final State state, final Value v, final String context) {
         // or maybe it just does nothing
     }
 
-    /* Similar to assignUncloned(),
-       However, also checks if the variable is already defined in scopes up to
-       (but EXCLUDING) `outerScope'.
-       Returns true and sets `v' if variable is undefined or already equal to `v'.
-       Returns false, if variable is defined and different from `v' */
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope) {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) {
         return true;
     }
 

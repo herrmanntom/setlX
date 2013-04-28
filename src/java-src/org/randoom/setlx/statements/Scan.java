@@ -97,13 +97,13 @@ public class Scan extends Statement {
 
                             // put current position into scope
                             if (posVar != null) {
-                                posVar.assignUncloned(state, position);
+                                posVar.assignUncloned(state, position, FUNCTIONAL_CHARACTER);
                             }
 
                             // put all matching variables into scope
-                            result.setAllBindings(state);
+                            result.setAllBindings(state, FUNCTIONAL_CHARACTER);
 
-                            // check conditon
+                            // check condition
                             if (br.evalConditionToBool(state)) {
                                 largestMatchSize   = offset;
                                 largestMatchBranch = br;
@@ -125,10 +125,10 @@ public class Scan extends Statement {
                     innerScope.setWriteThrough(false);
                     // put current position into scope
                     if (posVar != null) {
-                        posVar.assignUncloned(state, position);
+                        posVar.assignUncloned(state, position, FUNCTIONAL_CHARACTER);
                     }
                     // put all matching variables into current scope
-                    largestMatchResult.setAllBindings(state);
+                    largestMatchResult.setAllBindings(state, FUNCTIONAL_CHARACTER);
                     // reset WriteThrough, because changes during execution are not strictly local
                     innerScope.setWriteThrough(true);
 

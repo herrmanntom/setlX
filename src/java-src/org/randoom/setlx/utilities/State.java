@@ -10,7 +10,9 @@ import org.randoom.setlx.types.Value;
 import java.util.LinkedList;
 import java.util.Random;
 
-// This interface provides access to the current state of the interpreter.
+/**
+ * This interface provides access to the current state of the interpreter.
+ */
 public abstract class State {
 
     public abstract void                setEnvironmentProvider(final EnvironmentProvider envProvider);
@@ -97,7 +99,7 @@ public abstract class State {
 
     public abstract void                setTraceAssignments(final boolean traceAssignments);
 
-    public          boolean             traceAssignments;
+    protected       boolean             traceAssignments;
 
     public abstract void                setAssertsDisabled(final boolean assertsDisabled);
 
@@ -123,22 +125,41 @@ public abstract class State {
 
     public abstract Value               findValue(final String var) throws SetlException;
 
-    public abstract void                putValue(final String var, final Value value) throws IllegalRedefinitionException;
+    /**
+     * @param var                           Variable to set.
+     * @param value                         Value to set variable to
+     * @param context                       Context description of the assignment for trace.
+     * @throws IllegalRedefinitionException Thrown in case of redefining a class.
+     */
+    public abstract void                putValue(final String var, final Value value, final String context) throws IllegalRedefinitionException;
 
-    /*
+    /**
      * Store `value' for variable into current scope, but only if scopes linked
      * from current one up until `outerScope' do not have this value defined already.
      * Return false if linked scope contained a different value under this variable,
      * true otherwise.
+     *
+     * @param var            Variable to set.
+     * @param value          Value to set variable to.
+     * @param outerScope     Scope to up to which needs to be checked.
+     * @param context        Context description of the assignment for trace.
+     * @return               False if linked scope contained a different value under this variable, true otherwise.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract boolean             putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope) throws SetlException;
+    public abstract boolean             putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final String context) throws SetlException;
 
-    // Add bindings stored in `scope' into current scope.
-    // This also adds vars in outer scopes of `scope' until reaching the current
-    // scope as outer scope of `scope'.
-    public abstract void                putAllValues(final VariableScope scope) throws SetlException;
+    /**
+     * Add bindings stored in `scope' into current scope.
+     * This also adds variables in outer scopes of `scope' until reaching the
+     * current scope as outer scope of `scope'.
+     *
+     * @param scope          Scope to set variables from.
+     * @param context        Context description of the assignment for trace.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public abstract void                putAllValues(final VariableScope scope, final String context) throws SetlException;
 
-    public abstract void                putClassDefinition(final String var, final SetlClass classDef);
+    public abstract void                putClassDefinition(final String var, final SetlClass classDef, final String context);
 
     public abstract Term                scopeToTerm();
 

@@ -191,9 +191,9 @@ public class SetlClass extends Value {
         for (int i = 0; i < size; ++i) {
             final ParameterDef param = parameters.get(i);
             if (param.getType() == ParameterDef.READ_WRITE) {
-                param.assign(state, values.get(i));
+                param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
             } else {
-                param.assign(state, values.get(i).clone());
+                param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
             }
         }
 
@@ -240,7 +240,7 @@ public class SetlClass extends Value {
             state.setScope(oldScope);
 
             // write values in WriteBackAgent into restored scope
-            wba.writeBack(state);
+            wba.writeBack(state, FUNCTIONAL_CHARACTER);
 
             if (stepThrough || state.isDebugFinishFunction) {
                 state.setDebugModeActive(true);
@@ -321,7 +321,7 @@ public class SetlClass extends Value {
     }
 
     @Override
-    public void setObjectMember(final State state, final String variable, final Value value) throws SetlException {
+    public void setObjectMember(final State state, final String variable, final Value value, final String context) throws SetlException {
         if (staticVars == null) {
             optimize();
         }
@@ -334,6 +334,7 @@ public class SetlClass extends Value {
             staticDefs = computeStaticDefinitions(state);
         }
 
+        // TODO add trace
         staticDefs.put(variable, value);
 
         staticVars.add(variable);

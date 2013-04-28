@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
@@ -12,53 +13,47 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'assert' '(' condition ',' anyExpr ')' ';'
-    ;
-
-implemented here as:
-                   =========     =======
-                   mCondition    mMessage
-*/
-
+/**
+ * Implementation of the assert statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'assert' '(' condition ',' expr ')' ';'
+ *     ;
+ *
+ * implemented here as:
+ *                    =========     ====
+ *                    condition    message
+ */
 public class Assert extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String     FUNCTIONAL_CHARACTER    = "^assert";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assert.class);
 
-    private final Condition mCondition;
-    private final Expr      mMessage;
+    private final Condition condition;
+    private final Expr      message;
 
     public Assert(final Condition condition, final Expr message) {
-        mCondition  = condition;
-        mMessage    = message;
+        this.condition = condition;
+        this.message   = message;
     }
 
     @Override
     protected ReturnMessage execute(final State state) throws SetlException {
-        if ( ! mCondition.evalToBool(state)) {
-            throw new AssertException("Assertion failed: " + mMessage.eval(state).toString());
+        if (condition.eval(state) != SetlBoolean.TRUE) {
+            throw new AssertException("Assertion failed: " + message.eval(state).toString());
         }
         return null;
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mMessage.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        message.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -67,9 +62,9 @@ public class Assert extends Statement {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
         sb.append("assert(");
-        mCondition.appendString(state, sb, tabs);
+        condition.appendString(state, sb, tabs);
         sb.append(", ");
-        mMessage.appendString(state, sb, tabs);
+        message.appendString(state, sb, tabs);
         sb.append(");");
     }
 
@@ -78,8 +73,8 @@ public class Assert extends Statement {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mCondition.toTerm(state));
-        result.addMember(state, mMessage.toTerm(state));
+        result.addMember(state, condition.toTerm(state));
+        result.addMember(state, message.toTerm(state));
         return result;
     }
 

@@ -36,13 +36,9 @@ public class MatchResult {
         }
     }
 
-    public void setAllBindings(final State state) throws IllegalRedefinitionException {
+    public void setAllBindings(final State state, final String context) throws IllegalRedefinitionException {
         for (final Map.Entry<String, Value> entry : mVarBindings.entrySet()) {
-            state.putValue(entry.getKey(), entry.getValue().clone());
-
-            if (state.traceAssignments) {
-                state.outWriteLn("~< Trace (match): " + entry.getKey() + " := " + entry.getValue() + " >~");
-            }
+            state.putValue(entry.getKey(), entry.getValue().clone(), context);
         }
     }
 }

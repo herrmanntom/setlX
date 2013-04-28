@@ -94,10 +94,10 @@ public class MemberAccess extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v) throws SetlException {
+    public void assignUncloned(final State state, final Value v, final String context) throws SetlException {
         if (this.lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
-            lhs.setObjectMember(state, memberID, v);
+            lhs.setObjectMember(state, memberID, v, context);
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + this + " := " + v + "\" is unusable for member assignment."

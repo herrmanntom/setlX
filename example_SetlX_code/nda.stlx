@@ -1,0 +1,41 @@
+// Compute the language accepted by a given NDA.
+// Example by Henryk Michalewski
+
+class nda(alphabet,states,initial,accepting,transitions) {
+
+    ndaAlphabet    := alphabet;
+    ndaStates      := states;
+    ndaTransitions := transitions;
+    ndaInitial     := initial;
+    ndaAccepting   := accepting;
+
+    static {
+        isEmpty := procedure() {
+            current := { ndaInitial };
+            while(true) {
+                inRange := current;
+                currentPairs := { [letter,inState]: letter in ndaAlphabet, inState in inRange };
+
+                current += { outState : outState in ndaStates | exists ( [letter,inState] in currentPairs | [letter,inState,outState] in ndaTransitions ) };
+
+                if ( current == inRange ) {
+                    break;
+                }
+            }
+            if ( inRange * ndaAccepting != {} ) {
+                print ("The language accepted by the automaton is not empty");
+                return false;
+            } else {
+                print ("The language accepted by the automaton is empty");
+                return true;
+            }
+        };
+    }
+}
+
+myNda := nda({"a","b"},{0,1,2},0,{2}, { ["a",0,1],["b",1,2] });
+myNda.isEmpty();
+
+myNda := nda({"a","b"},{0,1,2},0,{2}, { ["a",0,1],["b",0,1] });
+myNda.isEmpty();
+

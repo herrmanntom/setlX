@@ -3,6 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Infinity;
 import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
@@ -33,7 +34,7 @@ public class PD_mathConst extends PreDefinedProcedure {
 
         } else if (name.getUnquotedString().equalsIgnoreCase( "infinity" )) {
 
-            return Infinity.POSITIVE;
+            return SetlDouble.valueOf(Double.POSITIVE_INFINITY);
 
         } else {
             throw new IncompatibleTypeException("Name-argument '" + name + "' is not a known constant or not a string.");

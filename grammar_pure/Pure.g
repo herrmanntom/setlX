@@ -250,7 +250,8 @@ explicitList
 
 atomicValue
     : NUMBER
-    | REAL
+    | DOUBLE
+    | '$' DOUBLE
     | 'om'
     | 'true'
     | 'false'
@@ -261,7 +262,7 @@ atomicValue
 ID : 'a'..'z' ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 TERM : '^' ID | 'A'..'Z' ID?;
 NUMBER : '0' | '1'..'9' ('0'..'9')*;
-REAL : NUMBER? '.' ('0'..'9')+ (('e' | 'E') ('+' | '-')? ('0'..'9')+)?;
+DOUBLE : NUMBER? '.' ('0'..'9')+ (('e' | 'E') ('+' | '-')? ('0'..'9')+)?;
 RANGE_SIGN : '..';
 STRING : '"' ('\\"' | ~('"'))* '"';
 LITERAL : '\'' ('\\\'' | ~('\''))* '\'';

@@ -67,7 +67,7 @@ public class Rational extends NumberValue {
         this.denominator         = d.divide(ggt);
         this.isInteger           = this.denominator.equals(BigInteger.ONE);
         if (this.denominator.equals(BigInteger.ZERO)) {
-            throw new NumberFormatException("new Rational: Devision by zero!");
+            throw new NumberFormatException("new Rational: Division by zero!");
         }
     }
 
@@ -215,8 +215,17 @@ public class Rational extends NumberValue {
     }
 
     @Override
+    public SetlDouble toDouble(final State state) {
+        return SetlDouble.valueOf(nominator, denominator);
+    }
+
+    @Override
     public Real toReal(final State state) {
         return Real.valueOf(nominator, denominator);
+    }
+
+    SetlDouble toDouble() {
+        return SetlDouble.valueOf(nominator, denominator);
     }
 
     /*package*/ Real toReal() {
@@ -236,8 +245,14 @@ public class Rational extends NumberValue {
     /* native type conversions */
 
     @Override
+    public double jDoubleValue() {
+	SetlDouble sd = SetlDouble.valueOf(nominator, denominator);
+	return sd.getDoubleValue();
+    }
+
+    @Override
     public int jIntValue() throws NotAnIntegerException, NumberToLargeException {
-        if (! isInteger) {
+        if (!isInteger) {
             throw new NotAnIntegerException(
                 "The fraction " + nominator + "/" + denominator + " can't be converted" +
                 " to an integer as the denominator is not 1."
@@ -267,9 +282,7 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
     public Rational ceil(final State state) {
-        if (nominator.compareTo(BigInteger.ZERO) > 0 &&
-             ! isInteger
-           )
+        if (nominator.compareTo(BigInteger.ZERO) > 0 && ! isInteger)
         {
             final BigInteger q = nominator.divide(denominator).add(BigInteger.ONE);
             return new Rational(q);
@@ -290,6 +303,8 @@ public class Rational extends NumberValue {
                 final BigInteger d = denominator.multiply(s.denominator);
                 return new Rational(n, d);
             }
+        } else if (subtrahend instanceof SetlDouble) {
+            return ((SetlDouble) subtrahend).differenceFlipped(state, this);
         } else if (subtrahend instanceof Real) {
             return ((Real) subtrahend).differenceFlipped(state, this);
         } else if (subtrahend == Infinity.POSITIVE ||
@@ -483,7 +498,7 @@ public class Rational extends NumberValue {
 
     @Override
     protected NumberValue power(final State state, final double exponent) throws SetlException {
-        return toReal(state).power(state, exponent);
+        return toDouble(state).power(state, exponent);
     }
 
     @Override
@@ -499,6 +514,7 @@ public class Rational extends NumberValue {
             }
         } else if (multiplier == Infinity.POSITIVE  ||
                    multiplier == Infinity.NEGATIVE  ||
+                   multiplier instanceof SetlDouble ||
                    multiplier instanceof Real       ||
                    multiplier instanceof SetlList   ||
                    multiplier instanceof SetlString
@@ -530,6 +546,8 @@ public class Rational extends NumberValue {
                 }
                 return new Rational(nominator.multiply(d.denominator), denominator.multiply(d.nominator));
             }
+        } else if (divisor instanceof SetlDouble) {
+            return ((SetlDouble) divisor).quotientFlipped(state, this);
         } else if (divisor instanceof Real) {
             return ((Real) divisor).quotientFlipped(state, this);
         } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
@@ -581,6 +599,12 @@ public class Rational extends NumberValue {
         if (isInteger) {
             return this;
         } else {
+	    // This computation needs to be as involved as it is, because it might happen
+	    // that the last invocation of the function round below rounds up.  Example:
+            // this = 100000000000000000000000000000000000000000000000000000000000000.75;
+            // this.toInteger = 100000000000000000000000000000000000000000000000000000000000000;
+            // roundPart = round(0,75) = 1;
+            // this + roundPart = 100000000000000000000000000000000000000000000000000000000000001;
             final Rational roundPart = (Rational) this.difference(state, this.toInteger(state)).toReal(state).round(state);
             return (Rational) this.toInteger(state).sum(state, roundPart);
         }
@@ -599,6 +623,8 @@ public class Rational extends NumberValue {
                 final BigInteger d = denominator.multiply(r.denominator);
                 return new Rational(n, d);
             }
+        } else if (summand instanceof SetlDouble) {
+            return summand.sum(state, this);
         } else if (summand instanceof Real) {
             return summand.sum(state, this);
         } else if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
@@ -668,7 +694,7 @@ public class Rational extends NumberValue {
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real < SetlString
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real & SetlDouble < SetlString
      * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
      */
@@ -687,6 +713,8 @@ public class Rational extends NumberValue {
                 final BigInteger bp = denominator.multiply(r.nominator);
                 return aq.compareTo(bp);
             }
+        } else if (v instanceof SetlDouble) {
+            return toDouble().compareTo(v);
         } else if (v instanceof Real) {
             return toReal().compareTo(v);
         }  else {
@@ -696,7 +724,7 @@ public class Rational extends NumberValue {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
      * < SetlObject < ConstructorDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.
@@ -721,6 +749,8 @@ public class Rational extends NumberValue {
                 final BigInteger bp = denominator.multiply(r.nominator);
                 return aq.equals(bp);
             }
+        } else if (v instanceof SetlDouble) {
+            return toDouble().equalTo(v);
         } else if (v instanceof Real) {
             return toReal().equalTo(v);
         } else {

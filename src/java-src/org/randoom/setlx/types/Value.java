@@ -98,6 +98,10 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isDouble() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isRational() {
         return SetlBoolean.FALSE;
     }
@@ -128,6 +132,10 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return Om.OM;
     }
 
+    public Value toDouble(final State state) throws SetlException {
+        return Om.OM;
+    }
+
     /* native type checks */
 
     public boolean jDoubleConvertable() {
@@ -142,7 +150,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public double jDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
         throw new IncompatibleTypeException(
-            "'" + this + "' is not a real."
+            "'" + this + "' is not a double."
         );
     }
 
@@ -158,7 +166,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return real.jDoubleValue();
         } else {
             throw new IncompatibleTypeException(
-                "'" + this + "' is not convertable to real."
+                "'" + this + "' is not convertable to a double."
             );
         }
     }

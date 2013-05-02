@@ -2,6 +2,7 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
 public abstract class NumberValue extends Value {
@@ -12,13 +13,13 @@ public abstract class NumberValue extends Value {
     public abstract NumberValue absoluteValue(final State state);
 
     @Override
-    public abstract NumberValue ceil(final State state);
+    public abstract NumberValue ceil(final State state) throws UndefinedOperationException;
 
     @Override
     public abstract Value       difference(final State state, final Value subtrahend) throws SetlException;
 
     @Override
-    public abstract NumberValue floor(final State state);
+    public abstract NumberValue floor(final State state) throws UndefinedOperationException;
 
     @Override
     public abstract NumberValue minus(final State state) throws SetlException;
@@ -28,6 +29,8 @@ public abstract class NumberValue extends Value {
         if (exponent.isInteger() == SetlBoolean.TRUE && exponent.jIntConvertable()) {
             return this.power(state, exponent.jIntValue());
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
+            return this.power(state, exponent.jDoubleValue());
+        } else if (exponent.isDouble() == SetlBoolean.TRUE) {
             return this.power(state, exponent.jDoubleValue());
         } else if (exponent.isReal() == SetlBoolean.TRUE) {
             final Rational r = (Rational) exponent.toRational(state);

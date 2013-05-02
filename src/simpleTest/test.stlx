@@ -335,7 +335,7 @@ equality := procedure() {
         correct := correct && false;
     }
 
-    if (real(4/5) == 0.8 && 0.8 == real(4/5) && rational(0.8) == 4/5 && 4/5 == rational(0.8)) {
+    if (real(4/5) == 0.8 && 0.8 == real(4/5) && rational($0.8) == 4/5 && 4/5 == rational($0.8)) {
         correct := correct && true;
     } else {
         correct := correct && false;
@@ -366,11 +366,10 @@ infinityTests := procedure() {
         correct := false;
     }
 
-    try {
-        sin(inf); // < should throw an error
-        correct := false;
-    } catch (e) {
+    if (sin(inf) == cos(inf)) {  // both values are NaN
         correct := correct && true;
+    } else {
+        correct := false;
     }
 
     tester(correct, "infinity computation");

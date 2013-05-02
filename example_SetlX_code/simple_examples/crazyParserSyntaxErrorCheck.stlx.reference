@@ -1,7 +1,7 @@
 rule stack: [initBlock]
-line 4:1 at [@2,81:81='%',<18>,4:0]: extraneous input '%' expecting {<EOF>, 'om', '[', 'continue', 'false', 'scan', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'while', 'exit', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, REAL, STRING, LITERAL}
+line 4:1 at [@2,81:81='%',<18>,4:0]: extraneous input '%' expecting {<EOF>, 'om', '[', 'continue', 'false', 'scan', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'while', 'exit', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', '$', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}
 rule stack: [initBlock, statement, expr, equation, implication, disjunction, conjunction, comparison, sum, product, reduce, prefixOperation, power, prefixOperation]
 line 5:9 at [@10,94:94='*',<4>,5:8]: no viable alternative at input '*'
 rule stack: [initBlock]
-line 6:1 at [@13,99:99='~',<91>,6:0]: extraneous input '~' expecting {<EOF>, 'om', '[', 'continue', 'false', 'scan', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'while', 'exit', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, REAL, STRING, LITERAL}
+line 6:1 at [@13,99:99='~',<92>,6:0]: extraneous input '~' expecting {<EOF>, 'om', '[', 'continue', 'false', 'scan', '_', '@', '+/', 'cachedProcedure', 'class', 'assert', '!', 'while', 'exit', '-', '(', 'if', 'match', 'try', 'check', '{', '*/', 'break', 'true', '$', 'procedure', 'backtrack', 'for', 'return', 'forall', 'exists', 'switch', '#', ID, TERM, NUMBER, DOUBLE, STRING, LITERAL}
 3 syntax error(s) encountered.

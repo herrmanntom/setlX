@@ -1,4 +1,4 @@
-maximum A (for N = 5,      P <= 5%) is 2.2184.
+maximum A (for N = 5,      P <= 5%) is 2.218400000000257.
 minimum N (for A = 1.75,   P <= 7%) is 5.
-Erlang B  (for A = 0.2*48, N = 20 ) is 0.001231677816976427.
-Erlang C  (for A = 0.2*48, N = 20 ) is 0.002365921291627030.
+Erlang B  (for A = 0.2*48, N = 20 ) is 0.0012316778169764295.
+Erlang C  (for A = 0.2*48, N = 20 ) is 0.002365921291627033.

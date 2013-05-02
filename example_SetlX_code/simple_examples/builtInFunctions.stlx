@@ -76,6 +76,7 @@ valueWithType := procedure(value) {
         case isInteger(value)  : return "int      : $value$";
         case isRational(value) : return "rational : $value$";
         case isReal(value)     : return "real     : $value$";
+        case isDouble(value)   : return "double   : $value$";
         case isString(value)   : return "string   : \"$value$\"";
         default                : return "??       : '$value$'";
     }

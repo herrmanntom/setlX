@@ -31,7 +31,7 @@ public class MathFunction2 extends PreDefinedProcedure {
         final Value arg1 = args.get(1);
         if (arg0 instanceof NumberValue && arg1 instanceof NumberValue) {
             try {
-                final double r = (Double) function.invoke(null, args.get(0).toJDoubleValue(state), args.get(1).toJDoubleValue(state));
+                final double r = (Double) function.invoke(null, arg0.jDoubleValue(), arg1.jDoubleValue());
                 return Real.valueOf(r);
             } catch (final SetlException se) {
                 throw se;

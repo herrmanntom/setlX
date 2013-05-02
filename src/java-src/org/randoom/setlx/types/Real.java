@@ -173,6 +173,10 @@ public class Real extends NumberValue {
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
+	    if (subtrahend instanceof SetlDouble) {
+                SetlDouble rhs = (SetlDouble) subtrahend;
+		return rhs.differenceFlipped(state, this);
+	    }
             if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
                 return (Infinity) subtrahend.minus(state);
             }
@@ -256,10 +260,21 @@ public class Real extends NumberValue {
     }
 
     @Override
-    public Value product(final State state, final Value multiplier) throws IncompatibleTypeException, UndefinedOperationException {
+    public Value product(final State state, final Value multiplier) 
+	throws SetlException 
+    {
         if (multiplier instanceof NumberValue) {
+	    if (multiplier instanceof SetlDouble) {
+                SetlDouble rhs = (SetlDouble) multiplier;
+		return rhs.product(state, this);
+	    }
             if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
-                return (Infinity) multiplier;
+		if (real.equals(BigDecimal.ZERO)) {
+		    String msg = "'" + this + " * " + multiplier + "' is undefined.";
+                    throw new UndefinedOperationException(msg);
+		} else {
+		    return (Infinity) multiplier;
+		}
             }
             BigDecimal right = null;
             if (multiplier instanceof Real) {
@@ -285,6 +300,10 @@ public class Real extends NumberValue {
     @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
+	    if (divisor instanceof SetlDouble) {
+                SetlDouble rhs = (SetlDouble) divisor;
+		return rhs.quotientFlipped(state, this);
+	    }
             BigDecimal right = null;
             if (divisor == Infinity.POSITIVE) {
                 return new Real("0.0");
@@ -330,8 +349,14 @@ public class Real extends NumberValue {
     }
 
     @Override
-    public Value sum(final State state, final Value summand) throws IncompatibleTypeException, UndefinedOperationException {
+    public Value sum(final State state, final Value summand) 
+	throws SetlException
+    {
         if (summand instanceof NumberValue) {
+	    if (summand instanceof SetlDouble) {
+                SetlDouble rhs = (SetlDouble) summand;
+		return rhs.sum(state, this);
+	    }
             if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
                 return (Infinity) summand;
             }
@@ -389,6 +414,10 @@ public class Real extends NumberValue {
         } else if (v instanceof Real) {
             final Real nr = (Real) v;
             return real.compareTo(nr.real);
+        } else if (v instanceof SetlDouble) {
+	    double     rhsD = ((SetlDouble) v).getDoubleValue();
+	    BigDecimal rhs  = new BigDecimal(rhsD, mathContext);
+            return real.compareTo(rhs);
         } else if (v instanceof Rational) {
             final Rational nr = (Rational) v;
             return real.compareTo(nr.toReal().real);
@@ -415,6 +444,10 @@ public class Real extends NumberValue {
             return true;
         } else if (v instanceof Real) {
             return real.compareTo(((Real) v).real) == 0;
+        } else if (v instanceof SetlDouble) {
+	    double     rhsD = ((SetlDouble) v).getDoubleValue();
+	    BigDecimal rhs  = new BigDecimal(rhsD, mathContext);
+            return real.compareTo(rhs) == 0;
         } else if (v instanceof Rational) {
             return real.compareTo(((Rational) v).toReal().real) == 0;
         } else {

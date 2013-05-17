@@ -321,8 +321,10 @@ public class SetlClass extends Value {
             staticDefs = computeStaticDefinitions(state);
         }
 
-        // TODO add trace
         staticDefs.put(variable, value);
+        if (state.traceAssignments) {
+            state.printTrace(variable, value, FUNCTIONAL_CHARACTER);
+        }
 
         staticVars.add(variable);
 

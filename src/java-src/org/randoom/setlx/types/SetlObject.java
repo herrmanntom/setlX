@@ -560,8 +560,11 @@ public class SetlObject extends Value {
         if (value instanceof Procedure) {
             ((Procedure) value).setClosure(null);
         }
-        // TODO add trace
+
         members.put(variable, value);
+        if (state.traceAssignments) {
+            state.printTrace(variable, value, FUNCTIONAL_CHARACTER);
+        }
     }
 
     /* function call */

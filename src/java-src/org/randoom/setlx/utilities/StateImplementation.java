@@ -53,7 +53,6 @@ public class StateImplementation extends State {
     private                 boolean             multiLineMode;
     private                 boolean             isInteractive;
     private                 boolean             printVerbose;
-    private                 boolean             traceAssignments;
     private                 boolean             assertsDisabled;
     private                 boolean             isRuntimeDebuggingEnabled;
 
@@ -76,7 +75,7 @@ public class StateImplementation extends State {
         multiLineMode                    = false;
         isInteractive                    = false;
         printVerbose                     = false;
-        traceAssignments                 = false;
+        super.traceAssignments           = false;
         assertsDisabled                  = false;
         isRuntimeDebuggingEnabled        = false;
     }
@@ -302,11 +301,6 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public boolean getTraceAssignments() {
-        return traceAssignments;
-    }
-
-    @Override
     public void setAssertsDisabled(final boolean assertsDisabled) {
         this.assertsDisabled = assertsDisabled;
     }
@@ -434,7 +428,8 @@ public class StateImplementation extends State {
         }
     }
 
-    private void printTrace(final String var, final Value result, final String context) {
+    @Override
+    public void printTrace(final String var, final Value result, final String context) {
         final StringBuilder out = new StringBuilder();
 
         out.append("~< Trace");

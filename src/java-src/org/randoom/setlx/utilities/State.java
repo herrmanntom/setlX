@@ -99,7 +99,9 @@ public abstract class State {
 
     public abstract void                setTraceAssignments(final boolean traceAssignments);
 
-    public abstract boolean             getTraceAssignments();
+    public          boolean             traceAssignments;
+
+    public abstract void                printTrace(final String var, final Value result, final String context);
 
     public abstract void                setAssertsDisabled(final boolean assertsDisabled);
 

@@ -26,8 +26,6 @@ import java.util.List;
  * implemented here as:
  *                                                                                    ========         =====
  *                                                                                    errorVar     blockToRecover
- *
- * TODO: implement in thread-save manor.
  */
 public class TryCatchLngBranch extends TryCatchAbstractBranch {
     // functional character used in terms
@@ -35,7 +33,6 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
 
     private final Variable                  errorVar;
     private final Block                     blockToRecover;
-    private       CatchableInSetlXException exception;      // last caught exception
 
     public TryCatchLngBranch(final Variable errorVar, final Block blockToRecover){
         this.errorVar       = errorVar;
@@ -45,21 +42,16 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
     @Override
     public boolean catches(final State state, final CatchableInSetlXException cise) {
         if (cise instanceof ThrownInSetlXException) {
-            exception = null;
             return false;
         } else {
-            // store exception
-            exception = cise;
             return true;
         }
     }
 
     @Override
-    public ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state, final CatchableInSetlXException cise) throws SetlException {
         // wrap into error
-        errorVar.assign(state, new SetlError(exception), FUNCTIONAL_CHARACTER);
-        // remove stored exception
-        exception = null;
+        errorVar.assign(state, new SetlError(cise), FUNCTIONAL_CHARACTER);
         // execute
         return blockToRecover.execute(state);
     }

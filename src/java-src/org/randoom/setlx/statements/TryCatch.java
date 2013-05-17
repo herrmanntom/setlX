@@ -29,8 +29,6 @@ import java.util.List;
  * implemented with different classes which inherit from BranchTryAbstract:
  *                            ======================================   =========================================   =========================================
  *                                        TryCatchBranch                           TryCatchLngBranch                           TryCatchUsrBranch
- *
- * TODO: implement in thread-save manor.
  */
 public class TryCatch extends Statement {
     // functional character used in terms
@@ -51,7 +49,7 @@ public class TryCatch extends Statement {
         } catch (final CatchableInSetlXException cise) {
             for (final TryCatchAbstractBranch br : tryList) {
                 if (br.catches(state, cise)) {
-                    return br.execute(state);
+                    return br.execute(state, cise);
                 }
             }
             // If we get here nothing matched. Re-throw as if nothing happened

@@ -8,7 +8,6 @@ import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * An addition of two expressions.
@@ -90,21 +89,6 @@ public class Sum extends Expr {
     @Override
     public int precedence() {
         return PRECEDENCE;
-    }
-
-    /* Java Code generation */
-
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        lhs.appendJavaCode(state, header, code, tabs);
-        code.append(".sum(state, ");
-        rhs.appendJavaCode(state, header, code, tabs);
-        code.append(")");
     }
 
     /**

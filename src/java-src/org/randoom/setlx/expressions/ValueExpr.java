@@ -4,7 +4,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Expression containing a single variable.
@@ -53,18 +52,6 @@ public class ValueExpr extends Expr {
     @Override
     public int precedence() {
         return PRECEDENCE;
-    }
-
-    /* Java Code generation */
-
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        value.appendJavaCode(state, header, code, tabs);
     }
 }
 

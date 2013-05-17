@@ -11,38 +11,39 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
-    ;
-
-implemented here as:
-               =========         =====
-               mCondition     mStatements
-*/
-
+/**
+ * Implementation of the if-(??)-then-branch.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
+ *     ;
+ *
+ * implemented here as:
+ *                =========         =====
+ *                condition       statements
+ */
 public class IfThenBranch extends IfThenAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "^ifThenBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThenBranch.class);
 
-    private final Condition mCondition;
-    private final Block     mStatements;
+    private final Condition condition;
+    private final Block     statements;
 
     public IfThenBranch(final Condition condition, final Block statements){
-        mCondition  = condition;
-        mStatements = statements;
+        this.condition  = condition;
+        this.statements = statements;
     }
 
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
-        return mCondition.eval(state) == SetlBoolean.TRUE;
+        return condition.eval(state) == SetlBoolean.TRUE;
     }
 
     @Override
     public ReturnMessage exec(final State state) throws SetlException {
-        return mStatements.exec(state);
+        return statements.exec(state);
     }
 
     @Override
@@ -50,21 +51,14 @@ public class IfThenBranch extends IfThenAbstractBranch {
         return exec(state);
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mCondition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -73,9 +67,9 @@ public class IfThenBranch extends IfThenAbstractBranch {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
         sb.append("if (");
-        mCondition.appendString(state, sb, tabs);
+        condition.appendString(state, sb, tabs);
         sb.append(") ");
-        mStatements.appendString(state, sb, tabs, true);
+        statements.appendString(state, sb, tabs, true);
     }
 
     /* term operations */
@@ -83,8 +77,8 @@ public class IfThenBranch extends IfThenAbstractBranch {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mCondition.toTerm(state));
-        result.addMember(state, mStatements.toTerm(state));
+        result.addMember(state, condition.toTerm(state));
+        result.addMember(state, statements.toTerm(state));
         return result;
     }
 

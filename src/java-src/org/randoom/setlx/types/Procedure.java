@@ -22,19 +22,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-// This class represents a function definition
-
-/*
-grammar rule:
-procedure
-    : 'procedure' '(' procedureParameters ')' '{' block '}'
-    ;
-
-implemented here as:
-                      ===================         =====
-                           parameters           statements
-*/
-
+/**
+ * This class represents a function definition.
+ *
+ * grammar rule:
+ * procedure
+ *     : 'procedure' '(' procedureParameters ')' '{' block '}'
+ *     ;
+ *
+ * implemented here as:
+ *                       ===================         =====
+ *                            parameters           statements
+ */
 public class Procedure extends Value {
     // functional character used in terms
     public  final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
@@ -83,13 +82,6 @@ public class Procedure extends Value {
         this.object = object;
     }
 
-    /* Gather all bound and unbound variables in this value and its siblings
-          - bound   means "assigned" in this value
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -157,7 +149,7 @@ public class Procedure extends Value {
         return result;
     }
 
-    protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
+    protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
         // store and increase callStackDepth
         final int oldCallStackDepth = state.callStackDepth;
         ++(state.callStackDepth);
@@ -343,11 +335,6 @@ public class Procedure extends Value {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v) {
         object = null;
@@ -371,13 +358,6 @@ public class Procedure extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         object = null;

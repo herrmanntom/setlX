@@ -26,7 +26,7 @@ import java.util.List;
  *
  * implemented here as:
  *       =======......=======
- *              mList
+ *               list
  */
 public class ExplicitList extends CollectionBuilder {
     private final List<Expr> list;

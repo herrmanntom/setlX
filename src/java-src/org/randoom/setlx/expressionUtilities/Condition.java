@@ -10,26 +10,27 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
-grammar rule:
-condition
-    : boolExpr
-    ;
+/**
+ * Wrapper class, checking if eval() returns a boolean, used in various statements.
+ *
+ * grammar rule:
+ * condition
+ *     : expr
+ *     ;
 
-implemented here as:
-      ========
-       mExpr
-*/
-
+ * implemented here as:
+ *       ====
+ *       expr
+ */
 public class Condition extends CodeFragment {
-    private final Expr mExpr;
+    private final Expr expr;
 
     public Condition(final Expr expr) {
-        mExpr = expr;
+        this.expr = expr;
     }
 
     public SetlBoolean eval(final State state) throws SetlException {
-        final Value v = mExpr.eval(state);
+        final Value v = expr.eval(state);
         if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) { // is Boolean value?
             return (SetlBoolean) v;
         } else {
@@ -37,34 +38,27 @@ public class Condition extends CodeFragment {
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mExpr.appendString(state, sb, tabs);
+        expr.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
     @Override
     public Value toTerm(final State state) {
-        return mExpr.toTerm(state);
+        return expr.toTerm(state);
     }
 }
 

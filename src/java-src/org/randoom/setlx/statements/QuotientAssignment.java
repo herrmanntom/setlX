@@ -12,20 +12,21 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-assignmentOther
-    : assignable ('/=' | [...] ) anyExpr
-    ;
-
-implemented here as:
-      ==========                 =======
-          lhs                      rhs
-*/
-
+/**
+ * Implementation of the /= operator, on statement level.
+ *
+ * grammar rule:
+ * assignmentOther
+ *     : assignable ('/=' | [...] ) expr
+ *     ;
+ *
+ * implemented here as:
+ *       ==========                 ====
+ *          lhs                     rhs
+ */
 public class QuotientAssignment extends StatementWithPrintableResult {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^quotientAssignment";
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(QuotientAssignment.class);
 
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1000;
@@ -40,8 +41,8 @@ public class QuotientAssignment extends StatementWithPrintableResult {
         printAfterEval = false;
     }
 
-    /*package*/ @Override
-    void setPrintAfterEval() {
+    @Override
+    /*package*/ void setPrintAfterEval() {
         printAfterEval = true;
     }
 
@@ -57,13 +58,6 @@ public class QuotientAssignment extends StatementWithPrintableResult {
         return null;
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -109,6 +103,5 @@ public class QuotientAssignment extends StatementWithPrintableResult {
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
-
 }
 

@@ -7,17 +7,18 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'continue' ';'
-    ;
-*/
-
+/**
+ * The continue statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'continue' ';'
+ *     ;
+ */
 public class Continue extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String     FUNCTIONAL_CHARACTER    = "^continue";
+    // functional character used in terms
+    private final static String     FUNCTIONAL_CHARACTER    = generateFunctionalCharacter(Continue.class);
 
     public  final static Continue   C                       = new Continue();
 
@@ -28,13 +29,6 @@ public class Continue extends Statement {
         return ReturnMessage.CONTINUE;
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,

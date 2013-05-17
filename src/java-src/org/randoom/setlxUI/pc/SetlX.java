@@ -29,7 +29,7 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String     VERSION         = "2.0.1";
+    private final static String     VERSION         = "2.0.2";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2013";
     private final static String     VERSION_PREFIX  = "v";
@@ -47,7 +47,6 @@ public class SetlX {
 
     public static void main(final String[] args) {
         String              dumpFile     = null;  // file to write loaded code into
-        String              dumpJavaFile = null;  // file to write loaded code converted to Java into
         String              dumpTermFile = null;  // file to write loaded code as term into
         boolean             help         = false;
         boolean             interactive  = false;
@@ -91,19 +90,6 @@ public class SetlX {
                    ) {
                     help     = true;
                     dumpFile = null;
-                }
-            } else if (s.equals("--dumpJava")) {
-                dumpJavaFile = "";
-                ++i; // set to next argument
-                if (i < args.length) {
-                    dumpJavaFile = args[i];
-                }
-                // check for incorrect dumpJavaFile contents
-                if (  dumpJavaFile.equals("") ||
-                     (dumpJavaFile.length() >= 2 && dumpJavaFile.substring(0,2).equals("--"))
-                   ) {
-                    help         = true;
-                    dumpJavaFile = null;
                 }
             } else if (s.equals("--dumpTerm")) {
                 dumpTermFile = "";
@@ -220,7 +206,6 @@ public class SetlX {
                     statement,
                     files,
                     dumpFile,
-                    dumpJavaFile,
                     dumpTermFile,
                     termLoop
             );
@@ -281,7 +266,6 @@ public class SetlX {
             final String       statement,
             final List<String> files,
             final String       dumpFile,
-            final String       dumpJavaFile,
             final String       dumpTermFile,
             final boolean      termLoop
     ) {
@@ -366,29 +350,12 @@ public class SetlX {
         }
 
         // print and/or dump programs if needed
-        if (verbose || dumpFile != null || dumpJavaFile != null || dumpTermFile != null) {
+        if (verbose || dumpFile != null || dumpTermFile != null) {
             state.setPrintVerbose(true); // enables correct indentation etc
             for (int i = 0; i < programs.size(); ++i) {
                 // get program text
                 final String program     = programs.get(i).toString(state) + state.getEndl();
-                      String javaProgram = null;
                       String programTerm = null;
-
-                if (dumpJavaFile != null) {
-                    // figure out Java class name
-                    if (Character.isLowerCase(dumpJavaFile.charAt(0)) ||
-                        ! dumpJavaFile.endsWith(".java")) {
-                        state.errWriteLn(
-                            "File to write Java code into must start with an " +
-                            "upper case letter and end in '.java'."
-                        );
-                        System.exit(EXIT_ERROR);
-                    }
-
-                    final String className = dumpJavaFile.substring(0, dumpJavaFile.lastIndexOf(".java"));
-
-                    javaProgram = programs.get(i).toJavaCode(state, className, PcEnvProvider.class);
-                }
 
                 if (dumpTermFile != null) {
                     final StringBuilder sb = new StringBuilder();
@@ -413,19 +380,7 @@ public class SetlX {
                     }
                 }
 
-                // append programs Java code equivalent to the dumpJavaFile
-                if (dumpJavaFile != null) {
-                    try {
-                        WriteFile.writeToFile(state, javaProgram, dumpJavaFile, /* append = */ (i > 0) );
-                    } catch (final FileNotWriteableException fnwe) {
-                        state.errWriteLn(fnwe.getMessage());
-
-                        System.exit(EXIT_ERROR);
-
-                    }
-                }
-
-                // append programs term equivalent to the dumpJavaFile
+                // append programs term equivalent to the dumpTermFile
                 if (dumpTermFile != null) {
                     try {
                         WriteFile.writeToFile(state, programTerm, dumpTermFile, /* append = */ (i > 0) );

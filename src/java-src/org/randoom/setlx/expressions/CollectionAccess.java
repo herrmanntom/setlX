@@ -15,20 +15,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/*
-grammar rule:
-call
-    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
-    ;
-
-implemented here as:
-      ==================================      ======================
-                  mLhs                                mArgs
-*/
-
+/**
+ * Expression that accesses a specific member of a collection value.
+ *
+ * grammar rule:
+ * call
+ *     : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
+ *     ;
+ *
+ * implemented here as:
+ *       ==================================      ======================
+ *                   lhs                                args
+ */
 public class CollectionAccess extends AssignableExpression {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^collectionAccess";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectionAccess.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
@@ -92,13 +93,6 @@ public class CollectionAccess extends AssignableExpression {
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -111,12 +105,6 @@ public class CollectionAccess extends AssignableExpression {
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-       when this expression gets assigned
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-    */
     @Override
     public void collectVariablesWhenAssigned (
         final List<String> boundVariables,
@@ -124,8 +112,11 @@ public class CollectionAccess extends AssignableExpression {
         final List<String> usedVariables
     ) {
         if (lhs instanceof AssignableExpression) {
-            // lhs is read, not bound, so use collectVariablesAndOptimize()
+            // lhs & args are read, not bound, so use collectVariablesAndOptimize()
             lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            for (final Expr expr : args) {
+                expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            }
         }
     }
 

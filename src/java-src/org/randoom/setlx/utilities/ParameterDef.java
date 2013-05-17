@@ -8,20 +8,19 @@ import org.randoom.setlx.types.Value;
 
 import java.util.List;
 
-// This class represents a single parameter of a function definition
-
-/*
-grammar rule:
-procedureParameter
-    : 'rw' variable
-    |      variable
-    ;
-
-implemented here as:
-      ==== ========
-      mType  mVar
-*/
-
+/**
+ * This class represents a single parameter of a function definition.
+ *
+ * grammar rule:
+ * procedureParameter
+ *     : 'rw' variable
+ *     |      variable
+ *     ;
+ *
+ * implemented here as:
+ *       ==== ========
+ *       mType  mVar
+ */
 public class ParameterDef extends CodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER    = "^parameter";
@@ -30,12 +29,12 @@ public class ParameterDef extends CodeFragment {
     public final static int READ_ONLY   = 0;
     public final static int READ_WRITE  = 1;
 
-    private final Variable mVar;
-    private final int      mType;
+    private final Variable var;
+    private final int      type;
 
     public ParameterDef(final Variable var, final int type) {
-        mVar  = var;
-        mType = type;
+        this.var  = var;
+        this.type = type;
     }
 
     public ParameterDef(final String id, final int type) {
@@ -50,42 +49,39 @@ public class ParameterDef extends CodeFragment {
         this(id, READ_ONLY);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mVar.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        var.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     public void assign(final State state, final Value v, final String context) throws SetlException {
-        mVar.assign(state, v, context);
+        var.assign(state, v, context);
     }
 
     public Value getValue(final State state) throws SetlException {
-        return mVar.eval(state);
+        return var.eval(state);
+    }
+
+    public String getVar() {
+        return var.getID();
     }
 
     public int getType() {
-        return mType;
+        return type;
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        if (mType == READ_WRITE) {
+        if (type == READ_WRITE) {
             sb.append("rw ");
         }
-        mVar.appendString(state, sb, 0);
+        var.appendString(state, sb, 0);
     }
 
     /* term operations */
@@ -93,12 +89,12 @@ public class ParameterDef extends CodeFragment {
     @Override
     public Term toTerm(final State state) {
         final Term result;
-        if (mType == READ_WRITE) {
+        if (type == READ_WRITE) {
             result = new Term(FUNCTIONAL_CHARACTER_RW);
         } else {
             result = new Term(FUNCTIONAL_CHARACTER);
         }
-        result.addMember(state, mVar.toTerm(state));
+        result.addMember(state, var.toTerm(state));
         return result;
     }
 

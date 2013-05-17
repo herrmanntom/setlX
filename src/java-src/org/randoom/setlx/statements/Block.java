@@ -13,7 +13,6 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A simple block of statements.
@@ -187,24 +186,6 @@ public class Block extends Statement {
                 block.add(TermConverter.valueToStatement(v));
             }
             return block;
-        }
-    }
-
-    /* Java Code generation */
-
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        final Iterator<Statement> iter = statements.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendJavaCode(state, header, code, tabs);
-            if (iter.hasNext()) {
-                code.append(state.getEndl());
-            }
         }
     }
 }

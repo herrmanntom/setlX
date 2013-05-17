@@ -25,6 +25,8 @@ public class ParseSetlX {
 
     private final static int EXPR  =  1337;
     private final static int BLOCK = 31337;
+    private final static int MAX_OPTIMIZE_MS      =  250;
+    private       static int maxOptimizeMsOverall = 1000;
 
     public static Block parseFile(final State state, String fileName) throws ParserException {
         try {
@@ -160,11 +162,13 @@ public class ParseSetlX {
                 optimizer.start();
 
                 // wait for optimization of the fragment, but max until 0.25s after start
-                while((state.currentTimeMillis() - startT) < 250 &&
+                while(maxOptimizeMsOverall > 0 &&
+                      (state.currentTimeMillis() - startT) < MAX_OPTIMIZE_MS &&
                       optimizer != null && optimizer.isAlive()
                 ) {
                     try {
                         Thread.sleep(5);
+                        maxOptimizeMsOverall -= 5;
                     } catch (final InterruptedException e) { /* don't care */ }
                 }
             }

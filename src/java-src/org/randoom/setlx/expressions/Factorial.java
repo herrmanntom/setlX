@@ -9,56 +9,50 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-factor
-    : [...]
-    | simpleFactor '!'?
-    ;
-
-implemented here as:
-      ============
-         mExpr
-*/
-
+/**
+ * Implementation of the factorial syntax.
+ *
+ * grammar rule:
+ * factor
+ *     : [...]
+ *     | ('(' expr ')' | procedure | variable) (memberAccess | call)* '!'?
+ *     ;
+ *
+ * implemented here as:
+ *       ============================================================
+ *                                 expr
+ */
 public class Factorial extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^factorial";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Factorial.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 2100;
 
-    private final Expr mExpr;
+    private final Expr expr;
 
     public Factorial(final Expr expr) {
-        mExpr = expr;
+        this.expr = expr;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mExpr.eval(state).factorial(state);
+        return expr.eval(state).factorial(state);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mExpr.appendString(state, sb, tabs);
+        expr.appendString(state, sb, tabs);
         sb.append("!");
     }
 
@@ -67,7 +61,7 @@ public class Factorial extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, mExpr.toTerm(state));
+        result.addMember(state, expr.toTerm(state));
         return result;
     }
 

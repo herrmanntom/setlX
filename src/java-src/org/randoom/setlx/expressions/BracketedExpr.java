@@ -6,47 +6,41 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
-grammar rule:
-simpleFactor
-    : '(' expr ')'
-    | [...]
-    ;
-
-implemented here as:
-          ====
-          mExpr
-*/
-
+/**
+ * A wrapper class for another expression, that is mostly used for printing.
+ *
+ * grammar rule:
+ * simpleFactor
+ *     : '(' expr ')'
+ *     | [...]
+ *     ;
+ *
+ * implemented here as:
+ *           ====
+ *           mExpr
+ */
 public class BracketedExpr extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 2100;
 
-    private final Expr mExpr;
+    private final Expr expr;
 
     public BracketedExpr(final Expr expr) {
-        mExpr = expr;
+        this.expr = expr;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mExpr.eval(state);
+        return expr.eval(state);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -54,7 +48,7 @@ public class BracketedExpr extends Expr {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("(");
-        mExpr.appendString(state, sb, tabs);
+        expr.appendString(state, sb, tabs);
         sb.append(")");
     }
 
@@ -62,7 +56,7 @@ public class BracketedExpr extends Expr {
 
     @Override
     public Value toTerm(final State state) {
-        return mExpr.toTerm(state);
+        return expr.toTerm(state);
     }
 
     // precedence level in SetlX-grammar

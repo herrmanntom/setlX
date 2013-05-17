@@ -11,17 +11,18 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-comparison
-    : expr '<=' expr
-    ;
-
-implemented here as:
-      ====      ====
-      lhs        rhs
-*/
-
+/**
+ * Implementation of the less-or-equal comparison expression.
+ *
+ * grammar rule:
+ * comparison
+ *     : expr '<=' expr
+ *     ;
+ *
+ * implemented here as:
+ *       ====      ====
+ *       lhs        rhs
+ */
 public class LessOrEqual extends Expr {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LessOrEqual.class);
@@ -75,13 +76,6 @@ public class LessOrEqual extends Expr {
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,

@@ -21,7 +21,7 @@ public abstract class Expr extends CodeFragment {
     private final static HashMap<String, SoftReference<Value>> REPLACEMENTS = new HashMap<String, SoftReference<Value>>();
 
     // value which is the result of this expression, iff expression is `static' (does not contain variables)
-    protected Value replacement = null;
+    private Value replacement = null;
 
     /**
      * Evaluate this expression.
@@ -202,5 +202,6 @@ public abstract class Expr extends CodeFragment {
      * @return Precedence level.
      */
     public abstract int   precedence();
+
 }
 

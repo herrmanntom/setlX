@@ -106,10 +106,6 @@ public abstract class PreDefinedProcedure extends Procedure {
         // List of writeBack-values, which should be stored into the outer scope
         final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
 
-        if (state.isDebugStepThroughFunction) {
-            state.setDebugStepThroughFunction(false);
-        }
-
         // call predefined function (which may add writeBack-values to List)
         final Value result  = this.execute(state, values, writeBackVars);
 

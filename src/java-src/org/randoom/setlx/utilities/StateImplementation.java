@@ -57,11 +57,6 @@ public class StateImplementation extends State {
     private                 boolean             assertsDisabled;
     private                 boolean             isRuntimeDebuggingEnabled;
 
-    /* -- Debugger -- */
-    private final           HashSet<String>     breakpoints;
-
-    private                 boolean             debugPromptActive;
-
     public StateImplementation() {
         this(DummyEnvProvider.DUMMY);
     }
@@ -84,15 +79,6 @@ public class StateImplementation extends State {
         traceAssignments                 = false;
         assertsDisabled                  = false;
         isRuntimeDebuggingEnabled        = false;
-        /* -- Debugger -- */
-        breakpoints                      = new HashSet<String>();
-        super.areBreakpointsEnabled      = false;
-        super.isDebugModeActive          = false;
-        debugPromptActive                = false;
-        super.isDebugStepNextExpr        = false;
-        super.isDebugStepThroughFunction = false;
-        super.isDebugFinishFunction      = false;
-        super.isDebugFinishLoop          = false;
     }
 
     @Override
@@ -388,7 +374,6 @@ public class StateImplementation extends State {
         if (parserErrorCapture != null) {
             parserErrorCapture.clear();
         }
-        breakpoints.clear();
     }
 
     @Override
@@ -449,7 +434,7 @@ public class StateImplementation extends State {
         }
     }
 
-    /*private*/ void printTrace(final String var, final Value result, final String context) {
+    private void printTrace(final String var, final Value result, final String context) {
         final StringBuilder out = new StringBuilder();
 
         out.append("~< Trace");
@@ -519,77 +504,6 @@ public class StateImplementation extends State {
     @Override
     public Term scopeToTerm() {
         return variableScope.toTerm(this, classDefinitions);
-    }
-
-    /* -- Debugger -- */
-
-    @Override
-    public void setBreakpoint(final String id) {
-        breakpoints.add(id);
-        setBreakpointsEnabled(true);
-    }
-
-    @Override
-    public boolean removeBreakpoint(final String id) {
-        final boolean result  = breakpoints.remove(id);
-        setBreakpointsEnabled(breakpoints.size() > 0);
-        return result;
-    }
-
-    @Override
-    public void removeAllBreakpoints() {
-        breakpoints.clear();
-        setBreakpointsEnabled(false);
-    }
-
-    @Override
-    public boolean isBreakpoint(final String id) {
-        return breakpoints.contains(id);
-    }
-
-    @Override
-    public String[] getAllBreakpoints() {
-        return breakpoints.toArray(new String[0]);
-    }
-
-    @Override
-    public void setBreakpointsEnabled(final boolean enabled) {
-        super.areBreakpointsEnabled = enabled;
-    }
-
-    @Override
-    public void setDebugModeActive(final boolean active) {
-        super.isDebugModeActive = active;
-    }
-
-    @Override
-    public void setDebugPromptActive(final boolean active) {
-        debugPromptActive  = active;
-    }
-
-    @Override
-    public boolean isDebugPromptActive() {
-        return debugPromptActive;
-    }
-
-    @Override
-    public void setDebugStepNextExpr(final boolean stepNextExpr) {
-        super.isDebugStepNextExpr = stepNextExpr;
-    }
-
-    @Override
-    public void setDebugStepThroughFunction(final boolean stepThrough) {
-        super.isDebugStepThroughFunction = stepThrough;
-    }
-
-    @Override
-    public void setDebugFinishFunction(final boolean finish) {
-        super.isDebugFinishFunction = finish;
-    }
-
-    @Override
-    public void setDebugFinishLoop(final boolean finish) {
-        super.isDebugFinishLoop = finish;
     }
 }
 

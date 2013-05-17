@@ -171,13 +171,8 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     }
 
     @Override
-    public ReturnMessage exec(final State state) throws SetlException {
-        return statements.exec(state);
-    }
-
-    @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        return exec(state);
+    public ReturnMessage execute(final State state) throws SetlException {
+        return statements.execute(state);
     }
 
     @Override

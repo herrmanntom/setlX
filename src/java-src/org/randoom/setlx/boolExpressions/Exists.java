@@ -17,18 +17,21 @@ import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
 
-/*
-grammar rule:
-boolExpr
-    : 'exists' '(' iteratorChain '|' condition ')'
-    | [...]
-    ;
-
-implemented here as:
-                   ========-----     =========
-                      iterator       condition
-*/
-
+/**
+ * The exists expression.
+ * Note: This expression has a 'side-effect' of setting the iterations for which
+ *       the condition is true in the current scope.
+ *
+ * grammar rule:
+ * factor
+ *     : 'exists' '(' iteratorChain '|' condition ')'
+ *     | [...]
+ *     ;
+ *
+ * implemented here as:
+ *                    ========-----     =========
+ *                       iterator       condition
+ */
 public class Exists extends Expr {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Exists.class);
@@ -59,13 +62,6 @@ public class Exists extends Expr {
             return null;
         }
 
-        /* Gather all bound and unbound variables in this expression and its siblings
-              - bound   means "assigned" in this expression
-              - unbound means "not present in bound set when used"
-              - used    means "present in bound set when used"
-           NOTE: Use optimizeAndCollectVariables() when adding variables from
-                 sub-expressions
-        */
         @Override
         public void collectVariablesAndOptimize (
             final List<String> boundVariables,
@@ -92,13 +88,6 @@ public class Exists extends Expr {
         return e.result;
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,

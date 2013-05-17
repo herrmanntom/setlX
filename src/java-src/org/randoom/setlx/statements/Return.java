@@ -35,7 +35,7 @@ public class Return extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         if (result != null) {
             return ReturnMessage.createMessage(result.eval(state));
         } else {

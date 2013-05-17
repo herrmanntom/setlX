@@ -12,27 +12,28 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'match' '(' anyExpr ')' '{' ( ... )* ('default' ':' block)? '}'
-    ;
-
-implemented here as:
-                                                          =====
-                                                       mStatements
-*/
-
+/**
+ * The default branch in a match statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'match' '(' expr ')' '{' ( ... )* ('default' ':' block)? '}'
+ *     ;
+ *
+ * implemented here as:
+ *                                                        =====
+ *                                                      statements
+ */
 public class MatchDefaultBranch extends MatchAbstractScanBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "^matchDefaultBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchDefaultBranch.class);
     /*package*/ final static int    END_OFFSET           = -2020202020;
 
-    private final Block   mStatements;
+    private final Block statements;
 
     public MatchDefaultBranch(final Block statements) {
-        mStatements = statements;
+        this.statements = statements;
     }
 
     @Override
@@ -56,29 +57,17 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
     }
 
     @Override
-    public ReturnMessage exec(final State state) throws SetlException {
-        return mStatements.exec(state);
+    public ReturnMessage execute(final State state) throws SetlException {
+        return statements.execute(state);
     }
 
-    @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        return exec(state);
-    }
-
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -88,7 +77,7 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
         state.appendLineStart(sb, tabs);
         sb.append("default:");
         sb.append(state.getEndl());
-        mStatements.appendString(state, sb, tabs + 1);
+        statements.appendString(state, sb, tabs + 1);
         sb.append(state.getEndl());
     }
 
@@ -97,7 +86,7 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, mStatements.toTerm(state));
+        result.addMember(state, statements.toTerm(state));
         return result;
     }
 

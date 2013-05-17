@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.0.2--- 2013-05-18
+ - removed partly defunct debug functions (but not trace)
+
 ---v2.0.1--- 2013-04-28
  # removed redundant quotes in objects
  # refactor and improve trace functionality

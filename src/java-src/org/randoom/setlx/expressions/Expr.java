@@ -3,7 +3,6 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
 
@@ -32,13 +31,11 @@ public abstract class Expr extends CodeFragment {
      */
     public Value eval(final State state) throws SetlException {
         try {
-            if (state.isDebugStepNextExpr && state.isDebugModeActive && ! state.isDebugPromptActive()) {
-                state.setDebugStepNextExpr(false);
-                DebugPrompt.prompt(state, this);
-            } else if (replacement != null) {
+            if (replacement != null) {
                 return replacement.clone();
+            } else {
+                return this.evaluate(state);
             }
-            return this.evaluate(state);
         } catch (final SetlException se) {
             se.addToTrace("Error in \"" + this + "\":");
             throw se;

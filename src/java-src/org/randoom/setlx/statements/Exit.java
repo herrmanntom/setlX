@@ -8,34 +8,28 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'exit' ';'
-    ;
-*/
-
+/**
+ * The exit statement -- the most important of them all!
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'exit' ';'
+ *     ;
+ */
 public class Exit extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER    = "^exit";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Exit.class);
 
-    public  final static Exit   E                       = new Exit();
+    public  final static Exit   E                    = new Exit();
 
     private Exit() { }
 
     @Override
-    protected ReturnMessage execute(final State state) throws ExitException {
+    public ReturnMessage execute(final State state) throws ExitException {
         throw new ExitException("Good Bye! (exit)");
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,

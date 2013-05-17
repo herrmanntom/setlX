@@ -37,7 +37,7 @@ public class ClassDefiner extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         state.putClassDefinition(name, classDefinition, FUNCTIONAL_CHARACTER);
         return null;
     }

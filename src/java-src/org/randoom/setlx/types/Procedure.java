@@ -190,14 +190,8 @@ public class Procedure extends Value {
         // results of call to procedure
               ReturnMessage   result      = null;
         final WriteBackAgent  wba         = new WriteBackAgent(parameters.size());
-        final boolean         stepThrough = state.isDebugStepThroughFunction;
 
         try {
-            if (stepThrough) {
-                state.setDebugStepThroughFunction(false);
-                state.setDebugModeActive(false);
-            }
-
             boolean executeInCurrentStack = true;
             if (state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
                 state.callStackDepth  = 0;
@@ -206,7 +200,7 @@ public class Procedure extends Value {
 
             // execute, e.g. perform real procedure call
             if (executeInCurrentStack) {
-                result = statements.exec(state);
+                result = statements.execute(state);
             } else {
                 // prevent running out of stack by creating a new thread
                 final CallExecThread callExec = new CallExecThread(statements, state);
@@ -265,13 +259,6 @@ public class Procedure extends Value {
 
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state, FUNCTIONAL_CHARACTER);
-
-            if (stepThrough || state.isDebugFinishFunction) {
-                state.setDebugModeActive(true);
-                if (state.isDebugFinishFunction) {
-                    state.setDebugFinishFunction(false);
-                }
-            }
 
             // reset callStackDepth
             state.callStackDepth = oldCallStackDepth;
@@ -414,7 +401,7 @@ public class Procedure extends Value {
         @Override
         public void run() {
             try {
-                this.mResult    = this.mStatements.exec(this.mState);
+                this.mResult    = this.mStatements.execute(this.mState);
                 this.mException = null;
             } catch (final SetlException e) {
                 this.mResult    = null;

@@ -11,45 +11,39 @@ import org.randoom.setlx.utilities.State;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
-    ;
-
-implemented with different classes which inherit from BranchAbstract:
-                    ==========================    ===================
-                         SwitchCaseBranch         SwitchDefaultBranch
-*/
-
+/**
+ * The switch statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+ *     ;
+ *
+ * implemented with different classes which inherit from BranchAbstract:
+ *                     ==========================    ===================
+ *                          SwitchCaseBranch         SwitchDefaultBranch
+ */
 public class Switch extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^switch";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Switch.class);
 
-    private final List<SwitchAbstractBranch> mBranchList;
+    private final List<SwitchAbstractBranch> branchList;
 
     public Switch(final List<SwitchAbstractBranch> branchList) {
-        mBranchList = branchList;
+        this.branchList = branchList;
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        for (final SwitchAbstractBranch br : mBranchList) {
+    public ReturnMessage execute(final State state) throws SetlException {
+        for (final SwitchAbstractBranch br : branchList) {
             if (br.evalConditionToBool(state)) {
-                return br.exec(state);
+                return br.execute(state);
             }
         }
         return null;
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -60,7 +54,7 @@ public class Switch extends Statement {
         // and last branch is a default-branch
         final int      preBound  = boundVariables.size();
         List<String> boundHere = null;
-        for (final SwitchAbstractBranch br : mBranchList) {
+        for (final SwitchAbstractBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
@@ -71,7 +65,7 @@ public class Switch extends Statement {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
         }
-        if (mBranchList.get(mBranchList.size() - 1) instanceof SwitchDefaultBranch) {
+        if (branchList.get(branchList.size() - 1) instanceof SwitchDefaultBranch) {
             boundVariables.addAll(boundHere);
         }
     }
@@ -83,7 +77,7 @@ public class Switch extends Statement {
         state.appendLineStart(sb, tabs);
         sb.append("switch {");
         sb.append(state.getEndl());
-        for (final SwitchAbstractBranch br : mBranchList) {
+        for (final SwitchAbstractBranch br : branchList) {
             br.appendString(state, sb, tabs + 1);
         }
         state.appendLineStart(sb, tabs);
@@ -96,8 +90,8 @@ public class Switch extends Statement {
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
-        final SetlList branchList = new SetlList(mBranchList.size());
-        for (final SwitchAbstractBranch br: mBranchList) {
+        final SetlList branchList = new SetlList(this.branchList.size());
+        for (final SwitchAbstractBranch br: this.branchList) {
             branchList.addMember(state, br.toTerm(state));
         }
         result.addMember(state, branchList);

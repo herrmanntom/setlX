@@ -18,14 +18,14 @@ import java.util.List;
  */
 public class Continue extends Statement {
     // functional character used in terms
-    private final static String     FUNCTIONAL_CHARACTER    = generateFunctionalCharacter(Continue.class);
+    private final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Continue.class);
 
-    public  final static Continue   C                       = new Continue();
+    public  final static Continue C                    = new Continue();
 
     private Continue() {  }
 
     @Override
-    protected ReturnMessage execute(final State state) {
+    public ReturnMessage execute(final State state) {
         return ReturnMessage.CONTINUE;
     }
 

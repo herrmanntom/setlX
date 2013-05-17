@@ -36,7 +36,7 @@ public class PD_evalTerm extends PreDefinedProcedure {
         if (fragment instanceof Expr) {
             result  = ((Expr) fragment).eval(state);
         } else if (fragment instanceof Statement) {
-            ((Statement) fragment).exec(state);
+            ((Statement) fragment).execute(state);
         } else {
             throw new UndefinedOperationException(
                 "This term does not represent an expression or a statement."

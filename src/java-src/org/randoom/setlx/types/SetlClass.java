@@ -203,17 +203,11 @@ public class SetlClass extends Value {
         newScope.linkToThisObject(newObject);
 
         final WriteBackAgent     wba         = new WriteBackAgent(parameters.size());
-        final boolean            stepThrough = state.isDebugStepThroughFunction;
-
-        if (stepThrough) {
-            state.setDebugStepThroughFunction(false);
-            state.setDebugModeActive(false);
-        }
 
         try {
 
             // execute, e.g. compute member definition
-            initBlock.exec(state);
+            initBlock.execute(state);
 
             // extract 'rw' arguments from scope, store them into WriteBackAgent
             for (int i = 0; i < parameters.size(); ++i) {
@@ -241,13 +235,6 @@ public class SetlClass extends Value {
 
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state, FUNCTIONAL_CHARACTER);
-
-            if (stepThrough || state.isDebugFinishFunction) {
-                state.setDebugModeActive(true);
-                if (state.isDebugFinishFunction) {
-                    state.setDebugFinishFunction(false);
-                }
-            }
         }
     }
 
@@ -265,7 +252,7 @@ public class SetlClass extends Value {
         try {
             // execute, e.g. compute static definition
             if (getStaticBlock() != null) {
-                getStaticBlock().exec(state);
+                getStaticBlock().execute(state);
             }
 
             newScope.unlink();

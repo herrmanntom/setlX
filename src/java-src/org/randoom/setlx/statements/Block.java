@@ -65,23 +65,18 @@ public class Block extends Statement {
     }
 
     @Override
-    public ReturnMessage exec(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         ReturnMessage result = null;
         for (final Statement stmnt : statements) {
             if (state.isExecutionStopped) {
                 throw new StopExecutionException("Interrupted");
             }
-            result = stmnt.exec(state);
+            result = stmnt.execute(state);
             if (result != null) {
                 return result;
             }
         }
         return null;
-    }
-
-    @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        return exec(state);
     }
 
     @Override

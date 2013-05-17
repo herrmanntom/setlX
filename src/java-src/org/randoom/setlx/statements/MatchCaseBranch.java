@@ -18,18 +18,19 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
-    ;
-
-implemented here as:
-                                       ========      =========       =====
-                                        mTerms       mCondition    mStatements
-*/
-
+/**
+ * The case branch inside a match statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'match' '(' expr ')' '{' ('case' exprList ('|' condition)? ':' block | [...] )* ('default' ':' block)? '}'
+ *     ;
+ *
+ * implemented here as:
+ *                   ====                      ========      =========       =====
+ *                   exprs                      terms        condition     statements
+ */
 public class MatchCaseBranch extends MatchAbstractBranch {
     // functional character used in terms
     /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchCaseBranch.class);
@@ -74,22 +75,10 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     }
 
     @Override
-    public ReturnMessage exec(final State state) throws SetlException {
-        return statements.exec(state);
+    public ReturnMessage execute(final State state) throws SetlException {
+        return statements.execute(state);
     }
 
-    @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        return exec(state);
-    }
-
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,

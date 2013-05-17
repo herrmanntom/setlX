@@ -13,80 +13,68 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-
-This catchLng block catches any exception, which was not user created, e.g.
-represents a semantic or syntactic error.
-
-grammar rule:
-statement
-    : [...]
-    | 'try' '{' block '}' ('catch' '(' variable ')' '{' block '}' | 'catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')+
-    ;
-
-implemented here as:
-                                                                                   ========         =====
-                                                                                   mErrorVar   mBlockToRecover
-*/
-
+/**
+ * This catchLng block catches any exception, which was not user created, e.g.
+ * represents a semantic or syntactic error.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'try' '{' block '}' ('catch' '(' variable ')' '{' block '}' | 'catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')+
+ *     ;
+ *
+ * implemented here as:
+ *                                                                                    ========         =====
+ *                                                                                    errorVar     blockToRecover
+ *
+ * TODO: implement in thread-save manor.
+ */
 public class TryCatchLngBranch extends TryCatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "^tryCatchLngBranch";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchLngBranch.class);
 
-    private final Variable                  mErrorVar;
-    private final Block                     mBlockToRecover;
-    private       CatchableInSetlXException mException;      // last catched exception
+    private final Variable                  errorVar;
+    private final Block                     blockToRecover;
+    private       CatchableInSetlXException exception;      // last caught exception
 
     public TryCatchLngBranch(final Variable errorVar, final Block blockToRecover){
-        mErrorVar       = errorVar;
-        mBlockToRecover = blockToRecover;
+        this.errorVar       = errorVar;
+        this.blockToRecover = blockToRecover;
     }
 
     @Override
     public boolean catches(final State state, final CatchableInSetlXException cise) {
         if (cise instanceof ThrownInSetlXException) {
-            mException = null;
+            exception = null;
             return false;
         } else {
             // store exception
-            mException = cise;
+            exception = cise;
             return true;
         }
     }
 
     @Override
-    public ReturnMessage exec(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         // wrap into error
-        mErrorVar.assign(state, new SetlError(mException), FUNCTIONAL_CHARACTER);
+        errorVar.assign(state, new SetlError(exception), FUNCTIONAL_CHARACTER);
         // remove stored exception
-        mException = null;
+        exception = null;
         // execute
-        return mBlockToRecover.exec(state);
+        return blockToRecover.execute(state);
     }
 
-    @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        return exec(state);
-    }
-
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        // add all variables found to bound by not suppliying unboundVariables
+        // add all variables found to bound by not supplying unboundVariables
         // as this expression is now used in an assignment
-        mErrorVar.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+        errorVar.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
 
-        mBlockToRecover.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        blockToRecover.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -94,9 +82,9 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append(" catchLng (");
-        mErrorVar.appendString(state, sb, tabs);
+        errorVar.appendString(state, sb, tabs);
         sb.append(") ");
-        mBlockToRecover.appendString(state, sb, tabs, true);
+        blockToRecover.appendString(state, sb, tabs, true);
     }
 
     /* term operations */
@@ -104,8 +92,8 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
     @Override
     public Term toTerm(final State state) {
         final Term    result  = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mErrorVar.toTerm(state));
-        result.addMember(state, mBlockToRecover.toTerm(state));
+        result.addMember(state, errorVar.toTerm(state));
+        result.addMember(state, blockToRecover.toTerm(state));
         return result;
     }
 

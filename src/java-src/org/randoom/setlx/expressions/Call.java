@@ -55,23 +55,8 @@ public class Call extends Expr {
                 "Left hand side \"" + lhs + "\" is undefined."
             );
         }
-        final boolean finishOuterFunction = state.isDebugFinishFunction;
-        try {
-            if (state.areBreakpointsEnabled && ! state.isDebugPromptActive()) {
-                if (state.isBreakpoint(lhs.toString())) {
-                    state.setDebugModeActive(true);
-                }
-            }
-            if (finishOuterFunction) { // unset, because otherwise it would be reset when this call returns
-                state.setDebugFinishFunction(false);
-            }
-            // supply the original expressions (mArgs), which are needed for 'rw' parameters
-            return lhs.call(state, args);
-        } finally {
-            if (finishOuterFunction) {
-                state.setDebugFinishFunction(true);
-            }
-        }
+        // supply the original expressions (mArgs), which are needed for 'rw' parameters
+        return lhs.call(state, args);
     }
 
     @Override

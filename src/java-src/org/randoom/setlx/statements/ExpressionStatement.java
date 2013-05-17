@@ -36,7 +36,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         final Value v = expr.eval(state);
         if (printAfterEval) {
             printResult(state, v);

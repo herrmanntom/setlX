@@ -47,7 +47,7 @@ public class SumAssignment extends StatementWithPrintableResult {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         final Value assigned = lhs.eval(state).sumAssign(state, rhs.eval(state).clone());
         lhs.assignUncloned(state, assigned, FUNCTIONAL_CHARACTER);
 

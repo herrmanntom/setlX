@@ -15,36 +15,37 @@ import org.randoom.setlx.utilities.VariableScope;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'match' '(' expr ')' '{' [...] '}'
-    ;
-
-implemented with different classes which inherit from MatchAbstractBranch:
-                  ====          ====
-                  mExpr      mBranchList
-*/
-
+/**
+ * Implementation of the match statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'match' '(' expr ')' '{' [...] '}'
+ *     ;
+ *
+ * implemented with different classes which inherit from MatchAbstractBranch:
+ *                   ====          ====
+ *                   expr       branchList
+ */
 public class Match extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Match.class);
 
-    private final Expr                        mExpr;
-    private final List<MatchAbstractBranch>   mBranchList;
+    private final Expr                        expr;
+    private final List<MatchAbstractBranch>   branchList;
 
     public Match(final Expr expr, final List<MatchAbstractBranch> branchList) {
-        mExpr       = expr;
-        mBranchList = branchList;
+        this.expr       = expr;
+        this.branchList = branchList;
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        final Value term = mExpr.eval(state).toTerm(state);
+    public ReturnMessage execute(final State state) throws SetlException {
+        final Value term = expr.eval(state).toTerm(state);
         final VariableScope outerScope = state.getScope();
         try {
-            for (final MatchAbstractBranch br : mBranchList) {
+            for (final MatchAbstractBranch br : branchList) {
                 final MatchResult result = br.matches(state, term);
                 if (result.isMatch()) {
                     // scope for execution
@@ -60,7 +61,7 @@ public class Match extends Statement {
 
                     if (br.evalConditionToBool(state)) {
                         // execute statements
-                        final ReturnMessage execResult = br.exec(state);
+                        final ReturnMessage execResult = br.execute(state);
 
                         // reset scope
                         state.setScope(outerScope);
@@ -82,26 +83,19 @@ public class Match extends Statement {
         }
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         // binding inside an match are only valid if present in all branches
         // and last branch is an default-branch
         final int      preBound  = boundVariables.size();
         List<String> boundHere = null;
-        for (final MatchAbstractBranch br : mBranchList) {
+        for (final MatchAbstractBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
@@ -112,7 +106,7 @@ public class Match extends Statement {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
         }
-        if (mBranchList.get(mBranchList.size() - 1) instanceof MatchDefaultBranch) {
+        if (branchList.get(branchList.size() - 1) instanceof MatchDefaultBranch) {
             boundVariables.addAll(boundHere);
         }
     }
@@ -123,10 +117,10 @@ public class Match extends Statement {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
         sb.append("match (");
-        mExpr.appendString(state, sb, 0);
+        expr.appendString(state, sb, 0);
         sb.append(") {");
         sb.append(state.getEndl());
-        for (final MatchAbstractBranch br : mBranchList) {
+        for (final MatchAbstractBranch br : branchList) {
             br.appendString(state, sb, tabs + 1);
         }
         state.appendLineStart(sb, tabs);
@@ -139,10 +133,10 @@ public class Match extends Statement {
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        result.addMember(state, mExpr.toTerm(state));
+        result.addMember(state, expr.toTerm(state));
 
-        final SetlList branchList = new SetlList(mBranchList.size());
-        for (final MatchAbstractBranch br: mBranchList) {
+        final SetlList branchList = new SetlList(this.branchList.size());
+        for (final MatchAbstractBranch br: this.branchList) {
             branchList.addMember(state, br.toTerm(state));
         }
         result.addMember(state, branchList);

@@ -25,7 +25,7 @@ public class Break extends Statement {
     private Break() { }
 
     @Override
-    protected ReturnMessage execute(final State state) {
+    public ReturnMessage execute(final State state) {
         return ReturnMessage.BREAK;
     }
 

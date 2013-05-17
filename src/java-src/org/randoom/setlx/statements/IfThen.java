@@ -37,10 +37,10 @@ public class IfThen extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         for (final IfThenAbstractBranch br : branchList) {
             if (br.evalConditionToBool(state)) {
-                return br.exec(state);
+                return br.execute(state);
             }
         }
         return null;

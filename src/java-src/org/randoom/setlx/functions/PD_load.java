@@ -38,7 +38,7 @@ public class PD_load extends PreDefinedProcedure {
         final Block   blk     = ParseSetlX.parseFile(state, file);
 
         // execute the contents
-        blk.exec(state);
+        blk.execute(state);
 
         // everything is good
         return SetlBoolean.TRUE;

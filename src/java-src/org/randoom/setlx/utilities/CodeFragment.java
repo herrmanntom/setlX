@@ -19,7 +19,7 @@ public abstract class CodeFragment {
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
      */
-    protected abstract void collectVariablesAndOptimize (
+    public abstract void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables

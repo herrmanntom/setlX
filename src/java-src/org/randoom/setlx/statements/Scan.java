@@ -49,7 +49,7 @@ public class Scan extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         final Value value = expr.eval(state);
         if ( ! (value instanceof SetlString)) {
             throw new IncompatibleTypeException(
@@ -133,7 +133,7 @@ public class Scan extends Statement {
                     innerScope.setWriteThrough(true);
 
                     // execute statements
-                    final ReturnMessage execResult = largestMatchBranch.exec(state);
+                    final ReturnMessage execResult = largestMatchBranch.execute(state);
 
                     // reset scope
                     state.setScope(outerScope);

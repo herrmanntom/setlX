@@ -422,8 +422,7 @@ public class SetlX {
     private static int execute(final State state, final Block b) {
         try {
 
-            state.setDebugModeActive(false);
-            b.exec(state);
+            b.execute(state);
 
         } catch (final AbortException ae) { // code detected user did something wrong
             state.errWriteLn(ae.getMessage());

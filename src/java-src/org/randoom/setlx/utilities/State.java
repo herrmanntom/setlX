@@ -163,45 +163,5 @@ public abstract class State {
 
     public abstract Term                scopeToTerm();
 
-    /* -- Debugger -- */
-
-    public abstract void                setBreakpoint(final String id);
-
-    public abstract boolean             removeBreakpoint(final String id);
-
-    public abstract void                removeAllBreakpoints();
-
-    public abstract boolean             isBreakpoint(final String id);
-
-    public abstract String[]            getAllBreakpoints();
-
-    public abstract void                setBreakpointsEnabled(final boolean enabled);
-
-    public          boolean             areBreakpointsEnabled;
-
-    public abstract void                setDebugModeActive(final boolean active);
-
-    public          boolean             isDebugModeActive;
-
-    public abstract void                setDebugPromptActive(final boolean active);
-
-    public abstract boolean             isDebugPromptActive();
-
-    public abstract void                setDebugStepNextExpr(final boolean stepNextExpr);
-
-    public          boolean             isDebugStepNextExpr;
-
-    public abstract void                setDebugStepThroughFunction(final boolean stepThrough);
-
-    public          boolean             isDebugStepThroughFunction;
-
-    public abstract void                setDebugFinishFunction(final boolean finish);
-
-    public          boolean             isDebugFinishFunction;
-
-    public abstract void                setDebugFinishLoop(final boolean finish);
-
-    public          boolean             isDebugFinishLoop;
-
 }
 

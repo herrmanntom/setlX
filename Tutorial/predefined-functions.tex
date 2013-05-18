@@ -920,9 +920,8 @@ yields the result
 \item \texttt{isTerm} tests whether its argument is a term.
 \end{enumerate}
 
-\section{Interactive Debugging}
-\setlx\ supports a command line interface for interactive debugging.  The interface to the
-debugger consists of the following functions:
+\section{Debugging}
+\setlx\ supports a functions to help with debugging:
 \begin{enumerate}
 \item \texttt{trace}:  This function is called as either
       \\[0.2cm]
@@ -932,78 +931,7 @@ debugger consists of the following functions:
       The expression \texttt{trace(true)} switches tracing on:  Afterwards, all
       assignments are written to the terminal window running \setlx.  To switch tracing
       of, call \texttt{trace(false)}.
-\item \texttt{setBreak}:  The expression 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{setBreak}(f)$
-      \\[0.2cm]
-      sets a breakpoint for the function specified by the argument $f$.  
-      In the context of \texttt{setBreak}, the argument $f$ is a string that is the
-      name of a function.
-\item \texttt{rmBreak}:  The expression 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{rmBreak}(f)$
-      \\[0.2cm]
-      removes the breakpoint for the function $f$, where $f$ is the name of a function.
-\item \texttt{lsBreak}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{lsBreak()}
-      \\[0.2cm]
-      lists all breakpoints.
-\item \texttt{step}: In general, the expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{step()}
-      \\[0.2cm]
-      executes the next statement.  However, if the next statement evaluates a complex
-      function, the \texttt{step()} only enters this function so that the programmer can
-      then step through the statements of the called function.
-\item \texttt{uStep}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{uStep()}
-      \\[0.2cm]
-      evaluates the expression that is needed to evaluate the next statement.
-      This is called a \emph{micro step}.
-\item \texttt{fStep}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{fStep()}
-      \\[0.2cm]
-      executes a \emph{macro step}: this executes the next instruction.  If the next
-      instruction is a function call, then this function call is evaluated in one step,
-      so this function steps over function calls.
-\item \texttt{finish}:  The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{finish()}
-      \\[0.2cm]
-      finishes execution of the current function.  This function is handy if you
-      accidentally step into a function.
-\item \texttt{finishLoop}:  The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{finishLoop()}
-      \\[0.2cm]
-      finishes the execution of the current loop without halting.
-\item \texttt{resume}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{resume()}
-      \\[0.2cm]
-      resumes normal execution of the program.
-\item \texttt{reset}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{reset()}
-      \\[0.2cm]
-      stops the execution of the current program and returns to the interactive prompt of
-      the interpreter.
 \end{enumerate}
-Finally the function \texttt{dbgHelp()} lists all commands that are available to support
-interactive debugging.
 
 
 \section{I/O Functions}

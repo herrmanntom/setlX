@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.ParserException;
-import org.randoom.setlx.exceptions.ResetException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
@@ -434,11 +433,6 @@ public class SetlX {
 
             return EXEC_EXIT; // breaks loop while parsing interactively
 
-        } catch (final ResetException re) { // user/code wants to quit debugging
-            if (state.isInteractive()) {
-                state.outWriteLn("Resetting to interactive prompt.");
-            }
-            return EXEC_OK;
         } catch (final SetlException se) { // user/code did something wrong
             se.printExceptionsTrace(state, 40);
             return EXEC_ERROR;

@@ -42,9 +42,19 @@ public abstract class State {
     public abstract void                addToParserErrorCount(int numberOfErrors);
     public abstract void                resetParserErrorCount();
 
+    /**
+     * Show the user a prompt for some input. The prompt message is only shown if
+     * input comes from a human, i.e. is not instantly available.
+     *
+     * Actual user input has to be read via inReadLine().
+     *
+     * @see org.randoom.setlx.utilities.State.inReadLine();
+     *
+     * @param prompt          Message to show to the user.
+     * @return                True if input comes from a human.
+     * @throws JVMIOException Thrown in case input cannot be opened.
+     */
     public abstract boolean             prompt(final String prompt) throws JVMIOException;
-
-    public abstract void                promptUnchecked(final String prompt);
 
     public abstract void                setRealPrintMode_default();
     public abstract void                setRealPrintMode_engineering();
@@ -128,6 +138,8 @@ public abstract class State {
     public abstract Value               findValue(final String var) throws SetlException;
 
     /**
+     * Store `value' for variable into current scope.
+     *
      * @param var                           Variable to set.
      * @param value                         Value to set variable to
      * @param context                       Context description of the assignment for trace.

@@ -178,11 +178,6 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void promptUnchecked(final String prompt) {
-        envProvider.promptForInput(prompt);
-    }
-
-    @Override
     public void setRealPrintMode_default() {
         super.realPrintMode = Real.PRINT_MODE_DEFAULT;
     }

@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v2.0.2--- 2013-05-18
  - removed partly defunct debug functions (but not trace)
  + add ability to trace object and class members
+ + add very simple debugging function stop(id)
 
 ---v2.0.1--- 2013-04-28
  # removed redundant quotes in objects

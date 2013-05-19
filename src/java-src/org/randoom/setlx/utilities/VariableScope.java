@@ -247,9 +247,8 @@ public class VariableScope {
         }
     }
 
-    /* term operations */
-
-    /*package*/ public Term toTerm(final State state, final HashMap<String, SetlClass> classDefinitions) {
+    // collect all bindings reachable from current scope
+    /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final HashMap<String, SetlClass> classDefinitions) {
         final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
@@ -258,6 +257,13 @@ public class VariableScope {
                 allVars.put(entry.getKey(), entry.getValue());
             }
         }
+        return allVars;
+    }
+
+    /* term operations */
+
+    /*package*/ public Term toTerm(final State state, final HashMap<String, SetlClass> classDefinitions) {
+        final SetlHashMap<Value> allVars = getAllVariablesInScope(classDefinitions);
 
         // term which represents the scope
         final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE, 1);

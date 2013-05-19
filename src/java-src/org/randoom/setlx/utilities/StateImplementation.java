@@ -492,6 +492,11 @@ public class StateImplementation extends State {
     }
 
     @Override
+    public SetlHashMap<Value> getAllVariablesInScope() {
+        return variableScope.getAllVariablesInScope(classDefinitions);
+    }
+
+    @Override
     public Term scopeToTerm() {
         return variableScope.toTerm(this, classDefinitions);
     }

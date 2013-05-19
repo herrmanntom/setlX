@@ -175,6 +175,8 @@ public abstract class State {
 
     public abstract void                putClassDefinition(final String var, final SetlClass classDef, final String context);
 
+    public abstract SetlHashMap<Value>  getAllVariablesInScope();
+
     public abstract Term                scopeToTerm();
 
 }

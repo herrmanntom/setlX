@@ -7,6 +7,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
+import java.util.Map.Entry;
 
 // stop(id)                      : interrupt the execution and show a prompt with
 //                                 some debugging functionality.
@@ -37,8 +38,8 @@ public class PD_stop extends PreDefinedProcedure {
             if (firstTimeUse) {
                 prompt = "Execution interrupted via " + message + ":\n"
                         +"Confirm without any input to continue execution.\n"
-                        +"Enter a variable name to display its current value.\n"
-                        +"Enter `All' to print term representation of current scope.\n"
+                        +"Enter comma separated variable names to display their current value.\n"
+                        +"Enter `All' to display all variables in the current scope.\n"
                         + message;
                 firstTimeUse = false;
             }
@@ -64,9 +65,11 @@ public class PD_stop extends PreDefinedProcedure {
                     for (String cmd : cmds) {
                         cmd = cmd.trim();
                         if (cmd.equals("All")) {
-                            state.outWriteLn("    All == " + state.scopeToTerm().toString(state));
+                            for (final Entry<String, Value> binding : state.getAllVariablesInScope().entrySet()) {
+                                state.outWriteLn("    " + binding.getKey() + " == " + binding.getValue().toString(state));
+                            }
                         } else if (cmd.matches("[a-z][a-zA-z_0-9]*")) {
-                            state.outWriteLn("    " + cmd + " == " + state.findValue(cmd).getUnquotedString());
+                            state.outWriteLn("    " + cmd + " == " + state.findValue(cmd).toString(state));
                         } else {
                             state.errWriteLn("    Input '" + cmd + "' is invalid!");
                         }

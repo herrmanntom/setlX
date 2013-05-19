@@ -36,9 +36,9 @@ import java.util.Map;
  */
 public class Procedure extends Value {
     // functional character used in terms
-    public  final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
     // how deep can the call stack be, before checking to replace the stack
-    private final static int      MAX_CALL_STACK_DEPTH = 400;
+    private final static int    MAX_CALL_STACK_DEPTH = 600;
 
     protected final List<ParameterDef>     parameters;      // parameter list
     protected final Block                  statements;      // statements in the body of the definition

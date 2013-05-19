@@ -5,8 +5,6 @@
 /documentation/*.pdf
 /documentation/*.toc
 /documentation/version.tex
-/example_SetlX_code/java_code_generation/*.java
-/example_SetlX_code/java_code_generation/*.class
 /grammar_pure/EBNF_extractor/*.class
 /grammar_pure/EBNF_extractor/EBNF_Grammar.tokens
 /grammar_pure/EBNF_extractor/EBNF_GrammarLexer.java
@@ -18,8 +16,10 @@
 /grammar_pure/PureParser.java
 /grammar_pure/*.class
 /src/java-src/org/randoom/setlx/grammar
-/src*/bin
-/src*/*.jar
+/src/bin
+/src/*.jar
+/src_gfx/bin
+/src_gfx/*.jar
 /Tutorial/*.?00pk
 /Tutorial/*.aux
 /Tutorial/*.dvi

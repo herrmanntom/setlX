@@ -58,12 +58,22 @@ public class PD_stop extends PreDefinedProcedure {
 
             if (input.equals("")) {
                 break;
-            } else if (input.equals("All")) {
-                state.outWriteLn("\tAll == " + state.scopeToTerm().toString(state));
-            } else if (input.matches("[a-z][a-zA-z_0-9]*")) {
-                state.outWriteLn("\t" + input + " == " + state.findValue(input).getUnquotedString());
             } else {
-                state.errWriteLn("\tInput is invalid!");
+                final String[] cmds = input.split(",");
+                if (cmds.length > 0) {
+                    for (String cmd : cmds) {
+                        cmd = cmd.trim();
+                        if (cmd.equals("All")) {
+                            state.outWriteLn("    All == " + state.scopeToTerm().toString(state));
+                        } else if (cmd.matches("[a-z][a-zA-z_0-9]*")) {
+                            state.outWriteLn("    " + cmd + " == " + state.findValue(cmd).getUnquotedString());
+                        } else {
+                            state.errWriteLn("    Input '" + cmd + "' is invalid!");
+                        }
+                    }
+                } else {
+                    state.errWriteLn("    Input '" + input + "' is invalid!");
+                }
             }
         }
 

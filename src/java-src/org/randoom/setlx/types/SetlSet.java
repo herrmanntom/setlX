@@ -506,7 +506,11 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value maximumMember(final State state) {
         if (size() < 1) {
-            return Infinity.NEGATIVE;
+            try {
+                return new SetlDouble(Double.NEGATIVE_INFINITY);
+            } catch (UndefinedOperationException e) {
+                e.printStackTrace();
+            }
         }
         return lastMember(state);
     }
@@ -514,7 +518,11 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value minimumMember(final State state) {
         if (size() < 1) {
-            return Infinity.POSITIVE;
+            try {
+                return new SetlDouble(Double.POSITIVE_INFINITY);
+            } catch (UndefinedOperationException e) {
+                e.printStackTrace();
+            }
         }
         return firstMember(state);
     }

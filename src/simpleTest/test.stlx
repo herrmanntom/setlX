@@ -366,11 +366,12 @@ infinityTests := procedure() {
         correct := false;
     }
 
-    if (sin(inf) == cos(inf)) {  // both values are NaN
-        correct := correct && true;
-    } else {
-        correct := false;
-    }
+    // the test below would rightfully raise an exception
+    // if (sin(inf) == cos(inf)) {  // both values are NaN
+    //    correct := correct && true;
+    // } else {
+    //    correct := false;
+    // }
 
     tester(correct, "infinity computation");
 };

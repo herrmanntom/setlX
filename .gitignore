@@ -18,8 +18,8 @@
 /grammar_pure/PureParser.java
 /grammar_pure/*.class
 /src/java-src/org/randoom/setlx/grammar
-/src*/bin
-/src*/*.jar
+*/bin
+*.jar
 /Tutorial/*.?00pk
 /Tutorial/*.aux
 /Tutorial/*.dvi

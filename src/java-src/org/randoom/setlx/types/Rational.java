@@ -28,6 +28,9 @@ public class Rational extends NumberValue {
     public  final static    Rational    NINE              = new Rational(9);
     public  final static    Rational    TEN               = new Rational(10);
 
+    public  final static    Rational    RAT_BIG           = SetlDouble.bigRational();
+    public  final static    Rational    RAT_SMALL         = SetlDouble.smallRational();
+
     private final static    Rational[]  NUMBERS           = {ZERO,  ONE,  TWO, THREE,
                                                              FOUR,  FIVE, SIX, SEVEN,
                                                              EIGHT, NINE, TEN };
@@ -242,12 +245,32 @@ public class Rational extends NumberValue {
                );
     }
 
+    @Override
+    public boolean jDoubleConvertable() {
+        if (this.compareTo(ZERO) == 0) {
+            return true;
+        }
+        Rational a = new Rational(nominator.abs(), denominator.abs());
+        if (a.compareTo(RAT_BIG) > 0) {
+            return false; // too big
+        }
+        if (a.compareTo(RAT_SMALL) < 0) {
+            return false; // too small
+        }
+        return true;
+    }
+
     /* native type conversions */
 
     @Override
-    public double jDoubleValue() {
-	SetlDouble sd = SetlDouble.valueOf(nominator, denominator);
-	return sd.getDoubleValue();
+    public double toJDoubleValue(final State state) throws NumberToLargeException {
+        if (!jDoubleConvertable()) {
+            String msg = "The fraction " + nominator + "/" + denominator 
+                       + "is too big or too small";
+            throw new NumberToLargeException(msg);
+        }
+        SetlDouble sd = SetlDouble.valueOf(nominator, denominator);
+        return sd.getDoubleValue();
     }
 
     @Override
@@ -307,10 +330,6 @@ public class Rational extends NumberValue {
             return ((SetlDouble) subtrahend).differenceFlipped(state, this);
         } else if (subtrahend instanceof Real) {
             return ((Real) subtrahend).differenceFlipped(state, this);
-        } else if (subtrahend == Infinity.POSITIVE ||
-                   subtrahend == Infinity.NEGATIVE)
-        {
-            return (Infinity) subtrahend.minus(state);
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
@@ -512,9 +531,7 @@ public class Rational extends NumberValue {
                 // mNominator/mDenominator * r.mNominator/r.mDenominator = (mNominator * r.mNominator) / (mDenominator * r.mDenominator)
                 return new Rational(nominator.multiply(r.nominator), denominator.multiply(r.denominator));
             }
-        } else if (multiplier == Infinity.POSITIVE  ||
-                   multiplier == Infinity.NEGATIVE  ||
-                   multiplier instanceof SetlDouble ||
+        } else if (multiplier instanceof SetlDouble ||
                    multiplier instanceof Real       ||
                    multiplier instanceof SetlList   ||
                    multiplier instanceof SetlString
@@ -550,8 +567,6 @@ public class Rational extends NumberValue {
             return ((SetlDouble) divisor).quotientFlipped(state, this);
         } else if (divisor instanceof Real) {
             return ((Real) divisor).quotientFlipped(state, this);
-        } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
-            return Rational.ZERO;
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(state, this);
         } else {
@@ -599,8 +614,8 @@ public class Rational extends NumberValue {
         if (isInteger) {
             return this;
         } else {
-	    // This computation needs to be as involved as it is, because it might happen
-	    // that the last invocation of the function round below rounds up.  Example:
+            // This computation needs to be as involved as it is, because it might happen
+            // that the last invocation of the function round below rounds up.  Example:
             // this = 100000000000000000000000000000000000000000000000000000000000000.75;
             // this.toInteger = 100000000000000000000000000000000000000000000000000000000000000;
             // roundPart = round(0,75) = 1;
@@ -627,8 +642,6 @@ public class Rational extends NumberValue {
             return summand.sum(state, this);
         } else if (summand instanceof Real) {
             return summand.sum(state, this);
-        } else if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
-            return summand;
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
@@ -694,8 +707,8 @@ public class Rational extends NumberValue {
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real & SetlDouble < SetlString
-     * < SetlSet < SetlList < Term < ProcedureDefinition < +Infinity
+     * SetlError < Om < SetlBoolean < Rational & Real & SetlDouble < SetlString
+     * < SetlSet < SetlList < Term < ProcedureDefinition 
      * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
@@ -724,9 +737,9 @@ public class Rational extends NumberValue {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real & SetlDouble
+     * SetlError < Om < SetlBoolean < Rational & Real & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
+     * < SetlObject < ConstructorDefinition
      * This ranking is necessary to allow sets and lists of different types.
      */
     @Override

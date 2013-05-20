@@ -30,11 +30,12 @@ public class MathFunction extends PreDefinedProcedure {
         final Value arg = args.get(0);
         if (arg instanceof NumberValue) {
             try {
-                final double r = (Double) function.invoke(null, arg.jDoubleValue());
+                final double r = (Double) function.invoke(null, arg.toJDoubleValue(state));
                 return SetlDouble.valueOf(r);
             } catch (final SetlException se) {
                 throw se;
             } catch (final Exception e) {
+		e.printStackTrace();
                 throw new JVMException(
                     "Error during calling a predefined mathematical function.\n" +
                     "This is probably a bug in the interpreter.\n" +

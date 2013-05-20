@@ -12,7 +12,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 
 /**
- * This class represents a floating point number.
+ * This class represents a decimal floating point number.
  */
 public class Real extends NumberValue {
 
@@ -60,11 +60,7 @@ public class Real extends NumberValue {
 
     public static NumberValue valueOf(final double real) throws UndefinedOperationException {
         if (Double.isInfinite(real)) {
-            if (real > 0) {
-                return Infinity.POSITIVE;
-            } else {
-                return Infinity.NEGATIVE;
-            }
+            return new SetlDouble(real);
         } else if (Double.isNaN(real)) {
             throw new UndefinedOperationException(
                 "Result of this operation is undefined/not a number."
@@ -146,7 +142,7 @@ public class Real extends NumberValue {
            )
         {
             throw new NumberToLargeException(
-                "The value of " + real + " is too large or to small for this operation."
+                "The value of " + real + " is too large or too small for this operation."
             );
         } else {
             return real.doubleValue();
@@ -173,12 +169,9 @@ public class Real extends NumberValue {
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof NumberValue) {
-	    if (subtrahend instanceof SetlDouble) {
+            if (subtrahend instanceof SetlDouble) {
                 SetlDouble rhs = (SetlDouble) subtrahend;
-		return rhs.differenceFlipped(state, this);
-	    }
-            if (subtrahend == Infinity.POSITIVE || subtrahend == Infinity.NEGATIVE) {
-                return (Infinity) subtrahend.minus(state);
+                return rhs.differenceFlipped(state, this);
             }
             BigDecimal right = null;
             if (subtrahend instanceof Real) {
@@ -261,20 +254,12 @@ public class Real extends NumberValue {
 
     @Override
     public Value product(final State state, final Value multiplier) 
-	throws SetlException 
+        throws SetlException 
     {
         if (multiplier instanceof NumberValue) {
-	    if (multiplier instanceof SetlDouble) {
+            if (multiplier instanceof SetlDouble) {
                 SetlDouble rhs = (SetlDouble) multiplier;
-		return rhs.product(state, this);
-	    }
-            if (multiplier == Infinity.POSITIVE || multiplier == Infinity.NEGATIVE) {
-		if (real.equals(BigDecimal.ZERO)) {
-		    String msg = "'" + this + " * " + multiplier + "' is undefined.";
-                    throw new UndefinedOperationException(msg);
-		} else {
-		    return (Infinity) multiplier;
-		}
+                return rhs.product(state, this);
             }
             BigDecimal right = null;
             if (multiplier instanceof Real) {
@@ -300,16 +285,12 @@ public class Real extends NumberValue {
     @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof NumberValue) {
-	    if (divisor instanceof SetlDouble) {
+            if (divisor instanceof SetlDouble) {
                 SetlDouble rhs = (SetlDouble) divisor;
-		return rhs.quotientFlipped(state, this);
-	    }
+                return rhs.quotientFlipped(state, this);
+            }
             BigDecimal right = null;
-            if (divisor == Infinity.POSITIVE) {
-                return new Real("0.0");
-            } else if (divisor == Infinity.NEGATIVE) {
-                return new Real("-0.0");
-            } else if (divisor instanceof Real) {
+            if (divisor instanceof Real) {
                 right = ((Real) divisor).real;
             } else {
                 right = ((Rational) divisor).toReal(state).real;
@@ -317,9 +298,9 @@ public class Real extends NumberValue {
             if (right.compareTo(BigDecimal.ZERO) == 0) {
                 final int cmp = this.compareTo(Rational.ZERO);
                 if (cmp > 0) {
-                    return Infinity.POSITIVE;
+                    return new SetlDouble(Double.POSITIVE_INFINITY);
                 } else if (cmp < 0) {
-                    return Infinity.NEGATIVE;
+                    return new SetlDouble(Double.NEGATIVE_INFINITY);
                 } else {
                     throw new UndefinedOperationException(
                         "'" + this + " / " + divisor + "' is undefined."
@@ -350,15 +331,12 @@ public class Real extends NumberValue {
 
     @Override
     public Value sum(final State state, final Value summand) 
-	throws SetlException
+        throws SetlException
     {
         if (summand instanceof NumberValue) {
-	    if (summand instanceof SetlDouble) {
+            if (summand instanceof SetlDouble) {
                 SetlDouble rhs = (SetlDouble) summand;
-		return rhs.sum(state, this);
-	    }
-            if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
-                return (Infinity) summand;
+                return rhs.sum(state, this);
             }
             BigDecimal right = null;
             if (summand instanceof Real) {
@@ -415,8 +393,8 @@ public class Real extends NumberValue {
             final Real nr = (Real) v;
             return real.compareTo(nr.real);
         } else if (v instanceof SetlDouble) {
-	    double     rhsD = ((SetlDouble) v).getDoubleValue();
-	    BigDecimal rhs  = new BigDecimal(rhsD, mathContext);
+            double     rhsD = ((SetlDouble) v).getDoubleValue();
+            BigDecimal rhs  = new BigDecimal(rhsD, mathContext);
             return real.compareTo(rhs);
         } else if (v instanceof Rational) {
             final Rational nr = (Rational) v;
@@ -428,9 +406,9 @@ public class Real extends NumberValue {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * SetlError < Om <  SetlBoolean < Rational & Real
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
+     * < SetlObject < ConstructorDefinition 
      * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
@@ -445,8 +423,8 @@ public class Real extends NumberValue {
         } else if (v instanceof Real) {
             return real.compareTo(((Real) v).real) == 0;
         } else if (v instanceof SetlDouble) {
-	    double     rhsD = ((SetlDouble) v).getDoubleValue();
-	    BigDecimal rhs  = new BigDecimal(rhsD, mathContext);
+            double     rhsD = ((SetlDouble) v).getDoubleValue();
+            BigDecimal rhs  = new BigDecimal(rhsD, mathContext);
             return real.compareTo(rhs) == 0;
         } else if (v instanceof Rational) {
             return real.compareTo(((Rational) v).toReal().real) == 0;
@@ -463,13 +441,12 @@ public class Real extends NumberValue {
     }
 
     /* private */
-
-    public Infinity handleArithmeticException(final ArithmeticException ae, final String operation) throws UndefinedOperationException {
+    public SetlDouble handleArithmeticException(final ArithmeticException ae, final String operation) throws UndefinedOperationException {
         final String message = ae.getMessage();
         if (message.equalsIgnoreCase("Overflow")) {
-            return Infinity.POSITIVE;
+            return new SetlDouble(Double.POSITIVE_INFINITY);
         } else if (message.equalsIgnoreCase("Underflow")) {
-            return Infinity.NEGATIVE;
+            return new SetlDouble(Double.NEGATIVE_INFINITY);
         } else if (message.equalsIgnoreCase("Division by zero")) {
             throw new UndefinedOperationException(
                 "'" + operation + "' is undefined (division by zero)."

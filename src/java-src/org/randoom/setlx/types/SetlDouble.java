@@ -10,53 +10,70 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
- * This class represents a floating point number.
+ * This class represents a binary floating point number.
  */
 public class SetlDouble extends NumberValue {
-    private final double mDouble;
+    private final double doubleValue;
 
-    private SetlDouble(Double d) {
-        mDouble = d;
+    private final static BigDecimal DOUBLE_MAX_VALUE = BigDecimal.valueOf(Double.MAX_VALUE);
+    private final static BigDecimal DOUBLE_MIN_VALUE = BigDecimal.valueOf(Double.MIN_VALUE);
+
+    protected SetlDouble(Double d) throws UndefinedOperationException {
+        if (Double.isNaN(d)) {
+            String msg = "Result of this operation is undefined/not a number.";
+            throw new UndefinedOperationException(msg);
+        }
+        this.doubleValue = d;
     }
     private SetlDouble(final String s) {
-        mDouble = new Double(s);
+        this.doubleValue = new Double(s);
     }
-    private SetlDouble(final BigDecimal real) {
-        mDouble = real.doubleValue();
+    private SetlDouble(final BigDecimal real) throws NumberToLargeException {
+        final BigDecimal absValue = real.abs();
+        if ( absValue.compareTo(DOUBLE_MAX_VALUE) > 0 ||
+             (
+               absValue.compareTo(DOUBLE_MIN_VALUE) < 0 &&
+               real.compareTo(BigDecimal.ZERO) != 0
+             )
+           )
+        {
+            throw new NumberToLargeException(
+                "The value of " + real + " is too large or too small for this operation."
+            );
+        } else {
+            this.doubleValue = real.doubleValue();
+        }
     }
     private SetlDouble(BigInteger nominator, BigInteger denominator) {
         double n = nominator  .doubleValue();
         double d = denominator.doubleValue();
-	// not the most efficient way to do it
-	while (Double.isInfinite(n) || Double.isInfinite(d)) {
-	    nominator   = nominator  .shiftRight(1);
-	    denominator = denominator.shiftRight(1);
-	    n = nominator  .doubleValue();
-	    d = denominator.doubleValue();
-	}
-	mDouble = n / d;
+        // not the most efficient way to do it
+        while (Double.isInfinite(n) || Double.isInfinite(d)) {
+            nominator   = nominator  .shiftRight(1);
+            denominator = denominator.shiftRight(1);
+            n = nominator  .doubleValue();
+            d = denominator.doubleValue();
+        }
+        this.doubleValue = n / d;
     }
 
     public static SetlDouble valueOf(final String str) {
         return new SetlDouble(str);
     }
-    public static NumberValue valueOf(final double real) {
-	return new SetlDouble(real);
+    public static SetlDouble valueOf(final double real) throws UndefinedOperationException {
+        if (Double.isNaN(real)) {
+            String msg = "Result of this operation is undefined/not a number.";
+            throw new UndefinedOperationException(msg);
+        }
+        return new SetlDouble(real);
     }
     public static NumberValue valueOf(final BigDecimal real) throws UndefinedOperationException {
         Double value = real.doubleValue();
-	if (Double.isInfinite(value)) {
-            if (value > 0) {
-                return Infinity.POSITIVE;
-            } else {
-                return Infinity.NEGATIVE;
-            }
-        } else if (Double.isNaN(value)) {
-            throw new UndefinedOperationException(
-                "Result of this operation is undefined/not a number."
-            );
+        if (Double.isNaN(value)) {
+            String msg = "Result of this operation is undefined/not a number.";
+            throw new UndefinedOperationException(msg);
         }
-	return new SetlDouble(value);
+        return new SetlDouble(value);
     }
     public static SetlDouble valueOf(final BigInteger nominator, final BigInteger denominator) {
         return new SetlDouble(nominator, denominator);
@@ -68,7 +85,7 @@ public class SetlDouble extends NumberValue {
         return this;
     }
     public Double getDoubleValue() {
-        return mDouble;
+        return this.doubleValue;
     }
 
     /* type checks (sort of Boolean operation) */
@@ -80,15 +97,15 @@ public class SetlDouble extends NumberValue {
     /* type conversions */
     @Override
     public Rational toInteger(final State state) 
-	throws UndefinedOperationException
+        throws UndefinedOperationException
     {
-	if (mDouble >= 0.0) {
-	    SetlDouble result = new SetlDouble(Math.floor(mDouble));
-	    return result.toRational(state);
-	} else {
-	    SetlDouble result = new SetlDouble(Math.ceil(mDouble));
-	    return result.toRational(state);
-	}
+        if (this.doubleValue >= 0.0) {
+            SetlDouble result = new SetlDouble(Math.floor(this.doubleValue));
+            return result.toRational(state);
+        } else {
+            SetlDouble result = new SetlDouble(Math.ceil(this.doubleValue));
+            return result.toRational(state);
+        }
     }
 
     /* Convert an IEEE 754 double to a rational.  The IEEE format specifies
@@ -101,50 +118,74 @@ public class SetlDouble extends NumberValue {
      */
     @Override
     public Rational toRational(final State state) 
-	throws UndefinedOperationException 
+        throws UndefinedOperationException 
     {
-	long bits         = Double.doubleToLongBits(mDouble);
-	long signMask     = 0x8000000000000000L;
-	long exponentMask = 0x7ff0000000000000L;
+        return toRational();
+    }
+
+    private Rational toRational() throws UndefinedOperationException 
+    {
+        long bits         = Double.doubleToLongBits(this.doubleValue);
+        long signMask     = 0x8000000000000000L;
+        long exponentMask = 0x7ff0000000000000L;
         long valueMask    = 0x000fffffffffffffL;
-	long biasedExp    = ((bits & exponentMask) >>> 52);
-	boolean sign      = ((bits & signMask) == signMask);
-	BigInteger nominator   = null;
-	BigInteger denominator = null;
-	if (biasedExp == 0) {  // denormalized number
-	    long exponent = - 1022 - 52;
-	    long mantissa = bits & valueMask;	    
-	    if (sign) {
-		nominator = BigInteger.valueOf(-mantissa);
-	    } else {
-		nominator = BigInteger.valueOf(mantissa);
-	    }
-	    denominator = BigInteger.valueOf(1).shiftLeft((int) -exponent);
-	    return Rational.valueOf(nominator, denominator);
-	} else if (biasedExp < 2047) {  // normalized number
-	    long exponent = biasedExp - 1023 - 52;
-	    long mantissa = (1L << 52) | (bits & valueMask);
-	    if (sign) {
-		nominator = BigInteger.valueOf(-mantissa);
-	    } else {
-		nominator = BigInteger.valueOf(mantissa);
-	    }
-	    if (exponent < 0) {
-		denominator = BigInteger.valueOf(1).shiftLeft((int) -exponent);
-		return Rational.valueOf(nominator, denominator);
-	    } else {
-		nominator = nominator.shiftLeft((int) exponent);
-		return Rational.valueOf(nominator);
-	    }
-	} else { // not a number (NaN)
-	    String msg = "This is not a number (NaN).";
-	    throw new UndefinedOperationException(msg);	    
-	}
+        long biasedExp    = ((bits & exponentMask) >>> 52);
+        boolean sign      = ((bits & signMask) == signMask);
+        BigInteger nominator   = null;
+        BigInteger denominator = null;
+        if (biasedExp == 0) {  // denormalized number
+            long exponent = - 1022 - 52;
+            long mantissa = bits & valueMask;            
+            if (sign) {
+                nominator = BigInteger.valueOf(-mantissa);
+            } else {
+                nominator = BigInteger.valueOf(mantissa);
+            }
+            denominator = BigInteger.valueOf(1).shiftLeft((int) -exponent);
+            return Rational.valueOf(nominator, denominator);
+        } else if (biasedExp < 2047) {  // normalized number
+            long exponent = biasedExp - 1023 - 52;
+            long mantissa = (1L << 52) | (bits & valueMask);
+            if (sign) {
+                nominator = BigInteger.valueOf(-mantissa);
+            } else {
+                nominator = BigInteger.valueOf(mantissa);
+            }
+            if (exponent < 0) {
+                denominator = BigInteger.valueOf(1).shiftLeft((int) -exponent);
+                return Rational.valueOf(nominator, denominator);
+            } else {
+                nominator = nominator.shiftLeft((int) exponent);
+                return Rational.valueOf(nominator);
+            }
+        } else { // not a number (NaN)
+            String msg = "This is not a number (NaN).";
+            throw new UndefinedOperationException(msg);            
+        }
+    }
+    
+    public static Rational bigRational() {
+        try {
+            SetlDouble big = new SetlDouble(Double.MAX_VALUE);
+            return big.toRational();
+        } catch (UndefinedOperationException e) {
+            // impossible
+        }
+        return null;
+    }
+    public static Rational smallRational() {
+        try {
+            SetlDouble small = new SetlDouble(Double.MIN_VALUE);
+            return small.toRational();
+        } catch (UndefinedOperationException e) {
+            // impossible
+        }
+        return null;
     }
 
     @Override
     public NumberValue toReal(final State state) throws UndefinedOperationException {
-	return Real.valueOf(mDouble);
+        return Real.valueOf(this.doubleValue);
     }
 
     @Override
@@ -155,50 +196,50 @@ public class SetlDouble extends NumberValue {
     /* native type checks */
     @Override
     public boolean jDoubleConvertable() {
-	return true;
+        return true;
     }
 
     /* native type conversions */
     @Override
     public double jDoubleValue() {
-	return mDouble;
+        return this.doubleValue;
     }
     @Override
     public double toJDoubleValue(final State state) {
-	return mDouble;
+        return this.doubleValue;
     }
 
     /* arithmetic operations */
     @Override
     public SetlDouble absoluteValue(final State state) {
-        return new SetlDouble(Math.abs(mDouble));
+        try {
+            return new SetlDouble(Math.abs(this.doubleValue));
+        } catch (UndefinedOperationException e) {
+            // impossible
+            return null;
+        }
     }
 
     @Override
     public Rational ceil(final State state) throws UndefinedOperationException {
-	// TODO: this can be done faster
-	SetlDouble result = new SetlDouble(Math.ceil(mDouble));
-	return result.toRational(state);
+        SetlDouble result = new SetlDouble(Math.ceil(this.doubleValue));
+        return result.toRational(state);
     }
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof SetlDouble) {
-	    SetlDouble rhs = (SetlDouble) subtrahend;
-	    return new SetlDouble(mDouble - rhs.getDoubleValue());
-	}
+            SetlDouble rhs = (SetlDouble) subtrahend;
+            return new SetlDouble(this.doubleValue - rhs.getDoubleValue());
+        }
         if (subtrahend instanceof NumberValue) {
-            if (subtrahend instanceof Infinity) {
-		Infinity rhs = (Infinity) subtrahend;
-		return new SetlDouble(mDouble - rhs.jDoubleValue());
-	    }
-	    if (subtrahend instanceof Real) {
-		Real   rhs       = (Real) subtrahend;
-		double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-		return new SetlDouble(mDouble - rhsDouble);
+             if (subtrahend instanceof Real) {
+                Real   rhs       = (Real) subtrahend;
+                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
+                return new SetlDouble(this.doubleValue - rhsDouble);
             } else { // subtrahend must be Rational now
                 Rational rhs = (Rational) subtrahend;
-		return new SetlDouble(mDouble - rhs.toDouble().mDouble);
+                return new SetlDouble(this.doubleValue - rhs.toDouble().doubleValue);
             }
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
@@ -210,9 +251,9 @@ public class SetlDouble extends NumberValue {
     }
 
     public Value differenceFlipped(final State state, final Rational minuend) throws SetlException {
-	BigInteger n   = minuend.getNominatorValue();
-	BigInteger d   = minuend.getDenominatorValue();
-	SetlDouble lhs = SetlDouble.valueOf(n, d);
+        BigInteger n   = minuend.getNominatorValue();
+        BigInteger d   = minuend.getDenominatorValue();
+        SetlDouble lhs = SetlDouble.valueOf(n, d);
         return lhs.difference(state, this);
     }
     public Value differenceFlipped(final State state, final Real minuend) throws SetlException {
@@ -221,32 +262,27 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Rational floor(final State state) 
-	throws UndefinedOperationException 
+        throws UndefinedOperationException 
     {
-	// TODO: this can be done faster
-	SetlDouble result = new SetlDouble(Math.floor(mDouble));
-	return result.toRational(state);
+        // TODO: this can be done faster
+        SetlDouble result = new SetlDouble(Math.floor(this.doubleValue));
+        return result.toRational(state);
     }
 
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof SetlDouble) {
-	    SetlDouble rhs = (SetlDouble) divisor;
-	    return new SetlDouble(mDouble / rhs.getDoubleValue()).floor(state);
-	}
-	if (divisor instanceof Real) {
-	    final Real rhs = (Real) divisor;
-	    return new SetlDouble(mDouble / rhs.jDoubleValue()).floor(state);
-	}
-	if (divisor instanceof Rational) {
-	    final Rational rhs = (Rational) divisor;
-	    return new SetlDouble(mDouble / rhs.toDouble().mDouble).floor(state);
-	}
-	if (divisor instanceof Infinity) {
-	    final Infinity rhs = (Infinity) divisor;
-	    // no need for floor here as result is either 0 or NaN
-	    return new SetlDouble(mDouble / rhs.jDoubleValue());
-	}
+            SetlDouble rhs = (SetlDouble) divisor;
+            return new SetlDouble(this.doubleValue / rhs.getDoubleValue()).floor(state);
+        }
+        if (divisor instanceof Real) {
+            final Real rhs = (Real) divisor;
+            return new SetlDouble(this.doubleValue / rhs.jDoubleValue()).floor(state);
+        }
+        if (divisor instanceof Rational) {
+            final Rational rhs = (Rational) divisor;
+            return new SetlDouble(this.doubleValue / rhs.toDouble().doubleValue).floor(state);
+        }
         if (divisor instanceof Term) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
@@ -258,42 +294,39 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public NumberValue minus(final State state) throws UndefinedOperationException {
-	return new SetlDouble(-mDouble);
+        return new SetlDouble(-this.doubleValue);
     }
 
     @Override
-    protected SetlDouble power(final State state, final int exponent) {
-	return new SetlDouble(Math.pow(mDouble, exponent));
-    }
-
-    @Override
-    protected NumberValue power(final State state, final double exponent) {
-	return new SetlDouble(Math.pow(mDouble, exponent));
-    }
-
-    @Override
-    public Value product(final State state, final Value multiplier) throws IncompatibleTypeException
+    protected SetlDouble power(final State state, final int exponent) 
+        throws UndefinedOperationException 
     {
-	if (multiplier instanceof SetlDouble) {
-	    SetlDouble rhs = (SetlDouble) multiplier;
-	    return new SetlDouble(mDouble * rhs.getDoubleValue());
-	}
-	if (multiplier instanceof NumberValue) {
-            if (multiplier instanceof Infinity) {
-		Double d = mDouble;
-		if (d.equals(0.0)) {
-		    return new SetlDouble(Double.NaN);
-		} else {
-		    return (Infinity) multiplier;
-		}
-            }
+        return new SetlDouble(Math.pow(this.doubleValue, exponent));
+    }
+
+    @Override
+    protected NumberValue power(final State state, final double exponent) 
+        throws UndefinedOperationException 
+    {
+        return new SetlDouble(Math.pow(this.doubleValue, exponent));
+    }
+
+    @Override
+    public Value product(final State state, final Value multiplier) 
+        throws IncompatibleTypeException, UndefinedOperationException
+    {
+        if (multiplier instanceof SetlDouble) {
+            SetlDouble rhs = (SetlDouble) multiplier;
+            return new SetlDouble(this.doubleValue * rhs.getDoubleValue());
+        }
+        if (multiplier instanceof NumberValue) {
             if (multiplier instanceof Real) {
-		Real   rhs       = (Real) multiplier;
-		double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-		return new SetlDouble(mDouble * rhsDouble);
+                Real   rhs       = (Real) multiplier;
+                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
+                return new SetlDouble(this.doubleValue * rhsDouble);
             } else {  // multiplier must be Rational now
                 final Rational rhs = (Rational) multiplier;
-                return new SetlDouble(mDouble * rhs.toDouble().mDouble);
+                return new SetlDouble(this.doubleValue * rhs.toDouble().doubleValue);
             }
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(state, this);
@@ -306,22 +339,18 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
-	if (divisor instanceof SetlDouble) {
-	    SetlDouble rhs = (SetlDouble) divisor;
-	    return new SetlDouble(mDouble / rhs.getDoubleValue());
-	}
+        if (divisor instanceof SetlDouble) {
+            SetlDouble rhs = (SetlDouble) divisor;
+            return new SetlDouble(this.doubleValue / rhs.getDoubleValue());
+        }
         if (divisor instanceof NumberValue) {
-            if (divisor instanceof Infinity) {
-		Infinity rhs = (Infinity) divisor;
-     		return new SetlDouble(mDouble / rhs.jDoubleValue());
-            }
-	    if (divisor instanceof Real) {
-		Real   rhs       = (Real) divisor;
-		double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-		return new SetlDouble(mDouble / rhsDouble);
+            if (divisor instanceof Real) {
+                Real   rhs       = (Real) divisor;
+                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
+                return new SetlDouble(this.doubleValue / rhsDouble);
             } else {  // divisor must be Rational now
-		Rational rhs = (Rational) divisor;
-                return new SetlDouble(mDouble / rhs.toDouble().mDouble);
+                Rational rhs = (Rational) divisor;
+                return new SetlDouble(this.doubleValue / rhs.toDouble().doubleValue);
             }
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(state, this);
@@ -332,9 +361,9 @@ public class SetlDouble extends NumberValue {
         }
     }
     public Value quotientFlipped(final State state, final Rational dividend) throws SetlException {
-	BigInteger n   = dividend.getNominatorValue();
-	BigInteger d   = dividend.getDenominatorValue();
-	SetlDouble lhs = SetlDouble.valueOf(n, d);
+        BigInteger n   = dividend.getNominatorValue();
+        BigInteger d   = dividend.getDenominatorValue();
+        SetlDouble lhs = SetlDouble.valueOf(n, d);
         return lhs.quotient(state, this);
     }
     public Value quotientFlipped(final State state, final Real dividend) throws SetlException {
@@ -343,28 +372,24 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Rational round(final State state) throws UndefinedOperationException {
-	SetlDouble result = new SetlDouble(Math.floor(mDouble + 0.5));
+        SetlDouble result = new SetlDouble(Math.floor(this.doubleValue + 0.5));
         return result.toRational(state);
     }
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof SetlDouble) {
-	    SetlDouble rhs = (SetlDouble) summand;
-	    return new SetlDouble(mDouble + rhs.getDoubleValue());
-	}
+            SetlDouble rhs = (SetlDouble) summand;
+            return new SetlDouble(this.doubleValue + rhs.getDoubleValue());
+        }
         if (summand instanceof NumberValue) {
-            if (summand instanceof Infinity) {
-		Infinity rhs = (Infinity) summand;
-		return new SetlDouble(mDouble + rhs.jDoubleValue());
-	    }
-	    if (summand instanceof Real) {
-		Real   rhs       = (Real) summand;
-		double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-		return new SetlDouble(mDouble + rhsDouble);
+            if (summand instanceof Real) {
+                Real   rhs       = (Real) summand;
+                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
+                return new SetlDouble(this.doubleValue + rhsDouble);
             } else { // summand must be Rational now
                 Rational rhs = (Rational) summand;
-		return new SetlDouble(mDouble + rhs.toDouble().mDouble);
+                return new SetlDouble(this.doubleValue + rhs.toDouble().doubleValue);
             }
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
@@ -377,12 +402,23 @@ public class SetlDouble extends NumberValue {
         }
     }
 
+    @Override
+    public SetlBoolean isInfinity() {
+        if (this.doubleValue == Double.POSITIVE_INFINITY ||
+            this.doubleValue == Double.NEGATIVE_INFINITY   ) 
+        {
+            return SetlBoolean.TRUE;
+        } else {    
+            return SetlBoolean.FALSE;
+        }
+    }
+
     /* string and char operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-	Double d = mDouble;
-	sb.append(d.toString());
+        Double d = this.doubleValue;
+        sb.append(d.toString());
     }
 
     /* comparisons */
@@ -397,17 +433,17 @@ public class SetlDouble extends NumberValue {
         if (this == v) {
             return 0;
         } else if (v instanceof SetlDouble) {
-	    final SetlDouble rhs = (SetlDouble) v;
-	    final Double d = mDouble;
-	    return d.compareTo(rhs.mDouble);
+            final SetlDouble rhs = (SetlDouble) v;
+            final Double d = this.doubleValue;
+            return d.compareTo(rhs.doubleValue);
         } else if (v instanceof Real) {
             final Real rhs = (Real) v;
-	    final Double d = mDouble;
+            final Double d = this.doubleValue;
             return d.compareTo(rhs.getBigDecimalValue().doubleValue());
         } else if (v instanceof Rational) {
             final Rational rhs = (Rational) v;
-	    final Double d = mDouble;
-            return d.compareTo(rhs.toDouble().mDouble);
+            final Double d = this.doubleValue;
+            return d.compareTo(rhs.toDouble().doubleValue);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -415,9 +451,9 @@ public class SetlDouble extends NumberValue {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * SetlError < Om < SetlBoolean < Rational & Real
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
+     * < SetlObject < ConstructorDefinition
      * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
@@ -427,14 +463,14 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public boolean equalTo(final Value v) {
-	return this.compareTo(v) == 0;
+        return this.compareTo(v) == 0;
     }
 
     private final static int initHashCode = SetlDouble.class.hashCode();
 
     @Override
     public int hashCode() {
-	Double d = mDouble;
+        Double d = this.doubleValue;
         return initHashCode + d.hashCode();
     }
 }

@@ -446,8 +446,10 @@ public class SetlList extends IndexedCollectionValue {
         return list.get(list.size() - 1).clone();
     }
 
+
     @Override
     public Value maximumMember(final State state) throws SetlException {
+        // Neutral element of max() is smallest value available
         Value max = Infinity.NEGATIVE;
         for (final Value v: list) {
             if (v.maximum(state, max).equals(v)) {
@@ -459,6 +461,7 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public Value minimumMember(final State state) throws SetlException {
+        // Neutral element of min() is largest value available
         Value min = Infinity.POSITIVE;
         for (final Value v: list) {
             if (v.minimum(state, min).equals(v)) {

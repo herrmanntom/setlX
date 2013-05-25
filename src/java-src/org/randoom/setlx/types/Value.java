@@ -492,12 +492,40 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Find largest member value in this (collection-) value.
+     *
+     * Note: This function must always return a valid value (i.e. not om) and
+     *       satisfy the following equation for all possible m and n:
+     *
+     *       max(m + n) == max([max(m), max(n)])
+     *
+     *       Especially when m is {} or [] and n is not.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Maximum of the members contained in this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value maximumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument of 'max(" + this + "') is not a collection value."
         );
     }
 
+    /**
+     * Find smallest member value in this (collection-) value.
+     *
+     * Note: This function must always return a valid value (i.e. not om) and
+     *       satisfy the following equation for all possible m and n:
+     *
+     *       min(m + n) == min([min(m), min(n)])
+     *
+     *       Especially when m is {} or [] and n is not.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Minimum of the members contained in this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value minimumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument of 'min(" + this + "') is not a collection value."

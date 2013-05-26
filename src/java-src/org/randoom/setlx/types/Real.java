@@ -60,7 +60,7 @@ public class Real extends NumberValue {
 
     public static NumberValue valueOf(final double real) throws UndefinedOperationException {
         if (Double.isInfinite(real)) {
-            return new SetlDouble(real);
+            return SetlDouble.valueOf(real);
         } else if (Double.isNaN(real)) {
             throw new UndefinedOperationException(
                 "Result of this operation is undefined/not a number."
@@ -298,9 +298,9 @@ public class Real extends NumberValue {
             if (right.compareTo(BigDecimal.ZERO) == 0) {
                 final int cmp = this.compareTo(Rational.ZERO);
                 if (cmp > 0) {
-                    return new SetlDouble(Double.POSITIVE_INFINITY);
+                    return SetlDouble.POSITIVE_INFINITY;
                 } else if (cmp < 0) {
-                    return new SetlDouble(Double.NEGATIVE_INFINITY);
+                    return SetlDouble.NEGATIVE_INFINITY;
                 } else {
                     throw new UndefinedOperationException(
                         "'" + this + " / " + divisor + "' is undefined."
@@ -444,9 +444,9 @@ public class Real extends NumberValue {
     public SetlDouble handleArithmeticException(final ArithmeticException ae, final String operation) throws UndefinedOperationException {
         final String message = ae.getMessage();
         if (message.equalsIgnoreCase("Overflow")) {
-            return new SetlDouble(Double.POSITIVE_INFINITY);
+            return SetlDouble.POSITIVE_INFINITY;
         } else if (message.equalsIgnoreCase("Underflow")) {
-            return new SetlDouble(Double.NEGATIVE_INFINITY);
+            return SetlDouble.NEGATIVE_INFINITY;
         } else if (message.equalsIgnoreCase("Division by zero")) {
             throw new UndefinedOperationException(
                 "'" + operation + "' is undefined (division by zero)."

@@ -447,15 +447,11 @@ public class SetlList extends IndexedCollectionValue {
     @Override
     public Value maximumMember(final State state) throws SetlException {
         Value max = null;
-        try {
-            max = new SetlDouble(Double.NEGATIVE_INFINITY);
-            for (final Value v: list) {
-                if (v.maximum(state, max).equals(v)) {
-                    max = v;
-                }
+        max = SetlDouble.NEGATIVE_INFINITY;
+        for (final Value v: list) {
+            if (v.maximum(state, max).equals(v)) {
+                max = v;
             }
-        } catch (UndefinedOperationException e) {
-            e.printStackTrace();
         }
         return max.clone();
    }
@@ -463,15 +459,11 @@ public class SetlList extends IndexedCollectionValue {
     @Override
     public Value minimumMember(final State state) throws SetlException {
         Value min = null;
-        try {
-            min = new SetlDouble(Double.POSITIVE_INFINITY);
-            for (final Value v: list) {
-                if (v.minimum(state, min).equals(v)) {
-                    min = v;
-                }
+        min = SetlDouble.POSITIVE_INFINITY;
+        for (final Value v: list) {
+            if (v.minimum(state, min).equals(v)) {
+                min = v;
             }
-        } catch (UndefinedOperationException e) {
-            e.printStackTrace();
         }
         return min.clone();
     }

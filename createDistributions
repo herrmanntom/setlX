@@ -10,15 +10,15 @@ cd src
 
 # clean the interpreter source
 echo "=> Cleaning the setlX interpreter's source ..."
-make dist-clean
+ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
-make
+ant
 if [ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" ]
   then
     # clean it up again (does not remove the jar)
-    make clean
+    ant clean
     echo "=> The setlX interpreter was build correctly."
 else
     echo "=> Building the setlX interpreter failed ..."
@@ -26,19 +26,25 @@ else
     exit 1
 fi
 
+# ensure some files use Windows line-endings
+if [ $(which unix2dos > /dev/null 2>&1; echo $?) -eq 0 ]
+  then
+    unix2dos setlX.cmd
+fi
+
 cd ../src_gfx
 
 # clean the interpreter source
 echo "=> Cleaning the setlX graphics library's source ..."
-make dist-clean
+ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX graphics library ..."
-make
+ant
 if [ -e "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" ]
   then
     # clean it up again (does not remove the jar)
-    make clean
+    ant clean
     echo "=> The setlX graphics library was build correctly."
 else
     echo "=> Building the setlX graphics library failed ..."
@@ -181,8 +187,8 @@ rm -rf zipContents
 echo "done"
 
 # remove the jars
-cd src;make dist-clean;cd ..
-cd src_gfx;make dist-clean;cd ..
+cd src;ant dist-clean;cd ..
+cd src_gfx;ant dist-clean;cd ..
 
 # create development zip
 echo -n "=> Creating development kit ... "

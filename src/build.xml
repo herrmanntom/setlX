@@ -3,6 +3,9 @@
     <property name="main-class"  value="org.randoom.setlxUI.pc.SetlX"/>
     <property name="src.dir"     value="java-src"/>
     <property name="build.dir"   value="bin"/>
+    <condition property="setlX.executable" value="setlX" else="setlX.cmd">
+        <os family="unix" />
+    </condition>
 
     <!-- discover library jars and add them to the class-path -->
     <path id="antlr-jar">
@@ -16,6 +19,13 @@
     <path id="rt.jar-j1.6">
         <fileset dir="${user.home}/programs/rt_jar_openJDK_1-6-0/" includes="rt.jar"/>
     </path>
+
+    <target name="test" depends="jar">
+        <exec executable="${setlX.executable}" dir="${basedir}" resolveexecutable="true">
+            <arg value="--runtimeDebugging"/>
+            <arg file="simpleTest/test.stlx"/>
+        </exec>
+    </target>
 
     <!-- create the standard jar after compiling -->
     <target name="jar" depends="compile">
@@ -70,7 +80,7 @@
         <unjar src="${toString:antlr-jar}" dest="${build.dir}">
             <patternset>
                 <include name="org/antlr/v4/runtime/**/*"/>
-                <exclude name="org/antlr/v4/runtime/tree/**/*"/>
+                <exclude name="org/antlr/v4/runtime/tree/gui/**/*"/>
             </patternset>
         </unjar>
     </target>
@@ -85,7 +95,7 @@
 
     <target name="dist-clean" depends="clean">
         <delete>
-            <fileset dir="." includes="*.jar"/>
+            <fileset dir="${basedir}" includes="*.jar"/>
         </delete>
     </target>
 </project>

@@ -10,9 +10,9 @@ tester := procedure(boolean, name) {
 
     if (boolean) {
         stateOfTests.testsOK += 1;
-        printErr("test $stateOfTests.testNumber$ successful ($name$)");
+        print("test $stateOfTests.testNumber$ successful ($name$)");
     } else {
-        printErr("test $stateOfTests.testNumber$ failed ($name$)");
+        print("test $stateOfTests.testNumber$ failed ($name$)");
     }
 
     return boolean;
@@ -423,8 +423,8 @@ grammarTests();
 
 printErr("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
 if (stateOfTests.testsOK == stateOfTests.testNumber) {
-    printErr("Everything is fine. Move along sir!");
+    print("Everything is fine. Move along sir!");
 } else {
-    printErr("Errors detected. Please fix them all.");
+    print("Errors detected. Please fix them all.");
 }
 

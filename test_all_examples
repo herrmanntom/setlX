@@ -17,7 +17,7 @@ renice -n 10 $$
 
 # prepare the interpreter
 simpleTest="src/simpleTest/test.stlx"
-cd src; make test >/dev/null 2>"$tmpFile"; cd ..
+cd src; ant -emacs -logger org.apache.tools.ant.NoBannerLogger test >"$tmpFile" 2>&1; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" "$tmpFile")

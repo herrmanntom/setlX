@@ -1,0 +1,61 @@
+<project name="setlX-gfx" basedir="." default="link">
+    <!-- variables which determine paths and other information used later -->
+    <property name="src.dir"     value="java-src"/>
+    <property name="build.dir"   value="bin"/>
+    <property name="main_setlX.dir" value="${basedir}/../src"/>
+    <condition property="setlX.executable" value="setlX" else="setlX.cmd">
+        <os family="unix" />
+    </condition>
+
+    <!-- discover library jars and add them to the class-path -->
+    <path id="setlX-jar">
+        <fileset dir="${main_setlX.dir}" includes="setlX.jar"/>
+    </path>
+    <path id="classpath">
+        <path refid="setlX-jar"/>
+    </path>
+
+    <target name="test" depends="link">
+        <exec executable="${setlX.executable}" dir="${main_setlX.dir}" resolveexecutable="true">
+            <arg value="--runtimeDebugging"/>
+            <arg file="simpleTest/test-gfx.stlx"/>
+        </exec>
+    </target>
+    
+    <!-- link jar into setlX dir -->
+    <target name="link" depends="jar">
+        <symlink link="${main_setlX.dir}/${ant.project.name}.jar"
+                 resource="${basedir}/${ant.project.name}.jar"
+                 overwrite="true"/>
+    </target>
+
+    <!-- create jar after compiling -->
+    <target name="jar" depends="compile">
+        <jar destfile="${ant.project.name}.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${build.dir}"
+               classpathref="classpath" includeantruntime="false">
+            <compilerarg value="-Xlint:all"/>
+        </javac>
+    </target>
+
+    <!-- clean up the mess we made by building -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+    </target>
+
+    <target name="dist-clean" depends="clean">
+        <delete>
+            <fileset dir="${basedir}" includes="*.jar"/>
+        </delete>
+        <delete file="${main_setlX.dir}/${ant.project.name}.jar"/>
+    </target>
+</project>
+

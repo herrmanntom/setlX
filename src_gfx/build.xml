@@ -1,4 +1,4 @@
-<project name="setlX-gfx" basedir="." default="link">
+<project name="setlX-gfx" basedir="." default="jar">
     <!-- variables which determine paths and other information used later -->
     <property name="src.dir"     value="java-src"/>
     <property name="build.dir"   value="bin"/>
@@ -15,27 +15,16 @@
         <path refid="setlX-jar"/>
     </path>
 
-    <target name="test" depends="link">
+    <target name="test" depends="jar">
         <exec executable="${setlX.executable}" dir="${main_setlX.dir}" resolveexecutable="true">
             <arg value="--runtimeDebugging"/>
             <arg file="simpleTest/test-gfx.stlx"/>
         </exec>
     </target>
-    
-    <!-- link jar into setlX dir -->
-    <target name="link" depends="jar">
-        <symlink link="${main_setlX.dir}/${ant.project.name}.jar"
-                 resource="${basedir}/${ant.project.name}.jar"
-                 overwrite="true"/>
-    </target>
 
     <!-- create jar after compiling -->
     <target name="jar" depends="compile">
-        <jar destfile="${ant.project.name}.jar" basedir="${build.dir}">
-            <manifest>
-                <attribute name="Main-Class" value="${main-class}"/>
-            </manifest>
-        </jar>
+        <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${build.dir}"/>
     </target>
 
     <target name="compile">
@@ -52,9 +41,6 @@
     </target>
 
     <target name="dist-clean" depends="clean">
-        <delete>
-            <fileset dir="${basedir}" includes="*.jar"/>
-        </delete>
         <delete file="${main_setlX.dir}/${ant.project.name}.jar"/>
     </target>
 </project>

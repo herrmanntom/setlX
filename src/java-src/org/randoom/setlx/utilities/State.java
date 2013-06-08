@@ -42,6 +42,11 @@ public abstract class State {
     public abstract void                addToParserErrorCount(int numberOfErrors);
     public abstract void                resetParserErrorCount();
 
+    // some special (error) messages
+    public abstract void                errWriteInternalError();
+    public abstract void                errWriteOutOfStack();
+    public abstract void                errWriteOutOfMemory(final boolean showXmxOption);
+
     /**
      * Show the user a prompt for some input. The prompt message is only shown if
      * input comes from a human, i.e. is not instantly available.

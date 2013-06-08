@@ -1,12 +1,9 @@
 package org.randoom.setlxUI.pc;
 
-import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.EndOfFileException;
-import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.ParserException;
-import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
@@ -36,10 +33,6 @@ public class SetlX {
 
     private final static int        EXIT_OK         = 0;
     private final static int        EXIT_ERROR      = 1;
-
-    private final static int        EXEC_OK         = 23;
-    private final static int        EXEC_ERROR      = 33;
-    private final static int        EXEC_EXIT       = 42;
 
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
@@ -245,7 +238,7 @@ public class SetlX {
                 skipTest = true;
                 blk      = null;
             } catch (final Exception e) { // this should never happen...
-                printInternalError(state);
+                state.errWriteInternalError();
                 if (state.isRuntimeDebuggingEnabled()) {
                     final ByteArrayOutputStream out = new ByteArrayOutputStream();
                     e.printStackTrace(new PrintStream(out));
@@ -255,7 +248,7 @@ public class SetlX {
                 break;
 
             }
-        } while (skipTest || (blk != null && execute(state, blk) != EXEC_EXIT));
+        } while (skipTest || (blk != null && blk.executeWithErrorHandling(state, true) != Block.EXECUTE_EXIT));
         printExecutionFinished(state);
     }
 
@@ -312,11 +305,11 @@ public class SetlX {
             System.exit(EXIT_ERROR);
 
         } catch (final OutOfMemoryError oome) {
-            printOoError(state);
+            state.errWriteOutOfMemory(true);
             System.exit(EXIT_ERROR);
 
         } catch (final Exception e) { // this should never happen...
-            printInternalError(state);
+            state.errWriteInternalError();
             if (state.isRuntimeDebuggingEnabled()) {
                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                 e.printStackTrace(new PrintStream(out));
@@ -406,7 +399,7 @@ public class SetlX {
 
         // run the parsed code
         for (int program = 0; program < programs.size(); ++program) {
-            if (execute(state, programs.get(program)) != EXEC_OK) {
+            if (programs.get(program).executeWithErrorHandling(state, true) != Block.EXECUTE_OK) {
                 break; // stop in case of error
             }
             // remove reference to stored code to free some memory
@@ -416,39 +409,6 @@ public class SetlX {
         if (verbose) {
             printExecutionFinished(state);
         }
-    }
-
-    private static int execute(final State state, final Block b) {
-        try {
-
-            b.execute(state);
-
-        } catch (final AbortException ae) { // code detected user did something wrong
-            state.errWriteLn(ae.getMessage());
-            return EXEC_ERROR;
-        } catch (final ExitException ee) { // user/code wants to quit
-            if (state.isInteractive()) {
-                state.outWriteLn(ee.getMessage());
-            }
-
-            return EXEC_EXIT; // breaks loop while parsing interactively
-
-        } catch (final SetlException se) { // user/code did something wrong
-            se.printExceptionsTrace(state, 40);
-            return EXEC_ERROR;
-        } catch (final OutOfMemoryError oome) {
-            printOoError(state);
-            return EXEC_EXIT; // breaks loop while parsing interactively
-        } catch (final Exception e) { // this should never happen...
-            printInternalError(state);
-            if (state.isRuntimeDebuggingEnabled()) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                e.printStackTrace(new PrintStream(out));
-                state.errWrite(out.toString());
-            }
-            return EXEC_ERROR;
-        }
-        return EXEC_OK; // continue loop while parsing interactively
     }
 
     private static void printHeader(final State state) {
@@ -523,23 +483,6 @@ public class SetlX {
             "      display the parsed program before executing it\n" +
             "  --version\n" +
             "      displays the interpreter version and terminates\n"
-        );
-    }
-
-    private static void printOoError(final State state) {
-        state.errWriteLn(
-            "The setlX interpreter has ran out of memory.\n" +
-            "Try improving the SetlX program and/or execute with larger maximum memory size.\n" +
-            "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n" +
-            "\n" +
-            "If that does not help get a better machine ;-)\n"
-        );
-    }
-
-    private static void printInternalError(final State state) {
-        state.errWriteLn(
-            "Internal error. Please report this error including steps and/or code " +
-            "to reproduce to `setlx@randoom.org'."
         );
     }
 

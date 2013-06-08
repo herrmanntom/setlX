@@ -160,6 +160,40 @@ public class StateImplementation extends State {
         parserErrorCount = 0;
     }
 
+    // some special (error) messages
+    @Override
+    public void errWriteInternalError() {
+        errWriteLn(
+            "Internal error. Please report this error including steps and/or code " +
+            "to reproduce to `setlx@randoom.org'."
+        );
+    }
+
+    @Override
+    public void errWriteOutOfStack() {
+        errWriteLn(
+            "The setlX interpreter has ran out of stack.\n" +
+            "Try improving the SetlX program to use less recursion.\n" +
+            "\n" +
+            "If that does not help get a better device ;-)\n"
+        );
+    }
+
+    @Override
+    public void errWriteOutOfMemory(final boolean showXmxOption) {
+        String message = "The setlX interpreter has ran out of memory.\n" +
+                         "Try improving the SetlX program";
+        if (showXmxOption) {
+            message += " and/or execute with larger maximum memory size.\n" +
+                       "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n";
+        } else {
+            message += ".\n";
+        }
+        message +=  "\n" +
+                    "If that does not help get a better device ;-)\n";
+        errWriteLn(message);
+    }
+
     @Override
     public boolean prompt(final String prompt) throws JVMIOException {
         // Only if a pipe is connected the input is ready (has input buffered)

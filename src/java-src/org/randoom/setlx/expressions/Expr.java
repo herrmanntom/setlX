@@ -54,7 +54,7 @@ public abstract class Expr extends CodeFragment {
     /**
      * Calculate static replacement value of this expression.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
      *
      * @param unboundVariables Variables not present in bound when used.
      */
@@ -113,7 +113,7 @@ public abstract class Expr extends CodeFragment {
      * NOTE: Use optimizeAndCollectVariables() when adding variables from
      *       sub-expressions.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
      *
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.

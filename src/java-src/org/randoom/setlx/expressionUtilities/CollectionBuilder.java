@@ -38,7 +38,7 @@ public abstract class CollectionBuilder extends CodeFragment {
      * Gather all bound and unbound variables in this expression and its siblings,
      * when it is used as an assignment.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
      *
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.

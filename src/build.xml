@@ -2,7 +2,9 @@
     <!-- variables which determine paths and other information used later -->
     <property name="main-class"  value="org.randoom.setlxUI.pc.SetlX"/>
     <property name="src.dir"     value="java-src"/>
-    <property name="build.dir"   value="bin"/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="doc.dir"     value="${build.dir}/javadoc"/>
     <condition property="setlX.executable" value="setlX" else="setlX.cmd">
         <os family="unix" />
     </condition>
@@ -13,6 +15,7 @@
     </path>
     <path id="classpath">
         <path refid="antlr-jar"/>
+        <pathelement path="${classes.dir}"/>
     </path>
 
     <!-- discover rt.jar from java-1.6 for building 1.6 compatible with newer javac -->
@@ -29,7 +32,7 @@
 
     <!-- create the standard jar after compiling -->
     <target name="jar" depends="compile">
-        <jar destfile="${ant.project.name}.jar" basedir="${build.dir}">
+        <jar destfile="${ant.project.name}.jar" basedir="${classes.dir}" index="true">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
@@ -37,24 +40,42 @@
     </target>
 
     <target name="compile" depends="grammar">
-        <javac srcdir="${src.dir}" destdir="${build.dir}"
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
                classpathref="classpath" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
     </target>
 
     <!-- create the jar after compiling with java 1.6 (required by android) -->
-    <target name="jar-j1.6" depends="clean,grammar">
-        <javac fork="true" srcdir="${src.dir}" destdir="${build.dir}" source="1.6" target="1.6"
+    <target name="android-jars" depends="doc-jar,src-jar,jar-j1.6"/>
+    <target name="jar-j1.6">
+        <antcall target="clean"/>
+        <antcall target="grammar"/>
+        <javac fork="true" srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" target="1.6"
                classpathref="classpath" bootclasspathref="rt.jar-j1.6" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
-        <jar destfile="${ant.project.name}-j1.6.jar" basedir="${build.dir}">
+        <jar destfile="${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
+             index="true">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
         </jar>
         <antcall target="clean"/>
+    </target>
+    
+    <!-- jars including documentation and source -->
+    <target name="doc-jar" depends="grammar">
+        <mkdir dir="${doc.dir}"/>
+        <javadoc sourcepath="${src.dir}" destdir="${doc.dir}" classpathref="classpath"
+                 author="false" version="false" use="true"
+                 windowtitle="${ant.project.name} API"
+                 doctitle="&lt;h1&gt;${ant.project.name}&lt;/h1&gt;"/>
+        <jar destfile="${ant.project.name}-doc.jar" basedir="${doc.dir}"/>
+    </target>
+    
+    <target name="src-jar" depends="grammar">
+        <jar destfile="${ant.project.name}-src.jar" basedir="${src.dir}"/>
     </target>
 
     <!-- checks if the grammar needs to be updated or not -->
@@ -76,8 +97,8 @@
             <arg file="grammar/SetlXgrammar.g"/>
         </java>
         <!-- extract antlr runtime classes and add them to the build tree -->
-        <mkdir dir="${build.dir}"/>
-        <unjar src="${toString:antlr-jar}" dest="${build.dir}">
+        <mkdir dir="${classes.dir}"/>
+        <unjar src="${toString:antlr-jar}" dest="${classes.dir}">
             <patternset>
                 <include name="org/antlr/v4/runtime/**/*"/>
                 <exclude name="org/antlr/v4/runtime/tree/gui/**/*"/>

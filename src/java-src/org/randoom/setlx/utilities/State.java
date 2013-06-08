@@ -53,7 +53,7 @@ public abstract class State {
      *
      * Actual user input has to be read via inReadLine().
      *
-     * @see org.randoom.setlx.utilities.State.inReadLine();
+     * @see org.randoom.setlx.utilities.State#inReadLine()
      *
      * @param prompt          Message to show to the user.
      * @return                True if input comes from a human.

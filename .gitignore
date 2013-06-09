@@ -5,11 +5,9 @@
 /documentation/*.pdf
 /documentation/*.toc
 /documentation/version.tex
-/grammar_pure/EBNF_extractor/*.class
-/grammar_pure/EBNF_extractor/EBNF_Grammar.tokens
-/grammar_pure/EBNF_extractor/EBNF_GrammarLexer.java
-/grammar_pure/EBNF_extractor/EBNF_GrammarLexer.tokens
-/grammar_pure/EBNF_extractor/EBNF_GrammarParser.java
+/grammar_pure/EBNF_extractor/build
+/grammar_pure/EBNF_extractor/src/EBNF_Grammar*
+/grammar_pure/EBNF_extractor/*.jar
 /grammar_pure/Pure.tokens
 /grammar_pure/PureLexer.java
 /grammar_pure/PureLexer.tokens

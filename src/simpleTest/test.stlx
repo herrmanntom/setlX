@@ -421,7 +421,7 @@ grammarTests();
 
 // ************************************************************************** \\
 
-printErr("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
+print("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
 if (stateOfTests.testsOK == stateOfTests.testNumber) {
     print("Everything is fine. Move along sir!");
 } else {

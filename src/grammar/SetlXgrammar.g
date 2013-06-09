@@ -486,41 +486,44 @@ set [boolean enableIgnore] returns [SetListConstructor sc]
     ;
 
 collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]
-    : range[$enableIgnore]        { $cb = $range.r;         }
-    | shortIterate[$enableIgnore] { $cb = $shortIterate.si; }
-    | iterate[$enableIgnore]      { $cb = $iterate.i;       }
-    | explicitList[$enableIgnore] { $cb = $explicitList.el; }
-    ;
-
-range [boolean enableIgnore] returns [Range r]
     @init {
-        Expr e = null;
+        List<Expr> exprs        = new ArrayList<Expr>();
     }
-    : e1 = expr[$enableIgnore]
+    : iterator[$enableIgnore] '|' c2 = condition[$enableIgnore]
+      { $cb = new SetlIteration(null, $iterator.iter, $c2.cnd); }
+    | e1 = expr[$enableIgnore]
       (
-        ',' e2 = expr[$enableIgnore] { e = $e2.ex; }
-      )?
-      RANGE_SIGN  e3 = expr[$enableIgnore]
-      { $r = new Range($e1.ex, e, $e3.ex); }
-    ;
+         ',' e2 = expr[$enableIgnore]
+         (
+            RANGE_SIGN e3 = expr[$enableIgnore]
+            { $cb = new Range($e1.ex, $e2.ex, $e3.ex); }
 
-shortIterate [boolean enableIgnore] returns [SetlIteration si]
-    : iterator[$enableIgnore] '|' condition[$enableIgnore]  { $si = new SetlIteration(null, $iterator.iter, $condition.cnd); }
-    ;
+          | { exprs.add($e1.ex); exprs.add($e2.ex); }
+            (
+              ',' e3 = expr[$enableIgnore] { exprs.add($e3.ex); }
+            )*
+            (
+               '|' e4 = expr[false] { $cb = new ExplicitListWithRest(exprs, $e4.ex); }
+             | /* epsilon */        { $cb = new ExplicitList        (exprs);         }
+            )
+         )
 
-iterator [boolean enableIgnore] returns [SetlIterator iter]
-    :
-      assignable[true] 'in' expr[$enableIgnore] { $iter = new SetlIterator($assignable.a, $expr.ex); }
-    ;
+       | RANGE_SIGN e3 = expr[$enableIgnore]
+         { $cb = new Range($e1.ex, null, $e3.ex); }
 
-iterate [boolean enableIgnore] returns [SetlIteration i]
-    @init {
-        Condition cnd = null;
-    }
-    : expr[$enableIgnore] ':' iteratorChain[$enableIgnore]
-      (
-        '|' condition[$enableIgnore] { cnd = $condition.cnd;                                     }
-      )?                             { $i = new SetlIteration($expr.ex, $iteratorChain.ic, cnd); }
+       | { exprs.add($e1.ex); }
+         (
+            '|' e2 = expr[false] { $cb = new ExplicitListWithRest(exprs, $e2.ex); }
+          | /* epsilon */        { $cb = new ExplicitList        (exprs);         }
+         )
+
+       | ':' iteratorChain[$enableIgnore]
+         (
+            '|' c1 = condition[$enableIgnore] { $cb = new SetlIteration($e1.ex, $iteratorChain.ic, $c1.cnd); }
+          | /* epsilon */                     { $cb = new SetlIteration($e1.ex, $iteratorChain.ic, null   ); }
+         )
+
+      )
     ;
 
 iteratorChain [boolean enableIgnore] returns [SetlIterator ic]
@@ -532,11 +535,9 @@ iteratorChain [boolean enableIgnore] returns [SetlIterator ic]
       )*
     ;
 
-explicitList [boolean enableIgnore] returns [CollectionBuilder el]
-    : exprList[$enableIgnore] { $el = new ExplicitList        ($exprList.exprs);           }
-      (
-        '|' expr[false]       { $el = new ExplicitListWithRest($exprList.exprs, $expr.ex); }
-      )?
+iterator [boolean enableIgnore] returns [SetlIterator iter]
+    :
+      assignable[true] 'in' expr[$enableIgnore] { $iter = new SetlIterator($assignable.a, $expr.ex); }
     ;
 
 atomicValue returns [Value av]

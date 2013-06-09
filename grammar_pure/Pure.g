@@ -218,34 +218,16 @@ set
     ;
 
 collectionBuilder
-    : range
-    | shortIterate
-    | iterate
-    | explicitList
-    ;
-
-range
-    : expr (',' expr)? RANGE_SIGN expr
-    ;
-
-shortIterate
     : iterator '|' condition
-    ;
-
-iterator
-    : assignable 'in' expr
-    ;
-
-iterate
-    : expr ':' iteratorChain ('|' condition)?
+    | expr (',' expr (RANGE_SIGN expr | (',' expr)* ('|' expr | /* epsilon */)) | RANGE_SIGN expr | '|' expr | /* epsilon */ | ':' iteratorChain ('|' condition | /* epsilon */))
     ;
 
 iteratorChain
     : iterator (',' iterator)*
     ;
 
-explicitList
-    : exprList ('|' expr)?
+iterator
+    : assignable 'in' expr
     ;
 
 atomicValue

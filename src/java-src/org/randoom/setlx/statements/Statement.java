@@ -7,9 +7,6 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-
 /**
  * Base class for all SetlX statements.
  */
@@ -57,20 +54,15 @@ public abstract class Statement extends CodeFragment {
             return EXECUTE_ERROR;
 
         } catch (final StackOverflowError soe) {
-            state.errWriteOutOfStack();
+            state.errWriteOutOfStack(soe, false);
             return EXECUTE_ERROR;
 
         } catch (final OutOfMemoryError oome) {
-            state.errWriteOutOfMemory(hintAtJVMxOptions);
+            state.errWriteOutOfMemory(hintAtJVMxOptions, false);
             return EXECUTE_ERROR;
 
         } catch (final Exception e) { // this should never happen...
-            state.errWriteInternalError();
-            if (state.isRuntimeDebuggingEnabled()) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                e.printStackTrace(new PrintStream(out));
-                state.errWrite(out.toString());
-            }
+            state.errWriteInternalError(e);
             return EXECUTE_ERROR;
         }
     }

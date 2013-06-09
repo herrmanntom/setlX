@@ -10,6 +10,8 @@ import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,35 +164,67 @@ public class StateImplementation extends State {
 
     // some special (error) messages
     @Override
-    public void errWriteInternalError() {
+    public void errWriteInternalError(final Exception e) {
         errWriteLn(
-            "Internal error. Please report this error including steps and/or code " +
-            "to reproduce to `setlx@randoom.org'."
+                "Internal error." + envProvider.getEndl() +
+                "Please report this error including steps and/or code to reproduce to" +
+                "`setlx@randoom.org'."
         );
-    }
-
-    @Override
-    public void errWriteOutOfStack() {
-        errWriteLn(
-            "The setlX interpreter has ran out of stack.\n" +
-            "Try improving the SetlX program to use less recursion.\n" +
-            "\n" +
-            "If that does not help get a better device ;-)\n"
-        );
-    }
-
-    @Override
-    public void errWriteOutOfMemory(final boolean showXmxOption) {
-        String message = "The setlX interpreter has ran out of memory.\n" +
-                         "Try improving the SetlX program";
-        if (showXmxOption) {
-            message += " and/or execute with larger maximum memory size.\n" +
-                       "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n";
-        } else {
-            message += ".\n";
+        if (isRuntimeDebuggingEnabled()) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            e.printStackTrace(new PrintStream(out));
+            errWrite(out.toString());
         }
-        message +=  "\n" +
-                    "If that does not help get a better device ;-)\n";
+    }
+
+    @Override
+    public void errWriteOutOfStack(final StackOverflowError soe, final boolean fromParser) {
+        String message = "The setlX ";
+        if (fromParser) {
+            message += "parser";
+        } else {
+            message += "interpreter";
+        }
+        message += " has ran out of stack." + envProvider.getEndl();
+
+        if (fromParser) {
+            message += "Please report this error including steps and/or code to reproduce to" +
+                       "`setlx@randoom.org'.";
+        } else {
+            message += "Try improving the SetlX program to use less recursion." + envProvider.getEndl() +
+                       envProvider.getEndl() +
+                       "If that does not help get a better device ;-)" + envProvider.getEndl();
+        }
+
+        errWriteLn(message);
+
+        if (isRuntimeDebuggingEnabled()) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            soe.printStackTrace(new PrintStream(out));
+            errWrite(out.toString());
+        }
+    }
+
+    @Override
+    public void errWriteOutOfMemory(final boolean showXmxOption, final boolean fromParser) {
+        String message = "The setlX ";
+        if (fromParser) {
+            message += "parser";
+        } else {
+            message += "interpreter";
+        }
+        message += " has ran out of memory." + envProvider.getEndl();
+
+        message += "Try improving the SetlX program";
+        if (showXmxOption) {
+            message += " and/or execute with larger maximum memory size." + envProvider.getEndl() +
+                       "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])" + envProvider.getEndl();
+        } else {
+            message += "." + envProvider.getEndl();
+        }
+        message += envProvider.getEndl() +
+                   "If that does not help get a better device ;-)" + envProvider.getEndl();
+
         errWriteLn(message);
     }
 

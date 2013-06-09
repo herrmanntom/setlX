@@ -12,11 +12,9 @@ import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -187,9 +185,11 @@ public class ParseSetlX {
                     state.getParserErrorCount() + " syntax error(s) encountered."
                 );
             } else { // NullPointer in parse tree itself
+                state.errWriteLn("Error while parsing code.");
+                state.errWriteInternalError(npe);
                 throw SyntaxErrorException.create(
                     new LinkedList<String>(),
-                    handleInternalError(state, "Internal error while parsing.", npe)
+                    "Error while parsing code."
                 );
             }
         } finally {
@@ -211,17 +211,6 @@ public class ParseSetlX {
     }
 
     // private subclass to execute optimization using a different thread
-    private static String handleInternalError(final State state, final String errorMsg, final Exception e) {
-        if (state.isRuntimeDebuggingEnabled()) {
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            e.printStackTrace(new PrintStream(out));
-            state.errWrite(out.toString());
-        }
-        return errorMsg + " Please report this error " +
-               "including steps and/or code to reproduce to `setlx@randoom.org'.";
-    }
-
-    // private subclass to execute optimization using a different thread
     private static class OptimizerThread extends Thread {
         private final CodeFragment                      fragment;
         private final org.randoom.setlx.utilities.State state;
@@ -236,7 +225,8 @@ public class ParseSetlX {
             try {
                fragment.optimize();
             } catch (final Exception e) {
-                state.errWriteLn(handleInternalError(state, "Internal error during optimization.", e));
+                state.errWriteLn("Error while optimizing parsed code.");
+                state.errWriteInternalError(e);
             }
         }
     }

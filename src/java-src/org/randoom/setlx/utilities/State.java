@@ -43,9 +43,9 @@ public abstract class State {
     public abstract void                resetParserErrorCount();
 
     // some special (error) messages
-    public abstract void                errWriteInternalError();
-    public abstract void                errWriteOutOfStack();
-    public abstract void                errWriteOutOfMemory(final boolean showXmxOption);
+    public abstract void                errWriteInternalError(final Exception e);
+    public abstract void                errWriteOutOfStack(final StackOverflowError soe, boolean fromParser);
+    public abstract void                errWriteOutOfMemory(final boolean showXmxOption, boolean fromParser);
 
     /**
      * Show the user a prompt for some input. The prompt message is only shown if

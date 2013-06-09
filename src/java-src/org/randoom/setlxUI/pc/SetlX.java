@@ -237,13 +237,19 @@ public class SetlX {
                 state.errWriteLn(pe.getMessage());
                 skipTest = true;
                 blk      = null;
+
+            }  catch (final StackOverflowError soe) {
+                state.errWriteOutOfStack(soe, true);
+
+                break;
+
+            } catch (final OutOfMemoryError oome) {
+                state.errWriteOutOfMemory(true, true);
+
+                break;
+
             } catch (final Exception e) { // this should never happen...
-                state.errWriteInternalError();
-                if (state.isRuntimeDebuggingEnabled()) {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    e.printStackTrace(new PrintStream(out));
-                    state.errWrite(out.toString());
-                }
+                state.errWriteInternalError(e);
 
                 break;
 
@@ -304,17 +310,16 @@ public class SetlX {
 
             System.exit(EXIT_ERROR);
 
+        } catch (final StackOverflowError soe) {
+            state.errWriteOutOfStack(soe, true);
+            System.exit(EXIT_ERROR);
+
         } catch (final OutOfMemoryError oome) {
-            state.errWriteOutOfMemory(true);
+            state.errWriteOutOfMemory(true, true);
             System.exit(EXIT_ERROR);
 
         } catch (final Exception e) { // this should never happen...
-            state.errWriteInternalError();
-            if (state.isRuntimeDebuggingEnabled()) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                e.printStackTrace(new PrintStream(out));
-                state.errWrite(out.toString());
-            }
+            state.errWriteInternalError(e);
 
             System.exit(EXIT_ERROR);
         }

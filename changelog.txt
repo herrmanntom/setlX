@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.0.3--- 2013-06-09
+ * lots of internal changes to the build system and error handling
+
 ---v2.0.2--- 2013-05-18
  - removed partly defunct debug functions (but not trace)
  + add ability to trace object and class members

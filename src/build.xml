@@ -46,8 +46,9 @@
         </javac>
     </target>
 
+    <target name="android-jars" depends="clean,doc-jar,src-jar,jar-j1.6"/>
+
     <!-- create the jar after compiling with java 1.6 (required by android) -->
-    <target name="android-jars" depends="doc-jar,src-jar,jar-j1.6"/>
     <target name="jar-j1.6">
         <antcall target="clean"/>
         <antcall target="grammar"/>
@@ -63,7 +64,7 @@
         </jar>
         <antcall target="clean"/>
     </target>
-    
+
     <!-- jars including documentation and source -->
     <target name="doc-jar" depends="grammar">
         <mkdir dir="${doc.dir}"/>
@@ -73,7 +74,7 @@
                  doctitle="&lt;h1&gt;${ant.project.name}&lt;/h1&gt;"/>
         <jar destfile="${ant.project.name}-doc.jar" basedir="${doc.dir}"/>
     </target>
-    
+
     <target name="src-jar" depends="grammar">
         <jar destfile="${ant.project.name}-src.jar" basedir="${src.dir}"/>
     </target>

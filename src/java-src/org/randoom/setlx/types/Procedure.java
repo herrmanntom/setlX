@@ -1,7 +1,6 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
-import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -208,12 +207,7 @@ public class Procedure extends Value {
                 try {
                     callExec.start();
                     callExec.join();
-                    result = callExec.mResult;
-                } catch (final OutOfMemoryError e) {
-                    throw new JVMException(
-                        "The setlX interpreter has ran out of (stack-replacement) memory.\n" +
-                        "Try preventing recursion in your SetlX program."
-                    );
+                    result = callExec.result;
                 } catch (final InterruptedException e) {
                     throw new StopExecutionException("Interrupted");
                 } finally {
@@ -221,8 +215,16 @@ public class Procedure extends Value {
                 }
 
                 // handle exceptions thrown in thread
-                if (callExec.mException != null) {
-                    throw callExec.mException;
+                if (callExec.error != null) {
+                    if (callExec.error instanceof SetlException) {
+                        throw (SetlException) callExec.error;
+                    } else if (callExec.error instanceof StackOverflowError) {
+                        throw (StackOverflowError) callExec.error;
+                    } else if (callExec.error instanceof OutOfMemoryError) {
+                        throw (OutOfMemoryError) callExec.error;
+                    } else if (callExec.error instanceof RuntimeException) {
+                        throw (RuntimeException) callExec.error;
+                    }
                 }
             }
 
@@ -386,26 +388,35 @@ public class Procedure extends Value {
 
     // private subclass to cheat the end of the world... or stack, whatever comes first
     private class CallExecThread extends Thread {
-        private final Block                             mStatements;
-        private final org.randoom.setlx.utilities.State mState;
-        /*package*/   ReturnMessage                     mResult;
-        /*package*/   SetlException                     mException;
+        private final Block                             statements;
+        private final org.randoom.setlx.utilities.State state;
+        /*package*/   ReturnMessage                     result;
+        /*package*/   Throwable                         error;
 
         public CallExecThread(final Block statements, final org.randoom.setlx.utilities.State state) {
-            this.mStatements = statements;
-            this.mState      = state;
-            this.mResult     = null;
-            this.mException  = null;
+            this.statements = statements;
+            this.state      = state;
+            this.result     = null;
+            this.error      = null;
         }
 
         @Override
         public void run() {
             try {
-                this.mResult    = this.mStatements.execute(this.mState);
-                this.mException = null;
-            } catch (final SetlException e) {
-                this.mResult    = null;
-                this.mException = e;
+                result = this.statements.execute(this.state);
+                error  = null;
+            } catch (final SetlException se) {
+                result = null;
+                error  = se;
+            } catch (final StackOverflowError soe) {
+                result = null;
+                error  = soe;
+            } catch (final OutOfMemoryError oome) {
+                result = null;
+                error  = oome;
+            } catch (final RuntimeException e) {
+                result = null;
+                error  = e;
             }
         }
     }

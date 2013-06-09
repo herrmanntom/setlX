@@ -3,6 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.EndOfFileException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.ParserException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.grammar.*;
@@ -26,7 +27,7 @@ public class ParseSetlX {
     private final static int MAX_OPTIMIZE_MS      =  250;
     private       static int maxOptimizeMsOverall = 1000;
 
-    public static Block parseFile(final State state, String fileName) throws ParserException {
+    public static Block parseFile(final State state, String fileName) throws ParserException, StopExecutionException {
         try {
             // allow modification of fileName/path by environment provider
             fileName = state.filterFileName(fileName);
@@ -41,7 +42,7 @@ public class ParseSetlX {
         }
     }
 
-    public static Block parseLibrary(final State state, String name) throws ParserException {
+    public static Block parseLibrary(final State state, String name) throws ParserException, StopExecutionException {
         try {
             // allow modification of name by environment provider
             name = state.filterLibraryName(name + ".stlx");
@@ -61,7 +62,7 @@ public class ParseSetlX {
         }
     }
 
-    public static Block parseInteractive(final State state) throws ParserException {
+    public static Block parseInteractive(final State state) throws ParserException, StopExecutionException {
         try {
             final InputStream stream = InputReader.getStream(state);
 
@@ -73,7 +74,7 @@ public class ParseSetlX {
         }
     }
 
-    public static Block parseStringToBlock(final State state, final String input) throws ParserException {
+    public static Block parseStringToBlock(final State state, final String input) throws ParserException, StopExecutionException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
@@ -85,7 +86,7 @@ public class ParseSetlX {
         }
     }
 
-    public static Expr parseStringToExpr(final State state, final String input) throws ParserException {
+    public static Expr parseStringToExpr(final State state, final String input) throws ParserException, StopExecutionException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
@@ -99,15 +100,15 @@ public class ParseSetlX {
 
     /* private methods */
 
-    private static Block parseBlock(final State state, final ANTLRInputStream input) throws SyntaxErrorException {
+    private static Block parseBlock(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
         return (Block) handleFragmentParsing(state, input, BLOCK);
     }
 
-    private static Expr parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException {
+    private static Expr parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
         return (Expr) handleFragmentParsing(state, input, EXPR);
     }
 
-    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final int type) throws SyntaxErrorException {
+    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final int type) throws SyntaxErrorException, StopExecutionException {
               SetlXgrammarLexer  lexer  = null;
               SetlXgrammarParser parser = null;
         final LinkedList<String> oldCap = state.getParserErrorCapture();
@@ -138,8 +139,29 @@ public class ParseSetlX {
             // set state object for parser
             parser.setSetlXState(state);
 
-            // result of the parsing run
-            final CodeFragment fragment = parseFragment(parser, type);
+            final ParserThread parserThread = new ParserThread(parser, type);
+                  CodeFragment fragment     = null;
+
+            try {
+                parserThread.start();
+                parserThread.join();
+                fragment = parserThread.result;
+            } catch (final InterruptedException e) {
+                throw new StopExecutionException("Interrupted");
+            }
+
+            // handle exceptions thrown in thread
+            if (parserThread.error != null) {
+                if (parserThread.error instanceof RecognitionException) {
+                    throw (RecognitionException) parserThread.error;
+                } else if (parserThread.error instanceof StackOverflowError) {
+                    throw (StackOverflowError) parserThread.error;
+                } else if (parserThread.error instanceof OutOfMemoryError) {
+                    throw (OutOfMemoryError) parserThread.error;
+                } else if (parserThread.error instanceof RuntimeException) {
+                    throw (RuntimeException) parserThread.error;
+                }
+            }
 
             // now ANTLR will add its parser errors into our capture ...
 
@@ -198,15 +220,45 @@ public class ParseSetlX {
         }
     }
 
-    private static CodeFragment parseFragment(final SetlXgrammarParser parser, final int type) throws RecognitionException {
-        switch (type) {
-            case EXPR:
-                return parser.initExpr().ae;
-            case BLOCK:
-                return parser.initBlock().blk;
-            default:
-                /* this should never be reached if surrounding code is correct */
-                return null;
+    // private subclass to execute the parser in a different thread
+    private static class ParserThread extends Thread {
+        private final SetlXgrammarParser parser;
+        private final int                type;
+        /*package*/   CodeFragment       result;
+        /*package*/   Throwable          error;
+
+
+        /*package*/ ParserThread(final SetlXgrammarParser parser, final int type) {
+            this.parser = parser;
+            this.type   = type;
+            this.result = null;
+            this.error  = null;
+        }
+
+        @Override
+        public void run() {
+            try {
+                switch (type) {
+                    case EXPR:
+                        result = parser.initExpr().ae;
+                        break;
+                    case BLOCK:
+                        result = parser.initBlock().blk;
+                        break;
+                }
+            } catch (final RecognitionException re) {
+                result = null;
+                error  = re;
+            } catch (final StackOverflowError soe) {
+                result = null;
+                error  = soe;
+            } catch (final OutOfMemoryError oome) {
+                result = null;
+                error  = oome;
+            } catch (final RuntimeException e) {
+                result = null;
+                error  = e;
+            }
         }
     }
 
@@ -223,7 +275,7 @@ public class ParseSetlX {
         @Override
         public void run() {
             try {
-               fragment.optimize();
+                fragment.optimize();
             } catch (final Exception e) {
                 state.errWriteLn("Error while optimizing parsed code.");
                 state.errWriteInternalError(e);

@@ -2,6 +2,7 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
@@ -89,6 +90,8 @@ public class StringConstructor extends Expr {
                                     "}"
                                 );
                             }
+                        } catch (final StopExecutionException see) {
+                            state.errWriteInternalError(see);
                         }
                         // clear expression
                         expr.setLength(0);

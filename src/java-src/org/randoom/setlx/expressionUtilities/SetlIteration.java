@@ -17,18 +17,17 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.List;
 
 /**
- * grammar rules:
- * shortIterate
- *     :             iterator       '|' condition
- *     ;
-
+ * Implementation of the most powerful expression in setlX: (set-)comprehension
+ *
+ * grammar rule:
+ *
  *  * iterate
- *     : anyExpr ':' iteratorChain ('|' condition)?
+ *     : expr ':' iteratorChain ('|' condition)?
  *     ;
-
+ *
  * implemented here as:
- *       =======     ========-----      =========
- *        mExpr        mIterator        mCondition
+ *       ====     ========-----      =========
+ *       expr       iterator         condition
  */
 public class SetlIteration extends CollectionBuilder {
     // functional character used in terms
@@ -52,22 +51,11 @@ public class SetlIteration extends CollectionBuilder {
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             if (condition == null || condition.eval(state) == SetlBoolean.TRUE) {
-                if (expr != null) {
-                    collection.addMember(state, expr.eval(state));
-                } else { // is simple iteration
-                    collection.addMember(state, lastIterationValue);
-                }
+                collection.addMember(state, expr.eval(state));
             }
             return null;
         }
 
-        /* Gather all bound and unbound variables in this expression and its siblings
-              - bound   means "assigned" in this expression
-              - unbound means "not present in bound set when used"
-              - used    means "present in bound set when used"
-           NOTE: Use optimizeAndCollectVariables() when adding variables from
-                 sub-expressions
-        */
         @Override
         public void collectVariablesAndOptimize (
             final List<String> boundVariables,
@@ -77,9 +65,7 @@ public class SetlIteration extends CollectionBuilder {
             if (condition != null) {
                 condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
             }
-            if (expr != null) {
-                expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-            }
+            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -94,13 +80,6 @@ public class SetlIteration extends CollectionBuilder {
         iterator.eval(state, new Exec(expr, condition, collection));
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -114,10 +93,8 @@ public class SetlIteration extends CollectionBuilder {
 
     @Override
     public void appendString(final State state, final StringBuilder sb) {
-        if (expr != null) {
-            expr.appendString(state, sb, 0);
-            sb.append(" : ");
-        }
+        expr.appendString(state, sb, 0);
+        sb.append(" : ");
         iterator.appendString(state, sb, 0);
         if (condition != null) {
             sb.append(" | ");
@@ -130,11 +107,7 @@ public class SetlIteration extends CollectionBuilder {
     @Override
     public void addToTerm(final State state, final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
-        if (expr != null) {
-            result.addMember(state, expr.toTerm(state));
-        } else {
-            result.addMember(state, new SetlString("nil"));
-        }
+        result.addMember(state, expr.toTerm(state));
         result.addMember(state, iterator.toTerm(state));
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
@@ -149,10 +122,7 @@ public class SetlIteration extends CollectionBuilder {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                Expr expr = null;
-                if (! term.firstMember().equals(new SetlString("nil"))) {
-                    expr  = TermConverter.valueToExpr(term.firstMember());
-                  }
+                final Expr expr = TermConverter.valueToExpr(term.firstMember());
 
                 SetlIterator iterator = null;
                 if (! term.getMember(2).equals(new SetlString("nil"))) {

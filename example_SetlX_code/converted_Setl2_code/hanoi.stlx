@@ -6,7 +6,7 @@ lastChars := procedure(x, n) {
 };
 
 sort := procedure(s) {
-	return [n in [1 .. max(s + {0})] | n in s];
+	return [n : n in [1 .. max(s + {0})] | n in s];
 };
 
 partition := procedure(s1, s2, s3, all) {
@@ -22,7 +22,7 @@ oneStep := procedure(pS, r) {
 };
 
 eliminateCycles := procedure(pS) {
-	return {p in pS | ( ! (cyclic(p)) )};
+	return {p : p in pS | ( ! (cyclic(p)) )};
 };
 
 cyclic := procedure(p) {
@@ -34,7 +34,7 @@ reachable := procedure(x, y, r) {
 	while (true) {
 		old_PS := pS;
 		pS := eliminateCycles(pS + oneStep(pS, r));
-		p := {p in pS | p[#p] == y};
+		p := {p : p in pS | p[#p] == y};
 		if (p != {}) {
 			return arb(p);
 		}

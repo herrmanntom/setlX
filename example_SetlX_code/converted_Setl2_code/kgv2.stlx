@@ -1,6 +1,6 @@
 
 gV := procedure(m, n) {
-	return {v in {m .. m * n} | (v % m == 0) && (v % n == 0)};
+	return {v : v in {m .. m * n} | (v % m == 0) && (v % n == 0)};
 };
 
 kgV := procedure(m, n) {

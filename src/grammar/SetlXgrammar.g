@@ -106,7 +106,7 @@ statement returns [Statement stmnt]
                                                                                :
                                                                                    new Assert($condition.cnd, $expr.ex);
                                                                                ;                                                   }
-    | assignmentOther   ';'                                          { $stmnt = $assignmentOther.assign;                           }
+    | assignmentOther  ';'                                           { $stmnt = $assignmentOther.assign;                           }
     | assignmentDirect ';'                                           { $stmnt = new ExpressionStatement($assignmentDirect.assign); }
     | expr[false] ';'                                                { $stmnt = new ExpressionStatement($expr.ex);                 }
     ;
@@ -489,9 +489,9 @@ collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]
     @init {
         List<Expr> exprs        = new ArrayList<Expr>();
     }
-    : iterator[$enableIgnore] '|' c2 = condition[$enableIgnore]
+    : /*iterator[$enableIgnore] '|' c2 = condition[$enableIgnore]
       { $cb = new SetlIteration(null, $iterator.iter, $c2.cnd); }
-    | e1 = expr[$enableIgnore]
+    | */e1 = expr[$enableIgnore]
       (
          ',' e2 = expr[$enableIgnore]
          (

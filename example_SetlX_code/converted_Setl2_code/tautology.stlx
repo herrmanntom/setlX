@@ -5,7 +5,7 @@ tautology := procedure(f) {
 	if ({eval(f, i): i in a} == {true}) {
 		return true;
 	} else {
-		return arb({i in a | ( ! (eval(f, i)) )});
+		return arb({i : i in a | ( ! (eval(f, i)) )});
 	}
 };
 

@@ -28,7 +28,7 @@ countVars := procedure(expr, x) {
 };
 
 singleVars := procedure(expr) {
-	return {x in allVars(expr) | countVars(expr, x) == 1};
+	return {x : x in allVars(expr) | countVars(expr, x) == 1};
 };
 
 testVars := procedure(expr, x) {

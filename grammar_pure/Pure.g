@@ -218,8 +218,7 @@ set
     ;
 
 collectionBuilder
-    : iterator '|' condition
-    | expr (',' expr (RANGE_SIGN expr | (',' expr)* ('|' expr | /* epsilon */)) | RANGE_SIGN expr | '|' expr | /* epsilon */ | ':' iteratorChain ('|' condition | /* epsilon */))
+    : expr (',' expr (RANGE_SIGN expr | (',' expr)* ('|' expr | /* epsilon */)) | RANGE_SIGN expr | '|' expr | /* epsilon */ | ':' iteratorChain ('|' condition | /* epsilon */))
     ;
 
 iteratorChain

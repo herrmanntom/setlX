@@ -13,7 +13,7 @@ class stoerWagnerMinCut(edges) {
     minCut := procedure() {
         if (mNodeCount == 2) {
             s := { x : x in mEquivNodes[1] };
-            t := arb({ x in {2 .. #mEdges} | !(x in s) });
+            t := arb({ x : x in {2 .. #mEdges} | !(x in s) });
             return [countEdges(s, t), s];
         }
         s  := { 1 };
@@ -68,7 +68,7 @@ class stoerWagnerMinCut(edges) {
     // returned.
     adjacent := procedure(v, s) {
         sEquiv := { y : x in s, y in mEquivNodes[x] };
-        return +/ { { y in mEdges[x] | !(y in sEquiv) } : x in mEquivNodes[v] };
+        return +/ { { y : y in mEdges[x] | !(y in sEquiv) } : x in mEquivNodes[v] };
     };
 
     // This procedure computes the number of edges connecting the set s with
@@ -79,7 +79,7 @@ class stoerWagnerMinCut(edges) {
 
     countEdgesSingle := procedure(s, v) {
         neighbours := { y : y in mEdges[v] };
-        count := #{ x in s | x in neighbours };
+        count := #{ x : x in s | x in neighbours };
         return count;
     };
     
@@ -91,7 +91,7 @@ class stoerWagnerMinCut(edges) {
         a := s + t;
         b := { x : x in a };
         for (n in a) {
-            this.mEdges[n] := [ x in mEdges[n] | !(x in b) ];
+            this.mEdges[n] := [ x : x in mEdges[n] | !(x in b) ];
         }
         for (n in a) {
             this.mEquivNodes[n] := a;

@@ -8,7 +8,7 @@ gt := procedure(m, n) {
 };
 
 teiler := procedure(m) {
-	return {t in {1 .. m} | m % t == 0};
+	return {t : t in {1 .. m} | m % t == 0};
 };
 
 print(ggt(666, 36));

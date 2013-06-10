@@ -213,7 +213,7 @@ davisPutnam := procedure(clauses, literals) {
 	if ({} in clauses) {
 		return false;
 	}
-	if ({k in clauses | #k == 1} == clauses) {
+	if ({k : k in clauses | #k == 1} == clauses) {
 		return clauses;
 	}
 	literal := selectLiteral(clauses, literals);
@@ -226,21 +226,21 @@ davisPutnam := procedure(clauses, literals) {
 };
 
 saturate := procedure(s) {
-	units := {k in s | #k == 1};
+	units := {k : k in s | #k == 1};
 	used := {};
 	while (units != {}) {
 		unit := arb(units);
 		used := used + {unit};
 		literal := arb(unit);
 		s := reduce(s, literal);
-		units := {k in s | #k == 1} - used;
+		units := {k : k in s | #k == 1} - used;
 	}
 	return s;
 };
 
 reduce := procedure(s, l) {
 	notL := negateLiteral(l);
-	return {k - {notL}: k in s | notL in k} + {k in s | ( ! (notL in k) ) && ( ! (l in k) )} + {{l}};
+	return {k - {notL}: k in s | notL in k} + {k : k in s | ( ! (notL in k) ) && ( ! (l in k) )} + {{l}};
 };
 
 selectLiteral := procedure(s, forbidden) {

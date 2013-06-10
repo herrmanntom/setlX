@@ -88,7 +88,7 @@ perms2 := procedure(s) {
   if (s == []) {
     return [[]];
   } else {
-    return [ [a]+b : a in s, b in perms2([ p in s | p != a]) ];
+    return [ [a]+b : a in s, b in perms2([ p : p in s | p != a]) ];
   }
 
 };

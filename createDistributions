@@ -177,7 +177,7 @@ cp -r example_SetlX_code zipContents
 while read -r -d $'\0' filename
   do
     rm -f "$filename"
-done < <( find "zipContents" -type f ! -name "*.stlx" -print0 )
+done < <( find "zipContents" -type f ! -name "*.stlx" ! -name "*.data" -print0 )
 while read -r -d $'\0' emptyDir
   do
     rmdir "$emptyDir"

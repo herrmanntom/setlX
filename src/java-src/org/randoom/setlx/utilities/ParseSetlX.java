@@ -10,7 +10,7 @@ import org.randoom.setlx.grammar.*;
 import org.randoom.setlx.statements.Block;
 
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.PredictionMode;
+//import org.antlr.v4.runtime.atn.PredictionMode;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -130,7 +130,7 @@ public class ParseSetlX {
             if (state.isRuntimeDebuggingEnabled()) {
                 parser.addErrorListener(new DiagnosticErrorListener());
                 // use more stringent parser mode
-                parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+                // parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
             }
 
             // capture parser errors

@@ -182,13 +182,15 @@ public class ParseSetlX {
                 optimizer.start();
 
                 // wait for optimization of the fragment, but max until 0.25s after start
-                while(maxOptimizeMsOverall > 0 &&
-                      (state.currentTimeMillis() - startT) < MAX_OPTIMIZE_MS &&
+                final int lowerBound = (state.isInteractive()? (9 * maxOptimizeMsOverall / 10) : 0);
+                final int upperBound = MAX_OPTIMIZE_MS / (state.isInteractive()? 10 : 1);
+                while(maxOptimizeMsOverall > lowerBound &&
+                      (state.currentTimeMillis() - startT) < upperBound &&
                       optimizer != null && optimizer.isAlive()
                 ) {
                     try {
-                        Thread.sleep(5);
-                        maxOptimizeMsOverall -= 5;
+                        Thread.sleep(10);
+                        maxOptimizeMsOverall -= 10;
                     } catch (final InterruptedException e) { /* don't care */ }
                 }
             }

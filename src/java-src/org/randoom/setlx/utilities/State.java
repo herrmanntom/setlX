@@ -95,6 +95,8 @@ public abstract class State {
     public abstract Random              getRandom();
 
     public          int                 callStackDepth;
+    public abstract int                 getMaxStackSize();
+    public abstract void                storeFirstCallStackDepth();
 
     public abstract void                stopExecution(final boolean stopExecution);
 

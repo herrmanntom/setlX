@@ -20,15 +20,15 @@ public class DummyEnvProvider implements EnvironmentProvider {
     }
 
     @Override
-    public void outWrite(String arg0) {
+    public void outWrite(final String arg0) {
     }
 
     @Override
-    public void errWrite(String arg0) {
+    public void errWrite(final String arg0) {
     }
 
     @Override
-    public void promptForInput(String arg0) {
+    public void promptForInput(final String arg0) {
     }
 
     @Override
@@ -42,12 +42,17 @@ public class DummyEnvProvider implements EnvironmentProvider {
     }
 
     @Override
-    public String filterFileName(String arg0) {
+    public int getMaxStackSize() {
+        return -1;
+    }
+
+    @Override
+    public String filterFileName(final String arg0) {
         return "";
     }
 
     @Override
-    public String filterLibraryName(String name) {
+    public String filterLibraryName(final String name) {
         return "";
     }
 

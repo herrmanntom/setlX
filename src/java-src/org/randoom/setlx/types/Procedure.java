@@ -2,7 +2,6 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
@@ -36,8 +35,6 @@ import java.util.Map;
 public class Procedure extends Value {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
-    // how deep can the call stack be, before checking to replace the stack
-    private final static int    MAX_CALL_STACK_DEPTH = 600;
 
     protected final List<ParameterDef>     parameters;      // parameter list
     protected final Block                  statements;      // statements in the body of the definition
@@ -149,9 +146,8 @@ public class Procedure extends Value {
     }
 
     protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
-        // store and increase callStackDepth
-        final int oldCallStackDepth = state.callStackDepth;
-        ++(state.callStackDepth);
+        // increase callStackDepth
+        state.callStackDepth += 2;
 
         // save old scope
         final VariableScope oldScope = state.getScope();
@@ -187,46 +183,13 @@ public class Procedure extends Value {
         values.clear();
 
         // results of call to procedure
-              ReturnMessage   result      = null;
-        final WriteBackAgent  wba         = new WriteBackAgent(parameters.size());
+              ReturnMessage   result = null;
+        final WriteBackAgent  wba    = new WriteBackAgent(parameters.size());
 
         try {
-            boolean executeInCurrentStack = true;
-            if (state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
-                state.callStackDepth  = 0;
-                executeInCurrentStack = false;
-            }
 
             // execute, e.g. perform real procedure call
-            if (executeInCurrentStack) {
-                result = statements.execute(state);
-            } else {
-                // prevent running out of stack by creating a new thread
-                final CallExecThread callExec = new CallExecThread(statements, state);
-
-                try {
-                    callExec.start();
-                    callExec.join();
-                    result = callExec.result;
-                } catch (final InterruptedException e) {
-                    throw new StopExecutionException("Interrupted");
-                } finally {
-                    state.callStackDepth = oldCallStackDepth;
-                }
-
-                // handle exceptions thrown in thread
-                if (callExec.error != null) {
-                    if (callExec.error instanceof SetlException) {
-                        throw (SetlException) callExec.error;
-                    } else if (callExec.error instanceof StackOverflowError) {
-                        throw (StackOverflowError) callExec.error;
-                    } else if (callExec.error instanceof OutOfMemoryError) {
-                        throw (OutOfMemoryError) callExec.error;
-                    } else if (callExec.error instanceof RuntimeException) {
-                        throw (RuntimeException) callExec.error;
-                    }
-                }
-            }
+            result = statements.execute(state);
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < parametersSize; ++i) {
@@ -253,6 +216,9 @@ public class Procedure extends Value {
                 }
             }
 
+        } catch (final StackOverflowError soe) {
+            state.storeFirstCallStackDepth();
+            throw soe;
         } finally { // make sure scope is always reset
             // restore old scope
             state.setScope(oldScope);
@@ -262,8 +228,8 @@ public class Procedure extends Value {
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state, FUNCTIONAL_CHARACTER);
 
-            // reset callStackDepth
-            state.callStackDepth = oldCallStackDepth;
+            // decrease callStackDepth
+            state.callStackDepth -= 2;
         }
 
         if (result != null) {
@@ -385,41 +351,5 @@ public class Procedure extends Value {
         object = null;
         return initHashCode + parameters.size();
     }
-
-    // private subclass to cheat the end of the world... or stack, whatever comes first
-    private class CallExecThread extends Thread {
-        private final Block                             statements;
-        private final org.randoom.setlx.utilities.State state;
-        /*package*/   ReturnMessage                     result;
-        /*package*/   Throwable                         error;
-
-        public CallExecThread(final Block statements, final org.randoom.setlx.utilities.State state) {
-            this.statements = statements;
-            this.state      = state;
-            this.result     = null;
-            this.error      = null;
-        }
-
-        @Override
-        public void run() {
-            try {
-                result = this.statements.execute(this.state);
-                error  = null;
-            } catch (final SetlException se) {
-                result = null;
-                error  = se;
-            } catch (final StackOverflowError soe) {
-                result = null;
-                error  = soe;
-            } catch (final OutOfMemoryError oome) {
-                result = null;
-                error  = oome;
-            } catch (final RuntimeException e) {
-                result = null;
-                error  = e;
-            }
-        }
-    }
-
 }
 

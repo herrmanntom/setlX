@@ -52,6 +52,8 @@ public class StateImplementation extends State {
     // random number generator
     private                 Random              randoom;
 
+    private                 int                 firstCallStackDepth;
+
     private                 boolean             multiLineMode;
     private                 boolean             isInteractive;
     private                 boolean             printVerbose;
@@ -72,7 +74,8 @@ public class StateImplementation extends State {
         variableScope                    = ROOT_SCOPE.createLinkedScope();
         isHuman                          = false;
         randoom                          = new Random();
-        super.callStackDepth             = 10; // add a bit to account for initialization stuff
+        super.callStackDepth             = (envProvider.getMaxStackSize() / 10); // add a bit to account for initialization stuff
+        firstCallStackDepth              = -1;
         super.isExecutionStopped         = false;
         multiLineMode                    = false;
         isInteractive                    = false;
@@ -202,6 +205,7 @@ public class StateImplementation extends State {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             soe.printStackTrace(new PrintStream(out));
             errWrite(out.toString());
+            errWriteLn("callStackDepth assumption was: " + firstCallStackDepth);
         }
     }
 
@@ -321,6 +325,18 @@ public class StateImplementation extends State {
     @Override
     public Random getRandom() {
         return randoom;
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return envProvider.getMaxStackSize();
+    }
+
+    @Override
+    public void storeFirstCallStackDepth() {
+        if (firstCallStackDepth < 0) {
+            firstCallStackDepth = callStackDepth;
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
@@ -19,6 +20,8 @@ import java.util.Map;
 public class VariableScope {
     // functional characters used in terms
     private final   static  String     FUNCTIONAL_CHARACTER_SCOPE = "^scope";
+    // how deep can the call stack be, before checking to replace the stack
+    private         static  int        MAX_CALL_STACK_DEPTH = -1;
 
     private final   SetlHashMap<Value> bindings;
 
@@ -116,39 +119,94 @@ public class VariableScope {
     }
 
     /*package*/ Value locateValue(final State state, final String var, final boolean check) throws SetlException {
-        if (check&&var.length()==3&&var.charAt(1)==97&&var.charAt(2)==114&&var.charAt(0)==119) {
-            final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
-            return new SetlString(new String(v));
+        // store and increase callStackDepth
+        final int oldCallStackDepth = state.callStackDepth;
+        ++(state.callStackDepth);
+
+        boolean executeInCurrentStack = true;
+        if (MAX_CALL_STACK_DEPTH < 0) {
+            MAX_CALL_STACK_DEPTH = state.getMaxStackSize();
         }
-        if (var.equals("this") && thisObject != null) {
-            return thisObject;
+        if (MAX_CALL_STACK_DEPTH > 0 && state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
+            state.callStackDepth  = 0;
+            executeInCurrentStack = false;
         }
-        Value v = bindings.get(var);
-        if (v != null) {
-            return v;
-        }
-        if (thisObject != null) {
-            v = thisObject.getObjectMemberUnCloned(state, var);
-            if (v != Om.OM) {
+
+        try {
+            if (check&&var.length()==3&&var.charAt(1)==97&&var.charAt(2)==114&&var.charAt(0)==119) {
+                final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
+                return new SetlString(new String(v));
+            }
+            if (var.equals("this") && thisObject != null) {
+                return thisObject;
+            }
+            Value v = bindings.get(var);
+            if (v != null) {
                 return v;
             }
-        }
-        if (originalScope != null && (v = originalScope.locateValue(state, var, false)) != null) {
-            // found some value in outer scope
-
-            // return nothing, if value is not allowed to be read from outer scopes
-            if (v != Om.OM && isRestrictedToFunctions && ! (v instanceof Procedure)) {
-                return null;
+            if (thisObject != null) {
+                v = thisObject.getObjectMemberUnCloned(state, var);
+                if (v != Om.OM) {
+                    return v;
+                }
             }
+            if (originalScope != null) {
+                if (executeInCurrentStack) {
+                    v = originalScope.locateValue(state, var, false);
+                } else {
+                    // prevent running out of stack by creating a new thread
+                    final LookupThread callExec = new LookupThread(originalScope, state, var);
 
-            // cache result, if this is allowed
-            if ( ! readThrough && v != Om.OM) {
-                bindings.put(var, v);
+                    try {
+                        callExec.start();
+                        callExec.join();
+                        v = callExec.result;
+                    } catch (final InterruptedException e) {
+                        throw new StopExecutionException("Interrupted");
+                    } catch (final StackOverflowError soe) {
+                        state.storeFirstCallStackDepth();
+                        throw soe;
+                    } finally {
+                        state.callStackDepth = oldCallStackDepth;
+                    }
+
+                    // handle exceptions thrown in thread
+                    if (callExec.error != null) {
+                        if (callExec.error instanceof SetlException) {
+                            throw (SetlException) callExec.error;
+                        } else if (callExec.error instanceof StackOverflowError) {
+                            throw (StackOverflowError) callExec.error;
+                        } else if (callExec.error instanceof OutOfMemoryError) {
+                            throw (OutOfMemoryError) callExec.error;
+                        } else if (callExec.error instanceof RuntimeException) {
+                            throw (RuntimeException) callExec.error;
+                        }
+                    }
+                }
+                if (v != null) {
+                    // found some value in outer scope
+
+                    // return nothing, if value is not allowed to be read from outer scopes
+                    if (v != Om.OM && isRestrictedToFunctions && ! (v instanceof Procedure)) {
+                        return null;
+                    }
+
+                    // cache result, if this is allowed
+                    if ( ! readThrough && v != Om.OM) {
+                        bindings.put(var, v);
+                    }
+
+                    return v;
+                }
             }
-
-            return v;
+            return null;
+        } catch (final StackOverflowError soe) {
+            state.storeFirstCallStackDepth();
+            throw soe;
+        }  finally {
+            // reset callStackDepth
+            state.callStackDepth = oldCallStackDepth;
         }
-        return null;
     }
 
     // collect all bindings reachable from current scope (except global variables!)
@@ -292,6 +350,44 @@ public class VariableScope {
             }
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
+    }
+
+    // private subclass to cheat the end of the world... or stack, whatever comes first
+    private class LookupThread extends Thread {
+        private final VariableScope                     originalScope;
+        private final org.randoom.setlx.utilities.State state;
+        private final String                            var;
+        /*package*/   Value                             result;
+        /*package*/   Throwable                         error;
+
+        /*package*/ LookupThread(final VariableScope originalScope, final org.randoom.setlx.utilities.State state, final String var) {
+            this.originalScope = originalScope;
+            this.state         = state;
+            this.var           = var;
+            this.result        = null;
+            this.error         = null;
+        }
+
+        @Override
+        public void run() {
+            try {
+                result = originalScope.locateValue(state, var, false);
+                error  = null;
+            } catch (final SetlException se) {
+                result = null;
+                error  = se;
+            } catch (final StackOverflowError soe) {
+                state.storeFirstCallStackDepth();
+                result = null;
+                error  = soe;
+            } catch (final OutOfMemoryError oome) {
+                result = null;
+                error  = oome;
+            } catch (final RuntimeException e) {
+                result = null;
+                error  = e;
+            }
+        }
     }
 }
 

@@ -83,6 +83,11 @@ public class PcEnvProvider implements EnvironmentProvider {
     }
 
     @Override
+    public int getMaxStackSize() {
+        return 2222;
+    }
+
+    @Override
     public String   filterFileName(final String fileName) {
         return fileName; // not required on PCs
     }

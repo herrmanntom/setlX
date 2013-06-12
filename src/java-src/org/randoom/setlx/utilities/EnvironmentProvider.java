@@ -9,7 +9,8 @@ public interface EnvironmentProvider {
 
     // read from input
     public abstract boolean inReady() throws JVMIOException;
-                   // line is read and returned without termination character(s)
+
+    // line is read and returned without termination character(s)
     public abstract String  inReadLine() throws JVMIOException;
 
     // write to standard output
@@ -24,6 +25,9 @@ public interface EnvironmentProvider {
     // some text format stuff
     public abstract String  getTab();
     public abstract String  getEndl();
+
+    // maximum stack size assumption before creating a new thread
+    public abstract int     getMaxStackSize();
 
     // allow modification of fileName/path when reading files
     public abstract String  filterFileName(final String fileName);

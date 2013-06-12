@@ -263,6 +263,9 @@ public class SetlIterator extends CodeFragment {
                     "Evaluation of iterator '" + iterationValue + "' is not a collection value."
                 );
             }
+        } catch (final StackOverflowError soe) {
+            state.storeFirstCallStackDepth();
+            throw soe;
         } finally {
             // decrease callStackDepth
             --(state.callStackDepth);

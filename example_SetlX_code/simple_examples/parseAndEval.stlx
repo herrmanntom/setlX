@@ -3,7 +3,7 @@
 getInput := procedure() {
     getValue := procedure() {
         try {
-            return eval(get("Please enter some SetlX value"));
+            return eval(get("Please enter some SetlX value: "));
         } catch (error) {
             print(error);
             print();
@@ -19,7 +19,7 @@ getInput := procedure() {
 
     getExpr := procedure() {
         try {
-            expr:= parse(get("Please enter some SetlX expression using 'value' as variable"));
+            expr:= parse(get("Please enter some SetlX expression using 'value' as variable: "));
             if (! isTerm(expr) || "^variable(\"value\")" notin canonical(expr)) {
                 throw("wrong!");
             }

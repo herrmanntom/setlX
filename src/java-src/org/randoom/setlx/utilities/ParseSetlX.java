@@ -24,8 +24,9 @@ public class ParseSetlX {
 
     private final static int EXPR  =  1337;
     private final static int BLOCK = 31337;
-    private final static int MAX_OPTIMIZE_MS      =  250;
-    private       static int maxOptimizeMsOverall = 1000;
+    private final static int MAX_OPTIMIZE_MS      = 200;
+    private final static int MAX_OPTIMIZE_OVERALL = 500;
+    private       static int optimization_time    = 0;
 
     public static Block parseFile(final State state, String fileName) throws ParserException, StopExecutionException {
         try {
@@ -181,16 +182,16 @@ public class ParseSetlX {
                 optimizer = new OptimizerThread(fragment, state);
                 optimizer.start();
 
-                // wait for optimization of the fragment, but max until 0.25s after start
-                final int lowerBound = (state.isInteractive()? (9 * maxOptimizeMsOverall / 10) : 0);
-                final int upperBound = MAX_OPTIMIZE_MS / (state.isInteractive()? 10 : 1);
-                while(maxOptimizeMsOverall > lowerBound &&
-                      (state.currentTimeMillis() - startT) < upperBound &&
+                // wait for optimization of the fragment
+                final int maxOverall  = (state.isInteractive()? (9 * MAX_OPTIMIZE_OVERALL / 10) : 0);
+                final int maxThisTime = MAX_OPTIMIZE_MS / (state.isInteractive()? 10 : 1);
+                while(optimization_time < maxOverall &&
+                      (state.currentTimeMillis() - startT) < maxThisTime &&
                       optimizer != null && optimizer.isAlive()
                 ) {
                     try {
                         Thread.sleep(10);
-                        maxOptimizeMsOverall -= 10;
+                        optimization_time += 10;
                     } catch (final InterruptedException e) { /* don't care */ }
                 }
             }
@@ -278,7 +279,13 @@ public class ParseSetlX {
         public void run() {
             try {
                 fragment.optimize();
-            } catch (final Exception e) {
+            } catch (final StackOverflowError soe) {
+                state.errWriteLn("Error while optimizing parsed code.");
+                state.errWriteOutOfStack(soe, false);
+            } catch (final OutOfMemoryError oome) {
+                state.errWriteLn("Error while optimizing parsed code.");
+                state.errWriteOutOfMemory(false, false);
+            } catch (final RuntimeException e) {
                 state.errWriteLn("Error while optimizing parsed code.");
                 state.errWriteInternalError(e);
             }

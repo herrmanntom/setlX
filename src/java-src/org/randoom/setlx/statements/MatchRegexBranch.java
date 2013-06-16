@@ -14,6 +14,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.StateImplementation;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -49,20 +50,29 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     public MatchRegexBranch(final State state, final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
         this(pattern, assignTo, condition, statements);
 
-        // if pattern is static (fully optimized), it can be compiled now
-        final Value patternReplacement = pattern.getReplacement();
-        if (patternReplacement != null) {
+        // if pattern is static it can be compiled now
+        if (pattern.isReplaceable()) {
+            Value patternReplacement = null;
             try {
-                this.runtimePattern = Pattern.compile(
-                    patternReplacement.getUnquotedString()
-                );
-            } catch (final PatternSyntaxException pse) {
-                state.writeParserErrLn(
-                    "Error while parsing regex-pattern " + pattern + " {\n"
-                  + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
-                  + "}"
-                );
-                state.addToParserErrorCount(1);
+                patternReplacement = pattern.eval(new StateImplementation());
+            } catch (final Throwable t) {
+                patternReplacement = null;
+            }
+            if (patternReplacement != null) {
+                try {
+                    this.runtimePattern = Pattern.compile(
+                        patternReplacement.getUnquotedString()
+                    );
+                } catch (final PatternSyntaxException pse) {
+                    state.writeParserErrLn(
+                        "Error while parsing regex-pattern " + pattern + " {\n"
+                      + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
+                      + "}"
+                    );
+                    state.addToParserErrorCount(1);
+                    this.runtimePattern = null;
+                }
+            } else {
                 this.runtimePattern = null;
             }
         } else {
@@ -110,15 +120,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         if (runtimePattern != null) {
             pttrn = runtimePattern;
         } else {
-            final Value patternStr;
-            final Value patternReplacement = pattern.getReplacement();
-            if (patternReplacement != null) {
-                // static pattern
-                patternStr = patternReplacement;
-            } else {
-                // dynamic pattern
-                patternStr = pattern.eval(state);
-            }
+            final Value patternStr = pattern.eval(state);
             if ( ! (patternStr instanceof SetlString)) {
                 throw new IncompatibleTypeException(
                     "Pattern argument '" + patternStr + "' is not a string."
@@ -128,7 +130,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             try {
                 pttrn = Pattern.compile(patternStr.getUnquotedString());
                 // store pattern if it is static
-                if (patternReplacement != null) {
+                if (pattern.isReplaceable()) {
                     runtimePattern = pttrn;
                 }
             } catch (final PatternSyntaxException pse) {

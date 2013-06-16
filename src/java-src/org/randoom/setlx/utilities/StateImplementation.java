@@ -192,7 +192,7 @@ public class StateImplementation extends State {
 
         if (fromParser) {
             message += "Please report this error including steps and/or code to reproduce to" +
-                       "`setlx@randoom.org'.";
+                       "`setlx@randoom.org'." + envProvider.getEndl();
         } else {
             message += "Try improving the SetlX program to use less recursion." + envProvider.getEndl() +
                        envProvider.getEndl() +

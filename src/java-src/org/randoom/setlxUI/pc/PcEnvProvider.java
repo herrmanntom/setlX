@@ -84,7 +84,7 @@ public class PcEnvProvider implements EnvironmentProvider {
 
     @Override
     public int getMaxStackSize() {
-        return 2222;
+        return 4678;
     }
 
     @Override

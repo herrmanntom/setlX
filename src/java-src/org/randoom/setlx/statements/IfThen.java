@@ -38,12 +38,23 @@ public class IfThen extends Statement {
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        for (final IfThenAbstractBranch br : branchList) {
-            if (br.evalConditionToBool(state)) {
-                return br.execute(state);
+        try {
+            // increase callStackDepth
+            ++(state.callStackDepth);
+
+            for (final IfThenAbstractBranch br : branchList) {
+                if (br.evalConditionToBool(state)) {
+                    return br.execute(state);
+                }
             }
+            return null;
+        } catch (final StackOverflowError soe) {
+            state.storeFirstCallStackDepth();
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
-        return null;
     }
 
     @Override

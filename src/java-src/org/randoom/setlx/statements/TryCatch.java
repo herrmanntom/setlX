@@ -45,6 +45,9 @@ public class TryCatch extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         try{
+            // increase callStackDepth
+            ++(state.callStackDepth);
+
             return blockToTry.execute(state);
         } catch (final CatchableInSetlXException cise) {
             for (final TryCatchAbstractBranch br : tryList) {
@@ -54,6 +57,9 @@ public class TryCatch extends Statement {
             }
             // If we get here nothing matched. Re-throw as if nothing happened
             throw cise;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
     }
 

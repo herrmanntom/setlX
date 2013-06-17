@@ -42,9 +42,12 @@ public class Match extends Statement {
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        final Value term = expr.eval(state).toTerm(state);
+        final Value         term       = expr.eval(state).toTerm(state);
         final VariableScope outerScope = state.getScope();
         try {
+            // increase callStackDepth
+            ++(state.callStackDepth);
+
             for (final MatchAbstractBranch br : branchList) {
                 final MatchResult result = br.matches(state, term);
                 if (result.isMatch()) {
@@ -78,7 +81,13 @@ public class Match extends Statement {
                 }
             }
             return null;
-        } finally { // make sure scope is always reset
+        } catch (final StackOverflowError soe) {
+            state.storeFirstCallStackDepth();
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
+            // make sure scope is always reset
             state.setScope(outerScope);
         }
     }

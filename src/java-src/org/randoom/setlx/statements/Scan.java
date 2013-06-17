@@ -58,6 +58,9 @@ public class Scan extends Statement {
         }
         final VariableScope outerScope = state.getScope();
         try {
+            // increase callStackDepth
+            ++(state.callStackDepth);
+
             SetlString string = (SetlString) value.clone();
             int        charNr   = 1;
             int        lineNr   = 1;
@@ -178,7 +181,13 @@ public class Scan extends Statement {
                 }
             }
             return null;
-        } finally { // make sure scope is always reset
+        } catch (final StackOverflowError soe) {
+            state.storeFirstCallStackDepth();
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
+            // make sure scope is always reset
             state.setScope(outerScope);
         }
     }

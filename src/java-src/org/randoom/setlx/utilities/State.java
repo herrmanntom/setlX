@@ -140,6 +140,11 @@ public abstract class State {
 
     public abstract void                setScope(final VariableScope newScope);
 
+    /**
+     * Reset state to its initial setup.
+     *
+     * Clears all scopes, class definitions, libraries and error captures.
+     */
     public abstract void                resetState();
 
     public abstract Value               findValue(final String var) throws SetlException;

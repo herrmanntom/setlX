@@ -158,6 +158,16 @@ public class ParseSetlX {
                 } else if (parserThread.error instanceof StackOverflowError) {
                     throw (StackOverflowError) parserThread.error;
                 } else if (parserThread.error instanceof OutOfMemoryError) {
+                    try {
+                        // free some memory
+                        state.resetState();
+                        // give hint to the garbage collector
+                        Runtime.getRuntime().gc();
+                        // sleep a while
+                        Thread.sleep(50);
+                    } catch (final InterruptedException e) {
+                        /* don't care */
+                    }
                     throw (OutOfMemoryError) parserThread.error;
                 } else if (parserThread.error instanceof RuntimeException) {
                     throw (RuntimeException) parserThread.error;

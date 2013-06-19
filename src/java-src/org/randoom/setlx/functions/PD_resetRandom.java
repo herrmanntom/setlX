@@ -17,7 +17,7 @@ public class PD_resetRandom extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
-        state.setPredictableRandoom();
+        state.setRandoomPredictable(true);
         return Om.OM;
     }
 }

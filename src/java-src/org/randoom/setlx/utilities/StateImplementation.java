@@ -54,6 +54,7 @@ public class StateImplementation extends State {
 
     private                 int                 firstCallStackDepth;
 
+    private                 boolean             isRandoomPredictable;
     private                 boolean             multiLineMode;
     private                 boolean             isInteractive;
     private                 boolean             printVerbose;
@@ -71,18 +72,34 @@ public class StateImplementation extends State {
         super.realPrintMode              = Real.PRINT_MODE_DEFAULT;
         loadedLibraries                  = new HashSet<String>();
         classDefinitions                 = new HashMap<String, SetlClass>();
-        variableScope                    = ROOT_SCOPE.createLinkedScope();
         isHuman                          = false;
-        randoom                          = new Random();
-        super.callStackDepth             = (envProvider.getMaxStackSize() / 50); // add a bit to account for initialization stuff
-        firstCallStackDepth              = -1;
-        super.isExecutionStopped         = false;
+        isRandoomPredictable             = false;
         multiLineMode                    = false;
         isInteractive                    = false;
         printVerbose                     = false;
         super.traceAssignments           = false;
         assertsDisabled                  = false;
         isRuntimeDebuggingEnabled        = false;
+        resetState();
+    }
+
+    @Override
+    public void resetState() {
+        if (parserErrorCapture != null) {
+            parserErrorCapture.clear();
+        }
+        parserErrorCount = 0;
+        loadedLibraries.clear();
+        classDefinitions.clear();
+        if (isRandoomPredictable) {
+            randoom = new Random(0);
+        } else {
+            randoom = new Random();
+        }
+        variableScope            = ROOT_SCOPE.createLinkedScope();
+        super.callStackDepth     = (envProvider.getMaxStackSize() / 50); // add a bit to account for initialization stuff
+        firstCallStackDepth      = -1;
+        super.isExecutionStopped = false;
     }
 
     @Override
@@ -300,8 +317,16 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void setPredictableRandoom() {
-        randoom = new Random(0);
+    public void setRandoomPredictable(final boolean predictableRandoom) {
+        isRandoomPredictable = predictableRandoom;
+        if (predictableRandoom) {
+            randoom = new Random(0);
+        }
+    }
+
+    @Override
+    public boolean isRandoomPredictable() {
+        return isRandoomPredictable;
     }
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
@@ -437,16 +462,6 @@ public class StateImplementation extends State {
     @Override
     public void setScope(final VariableScope newScope) {
         variableScope = newScope;
-    }
-
-    @Override
-    public void resetState() {
-        variableScope  = ROOT_SCOPE.createLinkedScope();
-        classDefinitions.clear();
-        loadedLibraries.clear();
-        if (parserErrorCapture != null) {
-            parserErrorCapture.clear();
-        }
     }
 
     @Override

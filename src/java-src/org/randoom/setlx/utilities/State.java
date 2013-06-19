@@ -81,7 +81,8 @@ public abstract class State {
     // current time in ms
     public abstract long                currentTimeMillis();
 
-    public abstract void                setPredictableRandoom();
+    public abstract void                setRandoomPredictable(boolean predictableRandoom);
+    public abstract boolean             isRandoomPredictable();
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
     public abstract int                 getRandomInt(final int upperBoundary);

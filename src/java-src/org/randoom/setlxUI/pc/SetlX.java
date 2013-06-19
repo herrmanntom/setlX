@@ -149,7 +149,7 @@ public class SetlX {
                     parameters.addMember(state, new SetlString(args[i]));
                 }
             } else if (s.equals("--predictableRandom")) { // easier debugging
-                state.setPredictableRandoom();
+                state.setRandoomPredictable(true);
             } else if (s.equals("--real32")) {
                 Real.setPrecision32();
             } else if (s.equals("--real64")) {

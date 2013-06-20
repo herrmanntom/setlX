@@ -127,7 +127,7 @@ public class Block extends Statement {
                             // sleep a while
                             Thread.sleep(50);
                         } catch (final InterruptedException e) {
-                            /* don't care */
+                            throw new StopExecutionException("Interrupted");
                         }
                         throw (OutOfMemoryError) callExec.error;
                     } else if (callExec.error instanceof RuntimeException) {

@@ -399,10 +399,16 @@ public class Rational extends NumberValue {
         Rational i = this;
         if (step.compareTo(Rational.ZERO) > 0) {
             for (; i.compareTo(stop) <= 0; i = (Rational) i.sum(state, step)) {
+                if (state.isExecutionStopped) {
+                    throw new StopExecutionException("Interrupted");
+                }
                 collection.addMember(state, i);
             }
         } else if (step.compareTo(Rational.ZERO) < 0) {
             for (; i.compareTo(stop) >= 0; i = (Rational) i.sum(state, step)) {
+                if (state.isExecutionStopped) {
+                    throw new StopExecutionException("Interrupted");
+                }
                 collection.addMember(state, i);
             }
         } else { // step == 0!

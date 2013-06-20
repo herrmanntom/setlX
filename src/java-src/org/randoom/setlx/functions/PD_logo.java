@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.JVMIOException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -105,7 +106,7 @@ public class PD_logo extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws StopExecutionException {
         String  logo  = LOGO_SMALL;
         int     payUp = 0;
         while(payUp <= 0 && payUp > -3 && count < 3) {
@@ -163,7 +164,9 @@ public class PD_logo extends PreDefinedProcedure {
                 time = state.getRandomInt(time);
                 timeSum += time;
                 Thread.sleep(time);
-            } catch (final InterruptedException ie) { /* who cares? */}
+            } catch (final InterruptedException ie) {
+                throw new StopExecutionException("Interrupted");
+            }
         }
 
         state.outWriteLn("Please come again.");

@@ -13,7 +13,7 @@ block
     ;
 
 statement
-    : classDefinition
+    : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}' ';'?
     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
     | match
@@ -31,10 +31,6 @@ statement
     | assignmentOther ';'
     | assignmentDirect ';'
     | expr ';'
-    ;
-
-classDefinition
-    : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}' ';'?
     ;
 
 match
@@ -73,6 +69,12 @@ assignmentDirect
     : assignable ':=' (assignmentDirect | expr)
     ;
 
+assignable
+    : variable ('.' variable | '[' expr ']')*
+    | assignList
+    | '_'
+    ;
+
 assignList
     : '[' explicitAssignList ']'
     ;
@@ -81,15 +83,9 @@ explicitAssignList
     : assignable (',' assignable)*
     ;
 
-assignable
-    : variable (memberAccess | '[' expr ']')*
-    | assignList
-    | '_'
-    ;
-
 expr
     : lambdaDefinition
-    | equation
+    | implication ('<==>' implication | '<!=>' implication)?
     ;
 
 lambdaDefinition
@@ -99,10 +95,6 @@ lambdaDefinition
 lambdaParameters
     : variable
     | '[' (variable (',' variable)*)? ']'
-    ;
-
-equation
-    : implication ('<==>' implication | '<!=>' implication)?
     ;
 
 implication
@@ -134,7 +126,7 @@ reduce
     ;
 
 prefixOperation
-    : power
+    : factor ('**' prefixOperation)?
     | '+/' prefixOperation
     | '*/' prefixOperation
     | '#' prefixOperation
@@ -142,21 +134,13 @@ prefixOperation
     | '@' prefixOperation
     ;
 
-power
-    : factor ('**' prefixOperation)?
-    ;
-
 factor
     : '!' factor
-    | term
+    | TERM '(' termArguments ')'
     | 'forall' '(' iteratorChain '|' condition ')'
     | 'exists' '(' iteratorChain '|' condition ')'
-    | ('(' expr ')' | procedure | variable) (memberAccess | call)* '!'?
+    | ('(' expr ')' | procedure | variable) ('.' variable | call)* '!'?
     | value '!'?
-    ;
-
-term
-    : TERM '(' termArguments ')'
     ;
 
 termArguments
@@ -179,10 +163,6 @@ procedureParameter
     | variable
     ;
 
-memberAccess
-    : '.' variable
-    ;
-
 call
     : '(' callParameters ')'
     | '[' collectionAccessParams ']'
@@ -195,26 +175,17 @@ callParameters
     ;
 
 collectionAccessParams
-    : expr RANGE_SIGN expr?
+    : expr (RANGE_SIGN expr?)?
     | RANGE_SIGN expr
-    | expr
     ;
 
 value
-    : list
-    | set
+    : '[' collectionBuilder? ']'
+    | '{' collectionBuilder? '}'
     | STRING
     | LITERAL
     | atomicValue
     | '_'
-    ;
-
-list
-    : '[' collectionBuilder? ']'
-    ;
-
-set
-    : '{' collectionBuilder? '}'
     ;
 
 collectionBuilder

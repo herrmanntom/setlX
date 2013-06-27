@@ -2,15 +2,11 @@ package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
-import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.VariableScope;
-
 import java.util.List;
 
 public abstract class CollectionBuilder extends CodeFragment {
@@ -33,73 +29,6 @@ public abstract class CollectionBuilder extends CodeFragment {
         final List<String> unboundVariables,
         final List<String> usedVariables
     );
-
-    /**
-     * Gather all bound and unbound variables in this expression and its siblings,
-     * when it is used as an assignment.
-     *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
-     *
-     * @param boundVariables   Variables "assigned" in this fragment.
-     * @param unboundVariables Variables not present in bound when used.
-     * @param usedVariables    Variables present in bound when used.
-     */
-    public void collectVariablesWhenAssigned (
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        /* do nothing by default */
-    }
-
-    /**
-     * Sets this list of expressions in this builder to the values contained in
-     * the given collection value. Does not clone 'collection' and does
-     * not return 'collection' for chained assignments.
-     *
-     * @param state          Current state of the running setlX program.
-     * @param collection     Collection to assign from.
-     * @param context        Context description of the assignment for trace.
-     * @throws SetlException Thrown in case of some (user-) error.
-     */
-    public          void assignUncloned(
-        final State                  state,
-        final IndexedCollectionValue collection,
-        final String                 context
-    ) throws SetlException {
-        throw new UndefinedOperationException(
-            "Error in \"" + this + "\":\n" +
-            "Only explicit lists can be used as targets for list assignments."
-        );
-    }
-
-    /**
-     * Sets this list of expressions in this builder to the values contained in
-     * the given collection value. Does not clone 'collection' and does
-     * not return 'collection' for chained assignments.
-     *
-     * Also checks if the variables to be set are already defined in scopes up to
-     * (but EXCLUDING) 'outerScope'.
-     * Returns true and sets the values, if each variable is undefined or already equal the the value to be set.
-     * Returns false, if a variable is defined and different.
-     *
-     * @param state          Current state of the running setlX program.
-     * @param collection     Collection to assign from.
-     * @param outerScope     Root scope of scopes to check.
-     * @return               True, if variable is undefined or already equal the the value to be set.
-     * @throws SetlException Thrown in case of some (user-) error.
-     */
-    public          boolean assignUnclonedCheckUpTo(
-        final State                  state,
-        final IndexedCollectionValue collection,
-        final VariableScope          outerScope,
-        final String                 context
-    ) throws SetlException {
-        throw new UndefinedOperationException(
-            "Error in \"" + this + "\":\n" +
-            "Only explicit lists can be used as targets for list assignments."
-        );
-    }
 
     /* String operations */
 

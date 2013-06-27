@@ -219,17 +219,13 @@ assignmentDirect returns [Expr assign]
     ;
 
 assignable [boolean enableIgnore] returns [AssignableExpression a]
-    : variable                 { $a = $variable.v;                             }
+    : variable                   { $a = $variable.v;                                        }
       (
-         '.' variable          { $a = new MemberAccess($a, $variable.v);       }
-       | '[' expr[false] ']'   { $a = new CollectionAccess($a, $expr.ex);      }
+         '.' variable            { $a = new MemberAccess($a, $variable.v);                  }
+       | '[' expr[false] ']'     { $a = new CollectionAccess($a, $expr.ex);                 }
       )*
-    | assignList               { $a = $assignList.alc;                         }
-    | {$enableIgnore}? '_'     { $a = VariableIgnore.VI;                       }
-    ;
-
-assignList returns [SetListConstructor alc]
-    : '[' explicitAssignList ']' { $alc = new SetListConstructor(SetListConstructor.LIST, $explicitAssignList.eil); }
+    | '[' explicitAssignList ']' { $a = new AssignListConstructor($explicitAssignList.eil); }
+    | {$enableIgnore}? '_'       { $a = VariableIgnore.VI;                                  }
     ;
 
 explicitAssignList returns [ExplicitList eil]

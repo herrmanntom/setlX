@@ -71,12 +71,8 @@ assignmentDirect
 
 assignable
     : variable ('.' variable | '[' expr ']')*
-    | assignList
+    | '[' explicitAssignList ']'
     | '_'
-    ;
-
-assignList
-    : '[' explicitAssignList ']'
     ;
 
 explicitAssignList

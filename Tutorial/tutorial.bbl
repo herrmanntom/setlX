@@ -83,8 +83,8 @@ Leon Sterling and Ehud~Y. Shapiro.
 
 \bibitem[SW11]{sedgewick:11}
 Robert Sedgewick and Kevin Wayne.
-\newblock {\em Algorithms}.
-\newblock Addison-Wesley, 4th edition, 2011.
+\newblock {\em Algorithms in \textsl{Java}}.
+\newblock Pearson, 4th edition, 2011.
 
 \bibitem[vR95]{vanRossum:95}
 Guido van Rossum.
@@ -92,7 +92,7 @@ Guido van Rossum.
 \newblock Technical report, Centrum Wiskunde \& Informatica, Amsterdam, 1995.
 
 \bibitem[WS92]{Wall92}
-L.~Wall and R.~L. Schwartz.
+Larry Wall and Randal~L. Schwartz.
 \newblock {\em Programming Perl.}
 \newblock O'Reilly and Assoc., 1992.
 

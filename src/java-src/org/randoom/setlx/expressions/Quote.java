@@ -9,49 +9,43 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-prefixOperation
-    : [...]
-    | '@' factor
-    ;
-
-implemented here as:
-          ======
-          mExpr
-*/
-
+/**
+ * The quotation expression.
+ *
+ * grammar rule:
+ * prefixOperation
+ *     : [...]
+ *     | '@' factor
+ *     ;
+ *
+ * implemented here as:
+ *           ======
+ *           expr
+ */
 public class Quote extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^quote";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Quote.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private final Expr mExpr;
+    private final Expr expr;
 
     public Quote(final Expr expr) {
-        mExpr = expr;
+        this.expr = expr;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mExpr.toTermQuoted(state);
+        return expr.toTermQuoted(state);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mExpr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -59,7 +53,7 @@ public class Quote extends Expr {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("@");
-        mExpr.appendString(state, sb, tabs);
+        expr.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
@@ -72,7 +66,7 @@ public class Quote extends Expr {
     @Override
     public Term toTermQuoted(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, mExpr.toTerm(state));
+        result.addMember(state, expr.toTerm(state));
         return result;
     }
 
@@ -80,7 +74,7 @@ public class Quote extends Expr {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(term.firstMember());
             return new Quote(expr);
         }
     }

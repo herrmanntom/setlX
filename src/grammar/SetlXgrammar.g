@@ -349,7 +349,7 @@ factor [boolean enableIgnore, boolean quoted] returns [Expr f]
     | 'exists' '(' iteratorChain[$enableIgnore] '|' condition ')'
       { $f = new Exists($iteratorChain.ic, $condition.cnd); }
     | (
-         '(' expr[$enableIgnore] ')' { $f = new BracketedExpr($expr.ex);             }
+         '(' expr[$enableIgnore] ')' { $f = $expr.ex;                                }
        | procedure                   { $f = new ProcedureConstructor($procedure.pd); }
        | variable                    { $f = $variable.v;                             }
       )

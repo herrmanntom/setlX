@@ -1,7 +1,6 @@
-When converting a term into an expression the term might represent an syntax-tree
-which is not "naturally" formed, i.e. contains brackets when an inner expression has
-lower precedence then its parent.
-Therefore during conversion the missing brackets are automatically created using the
+An expression might represent an syntax-tree which is not "naturally" formed,
+i.e. contains brackets when an inner expression has lower precedence then its parent.
+Therefore the missing brackets are automatically created during print, using the
 precedences and associativity rules listed here:
 
 Precedence, Associativity, Operator(s)

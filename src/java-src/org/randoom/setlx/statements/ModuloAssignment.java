@@ -28,9 +28,6 @@ public class ModuloAssignment extends StatementWithPrintableResult {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ModuloAssignment.class);
 
-    // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 1000;
-
     private final AssignableExpression lhs;
     private final Expr                 rhs;
     private       boolean              printAfterEval;
@@ -96,7 +93,7 @@ public class ModuloAssignment extends StatementWithPrintableResult {
     public static ModuloAssignment termToStatement(final Term term) throws TermConversionException {
         if (term.size() == 2) {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
             if (lhs instanceof AssignableExpression) {
                 return new ModuloAssignment((AssignableExpression) lhs, rhs);
             }

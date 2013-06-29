@@ -158,6 +158,34 @@ public abstract class Expr extends CodeFragment {
     @Override
     public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
+    /**
+     * Appends a string representation of this expression to the given
+     * StringBuilder object, automatically inserting brackets when required.
+     *
+     * @param state             Current state of the running setlX program.
+     * @param sb                StringBuilder to append to.
+     * @param tabs              Number of tabs to use as indentation for statements.
+     * @param callersPrecedence Grammar precedence of the outer expression.
+     * @param brackedEqualLevel Insert bracket if precedence of outer and inner expression is equal.
+     */
+    public void appendBracketedExpr(
+        final State state,
+        final StringBuilder sb,
+        final int tabs,
+        final int callersPrecedence,
+        final boolean brackedEqualLevel
+    ) {
+        if ( (brackedEqualLevel && callersPrecedence >= this.precedence() ||
+             (callersPrecedence > this.precedence()))
+        ) {
+            sb.append("(");
+            this.appendString(state, sb, tabs);
+            sb.append(")");
+        } else {
+            this.appendString(state, sb, tabs);
+        }
+    }
+
     /* term operations */
 
     @Override

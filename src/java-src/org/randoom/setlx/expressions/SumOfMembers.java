@@ -54,7 +54,7 @@ public class SumOfMembers extends Expr {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("+/");
-        expr.appendString(state, sb, tabs);
+        expr.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
@@ -70,7 +70,7 @@ public class SumOfMembers extends Expr {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr expr = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(term.firstMember());
             return new SumOfMembers(expr);
         }
     }

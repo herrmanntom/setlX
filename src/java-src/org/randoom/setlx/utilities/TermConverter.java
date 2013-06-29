@@ -3,7 +3,6 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.boolExpressions.Equals;
 import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressions.BracketedExpr;
 import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.ProcedureConstructor;
@@ -182,19 +181,8 @@ public class TermConverter {
         }
     }
 
-    public static Expr valueToExpr(final int callersPrecedence, final boolean brackedEqualLevel, final Value value) {
-        final Expr result         = (Expr) valueToCodeFragment(value, true);
-        final int  exprPrecedence = result.precedence();
-        if (brackedEqualLevel && callersPrecedence >= exprPrecedence) {
-            return new BracketedExpr(result);
-        } else if (callersPrecedence > exprPrecedence) {
-            return new BracketedExpr(result);
-        }
-        return result;
-    }
-
     public static Expr valueToExpr(final Value value) {
-        return valueToExpr(0000, false, value);
+        return (Expr) valueToCodeFragment(value, true);
     }
 
     public static Condition valueToCondition(final Value value) {

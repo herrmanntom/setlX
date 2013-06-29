@@ -54,9 +54,9 @@ public class Power extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendString(state, sb, tabs);
+        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
         sb.append(" ** ");
-        exponent.appendString(state, sb, tabs);
+        exponent.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
@@ -73,8 +73,8 @@ public class Power extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs        = TermConverter.valueToExpr(PRECEDENCE, true , term.firstMember());
-            final Expr exponent   = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr lhs        = TermConverter.valueToExpr(term.firstMember());
+            final Expr exponent   = TermConverter.valueToExpr(term.lastMember());
             return new Power(lhs, exponent);
         }
     }

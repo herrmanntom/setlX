@@ -58,7 +58,7 @@ public class Assignment extends Expr {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         lhs.appendString(state, sb, tabs);
         sb.append(" := ");
-        rhs.appendString(state, sb, tabs);
+        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
@@ -74,7 +74,7 @@ public class Assignment extends Expr {
     public static Assignment termToExpr(final Term term) throws TermConversionException {
         if (term.size() == 2) {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
             if (lhs instanceof AssignableExpression) {
                 return new Assignment((AssignableExpression) lhs, rhs);
             }

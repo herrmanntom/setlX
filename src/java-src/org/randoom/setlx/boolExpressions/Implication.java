@@ -41,13 +41,6 @@ public class Implication extends Expr {
         return lhs.eval(state).implication(state, rhs);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -62,9 +55,9 @@ public class Implication extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendString(state, sb, tabs);
+        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
         sb.append(" => ");
-        rhs.appendString(state, sb, tabs);
+        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
@@ -81,8 +74,8 @@ public class Implication extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, true , term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember() );
+            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember() );
             return new Implication(lhs, rhs);
         }
     }

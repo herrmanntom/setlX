@@ -78,7 +78,7 @@ public class SetlX {
                 }
                 // check for incorrect dumpFile contents
                 if (  dumpFile.equals("") ||
-                     (dumpFile.length() >= 2 && dumpFile.substring(0,2).equals("--"))
+                     (dumpFile.length() >= 1 && dumpFile.substring(0,1).equals("-"))
                    ) {
                     help     = true;
                     dumpFile = null;
@@ -91,38 +91,38 @@ public class SetlX {
                 }
                 // check for incorrect dumpTermFile contents
                 if (  dumpTermFile.equals("") ||
-                     (dumpTermFile.length() >= 2 && dumpTermFile.substring(0,2).equals("--"))
+                     (dumpTermFile.length() >= 1 && dumpTermFile.substring(0,1).equals("-"))
                    ) {
                     help         = true;
                     dumpTermFile = null;
                 }
-            } else if (s.equals("--ev")) {
+            } else if (s.equals("-e") || s.equals("--eval")) {
                 ++i; // set to next argument
                 if (i < args.length) {
                     expression = args[i];
                 }
                 // check for incorrect expression content
                 if (  statement != null || expression.equals("") ||
-                     (expression.length() >= 2 && expression.substring(0,2).equals("--"))
+                     (expression.length() >= 1 && expression.substring(0,1).equals("-"))
                    ) {
                     help       = true;
                     expression = null;
                 }
-            } else if (s.equals("--ex")) {
+            } else if (s.equals("-x") || s.equals("--exec")) {
                 ++i; // set to next argument
                 if (i < args.length) {
                     statement = args[i];
                 }
                 // check for incorrect statement content
                 if (  expression != null || statement.equals("") ||
-                     (statement.length() >= 2 && statement.substring(0,2).equals("--"))
+                     (statement.length() >= 1 && statement.substring(0,1).equals("-"))
                    ) {
                     help      = true;
                     statement = null;
                 }
-            } else if (s.equals("--help")) {
+            } else if (s.equals("-h") || s.equals("--help")) {
                 help = true;
-            } else if (s.equals("--libraryPath")) {
+            } else if (s.equals("-l") || s.equals("--libraryPath")) {
                 ++i; // set to next argument
                 if (i < args.length) {
                     envProvider.libraryPath = args[i];
@@ -130,25 +130,25 @@ public class SetlX {
                 // check for incorrect contents
                 if (  envProvider.libraryPath.equals("") ||
                       (
-                          envProvider.libraryPath.length() >= 2 &&
-                          envProvider.libraryPath.substring(0,2).equals("--")
+                          envProvider.libraryPath.length() >= 1 &&
+                          envProvider.libraryPath.substring(0,1).equals("-")
                       )
                    ) {
                     help = true;
                 }
-            } else if (s.equals("--multiLineMode")) {
+            } else if (s.equals("-m") || s.equals("--multiLineMode")) {
                 state.setMultiLineMode(true);
-            } else if (s.equals("--noAssert")) {
+            } else if (s.equals("-a") || s.equals("--noAssert")) {
                 state.setAssertsDisabled(true);
-            } else if (s.equals("--noExecution")) {
+            } else if (s.equals("-n") || s.equals("--noExecution")) {
                 noExecution = true;
-            } else if (s.equals("--params")) {
+            } else if (s.equals("-p") || s.equals("--params")) {
                 // all remaining arguments are passed into the program
                 ++i; // set to next argument
                 for (; i < args.length; ++i) {
                     parameters.addMember(state, new SetlString(args[i]));
                 }
-            } else if (s.equals("--predictableRandom")) { // easier debugging
+            } else if (s.equals("-r") || s.equals("--predictableRandom")) { // easier debugging
                 state.setRandoomPredictable(true);
             } else if (s.equals("--real32")) {
                 Real.setPrecision32();
@@ -168,9 +168,9 @@ public class SetlX {
                 state.setRuntimeDebugging(true);
             } else if (s.equals("--termLoop")) {
                 termLoop = true;
-            } else if (s.equals("--verbose")) {
+            } else if (s.equals("-v") || s.equals("--verbose")) {
                 verbose = true;
-            } else if (s.length() >= 2 && s.substring(0,2).equals("--")) { // invalid option
+            } else if (s.length() >= 1 && s.substring(0,1).equals("-")) { // invalid option
                 help    = true;
             } else {
                 files.add(s);
@@ -459,35 +459,35 @@ public class SetlX {
         printHelpInteractive(state);
         state.outWriteLn(
             "Additional parameters:\n" +
-            "  --ev <expression>\n" +
-            "     evaluates next argument as expression and exits\n" +
-            "  --ex <statement>\n" +
-            "     executes next argument as statement and exits\n" +
-            "  --libraryPath <path>\n" +
-            "     override SETLX_LIBRARY_PATH environment variable\n" +
-            "  --multiLineMode\n" +
-            "     only accept input in interactive mode after additional new line\n" +
-            "  --noAssert\n" +
-            "      disables all assert functions\n" +
-            "  --noExecution\n" +
-            "      load and check code for syntax errors, but do not execute it\n" +
-            "  --params <argument> ...\n" +
-            "     passes all following arguments to executed program via `params' variable\n" +
-            "  --predictableRandom\n" +
-            "      always use same random sequence (debugging)\n" +
+            "  -e <expression>, --eval <expression>\n" +
+            "      Evaluates next argument as expression and exits.\n" +
+            "  -x <statement>, --exec <statement>\n" +
+            "      Executes next argument as statement and exits.\n" +
+            "  -l <path>, --libraryPath <path>\n" +
+            "      Override SETLX_LIBRARY_PATH environment variable.\n" +
+            "  -m, --multiLineMode\n" +
+            "      Only accept input in interactive mode after additional new line.\n" +
+            "  -a, --noAssert\n" +
+            "      Disables all assert functions.\n" +
+            "  -n, --noExecution\n" +
+            "      Load and check code for syntax errors, but do not execute it.\n" +
+            "  -p <argument> ..., --params <argument> ...\n" +
+            "      Pass all following arguments to executed program via `params' variable.\n" +
+            "  -r, --predictableRandom\n" +
+            "      Always use same random sequence (debugging).\n" +
             "  --real32\n" +
             "  --real64\n" +
             "  --real128\n" +
             "  --real256\n" +
-            "      sets the width of the real-type in bits (real64 is the default)\n" +
+            "      Sets the width of the real-type in bits (real64 is the default).\n" +
             "  --realDefault\n" +
             "  --realEngineering\n" +
             "  --realPlain\n" +
-            "      sets how the exponent of reals is displayed\n" +
-            "  --verbose\n" +
-            "      display the parsed program before executing it\n" +
+            "      Sets how the exponent of reals is displayed.\n" +
+            "  -v, --verbose\n" +
+            "      Display the parsed program before executing it.\n" +
             "  --version\n" +
-            "      displays the interpreter version and terminates\n"
+            "      Display interpreter version and terminate.\n"
         );
     }
 

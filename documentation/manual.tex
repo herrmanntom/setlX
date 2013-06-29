@@ -142,37 +142,37 @@ Executing the `\command{exit;}' statement will terminate the interpreter.
 In addition to file-paths a number of options can be used when running \setlX{}:
 
 \begin{itemize}
-	\param{--ev <expression>}
-	      {evaluates next argument as expression and exits (cannot be combined with execution of a statement or files)}
-	\param{--ex <statement>}
-	      {executes next argument as statement and exits (cannot be combined with evaluation of an expression or execution of files)}
-	\param{--help}
-	      {displays some helpful information}
-	\param{--libraryPath <path>}
-	      {override SETLX\_LIBRARY\_PATH environment variable}
-	\param{--multiLineMode}
-	      {only accept input in interactive mode after additional new line}
-	\param{--noAssert}
-	      {disables all assert functions}
-	\param{--noExecution}
-	      {load and check code for syntax errors, but do not execute it}
-	\param{--params <argument> ...}
-	      {passes all following arguments to the executed program via `params' variable}
-	\param{--predictableRandom}
-	      {always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging)}
+	\param{-e <expression>, --eval <expression>}
+	      {Evaluates next argument as expression and exits (cannot be combined with execution of a statement or files).}
+	\param{-x <statement>, --exec <statement>}
+	      {Executes next argument as statement and exits (cannot be combined with evaluation of an expression or execution of files).}
+	\param{-h, --help}
+	      {Displays some helpful information.}
+	\param{-l <path>, --libraryPath <path>}
+	      {Override SETLX\_LIBRARY\_PATH environment variable.}
+	\param{-m, --multiLineMode}
+	      {Only accept input in interactive mode after additional new line.}
+	\param{-a, --noAssert}
+	      {Disables all assert functions.}
+	\param{-n, --noExecution}
+	      {Load and check code for syntax errors, but do not execute it.}
+	\param{-p <argument> ..., --params <argument> ...}
+	      {Pass all following arguments to the executed program via `params' variable.}
+	\param{-r, --predictableRandom}
+	      {Always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging).}
 	\param{--real32\\
 	       --real64\\
 	       --real128\\
 	       --real256}
-           {sets the width of the real-type in bits (64 is the sane default)}
+           {Sets the width of the real-type in bits (64 is the sane default).}
 	\param{--realDefault\\
 	       --realEngineering\\
 	       --realPlain}
-           {sets how the exponent of reals is displayed}
-	\param{--verbose}
-           {display the parsed program before executing it (has no effect in interactive mode)}
+           {Sets how the exponent of reals is displayed.}
+	\param{-v, --verbose}
+           {Display the parsed program before executing it (has no effect in interactive mode).}
 	\param{--version}
-           {displays the interpreter version and terminates}
+           {Display interpreter version and terminate.}
 \end{itemize}
 
 \section{System Requirements}

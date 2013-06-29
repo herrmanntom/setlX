@@ -1,6 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.0.3--- 2013-06-10
+---v2.1.0--- 2013-07-01
+ + added short versions for some command line options
  - remove "short-iterate" syntax to resolve some issues in the grammar
    (i.e {x in set | x%2 == 0} needs to be replaced with {x : x in set | x%2 == 0})
  * lots of internal changes to the build system and error handling

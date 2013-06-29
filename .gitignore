@@ -26,6 +26,8 @@
 /Tutorial/*.pdf
 /Tutorial/*.toc
 /Tutorial/tutorial.bbl
+/Tutorial/tutorial.blg
+/Tutorial/tutorial.synctex.gz
 /Tutorial/auto
 /diff.*.result
 /developmentGuide.pdf

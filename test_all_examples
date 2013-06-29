@@ -36,7 +36,7 @@ else
 fi
 
 # number of concurrent processes to start
-numberOfThreads=$("$setlXlaunchScript" --ev "nCPUs() \ 2")
+numberOfThreads=$("$setlXlaunchScript" -e "nCPUs() \ 2")
 if [ ! -z "$1" ]
   then
     if [[ "$1" =~ ^[1-9][0-9]*$ ]]

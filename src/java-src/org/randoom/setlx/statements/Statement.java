@@ -54,10 +54,23 @@ public abstract class Statement extends CodeFragment {
             return EXECUTE_ERROR;
 
         } catch (final StackOverflowError soe) {
+            state.storeFirstCallStackDepth();
+
             state.errWriteOutOfStack(soe, false);
             return EXECUTE_ERROR;
 
         } catch (final OutOfMemoryError oome) {
+            try {
+                // free some memory
+                state.resetState();
+                // give hint to the garbage collector
+                Runtime.getRuntime().gc();
+                // sleep a while
+                Thread.sleep(50);
+            } catch (final InterruptedException e) {
+                /* don't care any more */
+            }
+
             state.errWriteOutOfMemory(hintAtJVMxOptions, false);
             return EXECUTE_ERROR;
 

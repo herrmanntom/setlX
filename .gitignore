@@ -25,6 +25,7 @@
 /Tutorial/*.out
 /Tutorial/*.pdf
 /Tutorial/*.toc
+/Tutorial/tutorial.bbl
 /Tutorial/auto
 /diff.*.result
 /developmentGuide.pdf

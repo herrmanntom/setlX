@@ -918,6 +918,7 @@ yields the result
 \item \texttt{isSet} tests whether its argument is a set.
 \item \texttt{isString} tests whether its argument is a string.
 \item \texttt{isTerm} tests whether its argument is a term.
+\item \texttt{isObject} tests whether its argument is an object.
 \end{enumerate}
 
 \section{Debugging}
@@ -934,13 +935,23 @@ yields the result
 \item \texttt{stop}:  The function \texttt{stop}  is called as
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{stop(id)}.
+      $\texttt{stop}(\textsl{id})$.
       \\[0.2cm]
-      Here, the optional \textsl{id} parameter can be a string that helps you identify the
-      code-location where you inserted it. When executed, this function will present you with a
-      prompt. Confirm with no input to continue the execution, or enter comma separated variable
+      Here, the optional parameter \textsl{id} is a string that reminds you
+      of the location in the program where it was inserted. When executed, this function produces a
+      prompt.  Confirm with no input to continue the execution, or enter comma separated variable
       names to display their current value. Enter `All' to display all variables in the current scope.
-      This function always returns zero, so it can even be integrated into most expressions.
+      This function always returns zero, therefore it often possible to call this function inside expressions.
+\item \texttt{assert}: The function \texttt{assert}  is called as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $\texttt{assert}(\textsl{condition}, \textsl{msg})$.
+      \\[0.2cm]
+      Here, \textsl{condition} is an expression that has to  yield either \texttt{true} or \texttt{false}
+      when evaluated. If the \textsl{condition} is true, the function \texttt{assert} has no
+      further effect.  However, if the evaluation of \textsl{condition} yields the value
+      \texttt{false}, then the execution of the program is terminated and the error message
+      \textsl{msg} is printed.
 \end{enumerate}
 
 

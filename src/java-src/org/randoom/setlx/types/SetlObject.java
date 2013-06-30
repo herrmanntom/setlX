@@ -717,13 +717,23 @@ public class SetlObject extends Value {
 
     @Override
     public final SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
-        final Value result = overload(state, IS_EQUAL_TO, other);
-        if ( ! (result instanceof SetlBoolean)) {
-            throw new IncompatibleTypeException(
-                "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
-            );
+        if (getObjectMemberUnClonedUnSafe(state, IS_EQUAL_TO) != Om.OM) {
+            final Value result = overload(state, IS_EQUAL_TO, other);
+            if ( ! (result instanceof SetlBoolean)) {
+                throw new IncompatibleTypeException(
+                    "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
+                );
+            } else {
+                return (SetlBoolean) result;
+            }
+        }
+
+        if (! (other instanceof SetlObject)) {
+            return SetlBoolean.FALSE;
         } else {
-            return (SetlBoolean) result;
+            throw new UndefinedOperationException(
+                "Member '" + IS_EQUAL_TO + "' is undefined in '" + this + "'."
+            );
         }
     }
     final static String IS_EQUAL_TO = createOverloadVariable(Equals.functionalCharacter());

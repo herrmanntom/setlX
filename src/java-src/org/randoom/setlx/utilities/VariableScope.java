@@ -28,10 +28,10 @@ public class VariableScope {
     // stores reference scope of object
     private         SetlObject         thisObject;
 
-    // stores reference to original scope object upon cloning
+    // stores reference to previous scope object when creating a new scope
     private         VariableScope      originalScope;
 
-    // if set mOriginalScope is only searched for functions, not variables
+    // if set originalScope is only searched for functions, not variables
     private         boolean            isRestrictedToFunctions;
 
     /* If set variables read from outer scopes will _not_ be copied to

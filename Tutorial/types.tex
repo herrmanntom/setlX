@@ -28,7 +28,7 @@ However, complex commands like, for example, loops are not terminated by a semic
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v2.0.2=-
+-====================================setlX=============================v2.1.0=-
 
 Welcome to the setlX interpreter!
 
@@ -64,7 +64,7 @@ The welcome banner of \textsc{SetlX} points out that we can call \texttt{setlX} 
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v2.0.2=-
+-====================================setlX=============================v2.1.0=-
 
 File paths supplied as parameters for this program will be parsed and executed.
 The interactive mode will be started if called without any file parameters.
@@ -73,35 +73,35 @@ Interactive-Mode:
   The 'exit;' statement terminates the interpreter.
 
 Additional parameters:
-  --ev <expression>
-     evaluates next argument as expression and exits
-  --ex <statement>
-     executes next argument as statement and exits
-  --libraryPath <path>
-     override SETLX_LIBRARY_PATH environment variable
-  --multiLineMode
-     only accept input in interactive mode after additional new line
-  --noAssert
-      disables all assert functions
-  --noExecution
-      load and check code for syntax errors, but do not execute it
-  --params <argument> ...
-     passes all following arguments to executed program via `params' variable
-  --predictableRandom
-      always use same random sequence (debugging)
+  -e <expression>, --eval <expression>
+      Evaluates next argument as expression and exits.
+  -x <statement>, --exec <statement>
+      Executes next argument as statement and exits.
+  -l <path>, --libraryPath <path>
+      Override SETLX_LIBRARY_PATH environment variable.
+  -m, --multiLineMode
+      Only accept input in interactive mode after additional new line.
+  -a, --noAssert
+      Disables all assert functions.
+  -n, --noExecution
+      Load and check code for syntax errors, but do not execute it.
+  -p <argument> ..., --params <argument> ...
+      Pass all following arguments to executed program via `params' variable.
+  -r, --predictableRandom
+      Always use same random sequence (debugging).
   --real32
   --real64
   --real128
   --real256
-      sets the width of the real-type in bits (real64 is the default)
+      Sets the width of the real-type in bits (real64 is the default).
   --realDefault
   --realEngineering
   --realPlain
-      sets how the exponent of reals is displayed
-  --verbose
-      display the parsed program before executing it
+      Sets how the exponent of reals is displayed.
+  -v, --verbose
+      Display the parsed program before executing it.
   --version
-      displays the interpreter version and terminates
+      Display interpreter version and terminate.
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Calling \texttt{setlx} with the option ``\texttt{--help}''.}

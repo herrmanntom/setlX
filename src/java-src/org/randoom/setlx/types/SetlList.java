@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
@@ -510,6 +511,9 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlSet permutations(final State state) throws SetlException {
+        if (state.isExecutionStopped) {
+            throw new StopExecutionException("Interrupted");
+        }
         if (size() == 0) {
             final SetlSet permutations = new SetlSet();
             permutations.addMember(state, clone());

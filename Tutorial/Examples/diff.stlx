@@ -47,7 +47,6 @@ diff := procedure(t, x) {
 };
 
 simplify := procedure(s) {
-    s0 := s;
     t := simplifyOneStep(s);
     while (t != s) {
         s := t;

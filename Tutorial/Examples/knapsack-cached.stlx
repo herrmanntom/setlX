@@ -67,9 +67,9 @@ problem := { [1, 1, 12], [5, 15, 10], [6, 2, 16], [9, 13, 14], [11, 6, 8],
              [19, 9, 9], [19, 18, 6]
            };
 
-start  := now();
+// start  := now();
 [v, s] := knapsackNaive(problem, maxWeight);
-stop   := now();
+// stop   := now();
 print("naive algorithm using exhaustive search:");
 print("s = $s$, value = $v$, weight = $weight(s)$");
 // print("$0.001 * (stop - start)$ seconds");

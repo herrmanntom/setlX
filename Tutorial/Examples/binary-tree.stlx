@@ -14,7 +14,7 @@ insert := procedure(m, k1) {
              } else {
                  return Node(k2, l, insert(r, k1));
              }
-        default: abort("Error in insert($m$, $k1$, $v1$)");
+        default: abort("Error in insert($m$, $k1$)");
     }
 };
 
@@ -30,7 +30,7 @@ toString := procedure(m, n) {
     }
 };
     
-demo := procedure(cmp) {
+demo := procedure() {
     m := map();
     m := insert(m, "anton" );
     m := insert(m, "hugo"  );
@@ -42,7 +42,7 @@ demo := procedure(cmp) {
     print("\n$toString(m, 0)$\n");
 };
 
-demo(lessThan);
+demo();
 
 
 

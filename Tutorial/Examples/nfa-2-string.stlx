@@ -2,7 +2,6 @@
 nfa2string := procedure(nfa, sigma) {
     [states, delta, q0, final] := nfa;
     result := "";
-    n := 0;
     result += "states: $states$\n\n";   
     result += "start state: $q0$\n\n";
     result += "transitions:\n";

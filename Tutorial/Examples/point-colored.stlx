@@ -33,7 +33,7 @@ coloredPoint := procedure(x, y, c) {
     p.mColor := c;
     
     p.toStr := procedure() {
-	return "<$mX$, $mY$>: $mColor.mR$, $mColor.mG$, $mColor.mB$";
+        return "<$mX$, $mY$>: $mColor.mR$, $mColor.mG$, $mColor.mB$";
     };
     return p;
 };

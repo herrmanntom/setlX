@@ -8,6 +8,9 @@
     <condition property="setlX.executable" value="setlX" else="setlX.cmd">
         <os family="unix" />
     </condition>
+    <condition property="isJava6">
+        <contains string="${java.version}" substring="1.6" casesensitive="false"/>
+    </condition>
 
     <!-- discover library jars and add them to the class-path -->
     <path id="antlr-jar">
@@ -46,16 +49,26 @@
         </javac>
     </target>
 
-    <target name="android-jars" depends="clean,doc-jar,src-jar,jar-j1.6"/>
-
-    <!-- create the jar after compiling with java 1.6 (required by android) -->
-    <target name="jar-j1.6">
-        <antcall target="clean"/>
-        <antcall target="grammar"/>
+    <target name="compile-j1.6-compatible" depends="grammar">
         <javac fork="true" srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" target="1.6"
                classpathref="classpath" bootclasspathref="rt.jar-j1.6" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
+    </target>
+
+    <!-- compile either with native Java 1.6, or in compatibility mode -->
+    <target name="compile-j1.6" depends="compile-is-j1.6,compile-is-not-j1.6"/>
+    <target name="compile-is-j1.6" if="isJava6">
+        <antcall target="compile"/>
+    </target>
+    <target name="compile-is-not-j1.6" unless="isJava6">
+        <antcall target="compile-j1.6-compatible"/>
+    </target>
+
+    <!-- create the jar after compiling with Java 1.6 -->
+    <target name="jar-j1.6">
+        <antcall target="clean"/>
+        <antcall target="compile-j1.6"/>
         <jar destfile="${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
              index="true">
             <manifest>
@@ -64,6 +77,8 @@
         </jar>
         <antcall target="clean"/>
     </target>
+
+    <target name="android-jars" depends="clean,doc-jar,src-jar,jar-j1.6"/>
 
     <!-- jars including documentation and source -->
     <target name="doc-jar" depends="grammar">

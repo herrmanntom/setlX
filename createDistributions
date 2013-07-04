@@ -14,9 +14,9 @@ ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
-ant
-if [ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" ]
-  then
+ant jar-j1.6
+if [ -f "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" ]; then
+    mv "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX.jar"
     # clean it up again (does not remove the jar)
     ant clean
     echo "=> The setlX interpreter was build correctly."
@@ -27,8 +27,7 @@ else
 fi
 
 # ensure some files use Windows line-endings
-if [ $(which unix2dos > /dev/null 2>&1; echo $?) -eq 0 ]
-  then
+if [ $(which unix2dos > /dev/null 2>&1; echo $?) -eq 0 ]; then
     unix2dos setlX.cmd
 fi
 
@@ -40,9 +39,9 @@ ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX graphics library ..."
-ant
-if [ -e "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" ]
-  then
+ant jar-j1.6
+if [ -f "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" ]; then
+    mv "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar"
     # clean it up again (does not remove the jar)
     ant clean
     echo "=> The setlX graphics library was build correctly."

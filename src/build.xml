@@ -43,15 +43,16 @@
     </target>
 
     <target name="compile" depends="grammar">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true"
                classpathref="classpath" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
     </target>
 
     <target name="compile-j1.6-compatible" depends="grammar">
-        <javac fork="true" srcdir="${src.dir}" destdir="${classes.dir}" source="1.6" target="1.6"
-               classpathref="classpath" bootclasspathref="rt.jar-j1.6" includeantruntime="false">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true"
+               classpathref="classpath"  includeantruntime="false"
+               fork="true" source="1.6" target="1.6" bootclasspathref="rt.jar-j1.6">
             <compilerarg value="-Xlint:all"/>
         </javac>
     </target>

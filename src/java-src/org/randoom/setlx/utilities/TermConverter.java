@@ -152,11 +152,10 @@ public class TermConverter {
                         return new ValueExpr(specialValue);
                     }
                 }
-                throw new TermConversionException(
-                    "This term does not represent an CodeFragment."
-                );
+                // This term does not represent an CodeFragment.
+                return TermConstructor.termToExpr(term);
             } catch (final TermConversionException tce) {
-                // create TermConstructor for this custom term
+                // some error occurred... create TermConstructor for this custom term
                 return TermConstructor.termToExpr(term);
             }
         } else { // `value' is in fact a (more or less) simple value
@@ -168,7 +167,8 @@ public class TermConverter {
                 } else if (value instanceof SetlList || value instanceof SetlSet) {
                     return SetListConstructor.valueToExpr(value);
                 } else {
-                    throw new TermConversionException("not a special value");
+                    // not a special value
+                    return new ValueExpr(value);
                 }
             } catch (final TermConversionException tce) {
                 // some error occurred... create ValueExpr for this value

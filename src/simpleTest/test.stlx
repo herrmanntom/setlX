@@ -423,6 +423,12 @@ regexEscapeTests := procedure() {
     correct := true;
 
     s := "1\\2\\3";
+    correct := correct && (split(s, '\w') == ["","\\","\\",""]);
+
+    s := "1\\2\\3";
+    correct := correct && (split(s, "\\w") == ["","\\","\\",""]);
+
+    s := "1\\2\\3";
     correct := correct && (split(s, '\\\\') == ["1","2","3"]);
 
     s := "1\\2\\3";

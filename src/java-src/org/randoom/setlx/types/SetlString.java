@@ -652,27 +652,11 @@ public class SetlString extends IndexedCollectionValue {
             // parse pattern
             final Pattern pttrn = Pattern.compile(p);
 
-            final List<String> strings = Arrays.asList(pttrn.split(content));
+            final List<String> strings = Arrays.asList(pttrn.split(content, -1));
 
             final SetlList     result  = new SetlList(strings.size());
             for (final String str : strings) {
                 result.addMember(state, new SetlString(str));
-            }
-
-            /* some fixes to make the output a bit less confusing */
-
-            // fix split("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
-            if (strings.size() >= 1 && strings.get(0).equals("") && p.equals("")) {
-                result.removeFirstMember();
-            }
-            // fix split(";", ";") => [], should be ["", ""]
-            else if (content.toString().equals(p)) {
-                result.addMember(state, new SetlString());
-                result.addMember(state, new SetlString());
-            }
-            // fix split(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
-            else if (content.toString().endsWith(p)) {
-                result.addMember(state, new SetlString());
             }
 
             return result;

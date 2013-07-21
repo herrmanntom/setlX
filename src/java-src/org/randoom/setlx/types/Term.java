@@ -516,6 +516,11 @@ public class Term extends IndexedCollectionValue {
                 result.addBinding(id, other);
                 return result;
             }
+        } else if (functionalCharacter.equals(StringConstructor.getFunctionalCharacter()) && body.size() == 2 &&
+                   other instanceof SetlString) {
+            // 'this' is a StringConstructor, which may match a simple string
+            return other.matchesTerm(state, this);
+
         } else if ( ! (other instanceof Term)) {
             return new MatchResult(false);
         }

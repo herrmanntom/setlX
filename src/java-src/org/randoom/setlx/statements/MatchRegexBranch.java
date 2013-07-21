@@ -126,16 +126,17 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                     "Pattern argument '" + patternStr + "' is not a string."
                 );
             }
+            final String p = ((SetlString) patternStr).getUnquotedString();
             // parse pattern
             try {
-                pttrn = Pattern.compile(patternStr.getUnquotedString());
+                pttrn = Pattern.compile(p);
                 // store pattern if it is static
                 if (pattern.isReplaceable()) {
                     runtimePattern = pttrn;
                 }
             } catch (final PatternSyntaxException pse) {
                 final LinkedList<String> errors = new LinkedList<String>();
-                errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
+                errors.add("Error while parsing regex-pattern '" + p + "' {");
                 errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
                 errors.add("}");
                 throw SyntaxErrorException.create(

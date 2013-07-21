@@ -3,14 +3,19 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressions.StringConstructor;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class SetlString extends IndexedCollectionValue {
     /* To allow initially `free' cloning, by only marking a clone without
@@ -70,7 +75,7 @@ public class SetlString extends IndexedCollectionValue {
         for (int i = 1; i < length - 1; ) {
             final char c = s.charAt(i);                          // current char
             final char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
-            if (c == '\\' && n == '\'') {
+            if (c == '\\' && (n == '\'' || n == '\\')) {
                 result.content.append(n);
                 i += 2;
             } else {
@@ -635,34 +640,52 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException {
+    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException, SyntaxErrorException {
         if ( ! (pattern instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Pattern '" + pattern  + "' is not a string."
             );
         }
-        final String       p       = pattern.getUnquotedString();
-        final List<String> strings = Arrays.asList(content.toString().split(p));
-        final SetlList     result  = new SetlList(strings.size());
-        for (final String str : strings) {
-            result.addMember(state, new SetlString(str));
-        }
+        final String p = ((SetlString) pattern).getUnquotedString();
 
-        // fix split("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
-        if (strings.size() >= 1 && strings.get(0).equals("") && p.equals("")) {
-            result.removeFirstMember();
-        }
-        // fix split(";", ";") => [], should be ["", ""]
-        else if (content.toString().equals(p)) {
-            result.addMember(state, new SetlString());
-            result.addMember(state, new SetlString());
-        }
-        // fix split(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
-        else if (content.toString().endsWith(p)) {
-            result.addMember(state, new SetlString());
-        }
+        try {
+            // parse pattern
+            final Pattern pttrn = Pattern.compile(p);
 
-        return result;
+            final List<String> strings = Arrays.asList(pttrn.split(content));
+
+            final SetlList     result  = new SetlList(strings.size());
+            for (final String str : strings) {
+                result.addMember(state, new SetlString(str));
+            }
+
+            /* some fixes to make the output a bit less confusing */
+
+            // fix split("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
+            if (strings.size() >= 1 && strings.get(0).equals("") && p.equals("")) {
+                result.removeFirstMember();
+            }
+            // fix split(";", ";") => [], should be ["", ""]
+            else if (content.toString().equals(p)) {
+                result.addMember(state, new SetlString());
+                result.addMember(state, new SetlString());
+            }
+            // fix split(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
+            else if (content.toString().endsWith(p)) {
+                result.addMember(state, new SetlString());
+            }
+
+            return result;
+        } catch (final PatternSyntaxException pse) {
+            final LinkedList<String> errors = new LinkedList<String>();
+            errors.add("Error while parsing regex-pattern '" + p + "' {");
+            errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
+            errors.add("}");
+            throw SyntaxErrorException.create(
+                errors,
+                "1 syntax error encountered."
+            );
+        }
     }
 
     /* string and char operations */
@@ -725,6 +748,16 @@ public class SetlString extends IndexedCollectionValue {
     public MatchResult matchesTerm(final State state, final Value other) {
         if (other == IgnoreDummy.ID || this.equals(other)) {
             return new MatchResult(true);
+        } else if (other instanceof Term ) {
+            final Term o = (Term) other;
+            try {
+                if (o.functionalCharacter(state).getUnquotedString().equals(StringConstructor.getFunctionalCharacter())
+                    && o.size() == 2 && o.firstMember().size() == 1 && o.lastMember().size() == 0
+                ) {
+                    return matchesTerm(state, o.firstMember().firstMember(state));
+                }
+            } catch (final SetlException e) { /* just fail in the next line */ }
+            return new MatchResult(false);
         } else {
             return new MatchResult(false);
         }

@@ -419,6 +419,19 @@ grammarTests := procedure() {
 };
 grammarTests();
 
+regexEscapeTests := procedure() {
+    correct := true;
+
+    s := "1\\2\\3";
+    correct := correct && (split(s, '\\\\') == ["1","2","3"]);
+
+    s := "1\\2\\3";
+    correct := correct && (split(s, "\\\\") == ["1","2","3"]);
+
+    tester(correct, "regexEscape");
+};
+regexEscapeTests();
+
 // ************************************************************************** \\
 
 print("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");

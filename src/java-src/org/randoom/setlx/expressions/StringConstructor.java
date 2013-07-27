@@ -222,6 +222,13 @@ public class StringConstructor extends Expr {
         return result;
     }
 
+    /**
+     * Convert a term representing a StringConstructor into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting StringConstructor Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Expr termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -266,6 +273,11 @@ public class StringConstructor extends Expr {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String getFunctionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

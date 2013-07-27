@@ -7,6 +7,9 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
+/**
+ * Wrapper Expression for SetlX Literals, which parses escape sequences at runtime.
+ */
 public class LiteralConstructor extends Expr {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LiteralConstructor.class);
@@ -16,6 +19,11 @@ public class LiteralConstructor extends Expr {
     private final String     originalLiteral;
     private final SetlString runtimeString;
 
+    /**
+     * Constructor, which parses escape sequences in the literal to create.
+     *
+     * @param originalLiteral String read by the parser.
+     */
     public LiteralConstructor(final String originalLiteral) {
         this(originalLiteral, SetlString.parseLiteral(originalLiteral));
     }
@@ -60,6 +68,14 @@ public class LiteralConstructor extends Expr {
         return result;
     }
 
+
+    /**
+     * Convert a term representing a LiteralConstructor into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting LiteralConstructor Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static LiteralConstructor termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

@@ -20,11 +20,23 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class interfaces with the antlr parser and provides some error handling.
+ */
 public class ParseSetlX {
 
     private final static int EXPR  =  1337;
     private final static int BLOCK = 31337;
 
+    /**
+     * Parse a code block from a file.
+     *
+     * @param state                   Current state of the running setlX program.
+     * @param fileName                Path and name of the file to read.
+     * @return                        Parsed block of setlX-Code.
+     * @throws ParserException        Thrown in case of parser errors.
+     * @throws StopExecutionException Thrown when an InterruptedException got caught.
+     */
     public static Block parseFile(final State state, String fileName) throws ParserException, StopExecutionException {
         try {
             // allow modification of fileName/path by environment provider
@@ -40,6 +52,19 @@ public class ParseSetlX {
         }
     }
 
+    /**
+     * Parse a code block from a library file.
+     * Note:
+     *   The default ".stlx" extension is added to the name.
+     *   The resulting name is expected to be relative to the library path.
+     *   Libraries are only loaded once - an empty block is returned if it was loaded before.
+     *
+     * @param state                   Current state of the running setlX program.
+     * @param name                    Name of the library to read.
+     * @return                        Parsed block of setlX-Code.
+     * @throws ParserException        Thrown in case of parser errors.
+     * @throws StopExecutionException Thrown when an InterruptedException got caught.
+     */
     public static Block parseLibrary(final State state, String name) throws ParserException, StopExecutionException {
         try {
             // allow modification of name by environment provider
@@ -60,6 +85,14 @@ public class ParseSetlX {
         }
     }
 
+    /**
+     * Parse a code block while reading from standard-in.
+     *
+     * @param state                   Current state of the running setlX program.
+     * @return                        Parsed block of setlX-Code.
+     * @throws ParserException        Thrown in case of parser errors.
+     * @throws StopExecutionException Thrown when an InterruptedException got caught.
+     */
     public static Block parseInteractive(final State state) throws ParserException, StopExecutionException {
         try {
             final InputStream stream = InputReader.getStream(state);
@@ -72,6 +105,15 @@ public class ParseSetlX {
         }
     }
 
+    /**
+     * Parse a code block from a string.
+     *
+     * @param state                   Current state of the running setlX program.
+     * @param input                   String to read.
+     * @return                        Parsed block of setlX-Code.
+     * @throws ParserException        Thrown in case of parser errors.
+     * @throws StopExecutionException Thrown when an InterruptedException got caught.
+     */
     public static Block parseStringToBlock(final State state, final String input) throws ParserException, StopExecutionException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
@@ -84,6 +126,15 @@ public class ParseSetlX {
         }
     }
 
+    /**
+     * Parse an expression from a string.
+     *
+     * @param state                   Current state of the running setlX program.
+     * @param input                   String to read.
+     * @return                        Parsed setlX expression.
+     * @throws ParserException        Thrown in case of parser errors.
+     * @throws StopExecutionException Thrown when an InterruptedException got caught.
+     */
     public static Expr parseStringToExpr(final State state, final String input) throws ParserException, StopExecutionException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
@@ -285,7 +336,7 @@ public class ParseSetlX {
         }
     }
 
-    public static class SetlErrorListener extends BaseErrorListener {
+    private static class SetlErrorListener extends BaseErrorListener {
         private final State state;
 
         /*package*/ SetlErrorListener(final State state) {

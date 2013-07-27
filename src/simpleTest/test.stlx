@@ -422,14 +422,16 @@ grammarTests();
 regexEscapeTests := procedure() {
     correct := true;
 
+    // using literals, thus using no extra level of backslash-escaping
     s := "1\\2\\3";
     correct := correct && (split(s, '\w') == ["","\\","\\",""]);
 
     s := "1\\2\\3";
-    correct := correct && (split(s, "\\w") == ["","\\","\\",""]);
+    correct := correct && (split(s, '\\') == ["1","2","3"]);
 
+    // using strings, thus using one more level of backslash-escaping
     s := "1\\2\\3";
-    correct := correct && (split(s, '\\\\') == ["1","2","3"]);
+    correct := correct && (split(s, "\\w") == ["","\\","\\",""]);
 
     s := "1\\2\\3";
     correct := correct && (split(s, "\\\\") == ["1","2","3"]);

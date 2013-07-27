@@ -1,12 +1,14 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.1.1--- 2013-07-xx
- - build for Java 1.6 by default
+---v2.1.1--- 2013-07-27
+ + the single straight quote is now used as escape character in literals and the
+   only valid escape sequence is two quotes ('') as sequence for a single one (')
  - the quote operator (@) looses its special meaning for double-quoted strings;
    it will now only force a term creation; to get the old behavior on strings,
    replace the quotes with single straight ones: @"tax: 3$"  ->  'tax: 3$'
  # fix string escape level and error handling in split() function
  * term representation of strings changed
+ * build for Java 1.6 by default
  
 ---v2.1.0--- 2013-07-01
  + added short versions for some command line options

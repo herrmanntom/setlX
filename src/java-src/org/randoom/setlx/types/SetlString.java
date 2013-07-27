@@ -68,14 +68,14 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public static SetlString newLiteral(final String s) {
+    public static SetlString parseLiteral(final String s) {
         final SetlString result = new SetlString();
-        // parse escape sequences (only \' is parsed in literals)
+        // parse escape sequences (only '' as escaped ' is parsed in literals)
         final int           length    = s.length();
         for (int i = 1; i < length - 1; ) {
             final char c = s.charAt(i);                          // current char
             final char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
-            if (c == '\\' && (n == '\'' || n == '\\')) {
+            if (c == '\'' && n == '\'') {
                 result.content.append(n);
                 i += 2;
             } else {
@@ -709,6 +709,21 @@ public class SetlString extends IndexedCollectionValue {
                 sb.append("\\\"");
             } else if (c == '\0') {
                 sb.append("\\0");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    public String getEscapedLiteral() {
+        // parse escape sequences
+        final int           length  = content.length();
+        final StringBuilder sb      = new StringBuilder(length + 8);
+        for (int i = 0; i < length; ++i) {
+            final char c = content.charAt(i);  // current char
+            if (c == '\'') {
+                sb.append("\'\'");
             } else {
                 sb.append(c);
             }

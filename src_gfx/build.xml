@@ -2,6 +2,8 @@
     <!-- variables which determine paths and other information used later -->
     <property name="src.dir"     value="java-src"/>
     <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+
     <property name="main_setlX.dir" value="${basedir}/../src"/>
     <condition property="setlX.executable" value="setlX" else="setlX.cmd">
         <os family="unix" />
@@ -32,21 +34,24 @@
 
     <!-- create jar after compiling -->
     <target name="jar" depends="compile">
-        <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${build.dir}" index="true"/>
+        <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${classes.dir}" index="true"/>
     </target>
 
     <target name="compile">
-        <mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}"
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
                classpathref="classpath" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
     </target>
 
     <target name="compile-j1.6-compatible">
-        <mkdir dir="${build.dir}"/>
-        <javac fork="true" srcdir="${src.dir}" destdir="${build.dir}" source="1.6" target="1.6"
-               classpathref="classpath" bootclasspathref="rt.jar-j1.6" includeantruntime="false">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
+               classpathref="classpath" includeantruntime="false"
+               fork="true" source="1.6" target="1.6" bootclasspathref="rt.jar-j1.6">
             <compilerarg value="-Xlint:all"/>
         </javac>
     </target>
@@ -64,7 +69,7 @@
     <target name="jar-j1.6">
         <antcall target="clean"/>
         <antcall target="compile-j1.6"/>
-        <jar destfile="${main_setlX.dir}/${ant.project.name}-j1.6.jar" basedir="${build.dir}"
+        <jar destfile="${main_setlX.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
              index="true" />
         <antcall target="clean"/>
     </target>
@@ -76,7 +81,7 @@
 
     <target name="dist-clean" depends="clean">
         <delete file="${main_setlX.dir}/${ant.project.name}.jar"/>
-        <delete file="${main_setlX.dir}/${ant.project.name}-j.6.jar"/>
+        <delete file="${main_setlX.dir}/${ant.project.name}-j1.6.jar"/>
     </target>
 </project>
 

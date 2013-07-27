@@ -5,6 +5,7 @@
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
     <property name="doc.dir"     value="${build.dir}/javadoc"/>
+
     <condition property="setlX.executable" value="setlX" else="setlX.cmd">
         <os family="unix" />
     </condition>
@@ -43,15 +44,17 @@
     </target>
 
     <target name="compile" depends="grammar">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true"
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
                classpathref="classpath" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
     </target>
 
     <target name="compile-j1.6-compatible" depends="grammar">
-        <javac srcdir="${src.dir}" destdir="${classes.dir}" debug="true"
-               classpathref="classpath"  includeantruntime="false"
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
+               classpathref="classpath" includeantruntime="false"
                fork="true" source="1.6" target="1.6" bootclasspathref="rt.jar-j1.6">
             <compilerarg value="-Xlint:all"/>
         </javac>

@@ -38,7 +38,7 @@ public class StringConstructor extends Expr {
      *
      * @param state       Current state of the running SetlX program.
      * @param quoted      Is the created string quoted (via @-char)?
-     * @param orgStr String read by the parser.
+     * @param originalStr String read by the parser.
      */
     public StringConstructor(final State state, final boolean quoted, final String originalStr) {
         this(originalStr, new ArrayList<String>(), new ArrayList<Expr>());

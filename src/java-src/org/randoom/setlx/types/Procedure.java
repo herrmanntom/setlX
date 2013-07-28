@@ -217,7 +217,7 @@ public class Procedure extends Value {
             }
 
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
         } finally { // make sure scope is always reset
             // restore old scope

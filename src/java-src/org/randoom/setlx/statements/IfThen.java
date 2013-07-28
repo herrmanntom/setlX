@@ -56,7 +56,7 @@ public class IfThen extends Statement {
             }
             return null;
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
         } finally {
             // decrease callStackDepth

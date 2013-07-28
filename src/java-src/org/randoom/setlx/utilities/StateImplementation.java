@@ -13,6 +13,7 @@ import org.randoom.setlx.types.Value;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -409,9 +410,13 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void storeFirstCallStackDepth() {
+    public void storeStackDepthOfFirstCall(final int callStackDepth) {
         if (firstCallStackDepth < 0) {
-            firstCallStackDepth = callStackDepth;
+            firstCallStackDepth = this.callStackDepth;
+        }
+        if (this.callStackDepth != callStackDepth) {
+            // this should not be possible!
+            throw new InvalidParameterException("this.callStackDepth != callStackDepth");
         }
     }
 

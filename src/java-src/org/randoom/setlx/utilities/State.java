@@ -97,7 +97,7 @@ public abstract class State {
 
     public          int                 callStackDepth;
     public abstract int                 getMaxStackSize();
-    public abstract void                storeFirstCallStackDepth();
+    public abstract void                storeStackDepthOfFirstCall(final int callStackDepth);
 
     public abstract void                stopExecution(final boolean stopExecution);
 

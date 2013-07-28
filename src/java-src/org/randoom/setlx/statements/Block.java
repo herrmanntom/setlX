@@ -38,14 +38,27 @@ public class Block extends Statement {
 
     private final List<Statement> statements;
 
+    /**
+     * Create a new empty block of setlX statements.
+     */
     public Block() {
         this(new ArrayList<Statement>());
     }
 
+    /**
+     * Create a new empty block of setlX statements.
+     *
+     * @param size Initial statement capacity of the block.
+     */
     public Block(final int size) {
         this(new ArrayList<Statement>(size));
     }
 
+    /**
+     * Create a new block of setlX statements.
+     *
+     * @param statements Statements in the new block.
+     */
     public Block(final List<Statement> statements) {
         this.statements = statements;
     }
@@ -105,11 +118,6 @@ public class Block extends Statement {
                     }
                 } catch (final InterruptedException e) {
                     throw new StopExecutionException("Interrupted");
-                } catch (final StackOverflowError soe) {
-                    state.storeFirstCallStackDepth();
-                    throw soe;
-                } finally {
-                    state.callStackDepth = oldCallStackDepth;
                 }
 
                 // handle exceptions thrown in thread
@@ -136,9 +144,9 @@ public class Block extends Statement {
                 }
             }
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
-        }  finally {
+        } finally {
             // reset callStackDepth
             state.callStackDepth = oldCallStackDepth;
         }
@@ -281,7 +289,6 @@ public class Block extends Statement {
                 result = null;
                 error  = se;
             } catch (final StackOverflowError soe) {
-                state.storeFirstCallStackDepth();
                 result = null;
                 error  = soe;
             } catch (final OutOfMemoryError oome) {

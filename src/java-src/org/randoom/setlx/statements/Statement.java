@@ -71,7 +71,7 @@ public abstract class Statement extends CodeFragment {
             return EXECUTE_ERROR;
 
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
 
             state.errWriteOutOfStack(soe, false);
             return EXECUTE_ERROR;

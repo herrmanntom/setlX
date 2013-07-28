@@ -30,6 +30,11 @@ public class Return extends Statement {
 
     private final Expr result;
 
+    /**
+     * Create a new return statement.
+     *
+     * @param result Expression to evaluate before returning.
+     */
     public Return(final Expr result) {
         this.result = result;
     }
@@ -37,7 +42,18 @@ public class Return extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         if (result != null) {
-            return ReturnMessage.createMessage(result.eval(state));
+            try {
+                // increase callStackDepth
+                ++(state.callStackDepth);
+
+                return ReturnMessage.createMessage(result.eval(state));
+            } catch (final StackOverflowError soe) {
+                state.storeStackDepthOfFirstCall(state.callStackDepth);
+                throw soe;
+            } finally {
+                // decrease callStackDepth
+                --(state.callStackDepth);
+            }
         } else {
             return ReturnMessage.OM;
         }
@@ -80,6 +96,13 @@ public class Return extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing an return statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting return statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Return termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

@@ -68,7 +68,7 @@ public abstract class Expr extends CodeFragment {
             se.addToTrace("Error in \"" + this + "\":");
             throw se;
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
         } finally {
             // decrease callStackDepth

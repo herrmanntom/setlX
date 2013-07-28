@@ -13,6 +13,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
 import org.randoom.setlx.utilities.TermConverter;
@@ -47,7 +48,6 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     private       Value     assignTerm;     // term of variable to store groups
     private final Condition condition;      // optional condition to confirm match
     private final Block     statements;     // block to execute after match
-    private       int       endOffset;      // Offset of last match operation (i.e. how far the match progressed into the input)
 
     /**
      * Create new regex-branch.
@@ -98,7 +98,6 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         this.assignTerm     = null;
         this.condition      = condition;
         this.statements     = statements;
-        this.endOffset      = -1;
 
         // optimize pattern
         this.pattern.optimize();
@@ -107,8 +106,8 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     @Override
     public MatchResult matches(final State state, final Value term) throws SetlException {
         if (term instanceof SetlString) {
-            final MatchResult result = scannes(state, (SetlString) term);
-            if (result.isMatch() && ((SetlString) term).size() == endOffset) {
+            final ScanResult result = scannes(state, (SetlString) term);
+            if (result.isMatch() && ((SetlString) term).size() == result.getEndOffset()) {
                 return result;
             }
         }
@@ -125,7 +124,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     }
 
     @Override
-    public MatchResult scannes(final State state, final SetlString string) throws SetlException {
+    public ScanResult scannes(final State state, final SetlString string) throws SetlException {
         Pattern pttrn = null;
 
         if (runtimePattern != null) {
@@ -158,30 +157,24 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         }
 
         // match pattern
-        final Matcher  m = pttrn.matcher(string.getUnquotedString());
-        final boolean  r = m.lookingAt();
-        if (r) {
+        final Matcher  matcher = pttrn.matcher(string.getUnquotedString());
+        final boolean  result  = matcher.lookingAt();
+        if (result) {
             if (assignTo != null && assignTerm == null) {
                 assignTerm = assignTo.toTerm(state);
             }
-            endOffset = m.end();
             if (assignTerm != null) {
-                final int      count  = m.groupCount() + 1;
+                final int      count  = matcher.groupCount() + 1;
                 final SetlList groups = new SetlList(count);
                 for (int i = 0; i < count; ++i) {
-                    groups.addMember(state, new SetlString(m.group(i)));
+                    groups.addMember(state, new SetlString(matcher.group(i)));
                 }
-                return assignTerm.matchesTerm(state, groups);
+                return new ScanResult(assignTerm.matchesTerm(state, groups), matcher.end());
+            } else {
+                return new ScanResult(true, matcher.end());
             }
-        } else {
-            endOffset = -1;
         }
-        return new MatchResult(r);
-    }
-
-    @Override
-    public int getEndOffset() {
-        return endOffset;
+        return new ScanResult(false, -1);
     }
 
     @Override

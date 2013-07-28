@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -18,16 +18,10 @@ public abstract class MatchAbstractScanBranch extends MatchAbstractBranch {
      *
      * @param state          Current state of the running setlX program.
      * @param string         String to scan.
-     * @return               Result of the match.
+     * @return               Result of the scan.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract MatchResult scannes(final State state, SetlString string) throws SetlException;
-    /**
-     * Returns the offset after the last character matched.
-     *
-     * @return               Offset of the last match.
-     */
-    public abstract int         getEndOffset();
+    public abstract ScanResult scannes(final State state, SetlString string) throws SetlException;
 
     /**
      * Convert a term representing a match branch into such a branch.

@@ -7,6 +7,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -55,13 +56,8 @@ public class MatchDefaultBranch extends MatchAbstractScanBranch {
     }
 
     @Override
-    public MatchResult scannes(final State state, final SetlString string) {
-        return new MatchResult(true);
-    }
-
-    @Override
-    public int getEndOffset() {
-        return END_OFFSET;
+    public ScanResult scannes(final State state, final SetlString string) {
+        return new ScanResult(true, END_OFFSET);
     }
 
     @Override

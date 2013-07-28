@@ -17,6 +17,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -35,7 +36,7 @@ import java.util.List;
  *
  * implemented with different classes which inherit from MatchAbstractScanBranch:
  *                  ====              ========       =====
- *                  mExpr             mPosVarm    mBranchList
+ *                  expr               posVar      branchList
  */
 public class Scan extends Statement {
     // functional character used in terms
@@ -100,32 +101,29 @@ public class Scan extends Statement {
 
                 // find branch which matches largest string
                 for (final MatchAbstractScanBranch br : branchList) {
-                    final MatchResult result = br.scannes(state, string);
-                    if (result.isMatch()) {
-                        final int offset = br.getEndOffset();
-                        if (offset > largestMatchSize) {
-                            // scope for condition
-                            final VariableScope innerScope = outerScope.createLinkedScope();
-                            state.setScope(innerScope);
+                    final ScanResult result = br.scannes(state, string);
+                    if (result.isMatch() && result.getEndOffset() > largestMatchSize) {
+                        // scope for condition
+                        final VariableScope innerScope = outerScope.createLinkedScope();
+                        state.setScope(innerScope);
 
-                            // put current position into scope
-                            if (posVar != null) {
-                                posVar.assignUncloned(state, position, FUNCTIONAL_CHARACTER);
-                            }
-
-                            // put all matching variables into scope
-                            result.setAllBindings(state, FUNCTIONAL_CHARACTER);
-
-                            // check condition
-                            if (br.evalConditionToBool(state)) {
-                                largestMatchSize   = offset;
-                                largestMatchBranch = br;
-                                largestMatchResult = result;
-                            }
-
-                            // reset scope
-                            state.setScope(outerScope);
+                        // put current position into scope
+                        if (posVar != null) {
+                            posVar.assignUncloned(state, position, FUNCTIONAL_CHARACTER);
                         }
+
+                        // put all matching variables into scope
+                        result.setAllBindings(state, FUNCTIONAL_CHARACTER);
+
+                        // check condition
+                        if (br.evalConditionToBool(state)) {
+                            largestMatchSize   = result.getEndOffset();
+                            largestMatchBranch = br;
+                            largestMatchResult = result;
+                        }
+
+                        // reset scope
+                        state.setScope(outerScope);
                     }
                 }
                 // execute branch which matches largest string

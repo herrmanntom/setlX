@@ -37,6 +37,11 @@ public class SetlX {
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
+    /**
+     * The main method.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(final String[] args) {
         String              dumpFile     = null;  // file to write loaded code into
         String              dumpTermFile = null;  // file to write loaded code as term into

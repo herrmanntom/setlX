@@ -1,8 +1,13 @@
 package org.randoom.setlx.utilities;
 
-// This class lets all calls die
+/**
+ * This "environment" lets all calls die silently.
+ */
 public class DummyEnvProvider implements EnvironmentProvider {
 
+    /**
+     * Singleton dummy environment provider.
+     */
     public final static DummyEnvProvider DUMMY = new DummyEnvProvider();
 
     private DummyEnvProvider() {
@@ -39,11 +44,6 @@ public class DummyEnvProvider implements EnvironmentProvider {
     @Override
     public String getEndl() {
         return "";
-    }
-
-    @Override
-    public int getMaxStackSize() {
-        return -1;
     }
 
     @Override

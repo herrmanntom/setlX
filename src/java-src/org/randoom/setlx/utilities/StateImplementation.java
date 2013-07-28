@@ -20,7 +20,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-// This class represents the current state of the interpreter.
+/**
+ * This class represents the current state of the interpreter.
+ */
 public class StateImplementation extends State {
 
     // interface provider to the outer world
@@ -45,6 +47,8 @@ public class StateImplementation extends State {
 
     // number of CPUs/Cores in System
     private final   static  int                 CORES = Runtime.getRuntime().availableProcessors();
+    // measurement of this JVM's stack size
+    private         static  int                 STACK_MEASUREMENT = -1;
 
     // is input feed by a human?
     private                 boolean             isHuman;
@@ -61,10 +65,18 @@ public class StateImplementation extends State {
     private                 boolean             assertsDisabled;
     private                 boolean             isRuntimeDebuggingEnabled;
 
+    /**
+     * Create new state implementation, using a dummy environment.
+     */
     public StateImplementation() {
         this(DummyEnvProvider.DUMMY);
     }
 
+    /**
+     * Create new state implementation, using the specified environment.
+     *
+     * @param envProvider Environment provider implementation to use.
+     */
     public StateImplementation(final EnvironmentProvider envProvider) {
         this.envProvider                 = envProvider;
         parserErrorCapture               = null;
@@ -97,7 +109,7 @@ public class StateImplementation extends State {
             randoom = new Random();
         }
         variableScope            = ROOT_SCOPE.createLinkedScope();
-        super.callStackDepth     = (envProvider.getMaxStackSize() / 50); // add a bit to account for initialization stuff
+        super.callStackDepth     = (getMaxStackSize() / 50); // add a bit to account for initialization stuff
         firstCallStackDepth      = -1;
         super.isExecutionStopped = false;
     }
@@ -354,7 +366,41 @@ public class StateImplementation extends State {
 
     @Override
     public int getMaxStackSize() {
-        return envProvider.getMaxStackSize();
+        // As setlX's estimation is far from perfect, we assume 3x stack usage
+        // then the internal accounting guesses.
+        // Thus the maximum stack size is about 1/3 of the measured stack.
+
+        return measureStackSize() / 3;
+    }
+
+    // measure the stack size
+    private static int measureStackSize() {
+        if (STACK_MEASUREMENT <= 0) {
+            // create new thread to measure entire stack size, independent of
+            // current stack usage size in this thread.
+            final Thread stackEstimater = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    STACK_MEASUREMENT = measureStackSize_slave(2);
+                }
+            });
+            stackEstimater.start();
+            try {
+                stackEstimater.join();
+            } catch (final InterruptedException e) { }
+        }
+        return STACK_MEASUREMENT;
+    }
+
+    private static int measureStackSize_slave(int size) {
+        try {
+            if (size > 5000) {
+                return -1;
+            }
+            return measureStackSize_slave(++size);
+        } catch (final StackOverflowError soe) {
+            return size;
+        }
     }
 
     @Override

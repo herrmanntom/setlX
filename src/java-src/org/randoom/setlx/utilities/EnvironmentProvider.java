@@ -7,32 +7,72 @@ import org.randoom.setlx.exceptions.JVMIOException;
  */
 public interface EnvironmentProvider {
 
-    // read from input
+    /**
+     * Query if user provided input stream (e.g. stdin) has queued input.
+     *
+     * @return                True if input has queued input.
+     * @throws JVMIOException Thrown in case of IO errors.
+     */
     public abstract boolean inReady() throws JVMIOException;
 
-    // line is read and returned without termination character(s)
+    /**
+     * Read a single line without termination character(s) from user provided
+     * input stream (e.g. stdin).
+     *
+     * @return                Contents of the line read.
+     * @throws JVMIOException Thrown in case of IO errors.
+     */
     public abstract String  inReadLine() throws JVMIOException;
 
-    // write to standard output
+    /**
+     * Write to standard output.
+     *
+     * @param msg Message to write.
+     */
     public abstract void    outWrite(final String msg);
 
-    // write to standard error
+    /**
+     * Write to standard error.
+     *
+     * @param msg Message to write.
+     */
     public abstract void    errWrite(final String msg);
 
-    // prompt for user input
+    /**
+     * Display a message to the user, before querying for input.
+     *
+     * @param msg Message to display.
+     */
     public abstract void    promptForInput(final String msg);
 
-    // some text format stuff
+    /**
+     * Get the tabulator character to use.
+     *
+     * @return Tabulator character.
+     */
     public abstract String  getTab();
+
+    /**
+     * Get system dependent newline character sequence.
+     *
+     * @return Newline character sequence.
+     */
     public abstract String  getEndl();
 
-    // maximum stack size assumption before creating a new thread
-    public abstract int     getMaxStackSize();
-
-    // allow modification of fileName/path when reading files
+    /**
+     * Allows modification of filename/path when reading files from within setlX.
+     *
+     * @param fileName Filename as passed to setlX via input/source code.
+     * @return         Filename to use when opening for read/write.
+     */
     public abstract String  filterFileName(final String fileName);
 
-    // allow modification of library name
+    /**
+     * Allows modification of library-path when loading libraries from within setlX.
+     *
+     * @param name Filename as expected by setlX.
+     * @return     Filename to use when opening for read/write.
+     */
     public abstract String  filterLibraryName(final String name);
 
 }

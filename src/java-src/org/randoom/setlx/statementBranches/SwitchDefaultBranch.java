@@ -1,9 +1,8 @@
-package org.randoom.setlx.statements;
+package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.types.SetlBoolean;
+import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
@@ -12,7 +11,7 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.List;
 
 /**
- * A case in a switch statement.
+ * The default case in a switch statement.
  *
  * grammar rule:
  * statement
@@ -21,24 +20,22 @@ import java.util.List;
  *     ;
  *
  * implemented here as:
- *                            =========     =====
- *                            condition   statements
+ *                                                                 =====
+ *                                                               statements
  */
-public class SwitchCaseBranch extends SwitchAbstractBranch {
+public class SwitchDefaultBranch extends SwitchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchCaseBranch.class);
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchDefaultBranch.class);
 
-    private final Condition condition;
-    private final Block     statements;
+    private final Block statements;
 
-    public SwitchCaseBranch(final Condition condition, final Block statements){
-        this.condition  = condition;
+    public SwitchDefaultBranch(final Block statements) {
         this.statements = statements;
     }
 
     @Override
-    public boolean evalConditionToBool(final State state) throws SetlException {
-        return condition.eval(state) == SetlBoolean.TRUE;
+    public boolean evalConditionToBool(final State state) {
+        return true;
     }
 
     @Override
@@ -52,7 +49,6 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
@@ -61,11 +57,9 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
-        sb.append("case ");
-        condition.appendString(state, sb, tabs);
-        sb.append(":");
+        sb.append("default:");
         sb.append(state.getEndl());
-        statements.appendString(state, sb, tabs + 1, false);
+        statements.appendString(state, sb, tabs + 1);
         sb.append(state.getEndl());
     }
 
@@ -73,19 +67,17 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
 
     @Override
     public Term toTerm(final State state) {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, condition.toTerm(state));
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(state, statements.toTerm(state));
         return result;
     }
 
-    public static SwitchCaseBranch termToBranch(final Term term) throws TermConversionException {
-        if (term.size() != 2) {
+    public static SwitchDefaultBranch termToBranch(final Term term) throws TermConversionException {
+        if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition   = TermConverter.valueToCondition(term.firstMember());
-            final Block     block       = TermConverter.valueToBlock(term.lastMember());
-            return new SwitchCaseBranch(condition, block);
+            final Block block = TermConverter.valueToBlock(term.firstMember());
+            return new SwitchDefaultBranch(block);
         }
     }
 }

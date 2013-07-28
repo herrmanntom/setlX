@@ -1,8 +1,12 @@
-package org.randoom.setlx.statements;
+package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -10,31 +14,47 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.List;
 
 /**
- * The default case in a switch statement.
+ * The default branch in a match statement.
  *
  * grammar rule:
  * statement
  *     : [...]
- *     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+ *     | 'match' '(' expr ')' '{' ( ... )* ('default' ':' block)? '}'
  *     ;
  *
  * implemented here as:
- *                                                                 =====
- *                                                               statements
+ *                                                        =====
+ *                                                      statements
  */
-public class SwitchDefaultBranch extends SwitchAbstractBranch {
+public class MatchDefaultBranch extends MatchAbstractScanBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchDefaultBranch.class);
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchDefaultBranch.class);
+    public      final static int    END_OFFSET           = -2020202020;
 
     private final Block statements;
 
-    public SwitchDefaultBranch(final Block statements) {
+    public MatchDefaultBranch(final Block statements) {
         this.statements = statements;
     }
 
     @Override
-    public boolean evalConditionToBool(final State state) {
+    public MatchResult matches(final State state, final Value term) {
+        return new MatchResult(true);
+    }
+
+    @Override
+    public boolean evalConditionToBool(final State state) throws SetlException {
         return true;
+    }
+
+    @Override
+    public MatchResult scannes(final State state, final SetlString string) {
+        return new MatchResult(true);
+    }
+
+    @Override
+    public int getEndOffset() {
+        return END_OFFSET;
     }
 
     @Override
@@ -71,12 +91,12 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
         return result;
     }
 
-    public static SwitchDefaultBranch termToBranch(final Term term) throws TermConversionException {
+    public static MatchDefaultBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Block block = TermConverter.valueToBlock(term.firstMember());
-            return new SwitchDefaultBranch(block);
+            return new MatchDefaultBranch(block);
         }
     }
 }

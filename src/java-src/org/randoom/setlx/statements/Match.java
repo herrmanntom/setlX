@@ -3,6 +3,8 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.statementBranches.MatchAbstractBranch;
+import org.randoom.setlx.statementBranches.MatchDefaultBranch;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;

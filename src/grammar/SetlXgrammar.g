@@ -5,6 +5,7 @@ grammar SetlXgrammar;
     import org.randoom.setlx.expressions.*;
     import org.randoom.setlx.expressionUtilities.*;
     import org.randoom.setlx.statements.*;
+    import org.randoom.setlx.statementBranches.*;
     import org.randoom.setlx.types.*;
     import org.randoom.setlx.utilities.*;
 

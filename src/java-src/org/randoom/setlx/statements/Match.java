@@ -35,6 +35,12 @@ public class Match extends Statement {
     private final Expr                        expr;
     private final List<MatchAbstractBranch>   branchList;
 
+    /**
+     * Create a new match statement.
+     *
+     * @param expr       Expression forming the term to match.
+     * @param branchList List of match branches.
+     */
     public Match(final Expr expr, final List<MatchAbstractBranch> branchList) {
         this.expr       = expr;
         this.branchList = branchList;
@@ -46,7 +52,7 @@ public class Match extends Statement {
         final VariableScope outerScope = state.getScope();
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2;
 
             for (final MatchAbstractBranch br : branchList) {
                 final MatchResult result = br.matches(state, term);
@@ -86,7 +92,7 @@ public class Match extends Statement {
             throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
             // make sure scope is always reset
             state.setScope(outerScope);
         }
@@ -153,6 +159,13 @@ public class Match extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing a Match statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Match Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Match termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

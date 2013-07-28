@@ -32,6 +32,11 @@ public class IfThen extends Statement {
 
     private final List<IfThenAbstractBranch> branchList;
 
+    /**
+     * Create a new if-then-else statement.
+     *
+     * @param branchList List of if-then-else branches.
+     */
     public IfThen(final List<IfThenAbstractBranch> branchList) {
         this.branchList = branchList;
     }
@@ -40,7 +45,7 @@ public class IfThen extends Statement {
     public ReturnMessage execute(final State state) throws SetlException {
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2;
 
             for (final IfThenAbstractBranch br : branchList) {
                 if (br.evalConditionToBool(state)) {
@@ -53,7 +58,7 @@ public class IfThen extends Statement {
             throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
         }
     }
 
@@ -107,6 +112,13 @@ public class IfThen extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing a if-then-else statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting if-then-else Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static IfThen termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

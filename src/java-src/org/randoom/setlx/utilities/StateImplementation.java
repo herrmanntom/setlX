@@ -235,6 +235,7 @@ public class StateImplementation extends State {
             soe.printStackTrace(new PrintStream(out));
             errWrite(out.toString());
             errWriteLn("callStackDepth assumption was: " + firstCallStackDepth);
+            errWriteLn("max callStackDepth is:         " + getMaxStackSize());
         }
     }
 
@@ -366,11 +367,14 @@ public class StateImplementation extends State {
 
     @Override
     public int getMaxStackSize() {
-        // As setlX's estimation is far from perfect, we assume 3x stack usage
-        // then the internal accounting guesses.
-        // Thus the maximum stack size is about 1/3 of the measured stack.
+        // As setlX's estimation is far from perfect, we assume 2x more stack usage
+        // then its internal accounting guesses.
+        // Also a few stack (~50) frames should be free for functions out of our
+        // control, like the ones from the JDK ;-)
+        //
+        // Thus the maximum stack size is about 1/2 of (measured stack - 50).
 
-        return measureStackSize() / 3;
+        return (measureStackSize() - 50) / 2;
     }
 
     // measure the stack size
@@ -394,8 +398,9 @@ public class StateImplementation extends State {
 
     private static int measureStackSize_slave(int size) {
         try {
-            if (size > 5000) {
-                return -1;
+            if (size >= 1000000) {
+                // forever loop protection in case Java ever gets an unlimited stack
+                return 1000000;
             }
             return measureStackSize_slave(++size);
         } catch (final StackOverflowError soe) {

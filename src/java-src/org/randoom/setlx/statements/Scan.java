@@ -42,6 +42,13 @@ public class Scan extends Statement {
     private final Variable                      posVar;
     private final List<MatchAbstractScanBranch> branchList;
 
+    /**
+     * Create a new scan statement.
+     *
+     * @param expr       Expression forming the string to match.
+     * @param posVar     Variable storing the current position inside the string.
+     * @param branchList List of scan branches.
+     */
     public Scan(final Expr expr, final Variable posVar, final List<MatchAbstractScanBranch> branchList) {
         this.expr       = expr;
         this.posVar     = posVar;
@@ -59,7 +66,7 @@ public class Scan extends Statement {
         final VariableScope outerScope = state.getScope();
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2;
 
             SetlString string = (SetlString) value.clone();
             int        charNr   = 1;
@@ -186,7 +193,7 @@ public class Scan extends Statement {
             throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
             // make sure scope is always reset
             state.setScope(outerScope);
         }
@@ -276,6 +283,13 @@ public class Scan extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing a Scan statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Scan Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Scan termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

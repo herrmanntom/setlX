@@ -37,6 +37,12 @@ public class TryCatch extends Statement {
     private final Block                        blockToTry;
     private final List<TryCatchAbstractBranch> tryList;
 
+    /**
+     * Create a new try-catch statement.
+     *
+     * @param blockToTry Block of statement to "try"
+     * @param tryList    List of catch branches.
+     */
     public TryCatch(final Block blockToTry, final List<TryCatchAbstractBranch> tryList) {
         this.blockToTry = blockToTry;
         this.tryList    = tryList;
@@ -46,7 +52,7 @@ public class TryCatch extends Statement {
     public ReturnMessage execute(final State state) throws SetlException {
         try{
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2;
 
             return blockToTry.execute(state);
         } catch (final CatchableInSetlXException cise) {
@@ -59,7 +65,7 @@ public class TryCatch extends Statement {
             throw cise;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
         }
     }
 
@@ -109,6 +115,13 @@ public class TryCatch extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing a try-catch statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting if-then-else Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static TryCatch termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

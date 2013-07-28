@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * This catchUsr block catches any exception, which was user created, e.g.
- * by using  throw()  function in SetlX.
+ * by using the   throw()  function in SetlX.
  *
  * grammar rule:
  * statement
@@ -29,11 +29,17 @@ import java.util.List;
  */
 public class TryCatchUsrBranch extends TryCatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchUsrBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchUsrBranch.class);
 
-    private final Variable               errorVar;
-    private final Block                  blockToRecover;
+    private final Variable errorVar;
+    private final Block    blockToRecover;
 
+    /**
+     * Create new catchUsr-branch.
+     *
+     * @param errorVar       Variable to bind caught exception to.
+     * @param blockToRecover Statements to execute when exception is caught.
+     */
     public TryCatchUsrBranch(final Variable errorVar, final Block blockToRecover){
         this.errorVar       = errorVar;
         this.blockToRecover = blockToRecover;
@@ -89,6 +95,13 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing an catchUsr-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static TryCatchUsrBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -97,6 +110,15 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
             final Block     block   = TermConverter.valueToBlock(term.lastMember());
             return new TryCatchUsrBranch(var, block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

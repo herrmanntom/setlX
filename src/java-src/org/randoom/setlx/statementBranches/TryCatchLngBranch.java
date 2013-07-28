@@ -30,11 +30,17 @@ import java.util.List;
  */
 public class TryCatchLngBranch extends TryCatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchLngBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchLngBranch.class);
 
-    private final Variable                  errorVar;
-    private final Block                     blockToRecover;
+    private final Variable errorVar;
+    private final Block    blockToRecover;
 
+    /**
+     * Create new catchLng-branch.
+     *
+     * @param errorVar       Variable to bind caught exception to.
+     * @param blockToRecover Statements to execute when exception is caught.
+     */
     public TryCatchLngBranch(final Variable errorVar, final Block blockToRecover){
         this.errorVar       = errorVar;
         this.blockToRecover = blockToRecover;
@@ -90,6 +96,13 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing an catchLng-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static TryCatchLngBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -98,6 +111,15 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
             final Block     block   = TermConverter.valueToBlock(term.lastMember());
             return new TryCatchLngBranch(var, block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

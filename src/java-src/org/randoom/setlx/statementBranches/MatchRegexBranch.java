@@ -13,7 +13,6 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
 import org.randoom.setlx.utilities.TermConverter;
@@ -26,6 +25,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
+ * The regex-branch of the match or scan statement.
+ *
  * grammar rule:
  * statement
  *     : [...]
@@ -34,11 +35,11 @@ import java.util.regex.PatternSyntaxException;
  *
  * implemented here as:
  *                                         ====       ====        =========       =====
- *                                       mPattern   mAssignTo     mCondition   mStatements
+ *                                        pattern    assignTo     condition     statements
  */
 public class MatchRegexBranch extends MatchAbstractScanBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
 
     private final Expr      pattern;        // pattern to match
     private       Pattern   runtimePattern; // compiled pattern to match
@@ -46,8 +47,17 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     private       Value     assignTerm;     // term of variable to store groups
     private final Condition condition;      // optional condition to confirm match
     private final Block     statements;     // block to execute after match
-    private       int       endOffset;      // Offset of last match operation (i.e. how far match progressed the input)
+    private       int       endOffset;      // Offset of last match operation (i.e. how far the match progressed into the input)
 
+    /**
+     * Create new regex-branch.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param pattern    Regex pattern to match.
+     * @param assignTo   (Groups of) variable(s) to assign regex match groups to.
+     * @param condition  Condition to check before execution.
+     * @param statements Statements to execute when condition is met.
+     */
     public MatchRegexBranch(final State state, final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
         this(pattern, assignTo, condition, statements);
 
@@ -175,8 +185,8 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     }
 
     @Override
-    public ReturnMessage execute(final State state) throws SetlException {
-        return statements.execute(state);
+    public Block getStatements() {
+        return statements;
     }
 
     @Override
@@ -263,6 +273,13 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing a regex-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static MatchRegexBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 4) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -287,6 +304,15 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

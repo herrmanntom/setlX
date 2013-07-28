@@ -32,6 +32,11 @@ public class Switch extends Statement {
 
     private final List<SwitchAbstractBranch> branchList;
 
+    /**
+     * Create a new switch statement.
+     *
+     * @param branchList List of switch branches.
+     */
     public Switch(final List<SwitchAbstractBranch> branchList) {
         this.branchList = branchList;
     }
@@ -44,7 +49,7 @@ public class Switch extends Statement {
 
             for (final SwitchAbstractBranch br : branchList) {
                 if (br.evalConditionToBool(state)) {
-                    return br.execute(state);
+                    return br.getStatements().execute(state);
                 }
             }
             return null;
@@ -112,6 +117,13 @@ public class Switch extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing an if-then-else statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting if-then-else Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Switch termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

@@ -1,10 +1,8 @@
 package org.randoom.setlx.statementBranches;
 
-import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -25,10 +23,15 @@ import java.util.List;
  */
 public class SwitchDefaultBranch extends SwitchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchDefaultBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchDefaultBranch.class);
 
     private final Block statements;
 
+    /**
+     * Create new default-branch.
+     *
+     * @param statements Statements to execute.
+     */
     public SwitchDefaultBranch(final Block statements) {
         this.statements = statements;
     }
@@ -39,8 +42,8 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
     }
 
     @Override
-    public ReturnMessage execute(final State state) throws SetlException {
-        return statements.execute(state);
+    public Block getStatements() {
+        return statements;
     }
 
     @Override
@@ -72,6 +75,13 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing a default-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static SwitchDefaultBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -79,6 +89,15 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
             final Block block = TermConverter.valueToBlock(term.firstMember());
             return new SwitchDefaultBranch(block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

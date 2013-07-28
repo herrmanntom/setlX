@@ -47,11 +47,11 @@ public class IfThen extends Statement {
     public ReturnMessage execute(final State state) throws SetlException {
         try {
             // increase callStackDepth
-            state.callStackDepth += 2;
+            ++(state.callStackDepth);
 
             for (final IfThenAbstractBranch br : branchList) {
                 if (br.evalConditionToBool(state)) {
-                    return br.execute(state);
+                    return br.getStatements().execute(state);
                 }
             }
             return null;
@@ -60,7 +60,7 @@ public class IfThen extends Statement {
             throw soe;
         } finally {
             // decrease callStackDepth
-            state.callStackDepth -= 2;
+            --(state.callStackDepth);
         }
     }
 
@@ -115,7 +115,7 @@ public class IfThen extends Statement {
     }
 
     /**
-     * Convert a term representing a if-then-else statement into such a statement.
+     * Convert a term representing an if-then-else statement into such a statement.
      *
      * @param term                     Term to convert.
      * @return                         Resulting if-then-else Statement.

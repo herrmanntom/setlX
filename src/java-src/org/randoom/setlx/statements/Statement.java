@@ -12,8 +12,25 @@ import org.randoom.setlx.utilities.State;
  */
 public abstract class Statement extends CodeFragment {
 
+    /**
+     * Code returned by executeWithErrorHandling() when the execution stopped
+     * without any error occurring or the user explicitly exiting.
+     *
+     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+     */
     public final static int EXECUTE_OK    = 23;
+    /**
+     * Code returned by executeWithErrorHandling() when the execution stopped
+     * after some kind of error.
+     *
+     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+     */
     public final static int EXECUTE_ERROR = 33;
+    /**
+     * Code returned by executeWithErrorHandling() when the user used the exit statement.
+     *
+     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+     */
     public final static int EXECUTE_EXIT  = 42;
 
     /**

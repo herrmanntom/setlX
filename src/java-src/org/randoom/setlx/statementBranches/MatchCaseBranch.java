@@ -11,7 +11,6 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -34,13 +33,20 @@ import java.util.List;
  */
 public class MatchCaseBranch extends MatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchCaseBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchCaseBranch.class);
 
     private final List<Expr>  exprs;      // expressions which creates terms to match
     private final List<Value> terms;      // terms to match
     private final Condition   condition;  // optional condition to confirm match
     private final Block       statements; // block to execute after match
 
+    /**
+     * Create new case-branch.
+     *
+     * @param exprs      List of match-expressions.
+     * @param condition  Condition to check before execution.
+     * @param statements Statements to execute when condition is met.
+     */
     public MatchCaseBranch(final List<Expr> exprs, final Condition condition, final Block statements){
         this.exprs      = exprs;
         this.terms      = new ArrayList<Value>(exprs.size());
@@ -76,8 +82,8 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     }
 
     @Override
-    public ReturnMessage execute(final State state) throws SetlException {
-        return statements.execute(state);
+    public Block getStatements() {
+        return statements;
     }
 
     @Override
@@ -158,6 +164,13 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing a case-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static MatchCaseBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -178,6 +191,15 @@ public class MatchCaseBranch extends MatchAbstractBranch {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

@@ -6,7 +6,6 @@ import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -27,11 +26,17 @@ import java.util.List;
  */
 public class IfThenElseIfBranch extends IfThenAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThenElseIfBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThenElseIfBranch.class);
 
     private final Condition condition;
     private final Block     statements;
 
+    /**
+     * Create new else-if-(??)-then-branch.
+     *
+     * @param condition  Condition to check before execution.
+     * @param statements Statements to execute when condition is met.
+     */
     public IfThenElseIfBranch(final Condition condition, final Block statements){
         this.condition  = condition;
         this.statements = statements;
@@ -43,8 +48,8 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
     }
 
     @Override
-    public ReturnMessage execute(final State state) throws SetlException {
-        return statements.execute(state);
+    public Block getStatements() {
+        return statements;
     }
 
     @Override
@@ -77,6 +82,13 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing an else-if-(??)-then-branch branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static IfThenElseIfBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -85,6 +97,15 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
             final Block     block       = TermConverter.valueToBlock(term.lastMember());
             return new IfThenElseIfBranch(condition, block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

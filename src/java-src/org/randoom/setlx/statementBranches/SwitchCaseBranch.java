@@ -6,7 +6,6 @@ import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -27,11 +26,17 @@ import java.util.List;
  */
 public class SwitchCaseBranch extends SwitchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchCaseBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchCaseBranch.class);
 
     private final Condition condition;
     private final Block     statements;
 
+    /**
+     * Create new case-branch.
+     *
+     * @param condition  Condition to check before execution.
+     * @param statements Statements to execute when condition is met.
+     */
     public SwitchCaseBranch(final Condition condition, final Block statements){
         this.condition  = condition;
         this.statements = statements;
@@ -43,8 +48,8 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
     }
 
     @Override
-    public ReturnMessage execute(final State state) throws SetlException {
-        return statements.execute(state);
+    public Block getStatements() {
+        return statements;
     }
 
     @Override
@@ -80,6 +85,13 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing a case-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static SwitchCaseBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -88,6 +100,15 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
             final Block     block       = TermConverter.valueToBlock(term.lastMember());
             return new SwitchCaseBranch(condition, block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

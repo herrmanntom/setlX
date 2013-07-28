@@ -72,7 +72,7 @@ public class Match extends Statement {
 
                     if (br.evalConditionToBool(state)) {
                         // execute statements
-                        final ReturnMessage execResult = br.execute(state);
+                        final ReturnMessage execResult = br.getStatements().execute(state);
 
                         // reset scope
                         state.setScope(outerScope);

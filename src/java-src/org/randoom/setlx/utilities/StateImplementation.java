@@ -110,7 +110,7 @@ public class StateImplementation extends State {
             randoom = new Random();
         }
         variableScope            = ROOT_SCOPE.createLinkedScope();
-        super.callStackDepth     = (getMaxStackSize() / 50); // add a bit to account for initialization stuff
+        super.callStackDepth     = 15; // add a bit to account for initialization stuff
         firstCallStackDepth      = -1;
         super.isExecutionStopped = false;
     }
@@ -370,12 +370,12 @@ public class StateImplementation extends State {
     public int getMaxStackSize() {
         // As setlX's estimation is far from perfect, we assume 2x more stack usage
         // then its internal accounting guesses.
-        // Also a few stack (~50) frames should be free for functions out of our
+        // Also a few stack (~66) frames should be free for functions out of our
         // control, like the ones from the JDK ;-)
         //
-        // Thus the maximum stack size is about 1/2 of (measured stack - 50).
+        // Thus the maximum stack size is about 1/2 of (measured stack - 66).
 
-        return (measureStackSize() - 50) / 2;
+        return (measureStackSize() - 66) / 2;
     }
 
     // measure the stack size
@@ -416,6 +416,7 @@ public class StateImplementation extends State {
         }
         if (this.callStackDepth != callStackDepth) {
             // this should not be possible!
+            // but reading the parameter prevents javac optimizing the whole thing away
             throw new InvalidParameterException("this.callStackDepth != callStackDepth");
         }
     }

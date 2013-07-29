@@ -70,7 +70,7 @@ public class Scan extends Statement {
         final VariableScope outerScope = state.getScope();
         try {
             // increase callStackDepth
-            state.callStackDepth += 3;
+            state.callStackDepth += 2;
 
             SetlString string = (SetlString) value.clone();
             int        charNr   = 1;
@@ -194,7 +194,7 @@ public class Scan extends Statement {
             throw soe;
         } finally {
             // decrease callStackDepth
-            state.callStackDepth -= 3;
+            state.callStackDepth -= 2;
             // make sure scope is always reset
             state.setScope(outerScope);
         }

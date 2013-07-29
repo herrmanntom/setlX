@@ -33,7 +33,7 @@ public abstract class Expr extends CodeFragment {
     public Value eval(final State state) throws SetlException {
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2; // one for this eval(), one for evaluate()
 
             if (isNotReplaceable) {
                 return this.evaluate(state);
@@ -72,7 +72,8 @@ public abstract class Expr extends CodeFragment {
             throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
+
         }
     }
 

@@ -123,31 +123,43 @@ public class Procedure extends Value {
 
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
-        final int        size   = args.size();
-        final SetlObject object = this.object;
-        this.object = null;
+        try{
+            // increase callStackDepth
+            ++(state.callStackDepth);
 
-        if (parameters.size() != size) {
-            throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with "+ parameters.size()+" instead of " +
-                size + " parameters."
-            );
+            final int        size   = args.size();
+            final SetlObject object = this.object;
+            this.object = null;
+
+            if (parameters.size() != size) {
+                throw new IncorrectNumberOfParametersException(
+                    "'" + this + "' is defined with "+ parameters.size()+" instead of " +
+                    size + " parameters."
+                );
+            }
+
+            // evaluate arguments
+            final ArrayList<Value> values = new ArrayList<Value>(size);
+            for (final Expr arg : args) {
+                values.add(arg.eval(state));
+            }
+
+            final Value result = callAfterEval(state, args, values, object);
+
+            return result;
+
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
-
-        // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(size);
-        for (final Expr arg : args) {
-            values.add(arg.eval(state));
-        }
-
-        final Value result = callAfterEval(state, args, values, object);
-
-        return result;
     }
 
-    protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
+    protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
         // increase callStackDepth
-        state.callStackDepth += 2;
+        ++(state.callStackDepth);
 
         // save old scope
         final VariableScope oldScope = state.getScope();
@@ -229,7 +241,7 @@ public class Procedure extends Value {
             wba.writeBack(state, FUNCTIONAL_CHARACTER);
 
             // decrease callStackDepth
-            state.callStackDepth -= 2;
+            --(state.callStackDepth);
         }
 
         if (result != null) {

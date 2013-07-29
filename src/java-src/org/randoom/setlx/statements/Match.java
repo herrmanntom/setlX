@@ -54,7 +54,7 @@ public class Match extends Statement {
         final VariableScope outerScope = state.getScope();
         try {
             // increase callStackDepth
-            state.callStackDepth += 2;
+            ++(state.callStackDepth);
 
             for (final MatchAbstractBranch br : branchList) {
                 final MatchResult result = br.matches(state, term);
@@ -94,7 +94,7 @@ public class Match extends Statement {
             throw soe;
         } finally {
             // decrease callStackDepth
-            state.callStackDepth -= 2;
+            --(state.callStackDepth);
             // make sure scope is always reset
             state.setScope(outerScope);
         }

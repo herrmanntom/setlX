@@ -45,23 +45,12 @@ public class IfThen extends Statement {
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        try {
-            // increase callStackDepth
-            ++(state.callStackDepth);
-
-            for (final IfThenAbstractBranch br : branchList) {
-                if (br.evalConditionToBool(state)) {
-                    return br.getStatements().execute(state);
-                }
+        for (final IfThenAbstractBranch br : branchList) {
+            if (br.evalConditionToBool(state)) {
+                return br.getStatements().execute(state);
             }
-            return null;
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
-        } finally {
-            // decrease callStackDepth
-            --(state.callStackDepth);
         }
+        return null;
     }
 
     @Override

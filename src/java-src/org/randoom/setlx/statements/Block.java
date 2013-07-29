@@ -83,7 +83,7 @@ public class Block extends Statement {
     public ReturnMessage execute(final State state) throws SetlException {
         // store and increase callStackDepth
         final int oldCallStackDepth = state.callStackDepth;
-        ++(state.callStackDepth);
+        state.callStackDepth += 2; // one for the block, one for the next statement
 
         boolean executeInCurrentStack = true;
         if (MAX_CALL_STACK_DEPTH < 0) {

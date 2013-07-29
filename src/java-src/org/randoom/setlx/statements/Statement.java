@@ -51,6 +51,8 @@ public abstract class Statement extends CodeFragment {
      */
     public int executeWithErrorHandling(final State state, final boolean hintAtJVMxOptions) {
         try {
+            // increase callStackDepth
+            ++(state.callStackDepth);
 
             execute(state);
             return EXECUTE_OK;
@@ -94,6 +96,9 @@ public abstract class Statement extends CodeFragment {
         } catch (final Exception e) { // this should never happen...
             state.errWriteInternalError(e);
             return EXECUTE_ERROR;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
     }
 

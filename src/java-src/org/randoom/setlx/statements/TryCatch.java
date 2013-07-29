@@ -53,7 +53,7 @@ public class TryCatch extends Statement {
     public ReturnMessage execute(final State state) throws SetlException {
         try{
             // increase callStackDepth
-            state.callStackDepth += 2;
+            ++(state.callStackDepth);
 
             return blockToTry.execute(state);
         } catch (final CatchableInSetlXException cise) {
@@ -64,9 +64,12 @@ public class TryCatch extends Statement {
             }
             // If we get here nothing matched. Re-throw as if nothing happened
             throw cise;
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
         } finally {
             // decrease callStackDepth
-            state.callStackDepth -= 2;
+            --(state.callStackDepth);
         }
     }
 

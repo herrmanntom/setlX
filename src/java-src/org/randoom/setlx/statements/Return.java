@@ -42,18 +42,10 @@ public class Return extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         if (result != null) {
-            try {
-                // increase callStackDepth
-                ++(state.callStackDepth);
+            // increase callStackDepth
+            ++(state.callStackDepth);
 
-                return ReturnMessage.createMessage(result.eval(state));
-            } catch (final StackOverflowError soe) {
-                state.storeStackDepthOfFirstCall(state.callStackDepth);
-                throw soe;
-            } finally {
-                // decrease callStackDepth
-                --(state.callStackDepth);
-            }
+            return ReturnMessage.createMessage(result.eval(state));
         } else {
             return ReturnMessage.OM;
         }

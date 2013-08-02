@@ -20,6 +20,8 @@
 /src/java-src/org/randoom/setlx/grammar
 */bin
 *.jar
+/src/java-src/org/randoom/*/*/*.class
+/src/TAGS
 /Tutorial/*.?00pk
 /Tutorial/*.aux
 /Tutorial/*.dvi
@@ -28,6 +30,8 @@
 /Tutorial/*.pdf
 /Tutorial/*.toc
 /Tutorial/auto
+/Tutorial/_region_.synctex.gz
+/Tutorial/_region_.tex
 /diff.*.result
 /developmentGuide.pdf
 /manual.pdf

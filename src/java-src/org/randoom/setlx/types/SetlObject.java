@@ -247,19 +247,6 @@ public class SetlObject extends Value {
     }
     final static String TO_RATIONAL = createOverloadVariable(PD_rational.DEFINITION);
 
-    @Override
-    public Value toReal(final State state) throws SetlException {
-        final Value result = overload(state, TO_REAL);
-        if (result == Om.OM && ! (result instanceof Real)) {
-            throw new IncompatibleTypeException(
-                "Result of '" + TO_REAL + "' is not a real."
-            );
-        } else {
-            return result;
-        }
-    }
-    final static String TO_REAL = createOverloadVariable(PD_real.DEFINITION);
-
     /* arithmetic operations */
 
     @Override
@@ -677,7 +664,7 @@ public class SetlObject extends Value {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
      * < SetlObject < ConstructorDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.

@@ -18,7 +18,7 @@ public class PD_real extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).toReal(state);
+        return args.get(0).toDouble(state);
     }
 }
 

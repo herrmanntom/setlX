@@ -11,7 +11,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
-import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.utilities.TermConverter;
@@ -172,14 +172,6 @@ public class SetlX {
                 }
             } else if (s.equals("--predictableRandom")) { // easier debugging
                 state.setPredictableRandoom();
-            } else if (s.equals("--real32")) {
-                Real.setPrecision32();
-            } else if (s.equals("--real64")) {
-                Real.setPrecision64();
-            } else if (s.equals("--real128")) {
-                Real.setPrecision128();
-            } else if (s.equals("--real256")) {
-                Real.setPrecision256();
             } else if (s.equals("--realDefault")) {
                 state.setRealPrintMode_default();
             } else if (s.equals("--realEngineering")) {
@@ -562,15 +554,10 @@ public class SetlX {
             "     passes all following arguments to executed program via `params' variable\n" +
             "  --predictableRandom\n" +
             "      always use same random sequence (debugging)\n" +
-            "  --real32\n" +
-            "  --real64\n" +
-            "  --real128\n" +
-            "  --real256\n" +
-            "      sets the width of the real-type in bits (real64 is the default)\n" +
             "  --realDefault\n" +
             "  --realEngineering\n" +
             "  --realPlain\n" +
-            "      sets how the exponent of reals is displayed\n" +
+            "      sets how the exponent of doubles is displayed\n" +
             "  --verbose\n" +
             "      display the parsed program before executing it\n" +
             "  --version\n" +

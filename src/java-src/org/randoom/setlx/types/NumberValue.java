@@ -32,13 +32,6 @@ public abstract class NumberValue extends Value {
             return this.power(state, exponent.jDoubleValue());
         } else if (exponent.isDouble() == SetlBoolean.TRUE) {
             return this.power(state, exponent.jDoubleValue());
-        } else if (exponent.isReal() == SetlBoolean.TRUE) {
-            final Rational r = (Rational) exponent.toRational(state);
-            if (r.isInteger() == SetlBoolean.TRUE && r.jIntConvertable()) {
-                return this.power(state, r.jIntValue());
-            } else {
-                return this.power(state, exponent.jDoubleValue());
-            }
         } else if (exponent instanceof SetlSet && this.equalTo(Rational.TWO)) {
             return ((SetlSet) exponent).powerSet(state);
         } else if (exponent instanceof Term) {

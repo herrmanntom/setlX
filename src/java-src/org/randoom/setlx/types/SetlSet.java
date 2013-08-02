@@ -15,7 +15,7 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 /**
- * This class implements an set of arbitrary SetlX values.
+ * This class implements a set of arbitrary SetlX values.
  * Note that sets in SetlX are in lexicographical order.
  *
  * It will most likely be created and filled by an SetListConstructor
@@ -30,10 +30,10 @@ import java.util.TreeSet;
  */
 public class SetlSet extends CollectionValue {
     /* To allow initially `free' cloning, by only marking a clone without
-     * actually doing any cloning, this set carries a isClone flag.
+     * actually doing any cloning, this set carries an isClone flag.
      *
-     * If the contents of this SetlSet is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
+     * If the contents of this SetlSet is modified, the method `separateFromOriginal()'
+     * MUST be called before the modification.  This method then performs the real cloning,
      * if required.
      *
      * Main benefit of this technique is to perform the real cloning only
@@ -390,7 +390,7 @@ public class SetlSet extends CollectionValue {
         lowerBound.addMember(state, arg);
         final Value upperBound  = new SetlList(2);
         upperBound.addMember(state, arg);
-        upperBound.addMember(state, Infinity.POSITIVE);
+        upperBound.addMember(state, Top.TOP);
 
         final NavigableSet<Value> navSubSet = set.subSet(lowerBound, false, upperBound, true);
 
@@ -465,7 +465,7 @@ public class SetlSet extends CollectionValue {
         lowerBound.addMember(state, element);
         final Value upperBound  = new SetlList(2);
         upperBound.addMember(state, element);
-        upperBound.addMember(state, Infinity.POSITIVE);
+        upperBound.addMember(state, Top.TOP);
 
         final NavigableSet<Value> navSubSet = set.subSet(lowerBound, false, upperBound, true);
 
@@ -582,7 +582,7 @@ public class SetlSet extends CollectionValue {
         lowerBound.addMember(state, index);
         final Value upperBound  = new SetlList(2);
         upperBound.addMember(state, index);
-        upperBound.addMember(state, Infinity.POSITIVE);
+        upperBound.addMember(state, Top.TOP);
 
         // remove all previously set pairs which first member matches index
         set.removeAll(new TreeSet<Value>(set.subSet(lowerBound, true, upperBound, true)));

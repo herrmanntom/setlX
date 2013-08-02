@@ -236,9 +236,9 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value toReal(final State state) {
+    public Value toDouble(final State state) {
         try {
-            return Real.valueOf(content.toString());
+            return SetlDouble.valueOf(content.toString());
         } catch (final NumberFormatException nfe) {
             return Om.OM;
         }
@@ -750,7 +750,7 @@ public class SetlString extends IndexedCollectionValue {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
      * < SetlObject < ConstructorDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.

@@ -14,8 +14,7 @@ import java.util.List;
  */
 
 public class PD_from extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION
-                                            = new PD_from();
+    public final static PreDefinedProcedure DEFINITION = new PD_from();
 
     private PD_from() {
         super();
@@ -26,7 +25,8 @@ public class PD_from extends PreDefinedProcedure {
     public Value execute(final State       state,
                          final List<Value> args,
                          final List<Value> writeBackVars
-    ) throws SetlException {
+                        ) throws SetlException 
+    {
         final Value collection = args.get(0);
         final Value element;
         try {
@@ -43,8 +43,7 @@ public class PD_from extends PreDefinedProcedure {
             );
         }
 
-        /* write the reduced collection back
-           into the outer environment        */
+        // write the reduced collection back into the outer environment
         writeBackVars.add(collection);
 
         return element;

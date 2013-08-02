@@ -139,7 +139,7 @@ public class SetlBoolean extends Value {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
      * < SetlObject < ConstructorDefinition < +Infinity
      * This ranking is necessary to allow sets and lists of different types.

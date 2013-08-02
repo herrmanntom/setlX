@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.NumberValue;
-import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Value;

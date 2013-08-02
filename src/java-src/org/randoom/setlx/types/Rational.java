@@ -222,17 +222,8 @@ public class Rational extends NumberValue {
         return SetlDouble.valueOf(nominator, denominator);
     }
 
-    @Override
-    public Real toReal(final State state) {
-        return Real.valueOf(nominator, denominator);
-    }
-
     SetlDouble toDouble() {
         return SetlDouble.valueOf(nominator, denominator);
-    }
-
-    /*package*/ Real toReal() {
-        return Real.valueOf(nominator, denominator);
     }
 
     /* native type checks */
@@ -328,8 +319,6 @@ public class Rational extends NumberValue {
             }
         } else if (subtrahend instanceof SetlDouble) {
             return ((SetlDouble) subtrahend).differenceFlipped(state, this);
-        } else if (subtrahend instanceof Real) {
-            return ((Real) subtrahend).differenceFlipped(state, this);
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
@@ -532,7 +521,6 @@ public class Rational extends NumberValue {
                 return new Rational(nominator.multiply(r.nominator), denominator.multiply(r.denominator));
             }
         } else if (multiplier instanceof SetlDouble ||
-                   multiplier instanceof Real       ||
                    multiplier instanceof SetlList   ||
                    multiplier instanceof SetlString
         ) {
@@ -565,8 +553,6 @@ public class Rational extends NumberValue {
             }
         } else if (divisor instanceof SetlDouble) {
             return ((SetlDouble) divisor).quotientFlipped(state, this);
-        } else if (divisor instanceof Real) {
-            return ((Real) divisor).quotientFlipped(state, this);
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(state, this);
         } else {
@@ -614,14 +600,32 @@ public class Rational extends NumberValue {
         if (isInteger) {
             return this;
         } else {
-            // This computation needs to be as involved as it is, because it might happen
-            // that the last invocation of the function round below rounds up.  Example:
-            // this = 100000000000000000000000000000000000000000000000000000000000000.75;
-            // this.toInteger = 100000000000000000000000000000000000000000000000000000000000000;
-            // roundPart = round(0,75) = 1;
-            // this + roundPart = 100000000000000000000000000000000000000000000000000000000000001;
-            final Rational roundPart = (Rational) this.difference(state, this.toInteger(state)).toReal(state).round(state);
-            return (Rational) this.toInteger(state).sum(state, roundPart);
+	    if (nominator.signum() > 0) {
+		BigInteger[] dr = nominator.divideAndRemainder(denominator);
+		BigInteger   a  = dr[0];
+		BigInteger   b  = dr[1];
+		BigInteger   b2 = b.multiply(new BigInteger("2"));
+		int cmp = b2.compareTo(denominator);
+		if (cmp < 0) {
+		    return new Rational(a);
+		} else {
+		    return new Rational(a.add(BigInteger.ONE));
+		}
+	    } else {
+		BigInteger   nn = nominator.negate();
+		BigInteger[] dr = nn.divideAndRemainder(denominator);
+		BigInteger   a  = dr[0];
+		BigInteger   b  = dr[1];
+		BigInteger   b2 = b.multiply(new BigInteger("2"));
+		BigInteger   result;
+		int cmp = b2.compareTo(denominator);
+		if (cmp < 0) {
+		    result = a;
+		} else {
+		    result = a.add(BigInteger.ONE);
+		}
+		return new Rational(result.negate());
+	    }
         }
     }
 
@@ -639,8 +643,6 @@ public class Rational extends NumberValue {
                 return new Rational(n, d);
             }
         } else if (summand instanceof SetlDouble) {
-            return summand.sum(state, this);
-        } else if (summand instanceof Real) {
             return summand.sum(state, this);
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
@@ -728,8 +730,6 @@ public class Rational extends NumberValue {
             }
         } else if (v instanceof SetlDouble) {
             return toDouble().compareTo(v);
-        } else if (v instanceof Real) {
-            return toReal().compareTo(v);
         }  else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -764,8 +764,6 @@ public class Rational extends NumberValue {
             }
         } else if (v instanceof SetlDouble) {
             return toDouble().equalTo(v);
-        } else if (v instanceof Real) {
-            return toReal().equalTo(v);
         } else {
             return false;
         }

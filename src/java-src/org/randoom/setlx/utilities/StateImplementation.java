@@ -5,8 +5,8 @@ import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.SetlClass;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -70,7 +70,7 @@ public class StateImplementation extends State {
         this.envProvider                 = envProvider;
         parserErrorCapture               = null;
         parserErrorCount                 = 0;
-        super.realPrintMode              = Real.PRINT_MODE_DEFAULT;
+        super.realPrintMode              = SetlDouble.PRINT_MODE_DEFAULT;
         loadedLibraries                  = new HashSet<String>();
         classDefinitions                 = new HashMap<String, SetlClass>();
         variableScope                    = ROOT_SCOPE.createLinkedScope();
@@ -199,15 +199,15 @@ public class StateImplementation extends State {
 
     @Override
     public void setRealPrintMode_default() {
-        super.realPrintMode = Real.PRINT_MODE_DEFAULT;
+        super.realPrintMode = SetlDouble.PRINT_MODE_DEFAULT;
     }
     @Override
     public void setRealPrintMode_engineering() {
-        super.realPrintMode = Real.PRINT_MODE_ENGINEERING;
+        super.realPrintMode = SetlDouble.PRINT_MODE_ENGINEERING;
     }
     @Override
     public void setRealPrintMode_plain() {
-        super.realPrintMode = Real.PRINT_MODE_PLAIN;
+        super.realPrintMode = SetlDouble.PRINT_MODE_PLAIN;
     }
 
     // allow modification of fileName/path when reading files

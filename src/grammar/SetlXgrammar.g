@@ -542,7 +542,6 @@ explicitList [boolean enableIgnore] returns [CollectionBuilder el]
 atomicValue returns [Value av]
     : NUMBER     { $av = Rational.valueOf($NUMBER.text);       }
     | DOUBLE     { $av = SetlDouble.valueOf($DOUBLE.text);     }
-    | '$' DOUBLE { $av = Real.valueOf($DOUBLE.text);           }
     | 'om'       { $av = Om.OM;                                }
     | 'true'     { $av = SetlBoolean.TRUE;                     }
     | 'false'    { $av = SetlBoolean.FALSE;                    }

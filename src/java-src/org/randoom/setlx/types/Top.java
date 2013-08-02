@@ -1,30 +1,24 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
-public class SetlError extends Value {
+public class Top extends Value {
+    public final static Top TOP = new Top();
 
-    private final String message;
-
-    public SetlError(final String message) {
-        this.message = message;
-    }
-
-    public SetlError(final SetlException exception) {
-        this(exception.getMessage());
-    }
+    private Top() {}
 
     @Override
-    public SetlError clone() {
-        // this value is more or less atomic and can not be changed once set
+    public Top clone() {
+        // this value is atomic and can not be changed once set
         return this;
     }
 
-    /* type checks (sort of boolean operation) */
-
+    /* type checks (sort of Boolean operation) */
     @Override
-    public SetlBoolean isError() {
+    public SetlBoolean isTop() {
         return SetlBoolean.TRUE;
     }
 
@@ -32,7 +26,7 @@ public class SetlError extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append(message);
+	sb.append("Top");
     }
 
     /* comparisons */
@@ -46,42 +40,32 @@ public class SetlError extends Value {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof SetlError) {
-            final SetlError error = (SetlError) v;
-            return message.compareTo(error.message);
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return 1;
         }
     }
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
+     * SetlError < Om < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
+     * < SetlObject < ConstructorDefinition < Top
      * This ranking is necessary to allow sets and lists of different types.
      */
     @Override
     protected int compareToOrdering() {
-        return 100;
+	return 1300;
     }
 
     @Override
     public boolean equalTo(final Value v) {
-        if (this == v) {
-            return true;
-        } else if (v instanceof SetlError) {
-            return message.equals(((SetlError) v).message);
-        } else {
-            return false;
-        }
+        // as only exactly one object of class Top ever exists, we can get away with comparing the reference
+        return this == v;
     }
-
-    private final static int initHashCode = SetlError.class.hashCode();
 
     @Override
     public int hashCode() {
-        return initHashCode * 31 + message.hashCode();
+        return -1029009190;
     }
 }
 

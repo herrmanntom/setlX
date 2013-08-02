@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigDecimal;
@@ -13,6 +14,10 @@ import java.math.BigInteger;
  * This class represents a binary floating point number.
  */
 public class SetlDouble extends NumberValue {
+    public  final static int        PRINT_MODE_DEFAULT     = 1;
+    public  final static int        PRINT_MODE_ENGINEERING = 2;
+    public  final static int        PRINT_MODE_PLAIN       = 3;
+
     private final double doubleValue;
 
     private final static BigDecimal DOUBLE_MAX_VALUE  = BigDecimal.valueOf(Double.MAX_VALUE);
@@ -185,11 +190,6 @@ public class SetlDouble extends NumberValue {
     }
 
     @Override
-    public NumberValue toReal(final State state) throws UndefinedOperationException {
-        return Real.valueOf(this.doubleValue);
-    }
-
-    @Override
     public SetlDouble toDouble(final State state) {
         return this;
     }
@@ -228,16 +228,10 @@ public class SetlDouble extends NumberValue {
             SetlDouble rhs = (SetlDouble) subtrahend;
             return SetlDouble.valueOf(this.doubleValue - rhs.getDoubleValue());
         }
-        if (subtrahend instanceof NumberValue) {
-             if (subtrahend instanceof Real) {
-                Real   rhs       = (Real) subtrahend;
-                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-                return SetlDouble.valueOf(this.doubleValue - rhsDouble);
-            } else { // subtrahend must be Rational now
-                Rational rhs = (Rational) subtrahend;
-                return SetlDouble.valueOf(this.doubleValue - rhs.toDouble().doubleValue);
-            }
-        } else if (subtrahend instanceof Term) {
+        if (subtrahend instanceof Rational) {
+            Rational rhs = (Rational) subtrahend;
+            return SetlDouble.valueOf(this.doubleValue - rhs.toDouble().doubleValue);
+         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
@@ -251,9 +245,6 @@ public class SetlDouble extends NumberValue {
         BigInteger d   = minuend.getDenominatorValue();
         SetlDouble lhs = SetlDouble.valueOf(n, d);
         return lhs.difference(state, this);
-    }
-    public Value differenceFlipped(final State state, final Real minuend) throws SetlException {
-        return minuend.toDouble(state).difference(state, this);
     }
 
     @Override
@@ -270,10 +261,6 @@ public class SetlDouble extends NumberValue {
         if (divisor instanceof SetlDouble) {
             SetlDouble rhs = (SetlDouble) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.getDoubleValue()).floor(state);
-        }
-        if (divisor instanceof Real) {
-            final Real rhs = (Real) divisor;
-            return SetlDouble.valueOf(this.doubleValue / rhs.jDoubleValue()).floor(state);
         }
         if (divisor instanceof Rational) {
             final Rational rhs = (Rational) divisor;
@@ -315,15 +302,9 @@ public class SetlDouble extends NumberValue {
             SetlDouble rhs = (SetlDouble) multiplier;
             return SetlDouble.valueOf(this.doubleValue * rhs.getDoubleValue());
         }
-        if (multiplier instanceof NumberValue) {
-            if (multiplier instanceof Real) {
-                Real   rhs       = (Real) multiplier;
-                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-                return SetlDouble.valueOf(this.doubleValue * rhsDouble);
-            } else {  // multiplier must be Rational now
-                final Rational rhs = (Rational) multiplier;
-                return SetlDouble.valueOf(this.doubleValue * rhs.toDouble().doubleValue);
-            }
+        if (multiplier instanceof Rational) {
+	    final Rational rhs = (Rational) multiplier;
+	    return SetlDouble.valueOf(this.doubleValue * rhs.toDouble().doubleValue);
         } else if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
@@ -339,15 +320,9 @@ public class SetlDouble extends NumberValue {
             SetlDouble rhs = (SetlDouble) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.getDoubleValue());
         }
-        if (divisor instanceof NumberValue) {
-            if (divisor instanceof Real) {
-                Real   rhs       = (Real) divisor;
-                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-                return SetlDouble.valueOf(this.doubleValue / rhsDouble);
-            } else {  // divisor must be Rational now
-                Rational rhs = (Rational) divisor;
-                return SetlDouble.valueOf(this.doubleValue / rhs.toDouble().doubleValue);
-            }
+        if (divisor instanceof Rational) {
+	    Rational rhs = (Rational) divisor;
+	    return SetlDouble.valueOf(this.doubleValue / rhs.toDouble().doubleValue);
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(state, this);
         } else {
@@ -362,9 +337,6 @@ public class SetlDouble extends NumberValue {
         SetlDouble lhs = SetlDouble.valueOf(n, d);
         return lhs.quotient(state, this);
     }
-    public Value quotientFlipped(final State state, final Real dividend) throws SetlException {
-        return dividend.toDouble(state).quotient(state, this);
-    }
 
     @Override
     public Rational round(final State state) throws UndefinedOperationException {
@@ -378,15 +350,9 @@ public class SetlDouble extends NumberValue {
             SetlDouble rhs = (SetlDouble) summand;
             return SetlDouble.valueOf(this.doubleValue + rhs.getDoubleValue());
         }
-        if (summand instanceof NumberValue) {
-            if (summand instanceof Real) {
-                Real   rhs       = (Real) summand;
-                double rhsDouble = rhs.getBigDecimalValue().doubleValue();
-                return SetlDouble.valueOf(this.doubleValue + rhsDouble);
-            } else { // summand must be Rational now
-                Rational rhs = (Rational) summand;
-                return SetlDouble.valueOf(this.doubleValue + rhs.toDouble().doubleValue);
-            }
+        if (summand instanceof Rational) {
+	    Rational rhs = (Rational) summand;
+	    return SetlDouble.valueOf(this.doubleValue + rhs.toDouble().doubleValue);
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
@@ -398,8 +364,7 @@ public class SetlDouble extends NumberValue {
         }
     }
 
-    @Override
-    public SetlBoolean isInfinity() {
+    public SetlBoolean isInfinite() {
         if (this.doubleValue == Double.POSITIVE_INFINITY ||
             this.doubleValue == Double.NEGATIVE_INFINITY   ) 
         {
@@ -432,10 +397,6 @@ public class SetlDouble extends NumberValue {
             final SetlDouble rhs = (SetlDouble) v;
             final Double d = this.doubleValue;
             return d.compareTo(rhs.doubleValue);
-        } else if (v instanceof Real) {
-            final Real rhs = (Real) v;
-            final Double d = this.doubleValue;
-            return d.compareTo(rhs.getBigDecimalValue().doubleValue());
         } else if (v instanceof Rational) {
             final Rational rhs = (Rational) v;
             final Double d = this.doubleValue;
@@ -447,7 +408,7 @@ public class SetlDouble extends NumberValue {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < SetlBoolean < Rational & Real
+     * SetlError < Om < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
      * < SetlObject < ConstructorDefinition
      * This ranking is necessary to allow sets and lists of different types.

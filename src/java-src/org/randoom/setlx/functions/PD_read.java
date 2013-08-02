@@ -52,8 +52,8 @@ public class PD_read extends PreDefinedProcedure {
             inputValue = new SetlString(input);
             if (inputValue.toInteger(state) != Om.OM) {
                 inputValue = inputValue.toInteger(state);
-            } else if (inputValue.toReal(state) != Om.OM) {
-                inputValue = inputValue.toReal(state);
+            } else if (inputValue.toDouble(state) != Om.OM) {
+                inputValue = inputValue.toDouble(state);
             }
         } else {
             inputValue = Om.OM;

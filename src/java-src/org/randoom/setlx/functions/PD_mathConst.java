@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -28,11 +27,11 @@ public class PD_mathConst extends PreDefinedProcedure {
         // create constants with max precision possible when --real256 option is used
         if (       name.getUnquotedString().equalsIgnoreCase( "e"        )) {
 
-            return Real.valueOf("2.718281828459045235360287471352662497757247093699959574966967627724077");
+            return SetlDouble.valueOf("2.718281828459045235360287471352662497757247093699959574966967627724077");
 
         } else if (name.getUnquotedString().equalsIgnoreCase( "pi"       )) {
 
-            return Real.valueOf("3.141592653589793238462643383279502884197169399375105820974944592307816");
+            return SetlDouble.valueOf("3.141592653589793238462643383279502884197169399375105820974944592307816");
 
         } else if (name.getUnquotedString().equalsIgnoreCase( "infinity" )) {
 

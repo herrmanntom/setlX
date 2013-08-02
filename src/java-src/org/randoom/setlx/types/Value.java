@@ -70,7 +70,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
-    public SetlBoolean isInfinity() {
+    public SetlBoolean isTop() {
         return SetlBoolean.FALSE;
     }
 
@@ -91,10 +91,6 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     public SetlBoolean isProcedure() {
-        return SetlBoolean.FALSE;
-    }
-
-    public SetlBoolean isReal() {
         return SetlBoolean.FALSE;
     }
 
@@ -128,10 +124,6 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return Om.OM;
     }
 
-    public Value toReal(final State state) throws SetlException {
-        return Om.OM;
-    }
-
     public Value toDouble(final State state) throws SetlException {
         return Om.OM;
     }
@@ -161,7 +153,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     public double toJDoubleValue(final State state) throws SetlException {
-        final Value real = this.toReal(state);
+        final Value real = this.toDouble(state);
         if (real != Om.OM) {
             return real.jDoubleValue();
         } else {
@@ -651,7 +643,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* To compare "incomparable" values, e.g. of different types, the following
      * order is established and used in compareTo():
-     * SetlError < Om < SetlBoolean < Rational & Real
+     * SetlError < Om < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
      * < SetlObject < ConstructorDefinition
      * This ranking is necessary to allow sets and lists of different types.

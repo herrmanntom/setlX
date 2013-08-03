@@ -39,7 +39,7 @@ public class Assert extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         if (condition.eval(state) != SetlBoolean.TRUE) {
             throw new AssertException("Assertion failed: " + message.eval(state).toString());
         }

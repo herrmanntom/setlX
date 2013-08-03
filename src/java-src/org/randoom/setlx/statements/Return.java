@@ -11,52 +11,54 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'return' anyExpr? ';'
-    ;
-
-implemented here as:
-               =======
-               result
-*/
-
+/**
+ * Implementation of the return statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'return' anyExpr? ';'
+ *     ;
+ *
+ * implemented here as:
+ *                =======
+ *                result
+ */
 public class Return extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^return";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Return.class);
 
-    private final Expr mResult;
+    private final Expr result;
 
+    /**
+     * Create a new return statement.
+     *
+     * @param result Expression to evaluate before returning.
+     */
     public Return(final Expr result) {
-        mResult = result;
+        this.result = result;
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        if (mResult != null) {
-            return ReturnMessage.createMessage(mResult.eval(state));
+    public ReturnMessage execute(final State state) throws SetlException {
+        if (result != null) {
+            // increase callStackDepth
+            ++(state.callStackDepth);
+
+            return ReturnMessage.createMessage(result.eval(state));
         } else {
             return ReturnMessage.OM;
         }
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        if (mResult != null) {
-            mResult.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (result != null) {
+            result.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -66,9 +68,9 @@ public class Return extends Statement {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
         sb.append("return");
-        if (mResult != null){
+        if (result != null){
             sb.append(" ");
-            mResult.appendString(state, sb, 0);
+            result.appendString(state, sb, 0);
         }
         sb.append(";");
     }
@@ -78,14 +80,21 @@ public class Return extends Statement {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        if (mResult != null) {
-            result.addMember(state, mResult.toTerm(state));
+        if (this.result != null) {
+            result.addMember(state, this.result.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
         return result;
     }
 
+    /**
+     * Convert a term representing an return statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting return statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Return termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

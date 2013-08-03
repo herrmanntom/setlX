@@ -13,7 +13,7 @@ import org.randoom.setlx.utilities.State;
         if (state.isInteractive()) {
             out.append("~< Result: ");
         }
-        result.appendUnquotedString(state, out, 0);
+        result.appendString(state, out, 0);
         if (state.isInteractive()) {
             out.append(" >~");
         }

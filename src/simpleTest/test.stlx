@@ -10,9 +10,9 @@ tester := procedure(boolean, name) {
 
     if (boolean) {
         stateOfTests.testsOK += 1;
-        printErr("test $stateOfTests.testNumber$ successful ($name$)");
+        print("test $stateOfTests.testNumber$ successful ($name$)");
     } else {
-        printErr("test $stateOfTests.testNumber$ failed ($name$)");
+        print("test $stateOfTests.testNumber$ failed ($name$)");
     }
 
     return boolean;
@@ -419,12 +419,33 @@ grammarTests := procedure() {
 };
 grammarTests();
 
+regexEscapeTests := procedure() {
+    correct := true;
+
+    // using literals, thus using no extra level of backslash-escaping
+    s := "1\\2\\3";
+    correct := correct && (split(s, '\w') == ["","\\","\\",""]);
+
+    s := "1\\2\\3";
+    correct := correct && (split(s, '\\') == ["1","2","3"]);
+
+    // using strings, thus using one more level of backslash-escaping
+    s := "1\\2\\3";
+    correct := correct && (split(s, "\\w") == ["","\\","\\",""]);
+
+    s := "1\\2\\3";
+    correct := correct && (split(s, "\\\\") == ["1","2","3"]);
+
+    tester(correct, "regexEscape");
+};
+regexEscapeTests();
+
 // ************************************************************************** \\
 
-printErr("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
+print("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");
 if (stateOfTests.testsOK == stateOfTests.testNumber) {
-    printErr("Everything is fine. Move along sir!");
+    print("Everything is fine. Move along sir!");
 } else {
-    printErr("Errors detected. Please fix them all.");
+    print("Errors detected. Please fix them all.");
 }
 

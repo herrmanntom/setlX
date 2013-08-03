@@ -1,20 +1,22 @@
 package org.randoom.setlx.expressions;
 
 import java.util.List;
-
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
+/**
+ * Base class for all expressions that can be used as target for an assignment.
+ */
 public abstract class AssignableExpression extends Expr {
 
     /**
      * Gather all bound and unbound variables in this expression and its siblings,
      * when it is used as an assignment.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
      *
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
@@ -43,9 +45,7 @@ public abstract class AssignableExpression extends Expr {
 
     /**
      * Sets this expression to the given value. Does not clone 'value' and does
-     * not return 'value' for chained assignment.
-     *
-     * Only makes sense for assignable expressions, like variables and id-lists.
+     * not return 'value' for chained assignments.
      *
      * @param state          Current state of the running setlX program.
      * @param value          Value to assign.
@@ -59,15 +59,13 @@ public abstract class AssignableExpression extends Expr {
      * not return 'value' for chained assignment.
      * Also checks if the variable is already defined in scopes up to
      * (but EXCLUDING) 'outerScope'.
-     * Returns true and sets 'v' if variable is undefined or already equal to 'v'.
-     * Returns false, if variable is defined and different from 'v'.
-     *
-     * Only makes sense for assignable expressions, like variables and id-lists.
+     * Returns true and sets 'value' if variable is undefined or already equal to 'value'.
+     * Returns false, if variable is defined and different from 'value'.
      *
      * @param state          Current state of the running setlX program.
      * @param value          Value to assign.
      * @param outerScope     Root scope of scopes to check.
-     * @return               True, if variable is undefined or already equal to 'v'.
+     * @return               True, if variable is undefined or already equal to 'value'.
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public boolean assignUnclonedCheckUpTo(
@@ -82,6 +80,13 @@ public abstract class AssignableExpression extends Expr {
         );
     }
 
+    /**
+     * Evaluate this expression, but return the result without cloning it first.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Result of the evaluation.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     /*package*/ abstract Value evaluateUnCloned(final State state) throws SetlException;
 
 }

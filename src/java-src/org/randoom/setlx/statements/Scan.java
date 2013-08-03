@@ -6,6 +6,9 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.statementBranches.MatchAbstractBranch;
+import org.randoom.setlx.statementBranches.MatchAbstractScanBranch;
+import org.randoom.setlx.statementBranches.MatchDefaultBranch;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
@@ -14,6 +17,7 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -32,7 +36,7 @@ import java.util.List;
  *
  * implemented with different classes which inherit from MatchAbstractScanBranch:
  *                  ====              ========       =====
- *                  mExpr             mPosVarm    mBranchList
+ *                  expr               posVar      branchList
  */
 public class Scan extends Statement {
     // functional character used in terms
@@ -42,6 +46,13 @@ public class Scan extends Statement {
     private final Variable                      posVar;
     private final List<MatchAbstractScanBranch> branchList;
 
+    /**
+     * Create a new scan statement.
+     *
+     * @param expr       Expression forming the string to match.
+     * @param posVar     Variable storing the current position inside the string.
+     * @param branchList List of scan branches.
+     */
     public Scan(final Expr expr, final Variable posVar, final List<MatchAbstractScanBranch> branchList) {
         this.expr       = expr;
         this.posVar     = posVar;
@@ -49,7 +60,7 @@ public class Scan extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         final Value value = expr.eval(state);
         if ( ! (value instanceof SetlString)) {
             throw new IncompatibleTypeException(
@@ -58,6 +69,9 @@ public class Scan extends Statement {
         }
         final VariableScope outerScope = state.getScope();
         try {
+            // increase callStackDepth
+            state.callStackDepth += 2;
+
             SetlString string = (SetlString) value.clone();
             int        charNr   = 1;
             int        lineNr   = 1;
@@ -87,32 +101,29 @@ public class Scan extends Statement {
 
                 // find branch which matches largest string
                 for (final MatchAbstractScanBranch br : branchList) {
-                    final MatchResult result = br.scannes(state, string);
-                    if (result.isMatch()) {
-                        final int offset = br.getEndOffset();
-                        if (offset > largestMatchSize) {
-                            // scope for condition
-                            final VariableScope innerScope = outerScope.createLinkedScope();
-                            state.setScope(innerScope);
+                    final ScanResult result = br.scannes(state, string);
+                    if (result.isMatch() && result.getEndOffset() > largestMatchSize) {
+                        // scope for condition
+                        final VariableScope innerScope = outerScope.createLinkedScope();
+                        state.setScope(innerScope);
 
-                            // put current position into scope
-                            if (posVar != null) {
-                                posVar.assignUncloned(state, position, FUNCTIONAL_CHARACTER);
-                            }
-
-                            // put all matching variables into scope
-                            result.setAllBindings(state, FUNCTIONAL_CHARACTER);
-
-                            // check condition
-                            if (br.evalConditionToBool(state)) {
-                                largestMatchSize   = offset;
-                                largestMatchBranch = br;
-                                largestMatchResult = result;
-                            }
-
-                            // reset scope
-                            state.setScope(outerScope);
+                        // put current position into scope
+                        if (posVar != null) {
+                            posVar.assignUncloned(state, position, FUNCTIONAL_CHARACTER);
                         }
+
+                        // put all matching variables into scope
+                        result.setAllBindings(state, FUNCTIONAL_CHARACTER);
+
+                        // check condition
+                        if (br.evalConditionToBool(state)) {
+                            largestMatchSize   = result.getEndOffset();
+                            largestMatchBranch = br;
+                            largestMatchResult = result;
+                        }
+
+                        // reset scope
+                        state.setScope(outerScope);
                     }
                 }
                 // execute branch which matches largest string
@@ -133,7 +144,7 @@ public class Scan extends Statement {
                     innerScope.setWriteThrough(true);
 
                     // execute statements
-                    final ReturnMessage execResult = largestMatchBranch.exec(state);
+                    final ReturnMessage execResult = largestMatchBranch.getStatements().execute(state);
 
                     // reset scope
                     state.setScope(outerScope);
@@ -178,7 +189,13 @@ public class Scan extends Statement {
                 }
             }
             return null;
-        } finally { // make sure scope is always reset
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            state.callStackDepth -= 2;
+            // make sure scope is always reset
             state.setScope(outerScope);
         }
     }
@@ -267,6 +284,13 @@ public class Scan extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing a Scan statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Scan Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Scan termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

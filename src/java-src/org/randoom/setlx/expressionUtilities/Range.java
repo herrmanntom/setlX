@@ -13,75 +13,69 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-range
-    : expr (',' expr)? '..' expr
-    ;
-
-implemented here as:
-      ====      ====        ====
-     mStart    mSecond      mStop
-*/
-
+/**
+ * A range between two values, with optional step size.
+ *
+ * grammar rule:
+ * range
+ *     : expr (',' expr)? '..' expr
+ *     ;
+ *
+ * implemented here as:
+ *       ====      ====        ====
+ *      mStart    mSecond      mStop
+ */
 public class Range extends CollectionBuilder {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = "^range";
+    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Range.class);
 
-    private final Expr mStart;
-    private final Expr mSecond;
-    private final Expr mStop;
+    private final Expr start;
+    private final Expr second;
+    private final Expr stop;
 
     public Range(final Expr start, final Expr second, final Expr stop) {
-        mStart  = start;
-        mSecond = second;
-        mStop   = stop;
+        this.start  = start;
+        this.second = second;
+        this.stop   = stop;
     }
 
     @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
-        final Value start = mStart.eval(state);
+        final Value start = this.start.eval(state);
               Value step  = null;
         // compute step
-        if (mSecond != null) {
-            step = mSecond.eval(state).difference(state, start);
+        if (second != null) {
+            step = second.eval(state).difference(state, start);
         } else {
             step = Rational.ONE;
         }
-        start.fillCollectionWithinRange(state, step, mStop.eval(state), collection);
+        start.fillCollectionWithinRange(state, step, stop.eval(state), collection);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mStart.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        if (mSecond != null) {
-            mSecond.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        start.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (second != null) {
+            second.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
-        mStop.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        stop.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb) {
-        mStart.appendString(state, sb, 0);
-        if (mSecond != null) {
+        start.appendString(state, sb, 0);
+        if (second != null) {
             sb.append(", ");
-            mSecond.appendString(state, sb, 0);
+            second.appendString(state, sb, 0);
         }
         sb.append(" .. ");
-        mStop.appendString(state, sb, 0);
+        stop.appendString(state, sb, 0);
     }
 
     /* term operations */
@@ -89,13 +83,13 @@ public class Range extends CollectionBuilder {
     @Override
     public void addToTerm(final State state, final CollectionValue collection) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
-        result.addMember(state, mStart.toTerm(state));
-        if (mSecond != null) {
-            result.addMember(state, mSecond.toTerm(state));
+        result.addMember(state, start.toTerm(state));
+        if (second != null) {
+            result.addMember(state, second.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }
-        result.addMember(state, mStop.toTerm(state));
+        result.addMember(state, stop.toTerm(state));
 
         collection.addMember(state, result);
     }

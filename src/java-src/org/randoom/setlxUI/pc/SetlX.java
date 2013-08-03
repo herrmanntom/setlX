@@ -1,13 +1,9 @@
 package org.randoom.setlxUI.pc;
 
-import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.EndOfFileException;
-import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.ParserException;
-import org.randoom.setlx.exceptions.ResetException;
-import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
@@ -29,7 +25,7 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String     VERSION         = "2.0.2a";
+    private final static String     VERSION         = "2.1.1_double";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2013";
     private final static String     VERSION_PREFIX  = "v";
@@ -38,16 +34,16 @@ public class SetlX {
     private final static int        EXIT_OK         = 0;
     private final static int        EXIT_ERROR      = 1;
 
-    private final static int        EXEC_OK         = 23;
-    private final static int        EXEC_ERROR      = 33;
-    private final static int        EXEC_EXIT       = 42;
-
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
+    /**
+     * The main method.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(final String[] args) {
         String              dumpFile     = null;  // file to write loaded code into
-        String              dumpJavaFile = null;  // file to write loaded code converted to Java into
         String              dumpTermFile = null;  // file to write loaded code as term into
         boolean             help         = false;
         boolean             interactive  = false;
@@ -87,23 +83,10 @@ public class SetlX {
                 }
                 // check for incorrect dumpFile contents
                 if (  dumpFile.equals("") ||
-                     (dumpFile.length() >= 2 && dumpFile.substring(0,2).equals("--"))
+                     (dumpFile.length() >= 1 && dumpFile.substring(0,1).equals("-"))
                    ) {
                     help     = true;
                     dumpFile = null;
-                }
-            } else if (s.equals("--dumpJava")) {
-                dumpJavaFile = "";
-                ++i; // set to next argument
-                if (i < args.length) {
-                    dumpJavaFile = args[i];
-                }
-                // check for incorrect dumpJavaFile contents
-                if (  dumpJavaFile.equals("") ||
-                     (dumpJavaFile.length() >= 2 && dumpJavaFile.substring(0,2).equals("--"))
-                   ) {
-                    help         = true;
-                    dumpJavaFile = null;
                 }
             } else if (s.equals("--dumpTerm")) {
                 dumpTermFile = "";
@@ -113,38 +96,38 @@ public class SetlX {
                 }
                 // check for incorrect dumpTermFile contents
                 if (  dumpTermFile.equals("") ||
-                     (dumpTermFile.length() >= 2 && dumpTermFile.substring(0,2).equals("--"))
+                     (dumpTermFile.length() >= 1 && dumpTermFile.substring(0,1).equals("-"))
                    ) {
                     help         = true;
                     dumpTermFile = null;
                 }
-            } else if (s.equals("--ev")) {
+            } else if (s.equals("-e") || s.equals("--eval")) {
                 ++i; // set to next argument
                 if (i < args.length) {
                     expression = args[i];
                 }
                 // check for incorrect expression content
                 if (  statement != null || expression.equals("") ||
-                     (expression.length() >= 2 && expression.substring(0,2).equals("--"))
+                     (expression.length() >= 1 && expression.substring(0,1).equals("-"))
                    ) {
                     help       = true;
                     expression = null;
                 }
-            } else if (s.equals("--ex")) {
+            } else if (s.equals("-x") || s.equals("--exec")) {
                 ++i; // set to next argument
                 if (i < args.length) {
                     statement = args[i];
                 }
                 // check for incorrect statement content
                 if (  expression != null || statement.equals("") ||
-                     (statement.length() >= 2 && statement.substring(0,2).equals("--"))
+                     (statement.length() >= 1 && statement.substring(0,1).equals("-"))
                    ) {
                     help      = true;
                     statement = null;
                 }
-            } else if (s.equals("--help")) {
+            } else if (s.equals("-h") || s.equals("--help")) {
                 help = true;
-            } else if (s.equals("--libraryPath")) {
+            } else if (s.equals("-l") || s.equals("--libraryPath")) {
                 ++i; // set to next argument
                 if (i < args.length) {
                     envProvider.libraryPath = args[i];
@@ -152,26 +135,26 @@ public class SetlX {
                 // check for incorrect contents
                 if (  envProvider.libraryPath.equals("") ||
                       (
-                          envProvider.libraryPath.length() >= 2 &&
-                          envProvider.libraryPath.substring(0,2).equals("--")
+                          envProvider.libraryPath.length() >= 1 &&
+                          envProvider.libraryPath.substring(0,1).equals("-")
                       )
                    ) {
                     help = true;
                 }
-            } else if (s.equals("--multiLineMode")) {
+            } else if (s.equals("-m") || s.equals("--multiLineMode")) {
                 state.setMultiLineMode(true);
-            } else if (s.equals("--noAssert")) {
+            } else if (s.equals("-a") || s.equals("--noAssert")) {
                 state.setAssertsDisabled(true);
-            } else if (s.equals("--noExecution")) {
+            } else if (s.equals("-n") || s.equals("--noExecution")) {
                 noExecution = true;
-            } else if (s.equals("--params")) {
+            } else if (s.equals("-p") || s.equals("--params")) {
                 // all remaining arguments are passed into the program
                 ++i; // set to next argument
                 for (; i < args.length; ++i) {
                     parameters.addMember(state, new SetlString(args[i]));
                 }
-            } else if (s.equals("--predictableRandom")) { // easier debugging
-                state.setPredictableRandoom();
+            } else if (s.equals("-r") || s.equals("--predictableRandom")) { // easier debugging
+                state.setRandoomPredictable(true);
             } else if (s.equals("--realDefault")) {
                 state.setRealPrintMode_default();
             } else if (s.equals("--realEngineering")) {
@@ -182,9 +165,9 @@ public class SetlX {
                 state.setRuntimeDebugging(true);
             } else if (s.equals("--termLoop")) {
                 termLoop = true;
-            } else if (s.equals("--verbose")) {
+            } else if (s.equals("-v") || s.equals("--verbose")) {
                 verbose = true;
-            } else if (s.length() >= 2 && s.substring(0,2).equals("--")) { // invalid option
+            } else if (s.length() >= 1 && s.substring(0,1).equals("-")) { // invalid option
                 help    = true;
             } else {
                 files.add(s);
@@ -212,7 +195,6 @@ public class SetlX {
                     statement,
                     files,
                     dumpFile,
-                    dumpJavaFile,
                     dumpTermFile,
                     termLoop
             );
@@ -252,18 +234,24 @@ public class SetlX {
                 state.errWriteLn(pe.getMessage());
                 skipTest = true;
                 blk      = null;
+
+            }  catch (final StackOverflowError soe) {
+                state.errWriteOutOfStack(soe, true);
+
+                break;
+
+            } catch (final OutOfMemoryError oome) {
+                state.errWriteOutOfMemory(true, true);
+
+                break;
+
             } catch (final Exception e) { // this should never happen...
-                printInternalError(state);
-                if (state.isRuntimeDebuggingEnabled()) {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    e.printStackTrace(new PrintStream(out));
-                    state.errWrite(out.toString());
-                }
+                state.errWriteInternalError(e);
 
                 break;
 
             }
-        } while (skipTest || (blk != null && execute(state, blk) != EXEC_EXIT));
+        } while (skipTest || (blk != null && blk.executeWithErrorHandling(state, true) != Block.EXECUTE_EXIT));
         printExecutionFinished(state);
     }
 
@@ -273,7 +261,6 @@ public class SetlX {
             final String       statement,
             final List<String> files,
             final String       dumpFile,
-            final String       dumpJavaFile,
             final String       dumpTermFile,
             final boolean      termLoop
     ) {
@@ -320,17 +307,16 @@ public class SetlX {
 
             System.exit(EXIT_ERROR);
 
+        } catch (final StackOverflowError soe) {
+            state.errWriteOutOfStack(soe, true);
+            System.exit(EXIT_ERROR);
+
         } catch (final OutOfMemoryError oome) {
-            printOoError(state);
+            state.errWriteOutOfMemory(true, true);
             System.exit(EXIT_ERROR);
 
         } catch (final Exception e) { // this should never happen...
-            printInternalError(state);
-            if (state.isRuntimeDebuggingEnabled()) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                e.printStackTrace(new PrintStream(out));
-                state.errWrite(out.toString());
-            }
+            state.errWriteInternalError(e);
 
             System.exit(EXIT_ERROR);
         }
@@ -358,29 +344,12 @@ public class SetlX {
         }
 
         // print and/or dump programs if needed
-        if (verbose || dumpFile != null || dumpJavaFile != null || dumpTermFile != null) {
+        if (verbose || dumpFile != null || dumpTermFile != null) {
             state.setPrintVerbose(true); // enables correct indentation etc
             for (int i = 0; i < programs.size(); ++i) {
                 // get program text
                 final String program     = programs.get(i).toString(state) + state.getEndl();
-                      String javaProgram = null;
                       String programTerm = null;
-
-                if (dumpJavaFile != null) {
-                    // figure out Java class name
-                    if (Character.isLowerCase(dumpJavaFile.charAt(0)) ||
-                        ! dumpJavaFile.endsWith(".java")) {
-                        state.errWriteLn(
-                            "File to write Java code into must start with an " +
-                            "upper case letter and end in '.java'."
-                        );
-                        System.exit(EXIT_ERROR);
-                    }
-
-                    final String className = dumpJavaFile.substring(0, dumpJavaFile.lastIndexOf(".java"));
-
-                    javaProgram = programs.get(i).toJavaCode(state, className, PcEnvProvider.class);
-                }
 
                 if (dumpTermFile != null) {
                     final StringBuilder sb = new StringBuilder();
@@ -405,19 +374,7 @@ public class SetlX {
                     }
                 }
 
-                // append programs Java code equivalent to the dumpJavaFile
-                if (dumpJavaFile != null) {
-                    try {
-                        WriteFile.writeToFile(state, javaProgram, dumpJavaFile, /* append = */ (i > 0) );
-                    } catch (final FileNotWriteableException fnwe) {
-                        state.errWriteLn(fnwe.getMessage());
-
-                        System.exit(EXIT_ERROR);
-
-                    }
-                }
-
-                // append programs term equivalent to the dumpJavaFile
+                // append programs term equivalent to the dumpTermFile
                 if (dumpTermFile != null) {
                     try {
                         WriteFile.writeToFile(state, programTerm, dumpTermFile, /* append = */ (i > 0) );
@@ -444,7 +401,7 @@ public class SetlX {
 
         // run the parsed code
         for (int program = 0; program < programs.size(); ++program) {
-            if (execute(state, programs.get(program)) != EXEC_OK) {
+            if (programs.get(program).executeWithErrorHandling(state, true) != Block.EXECUTE_OK) {
                 break; // stop in case of error
             }
             // remove reference to stored code to free some memory
@@ -454,45 +411,6 @@ public class SetlX {
         if (verbose) {
             printExecutionFinished(state);
         }
-    }
-
-    private static int execute(final State state, final Block b) {
-        try {
-
-            state.setDebugModeActive(false);
-            b.exec(state);
-
-        } catch (final AbortException ae) { // code detected user did something wrong
-            state.errWriteLn(ae.getMessage());
-            return EXEC_ERROR;
-        } catch (final ExitException ee) { // user/code wants to quit
-            if (state.isInteractive()) {
-                state.outWriteLn(ee.getMessage());
-            }
-
-            return EXEC_EXIT; // breaks loop while parsing interactively
-
-        } catch (final ResetException re) { // user/code wants to quit debugging
-            if (state.isInteractive()) {
-                state.outWriteLn("Resetting to interactive prompt.");
-            }
-            return EXEC_OK;
-        } catch (final SetlException se) { // user/code did something wrong
-            se.printExceptionsTrace(state, 40);
-            return EXEC_ERROR;
-        } catch (final OutOfMemoryError oome) {
-            printOoError(state);
-            return EXEC_EXIT; // breaks loop while parsing interactively
-        } catch (final Exception e) { // this should never happen...
-            printInternalError(state);
-            if (state.isRuntimeDebuggingEnabled()) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                e.printStackTrace(new PrintStream(out));
-                state.errWrite(out.toString());
-            }
-            return EXEC_ERROR;
-        }
-        return EXEC_OK; // continue loop while parsing interactively
     }
 
     private static void printHeader(final State state) {
@@ -538,47 +456,30 @@ public class SetlX {
         printHelpInteractive(state);
         state.outWriteLn(
             "Additional parameters:\n" +
-            "  --ev <expression>\n" +
-            "     evaluates next argument as expression and exits\n" +
-            "  --ex <statement>\n" +
-            "     executes next argument as statement and exits\n" +
-            "  --libraryPath <path>\n" +
-            "     override SETLX_LIBRARY_PATH environment variable\n" +
-            "  --multiLineMode\n" +
-            "     only accept input in interactive mode after additional new line\n" +
-            "  --noAssert\n" +
-            "      disables all assert functions\n" +
-            "  --noExecution\n" +
-            "      load and check code for syntax errors, but do not execute it\n" +
-            "  --params <argument> ...\n" +
-            "     passes all following arguments to executed program via `params' variable\n" +
-            "  --predictableRandom\n" +
-            "      always use same random sequence (debugging)\n" +
+            "  -e <expression>, --eval <expression>\n" +
+            "      Evaluates next argument as expression and exits.\n" +
+            "  -x <statement>, --exec <statement>\n" +
+            "      Executes next argument as statement and exits.\n" +
+            "  -l <path>, --libraryPath <path>\n" +
+            "      Override SETLX_LIBRARY_PATH environment variable.\n" +
+            "  -m, --multiLineMode\n" +
+            "      Only accept input in interactive mode after additional new line.\n" +
+            "  -a, --noAssert\n" +
+            "      Disables all assert functions.\n" +
+            "  -n, --noExecution\n" +
+            "      Load and check code for syntax errors, but do not execute it.\n" +
+            "  -p <argument> ..., --params <argument> ...\n" +
+            "      Pass all following arguments to executed program via `params' variable.\n" +
+            "  -r, --predictableRandom\n" +
+            "      Always use same random sequence (debugging).\n" +
             "  --realDefault\n" +
             "  --realEngineering\n" +
             "  --realPlain\n" +
-            "      sets how the exponent of doubles is displayed\n" +
-            "  --verbose\n" +
-            "      display the parsed program before executing it\n" +
+            "      Sets how the exponent of reals is displayed.\n" +
+            "  -v, --verbose\n" +
+            "      Display the parsed program before executing it.\n" +
             "  --version\n" +
-            "      displays the interpreter version and terminates\n"
-        );
-    }
-
-    private static void printOoError(final State state) {
-        state.errWriteLn(
-            "The setlX interpreter has ran out of memory.\n" +
-            "Try improving the SetlX program and/or execute with larger maximum memory size.\n" +
-            "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])\n" +
-            "\n" +
-            "If that does not help get a better machine ;-)\n"
-        );
-    }
-
-    private static void printInternalError(final State state) {
-        state.errWriteLn(
-            "Internal error. Please report this error including steps and/or code " +
-            "to reproduce to `setlx@randoom.org'."
+            "      Display interpreter version and terminate.\n"
         );
     }
 

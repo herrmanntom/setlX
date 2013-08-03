@@ -9,17 +9,18 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-assignment
-    : assignable ':=' ((assignment)=> assignment | anyExpr)
-    ;
-
-implemented here as:
-      ==========       ===================================
-          lhs                          rhs
-*/
-
+/**
+ * The simple direct assignment.
+ *
+ * grammar rule:
+ * assignmentDirect
+ *     : assignable ':=' (assignmentDirect | expr)
+ *     ;
+ *
+ * implemented here as:
+ *       ==========       =======================
+ *           lhs                   rhs
+ */
 public class Assignment extends Expr {
     // functional character used in terms
     public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assignment.class);
@@ -37,18 +38,9 @@ public class Assignment extends Expr {
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        final Value assigned = lhs.assign(state, rhs.eval(state).clone(), FUNCTIONAL_CHARACTER);
-
-        return assigned;
+        return lhs.assign(state, rhs.eval(state).clone(), FUNCTIONAL_CHARACTER);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -66,7 +58,7 @@ public class Assignment extends Expr {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         lhs.appendString(state, sb, tabs);
         sb.append(" := ");
-        rhs.appendString(state, sb, tabs);
+        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
@@ -82,7 +74,7 @@ public class Assignment extends Expr {
     public static Assignment termToExpr(final Term term) throws TermConversionException {
         if (term.size() == 2) {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
             if (lhs instanceof AssignableExpression) {
                 return new Assignment((AssignableExpression) lhs, rhs);
             }
@@ -90,7 +82,6 @@ public class Assignment extends Expr {
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

@@ -10,15 +10,15 @@ cd src
 
 # clean the interpreter source
 echo "=> Cleaning the setlX interpreter's source ..."
-make dist-clean
+ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
-make
-if [ -f "$OVERRIDE_setlXJarDirectory/setlX.jar" ]
-  then
+ant jar-j1.6
+if [ -f "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" ]; then
+    mv "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX.jar"
     # clean it up again (does not remove the jar)
-    make clean
+    ant clean
     echo "=> The setlX interpreter was build correctly."
 else
     echo "=> Building the setlX interpreter failed ..."
@@ -26,19 +26,24 @@ else
     exit 1
 fi
 
+# ensure some files use Windows line-endings
+if [ $(which unix2dos > /dev/null 2>&1; echo $?) -eq 0 ]; then
+    unix2dos setlX.cmd
+fi
+
 cd ../src_gfx
 
 # clean the interpreter source
 echo "=> Cleaning the setlX graphics library's source ..."
-make dist-clean
+ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX graphics library ..."
-make
-if [ -e "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar" ]
-  then
+ant jar-j1.6
+if [ -f "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" ]; then
+    mv "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar"
     # clean it up again (does not remove the jar)
-    make clean
+    ant clean
     echo "=> The setlX graphics library was build correctly."
 else
     echo "=> Building the setlX graphics library failed ..."
@@ -159,7 +164,7 @@ rm -f diff.*.result
 # create binary only zip
 echo -n "=> Creating binary only distribution ... "
 mkdir -p zipContents
-cp changelog.txt manual.pdf tutorial.pdf src/setlX src/setlX.cmd src/setlX.jar src_gfx/setlX-gfx.jar zipContents/.
+cp changelog.txt manual.pdf tutorial.pdf src/setlX src/setlX.cmd src/setlX.jar src/setlX-gfx.jar zipContents/.
 cp -r syntax_highlighting zipContents/.
 cd zipContents; zip -qr "../$binOnly.zip" . ; cd ..
 rm -rf zipContents
@@ -171,7 +176,7 @@ cp -r example_SetlX_code zipContents
 while read -r -d $'\0' filename
   do
     rm -f "$filename"
-done < <( find "zipContents" -type f ! -name "*.stlx" -print0 )
+done < <( find "zipContents" -type f ! -name "*.stlx" ! -name "*.data" -print0 )
 while read -r -d $'\0' emptyDir
   do
     rmdir "$emptyDir"
@@ -181,8 +186,8 @@ rm -rf zipContents
 echo "done"
 
 # remove the jars
-cd src;make dist-clean;cd ..
-cd src_gfx;make dist-clean;cd ..
+cd src;ant dist-clean;cd ..
+cd src_gfx;ant dist-clean;cd ..
 
 # create development zip
 echo -n "=> Creating development kit ... "

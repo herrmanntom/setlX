@@ -91,11 +91,15 @@ public class CachedProcedure extends Procedure {
      * Remove references from cache, which where garbage collected.
      */
     private void validateCache() {
+        final ArrayList<SetlList> rmKeys = new ArrayList<SetlList>();
         for (final SetlList key : cache.keySet()) {
             final SoftReference<Value> valueRef = cache.get(key);
             if (valueRef == null || valueRef.get() == null) {
-                cache.remove(key);
+                rmKeys.add(key);
             }
+        }
+        for (final SetlList key: rmKeys) {
+            cache.remove(key);
         }
     }
 

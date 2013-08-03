@@ -13,7 +13,6 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A simple block of statements.
@@ -33,18 +32,33 @@ import java.util.Set;
  */
 public class Block extends Statement {
     // functional character used in terms
-    private final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Block.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Block.class);
+    // how deep can the call stack be, before checking to replace the stack
+    private       static int    MAX_CALL_STACK_DEPTH = -1;
 
     private final List<Statement> statements;
 
+    /**
+     * Create a new empty block of setlX statements.
+     */
     public Block() {
         this(new ArrayList<Statement>());
     }
 
+    /**
+     * Create a new empty block of setlX statements.
+     *
+     * @param size Initial statement capacity of the block.
+     */
     public Block(final int size) {
         this(new ArrayList<Statement>(size));
     }
 
+    /**
+     * Create a new block of setlX statements.
+     *
+     * @param statements Statements in the new block.
+     */
     public Block(final List<Statement> statements) {
         this.statements = statements;
     }
@@ -66,23 +80,77 @@ public class Block extends Statement {
     }
 
     @Override
-    public ReturnMessage exec(final State state) throws SetlException {
-        ReturnMessage result = null;
-        for (final Statement stmnt : statements) {
-            if (state.isExecutionStopped) {
-                throw new StopExecutionException("Interrupted");
+    public ReturnMessage execute(final State state) throws SetlException {
+        // store and increase callStackDepth
+        final int oldCallStackDepth = state.callStackDepth;
+        state.callStackDepth += 2; // one for the block, one for the next statement
+
+        boolean executeInCurrentStack = true;
+        if (MAX_CALL_STACK_DEPTH < 0) {
+            MAX_CALL_STACK_DEPTH = state.getMaxStackSize();
+        }
+        if (MAX_CALL_STACK_DEPTH > 0 && state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
+            state.callStackDepth  = 0;
+            executeInCurrentStack = false;
+        }
+
+        try {
+            if (executeInCurrentStack) {
+                ReturnMessage result = null;
+                for (final Statement stmnt : statements) {
+                    if (state.isExecutionStopped) {
+                        throw new StopExecutionException("Interrupted");
+                    }
+                    result = stmnt.execute(state);
+                    if (result != null) {
+                        return result;
+                    }
+                }
+            } else {
+                // prevent running out of stack by creating a new thread
+                final BlockExecThread callExec = new BlockExecThread(statements, state);
+
+                try {
+                    callExec.start();
+                    callExec.join();
+                    if (callExec.result != null) {
+                        return callExec.result;
+                    }
+                } catch (final InterruptedException e) {
+                    throw new StopExecutionException("Interrupted");
+                }
+
+                // handle exceptions thrown in thread
+                if (callExec.error != null) {
+                    if (callExec.error instanceof SetlException) {
+                        throw (SetlException) callExec.error;
+                    } else if (callExec.error instanceof StackOverflowError) {
+                        throw (StackOverflowError) callExec.error;
+                    } else if (callExec.error instanceof OutOfMemoryError) {
+                        try {
+                            // free some memory
+                            state.resetState();
+                            // give hint to the garbage collector
+                            Runtime.getRuntime().gc();
+                            // sleep a while
+                            Thread.sleep(50);
+                        } catch (final InterruptedException e) {
+                            throw new StopExecutionException("Interrupted");
+                        }
+                        throw (OutOfMemoryError) callExec.error;
+                    } else if (callExec.error instanceof RuntimeException) {
+                        throw (RuntimeException) callExec.error;
+                    }
+                }
             }
-            result = stmnt.exec(state);
-            if (result != null) {
-                return result;
-            }
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
+        } finally {
+            // reset callStackDepth
+            state.callStackDepth = oldCallStackDepth;
         }
         return null;
-    }
-
-    @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        return exec(state);
     }
 
     @Override
@@ -190,20 +258,45 @@ public class Block extends Statement {
         }
     }
 
-    /* Java Code generation */
+    // private subclass to cheat the end of the world... or stack, whatever comes first
+    private class BlockExecThread extends Thread {
+        private final List<Statement>                   statements;
+        private final org.randoom.setlx.utilities.State state;
+        /*package*/   ReturnMessage                     result;
+        /*package*/   Throwable                         error;
 
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        final Iterator<Statement> iter = statements.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendJavaCode(state, header, code, tabs);
-            if (iter.hasNext()) {
-                code.append(state.getEndl());
+        /*package*/ BlockExecThread(final List<Statement> statements, final org.randoom.setlx.utilities.State state) {
+            this.statements = statements;
+            this.state      = state;
+            this.result     = null;
+            this.error      = null;
+        }
+
+        @Override
+        public void run() {
+            try {
+                for (final Statement stmnt : statements) {
+                    if (state.isExecutionStopped) {
+                        throw new StopExecutionException("Interrupted");
+                    }
+                    result = stmnt.execute(state);
+                    if (result != null) {
+                        break;
+                    }
+                }
+                error  = null;
+            } catch (final SetlException se) {
+                result = null;
+                error  = se;
+            } catch (final StackOverflowError soe) {
+                result = null;
+                error  = soe;
+            } catch (final OutOfMemoryError oome) {
+                result = null;
+                error  = oome;
+            } catch (final RuntimeException e) {
+                result = null;
+                error  = e;
             }
         }
     }

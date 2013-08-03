@@ -547,8 +547,11 @@ public class SetlObject extends Value {
         if (value instanceof Procedure) {
             ((Procedure) value).setClosure(null);
         }
-        // TODO add trace
+
         members.put(variable, value);
+        if (state.traceAssignments) {
+            state.printTrace(variable, value, FUNCTIONAL_CHARACTER);
+        }
     }
 
     /* function call */
@@ -641,11 +644,6 @@ public class SetlObject extends Value {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v) {
         if (this == v) {
@@ -662,13 +660,6 @@ public class SetlObject extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 1100;
@@ -701,13 +692,23 @@ public class SetlObject extends Value {
 
     @Override
     public final SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
-        final Value result = overload(state, IS_EQUAL_TO, other);
-        if ( ! (result instanceof SetlBoolean)) {
-            throw new IncompatibleTypeException(
-                "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
-            );
+        if (getObjectMemberUnClonedUnSafe(state, IS_EQUAL_TO) != Om.OM) {
+            final Value result = overload(state, IS_EQUAL_TO, other);
+            if ( ! (result instanceof SetlBoolean)) {
+                throw new IncompatibleTypeException(
+                    "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
+                );
+            } else {
+                return (SetlBoolean) result;
+            }
+        }
+
+        if (! (other instanceof SetlObject)) {
+            return SetlBoolean.FALSE;
         } else {
-            return (SetlBoolean) result;
+            throw new UndefinedOperationException(
+                "Member '" + IS_EQUAL_TO + "' is undefined in '" + this + "'."
+            );
         }
     }
     final static String IS_EQUAL_TO = createOverloadVariable(Equals.functionalCharacter());

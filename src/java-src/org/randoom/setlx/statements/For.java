@@ -15,21 +15,23 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'for' '(' iteratorChain | condition ')' '{' block '}'
-    ;
-
-implemented here as:
-                ========-----   =========         =====
-                  mIterator     mCondition     mStatements
-*/
-
+/**
+ * SetlX's version of a counting loop
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'for' '(' iteratorChain | condition ')' '{' block '}'
+ *     ;
+ *
+ * implemented here as:
+ *                 ========-----   =========         =====
+ *                   iterator      condition       statements
+ *
+ */
 public class For extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String  FUNCTIONAL_CHARACTER   = "^for";
+    // functional character used in terms
+    private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(For.class);
 
     private final SetlIterator   iterator;
     private final Condition      condition;
@@ -48,19 +50,12 @@ public class For extends Statement {
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             if (condition == null || condition.eval(state) == SetlBoolean.TRUE) {
-                return statements.exec(state);
+                return statements.execute(state);
                 // ContinueException and BreakException are handled by outer iterator
             }
             return null;
         }
 
-        /* Gather all bound and unbound variables in this expression and its siblings
-              - bound   means "assigned" in this expression
-              - unbound means "not present in bound set when used"
-              - used    means "present in bound set when used"
-           NOTE: Use optimizeAndCollectVariables() when adding variables from
-                 sub-expressions
-        */
         @Override
         public void collectVariablesAndOptimize (
             final List<String> boundVariables,
@@ -82,28 +77,10 @@ public class For extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        final boolean finishLoop = state.isDebugFinishLoop;
-        if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
-            state.setDebugFinishLoop(false);
-        }
-        final ReturnMessage result = iterator.eval(state, exec);
-        if (state.isDebugFinishLoop) {
-            state.setDebugModeActive(true);
-            state.setDebugFinishLoop(false);
-        } else if (finishLoop) {
-            state.setDebugFinishLoop(true);
-        }
-        return result;
+    public ReturnMessage execute(final State state) throws SetlException {
+        return iterator.eval(state, exec);
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,

@@ -3,9 +3,7 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.DebugPrompt;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.StateImplementation;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -20,8 +18,10 @@ public abstract class Expr extends CodeFragment {
     // collection of reusable replacement values
     private final static HashMap<String, SoftReference<Value>> REPLACEMENTS = new HashMap<String, SoftReference<Value>>();
 
-    // value which is the result of this expression, iff expression is `static' (does not contain variables)
-    protected Value replacement = null;
+    // false if expression is `static' (does not contain variables) and can be replaced by a static result
+    private Boolean isNotReplaceable = true;
+    // value which is the result of this expression, if (isReplaceable == true)
+    private Value   replacement      = null;
 
     /**
      * Evaluate this expression.
@@ -32,16 +32,48 @@ public abstract class Expr extends CodeFragment {
      */
     public Value eval(final State state) throws SetlException {
         try {
-            if (state.isDebugStepNextExpr && state.isDebugModeActive && ! state.isDebugPromptActive()) {
-                state.setDebugStepNextExpr(false);
-                DebugPrompt.prompt(state, this);
+            // increase callStackDepth
+            state.callStackDepth += 2; // one for this eval(), one for evaluate()
+
+            if (isNotReplaceable) {
+                return this.evaluate(state);
             } else if (replacement != null) {
                 return replacement.clone();
+            } else /* if ( ! isNotReplaceable && replacement == null) */ {
+                // string representation of this expression
+                final String _this = this.toString(state);
+
+                synchronized (REPLACEMENTS) {
+                    // look up if same expression was already evaluated
+                    final SoftReference<Value> result = REPLACEMENTS.get(_this);
+                    if (result != null) {
+                        replacement = result.get();
+
+                        if (replacement == null) { // reference was cleared up
+                            REPLACEMENTS.remove(_this);
+                        }
+                    }
+                }
+
+                if (replacement == null) { // not found
+                    replacement = evaluate(state);
+                    synchronized (REPLACEMENTS) {
+                        REPLACEMENTS.put(_this, new SoftReference<Value>(replacement));
+                    }
+                }
+
+                return replacement;
             }
-            return this.evaluate(state);
         } catch (final SetlException se) {
             se.addToTrace("Error in \"" + this + "\":");
             throw se;
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            state.callStackDepth -= 2;
+
         }
     }
 
@@ -55,59 +87,12 @@ public abstract class Expr extends CodeFragment {
     protected abstract Value evaluate(final State state) throws SetlException;
 
     /**
-     * Calculate static replacement value of this expression.
+     * Check if this expression can be replaced with a static result.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
-     *
-     * @param unboundVariables Variables not present in bound when used.
+     * @return true, if it can be replaced, false otherwise.
      */
-    protected void calculateReplacement(final List<String> unboundVariables) {
-        if (replacement == null) {
-            try {
-                // bubble state which is not connected to anything useful
-                final State bubble = new StateImplementation();
-
-                // string representation of this expression
-                final String _this = this.toString(bubble);
-
-                synchronized (REPLACEMENTS) {
-                    // look up if same expression was already evaluated
-                    final SoftReference<Value> result = REPLACEMENTS.get(_this);
-                    if (result != null) {
-                        replacement = result.get();
-
-                        if (replacement == null) { // reference was cleared up
-                            REPLACEMENTS.remove(_this);
-                        }
-                    }
-
-                    if (replacement == null) { // not found
-                        // evaluate in bubble state
-                        replacement = evaluate(bubble);
-                        REPLACEMENTS.put(_this, new SoftReference<Value>(replacement));
-                    }
-                }
-            } catch (final SetlException se) {
-                // ignore error
-                replacement = null;
-
-                // add dummy variable to prevent optimization at later point
-                unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
-            }
-        }
-    }
-
-    /**
-     * Get static replacement value for this expression.
-     *
-     * @return Replacement value, or null.
-     */
-    public Value getReplacement() {
-        if (replacement != null) {
-            return replacement.clone();
-        } else {
-            return null;
-        }
+    public boolean isReplaceable() {
+        return ( ! isNotReplaceable);
     }
 
     /**
@@ -116,7 +101,7 @@ public abstract class Expr extends CodeFragment {
      * NOTE: Use optimizeAndCollectVariables() when adding variables from
      *       sub-expressions.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List<String>, List<String>, List<String>)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
      *
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
@@ -134,8 +119,8 @@ public abstract class Expr extends CodeFragment {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        if (replacement != null) {
-            // already optimized, no variables are needed during execution
+        if ( ! isNotReplaceable) {
+            // already marked as static, no variables are needed during execution
             return;
         }
 
@@ -151,19 +136,19 @@ public abstract class Expr extends CodeFragment {
         if (boundVariables.size() == preBoundSize && unboundVariables.size() == preUnboundSize) {
             // optimize when there where also no variables used at all
             if (usedVariables.size() == preUsedSize) {
-                calculateReplacement(unboundVariables);
+                isNotReplaceable = false;
             }
             // or if all used variables are not prebound
             else {
                 final List<String> prebound     = boundVariables.subList(0, preBoundSize);
                 final List<String> usedHere     = new ArrayList<String>(usedVariables.subList(preUsedSize, usedVariables.size()));
-                final int            usedHereSize = usedHere.size();
+                final int          usedHereSize = usedHere.size();
 
                 // check if any prebound variables could have been used
                 usedHere.removeAll(prebound);
                 if (usedHere.size() == usedHereSize) {
                     // definitely not, therefore safe to optimize
-                    calculateReplacement(unboundVariables);
+                    isNotReplaceable = false;
                 }
             }
         }
@@ -173,6 +158,34 @@ public abstract class Expr extends CodeFragment {
 
     @Override
     public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
+
+    /**
+     * Appends a string representation of this expression to the given
+     * StringBuilder object, automatically inserting brackets when required.
+     *
+     * @param state             Current state of the running setlX program.
+     * @param sb                StringBuilder to append to.
+     * @param tabs              Number of tabs to use as indentation for statements.
+     * @param callersPrecedence Grammar precedence of the outer expression.
+     * @param brackedEqualLevel Insert bracket if precedence of outer and inner expression is equal.
+     */
+    public void appendBracketedExpr(
+        final State state,
+        final StringBuilder sb,
+        final int tabs,
+        final int callersPrecedence,
+        final boolean brackedEqualLevel
+    ) {
+        if ( (brackedEqualLevel && callersPrecedence >= this.precedence() ||
+             (callersPrecedence > this.precedence()))
+        ) {
+            sb.append("(");
+            this.appendString(state, sb, tabs);
+            sb.append(")");
+        } else {
+            this.appendString(state, sb, tabs);
+        }
+    }
 
     /* term operations */
 
@@ -202,5 +215,6 @@ public abstract class Expr extends CodeFragment {
      * @return Precedence level.
      */
     public abstract int   precedence();
+
 }
 

@@ -11,17 +11,18 @@ import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.List;
 
-/*
-grammar rule:
-variable
-    : ID
-    ;
-
-implemented here as:
-      ==
-      mId
-*/
-
+/**
+ * A simple variable that can be read and assigned.
+ *
+ * grammar rule:
+ * variable
+ *     : ID
+ *     ;
+ *
+ * implemented here as:
+ *       ==
+ *       id
+ */
 public class Variable extends AssignableExpression {
     // This functional character is used internally
     public  final static String   FUNCTIONAL_CHARACTER          = "^Variable";
@@ -43,15 +44,15 @@ public class Variable extends AssignableExpression {
     // precedence level in SetlX-grammar
     private final static int      PRECEDENCE                    = 9999;
 
-    private final String mId;
+    private final String id;
 
     public Variable(final String id) {
-        mId = id;
+        this.id = id;
     }
 
     @Override
     public Value evaluate(final State state) throws SetlException {
-        return state.findValue(mId);
+        return state.findValue(id);
     }
 
     @Override
@@ -59,68 +60,47 @@ public class Variable extends AssignableExpression {
         return evaluate(state);
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        if (boundVariables.contains(mId)) {
-            usedVariables.add(mId);
+        if (boundVariables.contains(id)) {
+            usedVariables.add(id);
         } else {
-            unboundVariables.add(mId);
+            unboundVariables.add(id);
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-       when this expression gets assigned
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesWhenAssigned (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        boundVariables.add(mId);
+        boundVariables.add(id);
     }
 
-    // sets this expression to the given value
     @Override
     public void assignUncloned(final State state, final Value v, final String context) throws IllegalRedefinitionException {
-        state.putValue(mId, v, context);
+        state.putValue(id, v, context);
     }
 
-    /* Similar to assignUncloned(),
-       However, also checks if the variable is already defined in scopes up to
-       (but EXCLUDING) `outerScope'.
-       Returns true and sets `v' if variable is undefined or already equal to `v'.
-       Returns false, if variable is defined and different from `v' */
     @Override
     public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) throws SetlException {
-        return state.putValueCheckUpTo(mId, v, outerScope, context);
+        return state.putValueCheckUpTo(id, v, outerScope, context);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append(mId);
+        sb.append(id);
     }
 
     public String getID() {
-        return mId;
+        return id;
     }
 
     /* term operations */
@@ -128,14 +108,14 @@ public class Variable extends AssignableExpression {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, new SetlString(mId));
+        result.addMember(state, new SetlString(id));
         return result;
     }
 
     @Override
     public Term toTermQuoted(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER_EXTERNAL, 1);
-        result.addMember(state, new SetlString(mId));
+        result.addMember(state, new SetlString(id));
         return result;
     }
 
@@ -148,19 +128,19 @@ public class Variable extends AssignableExpression {
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
     }
 
-    // methods used when inserted into HashSets etc
+    /* methods used when inserted into HashSets etc */
+
     @Override
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
         } else if (o instanceof Variable) {
-            return mId.equals(((Variable) o).mId);
+            return id.equals(((Variable) o).id);
         } else {
             return false;
         }
@@ -169,7 +149,7 @@ public class Variable extends AssignableExpression {
         if (this == v) {
             return true;
         } else {
-            return mId.equals(v.mId);
+            return id.equals(v.id);
         }
     }
 
@@ -177,7 +157,7 @@ public class Variable extends AssignableExpression {
 
     @Override
     public int hashCode() {
-        return initHashCode + mId.hashCode();
+        return initHashCode + id.hashCode();
     }
 }
 

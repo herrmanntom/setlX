@@ -38,7 +38,7 @@ public class PD_execute extends PreDefinedProcedure {
         final Block   blk      = ParseSetlX.parseStringToBlock(state, stmntStr);
 
         // execute the contents
-        blk.exec(state);
+        blk.execute(state);
 
         // everything seems fine
         return SetlBoolean.TRUE;

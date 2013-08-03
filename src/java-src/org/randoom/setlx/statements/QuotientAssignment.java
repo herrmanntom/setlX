@@ -12,23 +12,21 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-assignmentOther
-    : assignable ('/=' | [...] ) anyExpr
-    ;
-
-implemented here as:
-      ==========                 =======
-          lhs                      rhs
-*/
-
+/**
+ * Implementation of the /= operator, on statement level.
+ *
+ * grammar rule:
+ * assignmentOther
+ *     : assignable ('/=' | [...] ) expr
+ *     ;
+ *
+ * implemented here as:
+ *       ==========                 ====
+ *          lhs                     rhs
+ */
 public class QuotientAssignment extends StatementWithPrintableResult {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = "^quotientAssignment";
-
-    // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 1000;
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(QuotientAssignment.class);
 
     private final AssignableExpression lhs;
     private final Expr                 rhs;
@@ -40,13 +38,13 @@ public class QuotientAssignment extends StatementWithPrintableResult {
         printAfterEval = false;
     }
 
-    /*package*/ @Override
-    void setPrintAfterEval() {
+    @Override
+    /*package*/ void setPrintAfterEval() {
         printAfterEval = true;
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         final Value assigned = lhs.eval(state).quotientAssign(state, rhs.eval(state).clone());
         lhs.assignUncloned(state, assigned, FUNCTIONAL_CHARACTER);
 
@@ -57,13 +55,6 @@ public class QuotientAssignment extends StatementWithPrintableResult {
         return null;
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -102,13 +93,12 @@ public class QuotientAssignment extends StatementWithPrintableResult {
     public static QuotientAssignment termToStatement(final Term term) throws TermConversionException {
         if (term.size() == 2) {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
             if (lhs instanceof AssignableExpression) {
                 return new QuotientAssignment((AssignableExpression) lhs, rhs);
             }
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
-
 }
 

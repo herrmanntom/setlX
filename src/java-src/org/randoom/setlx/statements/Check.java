@@ -11,62 +11,57 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-statement
-    : [...]
-    | 'check' '{' block '}' ('afterBacktrack' '{' block '}')?
-    ;
-
-implemented here as:
-                  =====                           =====
-               mStatements                      mRecovery
-*/
-
+/**
+ * The check statement, which is used when implementing a backtrack-like
+ * algorithm in conjunction with the backtrack-statement.
+ *
+ * grammar rule:
+ * statement
+ *     : [...]
+ *     | 'check' '{' block '}' ('afterBacktrack' '{' block '}')?
+ *     ;
+ *
+ * implemented here as:
+ *                   =====                           =====
+ *                mStatements                      mRecovery
+ */
 public class Check extends Statement {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String  FUNCTIONAL_CHARACTER   = "^check";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Check.class);
 
-    private final Block mStatements;
-    private final Block mRecovery;
+    private final Block statements;
+    private final Block recovery;
 
     public Check(final Block statements, final Block recovery) {
-        mStatements = statements;
-        mRecovery   = recovery;
+        this.statements = statements;
+        this.recovery   = recovery;
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         try {
-            return mStatements.exec(state);
+            return statements.execute(state);
         } catch (final BacktrackException bte) {
-            if (mRecovery != null) {
-                return mRecovery.exec(state);
+            if (recovery != null) {
+                return recovery.execute(state);
             } else {
                 return null;
             }
         }
     }
 
-    /* Gather all bound and unbound variables in this statement and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       Optimize sub-expressions during this process by calling optimizeAndCollectVariables()
-       when adding variables from them.
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mStatements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         // bindings inside the recovery block are not always valid --- ignore them
         final int preBound = boundVariables.size();
-        if (mRecovery != null) {
-            mRecovery.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        if (recovery != null) {
+            recovery.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
         while (boundVariables.size() > preBound) {
             boundVariables.remove(boundVariables.size() - 1);
@@ -79,10 +74,10 @@ public class Check extends Statement {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
         sb.append("check ");
-        mStatements.appendString(state,sb, tabs, true);
-        if (mRecovery != null) {
+        statements.appendString(state,sb, tabs, true);
+        if (recovery != null) {
             sb.append(" afterBacktrack ");
-            mRecovery.appendString(state, sb, tabs, true);
+            recovery.appendString(state, sb, tabs, true);
         }
     }
 
@@ -91,9 +86,9 @@ public class Check extends Statement {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mStatements.toTerm(state));
-        if (mRecovery != null) {
-            result.addMember(state, mRecovery.toTerm(state));
+        result.addMember(state, statements.toTerm(state));
+        if (recovery != null) {
+            result.addMember(state, recovery.toTerm(state));
         } else {
             result.addMember(state, new SetlString("nil"));
         }

@@ -1,7 +1,5 @@
 package org.randoom.setlx.types;
 
-import java.util.Set;
-
 import org.randoom.setlx.utilities.State;
 
 public class Om extends Value {
@@ -32,28 +30,8 @@ public class Om extends Value {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
-    /* Java Code generation */
-
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        header.add("import " + Om.class.getCanonicalName() + ";");
-
-        code.append(Om.class.getSimpleName());
-        code.append(".OM");
-    }
-
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v){
         if (v == OM) {
@@ -63,13 +41,6 @@ public class Om extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 200;

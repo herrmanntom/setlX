@@ -37,14 +37,10 @@ public class While extends Statement {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
-        final boolean finishLoop  = state.isDebugFinishLoop;
-        if (finishLoop) { // unset, because otherwise it would be reset when this loop finishes
-            state.setDebugFinishLoop(false);
-        }
+    public ReturnMessage execute(final State state) throws SetlException {
         ReturnMessage result = null;
         while (condition.eval(state) == SetlBoolean.TRUE) {
-            result = statements.exec(state);
+            result = statements.execute(state);
             if (result != null) {
                 if (result == ReturnMessage.CONTINUE) {
                     continue;
@@ -53,12 +49,6 @@ public class While extends Statement {
                 }
                 return result;
             }
-        }
-        if (state.isDebugFinishLoop) {
-            state.setDebugModeActive(true);
-            state.setDebugFinishLoop(false);
-        } else if (finishLoop) {
-            state.setDebugFinishLoop(true);
         }
         return null;
     }

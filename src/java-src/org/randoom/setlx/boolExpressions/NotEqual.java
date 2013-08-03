@@ -10,17 +10,18 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-comparison
-    : expr '!=' expr
-    ;
+/**
+ * Implementation of the Boolean not-equal operator.
+ *
+ * grammar rule:
+ * comparison
+ *     : expr '!=' expr
+ *    ;
 
-implemented here as:
-      ====      ====
-      lhs       rhs
-*/
-
+ * implemented here as:
+ *       ====      ====
+ *       lhs       rhs
+ */
 public class NotEqual extends Expr {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(NotEqual.class);
@@ -45,13 +46,6 @@ public class NotEqual extends Expr {
         }
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -66,9 +60,9 @@ public class NotEqual extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendString(state, sb, tabs);
+        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
         sb.append(" != ");
-        rhs.appendString(state, sb, tabs);
+        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
     }
 
     /* term operations */
@@ -85,8 +79,8 @@ public class NotEqual extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
             return new NotEqual(lhs, rhs);
         }
     }

@@ -150,12 +150,12 @@ print();
 */
 
 test := "21_test_12";
-print    ( "This is a $test$");
-print    (@"This is a $test$");
-printErr ( "This is a $test$");
-printErr (@"This is a $test$");
-nPrint   ( "This is a $test$");
-nPrintErr( "This is a $test$");
+print    ("This is a $test$");
+print    ('This is a $test$');
+printErr ("This is a $test$");
+printErr ('This is a $test$');
+nPrint   ("This is a $test$");
+nPrintErr("This is a $test$");
 print();
 print();
 

@@ -175,45 +175,38 @@ These have to occur in \emph{the same order and number} as read-write parameters
 
 \section{Build Targets}
 
-The interpreter can be intelligently (re)build using make.
-Even though the standard java compiler can resolve and compile dependencies, the rather complex make file is required for partial (re)builds, as files are not rebuild by this compiler when one of their dependencies was updated.
+The interpreter can be intelligently (re)build using ant.
 
-Make targets:
+Ant targets:
 
 \begin{itemize}
 	\item Standard build of the interpreter, which creates a self-contained `.jar' file:
 \begin{lstlisting}[frame=none,numbers=none]
-make
+ant
 \end{lstlisting}
 
-	\item Build a version without creating a jar file:
+	\item Build the interpreter with Java 1.6 (matching rt.jar needs to be at a certain place):
 
 \begin{lstlisting}[frame=none,numbers=none]
-make build
-\end{lstlisting}
-
-	\item Build a current version and execute the interactive mode:
-
-\begin{lstlisting}[frame=none,numbers=none]
-make interactive
+ant jar-j1.6
 \end{lstlisting}
 
 	\item Build a current version from source and execute a small set of regression tests:
 
 \begin{lstlisting}[frame=none,numbers=none]
-make test
+ant test
 \end{lstlisting}
 
 	\item Delete all automatically created files, except the `.jar' file:
 
 \begin{lstlisting}[frame=none,numbers=none]
-make clean
+ant clean
 \end{lstlisting}
 
 	\item Delete all created files:
 
 \begin{lstlisting}[frame=none,numbers=none]
-make dist-clean
+ant dist-clean
 \end{lstlisting}
 
 \end{itemize}
@@ -231,8 +224,9 @@ Note that to succeed a 64-bit java installation and about 6GB of free memory are
 
 The logic of the script is as follows:
 \begin{itemize}
-	\item First \command{make test} is executed and its result verified.
-	\item Each source file ending in \command{.stlx} inside the \command{example\_SetX\_code} folder will be executed, if a file with the same basename, but ending in \command{.stlx.reference} or \command{.stlx.noTermLoop.reference} exists.
+	\item First \command{ant test} is executed and its result verified.
+	\item Each source file ending in \command{.stlx} inside the \command{example\_SetX\_code} folder will be executed, if a file with the same basename, but ending in \command{.stlx.reference} or\\
+	 \command{.stlx.noTermLoop.reference} exists.
 	\item If the executed program requires user input, a file with the same basename, but ending in \command{.stlx.input} must be created, including an input per line. This file will be piped into the interpreter when executing the source file.
 	\item Execution switches the working directory to the location of the example and starts \setlX{} with the\\
 	      \command{--predictableRandom} option, thus ensuring predictable results. By default, the example program gets converted to a term and back to a program before execution, using the \command{--termLoop} option. This can be prevented by using a \command{.stlx.noTermLoop.reference} file as reference.
@@ -299,7 +293,7 @@ However, I would like to encourage you to provide the full development kit (i.e.
 The following software was used when developing the \setlX{} interpreter:
 
 \begin{itemize}
-	\item OpenJDK 1.7.0\_09, compatible to Oracles JDK 1.7 (aka JDK 7)
+	\item OpenJDK 1.7.0\_19, compatible to Oracles JDK 1.7 (aka JDK 7)
 	\item Antlr 4.0, which is shipped as `.jar' with the interpreter
 	\item \LaTeX{} (texlive 2007) and various \LaTeX{} packages:
 		\begin{itemize}
@@ -314,6 +308,7 @@ The following software was used when developing the \setlX{} interpreter:
 			\item hyperref
 			\item hypcap
 		\end{itemize}
+	\item Apache Ant 1.8.3
 	\item GNU Make 3.82
 	\item bc 1.06.95
 	\item unix2dos 2.2

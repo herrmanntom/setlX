@@ -142,45 +142,79 @@ Executing the `\command{exit;}' statement will terminate the interpreter.
 In addition to file-paths a number of options can be used when running \setlX{}:
 
 \begin{itemize}
-	\param{--ev <expression>}
-	      {evaluates next argument as expression and exits (cannot be combined with execution of a statement or files)}
-	\param{--ex <statement>}
-	      {executes next argument as statement and exits (cannot be combined with evaluation of an expression or execution of files)}
-	\param{--help}
-	      {displays some helpful information}
-	\param{--libraryPath <path>}
-	      {override SETLX\_LIBRARY\_PATH environment variable}
-	\param{--multiLineMode}
-	      {only accept input in interactive mode after additional new line}
-	\param{--noAssert}
-	      {disables all assert functions}
-	\param{--noExecution}
-	      {load and check code for syntax errors, but do not execute it}
-	\param{--params <argument> ...}
-	      {passes all following arguments to the executed program via `params' variable}
-	\param{--predictableRandom}
-	      {always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging)}
+	\param{-e <expression>, --eval <expression>}
+	      {Evaluates next argument as expression and exits (cannot be combined with execution of a statement or files).}
+	\param{-x <statement>, --exec <statement>}
+	      {Executes next argument as statement and exits (cannot be combined with evaluation of an expression or execution of files).}
+	\param{-h, --help}
+	      {Displays some helpful information.}
+	\param{-l <path>, --libraryPath <path>}
+	      {Override SETLX\_LIBRARY\_PATH environment variable.}
+	\param{-m, --multiLineMode}
+	      {Only accept input in interactive mode after additional new line.}
+	\param{-a, --noAssert}
+	      {Disables all assert functions.}
+	\param{-n, --noExecution}
+	      {Load and check code for syntax errors, but do not execute it.}
+	\param{-p <argument> ..., --params <argument> ...}
+	      {Pass all following arguments to the executed program via `params' variable.}
+	\param{-r, --predictableRandom}
+	      {Always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging).}
 	\param{--real32\\
 	       --real64\\
 	       --real128\\
 	       --real256}
-           {sets the width of the real-type in bits (64 is the sane default)}
+           {Sets the width of the real-type in bits (64 is the sane default).}
 	\param{--realDefault\\
 	       --realEngineering\\
 	       --realPlain}
-           {sets how the exponent of reals is displayed}
-	\param{--verbose}
-           {display the parsed program before executing it (has no effect in interactive mode)}
+           {Sets how the exponent of reals is displayed.}
+	\param{-v, --verbose}
+           {Display the parsed program before executing it (has no effect in interactive mode).}
 	\param{--version}
-           {displays the interpreter version and terminates}
+           {Display interpreter version and terminate.}
 \end{itemize}
+
+\section{System Requirements}
+
+To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher.
+%Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source is required and somewhat problematic (see section \ref{MACj5}).
+
+When building from source, the corresponding Java Development Kit (JDK) and a ant-installation have to be present as well.
+
+The hardware requirements are highly dependent on the executed \SetlX{} program. For optimal performance in most situations at least 512 MB of free main-memory should be available.
+
+\section{Limitations}
+
+\subsection{Out of Memory Error}
+
+Due to its implementation and execution by the Java Virtual Machine (JVM), an `out of memory error' might be encountered when executing \SetlX{} programs using deep recursion, very large or very many sets and\slash{}or lists.
+
+The JVM is only able to dynamically increase its memory allocation in very limited bounds, no matter how much free memory is available.
+
+To work around these problems, edit the used launching script (`\command{setlX}' or `\command{setlX.cmd}') with a text editor and follow the directions given at the top.
+
+%\subsection{Subpar Parsing Errors}
+%
+%Parsing errors are subpar, which make root cause of syntax errors sometimes hard to detect in a slew of messages.
+
+\subsection{Input in Interactive Mode on Unix}
+
+On UNIX (-like) systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java limitation and no platform independent solutions are available. You may install the `rlwrap' program to work around this issue.
+
+%\subsection{Known Bugs}
+%The following bugs are known to be present in this version of the interpreter:
+%
+%\begin{itemize}
+%	\item ...
+%\end{itemize}
 
 \section{Building from source}
 
 Optionally, when the interpreter source is available, the interpreter can be (re)build by executing
 
 \begin{lstlisting}[frame=none,numbers=none]
-make
+ant
 \end{lstlisting}
 
 in the `\command{src}' folder.
@@ -228,41 +262,6 @@ However, the \command{setlX} and \command{setlX.cmd} scripts can also be used to
 %\end{lstlisting}
 %\end{enumerate}
 %This will create the file `\command{setlX.jar}', which can be installed on the machine running Java 1.5 as stated in section \ref{Unix}.
-
-\section{System Requirements}
-
-To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher.
-%Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source is required and somewhat problematic (see section \ref{MACj5}).
-
-When building from source, the corresponding Java Development Kit (JDK) has to be present as well.
-
-The hardware requirements are highly dependent on the executed \SetlX{} program. For optimal performance in most situations at least 512 MB of free main-memory should be available.
-
-\section{Limitations}
-
-\subsection{Out of Memory Error}
-
-Due to its implementation and execution by the Java Virtual Machine (JVM), an `out of memory error' might be encountered when executing \SetlX{} programs using deep recursion, very large or very many sets and\slash{}or lists.
-
-The JVM is only able to dynamically increase its memory allocation in very limited bounds, no matter how much free memory is available.
-
-To work around these problems, edit the used launching script (`\command{setlX}' or `\command{setlX.cmd}') with a text editor and follow the directions given at the top.
-
-%\subsection{Subpar Parsing Errors}
-%
-%Parsing errors are subpar, which make root cause of syntax errors sometimes hard to detect in a slew of messages.
-
-\subsection{Input in Interactive Mode on Unix}
-
-On UNIX (-like) systems, the prompt in interactive mode does not handle control sequences correctly. This is a Java Limitation and no platform independent solutions are available. You may install the `rlwrap' program to work around this issue.
-
-%\subsection{Known Bugs}
-%The following bugs are known to be present in this version of the interpreter:
-%
-%\begin{itemize}
-%	\item ...
-%\end{itemize}
-
 
 \section{Disclaimer}
 

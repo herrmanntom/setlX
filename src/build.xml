@@ -1,0 +1,146 @@
+<project name="setlX" basedir="." default="jar">
+    <!-- variables which determine paths and other information used later -->
+    <property name="main-class"  value="org.randoom.setlxUI.pc.SetlX"/>
+    <property name="src.dir"     value="java-src"/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="doc.dir"     value="${build.dir}/javadoc"/>
+
+    <condition property="setlX.executable" value="setlX" else="setlX.cmd">
+        <os family="unix" />
+    </condition>
+    <condition property="isJava6">
+        <contains string="${java.version}" substring="1.6" casesensitive="false"/>
+    </condition>
+
+    <!-- discover library jars and add them to the class-path -->
+    <path id="antlr-jar">
+        <fileset dir="antlr" includes="antlr-*.jar"/>
+    </path>
+    <path id="classpath">
+        <path refid="antlr-jar"/>
+        <pathelement path="${classes.dir}"/>
+    </path>
+
+    <!-- discover rt.jar from java-1.6 for building 1.6 compatible with newer javac -->
+    <path id="rt.jar-j1.6">
+        <fileset dir="${user.home}/programs/rt_jar_openJDK_1-6-0/" includes="rt.jar"/>
+    </path>
+
+    <target name="test" depends="jar">
+        <exec executable="${setlX.executable}" dir="${basedir}" resolveexecutable="true">
+            <arg value="--runtimeDebugging"/>
+            <arg file="simpleTest/test.stlx"/>
+        </exec>
+    </target>
+
+    <!-- create the standard jar after compiling -->
+    <target name="jar" depends="compile">
+        <jar destfile="${ant.project.name}.jar" basedir="${classes.dir}" index="true">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="compile" depends="grammar">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
+               classpathref="classpath" includeantruntime="false">
+            <compilerarg value="-Xlint:all"/>
+        </javac>
+    </target>
+
+    <target name="compile-j1.6-compatible" depends="grammar">
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
+               classpathref="classpath" includeantruntime="false"
+               fork="true" source="1.6" target="1.6" bootclasspathref="rt.jar-j1.6">
+            <compilerarg value="-Xlint:all"/>
+        </javac>
+    </target>
+
+    <!-- compile either with native Java 1.6, or in compatibility mode -->
+    <target name="compile-j1.6" depends="compile-is-j1.6,compile-is-not-j1.6"/>
+    <target name="compile-is-j1.6" if="isJava6">
+        <antcall target="compile"/>
+    </target>
+    <target name="compile-is-not-j1.6" unless="isJava6">
+        <antcall target="compile-j1.6-compatible"/>
+    </target>
+
+    <!-- create the jar after compiling with Java 1.6 -->
+    <target name="jar-j1.6">
+        <antcall target="clean"/>
+        <antcall target="compile-j1.6"/>
+        <jar destfile="${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
+             index="true">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+        </jar>
+        <antcall target="clean"/>
+    </target>
+
+    <target name="android-jars" depends="clean,doc-jar,src-jar,jar-j1.6"/>
+
+    <!-- jars including documentation and source -->
+    <target name="doc-jar" depends="grammar">
+        <mkdir dir="${doc.dir}"/>
+        <javadoc sourcepath="${src.dir}" destdir="${doc.dir}" classpathref="classpath"
+                 author="false" version="false" use="true"
+                 windowtitle="${ant.project.name} API"
+                 doctitle="&lt;h1&gt;${ant.project.name}&lt;/h1&gt;"/>
+        <jar destfile="${ant.project.name}-doc.jar" basedir="${doc.dir}"/>
+    </target>
+
+    <target name="src-jar" depends="grammar">
+        <jar destfile="${ant.project.name}-src.jar" basedir="${src.dir}"/>
+    </target>
+
+    <!-- checks if the grammar needs to be updated or not -->
+    <target name="checkForGrammarChanges">
+        <!-- set "isUpToDate" to "true", if targetfile is newer as srcfile -->
+        <uptodate property="isUpToDate"
+                  srcfile="grammar/SetlXgrammar.g"
+                  targetfile="${src.dir}/org/randoom/setlx/grammar/SetlXgrammarParser.java"/>
+    </target>
+
+    <!-- update the grammar, but only when necessary;
+         manual check is necessary, because ant cannot handle antlr v4 properly -->
+    <target name="grammar" depends="checkForGrammarChanges" unless="isUpToDate">
+        <java classname="org.antlr.v4.Tool" classpathref="classpath">
+            <arg value="-no-listener"/>
+            <arg value="-Werror"/>
+            <arg line="-o ${src.dir}/org/randoom/setlx/grammar/"/>
+            <arg line="-package org.randoom.setlx.grammar"/>
+            <arg file="grammar/SetlXgrammar.g"/>
+        </java>
+        <!-- extract antlr runtime classes and add them to the build tree -->
+        <mkdir dir="${classes.dir}"/>
+        <unjar src="${toString:antlr-jar}" dest="${classes.dir}">
+            <patternset>
+                <include name="org/antlr/v4/runtime/**/*"/>
+                <exclude name="org/antlr/v4/runtime/misc/GraphicsSupport*"/>
+                <exclude name="org/antlr/v4/runtime/misc/TestRig*"/>
+                <exclude name="org/antlr/v4/runtime/misc/Utils*"/>
+                <exclude name="org/antlr/v4/runtime/tree/gui/**/*"/>
+            </patternset>
+        </unjar>
+    </target>
+
+    <!-- clean up the mess we made by building -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete>
+            <fileset dir="${src.dir}/org/randoom/setlx/grammar" includes="*"/>
+        </delete>
+    </target>
+
+    <target name="dist-clean" depends="clean">
+        <delete>
+            <fileset dir="${basedir}" includes="*.jar"/>
+        </delete>
+    </target>
+</project>
+

@@ -8,7 +8,7 @@ reachable := procedure(x, y, r) {
     while (true) {
         old_P := p;
         p := p + path_product(p, r);
-        found := {p in p | p[#p] == y};
+        found := {p : p in p | p[#p] == y};
         if (found != {}) {
             return arb(found);
         }

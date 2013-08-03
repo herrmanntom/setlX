@@ -918,11 +918,11 @@ yields the result
 \item \texttt{isSet} tests whether its argument is a set.
 \item \texttt{isString} tests whether its argument is a string.
 \item \texttt{isTerm} tests whether its argument is a term.
+\item \texttt{isObject} tests whether its argument is an object.
 \end{enumerate}
 
-\section{Interactive Debugging}
-\setlx\ supports a command line interface for interactive debugging.  The interface to the
-debugger consists of the following functions:
+\section{Debugging}
+\setlx\ supports a few functions to help with debugging:
 \begin{enumerate}
 \item \texttt{trace}:  This function is called as either
       \\[0.2cm]
@@ -932,78 +932,27 @@ debugger consists of the following functions:
       The expression \texttt{trace(true)} switches tracing on:  Afterwards, all
       assignments are written to the terminal window running \setlx.  To switch tracing
       of, call \texttt{trace(false)}.
-\item \texttt{setBreak}:  The expression 
+\item \texttt{stop}:  The function \texttt{stop}  is called as
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\texttt{setBreak}(f)$
+      $\texttt{stop}(\textsl{id})$.
       \\[0.2cm]
-      sets a breakpoint for the function specified by the argument $f$.  
-      In the context of \texttt{setBreak}, the argument $f$ is a string that is the
-      name of a function.
-\item \texttt{rmBreak}:  The expression 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      $\texttt{rmBreak}(f)$
-      \\[0.2cm]
-      removes the breakpoint for the function $f$, where $f$ is the name of a function.
-\item \texttt{lsBreak}: The expression
+      Here, the optional parameter \textsl{id} is a string that reminds you
+      of the location in the program where it was inserted. When executed, this function produces a
+      prompt.  Confirm with no input to continue the execution, or enter comma separated variable
+      names to display their current value. Enter `All' to display all variables in the current scope.
+      This function always returns zero, therefore it often possible to call this function inside expressions.
+\item \texttt{assert}: The function \texttt{assert}  is called as
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{lsBreak()}
+      $\texttt{assert}(\textsl{condition}, \textsl{msg})$.
       \\[0.2cm]
-      lists all breakpoints.
-\item \texttt{step}: In general, the expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{step()}
-      \\[0.2cm]
-      executes the next statement.  However, if the next statement evaluates a complex
-      function, the \texttt{step()} only enters this function so that the programmer can
-      then step through the statements of the called function.
-\item \texttt{uStep}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{uStep()}
-      \\[0.2cm]
-      evaluates the expression that is needed to evaluate the next statement.
-      This is called a \emph{micro step}.
-\item \texttt{fStep}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{fStep()}
-      \\[0.2cm]
-      executes a \emph{macro step}: this executes the next instruction.  If the next
-      instruction is a function call, then this function call is evaluated in one step,
-      so this function steps over function calls.
-\item \texttt{finish}:  The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{finish()}
-      \\[0.2cm]
-      finishes execution of the current function.  This function is handy if you
-      accidentally step into a function.
-\item \texttt{finishLoop}:  The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{finishLoop()}
-      \\[0.2cm]
-      finishes the execution of the current loop without halting.
-\item \texttt{resume}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{resume()}
-      \\[0.2cm]
-      resumes normal execution of the program.
-\item \texttt{reset}: The expression
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{reset()}
-      \\[0.2cm]
-      stops the execution of the current program and returns to the interactive prompt of
-      the interpreter.
+      Here, \textsl{condition} is an expression that has to  yield either \texttt{true} or \texttt{false}
+      when evaluated. If the \textsl{condition} is true, the function \texttt{assert} has no
+      further effect.  However, if the evaluation of \textsl{condition} yields the value
+      \texttt{false}, then the execution of the program is terminated and the error message
+      \textsl{msg} is printed.
 \end{enumerate}
-Finally the function \texttt{dbgHelp()} lists all commands that are available to support
-interactive debugging.
 
 
 \section{I/O Functions}

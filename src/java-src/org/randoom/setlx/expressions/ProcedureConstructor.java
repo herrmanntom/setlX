@@ -12,39 +12,40 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-/*
-grammar rule:
-definition
-    : lambdaDefinition
-    | procedureDefinition
-    ;
-
-implemented here as:
-      ===================
-          mDefinition
-*/
-
+/**
+ * An expression creating a procedure.
+ *
+ * grammar rule:
+ * definition
+ *     : lambdaDefinition
+ *     | procedureDefinition
+ *     ;
+ *
+ * implemented here as:
+ *       ===================
+ *           mDefinition
+ */
 public class ProcedureConstructor extends Expr {
     // precedence level in SetlX-grammar
     private final static int          LAMBDA_PRECEDENCE    = 1050;
     private final static int          PRECEDENCE           = 9999;
 
-    private final Procedure mDefinition;
-    private       HashSet<String>     mClosureVariables;
+    private final Procedure       definition;
+    private       HashSet<String> closureVariables;
 
     public ProcedureConstructor(final Procedure definition) {
-        mDefinition       = definition;
-        mClosureVariables = null;
+        this.definition       = definition;
+        this.closureVariables = null;
     }
 
     @Override
     protected Procedure evaluate(final State state) throws SetlException {
-        if (mClosureVariables == null) {
+        if (closureVariables == null) {
             this.optimize();
         }
-        if (! mClosureVariables.isEmpty()) {
+        if (! closureVariables.isEmpty()) {
             final HashMap<String, Value> closure = new HashMap<String, Value>();
-            for (final String var : mClosureVariables) {
+            for (final String var : closureVariables) {
                 if (var.equals("this")) {
                     continue;
                 }
@@ -60,21 +61,14 @@ public class ProcedureConstructor extends Expr {
                 }
             }
             if (! closure.isEmpty()) {
-                final Procedure result = mDefinition.createCopy();
+                final Procedure result = definition.createCopy();
                 result.setClosure(closure);
                 return result;
             }
         }
-        return mDefinition;
+        return definition;
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
@@ -83,32 +77,32 @@ public class ProcedureConstructor extends Expr {
     ) {
         final int preUnbound = unboundVariables.size();
         final int preUsed    = usedVariables.size();
-        mDefinition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        definition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         final HashSet<String> closureVariables = new HashSet<String>();
         closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
         closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
-        mClosureVariables = closureVariables;
+        this.closureVariables = closureVariables;
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mDefinition.appendString(state, sb, tabs);
+        definition.appendString(state, sb, tabs);
     }
 
     /* term operations */
 
     @Override
     public Value toTerm(final State state) {
-        return mDefinition.toTerm(state);
+        return definition.toTerm(state);
     }
 
     // precedence level in SetlX-grammar
     @Override
     public int precedence() {
-        if (mDefinition instanceof LambdaDefinition) {
+        if (definition instanceof LambdaDefinition) {
             return LAMBDA_PRECEDENCE;
         } else {
             return PRECEDENCE;

@@ -1,0 +1,26 @@
+An expression might represent an syntax-tree which is not "naturally" formed,
+i.e. contains brackets when an inner expression has lower precedence then its parent.
+Therefore the missing brackets are automatically created during print, using the
+precedences and associativity rules listed here:
+
+Precedence, Associativity, Operator(s)
+0000,       -,             reserved (explicit "do never bracket inner expression!")
+1000,       right,         :=
+1050,       left,          lambdaDefinition
+1100,       left,          <==>, <!=>
+1200,       right,         =>
+1300,       left,          ||
+1400,       left,          &&
+1500,       left,          ==, !=, <, <=, >, >=, in, notin
+1600,       left,          +, -
+1700,       left,          *, /, \, %, ><
+1800,       left,          binary +/, binary */
+1900,       right,         - i.e. unary minus
+1900,       -,             other unary operators
+2000,       right,         **
+2100,       left,          ! i.e. factorial
+2100,       -,             () and other unary expressions e.g. call, memberAccess etc
+2200,       right,         ! i.e. not
+9999,       -,             reserved (expressions with this precedence will never be bracketed.
+                           This includes atoms like Values, Set-Constructors, String-Constructors, etc)
+

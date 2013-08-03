@@ -2,6 +2,7 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
@@ -377,14 +378,31 @@ public class SetlSet extends CollectionValue {
         return getMemberUnCloned(state, args.get(0));
     }
 
-    // returns a set of all pairs which first element matches arg
     @Override
     public Value collectMap(final State state, final Value arg) throws SetlException {
-        /* Extract the subset of all members, for which this is true
-         * [arg] < subset <= [arg, +infinity]
+        /*
+         * When this function is invoked, this set is expected to be a map.
          *
-         * As this set is in lexicographical order, all pairs which first element
-         * matches arg must be in this subset.
+         * This map is represented with SetlList members with exactly two members,
+         * the first one being the key and the second one being the value,
+         * i.e. {[key1, value1], [key2, value2], ... , [key3, value3]}
+         *
+         * Thus this function get all map entries
+         *                      [`arg', x]
+         * in this set and returns a set of all values for x.
+         *
+         * Thus we extract a subset that satisfies the following equation:
+         *
+         * [`arg'] <= subset <= [`arg', Top.TOP]
+         *
+         * which includes all map entries where key == `arg', as this set is
+         * in lexicographical order and
+         *
+         * [`arg'] <= [`arg', x] <= [`arg', Top.TOP]
+         *
+         * for all x, because all lists with two members are larger as ones with
+         * one, if the first member is equal AND all x are smaller as Top.TOP,
+         * as that is the largest value possible.
          */
         final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(state, arg);
@@ -392,15 +410,15 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, arg);
         upperBound.addMember(state, Top.TOP);
 
-        final NavigableSet<Value> navSubSet = set.subSet(lowerBound, false, upperBound, true);
+        final NavigableSet<Value> subSet = set.subSet(lowerBound, false, upperBound, true);
 
-        // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
-        TreeSet<Value> subSet = null;
-        if (navSubSet instanceof TreeSet) { // on all tested runtimes this is a TreeSet, be one can't be sure
-            subSet  = (TreeSet<Value>) navSubSet;
-        } else { // slow, but secure shallow copy is better than ClassCastException
-            subSet  = new TreeSet<Value>(navSubSet);
-        }
+        /*
+         * The extracted subset is now checked for consistency, i.e. if all members
+         * in the subset are SetlList with exactly two members.
+         *
+         * If it does, all values from the map entries found will be added to
+         * the resulting set.
+         */
 
         final SetlSet result = new SetlSet();
         for (final Value v: subSet) {
@@ -455,11 +473,30 @@ public class SetlSet extends CollectionValue {
     }
 
     private Value getMemberZZZInternal(final State state, final Value element) throws SetlException {
-        /* Extract the subset of all members, for which this is true
-         * [element] < subset <= [element, +infinity]
+        /*
+         * When this function is invoked, this set is expected to be a functional relation,
+         * i.e. a map where each "key" only occurs once.
          *
-         * As this set is in lexicographical order, all pairs which first element
-         * matches element must be in this subset.
+         * This map is represented with SetlList members with exactly two members,
+         * the first one being the key and the second one being the value,
+         * i.e. {[key1, value1], [key2, value2], ... , [key3, value3]}
+         *
+         * Thus this function gets the specific map entry
+         *                      [`element', x]
+         * in this set and returns the value of this entry (x).
+         *
+         * Thus we extract a subset that satisfies the following equation:
+         *
+         * [`element'] <= subset <= [`element', Top.TOP]
+         *
+         * which includes all map entries where key == `element', as this set is
+         * in lexicographical order and
+         *
+         * [`element'] <= [`element', x] <= [`element', Top.TOP]
+         *
+         * for all x, because all lists with two members are larger as ones with
+         * one, if the first member is equal AND all x are smaller as Top.TOP,
+         * as that is the largest value possible.
          */
         final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(state, element);
@@ -467,17 +504,16 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, element);
         upperBound.addMember(state, Top.TOP);
 
-        final NavigableSet<Value> navSubSet = set.subSet(lowerBound, false, upperBound, true);
+        final NavigableSet<Value> subSet = set.subSet(lowerBound, false, upperBound, true);
 
-        // make sure the subSet is a TreeSet, as Android API <= 10 can't iterate a navigableSet...
-        TreeSet<Value>            subSet    = null;
-        if (navSubSet instanceof TreeSet) { // on all tested runtimes this is a TreeSet, be one can't be sure
-            subSet  = (TreeSet<Value>) navSubSet;
-        } else { // slow, but secure shallow copy is better than ClassCastException
-            subSet  = new TreeSet<Value>(navSubSet);
-        }
-
-        Value                     result    = Om.OM;
+        /*
+         * The extracted subset is now checked for consistency with, i.e. if it
+         * satisfies the functional relation.
+         *
+         * If it does, the iteration will only be over one map entry, which value
+         * is returned. If there either none or two+ entries om is returned.
+         */
+        Value result = Om.OM;
         for (final Value v: subSet) {
             if (v instanceof SetlList && v.size() == 2) {
                 if (result == Om.OM) {
@@ -507,7 +543,8 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value maximumMember(final State state) {
         if (size() < 1) {
-	    return SetlDouble.NEGATIVE_INFINITY;
+            // Neutral element of max() is smallest value available
+            return SetlError.BOTTOM;
         }
         return lastMember(state);
     }
@@ -515,7 +552,8 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value minimumMember(final State state) {
         if (size() < 1) {
-	    return SetlDouble.POSITIVE_INFINITY;
+            // Neutral element of min() is largest value available
+            return Top.TOP;
         }
         return firstMember(state);
     }
@@ -532,6 +570,9 @@ public class SetlSet extends CollectionValue {
     //     power(A + {x}) = power(A) + { {x} + s : s in power(A) }
     @Override
     public SetlSet powerSet(final State state) throws SetlException {
+        if (state.isExecutionStopped) {
+            throw new StopExecutionException("Interrupted");
+        }
         if (size() == 0) {
             final SetlSet power = new SetlSet();
             power.addMember(state, clone());
@@ -569,14 +610,37 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public void setMember(final State state, final Value index, final Value v) throws SetlException {
+        /*
+         * When this function is invoked, this set is expected to be a functional relation,
+         * i.e. a map where each "key" only occurs once.
+         *
+         * This map is represented with SetlList members with exactly two members,
+         * the first one being the key and the second one being the value,
+         * i.e. {[key1, value1], [key2, value2], ... , [key3, value3]}
+         *
+         * Thus this functions adds/sets the specific map entry
+         *                      [`index', `v']
+         * to this set.
+         */
 
         separateFromOriginal();
 
-        /* Extract the subset of all members, for which this is true
-         * [index] <= subset <= [index, +infinity]
+        /*
+         * To ensure and preserve the functional relation, any previous mappings
+         * for the with the key == `index' are removed.
          *
-         * As this set is in lexicographical order, all pairs which first element
-         * matches index must be in this subset.
+         * Thus we extract a subset that satisfies the following equation:
+         *
+         * [`index'] <= subset <= [`index', Top.TOP]
+         *
+         * which includes all map entries where key == `index', as this set is
+         * in lexicographical order and
+         *
+         * [`index'] <= [`index', x] <= [`index', Top.TOP]
+         *
+         * for all x, because all lists with two members are larger as ones with
+         * one, if the first member is equal AND all x are smaller as Top.TOP,
+         * as that is the largest value possible.
          */
         final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(state, index);
@@ -584,12 +648,12 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, index);
         upperBound.addMember(state, Top.TOP);
 
-        // remove all previously set pairs which first member matches index
+        // remove all previously map entries which key == `index'
         set.removeAll(new TreeSet<Value>(set.subSet(lowerBound, true, upperBound, true)));
 
-        /* now this set must either be empty or a map without a pair matching the index */
+        // now this set must either be empty or a map without an entry with `index' as key
         if (v != Om.OM) {
-            // add new pair [index, value] to this set
+            // add new map entry [`index', `v'] to this set
             final SetlList pair = new SetlList(2);
             pair.addMember(state, index);
             pair.addMember(state, v);

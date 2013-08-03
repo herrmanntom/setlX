@@ -109,11 +109,11 @@ knf := procedure(f) {
 };
 
 simplify := procedure(k) {
-	return {c in k | ( ! (isTrivial(c)) )};
+	return {c : c in k | ( ! (isTrivial(c)) )};
 };
 
 isTrivial := procedure(c) {
-	return {p in c | isString((p))} * {p[2]: p in c | p[1] == "-"} != {} || 1 in c;
+	return {p : p in c | isString((p))} * {p[2]: p in c | p[1] == "-"} != {} || 1 in c;
 };
 
 pretty_print_knf := procedure(f) {

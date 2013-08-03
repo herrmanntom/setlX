@@ -205,11 +205,7 @@ public class SetlIterator extends CodeFragment {
     private ReturnMessage evaluate(final State state, final SetlIteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
-
-            if (state.isExecutionStopped) {
-                throw new StopExecutionException("Interrupted");
-            }
+            state.callStackDepth += 2;
 
             final Value iterationValue = collection.eval(state); // trying to iterate over this value
             if (iterationValue instanceof CollectionValue) {
@@ -218,6 +214,10 @@ public class SetlIterator extends CodeFragment {
                 final VariableScope     innerScope  = state.getScope().createInteratorBlock();
                 // iterate over items
                 for (final Value v: coll) {
+                    if (state.isExecutionStopped) {
+                        throw new StopExecutionException("Interrupted");
+                    }
+
                     // restore inner scope
                     state.setScope(innerScope);
                     innerScope.setWriteThrough(false); // force iteration variables to be local to this block
@@ -263,9 +263,12 @@ public class SetlIterator extends CodeFragment {
                     "Evaluation of iterator '" + iterationValue + "' is not a collection value."
                 );
             }
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
         }
     }
 }

@@ -8,18 +8,24 @@ import java.io.InputStreamReader;
 import java.io.IOException;
 
 /**
- * This implementation provides access to the I/O mechanisms of PCs
+ * This implementation provides access to the I/O mechanisms of PCs.
  */
 public class PcEnvProvider implements EnvironmentProvider {
 
     private final static String TAB = "\t";
 
     private final String         endl;
+    /**
+     * Path where the library files are expected to reside.
+     */
   /*package*/     String         libraryPath;
 
     // buffered reader for stdin
     private       BufferedReader stdInReader;
 
+    /**
+     * Create new PcEnvProvider.
+     */
     public PcEnvProvider() {
         this.endl        = System.getProperty("line.separator");
         this.libraryPath = "";

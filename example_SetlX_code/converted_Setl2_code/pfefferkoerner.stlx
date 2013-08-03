@@ -11,6 +11,6 @@ teilungFunktioniert := procedure(n, teilungen) {
 	}
 };
 
-nKoerner := {n in {1 .. 100} | teilungFunktioniert(n, 4)};
+nKoerner := {n : n in {1 .. 100} | teilungFunktioniert(n, 4)};
 print(nKoerner);
 

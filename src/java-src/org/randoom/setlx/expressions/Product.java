@@ -9,60 +9,54 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-product
-    : power ('*' power | [...])*
-    ;
-
-implemented here as:
-      =====      =====
-      mLhs       mRhs
-*/
-
+/**
+ * Implementation of the * operator.
+ *
+ * grammar rule:
+ * product
+ *     : reduce ('*' reduce | [...])*
+ *     ;
+ *
+ * implemented here as:
+ *       ======      ======
+ *        lhs         rhs
+ */
 public class Product extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^product";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Product.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
 
-    private final Expr mLhs;
-    private final Expr mRhs;
+    private final Expr lhs;
+    private final Expr rhs;
 
     public Product(final Expr lhs, final Expr rhs) {
-        mLhs = lhs;
-        mRhs = rhs;
+        this.lhs = lhs;
+        this.rhs = rhs;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return mLhs.eval(state).product(state, mRhs.eval(state));
+        return lhs.eval(state).product(state, rhs.eval(state));
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mRhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
         sb.append(" * ");
-        mRhs.appendString(state, sb, tabs);
+        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
     }
 
     /* term operations */
@@ -70,8 +64,8 @@ public class Product extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mRhs.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, rhs.toTerm(state));
         return result;
     }
 
@@ -79,8 +73,8 @@ public class Product extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
             return new Product(lhs, rhs);
         }
     }

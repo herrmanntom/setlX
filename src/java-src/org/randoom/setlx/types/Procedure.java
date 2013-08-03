@@ -1,9 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
-import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
@@ -22,24 +20,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-// This class represents a function definition
-
-/*
-grammar rule:
-procedure
-    : 'procedure' '(' procedureParameters ')' '{' block '}'
-    ;
-
-implemented here as:
-                      ===================         =====
-                           parameters           statements
-*/
-
+/**
+ * This class represents a function definition.
+ *
+ * grammar rule:
+ * procedure
+ *     : 'procedure' '(' procedureParameters ')' '{' block '}'
+ *     ;
+ *
+ * implemented here as:
+ *                       ===================         =====
+ *                            parameters           statements
+ */
 public class Procedure extends Value {
     // functional character used in terms
-    public  final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
-    // how deep can the call stack be, before checking to replace the stack
-    private final static int      MAX_CALL_STACK_DEPTH = 400;
+    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
 
     protected final List<ParameterDef>     parameters;      // parameter list
     protected final Block                  statements;      // statements in the body of the definition
@@ -83,13 +78,6 @@ public class Procedure extends Value {
         this.object = object;
     }
 
-    /* Gather all bound and unbound variables in this value and its siblings
-          - bound   means "assigned" in this value
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -135,31 +123,42 @@ public class Procedure extends Value {
 
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
-        final int        size   = args.size();
-        final SetlObject object = this.object;
-        this.object = null;
+        try{
+            // increase callStackDepth
+            ++(state.callStackDepth);
 
-        if (parameters.size() != size) {
-            throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with "+ parameters.size()+" instead of " +
-                size + " parameters."
-            );
+            final int        size   = args.size();
+            final SetlObject object = this.object;
+            this.object = null;
+
+            if (parameters.size() != size) {
+                throw new IncorrectNumberOfParametersException(
+                    "'" + this + "' is defined with "+ parameters.size()+" instead of " +
+                    size + " parameters."
+                );
+            }
+
+            // evaluate arguments
+            final ArrayList<Value> values = new ArrayList<Value>(size);
+            for (final Expr arg : args) {
+                values.add(arg.eval(state));
+            }
+
+            final Value result = callAfterEval(state, args, values, object);
+
+            return result;
+
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
-
-        // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(size);
-        for (final Expr arg : args) {
-            values.add(arg.eval(state));
-        }
-
-        final Value result = callAfterEval(state, args, values, object);
-
-        return result;
     }
 
     protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
-        // store and increase callStackDepth
-        final int oldCallStackDepth = state.callStackDepth;
+        // increase callStackDepth
         ++(state.callStackDepth);
 
         // save old scope
@@ -196,49 +195,13 @@ public class Procedure extends Value {
         values.clear();
 
         // results of call to procedure
-              ReturnMessage   result      = null;
-        final WriteBackAgent  wba         = new WriteBackAgent(parameters.size());
-        final boolean         stepThrough = state.isDebugStepThroughFunction;
+              ReturnMessage   result = null;
+        final WriteBackAgent  wba    = new WriteBackAgent(parameters.size());
 
         try {
-            if (stepThrough) {
-                state.setDebugStepThroughFunction(false);
-                state.setDebugModeActive(false);
-            }
-
-            boolean executeInCurrentStack = true;
-            if (state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
-                state.callStackDepth  = 0;
-                executeInCurrentStack = false;
-            }
 
             // execute, e.g. perform real procedure call
-            if (executeInCurrentStack) {
-                result = statements.exec(state);
-            } else {
-                // prevent running out of stack by creating a new thread
-                final CallExecThread callExec = new CallExecThread(statements, state);
-
-                try {
-                    callExec.start();
-                    callExec.join();
-                    result = callExec.mResult;
-                } catch (final OutOfMemoryError e) {
-                    throw new JVMException(
-                        "The setlX interpreter has ran out of (stack-replacement) memory.\n" +
-                        "Try preventing recursion in your SetlX program."
-                    );
-                } catch (final InterruptedException e) {
-                    throw new StopExecutionException("Interrupted");
-                } finally {
-                    state.callStackDepth = oldCallStackDepth;
-                }
-
-                // handle exceptions thrown in thread
-                if (callExec.mException != null) {
-                    throw callExec.mException;
-                }
-            }
+            result = statements.execute(state);
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
             for (int i = 0; i < parametersSize; ++i) {
@@ -265,6 +228,9 @@ public class Procedure extends Value {
                 }
             }
 
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
         } finally { // make sure scope is always reset
             // restore old scope
             state.setScope(oldScope);
@@ -274,15 +240,8 @@ public class Procedure extends Value {
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state, FUNCTIONAL_CHARACTER);
 
-            if (stepThrough || state.isDebugFinishFunction) {
-                state.setDebugModeActive(true);
-                if (state.isDebugFinishFunction) {
-                    state.setDebugFinishFunction(false);
-                }
-            }
-
-            // reset callStackDepth
-            state.callStackDepth = oldCallStackDepth;
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
 
         if (result != null) {
@@ -343,11 +302,6 @@ public class Procedure extends Value {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v) {
         object = null;
@@ -371,13 +325,6 @@ public class Procedure extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         object = null;
@@ -416,32 +363,5 @@ public class Procedure extends Value {
         object = null;
         return initHashCode + parameters.size();
     }
-
-    // private subclass to cheat the end of the world... or stack, whatever comes first
-    private class CallExecThread extends Thread {
-        private final Block                             mStatements;
-        private final org.randoom.setlx.utilities.State mState;
-        /*package*/   ReturnMessage                     mResult;
-        /*package*/   SetlException                     mException;
-
-        public CallExecThread(final Block statements, final org.randoom.setlx.utilities.State state) {
-            this.mStatements = statements;
-            this.mState      = state;
-            this.mResult     = null;
-            this.mException  = null;
-        }
-
-        @Override
-        public void run() {
-            try {
-                this.mResult    = this.mStatements.exec(this.mState);
-                this.mException = null;
-            } catch (final SetlException e) {
-                this.mResult    = null;
-                this.mException = e;
-            }
-        }
-    }
-
 }
 

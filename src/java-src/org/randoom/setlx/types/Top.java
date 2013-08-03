@@ -26,16 +26,11 @@ public class Top extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-	sb.append("Top");
+        sb.append("Top");
     }
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v) {
         if (this == v) {
@@ -45,16 +40,9 @@ public class Top extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < SetlBoolean < Rational & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < Top
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
-	return 1300;
+        return 1300;
     }
 
     @Override
@@ -63,9 +51,11 @@ public class Top extends Value {
         return this == v;
     }
 
+    private final static int initHashCode = Top.class.hashCode();
+
     @Override
     public int hashCode() {
-        return -1029009190;
+        return initHashCode;
     }
 }
 

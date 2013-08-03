@@ -3,12 +3,10 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.boolExpressions.Equals;
 import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressions.BracketedExpr;
 import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.ProcedureConstructor;
 import org.randoom.setlx.expressions.SetListConstructor;
-import org.randoom.setlx.expressions.StringConstructor;
 import org.randoom.setlx.expressions.TermConstructor;
 import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.VariableIgnore;
@@ -25,7 +23,6 @@ import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlSet;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -155,11 +152,10 @@ public class TermConverter {
                         return new ValueExpr(specialValue);
                     }
                 }
-                throw new TermConversionException(
-                    "This term does not represent an CodeFragment."
-                );
+                // This term does not represent an CodeFragment.
+                return TermConstructor.termToExpr(term);
             } catch (final TermConversionException tce) {
-                // create TermConstructor for this custom term
+                // some error occurred... create TermConstructor for this custom term
                 return TermConstructor.termToExpr(term);
             }
         } else { // `value' is in fact a (more or less) simple value
@@ -170,10 +166,9 @@ public class TermConverter {
                     return CollectionAccessRangeDummy.CARD;
                 } else if (value instanceof SetlList || value instanceof SetlSet) {
                     return SetListConstructor.valueToExpr(value);
-                } else if (value instanceof SetlString) {
-                    return StringConstructor.valueToExpr(value);
                 } else {
-                    throw new TermConversionException("not a special value");
+                    // not a special value
+                    return new ValueExpr(value);
                 }
             } catch (final TermConversionException tce) {
                 // some error occurred... create ValueExpr for this value
@@ -182,19 +177,8 @@ public class TermConverter {
         }
     }
 
-    public static Expr valueToExpr(final int callersPrecedence, final boolean brackedEqualLevel, final Value value) {
-        final Expr result         = (Expr) valueToCodeFragment(value, true);
-        final int  exprPrecedence = result.precedence();
-        if (brackedEqualLevel && callersPrecedence >= exprPrecedence) {
-            return new BracketedExpr(result);
-        } else if (callersPrecedence > exprPrecedence) {
-            return new BracketedExpr(result);
-        }
-        return result;
-    }
-
     public static Expr valueToExpr(final Value value) {
-        return valueToExpr(0000, false, value);
+        return (Expr) valueToCodeFragment(value, true);
     }
 
     public static Condition valueToCondition(final Value value) {

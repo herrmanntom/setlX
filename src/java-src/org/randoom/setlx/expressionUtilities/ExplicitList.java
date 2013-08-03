@@ -26,7 +26,7 @@ import java.util.List;
  *
  * implemented here as:
  *       =======......=======
- *              mList
+ *               list
  */
 public class ExplicitList extends CollectionBuilder {
     private final List<Expr> list;
@@ -53,7 +53,16 @@ public class ExplicitList extends CollectionBuilder {
         }
     }
 
-    @Override
+    /**
+     * Gather all bound and unbound variables in this expression and its siblings,
+     * when it is used as an assignment.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
+     *
+     * @param boundVariables   Variables "assigned" in this fragment.
+     * @param unboundVariables Variables not present in bound when used.
+     * @param usedVariables    Variables present in bound when used.
+     */
     public void collectVariablesWhenAssigned (
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -66,7 +75,16 @@ public class ExplicitList extends CollectionBuilder {
         }
     }
 
-    @Override
+    /**
+     * Sets this list of expressions in this builder to the values contained in
+     * the given collection value. Does not clone 'collection' and does
+     * not return 'collection' for chained assignments.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param collection     Collection to assign from.
+     * @param context        Context description of the assignment for trace.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public void assignUncloned(
         final State                  state,
         final IndexedCollectionValue collection,
@@ -90,7 +108,22 @@ public class ExplicitList extends CollectionBuilder {
         }
     }
 
-    @Override
+    /**
+     * Sets this list of expressions in this builder to the values contained in
+     * the given collection value. Does not clone 'collection' and does
+     * not return 'collection' for chained assignments.
+     *
+     * Also checks if the variables to be set are already defined in scopes up to
+     * (but EXCLUDING) 'outerScope'.
+     * Returns true and sets the values, if each variable is undefined or already equal the the value to be set.
+     * Returns false, if a variable is defined and different.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param collection     Collection to assign from.
+     * @param outerScope     Root scope of scopes to check.
+     * @return               True, if variable is undefined or already equal the the value to be set.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public boolean assignUnclonedCheckUpTo(
         final State                  state,
         final IndexedCollectionValue collection,
@@ -149,7 +182,7 @@ public class ExplicitList extends CollectionBuilder {
         }
     }
 
-    /*package*/ static ExplicitList collectionValueToExplicitList(final CollectionValue value) throws TermConversionException {
+    public static ExplicitList collectionValueToExplicitList(final CollectionValue value) throws TermConversionException {
         final List<Expr> exprList = new ArrayList<Expr>(value.size());
         for (final Value v : value) {
             exprList.add(TermConverter.valueToExpr(v));

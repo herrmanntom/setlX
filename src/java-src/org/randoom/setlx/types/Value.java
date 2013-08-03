@@ -130,28 +130,67 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* native type checks */
 
+    /**
+     * Check if this value is equivalent to a native Java double AND can be
+     * converted without throwing any kind of exception at runtime.
+     *
+     * @return True if this type is can be converted.
+     */
     public boolean jDoubleConvertable() {
         return false;
     }
-
+    /**
+     * Check if this value is equivalent to a native Java integer AND can be
+     * converted without throwing any kind of exception at runtime.
+     *
+     * @return True if this type is can be converted.
+     */
     public boolean jIntConvertable() {
         return false;
     }
 
     /* native type conversions */
 
+    /**
+     * Get the native Java double equivalent of this value.
+     * This method does NOT convert non-double equivalent types into double!
+     *
+     * If jDoubleConvertable() equals true for this value, then it must be
+     * impossible for this method to fail or throw an exception of any kind.
+     *
+     * @return                           Equivalent double of this value.
+     * @throws IncompatibleTypeException if this value cannot be converted into a double.
+     * @throws NumberToLargeException    if this value is too large or to small to be converted.
+     */
     public double jDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
         throw new IncompatibleTypeException(
             "'" + this + "' is not a double."
         );
     }
 
+    /**
+     * Get the native Java integer equivalent of this value.
+     * This method does NOT convert non-integer equivalent types into integer!
+     *
+     * If jIntConvertable() equals true for this value, then it must be
+     * impossible for this method to fail or throw an exception of any kind.
+     *
+     * @return                           Equivalent int of this value.
+     * @throws IncompatibleTypeException if this value cannot be converted into an integer.
+     * @throws NumberToLargeException    if this value is too large or to small to be converted.
+     */
     public int jIntValue() throws IncompatibleTypeException, NotAnIntegerException, NumberToLargeException {
         throw new IncompatibleTypeException(
             "'" + this + "' is not an integer."
         );
     }
 
+    /**
+     * Convert this value into a native Java double.
+     *
+     * @return               Equivalent double of this value.
+     * @throws SetlException if this value cannot be converted.
+     */
     public double toJDoubleValue(final State state) throws SetlException {
         final Value real = this.toDouble(state);
         if (real != Om.OM) {
@@ -163,6 +202,12 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         }
     }
 
+    /**
+     * Convert this value into an native Java integer.
+     *
+     * @return               Equivalent int of this value.
+     * @throws SetlException if this value cannot be converted.
+     */
     public final int toJIntValue(final State state) throws SetlException {
         final Value integer = this.toInteger(state);
         if (integer != Om.OM) {
@@ -447,12 +492,40 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Find largest member value in this (collection-) value.
+     *
+     * Note: This function must always return a valid value (i.e. not om) and
+     *       satisfy the following equation for all possible m and n:
+     *
+     *       max(m + n) == max([max(m), max(n)])
+     *
+     *       Especially when m is {} or [] and n is not.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Maximum of the members contained in this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value maximumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument of 'max(" + this + "') is not a collection value."
         );
     }
 
+    /**
+     * Find smallest member value in this (collection-) value.
+     *
+     * Note: This function must always return a valid value (i.e. not om) and
+     *       satisfy the following equation for all possible m and n:
+     *
+     *       min(m + n) == min([min(m), min(n)])
+     *
+     *       Especially when m is {} or [] and n is not.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Minimum of the members contained in this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value minimumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument of 'min(" + this + "') is not a collection value."
@@ -641,12 +714,17 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     @Override
     public abstract int     compareTo(final Value v);
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < SetlBoolean < Rational & SetlDouble
+    /**
+     * In order to compare "incomparable" values, e.g. of different types, the
+     * following (mostly arbitrary) order is established and used in compareTo():
+     *
+     * SetlError.BOTTOM <= SetlError < Om < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition
+     * < SetlObject < ConstructorDefinition < Top
+     *
      * This ranking is necessary to allow sets and lists of different types.
+     *
+     * @return Number representing the order of this type in compareTo().
      */
     protected abstract int  compareToOrdering();
 

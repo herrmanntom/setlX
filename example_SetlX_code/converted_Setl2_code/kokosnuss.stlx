@@ -16,12 +16,12 @@ teile := procedure(n) {
 	return r;
 };
 
-s := {n in {1 .. 99} | teile_4_mal(n)};
+s := {n : n in {1 .. 99} | teile_4_mal(n)};
 print(s);
 n := arb(s);
-print("Am Anfang sind es ", n, " Kokosn�sse");
-print("Nach dem ersten Teilen bleiben noch ", teile_k_mal(n, 1), " Kokosn�sse.");
-print("Nach dem zweiten Teilen bleiben noch ", teile_k_mal(n, 2), " Kokosn�sse.");
-print("Nach dem dritten Teilen bleiben noch ", teile_k_mal(n, 3), " Kokosn�sse.");
-print("Beim letzten Teilen bekommt jeder ", teile_k_mal(n, 3) \ 3, " Kokosn�sse.");
+print("Am Anfang sind es ", n, " Kokosnuesse");
+print("Nach dem ersten Teilen bleiben noch ", teile_k_mal(n, 1), " Kokosnuesse.");
+print("Nach dem zweiten Teilen bleiben noch ", teile_k_mal(n, 2), " Kokosnuesse.");
+print("Nach dem dritten Teilen bleiben noch ", teile_k_mal(n, 3), " Kokosnuesse.");
+print("Beim letzten Teilen bekommt jeder ", teile_k_mal(n, 3) \ 3, " Kokosnuesse.");
 

@@ -1,5 +1,28 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.1.1--- 2013-07-27
+ + the single straight quote is now used as escape character in literals and the
+   only valid escape sequence is two quotes ('') as sequence for a single one (')
+ - the quote operator (@) looses its special meaning for double-quoted strings;
+   it will now only force a term creation; to get the old behavior on strings,
+   replace the quotes with single straight ones: @"tax: 3$"  ->  'tax: 3$'
+ # fix string escape level and error handling in split() function
+ * term representation of strings changed
+ * build for Java 1.6 by default
+ 
+---v2.1.0--- 2013-07-01
+ + added short versions for some command line options
+ + provide better fallback when comparing objects without 'equals' member to other
+   types
+ - remove "short-iterate" syntax to resolve some issues in the grammar
+   (i.e {x in set | x%2 == 0} needs to be replaced with {x : x in set | x%2 == 0})
+ * lots of internal changes to the build system and error handling
+
+---v2.0.2--- 2013-05-18
+ - removed partly defunct debug functions (but not trace)
+ + add ability to trace object and class members
+ + add very simple debugging function stop(id)
+
 ---v2.0.1--- 2013-04-28
  # removed redundant quotes in objects
  # refactor and improve trace functionality

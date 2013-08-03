@@ -38,11 +38,11 @@ oneStep := procedure(pS, r) {
 };
 
 eliminateCycles := procedure(pS) {
-	return {p in pS | ( ! (cyclic(p)) )};
+	return {p : p in pS | ( ! (cyclic(p)) )};
 };
 
 cyclic := procedure(p) {
-	return #{x: x in p} < #p;
+	return #{x : x in p} < #p;
 };
 
 reachable := procedure(x, y, r) {
@@ -50,7 +50,7 @@ reachable := procedure(x, y, r) {
 	while (true) {
 		old_PS := pS;
 		pS := eliminateCycles(pS + oneStep(pS, r));
-		p := {p in pS | p[#p] == y};
+		p := {p : p in pS | p[#p] == y};
 		if (p != {}) {
 			return arb(p);
 		}

@@ -9,7 +9,6 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
-import java.util.Set;
 
 /**
  * This class represents a rational number.
@@ -256,7 +255,7 @@ public class Rational extends NumberValue {
     @Override
     public double toJDoubleValue(final State state) throws NumberToLargeException {
         if (!jDoubleConvertable()) {
-            String msg = "The fraction " + nominator + "/" + denominator 
+            String msg = "The fraction " + nominator + "/" + denominator
                        + "is too big or too small";
             throw new NumberToLargeException(msg);
         }
@@ -423,10 +422,16 @@ public class Rational extends NumberValue {
         Rational i = this;
         if (step.compareTo(Rational.ZERO) > 0) {
             for (; i.compareTo(stop) <= 0; i = (Rational) i.sum(state, step)) {
+                if (state.isExecutionStopped) {
+                    throw new StopExecutionException("Interrupted");
+                }
                 collection.addMember(state, i);
             }
         } else if (step.compareTo(Rational.ZERO) < 0) {
             for (; i.compareTo(stop) >= 0; i = (Rational) i.sum(state, step)) {
+                if (state.isExecutionStopped) {
+                    throw new StopExecutionException("Interrupted");
+                }
                 collection.addMember(state, i);
             }
         } else { // step == 0!
@@ -599,33 +604,31 @@ public class Rational extends NumberValue {
     public Rational round(final State state) throws SetlException {
         if (isInteger) {
             return this;
-        } else {
-	    if (nominator.signum() > 0) {
-		BigInteger[] dr = nominator.divideAndRemainder(denominator);
-		BigInteger   a  = dr[0];
-		BigInteger   b  = dr[1];
-		BigInteger   b2 = b.multiply(new BigInteger("2"));
-		int cmp = b2.compareTo(denominator);
-		if (cmp < 0) {
-		    return new Rational(a);
-		} else {
-		    return new Rational(a.add(BigInteger.ONE));
-		}
-	    } else {
-		BigInteger   nn = nominator.negate();
-		BigInteger[] dr = nn.divideAndRemainder(denominator);
-		BigInteger   a  = dr[0];
-		BigInteger   b  = dr[1];
-		BigInteger   b2 = b.multiply(new BigInteger("2"));
-		BigInteger   result;
-		int cmp = b2.compareTo(denominator);
-		if (cmp < 0) {
-		    result = a;
-		} else {
-		    result = a.add(BigInteger.ONE);
-		}
-		return new Rational(result.negate());
-	    }
+        } else if (nominator.signum() > 0) {
+            BigInteger[] dr = nominator.divideAndRemainder(denominator);
+            BigInteger   a  = dr[0];
+            BigInteger   b  = dr[1];
+            BigInteger   b2 = b.multiply(new BigInteger("2"));
+            int cmp = b2.compareTo(denominator);
+            if (cmp < 0) {
+                return new Rational(a);
+            } else {
+                return new Rational(a.add(BigInteger.ONE));
+            }
+        } else /* if (nominator.signum() <= 0) */ {
+            BigInteger   nn = nominator.negate();
+            BigInteger[] dr = nn.divideAndRemainder(denominator);
+            BigInteger   a  = dr[0];
+            BigInteger   b  = dr[1];
+            BigInteger   b2 = b.multiply(new BigInteger("2"));
+            BigInteger   result;
+            int cmp = b2.compareTo(denominator);
+            if (cmp < 0) {
+                result = a;
+            } else {
+                result = a.add(BigInteger.ONE);
+            }
+            return new Rational(result.negate());
         }
     }
 
@@ -683,36 +686,8 @@ public class Rational extends NumberValue {
         }
     }
 
-    /* Java Code generation */
-
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        header.add("import " + Rational.class.getCanonicalName() + ";");
-
-        code.append(Rational.class.getSimpleName());
-        code.append(".valueOf(");
-        code.append(nominator.toString());
-        code.append(", ");
-        code.append(denominator.toString());
-        code.append(")");
-    }
-
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     * "incomparable" values, e.g. of different types are ranked as follows:
-     * SetlError < Om < SetlBoolean < Rational & Real & SetlDouble < SetlString
-     * < SetlSet < SetlList < Term < ProcedureDefinition 
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     public int compareTo(final Value v) {
         if (this == v) {
@@ -735,13 +710,6 @@ public class Rational extends NumberValue {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < SetlBoolean < Rational & Real & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 500;

@@ -1,4 +1,4 @@
-\chapter{Whettening Your Appetite}
+\chapter{Whetting Your Appetite}
 This chapter contains a short overview of the data types supported by
 \setlx\ and tries to whet your appetite for the language by showing off some of
 the features that are unique to \setlx.  Before we discuss the more elaborate data types,
@@ -28,7 +28,7 @@ However, complex commands like, for example, loops are not terminated by a semic
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v1.6.0=-
+-====================================setlX=============================v2.1.0=-
 
 Welcome to the setlX interpreter!
 
@@ -64,7 +64,7 @@ The welcome banner of \textsc{SetlX} points out that we can call \texttt{setlX} 
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v1.6.0=-
+-====================================setlX=============================v2.1.0=-
 
 File paths supplied as parameters for this program will be parsed and executed.
 The interactive mode will be started if called without any file parameters.
@@ -73,35 +73,35 @@ Interactive-Mode:
   The 'exit;' statement terminates the interpreter.
 
 Additional parameters:
-  --ev <expression>
-     evaluates next argument as expression and exits
-  --ex <statement>
-     executes next argument as statement and exits
-  --libraryPath <path>
-     override SETLX_LIBRARY_PATH environment variable
-  --multiLineMode
-     only accept input in interactive mode after additional new line
-  --noAssert
-      disables all assert functions
-  --noExecution
-      load and check code for syntax errors, but do not execute it
-  --params <argument> ...
-     passes all following arguments to executed program via `params' variable
-  --predictableRandom
-      always use same random sequence (debugging)
+  -e <expression>, --eval <expression>
+      Evaluates next argument as expression and exits.
+  -x <statement>, --exec <statement>
+      Executes next argument as statement and exits.
+  -l <path>, --libraryPath <path>
+      Override SETLX_LIBRARY_PATH environment variable.
+  -m, --multiLineMode
+      Only accept input in interactive mode after additional new line.
+  -a, --noAssert
+      Disables all assert functions.
+  -n, --noExecution
+      Load and check code for syntax errors, but do not execute it.
+  -p <argument> ..., --params <argument> ...
+      Pass all following arguments to executed program via `params' variable.
+  -r, --predictableRandom
+      Always use same random sequence (debugging).
   --real32
   --real64
   --real128
   --real256
-      sets the width of the real-type in bits (real64 is the default)
+      Sets the width of the real-type in bits (real64 is the default).
   --realDefault
   --realEngineering
   --realPlain
-      sets how the exponent of reals is displayed
-  --verbose
-      display the parsed program before executing it
+      Sets how the exponent of reals is displayed.
+  -v, --verbose
+      Display the parsed program before executing it.
   --version
-      displays the interpreter version and terminates
+      Display interpreter version and terminate.
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Calling \texttt{setlx} with the option ``\texttt{--help}''.}
@@ -639,7 +639,7 @@ The most basic operators on sets are as follows:
       \texttt{\{\{\}, \{1\}, \{1, 2\}, \{1, 2, 3\}, \{1, 3\}, \{2\}, \{2, 3\}, \{3\}\}}.
 \item ``\texttt{\symbol{37}}'' computes the \emph{symmetric difference} of sets.
 
-      In mathematics, the symmetric difference of two sets $s_1$ and $s_2$ is  written
+      In mathematics, the symmetric difference of two sets $s_1$ and $s_2$ is often written
       as $s_1 \triangle s_2$.  It is defined as
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -818,19 +818,18 @@ Obviously, this is not an effcient way to calculate primes, but efficiency is no
 point of this example.  It rather shows that \setlx\ is well suited to execute a
 mathematical definition as it is.
 
-There is a short form available for set comprehension:  For a set $s$ and a Boolean expression
-$\textsl{cond}$, the expression
+Let us look at another example of set comprehension:  The expression
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{ $x$ in $s$ | $\textsl{cond}$ \};}
+\texttt{\{ p:p in \{2..100\} | \{ t:t in \{2..p-1\} | p \% t == 0 \} == \{\} \}}
 \\[0.2cm]
-will compute the subset of all those elements of the set $s$ that satisfy the specified Boolean
-condition $\textsl{cond}$.  For example, the expression
+yields the set of all prime numbers less than 100.  The subexpression
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{ p in \{1..n\} | n \% p == 0 \}}
+\texttt{\{ t:t in \{2..p-1\} | p \% t == 0 \}}
 \\[0.2cm]
-computes the set of all those numbers $p$ that divide $n$ without leaving a remainder.
+computes the set of all those natural numbers bigger than 1 and less than \texttt{p} that divide
+\texttt{p} evenly.  If this set is empty, then, by the definition of a prime number, \texttt{p} is prime.
 
 The syntax for building set comprehensions is a little bit more
 general than discussed above.  Provided $s_1$, $\cdots$, $s_n$ are sets of \emph{lists},
@@ -1080,7 +1079,7 @@ simultaneous assignment of variables.  The statement
 \hspace*{1.3cm}
 \texttt{[x,y] := [1,2];}
 \\[0.2cm]
-sets the variable $x$ to 1 and $y$ to 2.  A more intersting example is the following assigment:
+sets the variable $x$ to 1 and $y$ to 2.  A more interesting example is the following assigment:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[y,x] := [x,y];}

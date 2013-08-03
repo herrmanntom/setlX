@@ -116,13 +116,6 @@ public class SetlClass extends Value {
         return new SetlClass(parameters, initBlock, initVars, staticBlock, staticVars, staticDefs);
     }
 
-    /* Gather all bound and unbound variables in this value and its siblings
-          - bound   means "assigned" in this value
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use collectVariablesAndOptimize() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -203,17 +196,11 @@ public class SetlClass extends Value {
         newScope.linkToThisObject(newObject);
 
         final WriteBackAgent     wba         = new WriteBackAgent(parameters.size());
-        final boolean            stepThrough = state.isDebugStepThroughFunction;
-
-        if (stepThrough) {
-            state.setDebugStepThroughFunction(false);
-            state.setDebugModeActive(false);
-        }
 
         try {
 
             // execute, e.g. compute member definition
-            initBlock.exec(state);
+            initBlock.execute(state);
 
             // extract 'rw' arguments from scope, store them into WriteBackAgent
             for (int i = 0; i < parameters.size(); ++i) {
@@ -241,13 +228,6 @@ public class SetlClass extends Value {
 
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state, FUNCTIONAL_CHARACTER);
-
-            if (stepThrough || state.isDebugFinishFunction) {
-                state.setDebugModeActive(true);
-                if (state.isDebugFinishFunction) {
-                    state.setDebugFinishFunction(false);
-                }
-            }
         }
     }
 
@@ -265,7 +245,7 @@ public class SetlClass extends Value {
         try {
             // execute, e.g. compute static definition
             if (getStaticBlock() != null) {
-                getStaticBlock().exec(state);
+                getStaticBlock().execute(state);
             }
 
             newScope.unlink();
@@ -334,8 +314,10 @@ public class SetlClass extends Value {
             staticDefs = computeStaticDefinitions(state);
         }
 
-        // TODO add trace
         staticDefs.put(variable, value);
+        if (state.traceAssignments) {
+            state.printTrace(variable, value, FUNCTIONAL_CHARACTER);
+        }
 
         staticVars.add(variable);
 
@@ -425,11 +407,6 @@ public class SetlClass extends Value {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v){
         if (this == v) {
@@ -462,13 +439,6 @@ public class SetlClass extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 1200;

@@ -138,9 +138,9 @@ merge_it := procedure(t1,t2) {
 qsort := procedure(a) {
   if (#a > 1) {
     pivot := a[#a \ 2 + 1];
-    a := qsort([x in a | compare(x, pivot)  < 0]) +
-               [x in a | compare(x, pivot) == 0]     +
-         qsort([x in a | compare(x, pivot)  > 0]);
+    a := qsort([x : x in a | compare(x, pivot)  < 0]) +
+               [x : x in a | compare(x, pivot) == 0]     +
+         qsort([x : x in a | compare(x, pivot)  > 0]);
   }
 
   return a;

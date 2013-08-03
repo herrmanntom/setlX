@@ -8,7 +8,6 @@ import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * An addition of two expressions.
@@ -55,9 +54,9 @@ public class Sum extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendString(state, sb, tabs);
+        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
         sb.append(" + ");
-        rhs.appendString(state, sb, tabs);
+        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
     }
 
     /* term operations */
@@ -81,8 +80,8 @@ public class Sum extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(PRECEDENCE, true , term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
             return new Sum(lhs, rhs);
         }
     }
@@ -90,21 +89,6 @@ public class Sum extends Expr {
     @Override
     public int precedence() {
         return PRECEDENCE;
-    }
-
-    /* Java Code generation */
-
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        lhs.appendJavaCode(state, header, code, tabs);
-        code.append(".sum(state, ");
-        rhs.appendJavaCode(state, header, code, tabs);
-        code.append(")");
     }
 
     /**

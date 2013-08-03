@@ -55,9 +55,9 @@ public class ProductOfMembersBinary extends Expr {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        neutral.appendString(state, sb, tabs);
+        neutral.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
         sb.append(" */ ");
-        collection.appendString(state, sb, tabs);
+        collection.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
@@ -74,8 +74,8 @@ public class ProductOfMembersBinary extends Expr {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr neutral    = TermConverter.valueToExpr(PRECEDENCE, false, term.firstMember());
-            final Expr collection = TermConverter.valueToExpr(PRECEDENCE, false, term.lastMember());
+            final Expr neutral    = TermConverter.valueToExpr(term.firstMember());
+            final Expr collection = TermConverter.valueToExpr(term.lastMember());
             return new ProductOfMembersBinary(neutral, collection);
         }
     }

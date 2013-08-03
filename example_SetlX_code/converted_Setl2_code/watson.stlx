@@ -41,11 +41,11 @@ a := {"a", "b", "c"};
 p := pow(a);
 print("P = ", p);
 b := {createBelegung(m, a): m in p};
-s := {i in b | (evalSet(fS, i) <==> true)};
+s := {i : i in b | (evalSet(fS, i) <==> true)};
 print("\nMenge der Belegungen, die FS erfuellen:");
 if (#s == 1) {
 	i := arb(s);
-	taeter := {x in a | i[x]};
+	taeter := {x : x in a | i[x]};
 	print("\nMenge der Taeter: ", taeter);
 }
 

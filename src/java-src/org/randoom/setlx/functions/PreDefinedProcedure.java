@@ -16,13 +16,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Base class for all procedures, which can be loaded at runtime by setlX.
+ */
 public abstract class PreDefinedProcedure extends Procedure {
     // functional characters used in terms
     private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
 
-    private       String  name;
-    private       boolean unlimitedParameters;
-    private       boolean allowFewerParameters;
+    private String  name;
+    private boolean unlimitedParameters;
+    private boolean allowFewerParameters;
 
     protected PreDefinedProcedure() {
         super(new ArrayList<ParameterDef>(), new Block());
@@ -31,6 +34,11 @@ public abstract class PreDefinedProcedure extends Procedure {
         this.allowFewerParameters = false;
     }
 
+    /**
+     * Get the name of this procedure, as shown in the interpreter.
+     *
+     * @return Name of this procedure.
+     */
     public final String getName() {
         if (name == null) {
             name = this.getClass().getSimpleName().substring(3);
@@ -38,35 +46,68 @@ public abstract class PreDefinedProcedure extends Procedure {
         return name;
     }
 
-    // only to be used by MathFunction.java & MathFunction2.java !
+    /**
+     * Set the name of this procedure.
+     *
+     * Only to be used by MathFunction.java & MathFunction2.java !
+     * Name of `normal' PreDefinedProcedures is determined automatically for the class name.
+     *
+     * @param name Name to set.
+     */
     protected final void setName(final String name) {
         this.name = name;
     }
 
-    // add parameters to own definition
-    protected void addParameter(final String param) {
+    /**
+     * Add parameters to this definition.
+     *
+     * @param param Parameter name to add.
+     */
+    protected final void addParameter(final String param) {
         parameters.add(new ParameterDef(param, ParameterDef.READ_ONLY));
     }
-    protected void addParameter(final String param, final int type) {
+
+    /**
+     * Add parameters to this definition.
+     * See ParameterDef for type constants.
+     *
+     * @see org.randoom.setlx.utilities.ParameterDef
+     *
+     * @param param Parameter name to add.
+     * @param type  Type of the parameter (RW, RO).
+     */
+    protected final void addParameter(final String param, final int type) {
         parameters.add(new ParameterDef(param, type));
     }
 
-    // allow an unlimited number of parameters
-    protected void enableUnlimitedParameters() {
+    /**
+     * Allow call with unlimited number of parameters.
+     */
+    protected final void enableUnlimitedParameters() {
         unlimitedParameters    = true;
     }
 
-    // allow an calling with fewer number of parameters then specified
-    protected void allowFewerParameters() {
+    /**
+     * Allow call with a fewer number of parameters then specified.
+     */
+    protected final void allowFewerParameters() {
         allowFewerParameters   = true;
     }
 
-    // this function is to be implemented by all predefined functions
+    /**
+     * Function to be implemented by specific predefined procedures.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param args           Values of the call-parameters in the same order as defined.
+     * @param writeBackVars  List to append Values for RW parameters in the same order as defined to.
+     * @return               Resulting value of the call.
+     * @throws SetlException Can be thrown in case of some (user-) error.
+     */
     protected abstract Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException;
 
     // this function is called from within SetlX
     @Override
-    public Value call(final State state, final List<Expr> args) throws SetlException {
+    public final Value call(final State state, final List<Expr> args) throws SetlException {
         final int paramSize = parameters.size();
         final int argsSize  = args.size();
         if (paramSize < argsSize) {
@@ -105,10 +146,6 @@ public abstract class PreDefinedProcedure extends Procedure {
 
         // List of writeBack-values, which should be stored into the outer scope
         final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
-
-        if (state.isDebugStepThroughFunction) {
-            state.setDebugStepThroughFunction(false);
-        }
 
         // call predefined function (which may add writeBack-values to List)
         final Value result  = this.execute(state, values, writeBackVars);
@@ -168,7 +205,7 @@ public abstract class PreDefinedProcedure extends Procedure {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public final Value toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
 
         result.addMember(state, new SetlString(getName()));

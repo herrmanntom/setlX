@@ -1,5 +1,7 @@
 #!/bin/bash
 
+trap 'kill 0;exit' INT QUIT ABRT KILL TERM
+
 tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 # set overrides for setlX launcher script
@@ -17,7 +19,7 @@ renice -n 10 $$
 
 # prepare the interpreter
 simpleTest="src/simpleTest/test.stlx"
-cd src; make test >/dev/null 2>"$tmpFile"; cd ..
+cd src; ant -emacs -logger org.apache.tools.ant.NoBannerLogger test >"$tmpFile" 2>&1; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" "$tmpFile")
@@ -34,7 +36,7 @@ else
 fi
 
 # number of concurrent processes to start
-numberOfThreads=$("$setlXlaunchScript" --ev "nCPUs() \ 2")
+numberOfThreads=$("$setlXlaunchScript" -e "nCPUs() \ 2")
 if [ ! -z "$1" ]
   then
     if [[ "$1" =~ ^[1-9][0-9]*$ ]]
@@ -105,7 +107,7 @@ for path in "${examplesAutomaticTest[@]}"
     started=$(bc <<< "$started + 1")
     echo -e "Starting test $started/$count.\n"
     message="Test of file '$path' ($started/$count)"
-    
+
     if [ -e "$path.noTermLoop.reference" ]
       then
         referenceFile="$path.noTermLoop.reference"

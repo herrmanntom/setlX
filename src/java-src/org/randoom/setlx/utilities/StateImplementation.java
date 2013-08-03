@@ -10,7 +10,10 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -18,7 +21,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-// This class represents the current state of the interpreter.
+/**
+ * This class represents the current state of the interpreter.
+ */
 public class StateImplementation extends State {
 
     // interface provider to the outer world
@@ -43,6 +48,8 @@ public class StateImplementation extends State {
 
     // number of CPUs/Cores in System
     private final   static  int                 CORES = Runtime.getRuntime().availableProcessors();
+    // measurement of this JVM's stack size
+    private         static  int                 STACK_MEASUREMENT = -1;
 
     // is input feed by a human?
     private                 boolean             isHuman;
@@ -50,22 +57,27 @@ public class StateImplementation extends State {
     // random number generator
     private                 Random              randoom;
 
+    private                 int                 firstCallStackDepth;
+
+    private                 boolean             isRandoomPredictable;
     private                 boolean             multiLineMode;
     private                 boolean             isInteractive;
     private                 boolean             printVerbose;
-    private                 boolean             traceAssignments;
     private                 boolean             assertsDisabled;
     private                 boolean             isRuntimeDebuggingEnabled;
 
-    /* -- Debugger -- */
-    private final           HashSet<String>     breakpoints;
-
-    private                 boolean             debugPromptActive;
-
+    /**
+     * Create new state implementation, using a dummy environment.
+     */
     public StateImplementation() {
         this(DummyEnvProvider.DUMMY);
     }
 
+    /**
+     * Create new state implementation, using the specified environment.
+     *
+     * @param envProvider Environment provider implementation to use.
+     */
     public StateImplementation(final EnvironmentProvider envProvider) {
         this.envProvider                 = envProvider;
         parserErrorCapture               = null;
@@ -73,26 +85,34 @@ public class StateImplementation extends State {
         super.realPrintMode              = SetlDouble.PRINT_MODE_DEFAULT;
         loadedLibraries                  = new HashSet<String>();
         classDefinitions                 = new HashMap<String, SetlClass>();
-        variableScope                    = ROOT_SCOPE.createLinkedScope();
         isHuman                          = false;
-        randoom                          = new Random();
-        super.callStackDepth             = 10; // add a bit to account for initialization stuff
-        super.isExecutionStopped         = false;
+        isRandoomPredictable             = false;
         multiLineMode                    = false;
         isInteractive                    = false;
         printVerbose                     = false;
-        traceAssignments                 = false;
+        super.traceAssignments           = false;
         assertsDisabled                  = false;
         isRuntimeDebuggingEnabled        = false;
-        /* -- Debugger -- */
-        breakpoints                      = new HashSet<String>();
-        super.areBreakpointsEnabled      = false;
-        super.isDebugModeActive          = false;
-        debugPromptActive                = false;
-        super.isDebugStepNextExpr        = false;
-        super.isDebugStepThroughFunction = false;
-        super.isDebugFinishFunction      = false;
-        super.isDebugFinishLoop          = false;
+        resetState();
+    }
+
+    @Override
+    public void resetState() {
+        if (parserErrorCapture != null) {
+            parserErrorCapture.clear();
+        }
+        parserErrorCount = 0;
+        loadedLibraries.clear();
+        classDefinitions.clear();
+        if (isRandoomPredictable) {
+            randoom = new Random(0);
+        } else {
+            randoom = new Random();
+        }
+        variableScope            = ROOT_SCOPE.createLinkedScope();
+        super.callStackDepth     = 15; // add a bit to account for initialization stuff
+        firstCallStackDepth      = -1;
+        super.isExecutionStopped = false;
     }
 
     @Override
@@ -175,6 +195,74 @@ public class StateImplementation extends State {
         parserErrorCount = 0;
     }
 
+    // some special (error) messages
+    @Override
+    public void errWriteInternalError(final Exception e) {
+        errWriteLn(
+                "Internal error." + envProvider.getEndl() +
+                "Please report this error including steps and/or code to reproduce to" +
+                "`setlx@randoom.org'."
+        );
+        if (isRuntimeDebuggingEnabled()) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            e.printStackTrace(new PrintStream(out));
+            errWrite(out.toString());
+        }
+    }
+
+    @Override
+    public void errWriteOutOfStack(final StackOverflowError soe, final boolean fromParser) {
+        String message = "The setlX ";
+        if (fromParser) {
+            message += "parser";
+        } else {
+            message += "interpreter";
+        }
+        message += " has ran out of stack." + envProvider.getEndl();
+
+        if (fromParser) {
+            message += "Please report this error including steps and/or code to reproduce to" +
+                       "`setlx@randoom.org'." + envProvider.getEndl();
+        } else {
+            message += "Try improving the SetlX program to use less recursion." + envProvider.getEndl() +
+                       envProvider.getEndl() +
+                       "If that does not help get a better device ;-)" + envProvider.getEndl();
+        }
+
+        errWriteLn(message);
+
+        if (isRuntimeDebuggingEnabled()) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            soe.printStackTrace(new PrintStream(out));
+            errWrite(out.toString());
+            errWriteLn("callStackDepth assumption was: " + firstCallStackDepth);
+            errWriteLn("max callStackDepth is:         " + getMaxStackSize());
+        }
+    }
+
+    @Override
+    public void errWriteOutOfMemory(final boolean showXmxOption, final boolean fromParser) {
+        String message = "The setlX ";
+        if (fromParser) {
+            message += "parser";
+        } else {
+            message += "interpreter";
+        }
+        message += " has ran out of memory." + envProvider.getEndl();
+
+        message += "Try improving the SetlX program";
+        if (showXmxOption) {
+            message += " and/or execute with larger maximum memory size." + envProvider.getEndl() +
+                       "(use '-Xmx<size>' parameter for java loader, where <size> is like '6g' [6GB])" + envProvider.getEndl();
+        } else {
+            message += "." + envProvider.getEndl();
+        }
+        message += envProvider.getEndl() +
+                   "If that does not help get a better device ;-)" + envProvider.getEndl();
+
+        errWriteLn(message);
+    }
+
     @Override
     public boolean prompt(final String prompt) throws JVMIOException {
         // Only if a pipe is connected the input is ready (has input buffered)
@@ -190,11 +278,6 @@ public class StateImplementation extends State {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public void promptUnchecked(final String prompt) {
-        envProvider.promptForInput(prompt);
     }
 
     @Override
@@ -248,8 +331,16 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void setPredictableRandoom() {
-        randoom = new Random(0);
+    public void setRandoomPredictable(final boolean predictableRandoom) {
+        isRandoomPredictable = predictableRandoom;
+        if (predictableRandoom) {
+            randoom = new Random(0);
+        }
+    }
+
+    @Override
+    public boolean isRandoomPredictable() {
+        return isRandoomPredictable;
     }
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
@@ -273,6 +364,61 @@ public class StateImplementation extends State {
     @Override
     public Random getRandom() {
         return randoom;
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        // As setlX's estimation is far from perfect, we assume 2x more stack usage
+        // then its internal accounting guesses.
+        // Also a few stack (~66) frames should be free for functions out of our
+        // control, like the ones from the JDK ;-)
+        //
+        // Thus the maximum stack size is about 1/2 of (measured stack - 66).
+
+        return (measureStackSize() - 66) / 2;
+    }
+
+    // measure the stack size
+    private static int measureStackSize() {
+        if (STACK_MEASUREMENT <= 0) {
+            // create new thread to measure entire stack size, independent of
+            // current stack usage size in this thread.
+            final Thread stackEstimater = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    STACK_MEASUREMENT = measureStackSize_slave(2);
+                }
+            });
+            stackEstimater.start();
+            try {
+                stackEstimater.join();
+            } catch (final InterruptedException e) { }
+        }
+        return STACK_MEASUREMENT;
+    }
+
+    private static int measureStackSize_slave(int size) {
+        try {
+            if (size >= 1000000) {
+                // forever loop protection in case Java ever gets an unlimited stack
+                return 1000000;
+            }
+            return measureStackSize_slave(++size);
+        } catch (final StackOverflowError soe) {
+            return size;
+        }
+    }
+
+    @Override
+    public void storeStackDepthOfFirstCall(final int callStackDepth) {
+        if (firstCallStackDepth < 0) {
+            firstCallStackDepth = this.callStackDepth;
+        }
+        if (this.callStackDepth != callStackDepth) {
+            // this should not be possible!
+            // but reading the parameter prevents javac optimizing the whole thing away
+            throw new InvalidParameterException("this.callStackDepth != callStackDepth");
+        }
     }
 
     @Override
@@ -313,11 +459,6 @@ public class StateImplementation extends State {
     @Override
     public void setTraceAssignments(final boolean traceAssignments) {
         this.traceAssignments = traceAssignments;
-    }
-
-    @Override
-    public boolean getTraceAssignments() {
-        return traceAssignments;
     }
 
     @Override
@@ -381,17 +522,6 @@ public class StateImplementation extends State {
     }
 
     @Override
-    public void resetState() {
-        variableScope  = ROOT_SCOPE.createLinkedScope();
-        classDefinitions.clear();
-        loadedLibraries.clear();
-        if (parserErrorCapture != null) {
-            parserErrorCapture.clear();
-        }
-        breakpoints.clear();
-    }
-
-    @Override
     public Value findValue(final String var) throws SetlException {
         Value v = classDefinitions.get(var);
         if (v != null) {
@@ -449,7 +579,8 @@ public class StateImplementation extends State {
         }
     }
 
-    /*private*/ void printTrace(final String var, final Value result, final String context) {
+    @Override
+    public void printTrace(final String var, final Value result, final String context) {
         final StringBuilder out = new StringBuilder();
 
         out.append("~< Trace");
@@ -517,79 +648,13 @@ public class StateImplementation extends State {
     }
 
     @Override
+    public SetlHashMap<Value> getAllVariablesInScope() {
+        return variableScope.getAllVariablesInScope(classDefinitions);
+    }
+
+    @Override
     public Term scopeToTerm() {
         return variableScope.toTerm(this, classDefinitions);
-    }
-
-    /* -- Debugger -- */
-
-    @Override
-    public void setBreakpoint(final String id) {
-        breakpoints.add(id);
-        setBreakpointsEnabled(true);
-    }
-
-    @Override
-    public boolean removeBreakpoint(final String id) {
-        final boolean result  = breakpoints.remove(id);
-        setBreakpointsEnabled(breakpoints.size() > 0);
-        return result;
-    }
-
-    @Override
-    public void removeAllBreakpoints() {
-        breakpoints.clear();
-        setBreakpointsEnabled(false);
-    }
-
-    @Override
-    public boolean isBreakpoint(final String id) {
-        return breakpoints.contains(id);
-    }
-
-    @Override
-    public String[] getAllBreakpoints() {
-        return breakpoints.toArray(new String[0]);
-    }
-
-    @Override
-    public void setBreakpointsEnabled(final boolean enabled) {
-        super.areBreakpointsEnabled = enabled;
-    }
-
-    @Override
-    public void setDebugModeActive(final boolean active) {
-        super.isDebugModeActive = active;
-    }
-
-    @Override
-    public void setDebugPromptActive(final boolean active) {
-        debugPromptActive  = active;
-    }
-
-    @Override
-    public boolean isDebugPromptActive() {
-        return debugPromptActive;
-    }
-
-    @Override
-    public void setDebugStepNextExpr(final boolean stepNextExpr) {
-        super.isDebugStepNextExpr = stepNextExpr;
-    }
-
-    @Override
-    public void setDebugStepThroughFunction(final boolean stepThrough) {
-        super.isDebugStepThroughFunction = stepThrough;
-    }
-
-    @Override
-    public void setDebugFinishFunction(final boolean finish) {
-        super.isDebugFinishFunction = finish;
-    }
-
-    @Override
-    public void setDebugFinishLoop(final boolean finish) {
-        super.isDebugFinishLoop = finish;
     }
 }
 

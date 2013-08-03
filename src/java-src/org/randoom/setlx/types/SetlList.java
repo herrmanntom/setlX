@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
@@ -16,7 +17,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/* This class implements a list of arbitrary SetlX values.
+/**
+ * This class implements a list of arbitrary SetlX values.
  * It will most likely be created and filled by an SetListConstructor
  * (or is result of an operation).
  *
@@ -72,7 +74,8 @@ public class SetlList extends IndexedCollectionValue {
         return new SetlList(this.list);
     }
 
-    /* If the contents of THIS SetlList is modified, the following function MUST
+    /**
+     * If the contents of THIS SetlList is modified, the following function MUST
      * be called before the modification. It performs the real cloning,
      * if THIS is actually marked as a clone.
      *
@@ -444,10 +447,11 @@ public class SetlList extends IndexedCollectionValue {
         return list.get(list.size() - 1).clone();
     }
 
+
     @Override
     public Value maximumMember(final State state) throws SetlException {
-        Value max = null;
-        max = SetlDouble.NEGATIVE_INFINITY;
+        // Neutral element of max() is smallest value available
+        Value max = SetlError.BOTTOM;
         for (final Value v: list) {
             if (v.maximum(state, max).equals(v)) {
                 max = v;
@@ -458,8 +462,8 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public Value minimumMember(final State state) throws SetlException {
-        Value min = null;
-        min = SetlDouble.POSITIVE_INFINITY;
+        // Neutral element of min() is largest value available
+        Value min = Top.TOP;
         for (final Value v: list) {
             if (v.minimum(state, min).equals(v)) {
                 min = v;
@@ -507,6 +511,9 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlSet permutations(final State state) throws SetlException {
+        if (state.isExecutionStopped) {
+            throw new StopExecutionException("Interrupted");
+        }
         if (size() == 0) {
             final SetlSet permutations = new SetlSet();
             permutations.addMember(state, clone());
@@ -727,11 +734,6 @@ public class SetlList extends IndexedCollectionValue {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v) {
         if (this == v) {
@@ -758,13 +760,6 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 800;

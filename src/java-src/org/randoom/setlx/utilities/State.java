@@ -42,9 +42,24 @@ public abstract class State {
     public abstract void                addToParserErrorCount(int numberOfErrors);
     public abstract void                resetParserErrorCount();
 
-    public abstract boolean             prompt(final String prompt) throws JVMIOException;
+    // some special (error) messages
+    public abstract void                errWriteInternalError(final Exception e);
+    public abstract void                errWriteOutOfStack(final StackOverflowError soe, boolean fromParser);
+    public abstract void                errWriteOutOfMemory(final boolean showXmxOption, boolean fromParser);
 
-    public abstract void                promptUnchecked(final String prompt);
+    /**
+     * Show the user a prompt for some input. The prompt message is only shown if
+     * input comes from a human, i.e. is not instantly available.
+     *
+     * Actual user input has to be read via inReadLine().
+     *
+     * @see org.randoom.setlx.utilities.State#inReadLine()
+     *
+     * @param prompt          Message to show to the user.
+     * @return                True if input comes from a human.
+     * @throws JVMIOException Thrown in case input cannot be opened.
+     */
+    public abstract boolean             prompt(final String prompt) throws JVMIOException;
 
     public abstract void                setRealPrintMode_default();
     public abstract void                setRealPrintMode_engineering();
@@ -66,7 +81,8 @@ public abstract class State {
     // current time in ms
     public abstract long                currentTimeMillis();
 
-    public abstract void                setPredictableRandoom();
+    public abstract void                setRandoomPredictable(boolean predictableRandoom);
+    public abstract boolean             isRandoomPredictable();
 
     // get number between 0 and upperBoundary (including 0 but not upperBoundary)
     public abstract int                 getRandomInt(final int upperBoundary);
@@ -80,6 +96,8 @@ public abstract class State {
     public abstract Random              getRandom();
 
     public          int                 callStackDepth;
+    public abstract int                 getMaxStackSize();
+    public abstract void                storeStackDepthOfFirstCall(final int callStackDepth);
 
     public abstract void                stopExecution(final boolean stopExecution);
 
@@ -99,7 +117,9 @@ public abstract class State {
 
     public abstract void                setTraceAssignments(final boolean traceAssignments);
 
-    public abstract boolean             getTraceAssignments();
+    public          boolean             traceAssignments;
+
+    public abstract void                printTrace(final String var, final Value result, final String context);
 
     public abstract void                setAssertsDisabled(final boolean assertsDisabled);
 
@@ -121,11 +141,18 @@ public abstract class State {
 
     public abstract void                setScope(final VariableScope newScope);
 
+    /**
+     * Reset state to its initial setup.
+     *
+     * Clears all scopes, class definitions, libraries and error captures.
+     */
     public abstract void                resetState();
 
     public abstract Value               findValue(final String var) throws SetlException;
 
     /**
+     * Store `value' for variable into current scope.
+     *
      * @param var                           Variable to set.
      * @param value                         Value to set variable to
      * @param context                       Context description of the assignment for trace.
@@ -161,47 +188,9 @@ public abstract class State {
 
     public abstract void                putClassDefinition(final String var, final SetlClass classDef, final String context);
 
+    public abstract SetlHashMap<Value>  getAllVariablesInScope();
+
     public abstract Term                scopeToTerm();
-
-    /* -- Debugger -- */
-
-    public abstract void                setBreakpoint(final String id);
-
-    public abstract boolean             removeBreakpoint(final String id);
-
-    public abstract void                removeAllBreakpoints();
-
-    public abstract boolean             isBreakpoint(final String id);
-
-    public abstract String[]            getAllBreakpoints();
-
-    public abstract void                setBreakpointsEnabled(final boolean enabled);
-
-    public          boolean             areBreakpointsEnabled;
-
-    public abstract void                setDebugModeActive(final boolean active);
-
-    public          boolean             isDebugModeActive;
-
-    public abstract void                setDebugPromptActive(final boolean active);
-
-    public abstract boolean             isDebugPromptActive();
-
-    public abstract void                setDebugStepNextExpr(final boolean stepNextExpr);
-
-    public          boolean             isDebugStepNextExpr;
-
-    public abstract void                setDebugStepThroughFunction(final boolean stepThrough);
-
-    public          boolean             isDebugStepThroughFunction;
-
-    public abstract void                setDebugFinishFunction(final boolean finish);
-
-    public          boolean             isDebugFinishFunction;
-
-    public abstract void                setDebugFinishLoop(final boolean finish);
-
-    public          boolean             isDebugFinishLoop;
 
 }
 

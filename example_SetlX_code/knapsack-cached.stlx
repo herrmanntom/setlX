@@ -23,9 +23,9 @@
 // where s is the subset solving the 0/1-knapsack problem and s is the value 
 // of the subset s. 
 knapsackNaive := procedure(problem, maxWeight) {
-    admissable := { s in pow(problem) | weight(s) <= maxWeight };
+    admissable := { s : s in pow(problem) | weight(s) <= maxWeight };
     maxValue   := max({ value(s) : s in admissable });
-    return [ maxValue, arb({ s in admissable | value(s) == maxValue }) ];
+    return [ maxValue, arb({ s : s in admissable | value(s) == maxValue }) ];
 };
 
 weight := procedure(s) {

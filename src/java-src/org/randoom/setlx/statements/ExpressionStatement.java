@@ -7,7 +7,6 @@ import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Statement containing a single expression.
@@ -37,7 +36,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     }
 
     @Override
-    protected ReturnMessage execute(final State state) throws SetlException {
+    public ReturnMessage execute(final State state) throws SetlException {
         final Value v = expr.eval(state);
         if (printAfterEval) {
             printResult(state, v);
@@ -69,19 +68,4 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     public Value toTerm(final State state) {
         return expr.toTerm(state);
     }
-
-    /* Java Code generation */
-
-    @Override
-    public void appendJavaCode(
-            final State         state,
-            final Set<String>   header,
-            final StringBuilder code,
-            final int           tabs
-    ) {
-        state.appendLineStart(code, tabs);
-        expr.appendJavaCode(state, header, code, tabs);
-        code.append(";");
-    }
 }
-

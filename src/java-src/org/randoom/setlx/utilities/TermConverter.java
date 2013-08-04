@@ -43,11 +43,11 @@ public class TermConverter {
             if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
                 // special cases
                 // non-generic values
-                if (fc.equals(CachedProcedure.FUNCTIONAL_CHARACTER)) {
+                if (fc.equals(CachedProcedure.getFunctionalCharacter())) {
                     return CachedProcedure.termToValue(term);
                 } else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
                     return LambdaDefinition.termToValue(term);
-                } else if (fc.equals(Procedure.FUNCTIONAL_CHARACTER)) {
+                } else if (fc.equals(Procedure.getFunctionalCharacter())) {
                     return Procedure.termToValue(term);
                 } else if (fc.equals(SetlClass.FUNCTIONAL_CHARACTER)) {
                     return SetlClass.termToValue(term);

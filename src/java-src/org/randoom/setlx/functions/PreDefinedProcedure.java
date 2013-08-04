@@ -27,6 +27,12 @@ public abstract class PreDefinedProcedure extends Procedure {
     private boolean unlimitedParameters;
     private boolean allowFewerParameters;
 
+    /**
+     * Initialize a new predefined procedure.
+     *
+     * Note: This class is abstract - no object will be created using this
+     *       constructor directly.
+     */
     protected PreDefinedProcedure() {
         super(new ArrayList<ParameterDef>(), new Block());
         this.name                 = null;
@@ -108,68 +114,81 @@ public abstract class PreDefinedProcedure extends Procedure {
     // this function is called from within SetlX
     @Override
     public final Value call(final State state, final List<Expr> args) throws SetlException {
-        final int paramSize = parameters.size();
-        final int argsSize  = args.size();
-        if (paramSize < argsSize) {
-            if (unlimitedParameters) {
-                // unlimited means: at least the number of defined parameters or more
-                // no error
-            } else {
-                String error = "Procedure is defined with fewer parameters ";
-                error +=       "(" + paramSize;
-                if (allowFewerParameters) {
-                    error +=   " or less";
-                }
-                error +=       ").";
-                throw new IncorrectNumberOfParametersException(error);
-            }
-        } else if (paramSize > argsSize) {
-            if (allowFewerParameters) {
-                // fewer parameters are allowed
-                // no error
-            } else {
-                String error = "Procedure is defined with more parameters ";
-                error +=       "(" + paramSize;
+        try {
+            // increase callStackDepth
+            state.callStackDepth += 2; // this method + the overloaded execute()
+                                       // after that all bets are off
+
+            final int paramSize = parameters.size();
+            final int argsSize  = args.size();
+            if (paramSize < argsSize) {
                 if (unlimitedParameters) {
-                    error +=   " or more";
+                    // unlimited means: at least the number of defined parameters or more
+                    // no error
+                } else {
+                    String error = "Procedure is defined with fewer parameters ";
+                    error +=       "(" + paramSize;
+                    if (allowFewerParameters) {
+                        error +=   " or less";
+                    }
+                    error +=       ").";
+                    throw new IncorrectNumberOfParametersException(error);
                 }
-                error +=       ").";
-                throw new IncorrectNumberOfParametersException(error);
-            }
-        }
-
-        // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(argsSize);
-        for (final Expr arg : args) {
-            values.add(arg.eval(state).clone());
-        }
-
-        // List of writeBack-values, which should be stored into the outer scope
-        final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
-
-        // call predefined function (which may add writeBack-values to List)
-        final Value result  = this.execute(state, values, writeBackVars);
-
-        // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
-        if (writeBackVars.size() > 0) {
-            final WriteBackAgent wba = new WriteBackAgent(writeBackVars.size());
-            for (int i = 0; i < paramSize; ++i) {
-                final ParameterDef param = parameters.get(i);
-                if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
-                    // value of parameter after execution
-                    final Value postValue = writeBackVars.remove(0);
-                    // expression used to fill parameter before execution
-                    final Expr  preExpr   = args.get(i);
-                    /* if possible the WriteBackAgent will set the variable used in
-                       this expression to its postExecution state in the outer scope */
-                    wba.add(preExpr, postValue);
+            } else if (paramSize > argsSize) {
+                if (allowFewerParameters) {
+                    // fewer parameters are allowed
+                    // no error
+                } else {
+                    String error = "Procedure is defined with more parameters ";
+                    error +=       "(" + paramSize;
+                    if (unlimitedParameters) {
+                        error +=   " or more";
+                    }
+                    error +=       ").";
+                    throw new IncorrectNumberOfParametersException(error);
                 }
             }
-            // assign variables
-            wba.writeBack(state, FUNCTIONAL_CHARACTER);
-        }
 
-        return result;
+            // evaluate arguments
+            final ArrayList<Value> values = new ArrayList<Value>(argsSize);
+            for (final Expr arg : args) {
+                values.add(arg.eval(state).clone());
+            }
+
+            // List of writeBack-values, which should be stored into the outer scope
+            final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
+
+            // call predefined function (which may add writeBack-values to List)
+            final Value result  = this.execute(state, values, writeBackVars);
+
+            // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
+            if (writeBackVars.size() > 0) {
+                final WriteBackAgent wba = new WriteBackAgent(writeBackVars.size());
+                for (int i = 0; i < paramSize; ++i) {
+                    final ParameterDef param = parameters.get(i);
+                    if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
+                        // value of parameter after execution
+                        final Value postValue = writeBackVars.remove(0);
+                        // expression used to fill parameter before execution
+                        final Expr  preExpr   = args.get(i);
+                        /* if possible the WriteBackAgent will set the variable used in
+                           this expression to its postExecution state in the outer scope */
+                        wba.add(preExpr, postValue);
+                    }
+                }
+                // assign variables
+                wba.writeBack(state, FUNCTIONAL_CHARACTER);
+            }
+
+            return result;
+
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
+        } finally {
+            // decrease callStackDepth
+            state.callStackDepth -= 2;
+        }
     }
 
     /* string and char operations */

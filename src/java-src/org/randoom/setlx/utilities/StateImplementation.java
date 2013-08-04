@@ -49,7 +49,9 @@ public class StateImplementation extends State {
     // number of CPUs/Cores in System
     private final   static  int                 CORES = Runtime.getRuntime().availableProcessors();
     // measurement of this JVM's stack size
-    private         static  int                 STACK_MEASUREMENT = -1;
+    private         static  int                 STACK_MEASUREMENT  = -1;
+    // maximum accepted stack measurement; is roughly equal to -Xss48m using the 64 bit OpenJDK 7
+    private final   static  int                 ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
 
     // is input feed by a human?
     private                 boolean             isHuman;
@@ -368,14 +370,14 @@ public class StateImplementation extends State {
 
     @Override
     public int getMaxStackSize() {
-        // As setlX's estimation is far from perfect, we assume 2x more stack usage
-        // then its internal accounting guesses.
+        // As setlX's estimation is far from perfect, we assume somewhat more
+        // stack usage then its internal accounting guesses.
         // Also a few stack (~66) frames should be free for functions out of our
         // control, like the ones from the JDK ;-)
         //
-        // Thus the maximum stack size is about 1/2 of (measured stack - 66).
+        // Thus the maximum stack size is about 2/3 of (measured stack - 66).
 
-        return (measureStackSize() - 66) / 2;
+        return ((measureStackSize() - 66) * 2) / 3;
     }
 
     // measure the stack size
@@ -399,9 +401,9 @@ public class StateImplementation extends State {
 
     private static int measureStackSize_slave(int size) {
         try {
-            if (size >= 1000000) {
-                // forever loop protection in case Java ever gets an unlimited stack
-                return 1000000;
+            if (size >= ABSOLUTE_MAX_STACK) {
+                // Forever loop protection in case Java ever gets an unlimited stack.
+                return ABSOLUTE_MAX_STACK;
             }
             return measureStackSize_slave(++size);
         } catch (final StackOverflowError soe) {
@@ -411,8 +413,8 @@ public class StateImplementation extends State {
 
     @Override
     public void storeStackDepthOfFirstCall(final int callStackDepth) {
-        if (firstCallStackDepth < 0) {
-            firstCallStackDepth = this.callStackDepth;
+        if (firstCallStackDepth < 0 && callStackDepth > 0) {
+            firstCallStackDepth = callStackDepth;
         }
         if (this.callStackDepth != callStackDepth) {
             // this should not be possible!

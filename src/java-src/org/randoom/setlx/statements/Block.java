@@ -90,7 +90,6 @@ public class Block extends Statement {
             MAX_CALL_STACK_DEPTH = state.getMaxStackSize();
         }
         if (MAX_CALL_STACK_DEPTH > 0 && state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
-            state.callStackDepth  = 0;
             executeInCurrentStack = false;
         }
 
@@ -275,6 +274,8 @@ public class Block extends Statement {
         @Override
         public void run() {
             try {
+                state.callStackDepth  = 0;
+
                 for (final Statement stmnt : statements) {
                     if (state.isExecutionStopped) {
                         throw new StopExecutionException("Interrupted");

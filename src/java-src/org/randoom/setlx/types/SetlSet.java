@@ -34,10 +34,10 @@ public class SetlSet extends CollectionValue {
      * actually doing any cloning, this set carries an isClone flag.
      *
      * If the contents of this SetlSet is modified, the method `separateFromOriginal()'
-     * MUST be called before the modification.  This method then performs the real cloning,
-     * if required.
+     * MUST be called before the modification.  This method then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
@@ -70,7 +70,7 @@ public class SetlSet extends CollectionValue {
 
     /**
      * If the contents of THIS SetlSet is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      *
      * While clone() is called upon all members of this set, this does not perform
@@ -543,8 +543,8 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value maximumMember(final State state) {
         if (size() < 1) {
-            // Neutral element of max() is smallest value available
-            return SetlError.BOTTOM;
+            // Neutral element of max() is smallest number available
+            return SetlDouble.NEGATIVE_INFINITY;
         }
         return lastMember(state);
     }
@@ -552,8 +552,8 @@ public class SetlSet extends CollectionValue {
     @Override
     public Value minimumMember(final State state) {
         if (size() < 1) {
-            // Neutral element of min() is largest value available
-            return Top.TOP;
+            // Neutral element of min() is largest number available
+            return SetlDouble.POSITIVE_INFINITY;
         }
         return firstMember(state);
     }

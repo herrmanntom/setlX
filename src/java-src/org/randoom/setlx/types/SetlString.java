@@ -25,10 +25,10 @@ public class SetlString extends IndexedCollectionValue {
      * actually doing any cloning, this SetlString carries a isClone flag.
      *
      * If the contents of this SetlString is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
-     * if required.
+     * MUST be called before the modification, which then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
@@ -174,7 +174,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     /* If the contents of THIS string is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      */
 

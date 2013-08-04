@@ -199,7 +199,6 @@ iterator
 atomicValue
     : NUMBER
     | DOUBLE
-    | '$' DOUBLE
     | 'om'
     | 'true'
     | 'false'
@@ -212,8 +211,8 @@ TERM : '^' ID | 'A'..'Z' ID?;
 NUMBER : '0' | '1'..'9' ('0'..'9')*;
 DOUBLE : NUMBER? '.' ('0'..'9')+ (('e' | 'E') ('+' | '-')? ('0'..'9')+)?;
 RANGE_SIGN : '..';
-STRING : '"' ('\\"' | ~('"'))* '"';
-LITERAL : '\'' ('\\\'' | ~('\''))* '\'';
+STRING : '"' ('\\' . | ~('"' | '\\'))* '"';
+LITERAL : '\'' ('\'\'' | ~('\''))* '\'';
 LINE_COMMENT : '//' (~('\n' | '\r'))*;
 MULTI_COMMENT : '/*' (~('*') | '*'+ ~('*' | '/'))* '*'+ '/';
 

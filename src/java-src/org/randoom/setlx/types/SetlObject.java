@@ -48,7 +48,7 @@ import org.randoom.setlx.functions.PD_permutations;
 import org.randoom.setlx.functions.PD_pow;
 import org.randoom.setlx.functions.PD_range;
 import org.randoom.setlx.functions.PD_rational;
-import org.randoom.setlx.functions.PD_real;
+import org.randoom.setlx.functions.PD_double;
 import org.randoom.setlx.functions.PD_reverse;
 import org.randoom.setlx.functions.PD_round;
 import org.randoom.setlx.functions.PD_shuffle;
@@ -80,10 +80,10 @@ public class SetlObject extends Value {
      * actually doing any cloning, this object carries a isClone flag.
      *
      * If the contents of this SetlObject is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
-     * if required.
+     * MUST be called before the modification, which then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
@@ -124,7 +124,7 @@ public class SetlObject extends Value {
 
     /**
      * If the contents of THIS SetlList is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      *
      * While clone() is called upon all members of this list, this does not perform

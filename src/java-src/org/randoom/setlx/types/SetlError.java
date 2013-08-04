@@ -4,8 +4,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.utilities.State;
 
 public class SetlError extends Value {
-    /* This object is the smallest values possible in compareTo() */
-    public final static SetlError BOTTOM = new SetlError("");
 
     private final String message;
 

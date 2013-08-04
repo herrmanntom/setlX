@@ -200,7 +200,7 @@ public class Procedure extends Value {
 
         try {
 
-            // execute, e.g. perform real procedure call
+            // execute, e.g. perform actual procedure call
             result = statements.execute(state);
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent

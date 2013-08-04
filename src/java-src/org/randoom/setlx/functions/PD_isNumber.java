@@ -6,7 +6,7 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isNumber(value)         : test if value-type is a rational or real
+// isNumber(value)         : test if value-type is a rational or double
 
 public class PD_isNumber extends PreDefinedProcedure {
     public final static PreDefinedProcedure DEFINITION = new PD_isNumber();

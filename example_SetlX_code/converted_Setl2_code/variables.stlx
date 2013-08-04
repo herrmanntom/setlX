@@ -47,7 +47,7 @@ prettyPrint := procedure(expr) {
 			return expr;
 		case isInteger(expr) :
 			return str(expr);
-		case isReal(expr) :
+		case isDouble(expr) :
 			return str(expr);
 		case #expr == 3 && expr[2] == "+" :
 			return prettyPrint(expr[1]) + " + " + prettyPrint(expr[3]);
@@ -93,7 +93,7 @@ prettyPrintParen := procedure(expr) {
 			return expr;
 		case isInteger(expr) :
 			return str(expr);
-		case isReal(expr) :
+		case isDouble(expr) :
 			return str(expr);
 		case #expr == 2 && expr[1] in functionNames :
 			return prettyPrint(expr);

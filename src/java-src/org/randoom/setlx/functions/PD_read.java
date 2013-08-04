@@ -11,7 +11,7 @@ import java.util.List;
 
 // read(message, ...)            : prompts the user with `message', then reads from
 //                                 stdin until user enters at least one character,
-//                                 converts input into integer or real if possible
+//                                 converts input into integer or double if possible
 
 public class PD_read extends PreDefinedProcedure {
     public final static PreDefinedProcedure DEFINITION = new PD_read();

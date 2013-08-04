@@ -35,10 +35,10 @@ public class SetlList extends IndexedCollectionValue {
      * actually doing any cloning, this list carries a isClone flag.
      *
      * If the contents of this SetlList is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
-     * if required.
+     * MUST be called before the modification, which then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
@@ -76,7 +76,7 @@ public class SetlList extends IndexedCollectionValue {
 
     /**
      * If the contents of THIS SetlList is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      *
      * While clone() is called upon all members of this list, this does not perform
@@ -447,29 +447,30 @@ public class SetlList extends IndexedCollectionValue {
         return list.get(list.size() - 1).clone();
     }
 
-
+    // we assume that all elements are numbers
     @Override
     public Value maximumMember(final State state) throws SetlException {
-        // Neutral element of max() is smallest value available
-        Value max = SetlError.BOTTOM;
+        // Neutral element of max() is smallest number available
+        Value max = SetlDouble.NEGATIVE_INFINITY;
         for (final Value v: list) {
             if (v.maximum(state, max).equals(v)) {
                 max = v;
             }
         }
-        return max.clone();
+        return max;
    }
 
+    // we assume that all elements are numbers
     @Override
     public Value minimumMember(final State state) throws SetlException {
-        // Neutral element of min() is largest value available
-        Value min = Top.TOP;
+        // Neutral element of min() is largest number available
+        Value min = SetlDouble.POSITIVE_INFINITY;
         for (final Value v: list) {
             if (v.minimum(state, min).equals(v)) {
                 min = v;
             }
         }
-        return min.clone();
+        return min;
     }
 
     @Override

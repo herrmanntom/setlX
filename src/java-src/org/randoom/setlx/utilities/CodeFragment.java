@@ -70,7 +70,7 @@ public abstract class CodeFragment {
 
     @Override
     public final String toString() {
-        final State bubble = new StateImplementation();
+        final State bubble = new State();
         return toString(bubble);
     }
 

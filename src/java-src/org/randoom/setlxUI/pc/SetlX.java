@@ -14,7 +14,7 @@ import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.StateImplementation;
+import org.randoom.setlx.utilities.State;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -55,7 +55,7 @@ public class SetlX {
         final List<String>  files        = new ArrayList<String>();
 
         final PcEnvProvider envProvider  = new PcEnvProvider();
-        final State         state        = new StateImplementation(envProvider);
+        final State         state        = new State(envProvider);
 
         final SetlList parameters = new SetlList(); // can/will be filled later
         try {

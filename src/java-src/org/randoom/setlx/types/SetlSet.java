@@ -541,21 +541,34 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value maximumMember(final State state) {
+    public Value maximumMember(final State state) throws IncompatibleTypeException {
         if (size() < 1) {
             // Neutral element of max() is smallest number available
             return SetlDouble.NEGATIVE_INFINITY;
         }
-        return lastMember(state);
+	Value a = firstMember(state);
+	Value b = lastMember(state);
+	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
+	    String errMsg = "The set " + this + " is not a set of numbers.";
+            throw new IncompatibleTypeException(errMsg);
+	}
+        return b;
     }
 
     @Override
-    public Value minimumMember(final State state) {
+    public Value minimumMember(final State state) throws IncompatibleTypeException {
+	// The minimum is only defined for sets of numbers.
         if (size() < 1) {
-            // Neutral element of min() is largest number available
+            // Neutral element of min() is the largest number available.
             return SetlDouble.POSITIVE_INFINITY;
         }
-        return firstMember(state);
+	Value a = firstMember(state);
+	Value b = lastMember(state);
+	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
+	    String errMsg = "The set " + this + " is not a set of numbers.";
+            throw new IncompatibleTypeException(errMsg);
+	}
+        return a;
     }
 
     @Override

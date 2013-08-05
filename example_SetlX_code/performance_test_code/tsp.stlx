@@ -76,7 +76,7 @@ readProblem := procedure(file) {
     // compute edges
     for (i in [1 .. numberNodes]) {
         [x, y] := split(lines[i], " ");
-        coordinates[i] := [ real(x), real(y) ];
+        coordinates[i] := [ double(x), double(y) ];
     }
     return coordinates;
 };

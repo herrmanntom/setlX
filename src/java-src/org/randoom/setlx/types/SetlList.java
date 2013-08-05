@@ -447,25 +447,33 @@ public class SetlList extends IndexedCollectionValue {
         return list.get(list.size() - 1).clone();
     }
 
-    // we assume that all elements are numbers
     @Override
     public Value maximumMember(final State state) throws SetlException {
         // Neutral element of max() is smallest number available
         Value max = SetlDouble.NEGATIVE_INFINITY;
         for (final Value v: list) {
+	    // we assume that all elements are numbers
+	    if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
+		String errMsg = "The list " + this + " is not a list of numbers.";
+		throw new IncompatibleTypeException(errMsg);
+	    }
             if (v.maximum(state, max).equals(v)) {
                 max = v;
             }
         }
         return max;
-   }
+    }
 
-    // we assume that all elements are numbers
     @Override
     public Value minimumMember(final State state) throws SetlException {
         // Neutral element of min() is largest number available
         Value min = SetlDouble.POSITIVE_INFINITY;
         for (final Value v: list) {
+	    // we assume that all elements are numbers
+	    if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
+		String errMsg = "The list " + this + " is not a list of numbers.";
+		throw new IncompatibleTypeException(errMsg);
+	    }
             if (v.minimum(state, min).equals(v)) {
                 min = v;
             }

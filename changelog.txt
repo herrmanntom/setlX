@@ -1,5 +1,17 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.2.0--- 2013-07-27
+ + added 64 bit floating point values that behave according to IEEE
+   754
+ + added the function double that converts a string or number into a
+   floating point number
+ + added the function isDouble that checks whether the value is a
+   floating point number
+ - removed the class Real 
+ - removed the function real and isReal
+ # min and max can now only be applied to lists or sets of numbers.
+ * build for Java 1.6 by default
+
 ---v2.1.1--- 2013-07-27
  + the single straight quote is now used as escape character in literals and the
    only valid escape sequence is two quotes ('') as sequence for a single one (')

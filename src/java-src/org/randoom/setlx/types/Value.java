@@ -74,6 +74,10 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isNumber() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isInteger() {
         return SetlBoolean.FALSE;
     }

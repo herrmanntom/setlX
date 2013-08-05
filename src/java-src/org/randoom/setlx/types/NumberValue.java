@@ -72,5 +72,11 @@ public abstract class NumberValue extends Value {
             );
         }
     }
+
+    @Override
+    public SetlBoolean isNumber() {
+        return SetlBoolean.TRUE;
+    }
+
 }
 

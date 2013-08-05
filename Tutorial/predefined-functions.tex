@@ -60,6 +60,21 @@ been described previously will be quite short.
       the operator computes the intersection of all elements.
 \item \texttt{arb}: The function $\texttt{arb}(s)$ picks an arbitrary element from the
       sequence $s$.  The argument $s$ can either be a set, a list, or a string.
+\item \texttt{collect}: The function $\texttt{collect}(l)$ takes a list $l$ of arbitrary elements.
+      The purpose of this function is to count the number of occurrences of these elements and to
+      compute a binary relation $l$ such that for every element $x$ in the list $l$, the binary
+      relation $r$ contains a pair of the form $[x,c]$, where $c$ is the number of occurrences of
+      $x$ in the list $l$. For example, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{r := collect(["a", "b", "c", "a", "b", "a"]);}
+      \\[0.2cm]
+      sets the variable \texttt{r} to the value
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\{["a", 3], ["b", 2], ["c", 1]\}}.
+      \\[0.2cm]
+      Note that this value can be used as a binary relation.
 \item \texttt{first}: The function $\texttt{first}(s)$ picks the first  element from the
       sequence $s$.  The argument $s$ can either be a set, a list, or a string.
       For a set $s$, the first element is the element that is smallest with respect to the
@@ -90,34 +105,20 @@ been described previously will be quite short.
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{domain(\{[1,2],[1,3],[5,7]\}) = \{1,5\}}.
-\item \texttt{max}:  If $s$ is a set or a list, the expression $\mathtt{max}(s)$ computes the biggest
+\item \texttt{max}:  If $s$ is a set or a list containing only numbers, the expression $\mathtt{max}(s)$ computes the biggest
       element of $s$.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{max(\{1,2,3\})}
       \\[0.2cm]
-      returns the number $3$.  In general, the elements in $s$ are compared using the function
-      \texttt{compare} discussed in the last section of this chapter.  For example, strings are compared
-      lexicographically, therefore 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{max(\{"abc", "xy", "z" \})}
-      \\[0.2cm]
-      yields the result \texttt{\symbol{34}z\symbol{34}}.
-\item \texttt{min}:  If $s$ is a set or a list, the expression $\mathtt{min}(s)$ computes the smallest
+      returns the number $3$.  
+\item \texttt{min}:  If $s$ is a set or a list containing only numbers, the expression $\mathtt{min}(s)$ computes the smallest
       element of $s$.  For example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{min(\{1,2,3\})}
       \\[0.2cm]
-      returns the number $1$.  In general, the elements in $s$ are compared using the function
-      \texttt{compare}.  For example, strings are compared
-      lexicographically, therefore 
-      \\[0.2cm]
-      \hspace*{1.3cm}
-      \texttt{min(\{"abc", "xy", "z" \})}
-      \\[0.2cm]
-      yields the result \texttt{\symbol{34}abc\symbol{34}}.
+      returns the number $1$.  
 \item \texttt{pow}:  If $s$ is a set, the expression $\mathtt{pow}(s)$ computes the power
       set of $s$.  The power set of $s$ is defined as the set of all subsets of $s$.  
       For example, the expression
@@ -554,33 +555,32 @@ The function \setlx\ provides the following mathematical functions.
       \texttt{rational(\symbol{34}2/7\symbol{34})}
       \\[0.2cm]
       will return the rational number $2/7$.  The function \texttt{rational} can also be
-      invoked on real numbers.  For example, the expression 
+      invoked on floating point numbers.  For example, the expression 
       \\[0.2cm]
       \hspace*{1.3cm}
       \texttt{rational(mathConst("e"))}
       \\[0.2cm]
-      yields the result $543656365691809/200000000000000$.  
+      yields the result $6121026514868073/2251799813685248$.  
       The expression $\mathtt{rational}(q)$ returns $q$ if $q$ is already a rational number.
-\item $\texttt{real}(s)$ converts the string $s$ into a floating point number.  For example
+\item $\texttt{double}(s)$ converts the string $s$ into a floating point number.  For example
       the expression
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{rational(\symbol{34}1.2\symbol{34})}
+      \texttt{double(\symbol{34}0.5\symbol{34})}
       \\[0.2cm]
-      will return the floating point number $1.2$.  The function \texttt{real} can also be
+      will return the floating point number $0.5$.  The function \texttt{double} can also be
       invoked on rational numbers.  For example, the expression 
       \\[0.2cm]
       \hspace*{1.3cm}
-      \texttt{real(2/7)}
+      \texttt{double(2/7)}
       \\[0.2cm]
       yields  $0.2857142857142857$.
-      The expression $\mathtt{real}(r)$ returns $r$ if $r$ is already a floating point
+      The expression $\mathtt{double}(r)$ returns $r$ if $r$ is already a floating point
       number.
 
-      \textbf{Warning}:  \setlx\ implements floating point numbers via the \textsl{Java}
-      class \texttt{BigDecimal} instead of using the primitive data type \texttt{double}.
-      Therefore, floating point operations are noticeably slower than in other
-      programming languages.
+      The implementation of floating point numbers is based on the \textsl{Java} class
+      \texttt{Double}.  Therefore, floating point numbers satisfy the specification given in the
+      IEEE standard 754 for the arithmetic of floating point numbers.
 \item Furthermore, the trigonometrical functions \texttt{sin}, \texttt{cos}, \texttt{tan}
       and the associated inverse trigonometrical functions 
       \texttt{asin}, 
@@ -708,10 +708,7 @@ generates a random number $x$ such that
 \hspace*{1.3cm}
 $0 \leq x$ \quad and \quad $x \leq 1$
 \\[0.2cm]
-holds.  Normally, this will be a floating point number with 64 bits.  If \setlx\ is
-instead invoked with the either of the parameters ``\texttt{--real32}'',
-``\texttt{--real128}'', or ``\texttt{--real256}'' then $x$ will have 32 bits, 128 bits, or
-256 bits respectively.  For debugging purposes it might be necessary to start \setlx\ with
+holds.  This will be a floating point number with 64 bits.  For debugging purposes it might be necessary to start \setlx\ with
 the parameter
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -719,7 +716,14 @@ the parameter
 \\[0.2cm]
 In this case, the sequence of random numbers that is generated by the function \texttt{random} and
 \texttt{rnd} is always the same.  This is useful when debugging a program working with
-random numbers.  The function \texttt{random} can also be called with an argument.  The expression
+random numbers.  The function 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{resetRandom()}
+\\[0.2cm]
+provides another way to reset the random number generator to its initial state.
+
+The function \texttt{random} can also be called with an argument.  The expression
 \\[0.2cm]
 \hspace*{1.3cm}
 $\texttt{random}(n)$
@@ -881,6 +885,7 @@ yields the result
 \setlx\ provides the following functions to check the type of a given function.
 \begin{enumerate}
 \item \texttt{isBoolean} tests whether its argument is a Boolean value.
+\item \texttt{isDouble} tests whether its argument is a floating point number. 
 \item \texttt{isError} tests whether its argument is an error object.
 
       For example, consider the following code:
@@ -899,7 +904,7 @@ yields the result
 
       will indeed print \texttt{true}, as the evaluation of \texttt{om+1}
       raises an exception that signifies an error.
-\item \texttt{isInfinite} tests whether its argument is a real number that represents
+\item \texttt{isInfinite} tests whether its argument is a floating point number that represents
       either positive or negative infinity.
 \item \texttt{isInteger} tests whether its argument is an integer number.
 \item \texttt{isList} tests whether its argument is a list.
@@ -914,7 +919,6 @@ yields the result
 \item \texttt{isNumber} tests whether its argument is a number.
 \item \texttt{isProcedure} tests whether its argument is a procedure.
 \item \texttt{isRational} tests whether its argument is a rational number.
-\item \texttt{isReal} tests whether its argument is a floating point number.
 \item \texttt{isSet} tests whether its argument is a set.
 \item \texttt{isString} tests whether its argument is a string.
 \item \texttt{isTerm} tests whether its argument is a term.

@@ -1,4 +1,4 @@
-package org.randoom.setlx.statements;
+package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -6,13 +6,14 @@ import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StateImplementation;
 import org.randoom.setlx.utilities.TermConverter;
@@ -25,6 +26,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
+ * The regex-branch of the match or scan statement.
+ *
  * grammar rule:
  * statement
  *     : [...]
@@ -33,11 +36,11 @@ import java.util.regex.PatternSyntaxException;
  *
  * implemented here as:
  *                                         ====       ====        =========       =====
- *                                       mPattern   mAssignTo     mCondition   mStatements
+ *                                        pattern    assignTo     condition     statements
  */
 public class MatchRegexBranch extends MatchAbstractScanBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
 
     private final Expr      pattern;        // pattern to match
     private       Pattern   runtimePattern; // compiled pattern to match
@@ -45,8 +48,16 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     private       Value     assignTerm;     // term of variable to store groups
     private final Condition condition;      // optional condition to confirm match
     private final Block     statements;     // block to execute after match
-    private       int       endOffset;      // Offset of last match operation (i.e. how far match progressed the input)
 
+    /**
+     * Create new regex-branch.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param pattern    Regex pattern to match.
+     * @param assignTo   (Groups of) variable(s) to assign regex match groups to.
+     * @param condition  Condition to check before execution.
+     * @param statements Statements to execute when condition is met.
+     */
     public MatchRegexBranch(final State state, final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
         this(pattern, assignTo, condition, statements);
 
@@ -87,7 +98,6 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         this.assignTerm     = null;
         this.condition      = condition;
         this.statements     = statements;
-        this.endOffset      = -1;
 
         // optimize pattern
         this.pattern.optimize();
@@ -96,8 +106,8 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     @Override
     public MatchResult matches(final State state, final Value term) throws SetlException {
         if (term instanceof SetlString) {
-            final MatchResult result = scannes(state, (SetlString) term);
-            if (result.isMatch() && ((SetlString) term).size() == endOffset) {
+            final ScanResult result = scannes(state, (SetlString) term);
+            if (result.isMatch() && ((SetlString) term).size() == result.getEndOffset()) {
                 return result;
             }
         }
@@ -114,7 +124,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     }
 
     @Override
-    public MatchResult scannes(final State state, final SetlString string) throws SetlException {
+    public ScanResult scannes(final State state, final SetlString string) throws SetlException {
         Pattern pttrn = null;
 
         if (runtimePattern != null) {
@@ -126,16 +136,17 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                     "Pattern argument '" + patternStr + "' is not a string."
                 );
             }
+            final String p = ((SetlString) patternStr).getUnquotedString();
             // parse pattern
             try {
-                pttrn = Pattern.compile(patternStr.getUnquotedString());
+                pttrn = Pattern.compile(p);
                 // store pattern if it is static
                 if (pattern.isReplaceable()) {
                     runtimePattern = pttrn;
                 }
             } catch (final PatternSyntaxException pse) {
                 final LinkedList<String> errors = new LinkedList<String>();
-                errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
+                errors.add("Error while parsing regex-pattern '" + p + "' {");
                 errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
                 errors.add("}");
                 throw SyntaxErrorException.create(
@@ -146,35 +157,29 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         }
 
         // match pattern
-        final Matcher  m = pttrn.matcher(string.getUnquotedString());
-        final boolean  r = m.lookingAt();
-        if (r) {
+        final Matcher  matcher = pttrn.matcher(string.getUnquotedString());
+        final boolean  result  = matcher.lookingAt();
+        if (result) {
             if (assignTo != null && assignTerm == null) {
                 assignTerm = assignTo.toTerm(state);
             }
-            endOffset = m.end();
             if (assignTerm != null) {
-                final int      count  = m.groupCount() + 1;
+                final int      count  = matcher.groupCount() + 1;
                 final SetlList groups = new SetlList(count);
                 for (int i = 0; i < count; ++i) {
-                    groups.addMember(state, new SetlString(m.group(i)));
+                    groups.addMember(state, new SetlString(matcher.group(i)));
                 }
-                return assignTerm.matchesTerm(state, groups);
+                return new ScanResult(assignTerm.matchesTerm(state, groups), matcher.end());
+            } else {
+                return new ScanResult(true, matcher.end());
             }
-        } else {
-            endOffset = -1;
         }
-        return new MatchResult(r);
+        return new ScanResult(false, -1);
     }
 
     @Override
-    public int getEndOffset() {
-        return endOffset;
-    }
-
-    @Override
-    public ReturnMessage execute(final State state) throws SetlException {
-        return statements.execute(state);
+    public Block getStatements() {
+        return statements;
     }
 
     @Override
@@ -261,6 +266,13 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing a regex-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static MatchRegexBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 4) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -285,6 +297,15 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

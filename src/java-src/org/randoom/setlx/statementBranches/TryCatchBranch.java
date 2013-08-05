@@ -1,10 +1,11 @@
-package org.randoom.setlx.statements;
+package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.ReturnMessage;
@@ -28,11 +29,17 @@ import java.util.List;
  */
 public class TryCatchBranch extends TryCatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchBranch.class);
 
-    private final Variable                  errorVar;
-    private final Block                     blockToRecover;
+    private final Variable errorVar;
+    private final Block    blockToRecover;
 
+    /**
+     * Create new catch-branch.
+     *
+     * @param errorVar       Variable to bind caught exception to.
+     * @param blockToRecover Statements to execute when exception is caught.
+     */
     public TryCatchBranch(final Variable errorVar, final Block blockToRecover){
         this.errorVar       = errorVar;
         this.blockToRecover = blockToRecover;
@@ -89,6 +96,13 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
         return result;
     }
 
+    /**
+     * Convert a term representing an catch-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static TryCatchBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -97,6 +111,15 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
             final Block     block   = TermConverter.valueToBlock(term.lastMember());
             return new TryCatchBranch(var, block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

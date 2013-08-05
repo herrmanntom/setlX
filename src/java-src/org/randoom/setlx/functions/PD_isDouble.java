@@ -5,19 +5,19 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isReal(value)           : test if value-type is real
+// isDouble tests whether argument is a double
 
-public class PD_isReal extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_isReal();
+public class PD_isDouble extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_isDouble();
 
-    private PD_isReal() {
+    private PD_isDouble() {
         super();
         addParameter("value");
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
-        return args.get(0).isReal();
+        return args.get(0).isDouble();
     }
 }
 

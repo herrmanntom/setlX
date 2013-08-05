@@ -5,6 +5,7 @@ grammar SetlXgrammar;
     import org.randoom.setlx.expressions.*;
     import org.randoom.setlx.expressionUtilities.*;
     import org.randoom.setlx.statements.*;
+    import org.randoom.setlx.statementBranches.*;
     import org.randoom.setlx.types.*;
     import org.randoom.setlx.utilities.*;
 
@@ -497,7 +498,7 @@ iterator [boolean enableIgnore] returns [SetlIterator iter]
 
 atomicValue returns [Value av]
     : NUMBER     { $av = Rational.valueOf($NUMBER.text);       }
-    | REAL       { $av = Real.valueOf($REAL.text);             }
+    | DOUBLE     { $av = SetlDouble.valueOf($DOUBLE.text);     }
     | 'om'       { $av = Om.OM;                                }
     | 'true'     { $av = SetlBoolean.TRUE;                     }
     | 'false'    { $av = SetlBoolean.FALSE;                    }
@@ -506,10 +507,10 @@ atomicValue returns [Value av]
 ID              : ('a' .. 'z')('a' .. 'z' | 'A' .. 'Z'| '_' | '0' .. '9')* ;
 TERM            : ('^' ID | 'A' .. 'Z' ID?) ;
 NUMBER          : '0'|('1' .. '9')('0' .. '9')*;
-REAL            : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') ('+' | '-')? ('0' .. '9')+)? ;
+DOUBLE          : NUMBER? '.' ('0' .. '9')+ (('e' | 'E') ('+' | '-')? ('0' .. '9')+)? ;
 RANGE_SIGN      : '..';
-STRING          : '"' ('\\"'|~('"'))* '"';
-LITERAL         : '\'' ('\\\''|~('\''))* '\'';
+STRING          : '"' ('\\'.|~('"'|'\\'))* '"';
+LITERAL         : '\'' ('\'\''|~('\''))* '\'';
 
 LINE_COMMENT    : '//' ~('\n' | '\r')*                      { skip(); } ;
 MULTI_COMMENT   : '/*' (~('*') | '*'+ ~('*'|'/'))* '*'+ '/' { skip(); } ;

@@ -2,6 +2,8 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.statementBranches.SwitchAbstractBranch;
+import org.randoom.setlx.statementBranches.SwitchDefaultBranch;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -30,29 +32,23 @@ public class Switch extends Statement {
 
     private final List<SwitchAbstractBranch> branchList;
 
+    /**
+     * Create a new switch statement.
+     *
+     * @param branchList List of switch branches.
+     */
     public Switch(final List<SwitchAbstractBranch> branchList) {
         this.branchList = branchList;
     }
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        try {
-            // increase callStackDepth
-            ++(state.callStackDepth);
-
-            for (final SwitchAbstractBranch br : branchList) {
-                if (br.evalConditionToBool(state)) {
-                    return br.execute(state);
-                }
+        for (final SwitchAbstractBranch br : branchList) {
+            if (br.evalConditionToBool(state)) {
+                return br.getStatements().execute(state);
             }
-            return null;
-        } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
-            throw soe;
-        } finally {
-            // decrease callStackDepth
-            --(state.callStackDepth);
         }
+        return null;
     }
 
     @Override
@@ -110,6 +106,13 @@ public class Switch extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing an if-then-else statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting if-then-else Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Switch termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

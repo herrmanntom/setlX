@@ -1,10 +1,15 @@
 <project name="setlX-gfx" basedir="." default="jar">
     <!-- variables which determine paths and other information used later -->
     <property name="src.dir"     value="java-src"/>
-    <property name="build.dir"   value="bin"/>
+    <property name="build.dir"   value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+
     <property name="main_setlX.dir" value="${basedir}/../src"/>
     <condition property="setlX.executable" value="setlX" else="setlX.cmd">
         <os family="unix" />
+    </condition>
+    <condition property="isJava6">
+        <contains string="${java.version}" substring="1.6" casesensitive="false"/>
     </condition>
 
     <!-- discover library jars and add them to the class-path -->
@@ -13,6 +18,11 @@
     </path>
     <path id="classpath">
         <path refid="setlX-jar"/>
+    </path>
+
+    <!-- discover rt.jar from java-1.6 for building 1.6 compatible with newer javac -->
+    <path id="rt.jar-j1.6">
+        <fileset dir="${user.home}/programs/rt_jar_openJDK_1-6-0/" includes="rt.jar"/>
     </path>
 
     <target name="test" depends="jar">
@@ -24,15 +34,44 @@
 
     <!-- create jar after compiling -->
     <target name="jar" depends="compile">
-        <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${build.dir}"/>
+        <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${classes.dir}" index="true"/>
     </target>
 
     <target name="compile">
-        <mkdir dir="${build.dir}"/>
-        <javac srcdir="${src.dir}" destdir="${build.dir}"
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
                classpathref="classpath" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
+    </target>
+
+    <target name="compile-j1.6-compatible">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
+               classpathref="classpath" includeantruntime="false"
+               fork="true" source="1.6" target="1.6" bootclasspathref="rt.jar-j1.6">
+            <compilerarg value="-Xlint:all"/>
+        </javac>
+    </target>
+
+    <!-- compile either with native Java 1.6, or in compatibility mode -->
+    <target name="compile-j1.6" depends="compile-is-j1.6,compile-is-not-j1.6"/>
+    <target name="compile-is-j1.6" if="isJava6">
+        <antcall target="compile"/>
+    </target>
+    <target name="compile-is-not-j1.6" unless="isJava6">
+        <antcall target="compile-j1.6-compatible"/>
+    </target>
+
+    <!-- create the jar after compiling with Java 1.6 -->
+    <target name="jar-j1.6">
+        <antcall target="clean"/>
+        <antcall target="compile-j1.6"/>
+        <jar destfile="${main_setlX.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
+             index="true" />
+        <antcall target="clean"/>
     </target>
 
     <!-- clean up the mess we made by building -->
@@ -42,6 +81,7 @@
 
     <target name="dist-clean" depends="clean">
         <delete file="${main_setlX.dir}/${ant.project.name}.jar"/>
+        <delete file="${main_setlX.dir}/${ant.project.name}-j1.6.jar"/>
     </target>
 </project>
 

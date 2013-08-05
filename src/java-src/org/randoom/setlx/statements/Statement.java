@@ -12,8 +12,25 @@ import org.randoom.setlx.utilities.State;
  */
 public abstract class Statement extends CodeFragment {
 
+    /**
+     * Code returned by executeWithErrorHandling() when the execution stopped
+     * without any error occurring or the user explicitly exiting.
+     *
+     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+     */
     public final static int EXECUTE_OK    = 23;
+    /**
+     * Code returned by executeWithErrorHandling() when the execution stopped
+     * after some kind of error.
+     *
+     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+     */
     public final static int EXECUTE_ERROR = 33;
+    /**
+     * Code returned by executeWithErrorHandling() when the user used the exit statement.
+     *
+     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+     */
     public final static int EXECUTE_EXIT  = 42;
 
     /**
@@ -34,6 +51,8 @@ public abstract class Statement extends CodeFragment {
      */
     public int executeWithErrorHandling(final State state, final boolean hintAtJVMxOptions) {
         try {
+            // increase callStackDepth
+            ++(state.callStackDepth);
 
             execute(state);
             return EXECUTE_OK;
@@ -54,7 +73,7 @@ public abstract class Statement extends CodeFragment {
             return EXECUTE_ERROR;
 
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
 
             state.errWriteOutOfStack(soe, false);
             return EXECUTE_ERROR;
@@ -77,6 +96,9 @@ public abstract class Statement extends CodeFragment {
         } catch (final Exception e) { // this should never happen...
             state.errWriteInternalError(e);
             return EXECUTE_ERROR;
+        } finally {
+            // decrease callStackDepth
+            --(state.callStackDepth);
         }
     }
 

@@ -205,7 +205,7 @@ public class SetlIterator extends CodeFragment {
     private ReturnMessage evaluate(final State state, final SetlIteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2;
 
             final Value iterationValue = collection.eval(state); // trying to iterate over this value
             if (iterationValue instanceof CollectionValue) {
@@ -264,11 +264,11 @@ public class SetlIterator extends CodeFragment {
                 );
             }
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
         }
     }
 }

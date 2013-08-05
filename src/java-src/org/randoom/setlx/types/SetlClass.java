@@ -116,13 +116,6 @@ public class SetlClass extends Value {
         return new SetlClass(parameters, initBlock, initVars, staticBlock, staticVars, staticDefs);
     }
 
-    /* Gather all bound and unbound variables in this value and its siblings
-          - bound   means "assigned" in this value
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use collectVariablesAndOptimize() when adding variables from
-             sub-expressions
-    */
     @Override
     public void collectVariablesAndOptimize (
         final List<String> boundVariables,
@@ -414,11 +407,6 @@ public class SetlClass extends Value {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v){
         if (this == v) {
@@ -451,13 +439,6 @@ public class SetlClass extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 1200;

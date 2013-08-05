@@ -27,6 +27,9 @@ public class Rational extends NumberValue {
     public  final static    Rational    NINE              = new Rational(9);
     public  final static    Rational    TEN               = new Rational(10);
 
+    public  final static    Rational    RAT_BIG           = SetlDouble.bigRational();
+    public  final static    Rational    RAT_SMALL         = SetlDouble.smallRational();
+
     private final static    Rational[]  NUMBERS           = {ZERO,  ONE,  TWO, THREE,
                                                              FOUR,  FIVE, SIX, SEVEN,
                                                              EIGHT, NINE, TEN };
@@ -66,7 +69,7 @@ public class Rational extends NumberValue {
         this.denominator         = d.divide(ggt);
         this.isInteger           = this.denominator.equals(BigInteger.ONE);
         if (this.denominator.equals(BigInteger.ZERO)) {
-            throw new NumberFormatException("new Rational: Devision by zero!");
+            throw new NumberFormatException("new Rational: Division by zero!");
         }
     }
 
@@ -214,12 +217,12 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public Real toReal(final State state) {
-        return Real.valueOf(nominator, denominator);
+    public SetlDouble toDouble(final State state) {
+        return SetlDouble.valueOf(nominator, denominator);
     }
 
-    /*package*/ Real toReal() {
-        return Real.valueOf(nominator, denominator);
+    SetlDouble toDouble() {
+        return SetlDouble.valueOf(nominator, denominator);
     }
 
     /* native type checks */
@@ -232,11 +235,37 @@ public class Rational extends NumberValue {
                );
     }
 
+    @Override
+    public boolean jDoubleConvertable() {
+        if (this.compareTo(ZERO) == 0) {
+            return true;
+        }
+        Rational a = new Rational(nominator.abs(), denominator.abs());
+        if (a.compareTo(RAT_BIG) > 0) {
+            return false; // too big
+        }
+        if (a.compareTo(RAT_SMALL) < 0) {
+            return false; // too small
+        }
+        return true;
+    }
+
     /* native type conversions */
 
     @Override
+    public double toJDoubleValue(final State state) throws NumberToLargeException {
+        if (!jDoubleConvertable()) {
+            String msg = "The fraction " + nominator + "/" + denominator
+                       + "is too big or too small";
+            throw new NumberToLargeException(msg);
+        }
+        SetlDouble sd = SetlDouble.valueOf(nominator, denominator);
+        return sd.getDoubleValue();
+    }
+
+    @Override
     public int jIntValue() throws NotAnIntegerException, NumberToLargeException {
-        if (! isInteger) {
+        if (!isInteger) {
             throw new NotAnIntegerException(
                 "The fraction " + nominator + "/" + denominator + " can't be converted" +
                 " to an integer as the denominator is not 1."
@@ -266,9 +295,7 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
     public Rational ceil(final State state) {
-        if (nominator.compareTo(BigInteger.ZERO) > 0 &&
-             ! isInteger
-           )
+        if (nominator.compareTo(BigInteger.ZERO) > 0 && ! isInteger)
         {
             final BigInteger q = nominator.divide(denominator).add(BigInteger.ONE);
             return new Rational(q);
@@ -289,12 +316,8 @@ public class Rational extends NumberValue {
                 final BigInteger d = denominator.multiply(s.denominator);
                 return new Rational(n, d);
             }
-        } else if (subtrahend instanceof Real) {
-            return ((Real) subtrahend).differenceFlipped(state, this);
-        } else if (subtrahend == Infinity.POSITIVE ||
-                   subtrahend == Infinity.NEGATIVE)
-        {
-            return (Infinity) subtrahend.minus(state);
+        } else if (subtrahend instanceof SetlDouble) {
+            return ((SetlDouble) subtrahend).differenceFlipped(state, this);
         } else if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
@@ -488,7 +511,7 @@ public class Rational extends NumberValue {
 
     @Override
     protected NumberValue power(final State state, final double exponent) throws SetlException {
-        return toReal(state).power(state, exponent);
+        return toDouble(state).power(state, exponent);
     }
 
     @Override
@@ -502,9 +525,7 @@ public class Rational extends NumberValue {
                 // mNominator/mDenominator * r.mNominator/r.mDenominator = (mNominator * r.mNominator) / (mDenominator * r.mDenominator)
                 return new Rational(nominator.multiply(r.nominator), denominator.multiply(r.denominator));
             }
-        } else if (multiplier == Infinity.POSITIVE  ||
-                   multiplier == Infinity.NEGATIVE  ||
-                   multiplier instanceof Real       ||
+        } else if (multiplier instanceof SetlDouble ||
                    multiplier instanceof SetlList   ||
                    multiplier instanceof SetlString
         ) {
@@ -535,10 +556,8 @@ public class Rational extends NumberValue {
                 }
                 return new Rational(nominator.multiply(d.denominator), denominator.multiply(d.nominator));
             }
-        } else if (divisor instanceof Real) {
-            return ((Real) divisor).quotientFlipped(state, this);
-        } else if (divisor == Infinity.POSITIVE || divisor == Infinity.NEGATIVE) {
-            return Rational.ZERO;
+        } else if (divisor instanceof SetlDouble) {
+            return ((SetlDouble) divisor).quotientFlipped(state, this);
         } else if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(state, this);
         } else {
@@ -585,9 +604,31 @@ public class Rational extends NumberValue {
     public Rational round(final State state) throws SetlException {
         if (isInteger) {
             return this;
-        } else {
-            final Rational roundPart = (Rational) this.difference(state, this.toInteger(state)).toReal(state).round(state);
-            return (Rational) this.toInteger(state).sum(state, roundPart);
+        } else if (nominator.signum() > 0) {
+            BigInteger[] dr = nominator.divideAndRemainder(denominator);
+            BigInteger   a  = dr[0];
+            BigInteger   b  = dr[1];
+            BigInteger   b2 = b.multiply(new BigInteger("2"));
+            int cmp = b2.compareTo(denominator);
+            if (cmp < 0) {
+                return new Rational(a);
+            } else {
+                return new Rational(a.add(BigInteger.ONE));
+            }
+        } else /* if (nominator.signum() <= 0) */ {
+            BigInteger   nn = nominator.negate();
+            BigInteger[] dr = nn.divideAndRemainder(denominator);
+            BigInteger   a  = dr[0];
+            BigInteger   b  = dr[1];
+            BigInteger   b2 = b.multiply(new BigInteger("2"));
+            BigInteger   result;
+            int cmp = b2.compareTo(denominator);
+            if (cmp < 0) {
+                result = a;
+            } else {
+                result = a.add(BigInteger.ONE);
+            }
+            return new Rational(result.negate());
         }
     }
 
@@ -604,10 +645,8 @@ public class Rational extends NumberValue {
                 final BigInteger d = denominator.multiply(r.denominator);
                 return new Rational(n, d);
             }
-        } else if (summand instanceof Real) {
+        } else if (summand instanceof SetlDouble) {
             return summand.sum(state, this);
-        } else if (summand == Infinity.POSITIVE || summand == Infinity.NEGATIVE) {
-            return summand;
         } else if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand instanceof SetlString) {
@@ -664,8 +703,8 @@ public class Rational extends NumberValue {
                 final BigInteger bp = denominator.multiply(r.nominator);
                 return aq.compareTo(bp);
             }
-        } else if (v instanceof Real) {
-            return toReal().compareTo(v);
+        } else if (v instanceof SetlDouble) {
+            return toDouble().compareTo(v);
         }  else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -691,8 +730,8 @@ public class Rational extends NumberValue {
                 final BigInteger bp = denominator.multiply(r.nominator);
                 return aq.equals(bp);
             }
-        } else if (v instanceof Real) {
-            return toReal().equalTo(v);
+        } else if (v instanceof SetlDouble) {
+            return toDouble().equalTo(v);
         } else {
             return false;
         }

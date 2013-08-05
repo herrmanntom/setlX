@@ -1,20 +1,20 @@
 The circumference of a circle with radius 10 is: 62.83185307179586.
-100 is approximately 99.99999999999999.
+100 is approximately 100.0.
 
-variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")]})
-variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }]})
-variables in inner scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["secretVariable", 42]})
-variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }]})
+variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["resetRandom", ^preDefinedProcedure("resetRandom")]})
+variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^preDefinedProcedure("resetRandom")]})
+variables in inner scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^preDefinedProcedure("resetRandom")], ["secretVariable", 42]})
+variables in outer scope: ^scope({["circumference", r |-> 2 * mathConst("pi") * r], ["getScope", ^preDefinedProcedure("getScope")], ["log", ^preDefinedProcedure("log")], ["mathConst", ^preDefinedProcedure("mathConst")], ["params", []], ["print", ^preDefinedProcedure("print")], ["printInnerScope", procedure() { secretVariable := 42; print("variables in inner scope: ", getScope()); }], ["resetRandom", ^preDefinedProcedure("resetRandom")]})
 
 Arrr("said", "the", "pirate")
 Arrr("said", "the", "pirate")
 
 46656 == 46656
 
-maximum A (for N = 5,      P <= 5%) is 2.2184.
+maximum A (for N = 5,      P <= 5%) is 2.218400000000257.
 minimum N (for A = 1.75,   P <= 7%) is 5.
-Erlang B  (for A = 0.2*48, N = 20 ) is 0.001231677816976427.
-Erlang C  (for A = 0.2*48, N = 20 ) is 0.002365921291627030.
+Erlang B  (for A = 0.2*48, N = 20 ) is 0.0012316778169764295.
+Erlang C  (for A = 0.2*48, N = 20 ) is 0.002365921291627033.
 
 direct:    string   : "99"
 converted: int      : 99
@@ -23,10 +23,10 @@ converted: string   : "text"
 direct:    string   : "text with number 5"
 converted: string   : "text with number 5"
 direct:    string   : "5.99"
-converted: real     : 5.99
+converted: double   : 5.99
 direct:    int      : 6
 converted: int      : 6
-direct:    real     : 99.999
+direct:    double   : 99.999
 converted: int      : 99
 direct:    ??       : 'om'
 converted: string   : "om"
@@ -55,9 +55,9 @@ This is a 21_test_12
 This is a $test$
 This is a 21_test_12This is a 21_test_12
 
-{throwACoin, print} = {^lambdaDefinition([], ^call("rnd", [{"heads", "tails"}])), ^preDefinedProcedure("print")}
+{throwACoin, print} = {^lambdaDefinition([], ^call("rnd", [{^stringConstructor(["heads"], []), ^stringConstructor(["tails"], [])}])), ^preDefinedProcedure("print")}
 a + 10 * b % 4 = ^sum(^variable("a"), ^modulo(^product(10, ^variable("b")), 4))
-"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = ^block([^call("print", [^call("parseStatements", ["print(\"that is crazy!\");"])])])
+"print(parseStatements(\"print(\\"that is crazy!\\");\"));" = ^block([^call("print", [^call("parseStatements", [^stringConstructor(["print(\"that is crazy!\");"], [])])])])
 
 6
 foo

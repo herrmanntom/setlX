@@ -25,6 +25,7 @@
 
     <target name="compile" depends="grammar">
         <javac srcdir="${src.dir}" destdir="${classes.dir}"
+               debug="true" debuglevel="lines,source"
                classpathref="classpath" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>

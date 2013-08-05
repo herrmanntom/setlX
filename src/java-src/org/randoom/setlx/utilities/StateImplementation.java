@@ -5,14 +5,15 @@ import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.SetlClass;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.Real;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -20,7 +21,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-// This class represents the current state of the interpreter.
+/**
+ * This class represents the current state of the interpreter.
+ */
 public class StateImplementation extends State {
 
     // interface provider to the outer world
@@ -45,6 +48,8 @@ public class StateImplementation extends State {
 
     // number of CPUs/Cores in System
     private final   static  int                 CORES = Runtime.getRuntime().availableProcessors();
+    // measurement of this JVM's stack size
+    private         static  int                 STACK_MEASUREMENT = -1;
 
     // is input feed by a human?
     private                 boolean             isHuman;
@@ -61,15 +66,23 @@ public class StateImplementation extends State {
     private                 boolean             assertsDisabled;
     private                 boolean             isRuntimeDebuggingEnabled;
 
+    /**
+     * Create new state implementation, using a dummy environment.
+     */
     public StateImplementation() {
         this(DummyEnvProvider.DUMMY);
     }
 
+    /**
+     * Create new state implementation, using the specified environment.
+     *
+     * @param envProvider Environment provider implementation to use.
+     */
     public StateImplementation(final EnvironmentProvider envProvider) {
         this.envProvider                 = envProvider;
         parserErrorCapture               = null;
         parserErrorCount                 = 0;
-        super.realPrintMode              = Real.PRINT_MODE_DEFAULT;
+        super.realPrintMode              = SetlDouble.PRINT_MODE_DEFAULT;
         loadedLibraries                  = new HashSet<String>();
         classDefinitions                 = new HashMap<String, SetlClass>();
         isHuman                          = false;
@@ -97,7 +110,7 @@ public class StateImplementation extends State {
             randoom = new Random();
         }
         variableScope            = ROOT_SCOPE.createLinkedScope();
-        super.callStackDepth     = (envProvider.getMaxStackSize() / 50); // add a bit to account for initialization stuff
+        super.callStackDepth     = 15; // add a bit to account for initialization stuff
         firstCallStackDepth      = -1;
         super.isExecutionStopped = false;
     }
@@ -223,6 +236,7 @@ public class StateImplementation extends State {
             soe.printStackTrace(new PrintStream(out));
             errWrite(out.toString());
             errWriteLn("callStackDepth assumption was: " + firstCallStackDepth);
+            errWriteLn("max callStackDepth is:         " + getMaxStackSize());
         }
     }
 
@@ -268,15 +282,15 @@ public class StateImplementation extends State {
 
     @Override
     public void setRealPrintMode_default() {
-        super.realPrintMode = Real.PRINT_MODE_DEFAULT;
+        super.realPrintMode = SetlDouble.PRINT_MODE_DEFAULT;
     }
     @Override
     public void setRealPrintMode_engineering() {
-        super.realPrintMode = Real.PRINT_MODE_ENGINEERING;
+        super.realPrintMode = SetlDouble.PRINT_MODE_ENGINEERING;
     }
     @Override
     public void setRealPrintMode_plain() {
-        super.realPrintMode = Real.PRINT_MODE_PLAIN;
+        super.realPrintMode = SetlDouble.PRINT_MODE_PLAIN;
     }
 
     // allow modification of fileName/path when reading files
@@ -354,13 +368,56 @@ public class StateImplementation extends State {
 
     @Override
     public int getMaxStackSize() {
-        return envProvider.getMaxStackSize();
+        // As setlX's estimation is far from perfect, we assume 2x more stack usage
+        // then its internal accounting guesses.
+        // Also a few stack (~66) frames should be free for functions out of our
+        // control, like the ones from the JDK ;-)
+        //
+        // Thus the maximum stack size is about 1/2 of (measured stack - 66).
+
+        return (measureStackSize() - 66) / 2;
+    }
+
+    // measure the stack size
+    private static int measureStackSize() {
+        if (STACK_MEASUREMENT <= 0) {
+            // create new thread to measure entire stack size, independent of
+            // current stack usage size in this thread.
+            final Thread stackEstimater = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    STACK_MEASUREMENT = measureStackSize_slave(2);
+                }
+            });
+            stackEstimater.start();
+            try {
+                stackEstimater.join();
+            } catch (final InterruptedException e) { }
+        }
+        return STACK_MEASUREMENT;
+    }
+
+    private static int measureStackSize_slave(int size) {
+        try {
+            if (size >= 1000000) {
+                // forever loop protection in case Java ever gets an unlimited stack
+                return 1000000;
+            }
+            return measureStackSize_slave(++size);
+        } catch (final StackOverflowError soe) {
+            return size;
+        }
     }
 
     @Override
-    public void storeFirstCallStackDepth() {
+    public void storeStackDepthOfFirstCall(final int callStackDepth) {
         if (firstCallStackDepth < 0) {
-            firstCallStackDepth = callStackDepth;
+            firstCallStackDepth = this.callStackDepth;
+        }
+        if (this.callStackDepth != callStackDepth) {
+            // this should not be possible!
+            // but reading the parameter prevents javac optimizing the whole thing away
+            throw new InvalidParameterException("this.callStackDepth != callStackDepth");
         }
     }
 

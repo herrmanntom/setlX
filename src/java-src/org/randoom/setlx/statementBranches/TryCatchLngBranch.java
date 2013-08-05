@@ -1,10 +1,12 @@
-package org.randoom.setlx.statements;
+package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
@@ -13,8 +15,8 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.List;
 
 /**
- * This catchUsr block catches any exception, which was user created, e.g.
- * by using  throw()  function in SetlX.
+ * This catchLng block catches any exception, which was not user created, e.g.
+ * represents a semantic or syntactic error.
  *
  * grammar rule:
  * statement
@@ -23,17 +25,23 @@ import java.util.List;
  *     ;
  *
  * implemented here as:
- *                                                                                                                                ========         =====
- *                                                                                                                                errorVar     blockToRecover
+ *                                                                                    ========         =====
+ *                                                                                    errorVar     blockToRecover
  */
-public class TryCatchUsrBranch extends TryCatchAbstractBranch {
+public class TryCatchLngBranch extends TryCatchAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchUsrBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatchLngBranch.class);
 
-    private final Variable               errorVar;
-    private final Block                  blockToRecover;
+    private final Variable errorVar;
+    private final Block    blockToRecover;
 
-    public TryCatchUsrBranch(final Variable errorVar, final Block blockToRecover){
+    /**
+     * Create new catchLng-branch.
+     *
+     * @param errorVar       Variable to bind caught exception to.
+     * @param blockToRecover Statements to execute when exception is caught.
+     */
+    public TryCatchLngBranch(final Variable errorVar, final Block blockToRecover){
         this.errorVar       = errorVar;
         this.blockToRecover = blockToRecover;
     }
@@ -41,16 +49,16 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
     @Override
     public boolean catches(final State state, final CatchableInSetlXException cise) {
         if (cise instanceof ThrownInSetlXException) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 
     @Override
     public ReturnMessage execute(final State state, final CatchableInSetlXException cise) throws SetlException {
-        // assign directly
-        errorVar.assign(state, ((ThrownInSetlXException) cise).getValue().clone(), FUNCTIONAL_CHARACTER);
+        // wrap into error
+        errorVar.assign(state, new SetlError(cise), FUNCTIONAL_CHARACTER);
         // execute
         return blockToRecover.execute(state);
     }
@@ -72,7 +80,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append(" catchUsr (");
+        sb.append(" catchLng (");
         errorVar.appendString(state, sb, tabs);
         sb.append(") ");
         blockToRecover.appendString(state, sb, tabs, true);
@@ -88,14 +96,30 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
         return result;
     }
 
-    public static TryCatchUsrBranch termToBranch(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing an catchLng-branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
+    public static TryCatchLngBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Variable  var     = Variable.termToExpr((Term) term.firstMember());
             final Block     block   = TermConverter.valueToBlock(term.lastMember());
-            return new TryCatchUsrBranch(var, block);
+            return new TryCatchLngBranch(var, block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

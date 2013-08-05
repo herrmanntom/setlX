@@ -70,7 +70,11 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
-    public SetlBoolean isInfinity() {
+    public SetlBoolean isTop() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isNumber() {
         return SetlBoolean.FALSE;
     }
 
@@ -94,7 +98,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
-    public SetlBoolean isReal() {
+    public SetlBoolean isDouble() {
         return SetlBoolean.FALSE;
     }
 
@@ -124,7 +128,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return Om.OM;
     }
 
-    public Value toReal(final State state) throws SetlException {
+    public Value toDouble(final State state) throws SetlException {
         return Om.OM;
     }
 
@@ -164,7 +168,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public double jDoubleValue() throws IncompatibleTypeException, NumberToLargeException {
         throw new IncompatibleTypeException(
-            "'" + this + "' is not a real."
+            "'" + this + "' is not a double."
         );
     }
 
@@ -192,12 +196,12 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException if this value cannot be converted.
      */
     public double toJDoubleValue(final State state) throws SetlException {
-        final Value real = this.toReal(state);
+        final Value real = this.toDouble(state);
         if (real != Om.OM) {
             return real.jDoubleValue();
         } else {
             throw new IncompatibleTypeException(
-                "'" + this + "' is not convertable to real."
+                "'" + this + "' is not convertable to a double."
             );
         }
     }
@@ -718,9 +722,9 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * In order to compare "incomparable" values, e.g. of different types, the
      * following (mostly arbitrary) order is established and used in compareTo():
      *
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
+     * SetlError.BOTTOM <= SetlError < Om < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
+     * < SetlObject < ConstructorDefinition < Top
      *
      * This ranking is necessary to allow sets and lists of different types.
      *

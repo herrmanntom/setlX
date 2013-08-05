@@ -33,7 +33,7 @@ public abstract class Expr extends CodeFragment {
     public Value eval(final State state) throws SetlException {
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2; // one for this eval(), one for evaluate()
 
             if (isNotReplaceable) {
                 return this.evaluate(state);
@@ -68,11 +68,12 @@ public abstract class Expr extends CodeFragment {
             se.addToTrace("Error in \"" + this + "\":");
             throw se;
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
+
         }
     }
 

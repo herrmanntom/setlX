@@ -38,7 +38,7 @@
                     <end>'</end>
                     <include>
                         <context id="escaped-single-straight-quote" style-ref="escaped-character">
-                            <match>\\'</match>
+                            <match>''</match>
                         </context>
                     </include>
                 </context>

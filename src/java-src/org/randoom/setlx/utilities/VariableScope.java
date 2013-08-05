@@ -163,11 +163,6 @@ public class VariableScope {
                         v = callExec.result;
                     } catch (final InterruptedException e) {
                         throw new StopExecutionException("Interrupted");
-                    } catch (final StackOverflowError soe) {
-                        state.storeFirstCallStackDepth();
-                        throw soe;
-                    } finally {
-                        state.callStackDepth = oldCallStackDepth;
                     }
 
                     // handle exceptions thrown in thread
@@ -211,9 +206,9 @@ public class VariableScope {
             }
             return null;
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
-        }  finally {
+        } finally {
             // reset callStackDepth
             state.callStackDepth = oldCallStackDepth;
         }
@@ -387,7 +382,6 @@ public class VariableScope {
                 result = null;
                 error  = se;
             } catch (final StackOverflowError soe) {
-                state.storeFirstCallStackDepth();
                 result = null;
                 error  = soe;
             } catch (final OutOfMemoryError oome) {

@@ -48,7 +48,7 @@ import org.randoom.setlx.functions.PD_permutations;
 import org.randoom.setlx.functions.PD_pow;
 import org.randoom.setlx.functions.PD_range;
 import org.randoom.setlx.functions.PD_rational;
-import org.randoom.setlx.functions.PD_real;
+import org.randoom.setlx.functions.PD_double;
 import org.randoom.setlx.functions.PD_reverse;
 import org.randoom.setlx.functions.PD_round;
 import org.randoom.setlx.functions.PD_shuffle;
@@ -80,10 +80,10 @@ public class SetlObject extends Value {
      * actually doing any cloning, this object carries a isClone flag.
      *
      * If the contents of this SetlObject is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
-     * if required.
+     * MUST be called before the modification, which then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
@@ -124,7 +124,7 @@ public class SetlObject extends Value {
 
     /**
      * If the contents of THIS SetlList is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      *
      * While clone() is called upon all members of this list, this does not perform
@@ -246,19 +246,6 @@ public class SetlObject extends Value {
         }
     }
     final static String TO_RATIONAL = createOverloadVariable(PD_rational.DEFINITION);
-
-    @Override
-    public Value toReal(final State state) throws SetlException {
-        final Value result = overload(state, TO_REAL);
-        if (result == Om.OM && ! (result instanceof Real)) {
-            throw new IncompatibleTypeException(
-                "Result of '" + TO_REAL + "' is not a real."
-            );
-        } else {
-            return result;
-        }
-    }
-    final static String TO_REAL = createOverloadVariable(PD_real.DEFINITION);
 
     /* arithmetic operations */
 
@@ -657,11 +644,6 @@ public class SetlObject extends Value {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v) {
         if (this == v) {
@@ -678,13 +660,6 @@ public class SetlObject extends Value {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 1100;

@@ -25,6 +25,7 @@ import java.util.List;
 public class StringConstructor extends Expr {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(StringConstructor.class);
+
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 9999;
 
@@ -39,20 +40,20 @@ public class StringConstructor extends Expr {
      * @param quoted      Is the created string quoted (via @-char)?
      * @param originalStr String read by the parser.
      */
-    public StringConstructor(final State state, final boolean quoted, String originalStr) {
+    public StringConstructor(final State state, final boolean quoted, final String originalStr) {
         this(originalStr, new ArrayList<String>(), new ArrayList<Expr>());
 
         // Strip out double quotes which the parser left in
-        originalStr = originalStr.substring(1, originalStr.length() - 1);
-        final int length = originalStr.length();
+        final String orgStr = originalStr.substring(1, originalStr.length() - 1);
+        final int    length = orgStr.length();
 
         if ( ! quoted) {
             final StringBuilder fragment  = new StringBuilder(); // buffer for string fragment
             final StringBuilder expr      = new StringBuilder(); // buffer for inner expr string
                   boolean       innerExpr = false;               // currently reading inner expr ?
             for (int i = 0; i < length; ++i) {
-                final char c = originalStr.charAt(i);  // current char
-                final char n = (i+1 < length)? originalStr.charAt(i+1) : '\0';  // next char
+                final char c = orgStr.charAt(i);  // current char
+                final char n = (i+1 < length)? orgStr.charAt(i+1) : '\0';  // next char
                 if (innerExpr) {
                     if (c == '$') {
                         // end of inner expr
@@ -135,7 +136,7 @@ public class StringConstructor extends Expr {
             this.fragments.trimToSize();
             this.exprs.trimToSize();
         } else {
-            this.fragments.add(originalStr);
+            this.fragments.add(orgStr);
         }
     }
 
@@ -204,28 +205,30 @@ public class StringConstructor extends Expr {
 
     @Override
     public Value toTerm(final State state) {
-        if (fragments.size() == 1 && exprs.size() == 0) {
-            // simple string without $-expression
-            return new SetlString(fragments.get(0));
-        } else {
-            final Term result  = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
-            final SetlList strList = new SetlList(fragments.size());
-            for (final String str: fragments) {
-                strList.addMember(state, new SetlString(str));
-            }
-            result.addMember(state, strList);
-
-            final SetlList expList = new SetlList(exprs.size());
-            for (final Expr expr: exprs) {
-                expList.addMember(state, expr.toTerm(state));
-            }
-            result.addMember(state, expList);
-
-            return result;
+        final SetlList strList = new SetlList(fragments.size());
+        for (final String str: fragments) {
+            strList.addMember(state, new SetlString(str));
         }
+        result.addMember(state, strList);
+
+        final SetlList expList = new SetlList(exprs.size());
+        for (final Expr expr: exprs) {
+            expList.addMember(state, expr.toTerm(state));
+        }
+        result.addMember(state, expList);
+
+        return result;
     }
 
+    /**
+     * Convert a term representing a StringConstructor into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting StringConstructor Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Expr termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -265,23 +268,18 @@ public class StringConstructor extends Expr {
         }
     }
 
-    public static Expr valueToExpr(final Value value) throws TermConversionException {
-        if ( ! (value instanceof SetlString)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        }
-        final SetlString        sstring     = (SetlString) value;
-        final String            string      = sstring.getUnquotedString();
-        final String            originalStr = "\"" + sstring.getEscapedString() + "\"";
-        final ArrayList<String> fragments   = new ArrayList<String>(1);
-        fragments.add(string);
-        final ArrayList<Expr>   exprs       = new ArrayList<Expr>(0);
-        final Expr              result      = new StringConstructor(originalStr, fragments, exprs);
-        return result;
-    }
-
     @Override
     public int precedence() {
         return PRECEDENCE;
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

@@ -2,6 +2,8 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.statementBranches.IfThenAbstractBranch;
+import org.randoom.setlx.statementBranches.IfThenElseBranch;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -32,29 +34,23 @@ public class IfThen extends Statement {
 
     private final List<IfThenAbstractBranch> branchList;
 
+    /**
+     * Create a new if-then-else statement.
+     *
+     * @param branchList List of if-then-else branches.
+     */
     public IfThen(final List<IfThenAbstractBranch> branchList) {
         this.branchList = branchList;
     }
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        try {
-            // increase callStackDepth
-            ++(state.callStackDepth);
-
-            for (final IfThenAbstractBranch br : branchList) {
-                if (br.evalConditionToBool(state)) {
-                    return br.execute(state);
-                }
+        for (final IfThenAbstractBranch br : branchList) {
+            if (br.evalConditionToBool(state)) {
+                return br.getStatements().execute(state);
             }
-            return null;
-        } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
-            throw soe;
-        } finally {
-            // decrease callStackDepth
-            --(state.callStackDepth);
         }
+        return null;
     }
 
     @Override
@@ -107,6 +103,13 @@ public class IfThen extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing an if-then-else statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting if-then-else Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static IfThen termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

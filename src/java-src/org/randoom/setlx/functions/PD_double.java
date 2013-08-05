@@ -6,19 +6,19 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// real(stringOrNumber)    : convert string or number into a real, returns om on failure
+// double(stringOrNumber)    : convert string or number into a double, returns om on failure
 
-public class PD_real extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_real();
+public class PD_double extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_double();
 
-    private PD_real() {
+    private PD_double() {
         super();
         addParameter("value");
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).toReal(state);
+        return args.get(0).toDouble(state);
     }
 }
 

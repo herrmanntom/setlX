@@ -3,6 +3,8 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.statementBranches.MatchAbstractBranch;
+import org.randoom.setlx.statementBranches.MatchDefaultBranch;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -35,6 +37,12 @@ public class Match extends Statement {
     private final Expr                        expr;
     private final List<MatchAbstractBranch>   branchList;
 
+    /**
+     * Create a new match statement.
+     *
+     * @param expr       Expression forming the term to match.
+     * @param branchList List of match branches.
+     */
     public Match(final Expr expr, final List<MatchAbstractBranch> branchList) {
         this.expr       = expr;
         this.branchList = branchList;
@@ -64,7 +72,7 @@ public class Match extends Statement {
 
                     if (br.evalConditionToBool(state)) {
                         // execute statements
-                        final ReturnMessage execResult = br.execute(state);
+                        final ReturnMessage execResult = br.getStatements().execute(state);
 
                         // reset scope
                         state.setScope(outerScope);
@@ -82,7 +90,7 @@ public class Match extends Statement {
             }
             return null;
         } catch (final StackOverflowError soe) {
-            state.storeFirstCallStackDepth();
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
         } finally {
             // decrease callStackDepth
@@ -153,6 +161,13 @@ public class Match extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing a Match statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Match Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Match termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

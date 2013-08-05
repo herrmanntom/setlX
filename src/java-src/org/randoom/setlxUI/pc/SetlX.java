@@ -7,7 +7,7 @@ import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
-import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.utilities.TermConverter;
@@ -25,7 +25,7 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String     VERSION         = "2.1.0";
+    private final static String     VERSION         = "2.1.1:double";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
     private final static String     C_YEARS         = "2011-2013";
     private final static String     VERSION_PREFIX  = "v";
@@ -37,6 +37,11 @@ public class SetlX {
     // print extra information and use correct indentation when printing statements etc
     private       static boolean    verbose         = false;
 
+    /**
+     * The main method.
+     *
+     * @param args Command line arguments.
+     */
     public static void main(final String[] args) {
         String              dumpFile     = null;  // file to write loaded code into
         String              dumpTermFile = null;  // file to write loaded code as term into
@@ -150,14 +155,6 @@ public class SetlX {
                 }
             } else if (s.equals("-r") || s.equals("--predictableRandom")) { // easier debugging
                 state.setRandoomPredictable(true);
-            } else if (s.equals("--real32")) {
-                Real.setPrecision32();
-            } else if (s.equals("--real64")) {
-                Real.setPrecision64();
-            } else if (s.equals("--real128")) {
-                Real.setPrecision128();
-            } else if (s.equals("--real256")) {
-                Real.setPrecision256();
             } else if (s.equals("--realDefault")) {
                 state.setRealPrintMode_default();
             } else if (s.equals("--realEngineering")) {
@@ -475,11 +472,6 @@ public class SetlX {
             "      Pass all following arguments to executed program via `params' variable.\n" +
             "  -r, --predictableRandom\n" +
             "      Always use same random sequence (debugging).\n" +
-            "  --real32\n" +
-            "  --real64\n" +
-            "  --real128\n" +
-            "  --real256\n" +
-            "      Sets the width of the real-type in bits (real64 is the default).\n" +
             "  --realDefault\n" +
             "  --realEngineering\n" +
             "  --realPlain\n" +

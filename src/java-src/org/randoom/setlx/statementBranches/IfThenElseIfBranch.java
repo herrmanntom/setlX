@@ -1,37 +1,43 @@
-package org.randoom.setlx.statements;
+package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
+import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
 /**
- * A case in a switch statement.
+ * Implementation of the else-if-(??)-then-branch.
  *
  * grammar rule:
  * statement
  *     : [...]
- *     | 'switch' '{' ('case' condition ':' block)* ('default' ':' block)? '}'
+ *     | 'if' '(' condition ')' '{' block '}' ('else' 'if' '(' condition ')' '{' block '}')* ('else' '{' block '}')?
  *     ;
  *
  * implemented here as:
- *                            =========     =====
- *                            condition   statements
+ *                                                             =========         =====
+ *                                                             mCondition     mStatements
  */
-public class SwitchCaseBranch extends SwitchAbstractBranch {
+public class IfThenElseIfBranch extends IfThenAbstractBranch {
     // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchCaseBranch.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThenElseIfBranch.class);
 
     private final Condition condition;
     private final Block     statements;
 
-    public SwitchCaseBranch(final Condition condition, final Block statements){
+    /**
+     * Create new else-if-(??)-then-branch.
+     *
+     * @param condition  Condition to check before execution.
+     * @param statements Statements to execute when condition is met.
+     */
+    public IfThenElseIfBranch(final Condition condition, final Block statements){
         this.condition  = condition;
         this.statements = statements;
     }
@@ -42,8 +48,8 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
     }
 
     @Override
-    public ReturnMessage execute(final State state) throws SetlException {
-        return statements.execute(state);
+    public Block getStatements() {
+        return statements;
     }
 
     @Override
@@ -60,13 +66,10 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.appendLineStart(sb, tabs);
-        sb.append("case ");
+        sb.append(" else if (");
         condition.appendString(state, sb, tabs);
-        sb.append(":");
-        sb.append(state.getEndl());
-        statements.appendString(state, sb, tabs + 1, false);
-        sb.append(state.getEndl());
+        sb.append(") ");
+        statements.appendString(state, sb, tabs, true);
     }
 
     /* term operations */
@@ -79,14 +82,30 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
         return result;
     }
 
-    public static SwitchCaseBranch termToBranch(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing an else-if-(??)-then-branch branch into such a branch.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
+    public static IfThenElseIfBranch termToBranch(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Condition condition   = TermConverter.valueToCondition(term.firstMember());
             final Block     block       = TermConverter.valueToBlock(term.lastMember());
-            return new SwitchCaseBranch(condition, block);
+            return new IfThenElseIfBranch(condition, block);
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.statementBranches.TryCatchAbstractBranch;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -37,6 +38,12 @@ public class TryCatch extends Statement {
     private final Block                        blockToTry;
     private final List<TryCatchAbstractBranch> tryList;
 
+    /**
+     * Create a new try-catch statement.
+     *
+     * @param blockToTry Block of statement to "try"
+     * @param tryList    List of catch branches.
+     */
     public TryCatch(final Block blockToTry, final List<TryCatchAbstractBranch> tryList) {
         this.blockToTry = blockToTry;
         this.tryList    = tryList;
@@ -57,6 +64,9 @@ public class TryCatch extends Statement {
             }
             // If we get here nothing matched. Re-throw as if nothing happened
             throw cise;
+        } catch (final StackOverflowError soe) {
+            state.storeStackDepthOfFirstCall(state.callStackDepth);
+            throw soe;
         } finally {
             // decrease callStackDepth
             --(state.callStackDepth);
@@ -109,6 +119,13 @@ public class TryCatch extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing a try-catch statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting if-then-else Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static TryCatch termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

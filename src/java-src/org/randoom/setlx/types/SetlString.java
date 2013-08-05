@@ -3,35 +3,56 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.expressions.StringConstructor;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+/**
+ * The setlX string data type.
+ */
 public class SetlString extends IndexedCollectionValue {
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this SetlString carries a isClone flag.
      *
      * If the contents of this SetlString is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
-     * if required.
+     * MUST be called before the modification, which then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
 
-    // this method is used when creating strings from StringConstructor
+    /**
+     * Create strings passed from an StringConstructor expression into an SetlString
+     * by parsing escape sequences etc.
+     *
+     * @param s String to convert.
+     * @return  Converted SetlString.
+     */
     public static String parseString(final String s) {
         final StringBuilder out = new StringBuilder(s.length() + 8);
         parseString(s, out);
         return out.toString();
     }
 
+    /**
+     * Create strings passed from an StringConstructor expression into an SetlString
+     * by parsing escape sequences etc.
+     *
+     * @param s   String to convert.
+     * @param out StringBuilder to append converted SetlString into.
+     */
     public static void parseString(final String s, final StringBuilder out) {
         // parse escape sequences
         final int           length    = s.length();
@@ -63,14 +84,21 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public static SetlString newLiteral(final String s) {
+    /**
+     * Create literals passed from an LiteralConstructor expression into an SetlString
+     * by parsing escape sequences etc.
+     *
+     * @param s String to convert.
+     * @return  Converted SetlString.
+     */
+    public static SetlString parseLiteral(final String s) {
         final SetlString result = new SetlString();
-        // parse escape sequences (only \' is parsed in literals)
+        // parse escape sequences (only '' as escaped ' is parsed in literals)
         final int           length    = s.length();
         for (int i = 1; i < length - 1; ) {
             final char c = s.charAt(i);                          // current char
             final char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
-            if (c == '\\' && n == '\'') {
+            if (c == '\'' && n == '\'') {
                 result.content.append(n);
                 i += 2;
             } else {
@@ -85,32 +113,51 @@ public class SetlString extends IndexedCollectionValue {
     // is this strings a clone
     private boolean       isCloned;
 
+    /**
+     * Create a new empty string.
+     */
     public SetlString(){
         this.content  = new StringBuilder();
         this.isCloned = false; // new strings are not a clone
     }
 
+    /**
+     * Create a new string storing a single character.
+     *
+     * @param c Character to store.
+     */
     public SetlString(final char c){
         this.content    = new StringBuilder();
         this.content.append(c);
         this.isCloned   = false; // new strings are not a clone
     }
 
+    /**
+     * Create a new string equal to the argument.
+     *
+     * @param string String to store.
+     */
     public SetlString(final String string){
         this.content    = new StringBuilder();
         this.content.append(string);
         this.isCloned   = false; // new strings are not a clone
     }
 
+    /**
+     * Create a new string equal to the content of the argument.
+     *
+     * @param content Content to store.
+     * @return new SetlString
+     */
+    public static SetlString newSetlStringFromSB(final StringBuilder content){
+        final SetlString result = new SetlString(content);
+        result.isCloned = false;
+        return result;
+    }
+
     private SetlString(final StringBuilder content){
         this.content  = content;
         this.isCloned = true;  // strings created from another string ARE a clone (most of the time)
-    }
-
-    public static SetlString newSetlStringFromSB(final StringBuilder content){
-        final SetlString result = new SetlString(content);
-        result.isCloned = false; // strings created from a StringBuilder can possibly be not a clone as well
-        return result;
     }
 
     @Override
@@ -127,7 +174,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     /* If the contents of THIS string is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      */
 
@@ -218,6 +265,12 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
+    /**
+     * Convert this string into a list of strings of single characters.
+     *
+     * @param state Current state of the running setlX program.
+     * @return      List of strings.
+     */
     /*package*/ SetlList toList(final State state) {
         final SetlList result = new SetlList(size());
         for (final Value str : this) {
@@ -236,9 +289,9 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value toReal(final State state) {
+    public Value toDouble(final State state) {
         try {
-            return Real.valueOf(content.toString());
+            return SetlDouble.valueOf(content.toString());
         } catch (final NumberFormatException nfe) {
             return Om.OM;
         }
@@ -338,7 +391,15 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    public SetlString sumFlipped(final State state, final Value summand) throws IncompatibleTypeException {
+    /**
+     * Add this string after the string representation of the summand.
+     *
+     * @param state   Current state of the running setlX program.
+     * @param summand Summand.
+     * @return        String of both objects.
+     * @throws IncompatibleTypeException Thrown when the summand is undefined (om).
+     */
+    /*package*/ SetlString sumFlipped(final State state, final Value summand) throws IncompatibleTypeException {
         if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " + " + summand + "' is undefined."
@@ -456,8 +517,18 @@ public class SetlString extends IndexedCollectionValue {
         return getMembers(low, high);
     }
 
-    // getMembers, i.e. substring
-    public SetlString getMembers(final int low, final int high) throws SetlException {
+    /**
+     * Get a members (/characters) of this string between the specified indexes.
+     * (This method is comparable to the usual substring.)
+     * Note:
+     *  The index starts with 1, not 0.
+     *
+     * @param low                     First character to include.
+     * @param high                    Last character to include.
+     * @return                        String between low and high.
+     * @throws NumberToLargeException Thrown when indexes are out of range.
+     */
+    public SetlString getMembers(final int low, final int high) throws NumberToLargeException {
         if (low < 1) {
             throw new NumberToLargeException(
                 "Lower bound '" + low + "' is lower as 1."
@@ -635,34 +706,36 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException {
+    public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException, SyntaxErrorException {
         if ( ! (pattern instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Pattern '" + pattern  + "' is not a string."
             );
         }
-        final String       p       = pattern.getUnquotedString();
-        final List<String> strings = Arrays.asList(content.toString().split(p));
-        final SetlList     result  = new SetlList(strings.size());
-        for (final String str : strings) {
-            result.addMember(state, new SetlString(str));
-        }
+        final String p = ((SetlString) pattern).getUnquotedString();
 
-        // fix split("foo", "") => ["", "f", "o", "o"], should be ["", "f", "o", "o"]
-        if (strings.size() >= 1 && strings.get(0).equals("") && p.equals("")) {
-            result.removeFirstMember();
-        }
-        // fix split(";", ";") => [], should be ["", ""]
-        else if (content.toString().equals(p)) {
-            result.addMember(state, new SetlString());
-            result.addMember(state, new SetlString());
-        }
-        // fix split(";f;o;o;", ";") => ["", "f", "o", "o"], should be ["", "f", "o", "o", ""]
-        else if (content.toString().endsWith(p)) {
-            result.addMember(state, new SetlString());
-        }
+        try {
+            // parse pattern
+            final Pattern pttrn = Pattern.compile(p);
 
-        return result;
+            final List<String> strings = Arrays.asList(pttrn.split(content, -1));
+
+            final SetlList     result  = new SetlList(strings.size());
+            for (final String str : strings) {
+                result.addMember(state, new SetlString(str));
+            }
+
+            return result;
+        } catch (final PatternSyntaxException pse) {
+            final LinkedList<String> errors = new LinkedList<String>();
+            errors.add("Error while parsing regex-pattern '" + p + "' {");
+            errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
+            errors.add("}");
+            throw SyntaxErrorException.create(
+                errors,
+                "1 syntax error encountered."
+            );
+        }
     }
 
     /* string and char operations */
@@ -684,6 +757,14 @@ public class SetlString extends IndexedCollectionValue {
         appendString(state, sb, 0);
     }
 
+    /**
+     * Get Java string that creates this string after parsing it via parseString().
+     * I.e. this is the reversed operation to that method.
+     *
+     * @see org.randoom.setlx.types.SetlString#parseString(String)
+     *
+     * @return escaped string.
+     */
     public String getEscapedString() {
         // parse escape sequences
         final int           length  = content.length();
@@ -709,6 +790,30 @@ public class SetlString extends IndexedCollectionValue {
         return sb.toString();
     }
 
+
+    /**
+     * Get Java string that creates this string after parsing it via parseLiteral().
+     * I.e. this is the reversed operation to that method.
+     *
+     * @see org.randoom.setlx.types.SetlString#parseLiteral(String)
+     *
+     * @return escaped literal.
+     */
+    public String getEscapedLiteral() {
+        // parse escape sequences
+        final int           length  = content.length();
+        final StringBuilder sb      = new StringBuilder(length + 8);
+        for (int i = 0; i < length; ++i) {
+            final char c = content.charAt(i);  // current char
+            if (c == '\'') {
+                sb.append("\'\'");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
     @Override
     public String getUnquotedString() {
         return content.toString();
@@ -725,6 +830,16 @@ public class SetlString extends IndexedCollectionValue {
     public MatchResult matchesTerm(final State state, final Value other) {
         if (other == IgnoreDummy.ID || this.equals(other)) {
             return new MatchResult(true);
+        } else if (other instanceof Term ) {
+            final Term o = (Term) other;
+            try {
+                if (o.functionalCharacter(state).getUnquotedString().equals(StringConstructor.getFunctionalCharacter())
+                    && o.size() == 2 && o.firstMember().size() == 1 && o.lastMember().size() == 0
+                ) {
+                    return matchesTerm(state, o.firstMember().firstMember(state));
+                }
+            } catch (final SetlException e) { /* just fail in the next line */ }
+            return new MatchResult(false);
         } else {
             return new MatchResult(false);
         }
@@ -732,11 +847,6 @@ public class SetlString extends IndexedCollectionValue {
 
     /* comparisons */
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final Value v) {
         if (this == v) {
@@ -748,13 +858,6 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    /* To compare "incomparable" values, e.g. of different types, the following
-     * order is established and used in compareTo():
-     * SetlError < Om < -Infinity < SetlBoolean < Rational & Real
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < +Infinity
-     * This ranking is necessary to allow sets and lists of different types.
-     */
     @Override
     protected int compareToOrdering() {
         return 600;

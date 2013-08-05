@@ -18,7 +18,11 @@ public class PD_fromB extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State       state, 
+                         final List<Value> args, 
+                         final List<Value> writeBackVars
+                        ) throws SetlException 
+    {
         final Value collection = args.get(0);
         final Value element    = collection.removeFirstMember(state);
 

@@ -29,7 +29,21 @@ evalExam := procedure(file, maxPoints) {
 };
 
 note := procedure(p, m) {
-    return 7.0 - 6.0 * p / m;
+    return nbrFormat(7.0 - 6.0 * p / m);
+};
+
+nbrFormat := procedure(value) {
+    roundValue := 10;
+    rVal    := 1.0 * (round(value * roundValue) / roundValue);
+    result  := str(rVal);
+    n       := #str(roundValue);
+    while (#result <= n + 1) {
+        result += "0";
+    }
+    if (#result > n + 1) {
+        result := result[1 .. n+1];
+    }
+    return result;
 };
 
 evalExam("result.txt", 60);

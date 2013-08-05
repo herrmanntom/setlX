@@ -1,8 +1,10 @@
 // this program demonstrates some of the new and possibly interesting built-in functions
 
+resetRandom();
 /*******************************************************************************
   mathConst(name_of_constant)   // get the value of a mathematical constant (currently only pi and e)
 */
+
 
 circumference := [r] |-> 2 * mathConst("pi") * r;
 print("The circumference of a circle with radius 10 is: " + circumference(10) + ".");
@@ -55,12 +57,12 @@ print();
 /*******************************************************************************
   int(stringOrNumber)           // convert string or number into an integer, returns om on failure
   rational(stringOrNumber)      // convert string or number into a rational, returns om on failure
-  real(stringOrNumber)          // convert string or number into a real, returns om on failure
+  double(stringOrNumber)        // convert string or number into a double, returns om on failure
   str(value)                    // converts any value into a string, can not fail
 */
 
 getIntRealOrStringFromInput := procedure(input) {
-    testFunctions := [int, rational, real, str];
+    testFunctions := [int, rational, double, str];
     for (f in testFunctions) {
         result := f(input);
         if (result != om) {
@@ -68,14 +70,14 @@ getIntRealOrStringFromInput := procedure(input) {
         }
     }
     // this should not be reached, because anything can be converted into a string...
-    abort("Input can not be converted to integer, real or string!");
+    abort("Input can not be converted to integer, double or string!");
 };
 
 valueWithType := procedure(value) {
     switch {
         case isInteger(value)  : return "int      : $value$";
         case isRational(value) : return "rational : $value$";
-        case isReal(value)     : return "real     : $value$";
+        case isDouble(value)   : return "double   : $value$";
         case isString(value)   : return "string   : \"$value$\"";
         default                : return "??       : '$value$'";
     }
@@ -149,12 +151,12 @@ print();
 */
 
 test := "21_test_12";
-print    ( "This is a $test$");
-print    (@"This is a $test$");
-printErr ( "This is a $test$");
-printErr (@"This is a $test$");
-nPrint   ( "This is a $test$");
-nPrintErr( "This is a $test$");
+print    ("This is a $test$");
+print    ('This is a $test$');
+printErr ("This is a $test$");
+printErr ('This is a $test$');
+nPrint   ("This is a $test$");
+nPrintErr("This is a $test$");
 print();
 print();
 

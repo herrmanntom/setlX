@@ -7,7 +7,6 @@ import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.ProcedureConstructor;
 import org.randoom.setlx.expressions.SetListConstructor;
-import org.randoom.setlx.expressions.StringConstructor;
 import org.randoom.setlx.expressions.TermConstructor;
 import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.VariableIgnore;
@@ -24,7 +23,6 @@ import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlSet;
-import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -154,11 +152,10 @@ public class TermConverter {
                         return new ValueExpr(specialValue);
                     }
                 }
-                throw new TermConversionException(
-                    "This term does not represent an CodeFragment."
-                );
+                // This term does not represent an CodeFragment.
+                return TermConstructor.termToExpr(term);
             } catch (final TermConversionException tce) {
-                // create TermConstructor for this custom term
+                // some error occurred... create TermConstructor for this custom term
                 return TermConstructor.termToExpr(term);
             }
         } else { // `value' is in fact a (more or less) simple value
@@ -169,10 +166,9 @@ public class TermConverter {
                     return CollectionAccessRangeDummy.CARD;
                 } else if (value instanceof SetlList || value instanceof SetlSet) {
                     return SetListConstructor.valueToExpr(value);
-                } else if (value instanceof SetlString) {
-                    return StringConstructor.valueToExpr(value);
                 } else {
-                    throw new TermConversionException("not a special value");
+                    // not a special value
+                    return new ValueExpr(value);
                 }
             } catch (final TermConversionException tce) {
                 // some error occurred... create ValueExpr for this value

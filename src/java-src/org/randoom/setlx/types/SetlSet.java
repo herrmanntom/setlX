@@ -2,6 +2,7 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
@@ -15,7 +16,7 @@ import java.util.NavigableSet;
 import java.util.TreeSet;
 
 /**
- * This class implements an set of arbitrary SetlX values.
+ * This class implements a set of arbitrary SetlX values.
  * Note that sets in SetlX are in lexicographical order.
  *
  * It will most likely be created and filled by an SetListConstructor
@@ -30,13 +31,13 @@ import java.util.TreeSet;
  */
 public class SetlSet extends CollectionValue {
     /* To allow initially `free' cloning, by only marking a clone without
-     * actually doing any cloning, this set carries a isClone flag.
+     * actually doing any cloning, this set carries an isClone flag.
      *
-     * If the contents of this SetlSet is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
-     * if required.
+     * If the contents of this SetlSet is modified, the method `separateFromOriginal()'
+     * MUST be called before the modification.  This method then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
@@ -69,7 +70,7 @@ public class SetlSet extends CollectionValue {
 
     /**
      * If the contents of THIS SetlSet is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      *
      * While clone() is called upon all members of this set, this does not perform
@@ -392,22 +393,22 @@ public class SetlSet extends CollectionValue {
          *
          * Thus we extract a subset that satisfies the following equation:
          *
-         * [`arg'] <= subset <= [`arg', +infinity]
+         * [`arg'] <= subset <= [`arg', Top.TOP]
          *
          * which includes all map entries where key == `arg', as this set is
          * in lexicographical order and
          *
-         * [`arg'] <= [`arg', x] <= [`arg', +infinity]
+         * [`arg'] <= [`arg', x] <= [`arg', Top.TOP]
          *
          * for all x, because all lists with two members are larger as ones with
-         * one, if the first member is equal AND all x are smaller or equal to
-         * +infinity, as that is the largest value possible.
+         * one, if the first member is equal AND all x are smaller as Top.TOP,
+         * as that is the largest value possible.
          */
         final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(state, arg);
         final Value upperBound  = new SetlList(2);
         upperBound.addMember(state, arg);
-        upperBound.addMember(state, Infinity.POSITIVE);
+        upperBound.addMember(state, Top.TOP);
 
         final NavigableSet<Value> subSet = set.subSet(lowerBound, false, upperBound, true);
 
@@ -486,22 +487,22 @@ public class SetlSet extends CollectionValue {
          *
          * Thus we extract a subset that satisfies the following equation:
          *
-         * [`element'] <= subset <= [`element', +infinity]
+         * [`element'] <= subset <= [`element', Top.TOP]
          *
          * which includes all map entries where key == `element', as this set is
          * in lexicographical order and
          *
-         * [`element'] <= [`element', x] <= [`element', +infinity]
+         * [`element'] <= [`element', x] <= [`element', Top.TOP]
          *
          * for all x, because all lists with two members are larger as ones with
-         * one, if the first member is equal AND all x are smaller or equal to
-         * +infinity, as that is the largest value possible.
+         * one, if the first member is equal AND all x are smaller as Top.TOP,
+         * as that is the largest value possible.
          */
         final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(state, element);
         final Value upperBound  = new SetlList(2);
         upperBound.addMember(state, element);
-        upperBound.addMember(state, Infinity.POSITIVE);
+        upperBound.addMember(state, Top.TOP);
 
         final NavigableSet<Value> subSet = set.subSet(lowerBound, false, upperBound, true);
 
@@ -540,21 +541,34 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value maximumMember(final State state) {
+    public Value maximumMember(final State state) throws IncompatibleTypeException {
         if (size() < 1) {
-            // Neutral element of max() is smallest value available
-            return Infinity.NEGATIVE;
+            // Neutral element of max() is smallest number available
+            return SetlDouble.NEGATIVE_INFINITY;
         }
-        return lastMember(state);
+	Value a = firstMember(state);
+	Value b = lastMember(state);
+	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
+	    String errMsg = "The set " + this + " is not a set of numbers.";
+            throw new IncompatibleTypeException(errMsg);
+	}
+        return b;
     }
 
     @Override
-    public Value minimumMember(final State state) {
+    public Value minimumMember(final State state) throws IncompatibleTypeException {
+	// The minimum is only defined for sets of numbers.
         if (size() < 1) {
-            // Neutral element of min() is largest value available
-            return Infinity.POSITIVE;
+            // Neutral element of min() is the largest number available.
+            return SetlDouble.POSITIVE_INFINITY;
         }
-        return firstMember(state);
+	Value a = firstMember(state);
+	Value b = lastMember(state);
+	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
+	    String errMsg = "The set " + this + " is not a set of numbers.";
+            throw new IncompatibleTypeException(errMsg);
+	}
+        return a;
     }
 
     @Override
@@ -569,6 +583,9 @@ public class SetlSet extends CollectionValue {
     //     power(A + {x}) = power(A) + { {x} + s : s in power(A) }
     @Override
     public SetlSet powerSet(final State state) throws SetlException {
+        if (state.isExecutionStopped) {
+            throw new StopExecutionException("Interrupted");
+        }
         if (size() == 0) {
             final SetlSet power = new SetlSet();
             power.addMember(state, clone());
@@ -627,22 +644,22 @@ public class SetlSet extends CollectionValue {
          *
          * Thus we extract a subset that satisfies the following equation:
          *
-         * [`index'] <= subset <= [`index', +infinity]
+         * [`index'] <= subset <= [`index', Top.TOP]
          *
          * which includes all map entries where key == `index', as this set is
          * in lexicographical order and
          *
-         * [`index'] <= [`index', x] <= [`index', +infinity]
+         * [`index'] <= [`index', x] <= [`index', Top.TOP]
          *
          * for all x, because all lists with two members are larger as ones with
-         * one, if the first member is equal AND all x are smaller or equal to
-         * +infinity, as that is the largest value possible.
+         * one, if the first member is equal AND all x are smaller as Top.TOP,
+         * as that is the largest value possible.
          */
         final Value lowerBound  = new SetlList(1);
         lowerBound.addMember(state, index);
         final Value upperBound  = new SetlList(2);
         upperBound.addMember(state, index);
-        upperBound.addMember(state, Infinity.POSITIVE);
+        upperBound.addMember(state, Top.TOP);
 
         // remove all previously map entries which key == `index'
         set.removeAll(new TreeSet<Value>(set.subSet(lowerBound, true, upperBound, true)));

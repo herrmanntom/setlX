@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.MatchResult;
@@ -34,10 +35,10 @@ public class SetlList extends IndexedCollectionValue {
      * actually doing any cloning, this list carries a isClone flag.
      *
      * If the contents of this SetlList is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the real cloning,
-     * if required.
+     * MUST be called before the modification, which then performs the actual 
+     * cloning, if required.
      *
-     * Main benefit of this technique is to perform the real cloning only
+     * Main benefit of this technique is to perform the actual cloning only
      * when a clone is actually modified, thus not performing a time consuming
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
@@ -75,7 +76,7 @@ public class SetlList extends IndexedCollectionValue {
 
     /**
      * If the contents of THIS SetlList is modified, the following function MUST
-     * be called before the modification. It performs the real cloning,
+     * be called before the modification. It performs the actual cloning,
      * if THIS is actually marked as a clone.
      *
      * While clone() is called upon all members of this list, this does not perform
@@ -446,29 +447,38 @@ public class SetlList extends IndexedCollectionValue {
         return list.get(list.size() - 1).clone();
     }
 
-
     @Override
     public Value maximumMember(final State state) throws SetlException {
-        // Neutral element of max() is smallest value available
-        Value max = Infinity.NEGATIVE;
+        // Neutral element of max() is smallest number available
+        Value max = SetlDouble.NEGATIVE_INFINITY;
         for (final Value v: list) {
+	    // we assume that all elements are numbers
+	    if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
+		String errMsg = "The list " + this + " is not a list of numbers.";
+		throw new IncompatibleTypeException(errMsg);
+	    }
             if (v.maximum(state, max).equals(v)) {
                 max = v;
             }
         }
-        return max.clone();
+        return max;
     }
 
     @Override
     public Value minimumMember(final State state) throws SetlException {
-        // Neutral element of min() is largest value available
-        Value min = Infinity.POSITIVE;
+        // Neutral element of min() is largest number available
+        Value min = SetlDouble.POSITIVE_INFINITY;
         for (final Value v: list) {
+	    // we assume that all elements are numbers
+	    if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
+		String errMsg = "The list " + this + " is not a list of numbers.";
+		throw new IncompatibleTypeException(errMsg);
+	    }
             if (v.minimum(state, min).equals(v)) {
                 min = v;
             }
         }
-        return min.clone();
+        return min;
     }
 
     @Override
@@ -510,6 +520,9 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlSet permutations(final State state) throws SetlException {
+        if (state.isExecutionStopped) {
+            throw new StopExecutionException("Interrupted");
+        }
         if (size() == 0) {
             final SetlSet permutations = new SetlSet();
             permutations.addMember(state, clone());

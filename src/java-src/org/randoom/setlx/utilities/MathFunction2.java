@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.NumberValue;
-import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Value;
 
@@ -31,8 +31,8 @@ public class MathFunction2 extends PreDefinedProcedure {
         final Value arg1 = args.get(1);
         if (arg0 instanceof NumberValue && arg1 instanceof NumberValue) {
             try {
-                final double r = (Double) function.invoke(null, args.get(0).toJDoubleValue(state), args.get(1).toJDoubleValue(state));
-                return Real.valueOf(r);
+                final double r = (Double) function.invoke(null, arg0.toJDoubleValue(state), arg1.toJDoubleValue(state));
+                return SetlDouble.valueOf(r);
             } catch (final SetlException se) {
                 throw se;
             } catch (final Exception e) {

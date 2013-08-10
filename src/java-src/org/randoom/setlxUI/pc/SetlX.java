@@ -7,13 +7,11 @@ import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
-import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.ParseSetlX;
-import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.State;
 
 import java.io.ByteArrayOutputStream;
@@ -75,6 +73,14 @@ public class SetlX {
 
                 System.exit(EXIT_OK);
 
+            } else if (s.equals("--doubleDefault")) {
+                state.setDoublePrintMode_default();
+            } else if (s.equals("--doubleScientific")) {
+                state.setDoublePrintMode_scientific();
+            } else if (s.equals("--doubleEngineering")) {
+                state.setDoublePrintMode_engineering();
+            } else if (s.equals("--doublePlain")) {
+                state.setDoublePrintMode_plain();
             } else if (s.equals("--dump")) {
                 dumpFile = "";
                 ++i; // set to next argument
@@ -155,12 +161,6 @@ public class SetlX {
                 }
             } else if (s.equals("-r") || s.equals("--predictableRandom")) { // easier debugging
                 state.setRandoomPredictable(true);
-            } else if (s.equals("--realDefault")) {
-                state.setRealPrintMode_default();
-            } else if (s.equals("--realEngineering")) {
-                state.setRealPrintMode_engineering();
-            } else if (s.equals("--realPlain")) {
-                state.setRealPrintMode_plain();
             } else if (s.equals("--runtimeDebugging")) {
                 state.setRuntimeDebugging(true);
             } else if (s.equals("--termLoop")) {
@@ -472,10 +472,11 @@ public class SetlX {
             "      Pass all following arguments to executed program via `params' variable.\n" +
             "  -r, --predictableRandom\n" +
             "      Always use same random sequence (debugging).\n" +
-            "  --realDefault\n" +
-            "  --realEngineering\n" +
-            "  --realPlain\n" +
-            "      Sets how the exponent of reals is displayed.\n" +
+            "  --doubleDefault\n" +
+            "  --doubleScientific\n" +
+            "  --doubleEngineering\n" +
+            "  --doublePlain\n" +
+            "      Sets how the exponent of doubles is displayed.\n" +
             "  -v, --verbose\n" +
             "      Display the parsed program before executing it.\n" +
             "  --version\n" +

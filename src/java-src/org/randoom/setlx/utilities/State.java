@@ -6,7 +6,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.Real;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -28,9 +28,9 @@ public class State {
     // public variables, available to allow slightly faster access...
 
     /**
-     * Printing mode for reals
+     * Printing mode for doubles
      */
-    public                  int                 realPrintMode;
+    public                  int                 doublePrintMode;
     /**
      * Print a trace when assigning variables.
      */
@@ -112,7 +112,7 @@ public class State {
         multiLineMode                    = false;
         isInteractive                    = false;
         printVerbose                     = false;
-        realPrintMode                    = Real.PRINT_MODE_DEFAULT;
+        doublePrintMode                    = SetlDouble.PRINT_MODE_DEFAULT;
         traceAssignments                 = false;
         assertsDisabled                  = false;
         isRuntimeDebuggingEnabled        = false;
@@ -390,16 +390,20 @@ public class State {
         return false;
     }
 
-    public void setRealPrintMode_default() {
-        realPrintMode = Real.PRINT_MODE_DEFAULT;
+    public void setDoublePrintMode_default() {
+        doublePrintMode = SetlDouble.PRINT_MODE_DEFAULT;
     }
 
-    public void setRealPrintMode_engineering() {
-        realPrintMode = Real.PRINT_MODE_ENGINEERING;
+    public void setDoublePrintMode_scientific() {
+        doublePrintMode = SetlDouble.PRINT_MODE_SCIENTIFIC;
     }
 
-    public void setRealPrintMode_plain() {
-        realPrintMode = Real.PRINT_MODE_PLAIN;
+    public void setDoublePrintMode_engineering() {
+        doublePrintMode = SetlDouble.PRINT_MODE_ENGINEERING;
+    }
+
+    public void setDoublePrintMode_plain() {
+        doublePrintMode = SetlDouble.PRINT_MODE_PLAIN;
     }
 
     // allow modification of fileName/path when reading files

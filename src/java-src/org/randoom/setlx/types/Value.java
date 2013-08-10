@@ -237,6 +237,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Compute the difference between this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param subtrahend     Value to subtract.
+     * @return               Difference of this and subtrahend.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof Term) {
             return ((Term) subtrahend).differenceFlipped(state, this);
@@ -338,6 +346,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return product(state, multiplier);
     }
 
+    /**
+     * Divide this value by another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param divisor        Value to divide by.
+     * @return               Division of this and divisor.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof Term) {
             return ((Term) divisor).quotientFlipped(state, this);

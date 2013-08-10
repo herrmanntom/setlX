@@ -114,11 +114,11 @@ public class Rational extends NumberValue {
         return this;
     }
 
-    public BigInteger getNominatorValue() {
+    /*package*/ BigInteger getNominatorValue() {
         return nominator;
     }
 
-    public BigInteger getDenominatorValue() {
+    /*package*/ BigInteger getDenominatorValue() {
         return denominator;
     }
 

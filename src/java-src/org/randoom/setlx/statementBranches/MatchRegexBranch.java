@@ -15,7 +15,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;

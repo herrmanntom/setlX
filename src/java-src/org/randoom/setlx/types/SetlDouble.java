@@ -189,7 +189,12 @@ public class SetlDouble extends NumberValue {
         return toRational();
     }
 
-    public Rational toRational() {
+    /**
+     * Convert this SetlDouble into a Rational
+     *
+     * @return Rational number representing this value.
+     */
+    /*package*/ Rational toRational() {
         final long bits         = Double.doubleToLongBits(this.doubleValue);
         final long signMask     = 0x8000000000000000L;
         final long exponentMask = 0x7ff0000000000000L;
@@ -230,11 +235,22 @@ public class SetlDouble extends NumberValue {
         }
     }
 
-    public static Rational bigRational() {
+    /**
+     * Get the maximum value of a SetlDouble as a Rational.
+     *
+     * @return Maximum value of a SetlDouble as a Rational.
+     */
+    /*package*/ static Rational bigRational() {
         final SetlDouble big = new SetlDouble(Double.MAX_VALUE);
         return big.toRational();
     }
-    public static Rational smallRational() {
+
+    /**
+     * Get the minimal value of a SetlDouble as a Rational.
+     *
+     * @return minimal value of a SetlDouble as a Rational.
+     */
+    /*package*/ static Rational smallRational() {
         final SetlDouble small = new SetlDouble(Double.MIN_VALUE);
         return small.toRational();
     }
@@ -267,9 +283,8 @@ public class SetlDouble extends NumberValue {
     }
 
     @Override
-    public Rational ceil(final State state) throws UndefinedOperationException {
-        final SetlDouble result = new SetlDouble(Math.ceil(this.doubleValue));
-        return result.toRational(state);
+    public SetlDouble ceil(final State state) throws UndefinedOperationException {
+        return valueOf(Math.ceil(this.doubleValue));
     }
 
     @Override
@@ -290,7 +305,15 @@ public class SetlDouble extends NumberValue {
         }
     }
 
-    public Value differenceFlipped(final State state, final Rational minuend) throws SetlException {
+    /**
+     * Compute the difference between another value and this.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param minuend        Value to subtract from.
+     * @return               Difference of minuend and this.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    /*package*/ Value differenceFlipped(final State state, final Rational minuend) throws SetlException {
         final BigInteger n   = minuend.getNominatorValue();
         final BigInteger d   = minuend.getDenominatorValue();
         final SetlDouble lhs = SetlDouble.valueOf(n, d);
@@ -298,12 +321,10 @@ public class SetlDouble extends NumberValue {
     }
 
     @Override
-    public Rational floor(final State state)
+    public SetlDouble floor(final State state)
         throws UndefinedOperationException
     {
-        // TODO: this can be done faster
-        final SetlDouble result = SetlDouble.valueOf(Math.floor(this.doubleValue));
-        return result.toRational(state);
+        return valueOf(Math.floor(this.doubleValue));
     }
 
     @Override
@@ -381,7 +402,16 @@ public class SetlDouble extends NumberValue {
             );
         }
     }
-    public Value quotientFlipped(final State state, final Rational dividend) throws SetlException {
+
+    /**
+     * Divide another value by this.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param dividend       Value to divide by this.
+     * @return               Division of dividend and this.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    /*package*/ Value quotientFlipped(final State state, final Rational dividend) throws SetlException {
         final BigInteger n   = dividend.getNominatorValue();
         final BigInteger d   = dividend.getDenominatorValue();
         final SetlDouble lhs = SetlDouble.valueOf(n, d);

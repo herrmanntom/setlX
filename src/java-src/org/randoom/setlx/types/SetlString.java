@@ -25,7 +25,7 @@ public class SetlString extends IndexedCollectionValue {
      * actually doing any cloning, this SetlString carries a isClone flag.
      *
      * If the contents of this SetlString is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the actual 
+     * MUST be called before the modification, which then performs the actual
      * cloning, if required.
      *
      * Main benefit of this technique is to perform the actual cloning only
@@ -289,7 +289,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value toDouble(final State state) {
+    public Value toDouble(final State state) throws UndefinedOperationException {
         try {
             return SetlDouble.valueOf(content.toString());
         } catch (final NumberFormatException nfe) {

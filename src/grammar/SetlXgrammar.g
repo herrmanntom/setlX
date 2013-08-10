@@ -2,6 +2,7 @@ grammar SetlXgrammar;
 
 @parser::header {
     import org.randoom.setlx.boolExpressions.*;
+    import org.randoom.setlx.exceptions.UndefinedOperationException;
     import org.randoom.setlx.expressions.*;
     import org.randoom.setlx.expressionUtilities.*;
     import org.randoom.setlx.statements.*;
@@ -498,7 +499,12 @@ iterator [boolean enableIgnore] returns [SetlIterator iter]
 
 atomicValue returns [Value av]
     : NUMBER     { $av = Rational.valueOf($NUMBER.text);       }
-    | DOUBLE     { $av = SetlDouble.valueOf($DOUBLE.text);     }
+    | DOUBLE     { try {
+                       $av = SetlDouble.valueOf($DOUBLE.text);
+                   } catch (UndefinedOperationException uoe) {
+                       /*will not happen*/
+                   }
+                 }
     | 'om'       { $av = Om.OM;                                }
     | 'true'     { $av = SetlBoolean.TRUE;                     }
     | 'false'    { $av = SetlBoolean.FALSE;                    }

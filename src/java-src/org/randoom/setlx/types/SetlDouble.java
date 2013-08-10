@@ -42,34 +42,38 @@ public class SetlDouble extends NumberValue {
 
     private final static BigDecimal    DOUBLE_MAX_VALUE       = BigDecimal.valueOf(Double.MAX_VALUE);
     private final static BigDecimal    DOUBLE_MIN_VALUE       = BigDecimal.valueOf(Double.MIN_VALUE);
+    /**
+     * Double value of positive infinity.
+     */
     public  final static SetlDouble    POSITIVE_INFINITY      = SetlDouble.valueOfNoEx(Double.POSITIVE_INFINITY);
+    /**
+     * Double value of negative infinity.
+     */
     public  final static SetlDouble    NEGATIVE_INFINITY      = SetlDouble.valueOfNoEx(Double.NEGATIVE_INFINITY);
 
     private SetlDouble(final Double d) {
         this.doubleValue = d;
     }
-    private SetlDouble(final String s) {
-        this.doubleValue = new Double(s);
-    }
-    private SetlDouble(final BigDecimal real) {
-        this.doubleValue = real.doubleValue();
-    }
-    private SetlDouble(BigInteger nominator, BigInteger denominator) {
-        double n = nominator  .doubleValue();
-        double d = denominator.doubleValue();
-        // not the most efficient way to do it
-        while (Double.isInfinite(n) || Double.isInfinite(d)) {
-            nominator   = nominator  .shiftRight(1);
-            denominator = denominator.shiftRight(1);
-            n = nominator  .doubleValue();
-            d = denominator.doubleValue();
-        }
-        this.doubleValue = n / d;
+
+    /**
+     * Create a new SetlDouble from a String.
+     *
+     * @param str                          String to parse as double.
+     * @return                             The new SetlDouble.
+     * @throws UndefinedOperationException Thrown in case the double is not a number.
+     * @throws NumberFormatException       Thrown in case the string does not represent a double.
+     */
+    public static SetlDouble valueOf(final String str) throws UndefinedOperationException {
+        return valueOf(new Double(str));
     }
 
-    public static SetlDouble valueOf(final String str) {
-        return new SetlDouble(str);
-    }
+    /**
+     * Create a new SetlDouble from a double.
+     *
+     * @param  real                        Double value of the new SetlDouble.
+     * @return                             The new SetlDouble.
+     * @throws UndefinedOperationException Thrown in case the double is not a number.
+     */
     public static SetlDouble valueOf(final double real) throws UndefinedOperationException {
         if (Double.isNaN(real)) {
             final String msg = "Result of this operation is undefined/not a number.";
@@ -78,9 +82,18 @@ public class SetlDouble extends NumberValue {
         return new SetlDouble(real);
     }
     // Only use this function if you are sure that real != NAN!
-    static SetlDouble valueOfNoEx(final double real) {
+    private static SetlDouble valueOfNoEx(final double real) {
          return new SetlDouble(real);
     }
+
+    /**
+     * Create a new SetlDouble from a BigDecimal.
+     *
+     * @param  real                        BigDecimal value of the new SetlDouble.
+     * @return                             The new SetlDouble.
+     * @throws NumberToLargeException      Thrown in case the BigDecimal is too large or small.
+     * @throws UndefinedOperationException Thrown in case the double is not a number.
+     */
     public static NumberValue valueOf(final BigDecimal real)
         throws UndefinedOperationException, NumberToLargeException
     {
@@ -101,10 +114,40 @@ public class SetlDouble extends NumberValue {
             final String msg = "Result of this operation is undefined/not a number.";
             throw new UndefinedOperationException(msg);
         }
-        return new SetlDouble(value);
+        return new SetlDouble(real.doubleValue());
     }
-    public static SetlDouble valueOf(final BigInteger nominator, final BigInteger denominator) {
-        return new SetlDouble(nominator, denominator);
+
+    /**
+     * Create a new SetlDouble from a rational of two BigIntegers.
+     *
+     * @param  nominator                   Nominator value of the rational.
+     * @param  denominator                 Denominator value of the rational.
+     * @return                             The new SetlDouble.
+     * @throws NumberToLargeException      Thrown in case the BigDecimal is too large or small.
+     */
+    public static SetlDouble valueOf(final BigInteger nominator, final BigInteger denominator)
+        throws NumberToLargeException
+    {
+        BigInteger nom   = nominator;
+        BigInteger denom = denominator;
+        double n = nom  .doubleValue();
+        double d = denom.doubleValue();
+        double r = n / d;
+        try {
+            // not the most efficient way to do it
+            while (Double.isInfinite(n) || Double.isInfinite(d) || Double.isNaN(r)) {
+                nom   = denom  .shiftRight(1);
+                denom = denom.shiftRight(1);
+                n = nom  .doubleValue();
+                d = denom.doubleValue();
+                r = n / d;
+            }
+            return new SetlDouble(r);
+        } catch (final ArithmeticException ae) {
+            throw new NumberToLargeException(
+                "The value of " + nominator + "/" + denominator + " is too large or too small for this operation."
+            );
+        }
     }
 
     @Override
@@ -146,8 +189,7 @@ public class SetlDouble extends NumberValue {
         return toRational();
     }
 
-    private Rational toRational() throws UndefinedOperationException
-    {
+    public Rational toRational() {
         final long bits         = Double.doubleToLongBits(this.doubleValue);
         final long signMask     = 0x8000000000000000L;
         final long exponentMask = 0x7ff0000000000000L;
@@ -181,29 +223,20 @@ public class SetlDouble extends NumberValue {
                 nominator = nominator.shiftLeft((int) exponent);
                 return Rational.valueOf(nominator);
             }
-        } else { // not a number (NaN)
+        } else { // not a number (NaN) -> Should be impossible, as that is checked in valueOf
             final String msg = "This is not a number (NaN).";
-            throw new UndefinedOperationException(msg);
+            // throw unchecked exception
+            throw new NumberFormatException(msg);
         }
     }
 
     public static Rational bigRational() {
-        try {
-            final SetlDouble big = new SetlDouble(Double.MAX_VALUE);
-            return big.toRational();
-        } catch (final UndefinedOperationException e) {
-            // impossible
-        }
-        return null;
+        final SetlDouble big = new SetlDouble(Double.MAX_VALUE);
+        return big.toRational();
     }
     public static Rational smallRational() {
-        try {
-            final SetlDouble small = new SetlDouble(Double.MIN_VALUE);
-            return small.toRational();
-        } catch (final UndefinedOperationException e) {
-            // impossible
-        }
-        return null;
+        final SetlDouble small = new SetlDouble(Double.MIN_VALUE);
+        return small.toRational();
     }
 
     @Override
@@ -313,7 +346,7 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Value product(final State state, final Value multiplier)
-        throws IncompatibleTypeException, UndefinedOperationException
+        throws IncompatibleTypeException, UndefinedOperationException, NumberToLargeException
     {
         if (multiplier instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) multiplier;
@@ -447,9 +480,12 @@ public class SetlDouble extends NumberValue {
             final Double d = this.doubleValue;
             return d.compareTo(rhs.doubleValue);
         } else if (v instanceof Rational) {
-            final Rational rhs = (Rational) v;
-            final Double d = this.doubleValue;
-            return d.compareTo(rhs.toDouble().doubleValue);
+            try {
+                final Double d = this.doubleValue;
+                return d.compareTo(((Rational)v).toDouble().doubleValue);
+            } catch (final NumberToLargeException e) {
+                return toRational().compareTo(v);
+            }
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }

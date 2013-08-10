@@ -217,11 +217,11 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public SetlDouble toDouble(final State state) {
+    public SetlDouble toDouble(final State state) throws NumberToLargeException, UndefinedOperationException {
         return SetlDouble.valueOf(nominator, denominator);
     }
 
-    SetlDouble toDouble() {
+    SetlDouble toDouble() throws NumberToLargeException {
         return SetlDouble.valueOf(nominator, denominator);
     }
 
@@ -704,7 +704,11 @@ public class Rational extends NumberValue {
                 return aq.compareTo(bp);
             }
         } else if (v instanceof SetlDouble) {
-            return toDouble().compareTo(v);
+            try {
+                return toDouble().compareTo(v);
+            } catch (final NumberToLargeException e) {
+                return this.compareTo(((SetlDouble)v).toRational());
+            }
         }  else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -717,24 +721,7 @@ public class Rational extends NumberValue {
 
     @Override
     public boolean equalTo(final Value v) {
-        if (this == v) {
-            return true;
-        } else if (v instanceof Rational) {
-            final Rational r = (Rational) v;
-            if (isInteger && r.isInteger) {
-                // a/1 == p/1  <==>  a == p
-                return nominator.equals(r.nominator);
-            } else {
-                // a/b == p/q  <==>  a * q == b * p
-                final BigInteger aq = nominator.multiply(r.denominator);
-                final BigInteger bp = denominator.multiply(r.nominator);
-                return aq.equals(bp);
-            }
-        } else if (v instanceof SetlDouble) {
-            return toDouble().equalTo(v);
-        } else {
-            return false;
-        }
+        return this.compareTo(v) == 0;
     }
 
     private final static int initHashCode = Rational.class.hashCode();

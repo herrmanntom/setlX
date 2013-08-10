@@ -240,7 +240,7 @@ public class Rational extends NumberValue {
         if (this.compareTo(ZERO) == 0) {
             return true;
         }
-        Rational a = new Rational(nominator.abs(), denominator.abs());
+        final Rational a = new Rational(nominator.abs(), denominator.abs());
         if (a.compareTo(RAT_BIG) > 0) {
             return false; // too big
         }
@@ -255,12 +255,12 @@ public class Rational extends NumberValue {
     @Override
     public double toJDoubleValue(final State state) throws NumberToLargeException {
         if (!jDoubleConvertable()) {
-            String msg = "The fraction " + nominator + "/" + denominator
+            final String msg = "The fraction " + nominator + "/" + denominator
                        + "is too big or too small";
             throw new NumberToLargeException(msg);
         }
-        SetlDouble sd = SetlDouble.valueOf(nominator, denominator);
-        return sd.getDoubleValue();
+        final SetlDouble sd = SetlDouble.valueOf(nominator, denominator);
+        return sd.jDoubleValue();
     }
 
     @Override
@@ -605,24 +605,24 @@ public class Rational extends NumberValue {
         if (isInteger) {
             return this;
         } else if (nominator.signum() > 0) {
-            BigInteger[] dr = nominator.divideAndRemainder(denominator);
-            BigInteger   a  = dr[0];
-            BigInteger   b  = dr[1];
-            BigInteger   b2 = b.multiply(new BigInteger("2"));
-            int cmp = b2.compareTo(denominator);
+            final BigInteger[] dr = nominator.divideAndRemainder(denominator);
+            final BigInteger   a  = dr[0];
+            final BigInteger   b  = dr[1];
+            final BigInteger   b2 = b.multiply(new BigInteger("2"));
+            final int cmp = b2.compareTo(denominator);
             if (cmp < 0) {
                 return new Rational(a);
             } else {
                 return new Rational(a.add(BigInteger.ONE));
             }
         } else /* if (nominator.signum() <= 0) */ {
-            BigInteger   nn = nominator.negate();
-            BigInteger[] dr = nn.divideAndRemainder(denominator);
-            BigInteger   a  = dr[0];
-            BigInteger   b  = dr[1];
-            BigInteger   b2 = b.multiply(new BigInteger("2"));
+            final BigInteger   nn = nominator.negate();
+            final BigInteger[] dr = nn.divideAndRemainder(denominator);
+            final BigInteger   a  = dr[0];
+            final BigInteger   b  = dr[1];
+            final BigInteger   b2 = b.multiply(new BigInteger("2"));
             BigInteger   result;
-            int cmp = b2.compareTo(denominator);
+            final int cmp = b2.compareTo(denominator);
             if (cmp < 0) {
                 result = a;
             } else {

@@ -112,9 +112,6 @@ public class SetlDouble extends NumberValue {
         // this value is more or less atomic and can not be changed once set
         return this;
     }
-    public Double getDoubleValue() {
-        return this.doubleValue;
-    }
 
     /* type checks (sort of Boolean operation) */
     @Override
@@ -246,7 +243,7 @@ public class SetlDouble extends NumberValue {
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) subtrahend;
-            return SetlDouble.valueOf(this.doubleValue - rhs.getDoubleValue());
+            return SetlDouble.valueOf(this.doubleValue - rhs.jDoubleValue());
         }
         if (subtrahend instanceof Rational) {
             final Rational rhs = (Rational) subtrahend;
@@ -280,7 +277,7 @@ public class SetlDouble extends NumberValue {
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) divisor;
-            return SetlDouble.valueOf(this.doubleValue / rhs.getDoubleValue()).floor(state);
+            return SetlDouble.valueOf(this.doubleValue / rhs.jDoubleValue()).floor(state);
         }
         if (divisor instanceof Rational) {
             final Rational rhs = (Rational) divisor;
@@ -320,7 +317,7 @@ public class SetlDouble extends NumberValue {
     {
         if (multiplier instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) multiplier;
-            return SetlDouble.valueOf(this.doubleValue * rhs.getDoubleValue());
+            return SetlDouble.valueOf(this.doubleValue * rhs.jDoubleValue());
         }
         if (multiplier instanceof Rational) {
             final Rational rhs = (Rational) multiplier;
@@ -338,7 +335,7 @@ public class SetlDouble extends NumberValue {
     public Value quotient(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) divisor;
-            return SetlDouble.valueOf(this.doubleValue / rhs.getDoubleValue());
+            return SetlDouble.valueOf(this.doubleValue / rhs.jDoubleValue());
         }
         if (divisor instanceof Rational) {
             final Rational rhs = (Rational) divisor;
@@ -368,7 +365,7 @@ public class SetlDouble extends NumberValue {
     public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) summand;
-            return SetlDouble.valueOf(this.doubleValue + rhs.getDoubleValue());
+            return SetlDouble.valueOf(this.doubleValue + rhs.jDoubleValue());
         }
         if (summand instanceof Rational) {
             final Rational rhs = (Rational) summand;

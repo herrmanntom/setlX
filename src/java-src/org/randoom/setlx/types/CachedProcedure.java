@@ -36,15 +36,16 @@ import java.util.List;
  */
 public class CachedProcedure extends Procedure {
     // functional character used in terms
-    public  final static String                                  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CachedProcedure.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CachedProcedure.class);
 
-    private final        HashMap<SetlList, SoftReference<Value>> cache;
-    private              int                                     cacheHits;
+    private final HashMap<SetlList, SoftReference<Value>> cache;
+    private       int                                     cacheHits;
 
     /**
      * Create new cached procedure definition.
-     * @param parameters procedure parameters
-     * @param statements statements in the body of the procedure
+     *
+     * @param parameters Procedure parameters.
+     * @param statements Statements in the body of the procedure.
      */
     public CachedProcedure(final List<ParameterDef> parameters, final Block statements) {
         super(parameters, statements);
@@ -55,11 +56,12 @@ public class CachedProcedure extends Procedure {
     /**
      * Create new cached procedure definition, which replicates the complete
      * internal state of another cached procedure.
-     * @param parameters procedure parameters
-     * @param statements statements in the body of the procedure
-     * @param closure
-     * @param cache
-     * @param cacheHits
+     *
+     * @param parameters Procedure parameters.
+     * @param statements Statements in the body of the procedure.
+     * @param closure    Attached closure variables.
+     * @param cache      Cache of result values.
+     * @param cacheHits  Number of cache hits so far.
      */
     private CachedProcedure(
         final List<ParameterDef>                      parameters,
@@ -103,15 +105,29 @@ public class CachedProcedure extends Procedure {
         }
     }
 
+    /**
+     * Returns the number times a cached result could be used instead of
+     * recomputing it.
+     *
+     * @return Number of cache hits.
+     */
     public int getCacheHits() {
         object = null;
         return cacheHits;
     }
+    /**
+     * Returns the number of cached results for this function.
+     *
+     * @return Number of cached results.
+     */
     public int getCacheSize() {
         object = null;
         validateCache();
         return cache.size();
     }
+    /**
+     * Clears the internal result cache of this function.
+     */
     public void clearCache() {
         object = null;
         cache.clear();
@@ -158,14 +174,26 @@ public class CachedProcedure extends Procedure {
             ++cacheHits;
             return cachedResult.clone();
         } else {
-            // cache om to prevent recursion loop
-            cache.put(key, new SoftReference<Value>(Om.OM));
-            // call function
-            cachedResult = callAfterEval(state, args, values, object);
-            // put value into cache
-            cache.put(key, new SoftReference<Value>(cachedResult));
-            // return value
-            return cachedResult.clone();
+            try {
+                // increase callStackDepth
+                ++(state.callStackDepth);
+
+                // cache om to prevent recursion loop
+                cache.put(key, new SoftReference<Value>(Om.OM));
+                // call function
+                cachedResult = callAfterEval(state, args, values, object);
+                // put value into cache
+                cache.put(key, new SoftReference<Value>(cachedResult));
+                // return value
+                return cachedResult.clone();
+
+            } catch (final StackOverflowError soe) {
+                state.storeStackDepthOfFirstCall(state.callStackDepth);
+                throw soe;
+            } finally {
+                // decrease callStackDepth
+                --(state.callStackDepth);
+            }
         }
     }
 
@@ -204,6 +232,13 @@ public class CachedProcedure extends Procedure {
         return result;
     }
 
+    /**
+     * Convert a term representing a CachedProcedure into such a procedure.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Procedure.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static CachedProcedure termToValue(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -224,6 +259,15 @@ public class CachedProcedure extends Procedure {
     public int hashCode() {
         object = null;
         return initHashCode + parameters.size();
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

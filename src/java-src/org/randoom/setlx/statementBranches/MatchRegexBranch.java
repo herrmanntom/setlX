@@ -15,7 +15,7 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.StateImplementation;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
@@ -65,7 +65,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         if (pattern.isReplaceable()) {
             Value patternReplacement = null;
             try {
-                patternReplacement = pattern.eval(new StateImplementation());
+                patternReplacement = pattern.eval(new State());
             } catch (final Throwable t) {
                 patternReplacement = null;
             }

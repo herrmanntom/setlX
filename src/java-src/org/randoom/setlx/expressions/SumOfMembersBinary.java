@@ -6,7 +6,7 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.StateImplementation;
+import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
@@ -53,7 +53,7 @@ public class SumOfMembersBinary extends Expr {
         Value value = null;
         if (collection.isReplaceable()) {
             try {
-                value = collection.eval(new StateImplementation());
+                value = collection.eval(new State());
             } catch (final Throwable t) {
                 value = null;
             }

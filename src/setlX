@@ -20,6 +20,9 @@ javaParameters=""
 # uncomment to execute with increased memory size (6GB) (>2GB needs 64 Bit mode!)
 #javaParameters="$javaParameters -Xmx6144m"
 
+# uncomment to execute with increased stack size
+#javaParameters="$javaParameters -Xss48m"
+
 ################################################################################
 
 if [ -n "$OVERRIDE_setlXJarDirectory" ]

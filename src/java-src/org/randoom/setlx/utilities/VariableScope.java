@@ -128,7 +128,6 @@ public class VariableScope {
             MAX_CALL_STACK_DEPTH = state.getMaxStackSize();
         }
         if (MAX_CALL_STACK_DEPTH > 0 && state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
-            state.callStackDepth  = 0;
             executeInCurrentStack = false;
         }
 
@@ -376,6 +375,8 @@ public class VariableScope {
         @Override
         public void run() {
             try {
+                state.callStackDepth  = 0;
+
                 result = originalScope.locateValue(state, var, false);
                 error  = null;
             } catch (final SetlException se) {

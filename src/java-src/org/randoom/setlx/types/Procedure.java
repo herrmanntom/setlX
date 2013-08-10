@@ -34,17 +34,43 @@ import java.util.Map;
  */
 public class Procedure extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
+    private   final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
 
-    protected final List<ParameterDef>     parameters;      // parameter list
-    protected final Block                  statements;      // statements in the body of the definition
-    protected       HashMap<String, Value> closure;         // variables and values used in closure
-    protected       SetlObject             object;          // surrounding object for next call
+    /**
+     * List of parameters.
+     */
+    protected final List<ParameterDef>     parameters;
+    /**
+     * Statements in the body of the procedure.
+     */
+    protected final Block                  statements;
+    /**
+     * Variables and values used in closure.
+     */
+    protected       HashMap<String, Value> closure;
+    /**
+     * Surrounding object for next call.
+     */
+    protected       SetlObject             object;
 
+    /**
+     * Create new cached procedure definition.
+     *
+     * @param parameters List of parameters.
+     * @param statements Statements in the body of the procedure.
+     */
     public Procedure(final List<ParameterDef> parameters, final Block statements) {
         this(parameters, statements, null);
     }
 
+    /**
+     * Create new procedure definition, which replicates the complete internal
+     * state of another procedure.
+     *
+     * @param parameters procedure parameters
+     * @param statements statements in the body of the procedure
+     * @param closure    Attached closure variables.
+     */
     protected Procedure(final List<ParameterDef> parameters, final Block statements, final HashMap<String, Value> closure) {
         this.parameters = parameters;
         this.statements = statements;
@@ -56,7 +82,13 @@ public class Procedure extends Value {
         this.object = null;
     }
 
-    // only to be used by ProcedureConstructor
+    /**
+     * Create a separate instance of this procedure.
+     *
+     * Note: Only to be used by ProcedureConstructor.
+     *
+     * @return Copy of this procedure definition.
+     */
     public Procedure createCopy() {
         return new Procedure(parameters, statements);
     }
@@ -70,10 +102,21 @@ public class Procedure extends Value {
         }
     }
 
+    /**
+     * Attach closure variables and their values.
+     *
+     * @param closure Closure variables to attach.
+     */
     public void setClosure(final HashMap<String, Value> closure) {
         this.closure = closure;
     }
 
+    /**
+     * Attach surrounding object, when this procedure is part of an object/class
+     * definition.
+     *
+     * @param object Object to attach.
+     */
     public void addSurroundingObject(final SetlObject object) {
         this.object = object;
     }
@@ -123,7 +166,7 @@ public class Procedure extends Value {
 
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
-        try{
+        try {
             // increase callStackDepth
             ++(state.callStackDepth);
 
@@ -157,6 +200,17 @@ public class Procedure extends Value {
         }
     }
 
+    /**
+     * Perform the actual function call using the statement in this definition,
+     * after all parameters where evaluated.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param args           Expressions used to set the procedures parameters.
+     * @param values         Results of the evaluated parameters.
+     * @param object         Surrounding object for this call.
+     * @return               Return value of this function call.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
         // increase callStackDepth
         ++(state.callStackDepth);
@@ -286,6 +340,13 @@ public class Procedure extends Value {
         return result;
     }
 
+    /**
+     * Convert a term representing a Procedure into such a procedure.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Procedure.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Procedure termToValue(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -362,6 +423,15 @@ public class Procedure extends Value {
     public int hashCode() {
         object = null;
         return initHashCode + parameters.size();
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

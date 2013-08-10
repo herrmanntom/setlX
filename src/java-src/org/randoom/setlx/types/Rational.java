@@ -221,7 +221,7 @@ public class Rational extends NumberValue {
         return SetlDouble.valueOf(nominator, denominator);
     }
 
-    SetlDouble toDouble() throws NumberToLargeException {
+    /*package*/ SetlDouble toDouble() throws NumberToLargeException {
         return SetlDouble.valueOf(nominator, denominator);
     }
 

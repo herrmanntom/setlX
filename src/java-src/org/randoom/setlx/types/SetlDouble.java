@@ -283,8 +283,8 @@ public class SetlDouble extends NumberValue {
     }
 
     @Override
-    public SetlDouble ceil(final State state) throws UndefinedOperationException {
-        return valueOf(Math.ceil(this.doubleValue));
+    public Rational ceil(final State state) throws UndefinedOperationException {
+        return valueOf(Math.ceil(this.doubleValue)).toRational();
     }
 
     @Override
@@ -321,10 +321,10 @@ public class SetlDouble extends NumberValue {
     }
 
     @Override
-    public SetlDouble floor(final State state)
+    public Rational floor(final State state)
         throws UndefinedOperationException
     {
-        return valueOf(Math.floor(this.doubleValue));
+        return valueOf(Math.floor(this.doubleValue)).toRational();
     }
 
     @Override

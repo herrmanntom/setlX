@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// now()                   : get current time since epoch in ms
-
+/**
+ * now()                   : get current time since epoch in ms
+ */
 public class PD_now extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `now'. */
     public final static PreDefinedProcedure DEFINITION
                                             = new PD_now();
 

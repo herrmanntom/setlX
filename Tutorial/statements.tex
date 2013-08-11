@@ -988,8 +988,8 @@ Of course, the function \texttt{args} achieves a similar effect.  We have that
 \texttt{args(F(1, G(2), \{2,3\})) = [1, G(2), \{2, 3\}]}.
 
 \section{Loops}
-\setlx\ offers two different kinds of loops: \texttt{for} loops and \texttt{while} loops.  The
-\texttt{while} loops are the most general loops.  Therefore, we discuss them first.  
+\setlx\ offers three different kinds of loops: \texttt{for} loops, \texttt{while} loops, and
+\texttt{do-while} loops.  The \texttt{while} loops are the most general loops.  Therefore, we discuss them first.  
 
 \subsection{\texttt{while} Loops}
 The syntax and semantics of \texttt{while} loops in \setlx\ is really the same as in the programming
@@ -1099,6 +1099,86 @@ incremented to 4 and the \texttt{break} statement in line 9 terminates the loop.
 \caption{This function demonstrates the semantics of \texttt{break} and \texttt{continue}.}
 \label{fig:break-and-continue.stlx}
 \end{figure}
+
+
+\subsection{\texttt{do-while} Loops}
+Similar to the language \texttt{C}, \setlx\ supports the \texttt{do-while} loop.  The difference
+between a \texttt{do-while} loop and an ordinary \texttt{while} loop is that 
+sometimes the body of a loop needs to execute at least once, regardless of the condition
+controlling the loop.  For example, imagine you want to implement the following guessing game:  The computer
+thinks of a natural number between 0 and 100 inclusive and the player has to guess it.  Every time the
+player enters some number, the computer informs the player whether the number was too big, too
+small, or whether the player has correctly guessed the secret number.  In this guessing game, the
+player always has to enter at least one number.  Therefore, the most natural way to implement this
+game is to use a \texttt{do-while} loop.  Figure \ref{fig:guessNumber.stlx} shows an implementation
+of the guessing game.  The implementation works as follows:
+\begin{enumerate}
+\item In line 2, the secret number is generated as a random number.  This is the number that has to
+      be guessed by the player.
+\item The variable \texttt{count} is used to count the number of guessing attempts.
+      This variable is initialised in line 3.
+\item Since the user has to enter at least one number, we use a \texttt{do-while} loop that loops as
+      long as the user has not yet guessed the secret number.
+
+      In line 6, the user is asked to guess the secret number.  If this number is either too small
+      or too big, an appropriate message is printed.  The loop terminates in line 14 if the number
+      that has been guessed is identical to the secret number.
+\end{enumerate}
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    guessNumber := procedure() {
+        secret := rnd(100);
+        count  := 0;
+        do {
+            count += 1;
+            x := read("input a number between 0 and 100 inclusively: ");
+            if (x < secret) {
+                print("sorry, too small");
+            } else if (x > secret) {
+                print("sorry, too big");
+            } else {
+                print("correct!");
+            }
+        } while (x != secret);
+        print("number of guesses: $count$");
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Implementing the guessing game in \setlx.}
+\label{fig:guessNumber.stlx}
+\end{figure}
+
+\noindent
+The syntax of a \texttt{do-while} loop is given by the following grammar rule:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\textsl{statement} \;\rightarrow\; \quoted{do} \quoted{\{}  \textsl{block} \quoted{\}} \quoted{while}
+  \quoted{(} \textsl{boolExpr} \quoted{)} \quoted{;} 
+$.
+\\[0.2cm]
+Here, \textsl{boolExpr} is a Boolean expression returning either \texttt{true} or
+\texttt{false}.  This expression is called the \emph{guard} of the \texttt{do-while} loop.
+The syntactical variable \textsl{block} denotes a sequence of statements.  Note that, 
+in contrast to the programming languages \texttt{C} and \textsl{Java}, the
+block of statements always has to be enclosed in curly braces, even if it consists only of a
+single statement.  Furthermore, note that a \texttt{do-while} loop has to be terminated with a semicolon.
+
+The semantics of a \texttt{do-while} loop is the same as in \texttt{C}:
+The body of the loop is executed once.  Then, if the guard is false, execution terminates.  Otherwise,
+the body is executed again and again as long as the guard is true.  In order
+to abort an iteration of the loop prematurely, the commands \texttt{continue} and
+\texttt{break} can be used.  These commands work in the same way as in a \texttt{while} loop.
 
 \subsection{\texttt{for} Loops}
 In order to perform a list of commands a predefined number of times, a \texttt{for} loop should  be

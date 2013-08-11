@@ -1,11 +1,16 @@
 package org.randoom.setlx.types;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
+/**
+ * Representation of the largest value-type as far as compareTo is concerned.
+ *
+ * For internal use only.
+ */
 public class Top extends Value {
+    /**
+     * The largest value far as compareTo is concerned.
+     */
     public final static Top TOP = new Top();
 
     private Top() {}
@@ -14,12 +19,6 @@ public class Top extends Value {
     public Top clone() {
         // this value is atomic and can not be changed once set
         return this;
-    }
-
-    /* type checks (sort of Boolean operation) */
-    @Override
-    public SetlBoolean isTop() {
-        return SetlBoolean.TRUE;
     }
 
     /* string and char operations */

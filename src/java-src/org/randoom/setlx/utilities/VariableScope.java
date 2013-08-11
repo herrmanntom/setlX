@@ -16,7 +16,9 @@ import org.randoom.setlx.types.Value;
 import java.util.HashMap;
 import java.util.Map;
 
-// This class collects the variable bindings and the function definitions in current scope.
+/**
+ *  Objects of this class collect the variable bindings and the function definitions in the current scope.
+ */
 public class VariableScope {
     // functional characters used in terms
     private final   static  String     FUNCTIONAL_CHARACTER_SCOPE = "^scope";
@@ -46,7 +48,10 @@ public class VariableScope {
     private         boolean            readThrough;
     private         boolean            writeThrough;
 
-    // scopes have to be cloned from current one, therefore don't use from outside!
+    /**
+     * Create a new VariableScope.
+     * Scopes have to be cloned from current one, therefore don't use from outside!
+     */
     /*package*/ VariableScope() {
         bindings                = new SetlHashMap<Value>();
         thisObject              = null;
@@ -72,14 +77,26 @@ public class VariableScope {
         return newScope;
     }
 
+    /**
+     * Create a new scope that is linked to this one.
+     *
+     * @return The new scope.
+     */
     public VariableScope createLinkedScope() {
         final VariableScope newScope = new VariableScope();
         newScope.originalScope       = this;
         return newScope;
     }
 
-    /* iterators need special scopeBlocks, because the iteration variables are local
-       to their iteration, but all other variables inside the execution body are not */
+    /**
+     * Create a new iterator scope that is linked to this one.
+     *
+     * Iterators need special scopeBlocks, because the iteration variables are
+     * local to their iteration, but all other variables inside the execution
+     * body are not.
+     *
+     * @return The new scope.
+     */
     public VariableScope createInteratorBlock() {
         final VariableScope newScope = this.createLinkedScope();
         newScope.readThrough         = true;
@@ -87,37 +104,81 @@ public class VariableScope {
         return newScope;
     }
 
+    /**
+     * Create a scope that is linked to this one, but lets only function definitions
+     * pass through the link.
+     *
+     * @return The new scope.
+     */
     public VariableScope createFunctionsOnlyLinkedScope() {
         final VariableScope newScope     = this.createLinkedScope();
         newScope.isRestrictedToFunctions = true;
         return newScope;
     }
 
+    /**
+     * Clear all bindings in this scope.
+     */
     /*package*/ void clear() {
         bindings.clear();
     }
 
+    /**
+     * Removes all links to other scopes and SetlObjects.
+     */
     public void unlink() {
         thisObject   = null;
         originalScope = null;
     }
 
+    /**
+     * Link the given scope as outer scope of this one.
+     *
+     * @param originalScope Outer scope to link.
+     */
     public void linkToOriginalScope(final VariableScope originalScope) {
         this.originalScope = originalScope;
     }
 
+    /**
+     * Link the given SetlObject to this scope. It will be accessible via the
+     * `this' binding.
+     *
+     * @param thisObject Object to link.
+     */
     public void linkToThisObject(final SetlObject thisObject) {
         this.thisObject   = thisObject;
     }
 
+    /**
+     * Set this scope into write-through mode.
+     * In this mode setting bindings which are not directly in this scope
+     * will be passed to the next scope and set there.
+     *
+     * @param writeThrough Flag to enable/disable write-through mode.
+     */
     public void setWriteThrough(final boolean writeThrough) {
         this.writeThrough = writeThrough;
     }
 
+    /**
+     * Get the number of bindings in this scope.
+     *
+     * @return Number of bindings in this scope.
+     */
     public int size() {
         return bindings.size();
     }
 
+    /**
+     * Get the value of a specific bindings reachable from this scope.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param var            Name of the variable to locate.
+     * @param check          To perform the check only once.
+     * @return               Located value or null.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     /*package*/ Value locateValue(final State state, final String var, final boolean check) throws SetlException {
         // store and increase callStackDepth
         final int oldCallStackDepth = state.callStackDepth;
@@ -213,7 +274,12 @@ public class VariableScope {
         }
     }
 
-    // collect all bindings reachable from current scope (except global variables!)
+    /**
+     * Collect all bindings reachable from current scope (except global variables!)
+     *
+     * @param result              Map to put bindings into.
+     * @param restrictToFunctions If true only functions are collected.
+     */
     public void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
         // add add bindings from inner scopes
         if (originalScope != null) {
@@ -231,6 +297,13 @@ public class VariableScope {
         }
     }
 
+    /**
+     * Store a new binding into this scope.
+     *
+     * @param var                           Name of the variable to store.
+     * @param value                         Value to store under the given name.
+     * @throws IllegalRedefinitionException Thrown when trying to overwrite `this'.
+     */
     /*package*/ void storeValue(final String var, final Value value) throws IllegalRedefinitionException {
         if (var.equals("this")) {
             throw new IllegalRedefinitionException(
@@ -248,11 +321,16 @@ public class VariableScope {
         }
     }
 
-    /*
+    /**
      * Store `value' for variable into current scope, but only if scopes linked
      * from current one up until `outerScope' do not have this value defined already.
-     * Return false if linked scope contained a different value under this variable,
-     * true otherwise.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param var            Name of the variable to store.
+     * @param value          New value to store.
+     * @param outerScope     Check scope chain up until this scope.
+     * @return               False if linked scope contained a different value under this variable, true otherwise.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
     /*package*/ boolean storeValueCheckUpTo(final State state, final String var, final Value value, final VariableScope outerScope) throws SetlException {
         VariableScope toCheck = originalScope;
@@ -284,9 +362,14 @@ public class VariableScope {
         return true;
     }
 
-    // Add bindings stored in `scope' into this scope or globals.
-    // This also adds variables in outer scopes of `scope' until reaching this
-    // as outer scope of `scope'.
+    /**
+     * Add bindings stored in `scope' into this scope or globals.
+     * This also adds variables in outer scopes of `scope' until reaching this
+     * as outer scope of `scope'.
+     *
+     * @param  scope                        Scope to add bindings from.
+     * @throws IllegalRedefinitionException Thrown when trying to overwrite `this'.
+     */
     /*package*/ void storeAllValues(final VariableScope scope) throws IllegalRedefinitionException {
         for (final Map.Entry<String, Value> entry : scope.bindings.entrySet()) {
             storeValue(entry.getKey(), entry.getValue());
@@ -296,9 +379,16 @@ public class VariableScope {
         }
     }
 
-    // Add bindings stored in `scope' into this scope or globals.
-    // This also adds variables in outer scopes of `scope' until reaching this
-    // as outer scope of `scope'.
+    /**
+     * Add bindings stored in `scope' into this scope or globals.
+     * This also adds variables in outer scopes of `scope' until reaching this
+     * as outer scope of `scope'.
+     * Also adds all assignments into a Map to trace them.
+     *
+     * @param scope                         Scope to add bindings from.
+     * @param assignments                   Map to add assignments into.
+     * @throws IllegalRedefinitionException Thrown when trying to overwrite `this'.
+     */
     /*package*/ void storeAllValuesTrace(final VariableScope scope, final HashMap<String, Value> assignments) throws IllegalRedefinitionException {
         for (final Map.Entry<String, Value> entry : scope.bindings.entrySet()) {
             storeValue(entry.getKey(), entry.getValue());
@@ -309,7 +399,12 @@ public class VariableScope {
         }
     }
 
-    // collect all bindings reachable from current scope
+    /**
+     * Collect all bindings reachable from current scope.
+     *
+     * @param classDefinitions Existing class definitions to add.
+     * @return                 Map of all reachable bindings.
+     */
     /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final HashMap<String, SetlClass> classDefinitions) {
         final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
         // collect all bindings reachable from current scope
@@ -324,6 +419,13 @@ public class VariableScope {
 
     /* term operations */
 
+    /**
+     * Collect all bindings reachable from current scope and represent them as a term.
+     *
+     * @param state            Current state of the running setlX program.
+     * @param classDefinitions Existing class definitions to add.
+     * @return                 Term of all reachable bindings.
+     */
     /*package*/ public Term toTerm(final State state, final HashMap<String, SetlClass> classDefinitions) {
         final SetlHashMap<Value> allVars = getAllVariablesInScope(classDefinitions);
 
@@ -336,6 +438,14 @@ public class VariableScope {
         return result;
     }
 
+    /**
+     * Convert a term representing all bindings reachable from a scope into a
+     * scope containing these bindings.
+     *
+     * @param value                    Term representation to convert.
+     * @return                         New scope.
+     * @throws TermConversionException Thrown when encountering a malformed term.
+     */
     public static VariableScope valueToScope(final Value value) throws TermConversionException {
         if (value instanceof Term) {
             final Term term = (Term) value;

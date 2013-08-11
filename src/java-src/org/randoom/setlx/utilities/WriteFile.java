@@ -7,8 +7,20 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Utility class to handle writing files.
+ */
 public class WriteFile {
 
+    /**
+     * Write a file to storage.
+     *
+     * @param state                      Current state of the running setlX program.
+     * @param content                    Content to write into the file.
+     * @param fileName                   Name of file to write.
+     * @param append                     Set to true to append instead of creating/overwriting.
+     * @throws FileNotWriteableException Thrown in case the file cannot be created/appended.
+     */
     public static void writeToFile(final State state, final String content, String fileName, final boolean append) throws FileNotWriteableException {
         FileWriter     fWr = null;
         BufferedWriter out = null;

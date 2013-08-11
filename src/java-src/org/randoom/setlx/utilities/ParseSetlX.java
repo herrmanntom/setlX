@@ -95,7 +95,7 @@ public class ParseSetlX {
      */
     public static Block parseInteractive(final State state) throws ParserException, StopExecutionException {
         try {
-            final InputStream stream = InputReader.getStream(state);
+            final InputStream stream = InputReader.getStream(state, state.getEndl(), state.isMultiLineEnabled());
 
             // parse the input
             return parseBlock(state, new ANTLRInputStream(stream));

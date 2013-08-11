@@ -9,7 +9,6 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
@@ -732,7 +731,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * Useful output is only possible if both values are of the same type.
      */
     @Override
-    public abstract int     compareTo(final Value v);
+    public abstract int     compareTo(final Value other);
 
     /**
      * In order to compare "incomparable" values, e.g. of different types, the
@@ -748,7 +747,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     protected abstract int  compareToOrdering();
 
-    public abstract boolean equalTo  (final Value v);
+    /**
+     * Test if two Values are equal.
+     * This operation is much faster as ( compareTo(other) == 0 ) for certain types.
+     *
+     * @param other Other value to compare to `this'
+     * @return      True if `this' equals `other', false otherwise.
+     */
+    public abstract boolean equalTo  (final Value other);
 
     @Override
     public final boolean equals(final Object o) {
@@ -764,12 +770,29 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     @Override
     public abstract int hashCode();
 
+    /**
+     * Test if two Values are equal.
+     * This operation is much faster as ( compareTo(other) == 0 ) for certain types.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Other value to compare to `this'
+     * @return               SetlBoolean.TRUE if `this' equals `other', SetlBoolean.FALSE otherwise.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
         return SetlBoolean.valueOf(this.equalTo(other));
     }
 
-    /* this comparison is different than `this.compareTo(other) < 0' and should
-       throw errors on seemingly incomparable types like `5 < TRUE'            */
+    /**
+     * Test if the value of this is lower than the value of `other'.
+     * This comparison is different than `this.compareTo(other) < 0' insofar as
+     * it throw errors on seemingly incomparable types like `5 < TRUE'.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Other value to compare to `this'
+     * @return               SetlBoolean.TRUE if `this' is less than `other', SetlBoolean.FALSE otherwise.
+     * @throws SetlException Thrown in case the types are incomparable.
+     */
     public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
         throw new UndefinedOperationException("'" + this + " < " + other + "' is undefined.");
     }

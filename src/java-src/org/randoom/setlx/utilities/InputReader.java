@@ -7,27 +7,28 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
- * Reads from system in and returns an input stream
- *
- * Reads from System.in until input is non-empty (e.g. includes characters other than EOL).
- *
- * Also endlines can be escaped with backslashes, if they should be ignored.
- *
- * If multiLine is true the user has to accepted input with an extra empty line.
- * Returned stream does _not_ include the extra empty line.
+ * Reads from a provided input and returns an input stream
  */
-
 public final class InputReader {
-    private static String   EOL         = null;
 
-    public static InputStream getStream(final State state) throws EndOfFileException {
+    /**
+     * Reads from System.in until input is non-empty (e.g. includes characters other than EOL).
+     *
+     * End-of-line-sequences escaped with backslashes are ignored.
+     *
+     * If multiLine is true the user has to accepted input with an extra empty line.
+     * Returned stream does _not_ include the extra empty line.
+     *
+     * @param state               Current state of the running setlX program.
+     * @param endl                End-of-line sequence to use.
+     * @param multiLine           Set to true if multiline mode should be enabled.
+     * @return                    Text read from the input.
+     * @throws EndOfFileException Thrown in case the user inserts a EOF character.
+     */
+    public static InputStream getStream(final State state, final String endl, final boolean multiLine) throws EndOfFileException {
         final StringBuilder   input       = new StringBuilder();
               String          line        = null;
               int             endlAdded   = 0;
-        final boolean         multiLine   = state.isMultiLineEnabled();
-        if (EOL == null) {
-            EOL = state.getEndl();
-        }
         try {
             while (true) {
                 // line is read and returned without termination character(s)
@@ -43,11 +44,11 @@ public final class InputReader {
                         continue;
                     } else {
                         // add line termination (e.g. Unix style '\n')
-                        input.append(EOL);  endlAdded += EOL.length();
+                        input.append(endl);  endlAdded += endl.length();
                     }
                 }
                 if (( ! multiLine || line.length() == 0) && input.length() > endlAdded) {
-                    final byte[] byteArray = input.substring(0, input.length() - EOL.length()).getBytes();
+                    final byte[] byteArray = input.substring(0, input.length() - endl.length()).getBytes();
                     return new ByteArrayInputStream(byteArray);
                 }
             }

@@ -9,14 +9,24 @@ import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Value;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.List;
 
-// this class encapsulates functions from java.Math
-
+/**
+ * Objects of this class encapsulate functions from java.Math using a single
+ * double as argument.
+ */
 public class MathFunction extends PreDefinedProcedure {
     private final Method function;
 
+    /**
+     * Encapsulate a java.Math function.
+     *
+     * @param name     Name of the function.
+     * @param function Function to encapsulate.
+     */
     public MathFunction(final String name, final Method function) {
         super();
         setName(name);
@@ -34,7 +44,11 @@ public class MathFunction extends PreDefinedProcedure {
             } catch (final SetlException se) {
                 throw se;
             } catch (final Exception e) {
-		e.printStackTrace();
+                if (state.isRuntimeDebuggingEnabled()) {
+                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    e.printStackTrace(new PrintStream(out));
+                    state.errWrite(out.toString());
+                }
                 throw new JVMException(
                     "Error during calling a predefined mathematical function.\n" +
                     "This is probably a bug in the interpreter.\n" +

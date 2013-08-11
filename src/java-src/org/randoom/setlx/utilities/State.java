@@ -675,7 +675,14 @@ public class State {
         }
     }
 
-    public void printTrace(final String var, final Value result, final String context) {
+    /**
+     * Print a trace of some assignment into stdout.
+     *
+     * @param var     Name of the variable that was assigned.
+     * @param value   Value that was assigned.
+     * @param context Context of the assignment to display, or null.
+     */
+    public void printTrace(final String var, final Value value, final String context) {
         final StringBuilder out = new StringBuilder();
 
         out.append("~< Trace");
@@ -687,7 +694,7 @@ public class State {
         out.append(": ");
         out.append(var);
         out.append(" := ");
-        result.appendUnquotedString(this, out, 0);
+        value.appendUnquotedString(this, out, 0);
         out.append(" >~");
 
         this.outWriteLn(out.toString());

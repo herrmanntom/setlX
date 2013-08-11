@@ -16,6 +16,11 @@ public class WriteBackAgent {
     private final List<AssignableExpression> expressions;
     private final List<Value>                values;
 
+    /**
+     * Create a new write-back-agent object.
+     *
+     * @param size Number of write-back values used.
+     */
     public WriteBackAgent(final int size) {
         this.expressions = new ArrayList<AssignableExpression>(size);
         this.values      = new ArrayList<Value>(size);

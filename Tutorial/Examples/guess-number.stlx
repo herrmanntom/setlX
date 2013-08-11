@@ -1,0 +1,18 @@
+guessNumber := procedure() {
+    secret := rnd(100);
+    count  := 0;
+    do {
+        count += 1;
+        x := read("input a number between 0 and 100 inclusively: ");
+        if (x < secret) {
+            print("sorry, too small");
+        } else if (x > secret) {
+            print("sorry, too big");
+        } else {
+            print("correct!");
+        }
+    } while (x != secret);
+    print("number of guesses: $count$");
+};
+
+guessNumber();

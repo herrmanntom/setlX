@@ -444,6 +444,7 @@ public class SetlDouble extends NumberValue {
         }
     }
 
+    @Override
     public SetlBoolean isInfinite() {
         if (this.doubleValue == Double.POSITIVE_INFINITY ||
             this.doubleValue == Double.NEGATIVE_INFINITY   )

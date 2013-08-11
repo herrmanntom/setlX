@@ -77,6 +77,15 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    /**
+     * Test if this value represents INFINITY or -INFINITY.
+     *
+     * @return True if this value represents infinity.
+     */
+    public SetlBoolean isInfinite() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isInteger() {
         return SetlBoolean.FALSE;
     }

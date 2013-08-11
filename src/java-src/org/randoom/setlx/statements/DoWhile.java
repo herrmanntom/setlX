@@ -12,32 +12,32 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.List;
 
 /**
- * Everyones favorite: the while statement.
+ * The do-while statement.
  *
  * grammar rule:
  * statement
  *     : [...]
- *     | 'while' '(' condition ')' '{' block '}'
+ *     | 'do' '{' block '}' 'while' '(' condition ')' ';'
  *     ;
  *
  * implemented here as:
- *                   =========         =====
- *                   condition       statements
+ *                =====                 =========
+ *              statements              condition
  */
-public class While extends Statement {
+public class DoWhile extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(While.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(DoWhile.class);
 
     private final Condition condition;
     private final Block     statements;
 
     /**
-     * Create a new while statement.
+     * Create a new do-while statement.
      *
      * @param condition  Loop-condition.
      * @param statements Statements to execute inside the loop.
      */
-    public While(final Condition condition, final Block statements) {
+    public DoWhile(final Condition condition, final Block statements) {
         this.condition  = condition;
         this.statements = statements;
     }
@@ -45,7 +45,7 @@ public class While extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         ReturnMessage result = null;
-        while (condition.eval(state) == SetlBoolean.TRUE) {
+        do {
             result = statements.execute(state);
             if (result != null) {
                 if (result == ReturnMessage.CONTINUE) {
@@ -55,7 +55,7 @@ public class While extends Statement {
                 }
                 return result;
             }
-        }
+        } while (condition.eval(state) == SetlBoolean.TRUE);
         return null;
     }
 
@@ -74,10 +74,12 @@ public class While extends Statement {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
+        sb.append("do ");
+        condition.appendString(state, sb, tabs);
+        statements.appendString(state, sb, tabs, true);
         sb.append("while (");
         condition.appendString(state, sb, tabs);
-        sb.append(") ");
-        statements.appendString(state, sb, tabs, true);
+        sb.append(");");
     }
 
     /* term operations */
@@ -91,19 +93,19 @@ public class While extends Statement {
     }
 
     /**
-     * Convert a term representing a While statement into such a statement.
+     * Convert a term representing a DoWhile statement into such a statement.
      *
      * @param term                     Term to convert.
-     * @return                         Resulting While Statement.
+     * @return                         Resulting DoWhile Statement.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static While termToStatement(final Term term) throws TermConversionException {
+    public static DoWhile termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Condition condition   = TermConverter.valueToCondition(term.firstMember());
             final Block     block       = TermConverter.valueToBlock(term.lastMember());
-            return new While(condition, block);
+            return new DoWhile(condition, block);
         }
     }
 }

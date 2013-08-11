@@ -1,6 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v2.2.0--- 2013-08-11
+ + added a do-while statement
  + added 64 bit floating point values that behave according to IEEE
    754
  + added the function double() that converts a string or number into a

@@ -91,6 +91,7 @@ statement returns [Statement stmnt]
     | 'for' '(' iteratorChain[false] ('|' condition {condition = $condition.cnd;} )? ')' '{' block '}'
                                                                      { $stmnt = new For($iteratorChain.ic, condition, $block.blk); }
     | 'while' '(' condition ')' '{' block '}'                        { $stmnt = new While($condition.cnd, $block.blk);             }
+    | 'do' '{' block '}' 'while' '(' condition ')' ';'               { $stmnt = new DoWhile($condition.cnd, $block.blk);           }
     | 'try'                                '{' b1 = block '}'
       (
          'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));         }

@@ -1,2 +1,10 @@
+Fix this paragraph in "3.5.1 while Loops"
+
+The function f is implemented via a while loop. This loop runs as long as n is different from
+1. The syntax ...
+
+There should be something after the "from" and there is the point #1, but no point #2!
+
+======================
 
 

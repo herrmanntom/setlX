@@ -20,6 +20,7 @@ statement
     | scan
     | 'for' '(' iteratorChain ('|' condition)? ')' '{' block '}'
     | 'while' '(' condition ')' '{' block '}'
+    | 'do' '{' block '}' 'while' '(' condition ')' ';'
     | 'try' '{' block '}' ('catchLng' '(' variable ')' '{' block '}' | 'catchUsr' '(' variable ')' '{' block '}')* ('catch' '(' variable ')' '{' block '}')?
     | 'check' '{' block '}' ('afterBacktrack' '{' block '}')?
     | 'backtrack' ';'

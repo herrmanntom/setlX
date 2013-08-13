@@ -956,6 +956,10 @@ yields the result
       further effect.  However, if the evaluation of \textsl{condition} yields the value
       \texttt{false}, then the execution of the program is terminated and the error message
       \textsl{msg} is printed.
+
+      \setlx\ has an option ``\texttt{--noAssert}''.  The short form of this option is ``\texttt{-a}''.
+      If this option is activated, the function \texttt{assert} is not evaluated.  Hence,  in order
+      to speed up the program, this option can be used to switch off all assertions.      
 \end{enumerate}
 
 

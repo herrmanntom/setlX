@@ -1011,8 +1011,10 @@ recursively as follows:
        \right.
       $ 
 \end{enumerate}
-Then $f$ is well-defined and, furthermore, it is claimed that $f(n) = 1$ for all $n \in \mathbb{N}$.  Figure
-\ref{fig:ulam.stlx} shows an implementation of this function in \setlx.  
+The Collatz conjecture claims that $f(n) = 1$  for all $n \in \mathbb{N}$. 
+If we assume the Collatz conjecture is true, then $f$ is well-defined.
+Otherwise, if the Collatz conjecture is not true, for certain values of $n$ the function $f(n)$ is undefined.
+Figure \ref{fig:ulam.stlx} shows an implementation of the function $f$ in \setlx.  
 
 \begin{figure}[!ht]
 \centering
@@ -1045,7 +1047,10 @@ Then $f$ is well-defined and, furthermore, it is claimed that $f(n) = 1$ for all
 \end{figure}
 
 The function $f$ is implemented via a \texttt{while} loop.  This loop runs as long as $n$
-is different from $1$.  The syntax of a \texttt{while} loop is given by the following
+is different from the number one.  Therefore, if the Collatz conjecture is true, the \texttt{while}
+loop will eventually terminate for all values of $n$.
+
+The syntax of a \texttt{while} loop is given by the following
 grammar rule:
 \\[0.2cm]
 \hspace*{1.3cm}

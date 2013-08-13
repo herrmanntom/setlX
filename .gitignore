@@ -13,6 +13,7 @@
 /grammar_pure/PureLexer.tokens
 /grammar_pure/PureParser.java
 /grammar_pure/*.class
+/grammar_pure/Pure.g
 /src/java-src/org/randoom/setlx/grammar
 /src/build
 /src/*.jar

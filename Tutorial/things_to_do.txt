@@ -7,4 +7,7 @@ There should be something after the "from" and there is the point #1, but no poi
 
 ======================
 
+assert()
 
+explain that the --noAssert (or -a) option disables assert statements entirely.
+Thus they can be "switched off" for performance, when they perform complicated tests.

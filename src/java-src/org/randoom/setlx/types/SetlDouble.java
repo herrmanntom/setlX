@@ -47,6 +47,14 @@ public class SetlDouble extends NumberValue {
      * Double value of negative infinity.
      */
     public  final static SetlDouble    NEGATIVE_INFINITY      = SetlDouble.valueOfNoEx(Double.NEGATIVE_INFINITY);
+    /**
+     * Double value of Euler's number, i.e. lim_n->oo (1+1/n)^n
+     */
+    public  final static SetlDouble    E                      = SetlDouble.valueOfNoEx(Math.E);
+    /**
+     * Double value of pi, i.e. the ratio of the circumference of a circle to its diameter.
+     */
+    public  final static SetlDouble    PI                     = SetlDouble.valueOfNoEx(Math.PI);
 
     private SetlDouble(final Double d) {
         this.doubleValue = d;

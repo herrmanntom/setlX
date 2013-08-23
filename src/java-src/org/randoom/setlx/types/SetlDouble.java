@@ -7,7 +7,6 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.utilities.State;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 
@@ -40,8 +39,6 @@ public class SetlDouble extends NumberValue {
 
     private final double doubleValue;
 
-    private final static BigDecimal    DOUBLE_MAX_VALUE       = BigDecimal.valueOf(Double.MAX_VALUE);
-    private final static BigDecimal    DOUBLE_MIN_VALUE       = BigDecimal.valueOf(Double.MIN_VALUE);
     /**
      * Double value of positive infinity.
      */
@@ -84,37 +81,6 @@ public class SetlDouble extends NumberValue {
     // Only use this function if you are sure that real != NAN!
     private static SetlDouble valueOfNoEx(final double real) {
          return new SetlDouble(real);
-    }
-
-    /**
-     * Create a new SetlDouble from a BigDecimal.
-     *
-     * @param  real                        BigDecimal value of the new SetlDouble.
-     * @return                             The new SetlDouble.
-     * @throws NumberToLargeException      Thrown in case the BigDecimal is too large or small.
-     * @throws UndefinedOperationException Thrown in case the double is not a number.
-     */
-    public static NumberValue valueOf(final BigDecimal real)
-        throws UndefinedOperationException, NumberToLargeException
-    {
-        final BigDecimal absValue = real.abs();
-        if (absValue.compareTo(DOUBLE_MAX_VALUE) > 0 ||
-             (
-               absValue.compareTo(DOUBLE_MIN_VALUE) < 0 &&
-               real.compareTo(BigDecimal.ZERO) != 0
-             )
-           )
-        {
-            throw new NumberToLargeException(
-                "The value of " + real + " is too large or too small for this operation."
-            );
-        }
-        final Double value = real.doubleValue();
-        if (Double.isNaN(value)) {
-            final String msg = "Result of this operation is undefined/not a number.";
-            throw new UndefinedOperationException(msg);
-        }
-        return new SetlDouble(real.doubleValue());
     }
 
     /**

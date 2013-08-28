@@ -1,0 +1,2 @@
+gfx_text(10.0,10.0,"Text");
+print("gfx-test successful");

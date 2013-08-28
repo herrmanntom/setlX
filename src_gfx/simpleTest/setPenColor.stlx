@@ -1,0 +1,3 @@
+gfx_setPenColor();
+gfx_setPenColor("RED");
+print("gfx-test successful");

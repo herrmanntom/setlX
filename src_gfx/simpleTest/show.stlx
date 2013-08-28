@@ -1,0 +1,3 @@
+gfx_show();
+gfx_show(5);
+print("gfx-test successful");

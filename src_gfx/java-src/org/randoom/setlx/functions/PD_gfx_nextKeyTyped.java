@@ -1,6 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -17,6 +18,14 @@ public class PD_gfx_nextKeyTyped extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return new SetlString( StdDraw.nextKeyTyped() );
+    	String result = "";
+    	try {
+    	    result += StdDraw.nextKeyTyped();
+    	    return new SetlString( result );
+    	} catch ( Exception ex ) {
+            //no key typed throws Exception here
+    		//just ignore this case and return false
+    		return SetlBoolean.FALSE;
+    	}
     }
 }

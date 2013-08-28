@@ -1,0 +1,4 @@
+gfx_addPlayPauseButton();
+gfx_addPlayPauseButton(true);
+gfx_addPlayPauseButton(false);
+print("gfx-test successful");

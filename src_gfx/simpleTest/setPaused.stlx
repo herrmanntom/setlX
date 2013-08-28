@@ -1,0 +1,3 @@
+gfx_setPaused(true);
+gfx_setPaused(false);
+print("gfx-test successful");

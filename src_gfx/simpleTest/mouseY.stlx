@@ -1,0 +1,2 @@
+gfx_mouseY();
+print("gfx-test successful");

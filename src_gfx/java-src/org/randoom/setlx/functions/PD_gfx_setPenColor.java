@@ -19,21 +19,26 @@ public class PD_gfx_setPenColor extends GfxFunction {
     public PD_gfx_setPenColor(){
         super();
         addParameter("color");
+        allowFewerParameters();
     }
 
     @Override
     protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        Color c = StdDraw.BLACK;
-        try {
-            final Field f = StdDraw.class.getField(args.get(0).getUnquotedString().toUpperCase());
-            c = (Color) f.get(null);
-            StdDraw.setPenColor(c);
-            return SetlBoolean.TRUE;
-        } catch (final Exception e) {
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            e.printStackTrace(new PrintStream(out));
-            state.errWrite(out.toString());
-            return SetlBoolean.FALSE;
+        if ( args.size() == 0 ) {
+        	StdDraw.setPenColor();
+        } else {
+	    	Color c = StdDraw.BLACK;
+	        try {
+	            final Field f = StdDraw.class.getField(args.get(0).getUnquotedString().toUpperCase());
+	            c = (Color) f.get(null);
+	            StdDraw.setPenColor(c);
+	        } catch (final Exception e) {
+	            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+	            e.printStackTrace(new PrintStream(out));
+	            state.errWrite(out.toString());
+	            return SetlBoolean.FALSE;
+	        }
         }
+        return SetlBoolean.TRUE;
     }
 }

@@ -1,0 +1,3 @@
+gfx_setXscale();
+gfx_setXscale( 0, 20 );
+print("gfx-test successful");

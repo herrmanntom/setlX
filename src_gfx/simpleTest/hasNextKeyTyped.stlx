@@ -1,0 +1,2 @@
+gfx_hasNextKeyTyped();
+print("gfx-test successful");

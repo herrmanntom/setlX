@@ -1241,6 +1241,32 @@ In order to find how this function works, try it yourself.
 The function \texttt{now}  returns the number of milliseconds that have elapsed since
 the beginning of the Unix epoch.
 
+\subsection{\texttt{run}}
+The function \texttt{run} executes a shell command, i.e.~a command that would otherwise be
+invoked via a shell like \texttt{bash} or the windows command line.  The function \texttt{run(\textsl{cmd})} returns a pair
+of lists: The first list contains the strings that make up the output produced when running the
+command  \texttt{\textsl{cmd}} in the command line.  Every string in the list corresponds to one line
+of output produced by  \texttt{\textsl{cmd}}. 
+ The second list is empty as long as   \texttt{\textsl{cmd}} does not produce any error messages.
+ If there are error messages, these are collected in the second list returned as the result of   \texttt{run(\textsl{cmd})}.
+For example, the command
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{run('ls *.tex');}
+\\[0.2cm]
+yields the output
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[["backtracking.tex", "basics.tex", "closures.tex"], []]}
+\\[0.2cm]
+in one of my directories containing \TeX files.  However, if this command is executed in a
+directory that does not contain any file with the extension ``\texttt{.tex}'', then the output is
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[[], ["ls: *.tex: No such file or directory"]]}
+\\[0.2cm]
+indicating that there are no files matching the pattern ``\texttt{*.tex}''.
+
 \subsection{\texttt{sleep}}
 The function sleep takes one argument that has to be a positive natural number.  The expression
 \\[0.2cm]

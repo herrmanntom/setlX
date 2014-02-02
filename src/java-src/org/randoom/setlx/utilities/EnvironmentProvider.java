@@ -60,6 +60,13 @@ public interface EnvironmentProvider {
     public abstract String  getEndl();
 
     /**
+     * Get identifier for the operating system that setlX runs on.
+     *
+     * @return Identifier for the operating system executing setlX.
+     */
+    public abstract String  getOsID();
+
+    /**
      * Allows modification of filename/path when reading files from within setlX.
      *
      * @param fileName Filename as passed to setlX via input/source code.

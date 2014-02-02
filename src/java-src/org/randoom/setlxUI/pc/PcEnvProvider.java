@@ -15,21 +15,34 @@ public class PcEnvProvider implements EnvironmentProvider {
     private final static String TAB = "\t";
 
     private final String         endl;
+    private final String         osName;
     /**
      * Path where the library files are expected to reside.
      */
-  /*package*/     String         libraryPath;
+    private       String         libraryPath;
 
     // buffered reader for stdin
     private       BufferedReader stdInReader;
 
     /**
      * Create new PcEnvProvider.
+     *
+     * @param libraryPath Path where the library files are expected to reside.
      */
-    public PcEnvProvider() {
+    public PcEnvProvider(final String libraryPath) {
         this.endl        = System.getProperty("line.separator");
-        this.libraryPath = "";
+        this.osName      = System.getProperty("os.name");
+        this.libraryPath = libraryPath;
         this.stdInReader = null;
+    }
+
+    /**
+     * Set new library path.
+     *
+     * @param libraryPath Path where the library files are expected to reside.
+     */
+    public void setlibraryPath(final String libraryPath) {
+        this.libraryPath = libraryPath;
     }
 
     /**
@@ -86,6 +99,11 @@ public class PcEnvProvider implements EnvironmentProvider {
     @Override
     public String   getEndl() {
         return endl;
+    }
+
+    @Override
+    public String   getOsID() {
+        return osName;
     }
 
     @Override

@@ -23,9 +23,9 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String     VERSION         = "2.2.0";
+    private final static String     VERSION         = "2.2.1";
     private final static String     SETLX_URL       = "http://setlX.randoom.org/";
-    private final static String     C_YEARS         = "2011-2013";
+    private final static String     C_YEARS         = "2011-2014";
     private final static String     VERSION_PREFIX  = "v";
     private final static String     HEADER          = "-====================================setlX====================================-";
 
@@ -52,7 +52,12 @@ public class SetlX {
         String              statement    = null;  // code to be executed when using -ex option
         final List<String>  files        = new ArrayList<String>();
 
-        final PcEnvProvider envProvider  = new PcEnvProvider();
+        String              libraryPath  = null;
+        if ((libraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
+            libraryPath = "";
+        }
+
+        final PcEnvProvider envProvider  = new PcEnvProvider(libraryPath);
         final State         state        = new State(envProvider);
 
         final SetlList parameters = new SetlList(); // can/will be filled later
@@ -60,10 +65,6 @@ public class SetlX {
             state.putValue("params", parameters, "init");
         } catch (final IllegalRedefinitionException e) {
             // impossible
-        }
-
-        if ((envProvider.libraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
-            envProvider.libraryPath = "";
         }
 
         for (int i = 0; i < args.length; ++i) {
@@ -136,13 +137,14 @@ public class SetlX {
             } else if (s.equals("-l") || s.equals("--libraryPath")) {
                 ++i; // set to next argument
                 if (i < args.length) {
-                    envProvider.libraryPath = args[i];
+                    libraryPath = args[i];
+                    envProvider.setlibraryPath(libraryPath);
                 }
                 // check for incorrect contents
-                if (  envProvider.libraryPath.equals("") ||
+                if (  libraryPath.equals("") ||
                       (
-                          envProvider.libraryPath.length() >= 1 &&
-                          envProvider.libraryPath.substring(0,1).equals("-")
+                          libraryPath.length() >= 1 &&
+                          libraryPath.substring(0,1).equals("-")
                       )
                    ) {
                     help = true;

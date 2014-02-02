@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.2.1--- 2014-02-02
+ + added getOsID() function that returns an identifier for the operating system
+   that setlX runs on
+
 ---v2.2.0--- 2013-08-14
  + added a do-while statement
  + added 64 bit floating point values that behave according to IEEE

@@ -585,6 +585,24 @@ public class State {
         }
     }
 
+    /**
+     * Get the tabulator character to use.
+     *
+     * @return Tabulator character.
+     */
+    public String getTab() {
+        if (printVerbose) {
+            return envProvider.getTab();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Get system dependent newline character sequence.
+     *
+     * @return Newline character sequence.
+     */
     public String getEndl() {
         if (printVerbose) {
             return envProvider.getEndl();
@@ -593,12 +611,13 @@ public class State {
         }
     }
 
-    public String getTab() {
-        if (printVerbose) {
-            return envProvider.getTab();
-        } else {
-            return "";
-        }
+    /**
+     * Get identifier for the operating system that setlX runs on.
+     *
+     * @return Identifier for the operating system executing setlX.
+     */
+    public String getOsID() {
+        return envProvider.getOsID();
     }
 
     /* -- saved variables in current scope -- */

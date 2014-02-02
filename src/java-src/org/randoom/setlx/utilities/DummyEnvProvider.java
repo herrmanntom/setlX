@@ -47,6 +47,11 @@ public class DummyEnvProvider implements EnvironmentProvider {
     }
 
     @Override
+    public String getOsID() {
+        return "";
+    }
+
+    @Override
     public String filterFileName(final String arg0) {
         return "";
     }

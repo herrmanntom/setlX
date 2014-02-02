@@ -23,22 +23,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-// This class represents a definition of a constructor for objects
-
-/*
-grammar rule:
-classDefinition
-    : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
-    ;
-
-implemented here as:
-                     ===================         =====               =====
-                         parameters            initBlock           staticBlock
-*/
-
+/**
+ * This class represents a definition of a constructor for objects.
+ *
+ * grammar rule:
+ * classDefinition
+ *     : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
+ *     ;
+ *
+ * implemented here as:
+ *                      ===================         =====               =====
+ *                          parameters            initBlock           staticBlock
+ */
 public class SetlClass extends Value {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlClass.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlClass.class);
 
     private final static Block  REBUILD_MARKER       = new Block(0);
 
@@ -49,9 +48,16 @@ public class SetlClass extends Value {
     private       HashSet<String>    staticVars;  // variables defined in the static block
     private       SetlHashMap<Value> staticDefs;  // definitions from static block
 
+    /**
+     * Create a new instance of this data type.
+     *
+     * @param parameters  Parameters of the "constructor" to execute when creating objects.
+     * @param init        Statements to execute when creating objects.
+     * @param staticBlock Statements to execute once.
+     */
     public SetlClass(final List<ParameterDef> parameters,
-                           final Block              init,
-                           final Block              staticBlock
+                     final Block              init,
+                     final Block              staticBlock
     ) {
         this(parameters, init, null, staticBlock, null, null);
     }
@@ -83,6 +89,12 @@ public class SetlClass extends Value {
         return staticBlock;
     }
 
+    /**
+     * Gather all static bindings set in this class.
+     *
+     * @param result              Map to append static bindings to.
+     * @param restrictToFunctions Only collect bindings of functions.
+     */
     public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
         for (final Map.Entry<String, Value> entry : staticDefs.entrySet()) {
             final Value val = entry.getValue();
@@ -332,6 +344,17 @@ public class SetlClass extends Value {
         appendString(null, state, sb, tabs);
     }
 
+    /**
+     * Appends a string representation of this class to the given StringBuilder
+     * object.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toString(State)
+     *
+     * @param className Name bound to this class, or null.
+     * @param state     Current state of the running setlX program.
+     * @param sb        StringBuilder to append to.
+     * @param tabs      Number of tabs to use as indentation for statements.
+     */
     public void appendString(final String className, final State state, final StringBuilder sb, final int tabs) {
         final String endl = state.getEndl();
         sb.append("class");
@@ -383,6 +406,13 @@ public class SetlClass extends Value {
         return result;
     }
 
+    /**
+     * Convert a term representing a SetlClass into such a value.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting SetlClass.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static SetlClass termToValue(final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -476,5 +506,13 @@ public class SetlClass extends Value {
         return hash;
     }
 
+    /**
+     * Get the functional character of this value type used in terms.
+     *
+     * @return Functional character of this value type.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
+    }
 }
 

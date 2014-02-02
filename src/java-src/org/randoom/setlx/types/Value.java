@@ -124,14 +124,35 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* type conversions */
 
+    /**
+     * Convert this value into an integer setlX rational.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Equivalent rational of this value, or om.
+     * @throws SetlException if this value cannot be converted.
+     */
     public Value toInteger(final State state) throws SetlException {
         return Om.OM;
     }
 
+    /**
+     * Convert this value into a setlX rational.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Equivalent rational of this value, or om.
+     * @throws SetlException if this value cannot be converted.
+     */
     public Value toRational(final State state) throws SetlException {
         return Om.OM;
     }
 
+    /**
+     * Convert this value into a setlX double.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Equivalent double of this value, or om.
+     * @throws SetlException if this value cannot be converted.
+     */
     public Value toDouble(final State state) throws SetlException {
         return Om.OM;
     }
@@ -185,6 +206,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      *
      * @return                           Equivalent int of this value.
      * @throws IncompatibleTypeException if this value cannot be converted into an integer.
+     * @throws NotAnIntegerException     if this value is not an integer.
      * @throws NumberToLargeException    if this value is too large or to small to be converted.
      */
     public int jIntValue() throws IncompatibleTypeException, NotAnIntegerException, NumberToLargeException {
@@ -196,6 +218,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     /**
      * Convert this value into a native Java double.
      *
+     * @param state          Current state of the running setlX program.
      * @return               Equivalent double of this value.
      * @throws SetlException if this value cannot be converted.
      */
@@ -213,6 +236,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     /**
      * Convert this value into an native Java integer.
      *
+     * @param state          Current state of the running setlX program.
      * @return               Equivalent int of this value.
      * @throws SetlException if this value cannot be converted.
      */
@@ -328,6 +352,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return modulo(state, modulo);
     }
 
+    /**
+     * Raise this value to the power of another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param exponent       Value to raise by.
+     * @return               This raised by the power of exponent.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value power(final State state, final Value exponent) throws SetlException {
         if (exponent instanceof Term) {
             return ((Term) exponent).powerFlipped(state, this);
@@ -459,6 +491,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Test if this value contains the specified element.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param element        Element to search for.
+     * @return               True if the element is contained, false otherwise.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public SetlBoolean containsMember(final State state, final Value element) throws SetlException {
         throw new IncompatibleTypeException(
             "Right-hand-side of '" + element  + " in " + this + "' is not a collection value."
@@ -471,6 +511,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Get the first member of this value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               First member of this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value firstMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get first member from operand; '" + this + "' is not a collection value."
@@ -483,6 +530,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Get a specified member of this value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          Index of the member to get.
+     * @return               Member of this value at the specified index.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value getMember(final State state, final Value index) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member with index '" + index + "' from operand;" +
@@ -490,6 +545,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Get a specified member of this value, but return it without cloning.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          Index of the member to get.
+     * @return               Member of this value at the specified index.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get member with index '" + index + "' from operand;" +
@@ -510,6 +573,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Get the last member of this value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               last member of this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value lastMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not get last member from operand; '" + this + "' is not a collection value."
@@ -586,18 +656,38 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Remove the specified member of this value.
+     *
+     * @param element                    Element to remove.
+     * @throws IncompatibleTypeException Thrown in case of some (user-) error.
+     */
     public void removeMember(final Value element) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
             "Can not remove '" + element + "' from operand; '" + this + "' is not a collection value."
         );
     }
 
+    /**
+     * Remove the first member of this value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               First member of this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value removeFirstMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not remove first member from operand; '" + this + "' is not a collection value."
         );
     }
 
+    /**
+     * Remove the last member of this value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Last member of this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value removeLastMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not remove last member from operand; '" + this + "' is not a collection value."
@@ -682,14 +772,36 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     @Override
     public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
+    /**
+     * Appends a string representation of this class to the given StringBuilder
+     * object, but suppresses quotes when appending strings.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toString(State)
+     *
+     * @param state     Current state of the running setlX program.
+     * @param sb        StringBuilder to append to.
+     * @param tabs      Number of tabs to use as indentation for statements.
+     */
     public void appendUnquotedString(final State state, final StringBuilder sb, final int tabs) {
         appendString(state, sb, tabs);
     }
 
+    /**
+     * Appends an uninterpreted string representation of this value to the given
+     * StringBuilder object.
+     *
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     */
     public void canonical(final State state, final StringBuilder sb) {
         appendString(state, sb, 0);
     }
 
+    /**
+     * Get an uninterpreted string representation of this value.
+     *
+     * @return Uninterpreted string representation of this value.
+     */
     public final String canonical() {
         final State         bubble = new State();
         final StringBuilder sb     = new StringBuilder();

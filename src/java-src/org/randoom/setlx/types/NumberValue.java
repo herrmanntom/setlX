@@ -5,6 +5,9 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
+/**
+ * This base class provides some functionality for all numeric values.
+ */
 public abstract class NumberValue extends Value {
 
     /* arithmetic operations */
@@ -43,7 +46,23 @@ public abstract class NumberValue extends Value {
         }
     }
 
+    /**
+     * Raise this value to the power of another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param exponent       Value to raise by.
+     * @return               This raised by the power of exponent.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     protected abstract NumberValue power(final State state, final int    exponent) throws SetlException;
+    /**
+     * Raise this value to the power of another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param exponent       Value to raise by.
+     * @return               This raised by the power of exponent.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     protected abstract NumberValue power(final State state, final double exponent) throws SetlException;
 
     @Override

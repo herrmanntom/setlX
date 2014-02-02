@@ -8,11 +8,19 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.Iterator;
 
+/**
+ * This base class provides some functionality for all collection values.
+ */
 public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     @Override
     public abstract Iterator<Value> iterator();
 
+    /**
+     * Returns an reversed iterator over the members of this collection value.
+     *
+     * @return an Iterator.
+     */
     public abstract Iterator<Value> descendingIterator();
 
     @Override
@@ -71,7 +79,13 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     @Override
     public abstract SetlBoolean     containsMember(final State state, final Value element) throws IncompatibleTypeException;
 
-    // compare not only own members, but also all members contained in own members
+    /**
+     * Test if this value contains the specified element.
+     * Compares not only own members, but also all members contained in own members.
+     *
+     * @param element Element to search for.
+     * @return        True if the element is contained, false otherwise.
+     */
     public          SetlBoolean     containsMemberRecursive(final Value element) {
         for (final Value v: this) {
             if (v.equalTo(element)) {
@@ -91,6 +105,11 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         return firstMember();
     }
 
+    /**
+     * Get the first member of this collection value.
+     *
+     * @return First member of this collection value.
+     */
     public abstract Value           firstMember();
 
     @Override
@@ -116,6 +135,11 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         return lastMember();
     }
 
+    /**
+     * Get the last member of this collection value.
+     *
+     * @return Last member of this collection value.
+     */
     public abstract Value           lastMember();
 
     @Override
@@ -145,6 +169,11 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         return removeFirstMember();
     }
 
+    /**
+     * Remove the first member of this collection value.
+     *
+     * @return First member of this collection value.
+     */
     public abstract Value           removeFirstMember();
 
     @Override
@@ -152,6 +181,11 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         return removeLastMember();
     }
 
+    /**
+     * Remove the last member of this collection value.
+     *
+     * @return Last member of this collection value.
+     */
     public abstract Value           removeLastMember();
 
     @Override

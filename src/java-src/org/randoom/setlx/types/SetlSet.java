@@ -34,7 +34,7 @@ public class SetlSet extends CollectionValue {
      * actually doing any cloning, this set carries an isClone flag.
      *
      * If the contents of this SetlSet is modified, the method `separateFromOriginal()'
-     * MUST be called before the modification.  This method then performs the actual 
+     * MUST be called before the modification.  This method then performs the actual
      * cloning, if required.
      *
      * Main benefit of this technique is to perform the actual cloning only
@@ -45,6 +45,9 @@ public class SetlSet extends CollectionValue {
     private TreeSet<Value> set;
     private boolean        isCloned; // is this set a clone?
 
+    /**
+     * Create a new empty set.
+     */
     public SetlSet() {
         this.set      = new TreeSet<Value>();
         this.isCloned = false; // new sets are not a clone
@@ -133,6 +136,11 @@ public class SetlSet extends CollectionValue {
 
     /* type conversion */
 
+    /**
+     * Convert this set into a list.
+     *
+     * @return SetlList of the members in this set.
+     */
     /*package*/ SetlList toList() {
         return new SetlList(new ArrayList<Value>(set));
     }
@@ -546,10 +554,10 @@ public class SetlSet extends CollectionValue {
             // Neutral element of max() is smallest number available
             return SetlDouble.NEGATIVE_INFINITY;
         }
-	Value a = firstMember(state);
-	Value b = lastMember(state);
+	final Value a = firstMember(state);
+	final Value b = lastMember(state);
 	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
-	    String errMsg = "The set " + this + " is not a set of numbers.";
+	    final String errMsg = "The set " + this + " is not a set of numbers.";
             throw new IncompatibleTypeException(errMsg);
 	}
         return b;
@@ -562,10 +570,10 @@ public class SetlSet extends CollectionValue {
             // Neutral element of min() is the largest number available.
             return SetlDouble.POSITIVE_INFINITY;
         }
-	Value a = firstMember(state);
-	Value b = lastMember(state);
+	final Value a = firstMember(state);
+	final Value b = lastMember(state);
 	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
-	    String errMsg = "The set " + this + " is not a set of numbers.";
+	    final String errMsg = "The set " + this + " is not a set of numbers.";
             throw new IncompatibleTypeException(errMsg);
 	}
         return a;

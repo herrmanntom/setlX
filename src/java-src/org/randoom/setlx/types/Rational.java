@@ -14,21 +14,53 @@ import java.math.BigInteger;
  * This class represents a rational number.
  */
 public class Rational extends NumberValue {
-
+    /**
+     * Rational value of 0.
+     */
     public  final static    Rational    ZERO              = new Rational(0);
+    /**
+     * Rational value of 1.
+     */
     public  final static    Rational    ONE               = new Rational(1);
+    /**
+     * Rational value of 2.
+     */
     public  final static    Rational    TWO               = new Rational(2);
+    /**
+     * Rational value of 3.
+     */
     public  final static    Rational    THREE             = new Rational(3);
+    /**
+     * Rational value of 4.
+     */
     public  final static    Rational    FOUR              = new Rational(4);
+    /**
+     * Rational value of 5.
+     */
     public  final static    Rational    FIVE              = new Rational(5);
+    /**
+     * Rational value of 6.
+     */
     public  final static    Rational    SIX               = new Rational(6);
-    public  final static    Rational    SEVEN             = new Rational(7); // of nine?
+    /**
+     * Rational value of Seven of Nine, Tertiary Adjunct of Unimatrix Zero-One.
+     */
+    public  final static    Rational    SEVEN             = new Rational(7);
+    /**
+     * Rational value of 8.
+     */
     public  final static    Rational    EIGHT             = new Rational(8);
+    /**
+     * Rational value of 9.
+     */
     public  final static    Rational    NINE              = new Rational(9);
+    /**
+     * Rational value of 10.
+     */
     public  final static    Rational    TEN               = new Rational(10);
 
-    public  final static    Rational    RAT_BIG           = SetlDouble.bigRational();
-    public  final static    Rational    RAT_SMALL         = SetlDouble.smallRational();
+    private final static    Rational    RAT_BIG           = SetlDouble.bigRational();
+    private final static    Rational    RAT_SMALL         = SetlDouble.smallRational();
 
     private final static    Rational[]  NUMBERS           = {ZERO,  ONE,  TWO, THREE,
                                                              FOUR,  FIVE, SIX, SEVEN,
@@ -73,6 +105,12 @@ public class Rational extends NumberValue {
         }
     }
 
+    /**
+     * Get Rational representing the specified value.
+     *
+     * @param number Numeric value to represent.
+     * @return       Rational representation.
+     */
     public static Rational valueOf(final long number) {
         if (number >= 0 && number <= 10) {
             return NUMBERS[(int) number];
@@ -80,6 +118,12 @@ public class Rational extends NumberValue {
         return new Rational(number);
     }
 
+    /**
+     * Get Rational representing the specified value.
+     *
+     * @param string Numeric value to represent.
+     * @return       Rational representation.
+     */
     public static Rational valueOf(final String string) {
         final int pos = string.indexOf('/');
         if (pos == -1) { // does not include '/'
@@ -96,14 +140,34 @@ public class Rational extends NumberValue {
         }
     }
 
+    /**
+     * Get Rational representing the specified value.
+     *
+     * @param number Numeric value to represent.
+     * @return       Rational representation.
+     */
     public static Rational valueOf(final BigInteger number) {
         return new Rational(number);
     }
 
+    /**
+     * Get Rational representing the specified value.
+     *
+     * @param nominator   Nominator of the value to represent.
+     * @param denominator Denominator of the value to represent.
+     * @return            Rational representation.
+     */
     public static Rational valueOf(final BigInteger nominator, final BigInteger denominator) {
         return new Rational(nominator, denominator);
     }
 
+    /**
+     * Get Rational representing the specified value.
+     *
+     * @param nominator   Nominator of the value to represent.
+     * @param denominator Denominator of the value to represent.
+     * @return            Rational representation.
+     */
     public static Rational valueOf(final long nominator, final long denominator) {
         return new Rational(BigInteger.valueOf(nominator), BigInteger.valueOf(denominator));
     }
@@ -114,10 +178,20 @@ public class Rational extends NumberValue {
         return this;
     }
 
+    /**
+     * Get nominator of the represented value.
+     *
+     * @return Nominator of the represented value.
+     */
     /*package*/ BigInteger getNominatorValue() {
         return nominator;
     }
 
+    /**
+     * Get denominator of the represented value.
+     *
+     * @return Denominator of the represented value.
+     */
     /*package*/ BigInteger getDenominatorValue() {
         return denominator;
     }
@@ -138,6 +212,11 @@ public class Rational extends NumberValue {
         }
     }
 
+    /**
+     * Test if this is a prime number.
+     *
+     * @return true if this number is in fact prime.
+     */
     public boolean isPrime() {
         if ( ! isInteger || nominator.compareTo(BigInteger.ONE) <= 0) {
             return false;
@@ -166,6 +245,11 @@ public class Rational extends NumberValue {
         return true;
     }
 
+    /**
+     * Estimate if this is a prime number.
+     *
+     * @return True if this BigInteger is probably prime, false if it's definitely composite.
+     */
     public boolean isProbablePrime() {
         if ( ! isInteger ) {
             return false;
@@ -175,6 +259,15 @@ public class Rational extends NumberValue {
         return nominator.isProbablePrime(30);
     }
 
+    /**
+     * Get the next Rational after this number, that is estimated to be prime.
+     * The probability that the number returned by this method is composite does
+     * not exceed 2<sup>-100</sup>.. This method will never skip over a prime when
+     * searching: if it returns p, there is no prime q such that this < q < p.
+     *
+     * @return                       The first Rational greater than this number that is probably prime.
+     * @throws NotAnIntegerException Thrown when this number is not an integer.
+     */
     public Rational nextProbablePrime() throws NotAnIntegerException {
         if ( ! isInteger || nominator.compareTo(BigInteger.ZERO) <= 0) {
             throw new NotAnIntegerException(
@@ -221,6 +314,12 @@ public class Rational extends NumberValue {
         return SetlDouble.valueOf(nominator, denominator);
     }
 
+    /**
+     * Convert this value into a setlX double.
+     *
+     * @return                        Equivalent double of this value.
+     * @throws NumberToLargeException if this value cannot be converted.
+     */
     /*package*/ SetlDouble toDouble() throws NumberToLargeException {
         return SetlDouble.valueOf(nominator, denominator);
     }

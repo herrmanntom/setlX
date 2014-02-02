@@ -471,17 +471,21 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public SetlString getMember(final int index) throws SetlException {
-        if (index > content.length()) {
+        if (Math.abs(index) > content.length()) {
             throw new NumberToLargeException(
                 "Index '" + index + "' is larger as size '" + content.length() + "' of string '" + content.toString() + "'."
             );
         }
-        if (index < 1) {
+        if (index == 0) {
             throw new NumberToLargeException(
-                "Index '" + index + "' is lower as 1."
+                "Index '" + index + "' is invalid."
             );
+        } else if (index > 0) {
+            return new SetlString(content.substring(index - 1, index));
+        } else /* if (index < 0) */ {
+            final int indexFromEnd = content.length() + index + 1;
+            return new SetlString(content.substring(indexFromEnd - 1, indexFromEnd));
         }
-        return new SetlString(content.substring(index - 1, index));
     }
 
     @Override

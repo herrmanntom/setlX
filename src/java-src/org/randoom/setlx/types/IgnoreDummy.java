@@ -3,8 +3,14 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
+/**
+ * This class represents the value of the 'ignore' expression '-'.
+ */
 public class IgnoreDummy extends Value {
 
+    /**
+     * Singleton of the one and only IgnoreDummy.
+     */
     public final static IgnoreDummy ID = new IgnoreDummy();
 
     private IgnoreDummy() {}

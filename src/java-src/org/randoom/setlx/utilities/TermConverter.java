@@ -45,15 +45,15 @@ public class TermConverter {
                 // non-generic values
                 if (fc.equals(CachedProcedure.getFunctionalCharacter())) {
                     return CachedProcedure.termToValue(term);
-                } else if (fc.equals(LambdaDefinition.FUNCTIONAL_CHARACTER)) {
+                } else if (fc.equals(LambdaDefinition.getFunctionalCharacter())) {
                     return LambdaDefinition.termToValue(term);
                 } else if (fc.equals(Procedure.getFunctionalCharacter())) {
                     return Procedure.termToValue(term);
-                } else if (fc.equals(SetlClass.FUNCTIONAL_CHARACTER)) {
+                } else if (fc.equals(SetlClass.getFunctionalCharacter())) {
                     return SetlClass.termToValue(term);
                 } else if (fc.equals(SetlObject.FUNCTIONAL_CHARACTER)) {
                     return SetlObject.termToValue(term);
-                } else if (fc.equals(Om.FUNCTIONAL_CHARACTER)) {
+                } else if (fc.equals(Om.getFunctionalCharacter())) {
                     return Om.OM;
                 }
             }

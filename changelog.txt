@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v2.2.1--- 2014-02-02
  + added getOsID() function that returns an identifier for the operating system
    that setlX runs on
+ + allow negative indexes to strings and lists, which count from the end
 
 ---v2.2.0--- 2013-08-14
  + added a do-while statement

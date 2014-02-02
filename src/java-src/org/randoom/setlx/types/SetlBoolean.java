@@ -5,9 +5,18 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.utilities.State;
 
+/**
+ * The setlX string data type.
+ */
 public class SetlBoolean extends Value {
 
+    /**
+     * SetlBoolean value of false.
+     */
     public final static SetlBoolean FALSE = new SetlBoolean();
+    /**
+     * SetlBoolean value of true.
+     */
     public final static SetlBoolean TRUE  = new SetlBoolean();
 
     private SetlBoolean() {  }
@@ -18,6 +27,12 @@ public class SetlBoolean extends Value {
         return this;
     }
 
+    /**
+     * Get SetlBoolean representing the specified value.
+     *
+     * @param value Boolean value to represent.
+     * @return      SetlBoolean representation.
+     */
     public static SetlBoolean valueOf(final boolean value){
         if (value) {
             return TRUE;

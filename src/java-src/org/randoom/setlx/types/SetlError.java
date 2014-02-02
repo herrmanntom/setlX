@@ -3,14 +3,27 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.utilities.State;
 
+/**
+ * The setlX data type for encapsulating errors caught in try-catch.
+ */
 public class SetlError extends Value {
 
     private final String message;
 
+    /**
+     * Create a new SetlError containing the specified message.
+     *
+     * @param message Error message.
+     */
     public SetlError(final String message) {
         this.message = message;
     }
 
+    /**
+     * Create a new SetlError containing the message of the specified exception.
+     *
+     * @param exception Exception to copy the message from.
+     */
     public SetlError(final SetlException exception) {
         this(exception.getMessage());
     }

@@ -2,10 +2,16 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.utilities.State;
 
+/**
+ * This class represents an undefined value.
+ */
 public class Om extends Value {
     // functional character used in terms
-    public final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Om.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Om.class);
 
+    /**
+     * Singleton of the one and only undefined value in setlX.
+     */
     public final static Om     OM = new Om();
 
     private Om() {  }
@@ -60,6 +66,15 @@ public class Om extends Value {
     @Override
     public int hashCode() {
         return initHashCode;
+    }
+
+    /**
+     * Get the functional character of this value type used in terms.
+     *
+     * @return Functional character of this value type.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

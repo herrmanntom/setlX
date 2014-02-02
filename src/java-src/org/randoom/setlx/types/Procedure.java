@@ -54,7 +54,7 @@ public class Procedure extends Value {
     protected       SetlObject             object;
 
     /**
-     * Create new cached procedure definition.
+     * Create new procedure definition.
      *
      * @param parameters List of parameters.
      * @param statements Statements in the body of the procedure.

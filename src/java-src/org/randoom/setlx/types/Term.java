@@ -12,13 +12,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-/*
-    This class implements terms in the form of
-
-        f(e1, e2, ..., en)
-
+/**
+ *    This class implements terms in the form of
+ *
+ *        f(e1, e2, ..., en)
 */
-
 public class Term extends IndexedCollectionValue {
     // functional character of the term;    e.g. f
     private final String   functionalCharacter;

@@ -13,25 +13,30 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-// This class represents a function definition
-
-/*
-grammar rule:
-lambdaDefinition
-    : lambdaParameters    '|->' sum
-    ;
-
-implemented here as:
-      ----------------          ===
-   parameters (inherited)       expr
-*/
-
+/**
+ * This class represents a lambda definition.
+ *
+ * grammar rule:
+ * lambdaDefinition
+ *     : lambdaParameters    '|->' sum
+ *     ;
+ *
+ * implemented here as:
+ *       ----------------          ===
+ *    parameters (inherited)       expr
+ */
 public class LambdaDefinition extends Procedure {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LambdaDefinition.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LambdaDefinition.class);
 
     private final Expr expr; // expression in the body of the definition; used directly only for toString() and toTerm()
 
+    /**
+     * Create new lambda definition.
+     *
+     * @param parameters List of parameters.
+     * @param expr       lambda-expression.
+     */
     public LambdaDefinition(final List<ParameterDef> parameters, final Expr expr) {
         super(parameters, new Block(1));
         this.expr = expr;
@@ -121,6 +126,15 @@ public class LambdaDefinition extends Procedure {
     public int hashCode() {
         object = null;
         return initHashCode + parameters.size();
+    }
+
+    /**
+     * Get the functional character of this value type used in terms.
+     *
+     * @return Functional character of this value type.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

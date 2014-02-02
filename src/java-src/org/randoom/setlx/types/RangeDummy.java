@@ -2,8 +2,14 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.utilities.State;
 
+/**
+ * This class represents the value of the 'range' expression '..'.
+ */
 public class RangeDummy extends Value {
 
+    /**
+     * Singleton of the one and only RangeDummy.
+     */
     public final static RangeDummy RD = new RangeDummy();
 
     private RangeDummy(){}

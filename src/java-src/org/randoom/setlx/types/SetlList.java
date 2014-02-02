@@ -29,13 +29,12 @@ import java.util.Map;
  *   interpreter.expressionUtilities.Iteration
  *   interpreter.expressionUtilities.Range
  */
-
 public class SetlList extends IndexedCollectionValue {
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this list carries a isClone flag.
      *
      * If the contents of this SetlList is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the actual 
+     * MUST be called before the modification, which then performs the actual
      * cloning, if required.
      *
      * Main benefit of this technique is to perform the actual cloning only
@@ -47,15 +46,28 @@ public class SetlList extends IndexedCollectionValue {
     // is this list a clone
     private boolean             isCloned;
 
+    /**
+     * Create a new empty list.
+     */
     public SetlList() {
         this(10);
     }
 
+    /**
+     * Create a new empty list, allocating space for the given number of elements.
+     *
+     * @param initialCapacity Number of elements to store without resizing.
+     */
     public SetlList(final int initialCapacity) {
         this.list     = new ArrayList<Value>(initialCapacity);
         this.isCloned = false; // new lists are not a clone
     }
 
+    /**
+     * Create a new list, cloning from another one.
+     *
+     * @param list List to clone from.
+     */
     /*package*/ SetlList(final ArrayList<Value> list) {
         this.list     = list;
         this.isCloned = true;  // lists created from another list ARE a clone
@@ -134,6 +146,10 @@ public class SetlList extends IndexedCollectionValue {
         return new SetlListDecendingIterator(this);
     }
 
+    /**
+     * Trims the capacity of this list to be its current size.
+     * Trailing members with a value of OM are removed.
+     */
     public void compress() {
         int size    = list.size();
         int removed = 0;
@@ -261,6 +277,13 @@ public class SetlList extends IndexedCollectionValue {
         list.add(element.clone());
     }
 
+    /**
+     * Create a setlX map of all contained members, with unique valued used
+     * as key and the number of their occurrences as values.
+     *
+     * @param state Current state of the running setlX program.
+     * @return      Collection of all contained members.
+     */
     public SetlSet collect(final State state) {
         final HashMap<Value, Integer> map        = new HashMap<Value, Integer>();
               Integer                 occurences = null;
@@ -355,7 +378,14 @@ public class SetlList extends IndexedCollectionValue {
         return getMemberZZZInternal(index).clone();
     }
 
-    public Value getMemberUnCloned(final int index) throws SetlException {
+    /**
+     * Get a specified member of this list, but return it without cloning.
+     *
+     * @param index          Index of the member to get. Note: Index starts with 1, not 0.
+     * @return               Member of this list at the specified index.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    /*package*/ Value getMemberUnCloned(final int index) throws SetlException {
         separateFromOriginal();
         return getMemberZZZInternal(index);
     }
@@ -379,16 +409,20 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     private Value getMemberZZZInternal(final int index) throws NumberToLargeException {
-        if (index < 1) {
-            throw new NumberToLargeException(
-                "Index '" + index + "' is lower as '1'."
-            );
-        }
-        if (index > size()) {
+        if (Math.abs(index) > size()) {
             return Om.OM;
         }
-        // in java the index is one lower
-        return list.get(index - 1);
+        if (index == 0) {
+            throw new NumberToLargeException(
+                "Index '" + index + "' is invalid."
+            );
+        } else if (index > 0) {
+            // in java the index is one lower
+            return list.get(index - 1);
+        } else /* if (index < 0) */ {
+            final int indexFromEnd = size() + index;
+            return list.get(indexFromEnd);
+        }
     }
 
     @Override
@@ -452,11 +486,11 @@ public class SetlList extends IndexedCollectionValue {
         // Neutral element of max() is smallest number available
         Value max = SetlDouble.NEGATIVE_INFINITY;
         for (final Value v: list) {
-	    // we assume that all elements are numbers
-	    if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
-		String errMsg = "The list " + this + " is not a list of numbers.";
-		throw new IncompatibleTypeException(errMsg);
-	    }
+            // we assume that all elements are numbers
+            if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
+                final String errMsg = "The list " + this + " is not a list of numbers.";
+                throw new IncompatibleTypeException(errMsg);
+            }
             if (v.maximum(state, max).equals(v)) {
                 max = v;
             }
@@ -469,11 +503,11 @@ public class SetlList extends IndexedCollectionValue {
         // Neutral element of min() is largest number available
         Value min = SetlDouble.POSITIVE_INFINITY;
         for (final Value v: list) {
-	    // we assume that all elements are numbers
-	    if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
-		String errMsg = "The list " + this + " is not a list of numbers.";
-		throw new IncompatibleTypeException(errMsg);
-	    }
+            // we assume that all elements are numbers
+            if (v.isNumber().equalTo(SetlBoolean.FALSE)) {
+                final String errMsg = "The list " + this + " is not a list of numbers.";
+                throw new IncompatibleTypeException(errMsg);
+            }
             if (v.minimum(state, min).equals(v)) {
                 min = v;
             }
@@ -676,6 +710,14 @@ public class SetlList extends IndexedCollectionValue {
         canonical(state, sb, true);
     }
 
+    /**
+     * Appends an uninterpreted string representation of this list to the given
+     * StringBuilder object.
+     *
+     * @param state       Current state of the running setlX program.
+     * @param sb          StringBuilder to append to.
+     * @param addBracktes Append enclosing brackes of the list.
+     */
     public void canonical(final State state, final StringBuilder sb, final boolean addBracktes) {
         if (addBracktes) {
             sb.append("[");

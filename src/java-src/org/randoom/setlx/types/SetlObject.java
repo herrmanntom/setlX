@@ -80,7 +80,7 @@ public class SetlObject extends Value {
      * actually doing any cloning, this object carries a isClone flag.
      *
      * If the contents of this SetlObject is modified `separateFromOriginal()'
-     * MUST be called before the modification, which then performs the actual 
+     * MUST be called before the modification, which then performs the actual
      * cloning, if required.
      *
      * Main benefit of this technique is to perform the actual cloning only
@@ -728,6 +728,12 @@ public class SetlObject extends Value {
     }
     final static String IS_LESS_THAN = createOverloadVariable(LessThan.functionalCharacter());
 
+    /**
+     * Gather all bindings set in this object
+     *
+     * @param result              Map to append bindings to.
+     * @param restrictToFunctions Only collect bindings of functions.
+     */
     public void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
         classDefinition.collectBindings(result, restrictToFunctions);
 

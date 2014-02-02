@@ -1,5 +1,7 @@
 package org.randoom.setlx.utilities;
 
+import java.util.List;
+
 import org.randoom.setlx.exceptions.JVMIOException;
 
 /**
@@ -44,6 +46,17 @@ public interface EnvironmentProvider {
      * @param msg Message to display.
      */
     public abstract void    promptForInput(final String msg);
+
+    /**
+     * Display a question to the user, before forcing to select one of the
+     * provided answers.
+     *
+     * @param question        Question to display.
+     * @param answers         Non-empty list of questions to select from.
+     * @return                Answer selected by the user.
+     * @throws JVMIOException Thrown in case of IO errors.
+     */
+    public abstract String  promptSelectionFromAnswers(final String question, final List<String> answers) throws JVMIOException;
 
     /**
      * Get the tabulator character to use.

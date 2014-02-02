@@ -6,6 +6,7 @@ import org.randoom.setlx.utilities.EnvironmentProvider;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * This implementation provides access to the I/O mechanisms of PCs.
@@ -90,6 +91,37 @@ public class PcEnvProvider implements EnvironmentProvider {
     public void    promptForInput(final String msg) {
         System.out.print(msg);
         System.out.flush();
+    }
+
+    @Override
+    public String  promptSelectionFromAnswers(final String question, final List<String> answers) throws JVMIOException {
+        final StringBuilder prompt = new StringBuilder(question);
+        int nAnswer = 0;
+        for (final String answer : answers) {
+            prompt.append("\n");
+            if (answers.size() >= 10 && nAnswer < 9) {
+                prompt.append(" ");
+            }
+            prompt.append(++nAnswer);
+            prompt.append(") ");
+            prompt.append(answer);
+        }
+        prompt.append("\n");
+        promptForInput(prompt.toString());
+        final String promptEnd = "Please enter a number between 1 and " + nAnswer + ": ";
+        String input = null;
+        while (input == null) {
+            promptForInput(promptEnd);
+            input = inReadLine();
+            try {
+                final int n = Integer.valueOf(input);
+                if (n >= 1 && n <= nAnswer) {
+                    return answers.get(n - 1);
+                }
+            } catch (final Exception e) {}
+            input = null;
+        }
+        return null; // never to be reached
     }
 
     @Override

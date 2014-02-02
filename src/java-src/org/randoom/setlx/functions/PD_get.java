@@ -8,9 +8,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// get(message, ...)             : prompts the user with `message', then reads a single line from stdin
-
+/**
+ * get(message, ...)             : prompts the user with `message', then reads a single line from stdin
+ */
 public class PD_get extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `get'. */
     public final static PreDefinedProcedure DEFINITION = new PD_get();
 
     private PD_get() {

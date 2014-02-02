@@ -17,6 +17,7 @@ import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -373,7 +374,6 @@ public class State {
      * @return                True if input comes from a human.
      * @throws JVMIOException Thrown in case input cannot be opened.
      */
-
     public boolean prompt(final String prompt) throws JVMIOException {
         // Only if a pipe is connected the input is ready (has input buffered)
         // BEFORE the prompt.
@@ -388,6 +388,19 @@ public class State {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Display a question to the user, before forcing to select one of the
+     * provided answers.
+     *
+     * @param question        Question to display.
+     * @param answers         Non-empty list of questions to select from.
+     * @return                Answer selected by the user.
+     * @throws JVMIOException Thrown in case of IO errors.
+     */
+    public String promptSelectionFromAnswerss(final String question, final List<String> answers) throws JVMIOException {
+        return envProvider.promptSelectionFromAnswers(question, answers);
     }
 
     public void setDoublePrintMode_default() {

@@ -3,6 +3,8 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v2.2.1--- 2014-02-02
  + added getOsID() function that returns an identifier for the operating system
    that setlX runs on
+ + added ask(question, answers) function that prompts the user with `question',
+   then forces him to select one from answers, which is returned
  + allow negative indexes to strings and lists, which count from the end
 
 ---v2.2.0--- 2013-08-14

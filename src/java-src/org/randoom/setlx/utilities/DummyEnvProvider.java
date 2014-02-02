@@ -1,5 +1,7 @@
 package org.randoom.setlx.utilities;
 
+import java.util.List;
+
 /**
  * This "environment" lets all calls die silently.
  */
@@ -25,15 +27,20 @@ public class DummyEnvProvider implements EnvironmentProvider {
     }
 
     @Override
-    public void outWrite(final String arg0) {
+    public void outWrite(final String msg) {
     }
 
     @Override
-    public void errWrite(final String arg0) {
+    public void errWrite(final String msg) {
     }
 
     @Override
-    public void promptForInput(final String arg0) {
+    public void promptForInput(final String msg) {
+    }
+
+    @Override
+    public String promptSelectionFromAnswers(final String question, final List<String> answers) {
+        return answers.get(0); // may fail if called incorrectly
     }
 
     @Override
@@ -52,7 +59,7 @@ public class DummyEnvProvider implements EnvironmentProvider {
     }
 
     @Override
-    public String filterFileName(final String arg0) {
+    public String filterFileName(final String fileName) {
         return "";
     }
 

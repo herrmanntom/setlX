@@ -471,27 +471,30 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public SetlString getMember(final int index) throws SetlException {
-        if (Math.abs(index) > content.length()) {
-            throw new NumberToLargeException(
-                "Index '" + index + "' is larger as size '" + content.length() + "' of string '" + content.toString() + "'."
-            );
-        }
+        final int indexFromStart;
         if (index == 0) {
             throw new NumberToLargeException(
                 "Index '" + index + "' is invalid."
             );
         } else if (index > 0) {
-            return new SetlString(content.substring(index - 1, index));
+            indexFromStart = index;
         } else /* if (index < 0) */ {
-            final int indexFromEnd = content.length() + index + 1;
-            return new SetlString(content.substring(indexFromEnd - 1, indexFromEnd));
+            // negative index counts from end of the string - convert it to actual index
+            indexFromStart = content.length() + index + 1;
         }
+
+        if (indexFromStart < 1 || indexFromStart > content.length()) {
+            throw new NumberToLargeException(
+                "Index '" + index + "' is larger as size '" + content.length() + "' of string '" + content.toString() + "'."
+            );
+        }
+        return new SetlString(content.substring(indexFromStart - 1, indexFromStart));
     }
 
     @Override
     public SetlString getMember(final State state, final Value vIndex) throws SetlException {
         int index = 0;
-        if (vIndex.isInteger() == SetlBoolean.TRUE) {
+        if (vIndex.jIntConvertable()) {
             index = vIndex.jIntValue();
         } else {
             throw new IncompatibleTypeException(
@@ -526,6 +529,7 @@ public class SetlString extends IndexedCollectionValue {
      * (This method is comparable to the usual substring.)
      * Note:
      *  The index starts with 1, not 0.
+     *  Negative index is interpreted as counting from the end, e.g. size() + index + 1
      *
      * @param low                     First character to include.
      * @param high                    Last character to include.
@@ -533,25 +537,38 @@ public class SetlString extends IndexedCollectionValue {
      * @throws NumberToLargeException Thrown when indexes are out of range.
      */
     public SetlString getMembers(final int low, final int high) throws NumberToLargeException {
-        if (low < 1) {
+        final int lowFromStart;
+        final int highFromStart;
+        if (low == 0) {
             throw new NumberToLargeException(
-                "Lower bound '" + low + "' is lower as 1."
+                "Lower bound '" + low + "' is invalid."
             );
+        } else if (low > 0) {
+            lowFromStart = low;
+        } else /* if (low < 0) */ {
+            // negative index counts from end of the string - convert it to actual index
+            lowFromStart = content.length() + low + 1;
         }
-        if (size() == 0) {
+
+        if (high >= 0) {
+            highFromStart = high;
+        } else /* if (high < 0) */ {
+            // negative index counts from end of the string - convert it to actual index
+            highFromStart = content.length() + high + 1;
+        }
+
+        if (lowFromStart < 1 || content.length() == 0) {
             throw new NumberToLargeException(
-                "Lower bound '" + low + "' is larger as string size '" + size() + "'."
+                "Lower bound '" + low + "' is larger as string size '" + content.length() + "'."
             );
-        }
-        if (high > content.length()) {
+        } else if (highFromStart > content.length()) {
             throw new NumberToLargeException(
-                "Upper bound '" + high + "' is larger as string size '" + size() + "'."
+                "Upper bound '" + high + "' is larger as string size '" + content.length() + "'."
             );
-        }
-        if (high < low) {
+        } else if (lowFromStart > highFromStart) {
             return new SetlString();
         } else {
-            return new SetlString(content.substring(low - 1, high));
+            return new SetlString(content.substring(lowFromStart - 1, highFromStart));
         }
     }
 

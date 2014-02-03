@@ -409,65 +409,77 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     private Value getMemberZZZInternal(final int index) throws NumberToLargeException {
-        if (Math.abs(index) > size()) {
-            return Om.OM;
-        }
+        final int indexFromStart;
         if (index == 0) {
             throw new NumberToLargeException(
-                "Index '" + index + "' is invalid."
-            );
+                    "Index '" + index + "' is invalid."
+                );
         } else if (index > 0) {
-            // in java the index is one lower
-            return list.get(index - 1);
+            indexFromStart = index;
         } else /* if (index < 0) */ {
-            final int indexFromEnd = size() + index;
-            return list.get(indexFromEnd);
+            // negative index counts from end of the list - convert it to actual index
+            indexFromStart = list.size() + index + 1;
+        }
+
+        if (indexFromStart < 1 || indexFromStart > list.size()) {
+            return Om.OM;
+        } else {
+            return list.get(indexFromStart - 1);
         }
     }
 
     @Override
     public Value getMembers(final State state, final Value vLow, final Value vHigh) throws SetlException {
-        int low = 0, high = 0;
+        final int lowFromStart;
+        final int highFromStart;
         if (vLow.isInteger() == SetlBoolean.TRUE) {
-            low = vLow.jIntValue();
+            final int low = vLow.jIntValue();
+            if (low == 0) {
+                throw new NumberToLargeException(
+                    "Lower bound '" + vLow + "' is invalid."
+                );
+            } else if (low > 0) {
+                lowFromStart = low;
+            } else /* if (low < 0) */ {
+                // negative index counts from end of the string - convert it to actual index
+                lowFromStart = list.size() + low + 1;
+            }
         } else {
             throw new IncompatibleTypeException(
                 "Lower bound '" + vLow + "' is not a integer."
             );
         }
         if (vHigh.isInteger() == SetlBoolean.TRUE) {
-            high = vHigh.jIntValue();
+            final int high = vHigh.jIntValue();
+            if (high >= 0) {
+                highFromStart = high;
+            } else /* if (high < 0) */ {
+                // negative index counts from end of the string - convert it to actual index
+                highFromStart = list.size() + high + 1;
+            }
         } else {
             throw new IncompatibleTypeException(
                 "Upper bound '" + vHigh + "' is not a integer."
             );
         }
 
-        if (low < 1) {
+        if (lowFromStart < 1 || list.size() == 0) {
             throw new NumberToLargeException(
-                "Lower bound '" + low + "' is lower as '1'."
+                "Lower bound '" + vLow + "' is larger as list size '" + list.size() + "'."
             );
-        }
-        if (size() == 0) {
+        } else if (highFromStart > list.size()) {
             throw new NumberToLargeException(
-                "Lower bound '" + low + "' is larger as list size '" + size() + "'."
-            );
-        }
-        if (high > size()) {
-            throw new NumberToLargeException(
-                "Upper bound '" + high + "' is larger as list size '" + size() + "'."
+                "Upper bound '" + vHigh + "' is larger as list size '" + list.size() + "'."
             );
         }
 
-        // in java the index is one lower
-        --low;
-
-        int size = high - low;
+        int size = highFromStart - lowFromStart - 1;
         if (size < 0) {
             size = 0;
         }
         final SetlList result = new SetlList(size);
-        for (int i = low; i < high; ++i) {
+                     // in java the index is one lower
+        for (int i = lowFromStart - 1; i < highFromStart; ++i) {
             result.addMember(state, list.get(i).clone());
         }
         return result;

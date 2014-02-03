@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.2.1--- 2014-02-02
+---v2.2.1--- 2014-02-03
  + added getOsID() function that returns an identifier for the operating system
    that setlX runs on
  + added ask(question, answers) function that prompts the user with `question',

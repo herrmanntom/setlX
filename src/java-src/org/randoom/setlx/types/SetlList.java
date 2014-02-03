@@ -430,6 +430,7 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public Value getMembers(final State state, final Value vLow, final Value vHigh) throws SetlException {
+        final int listSize = list.size();
         final int lowFromStart;
         final int highFromStart;
         if (vLow.isInteger() == SetlBoolean.TRUE) {
@@ -442,7 +443,7 @@ public class SetlList extends IndexedCollectionValue {
                 lowFromStart = low;
             } else /* if (low < 0) */ {
                 // negative index counts from end of the string - convert it to actual index
-                lowFromStart = list.size() + low + 1;
+                lowFromStart = listSize + low + 1;
             }
         } else {
             throw new IncompatibleTypeException(
@@ -455,7 +456,7 @@ public class SetlList extends IndexedCollectionValue {
                 highFromStart = high;
             } else /* if (high < 0) */ {
                 // negative index counts from end of the string - convert it to actual index
-                highFromStart = list.size() + high + 1;
+                highFromStart = listSize + high + 1;
             }
         } else {
             throw new IncompatibleTypeException(
@@ -463,23 +464,13 @@ public class SetlList extends IndexedCollectionValue {
             );
         }
 
-        if (lowFromStart < 1 || list.size() == 0) {
-            throw new NumberToLargeException(
-                "Lower bound '" + vLow + "' is larger as list size '" + list.size() + "'."
-            );
-        } else if (highFromStart > list.size()) {
-            throw new NumberToLargeException(
-                "Upper bound '" + vHigh + "' is larger as list size '" + list.size() + "'."
-            );
-        }
-
-        int size = highFromStart - lowFromStart - 1;
-        if (size < 0) {
+        int size = highFromStart - (lowFromStart - 1);
+        if (size < 0 || lowFromStart < 1 || highFromStart < 1 || lowFromStart > listSize) {
             size = 0;
         }
         final SetlList result = new SetlList(size);
                      // in java the index is one lower
-        for (int i = lowFromStart - 1; i < highFromStart; ++i) {
+        for (int i = lowFromStart - 1; size > 0 && i < highFromStart && i < listSize; ++i) {
             result.addMember(state, list.get(i).clone());
         }
         return result;

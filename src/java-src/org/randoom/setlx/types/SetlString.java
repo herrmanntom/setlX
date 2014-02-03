@@ -484,17 +484,16 @@ public class SetlString extends IndexedCollectionValue {
         }
 
         if (indexFromStart < 1 || indexFromStart > content.length()) {
-            throw new NumberToLargeException(
-                "Index '" + index + "' is larger as size '" + content.length() + "' of string '" + content.toString() + "'."
-            );
+            return new SetlString();
+        } else {
+            return new SetlString(content.substring(indexFromStart - 1, indexFromStart));
         }
-        return new SetlString(content.substring(indexFromStart - 1, indexFromStart));
     }
 
     @Override
     public SetlString getMember(final State state, final Value vIndex) throws SetlException {
         int index = 0;
-        if (vIndex.jIntConvertable()) {
+        if (vIndex.isInteger() == SetlBoolean.TRUE) {
             index = vIndex.jIntValue();
         } else {
             throw new IncompatibleTypeException(
@@ -537,6 +536,7 @@ public class SetlString extends IndexedCollectionValue {
      * @throws NumberToLargeException Thrown when indexes are out of range.
      */
     public SetlString getMembers(final int low, final int high) throws NumberToLargeException {
+        final int length = content.length();
         final int lowFromStart;
         final int highFromStart;
         if (low == 0) {
@@ -547,26 +547,20 @@ public class SetlString extends IndexedCollectionValue {
             lowFromStart = low;
         } else /* if (low < 0) */ {
             // negative index counts from end of the string - convert it to actual index
-            lowFromStart = content.length() + low + 1;
+            lowFromStart = length + low + 1;
         }
 
         if (high >= 0) {
             highFromStart = high;
         } else /* if (high < 0) */ {
             // negative index counts from end of the string - convert it to actual index
-            highFromStart = content.length() + high + 1;
+            highFromStart = length + high + 1;
         }
 
-        if (lowFromStart < 1 || content.length() == 0) {
-            throw new NumberToLargeException(
-                "Lower bound '" + low + "' is larger as string size '" + content.length() + "'."
-            );
-        } else if (highFromStart > content.length()) {
-            throw new NumberToLargeException(
-                "Upper bound '" + high + "' is larger as string size '" + content.length() + "'."
-            );
-        } else if (lowFromStart > highFromStart) {
+        if (lowFromStart < 1 || highFromStart < 1 || lowFromStart > highFromStart || lowFromStart > length) {
             return new SetlString();
+        } else if (highFromStart > length) {
+            return new SetlString(content.substring(lowFromStart - 1, length));
         } else {
             return new SetlString(content.substring(lowFromStart - 1, highFromStart));
         }

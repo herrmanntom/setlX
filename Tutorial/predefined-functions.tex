@@ -977,6 +977,30 @@ strings.  If file a with the specified name does not exist, it is created.  Then
 given in $l$ are appended to the file.   Each string written to the specified file is
 automatically  terminated by a newline character.
 
+\subsection{\texttt{ask}}
+The function \texttt{ask} is called as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{ask(\textsl{question}, \textsl{answerList})}$.
+\\[0.2cm]
+Here, \textsl{question} is a string that is printed and \textsl{answerList} is a list of all
+possible answers that the user can choose from.  For example, imagine you are programming some
+support application for the US judicial system and your program has to ask your customer a difficult
+question.  The call
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{ask("How would you like to die?", ["electrocution", "intoxination"]);}
+\\[0.2cm]
+prints the following message to the screen:
+\begin{verbatim}
+    How would you like to die?
+    1) electrocution
+    2) intoxination
+    Please enter a number between 1 and 2: 
+\end{verbatim} 
+If the user would now presses the digit 1 and hits the enter key, then the function \texttt{ask} will
+return the string \texttt{"electrocution"}.
+
 \subsection{\texttt{deleteFile}}
 The function \texttt{deleteFile} is called as
 \\[0.2cm]

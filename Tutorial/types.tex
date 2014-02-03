@@ -1055,8 +1055,14 @@ the expression
 \hspace*{1.3cm}
 \texttt{l[5..10]}
 \\[0.2cm]
-yields the sublist \texttt{[5, 6, 7, 8, 9, 10]}.  There are two variants of the slicing operator.
-The expression
+yields the sublist \texttt{[5, 6, 7, 8, 9, 10]}.  The  expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[$a$..$b$]}
+\\[0.2cm]
+returns the empty list if $a > b$.  
+
+There are two variants of the slicing operator.   The expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{$l$[$a$..]}
@@ -1068,6 +1074,63 @@ returns the sublist of $l$ that starts with the element at index $a$, and the ex
 \\[0.2cm]
 computes the sublist of $l$ that starts at the first element and includes all the elements up to the
 element at index $b$.
+
+The index operator also works with negative indices.  For a nonempty list $l$, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[-1]}
+\\[0.2cm]
+selects the last element of $l$, while
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[-2]}
+\\[0.2cm]
+would select the second to last element, provided the list has at least two elements.  In general, for a list $l$ of length $n$ and an index 
+$i\in \{1,\cdots,n\}$, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[-$i$]}
+\\[0.2cm]
+selects the element with index $n + 1 - i$, i.e.~for $i \in \{1,\cdots,n\}$ the expressions
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[-$i$]} \quad and \quad \texttt{$l$[$n+1-i$]}
+\\[0.2cm]
+are equivalent.  Negative indices also work with the slicing operator.  For example, for a list $l$
+containing at least two elements, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[2..-2]}
+\\[0.2cm]
+returns the list that results from $l$ by chopping of both the first and the last element of $l$.
+The variants
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{l[$a$..]} \quad and \quad \texttt{l[..$b$]}
+\\[0.2cm]
+also work with negative valus of $a$ and $b$.  For example, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[..-2]}
+\\[0.2cm]
+returns a list containing all elements of $l$ but the last.
+
+When indexing a list, the number $0$ is not allowed as an index.  Therefore, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$l$[0]}
+\\[0.2cm]
+will yield the following error message:
+\begin{verbatim}
+    Error in "l[0]":
+    Index '0' is invalid.
+\end{verbatim}
+However, the index $0$ is allowed as the second index in a range operator.  For example, the expression
+\texttt{l[1:0]}
+yields the empty list.
+\vspace*{\fill} 
+
+\pagebreak
 
 Lists of variables can be used on the left hand side of an assigment.  This feature enables the
 simultaneous assignment of variables.  The statement
@@ -1308,7 +1371,10 @@ In order to extract the $i$-th character of the string $s$, we can use the expre
 \hspace*{1.3cm}
 \texttt{$s$[$i$]}.
 \\[0.2cm]
-The slicing operators work similar to lists, for example, if $s$ has the value 
+As for lists, this also works for negative values of the index $i$.  For example, the expression \texttt{$s$[-1]}
+returns the last character of $s$.
+
+There is also a slicing operator.  This operator works similar to lists, for example, if $s$ has the value 
 \texttt{\symbol{34}abcdef\symbol{34}}, then 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1324,7 +1390,12 @@ yields \texttt{\symbol{34}bcdef\symbol{34}} and
 \hspace*{1.3cm}
 \texttt{s[..5];}
 \\[0.2cm]
-gives \texttt{\symbol{34}abcde\symbol{34}}.  
+gives \texttt{\symbol{34}abcde\symbol{34}}.  Again, in the expressions
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{$s$[$a$..$b$]}, \quad \texttt{$s$[$a$..]}, \quad and \quad \texttt{$s$[..$b$]}
+\\[0.2cm]
+the indices $a$ and $b$ can be negative numbers.
 
 \setlx\ provides \emph{string interpolation}:
 If a string contains a substring enclosed in ``\texttt{\symbol{36}}''-symbols, then \setlx\ 

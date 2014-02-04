@@ -465,12 +465,12 @@ public class SetlString extends IndexedCollectionValue {
         if (size() > 0) {
             return new SetlString(content.charAt(0));
         } else {
-            return new SetlString();
+            return Om.OM;
         }
     }
 
     @Override
-    public SetlString getMember(final int index) throws SetlException {
+    public Value getMember(final int index) throws SetlException {
         final int indexFromStart;
         if (index == 0) {
             throw new NumberToLargeException(
@@ -484,14 +484,14 @@ public class SetlString extends IndexedCollectionValue {
         }
 
         if (indexFromStart < 1 || indexFromStart > content.length()) {
-            return new SetlString();
+            return Om.OM;
         } else {
             return new SetlString(content.substring(indexFromStart - 1, indexFromStart));
         }
     }
 
     @Override
-    public SetlString getMember(final State state, final Value vIndex) throws SetlException {
+    public Value getMember(final State state, final Value vIndex) throws SetlException {
         int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
             index = vIndex.jIntValue();
@@ -571,7 +571,7 @@ public class SetlString extends IndexedCollectionValue {
         if (size() > 0) {
             return new SetlString(content.charAt(size() - 1));
         } else {
-            return new SetlString();
+            return Om.OM;
         }
     }
 
@@ -637,7 +637,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value removeLastMember() {
-        final int  index  = size() - 1;
+        final int index = size() - 1;
         if (index < 0) {
             return Om.OM;
         }

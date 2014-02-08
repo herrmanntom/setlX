@@ -29,7 +29,7 @@ import java.util.List;
  *
  * implemented here as:
  *                   ====                      ========      =========       =====
- *                   exprs                      terms        condition     statements
+ *                   exprs                      terms        condition     statements
  */
 public class MatchCaseBranch extends MatchAbstractBranch {
     // functional character used in terms

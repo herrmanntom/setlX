@@ -36,10 +36,10 @@ public class PD_ask extends PreDefinedProcedure {
                 answers.add(answer.getUnquotedString());
             }
         } else {
-            throw new IncompatibleTypeException("Question-argument '" + answersCollection + "' is not a collection value.");
+            throw new IncompatibleTypeException("ListOfAnswers-argument '" + answersCollection + "' is not a collection value.");
         }
         if (answers.size() < 1) {
-            throw new IncorrectNumberOfParametersException("Question-argument '" + answersCollection + "' is empty.");
+            throw new IncorrectNumberOfParametersException("ListOfAnswers-argument '" + answersCollection + "' is empty.");
         }
         try {
             final String result = state.promptSelectionFromAnswerss(question, answers);

@@ -96,30 +96,44 @@ public class PcEnvProvider implements EnvironmentProvider {
     @Override
     public String  promptSelectionFromAnswers(final String question, final List<String> answers) throws JVMIOException {
         final StringBuilder prompt = new StringBuilder(question);
-        int nAnswer = 0;
-        for (final String answer : answers) {
-            prompt.append("\n");
-            if (answers.size() >= 10 && nAnswer < 9) {
-                prompt.append(" ");
-            }
-            prompt.append(++nAnswer);
-            prompt.append(") ");
-            prompt.append(answer);
-        }
-        prompt.append("\n");
-        promptForInput(prompt.toString());
-        final String promptEnd = "Please enter a number between 1 and " + nAnswer + ": ";
-        String input = null;
-        while (input == null) {
-            promptForInput(promptEnd);
-            input = inReadLine();
-            try {
-                final int n = Integer.valueOf(input);
-                if (n >= 1 && n <= nAnswer) {
-                    return answers.get(n - 1);
+        if (answers.size() > 1) {
+            int nAnswer = 0;
+            for (final String answer : answers) {
+                prompt.append("\n");
+                if (answers.size() >= 10 && nAnswer < 9) {
+                    prompt.append(" ");
                 }
-            } catch (final Exception e) {}
-            input = null;
+                prompt.append(++nAnswer);
+                prompt.append(") ");
+                prompt.append(answer);
+            }
+            prompt.append("\n");
+            promptForInput(prompt.toString());
+            final String promptEnd = "Please enter a number between 1 and " + nAnswer + ": ";
+            String input = null;
+            while (input == null) {
+                promptForInput(promptEnd);
+                input = inReadLine();
+                try {
+                    final int n = Integer.valueOf(input);
+                    if (n >= 1 && n <= nAnswer) {
+                        return answers.get(n - 1);
+                    }
+                } catch (final Exception e) {}
+                input = null;
+            }
+        } else /* if (answers.size() == 1) */ {
+            final String answer = answers.get(0);
+            prompt.append("\n[Enter] to confirm");
+            if (answer.length() > 0) {
+                prompt.append(" '");
+                prompt.append(answer);
+                prompt.append("'");
+            }
+            prompt.append(".");
+            promptForInput(prompt.toString());
+            inReadLine();
+            return answer;
         }
         return null; // never to be reached
     }

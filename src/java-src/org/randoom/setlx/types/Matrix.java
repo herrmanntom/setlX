@@ -3,6 +3,9 @@
  */
 package org.randoom.setlx.types;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -10,6 +13,34 @@ import org.randoom.setlx.utilities.State;
  *
  */
 public class Matrix extends Value {
+        
+        Jama.Matrix value;
+    
+        public Matrix(final CollectionValue Init) throws SetlException {
+            super();
+            List<double[]> all = new ArrayList<double[]>(Init.size());
+            int n = -1;
+            for(Value row : Init) {
+                // TODO typeof check
+                CollectionValue colrow = (CollectionValue)row;
+                int nt = 0;
+                double[] cells = new double[colrow.size()];
+                for(Value cell : colrow) {
+                    // TODO typeof check
+                    cells[nt] = cell.toJDoubleValue(null); // TODO State
+                    nt++;
+                }
+                if(n > -1 && nt != n) {
+                    // TODO throw exception »rows of different length«
+                } else {
+                    n = nt;
+                }
+                all.add(cells);
+            }
+            double[][] base = new double[all.size()][n];
+            all.toArray(base);
+            value = new Jama.Matrix(base);
+        }
 
 	/* (non-Javadoc)
 	 * @see org.randoom.setlx.types.Value#clone()

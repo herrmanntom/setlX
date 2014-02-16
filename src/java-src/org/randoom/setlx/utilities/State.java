@@ -456,6 +456,11 @@ public class State {
         return System.currentTimeMillis();
     }
 
+    /**
+     * Set internal random number generator into a predictable state.
+     *
+     * @param predictableRandoom True to set random number generator to be predictable.
+     */
     public void setRandoomPredictable(final boolean predictableRandoom) {
         isRandoomPredictable = predictableRandoom;
         if (predictableRandoom) {
@@ -463,29 +468,58 @@ public class State {
         }
     }
 
+    /**
+     * Get if internal random number generator is in a predictable state.
+     *
+     * @return True if random number generator is predictable.
+     */
     public boolean isRandoomPredictable() {
         return isRandoomPredictable;
     }
 
-    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
+    /**
+     * Get random number between 0 and upperBoundary (including 0 but not upperBoundary).
+     *
+     * @param upperBoundary Limit of numbers to return.
+     * @return              Random number between 0 and upperBoundary.
+     */
     public int getRandomInt(final int upperBoundary) {
         return randoom.nextInt(upperBoundary);
     }
 
-    // get random number (all int values are possible)
+    /**
+     * Get random number (all int values are possible).
+     *
+     * @return Random number.
+     */
     public int getRandomInt() {
         return randoom.nextInt();
     }
 
-    // get number between 0 and upperBoundary (including 0 but not upperBoundary)
+    /**
+     * Get random number (all double values are possible).
+     *
+     * @return Random number.
+     */
     public double getRandomDouble() {
         return randoom.nextDouble();
     }
 
+    /**
+     * Get internal random number generator object. Use this to hook your randomness
+     * into debug options like setRandoomPredictable().
+     *
+     * @return Random number generator object.
+     */
     public Random getRandom() {
         return randoom;
     }
 
+    /**
+     * Estimate maximum number of stack frames on current JVM.
+     *
+     * @return Maximum number of stack frames.
+     */
     public int getMaxStackSize() {
         // As setlX's estimation is far from perfect, we assume somewhat more
         // stack usage then its internal accounting guesses.
@@ -497,7 +531,11 @@ public class State {
         return ((measureStackSize() - 66) * 2) / 3;
     }
 
-    // measure the stack size
+    /**
+     * Measure maximum number of stack frames on current JVM.
+     *
+     * @return Maximum number of stack frames.
+     */
     private static int measureStackSize() {
         if (STACK_MEASUREMENT <= 0) {
             // create new thread to measure entire stack size, independent of
@@ -529,6 +567,13 @@ public class State {
         }
     }
 
+    /**
+     * Store call stack depth given to this function when it is invoked the
+     * first time.
+     * Subsequent invocations do nothing until the state is reset.
+     *
+     * @param callStackDepth Call stack depth to store.
+     */
     public void storeStackDepthOfFirstCall(final int callStackDepth) {
         if (firstCallStackDepth < 0 && callStackDepth > 0) {
             firstCallStackDepth = callStackDepth;
@@ -540,6 +585,12 @@ public class State {
         }
     }
 
+    /**
+     * Set flag to stop execution when it is checked by the next statement
+     * or expression.
+     *
+     * @param stopExecution True to stop execution, false otherwise.
+     */
     public void stopExecution(final boolean stopExecution) {
         isExecutionStopped = stopExecution;
     }
@@ -580,15 +631,32 @@ public class State {
         return assertsDisabled;
     }
 
-    // 'secret' option to print stack trace of unhandled java exceptions and use more checks
+    /**
+     * 'secret' option to print stack trace of unhandled java exceptions and use
+     * more checks.
+     *
+     * @param isRuntimeDebuggingEnabled True to enable runtime debugging.
+     */
     public void setRuntimeDebugging(final boolean isRuntimeDebuggingEnabled) {
         this.isRuntimeDebuggingEnabled = isRuntimeDebuggingEnabled;
     }
 
+    /**
+     * Get 'secret' option to print stack trace of unhandled java exceptions and
+     * use more checks.
+     *
+     * @return True if runtime debugging is enabled.
+     */
     public boolean isRuntimeDebuggingEnabled() {
         return isRuntimeDebuggingEnabled;
     }
 
+    /**
+     * Append typical beginning of a new line to string builder.
+     *
+     * @param sb   StringBuilder object to append to.
+     * @param tabs Number of tabs to use.
+     */
     public void appendLineStart(final StringBuilder sb, final int tabs) {
         if (printVerbose && tabs > 0) {
             final String tab = envProvider.getTab();
@@ -635,14 +703,31 @@ public class State {
 
     /* -- saved variables in current scope -- */
 
+    /**
+     * Get current scope object.
+     *
+     * @return Current scope.
+     */
     public VariableScope getScope() {
         return variableScope;
     }
 
+    /**
+     * Set current scope to given scope object.
+     *
+     * @param newScope scope to set as current scope.
+     */
     public void setScope(final VariableScope newScope) {
         variableScope = newScope;
     }
 
+    /**
+     * Get the value of a specific bindings reachable from current scope.
+     *
+     * @param var            Name of the variable to locate.
+     * @return               Located value or Om.OM.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value findValue(final String var) throws SetlException {
         Value v = classDefinitions.get(var);
         if (v != null) {
@@ -793,6 +878,13 @@ public class State {
         }
     }
 
+    /**
+     * Store `classDef' into global scope.
+     *
+     * @param var      Name to bind `classDef' to.
+     * @param classDef Class definition to store.
+     * @param context  Context description of the assignment for trace.
+     */
     public void putClassDefinition(final String var, final SetlClass classDef, final String context) {
         classDefinitions.put(var, classDef);
         if (traceAssignments) {
@@ -800,10 +892,20 @@ public class State {
         }
     }
 
+    /**
+     * Collect all bindings reachable from current scope.
+     *
+     * @return Map of all reachable bindings.
+     */
     public SetlHashMap<Value> getAllVariablesInScope() {
         return variableScope.getAllVariablesInScope(classDefinitions);
     }
 
+    /**
+     * Collect all bindings reachable from current scope and represent them as a term.
+     *
+     * @return Term of all reachable bindings.
+     */
     public Term scopeToTerm() {
         return variableScope.toTerm(this, classDefinitions);
     }

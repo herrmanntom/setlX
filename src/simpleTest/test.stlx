@@ -444,6 +444,55 @@ regexEscapeTests := procedure() {
 };
 regexEscapeTests();
 
+cacheTest := procedure() {
+    correct := true;
+
+    // This test checks if procedures cache correctly when calling themselves recursevely
+    //
+    // Original bug was that `f' was detected (correctly) as closure variable, as it is
+    // called from within this procedure, but not defined when the procedure is defined.
+    f := cachedProcedure(n,t){
+        if (n==0) {
+            return 1;
+        } else {
+            return f(n-1,t);
+        }
+    };
+
+    for (n in [1..3]) {
+        for (t in [[1,2],[3,4]]) {
+            correct := correct && f(n,t) == 1;
+        }
+    }
+    correct := correct && cacheStats(f) == {["cache hits", 4], ["cached items", 8]};
+
+    // When one then would redefine `f', the `f' from above _would_ be defined and
+    // thus be taken as closure variable.
+    // When executing the redefined `f', it would put a copy of the old `f' into its
+    // own state (closure functionality) and thus circumvent the cache and worse
+    // behave like the old `f' during the recursion step.
+    //
+    // Bugfix was to check for existing bindings reachable from current scope
+    // when setting closure variables and skip when there are some.
+    f := cachedProcedure(n,t){
+        if (n==0) {
+            return 2;
+        } else {
+            return f(n-1,t);
+        }
+    };
+
+    for (n in [1..3]) {
+        for (t in [[1,2],[3,4]]) {
+            correct := correct && f(n,t) == 2;
+        }
+    }
+    correct := correct && cacheStats(f) == {["cache hits", 4], ["cached items", 8]};
+
+    tester(correct, "cacheTest");
+};
+cacheTest();
+
 // ************************************************************************** \\
 
 print("\n$stateOfTests.testsOK$ / $stateOfTests.testNumber$ successful");

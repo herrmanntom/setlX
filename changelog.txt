@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.2.2--- 2014-02-15
+ + improve ask() on PCs when there is just one answer
+ # fixed closure behavior with cachedProcedures calling themselves recursively
+
 ---v2.2.1--- 2014-02-03
  + added getOsID() function that returns an identifier for the operating system
    that setlX runs on

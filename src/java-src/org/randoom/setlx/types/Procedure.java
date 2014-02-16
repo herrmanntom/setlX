@@ -229,7 +229,7 @@ public class Procedure extends Value {
         // assign closure contents
         if (closure != null) {
             for (final Map.Entry<String, Value> entry : closure.entrySet()) {
-                new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, entry.getValue(), oldScope, FUNCTIONAL_CHARACTER);
+                new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, entry.getValue(), null, FUNCTIONAL_CHARACTER);
             }
         }
 

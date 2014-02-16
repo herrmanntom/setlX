@@ -20,20 +20,26 @@ import java.util.Map;
  *  Objects of this class collect the variable bindings and the function definitions in the current scope.
  */
 public class VariableScope {
-    // functional characters used in terms
+    /// functional characters used in terms
     private final   static  String     FUNCTIONAL_CHARACTER_SCOPE = "^scope";
-    // how deep can the call stack be, before checking to replace the stack
+    /// how deep can the call stack be, before checking to replace the stack
     private         static  int        MAX_CALL_STACK_DEPTH = -1;
 
     private final   SetlHashMap<Value> bindings;
 
-    // stores reference scope of object
+    /**
+     * stores reference scope of object
+     */
     private         SetlObject         thisObject;
 
-    // stores reference to previous scope object when creating a new scope
+    /**
+     * stores reference to previous scope object when creating a new scope
+     */
     private         VariableScope      originalScope;
 
-    // if set originalScope is only searched for functions, not variables
+    /**
+     * if set originalScope is only searched for functions, not variables
+     */
     private         boolean            isRestrictedToFunctions;
 
     /* If set variables read from outer scopes will _not_ be copied to
@@ -314,7 +320,7 @@ public class VariableScope {
             // this scope does not allow write through or variable is actually stored here
             bindings.put(var, value);
         } else if (writeThrough          && // allowed to write into mOriginalScope
-                   originalScope != null && // mOriginalScope exists
+                   originalScope != null && // originalScope exists
                    ( ! isRestrictedToFunctions || value instanceof Procedure) // not restricted
         ) {
             originalScope.storeValue(var, value);
@@ -324,6 +330,7 @@ public class VariableScope {
     /**
      * Store `value' for variable into current scope, but only if scopes linked
      * from current one up until `outerScope' do not have this value defined already.
+     * Does NOT check in current scope!
      *
      * @param state          Current state of the running setlX program.
      * @param var            Name of the variable to store.
@@ -333,17 +340,20 @@ public class VariableScope {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     /*package*/ boolean storeValueCheckUpTo(final State state, final String var, final Value value, final VariableScope outerScope) throws SetlException {
-        VariableScope toCheck = originalScope;
-        while (toCheck != null && toCheck != outerScope) {
+              VariableScope toCheck    = originalScope;
+              boolean       limitToFnc = isRestrictedToFunctions;
+        final boolean       valueIsFnc = value instanceof Procedure;
+        while (toCheck != null && toCheck != outerScope && (valueIsFnc || ! limitToFnc)) {
             final Value now = toCheck.bindings.get(var);
-            if (now != null) { // already saved there
+            if (now != null && (! limitToFnc || now instanceof Procedure)) { // already saved there
                 if (now.equalTo(value)) {
                     return true;
                 } else if (now != Om.OM) {
                     return false;
                 }
             } else {
-                toCheck = toCheck.originalScope;
+                limitToFnc = limitToFnc || toCheck.isRestrictedToFunctions;
+                toCheck    = toCheck.originalScope;
             }
         }
         // also check in scopes of surrounding objects

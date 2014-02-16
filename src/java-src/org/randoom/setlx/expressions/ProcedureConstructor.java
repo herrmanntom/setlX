@@ -23,7 +23,7 @@ import java.util.List;
  *
  * implemented here as:
  *       ===================
- *           mDefinition
+ *           definition
  */
 public class ProcedureConstructor extends Expr {
     // precedence level in SetlX-grammar
@@ -33,6 +33,11 @@ public class ProcedureConstructor extends Expr {
     private final Procedure       definition;
     private       HashSet<String> closureVariables;
 
+    /**
+     * Create a new ProcedureConstructor expression.
+     *
+     * @param definition Base procedure definition.
+     */
     public ProcedureConstructor(final Procedure definition) {
         this.definition       = definition;
         this.closureVariables = null;

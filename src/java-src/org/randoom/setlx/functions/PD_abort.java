@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// abort(message)          : stops execution and displays given error message(s)
-
+/**
+ *  abort(message)          : stops execution and displays given error message(s)
+ */
 public class PD_abort extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `abort'. */
     public final static PreDefinedProcedure DEFINITION = new PD_abort();
 
     private PD_abort() {

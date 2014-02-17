@@ -126,26 +126,50 @@ public abstract class PreDefinedProcedure extends Procedure {
                     // unlimited means: at least the number of defined parameters or more
                     // no error
                 } else {
-                    String error = "Procedure is defined with fewer parameters ";
-                    error +=       "(" + paramSize;
-                    if (allowFewerParameters) {
-                        error +=   " or less";
+                    final StringBuilder error = new StringBuilder();
+                    error.append("Procedure is defined with fewer parameters: ");
+                    error.append(getName());
+                    error.append("(");
+                    final Iterator<ParameterDef> iter = parameters.iterator();
+                    while (iter.hasNext()) {
+                        if (allowFewerParameters) {
+                            error.append("[");
+                        }
+                        iter.next().appendString(state, error, 0);
+                        if (allowFewerParameters) {
+                            error.append("]");
+                        }
+                        if (iter.hasNext()) {
+                            error.append(", ");
+                        }
                     }
-                    error +=       ").";
-                    throw new IncorrectNumberOfParametersException(error);
+                    error.append(")");
+                    throw new IncorrectNumberOfParametersException(error.toString());
                 }
             } else if (paramSize > argsSize) {
                 if (allowFewerParameters) {
                     // fewer parameters are allowed
                     // no error
                 } else {
-                    String error = "Procedure is defined with more parameters ";
-                    error +=       "(" + paramSize;
-                    if (unlimitedParameters) {
-                        error +=   " or more";
+                    final StringBuilder error = new StringBuilder();
+                    error.append("Procedure is defined with more parameters: ");
+                    error.append(getName());
+                    error.append("(");
+                    final Iterator<ParameterDef> iter = parameters.iterator();
+                    while (iter.hasNext()) {
+                        iter.next().appendString(state, error, 0);
+                        if (iter.hasNext()) {
+                            error.append(", ");
+                        }
                     }
-                    error +=       ").";
-                    throw new IncorrectNumberOfParametersException(error);
+                    if (unlimitedParameters) {
+                        if (parameters.size() > 0) {
+                            error.append(", ");
+                        }
+                        error.append("...");
+                    }
+                    error.append(")");
+                    throw new IncorrectNumberOfParametersException(error.toString());
                 }
             }
 
@@ -199,7 +223,13 @@ public abstract class PreDefinedProcedure extends Procedure {
         sb.append("procedure(");
         final Iterator<ParameterDef> iter = parameters.iterator();
         while (iter.hasNext()) {
+            if (allowFewerParameters) {
+                sb.append("[");
+            }
             iter.next().appendString(state, sb, 0);
+            if (allowFewerParameters) {
+                sb.append("]");
+            }
             if (iter.hasNext()) {
                 sb.append(", ");
             }

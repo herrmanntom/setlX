@@ -9,15 +9,17 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// random([real])                : Get random number between 0.0 and argument (inclusive).
-//                                 If no argument is used, 1.0 is implied.
-
+/**
+ *  random([upperBound])          : Get random number between 0.0 and argument (inclusive).
+ *                                  If no argument is used, 1.0 is implied.
+ */
 public class PD_random extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `random'. */
     public final static PreDefinedProcedure DEFINITION = new PD_random();
 
     private PD_random() {
         super();
-        addParameter("numberOfChoices");
+        addParameter("upperBound");
         allowFewerParameters();
     }
 

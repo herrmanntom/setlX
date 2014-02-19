@@ -460,6 +460,15 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return Rational.valueOf(this.size());
     }
 
+    /**
+     * Implementation of the >< operator. Computes the cartasionProduct of two sets
+     * and combines two lists into one.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Second value.
+     * @return               Division of this and divisor.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value cartesianProduct(final State state, final Value other) throws SetlException {
         if (other instanceof Term) {
             return ((Term) other).cartesianProductFlipped(state, this);
@@ -809,6 +818,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return sb.toString();
     }
 
+    /**
+     * Convert this value into a single character.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Character representation of this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value charConvert(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand '" + this + "' is not a number between 0 and 255."

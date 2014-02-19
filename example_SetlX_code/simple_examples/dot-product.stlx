@@ -1,0 +1,17 @@
+// This program demonstrates the >< operator when used with two lists, which
+// is equal to the following 'zip' function:
+//
+// zip := procedure(xs, ys) {
+//     assert(#xs == #ys, "list of different size");
+//     return [ [xs[i], ys[i]] : i in [1..#xs] ];
+// };
+
+dotProduct := procedure(xs, ys) {
+    return +/ +/ (xs >< ys);
+};
+
+n  := 36;
+xs := [1 .. n];
+ys := [1 : i in [1..n]];
+
+print("$xs$ * $ys$ = $dotProduct(xs, ys)$");

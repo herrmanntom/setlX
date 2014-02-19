@@ -1,0 +1,52 @@
+// This is an example of linear regression.
+
+mean := procedure(xs) {
+    return +/ xs / #xs;
+};
+
+variance := procedure(xs) {
+    mu  := mean(xs);
+    n   := #xs;
+    return +/ [ (x-mu)**2 : x in xs ] / n;
+};
+
+squaredSum := procedure(xs) {
+    xMean := mean(xs);
+    return +/ [ (x-xMean)**2 : x in xs ];
+};
+
+sumOfProds := procedure(xs, ys) {
+    xMean := mean(xs);
+    yMean := mean(ys);
+    return +/ [ (x-xMean)*(y-yMean) : [x,y] in xs >< ys ];
+};
+
+regressionB := procedure(xs, ys) {
+    xMean := mean(xs);
+    yMean := mean(ys);
+    return sumOfProds(xs, ys) / squaredSum(xs) + 0.0;
+};
+
+regressionA := procedure(xs, ys) {
+    xMean := mean(xs);
+    yMean := mean(ys);
+    return yMean - regressionB(xs, ys) * xMean + 0.0;
+};
+
+correlation := procedure(xs, ys) {
+    xMean := mean(xs);
+    yMean := mean(ys);
+    return sumOfProds(xs, ys) / sqrt(squaredSum(xs) * squaredSum(ys));
+};
+
+for (n in [10, 15, 30]) {
+    print("n = $n$");
+    l  := [1 .. 10];
+    xs := [i**2 : i in [1 .. n]];
+    ys := [i**3 : i in [1 .. n]];
+    print("regression  coefficient beta  = ", regressionB(xs, ys));
+    print("regression  coefficient alpha = ", regressionA(xs, ys));
+    print("correlation coefficient r     = ", correlation(xs, ys));
+}
+
+

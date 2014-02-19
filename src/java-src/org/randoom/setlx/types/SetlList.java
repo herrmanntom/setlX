@@ -277,6 +277,40 @@ public class SetlList extends IndexedCollectionValue {
         list.add(element.clone());
     }
 
+    @Override
+    public Value cartesianProduct(final State state, final Value otr) throws SetlException {
+        // zip := procedure(xs, ys) {
+        //      assert(#xs == #ys, "list of different size");
+        //      return [ [xs[i], ys[i]] : i in [1..#xs] ];
+        // };
+        if (otr instanceof SetlList) {
+            final SetlList other = (SetlList) otr;
+            final int      size  = this.size();
+            if (size != other.size()) {
+                throw new UndefinedOperationException(
+                    "Both sides of '" + this + " >< " + other + "' are not of equal length."
+                );
+            }
+
+            final SetlList result = new SetlList(size);
+
+            for (int i = 1; i <= size; ++i) {
+                final SetlList tuple = new SetlList(2);
+                tuple.addMember(state, getMember(i));
+                tuple.addMember(state, other.getMember(i));
+                result.addMember(state, tuple);
+            }
+
+            return result;
+        } else if (otr instanceof Term) {
+            return ((Term) otr).cartesianProductFlipped(state, this);
+        } else {
+            throw new IncompatibleTypeException(
+                "Right-hand-side of '" + this + " >< " + otr + "' is not a list."
+            );
+        }
+    }
+
     /**
      * Create a setlX map of all contained members, with unique valued used
      * as key and the number of their occurrences as values.

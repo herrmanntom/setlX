@@ -1,0 +1,12 @@
+n = 10
+regression  coefficient beta  = 9.929356357927787
+regression  coefficient alpha = -79.7802197802198
+correlation coefficient r     = 0.9871796626270701
+n = 15
+regression  coefficient beta  = 14.626939177542477
+regression  coefficient alpha = -249.16030534351148
+correlation coefficient r     = 0.9866881560444399
+n = 30
+regression  coefficient beta  = 28.699954281235712
+regression  coefficient alpha = -1837.768924302789
+correlation coefficient r     = 0.9862973375863076

@@ -1,6 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.2.2--- 2014-02-15
+---v2.2.2--- 2014-02-19
+ + implemented >< operator on lists, which combines two lists of equal size into
+   a list of pairs, one from each list
  + improve ask() on PCs when there is just one answer
  + updated to antlr 4.2
  # fixed closure behavior with cachedProcedures calling themselves recursively

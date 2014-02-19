@@ -1,1 +1,2 @@
+use explicit `closure' definitions instead of `procedure'
 

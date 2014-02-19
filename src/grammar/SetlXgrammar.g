@@ -379,6 +379,8 @@ procedure returns [Procedure pd]
       { $pd = new Procedure($procedureParameters.paramList, $block.blk);       }
     | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
       { $pd = new CachedProcedure($procedureParameters.paramList, $block.blk); }
+    | 'closure'         '(' procedureParameters ')' '{' block '}'
+      { $pd = new Closure($procedureParameters.paramList, $block.blk);         }
     ;
 
 procedureParameters returns [List<ParameterDef> paramList]

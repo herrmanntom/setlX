@@ -3,9 +3,12 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v2.2.2--- 2014-02-19
  + implemented >< operator on lists, which combines two lists of equal size into
    a list of pairs, one from each list
+ + implemented closures as special kind of procedure for future use; currently
+   closures work exactly like normal procedures
  + improve ask() on PCs when there is just one answer
  + updated to antlr 4.2
  # fixed closure behavior with cachedProcedures calling themselves recursively
+ * as 'closure' is now a keyword, code using it as an identifier will break
 
 ---v2.2.1--- 2014-02-03
  + added getOsID() function that returns an identifier for the operating system

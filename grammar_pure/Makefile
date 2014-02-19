@@ -9,7 +9,7 @@ PureLexer.class PureParser.class ParsePure.class: PureLexer.java PureParser.java
 Pure.tokens PureLexer.java PureParser.java: Pure.g
 	java  -cp $(CLASSPATH) org.antlr.v4.Tool -no-listener -Werror Pure.g
 
-Pure.g:
+Pure.g: ../src/grammar/SetlXgrammar.g
 	cd EBNF_extractor; ant; cd -
 	sh create_pure_grammar.sh
 

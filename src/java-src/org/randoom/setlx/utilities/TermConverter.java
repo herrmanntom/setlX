@@ -14,6 +14,7 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedure;
+import org.randoom.setlx.types.Closure;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.IgnoreDummy;
@@ -31,11 +32,21 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * Utility class to convert terms into their equivalent CodeFragment at runtime.
+ */
 public class TermConverter {
 
     private static Map<String, Method> sExprConverters      = new HashMap<String, Method>();
     private static Map<String, Method> sStatementConverters = new HashMap<String, Method>();
 
+    /**
+     * Convert a term (or value) representing a setlX-Value into such a value.
+     *
+     * @param value                    Term to convert.
+     * @return                         Resulting Value.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Value valueTermToValue(final Value value) throws TermConversionException {
         if (value instanceof Term) {
             final Term   term = (Term) value;
@@ -45,6 +56,8 @@ public class TermConverter {
                 // non-generic values
                 if (fc.equals(CachedProcedure.getFunctionalCharacter())) {
                     return CachedProcedure.termToValue(term);
+                } else if (fc.equals(Closure.getFunctionalCharacter())) {
+                    return Closure.termToValue(term);
                 } else if (fc.equals(LambdaDefinition.getFunctionalCharacter())) {
                     return LambdaDefinition.termToValue(term);
                 } else if (fc.equals(Procedure.getFunctionalCharacter())) {
@@ -65,6 +78,13 @@ public class TermConverter {
         }
     }
 
+    /**
+     * Convert a term (or value) representing a setlX-CodeFragment into such a fragment.
+     *
+     * @param value          Term to convert.
+     * @param restrictToExpr Only convert to expressions, not statements.
+     * @return               Resulting CodeFragment.
+     */
     public static CodeFragment valueToCodeFragment(final Value value, final boolean restrictToExpr) {
         if (value instanceof Term) {
             final Term    term    = (Term) value;
@@ -177,14 +197,33 @@ public class TermConverter {
         }
     }
 
+    /**
+     * Convert a term (or value) representing a setlX-Expr into such an expression.
+     *
+     * @param value          Term to convert.
+     * @return               Resulting Expr.
+     */
     public static Expr valueToExpr(final Value value) {
         return (Expr) valueToCodeFragment(value, true);
     }
 
+    /**
+     * Convert a term (or value) representing a setlX-Condition into such a condition.
+     *
+     * @param value          Term to convert.
+     * @return               Resulting Condition.
+     */
     public static Condition valueToCondition(final Value value) {
         return new Condition(valueToExpr(value));
     }
 
+    /**
+     * Convert a term (or value) representing a setlX-Statement into such a statement.
+     *
+     * @param value                    Term to convert.
+     * @return                         Resulting Statement.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Statement valueToStatement(final Value value) throws TermConversionException {
         final CodeFragment cf = valueToCodeFragment(value, false);
         if (cf instanceof Statement) {
@@ -198,6 +237,13 @@ public class TermConverter {
         }
     }
 
+    /**
+     * Convert a term (or value) representing a setlX-Statement-Block into such a block.
+     *
+     * @param value                    Term to convert.
+     * @return                         Resulting Block.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Block valueToBlock(final Value value) throws TermConversionException {
         final Statement   s   = valueToStatement(value);
         if (s instanceof Block) {

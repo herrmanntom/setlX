@@ -1,5 +1,5 @@
 
-closure := procedure(a) {
+closure_ := procedure(a) {
 	temp := a;
 	while (true) {
 		old_Temp := temp;
@@ -15,5 +15,5 @@ compose := procedure(a1, a2) {
 };
 
 a3 := {[["a", "b"], 1], [["b", "c"], 2], [["c", "d"], 10]};
-print(closure(a3));
+print(closure_(a3));
 

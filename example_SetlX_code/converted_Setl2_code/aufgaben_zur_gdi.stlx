@@ -11,7 +11,7 @@ compose := procedure(a1, a2) {
 	return {[[x, z], d1 + d2]: [[x, y1], d1] in a1, [[y2, z], d2] in a2 | y1 == y2};
 };
 
-closure := procedure(a) {
+closure_ := procedure(a) {
 	temp := a;
 	while (true) {
 		old_Temp := temp;
@@ -47,6 +47,6 @@ a1 := {[["a", "b"], 1], [["a", "c"], 2]};
 a2 := {[["b", "d"], 2], [["c", "e"], 3]};
 a3 := {[["a", "b"], 1], [["b", "c"], 2], [["c", "d"], 10]};
 print(compose(a1, a2));
-print(closure(a3));
+print(closure_(a3));
 print(toLists({1, 2, 3}));
 

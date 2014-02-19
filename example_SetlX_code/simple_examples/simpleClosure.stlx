@@ -2,7 +2,7 @@
 
 serialNumber := 0;
 
-factory := procedure(date, model, color, horsePower) {
+factory := closure(date, model, color, horsePower) {
     serialNumber += 1;
 
     // all cars produced in this factory are rated in kW
@@ -10,7 +10,7 @@ factory := procedure(date, model, color, horsePower) {
 
     // record how often a car stated its properties
     nrOfCalls := 0;
-    return procedure() {
+    return closure() {
         nrOfCalls += 1;
         return "$color$ $model$ with $powerOutput$ kW, produced on $date$, serial $serialNumber$; read $nrOfCalls$ times";
     };

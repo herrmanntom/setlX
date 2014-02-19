@@ -4,16 +4,18 @@
 package org.randoom.setlx.types;
 
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Iterator;
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
 /**
  * @author Patrick Robinson
  *
  */
-public class Matrix extends Value { // CollectionValue ?
+public class Matrix extends IndexedCollectionValue { // CollectionValue ?
     public Jama.Matrix value;
 
     public Matrix(Jama.Matrix v) {
@@ -55,8 +57,7 @@ public class Matrix extends Value { // CollectionValue ?
      */
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
-        // TODO Auto-generated method stub
-        // FIXME What the hell is this supposed to do?
+        // TODO does this work as it should?
         canonical(state, sb);
     }
 
@@ -162,5 +163,82 @@ public class Matrix extends Value { // CollectionValue ?
             sb.append("› ");
         }
         sb.append("»");
+    }
+
+    @Override
+    public Value getMember(int index) throws SetlException {
+        SetlList container = new SetlList(this.value.getColumnDimension());
+        for(double d : this.value.getArray()[index]) container.addMember(null, new SetlDouble(d));
+        return container;
+    }
+
+    @Override
+    public Iterator<Value> iterator() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Iterator<Value> descendingIterator() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addMember(State state, Value element) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public SetlBoolean containsMember(State state, Value element) throws IncompatibleTypeException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Value firstMember() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Value getMember(State state, Value index) throws SetlException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Value lastMember() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Value maximumMember(State state) throws SetlException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Value minimumMember(State state) throws SetlException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeMember(Value element) throws IncompatibleTypeException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Value removeFirstMember() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Value removeLastMember() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int size() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public MatchResult matchesTerm(State state, Value other) throws SetlException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

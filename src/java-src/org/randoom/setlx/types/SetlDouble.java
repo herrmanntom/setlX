@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
@@ -56,7 +55,7 @@ public class SetlDouble extends NumberValue {
      */
     public  final static SetlDouble    PI                     = SetlDouble.valueOfNoEx(Math.PI);
 
-    private SetlDouble(final Double d) {
+    public SetlDouble(final Double d) {
         this.doubleValue = d;
     }
 

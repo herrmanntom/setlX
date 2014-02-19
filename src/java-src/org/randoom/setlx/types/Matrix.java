@@ -5,6 +5,8 @@ package org.randoom.setlx.types;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -168,7 +170,7 @@ public class Matrix extends IndexedCollectionValue { // CollectionValue ?
     @Override
     public Value getMember(int index) throws SetlException {
         SetlList container = new SetlList(this.value.getColumnDimension());
-        for(double d : this.value.getArray()[index]) container.addMember(null, new SetlDouble(d));
+        for(double d : this.value.getArray()[index - 1]) container.addMember(null, new SetlDouble(d));
         return container;
     }
 
@@ -194,17 +196,30 @@ public class Matrix extends IndexedCollectionValue { // CollectionValue ?
 
     @Override
     public Value firstMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return this.getMember(1);
+        } catch (SetlException ex) {
+            // TODO do something
+            // Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @Override
     public Value getMember(State state, Value index) throws SetlException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(!(index instanceof NumberValue)) throw new MatrixException("Given index is not a number.");
+        return this.getMember(((NumberValue)index).toJIntValue(state));
     }
 
     @Override
     public Value lastMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return this.getMember(this.value.getRowDimension());
+        } catch (SetlException ex) {
+            // TODO do something
+            // Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 
     @Override
@@ -234,7 +249,7 @@ public class Matrix extends IndexedCollectionValue { // CollectionValue ?
 
     @Override
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.value.getRowDimension();
     }
 
     @Override

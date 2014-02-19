@@ -4,6 +4,7 @@
 package org.randoom.setlx.types;
 
 import java.util.Arrays;
+import java.util.Objects;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.utilities.State;
@@ -152,14 +153,14 @@ public class Matrix extends Value { // CollectionValue ?
     @Override
     public void canonical(final State state, final StringBuilder sb) {
         double[][] a = value.getArray();
-        sb.append("[");
+        sb.append("«");
         for(double[] a1 : a) {
-            sb.append(" [");
+            sb.append(" ‹");
             for(double a2 : a1) {
                 sb.append(" ").append(a2).append(" ");
             }
-            sb.append("] ");
+            sb.append("› ");
         }
-        sb.append("]");
+        sb.append("»");
     }
 }

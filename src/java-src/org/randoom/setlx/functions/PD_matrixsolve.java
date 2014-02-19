@@ -24,8 +24,8 @@ public class PD_matrixsolve extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if(!(args.get(0) instanceof Matrix)) throw new MatrixException("The first parameter is not a matrix.");
-        if(!(args.get(1) instanceof Matrix)) throw new MatrixException("The second parameter is not a matrix.");
+        if(!(args.get(0) instanceof Matrix)) throw new MatrixException("The first parameter needs to be a matrix.");
+        if(!(args.get(1) instanceof Matrix)) throw new MatrixException("The second parameter needs to be a matrix.");
         // TODO check conditions
         Matrix A = (Matrix)args.get(0);
         Matrix B = (Matrix)args.get(1);

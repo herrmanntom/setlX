@@ -117,8 +117,9 @@ public class Matrix extends IndexedCollectionValue { // CollectionValue ?
         return null;
     }
     
-    public Matrix inverse(final State state) {
-        return new Matrix(this.value.inverse());
+    public Matrix transpose() {
+        // TODO map this to !
+        return new Matrix(this.value.transpose());
     }
     
     public Matrix power(final State state, final int exponent) throws SetlException {

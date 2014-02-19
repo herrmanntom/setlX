@@ -3,24 +3,19 @@
  */
 package org.randoom.setlx.types;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 /**
  * @author Patrick Robinson
  *
  */
 public class Matrix extends Value { // CollectionValue ?
+    public Jama.Matrix value;
 
-    Jama.Matrix value;
-
-    private Matrix(Jama.Matrix v) {
+    public Matrix(Jama.Matrix v) {
         super();
         this.value = v;
     }
@@ -100,26 +95,58 @@ public class Matrix extends Value { // CollectionValue ?
     
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
+        if(multiplier instanceof Matrix) {
+            Matrix b = (Matrix)multiplier;
+            // TODO check conditions
+            return new Matrix(this.value.times(b.value));
+        } else if(multiplier instanceof NumberValue) {
+            NumberValue n = (NumberValue)multiplier;
+            return new Matrix(this.value.times(n.toJDoubleValue(null)));
+        } else {
+            throw new MatrixException("Summand is not of type Matrix.");
+        }
+    }
+    
+    @Override
+    public Value productAssign(final State state, final Value multiplier) throws MatrixException {
         // TODO
         return null;
     }
     
-    @Override
-    public Value productAssign(final State state, final Value multiplier) throws SetlException {
-        // TODO
-        return null;
+    public Matrix inverse(final State state) {
+        return new Matrix(this.value.inverse());
+    }
+    
+    public Matrix power(final State state, final int exponent) throws SetlException {
+        // TODO exponent == 0 ?
+        // TODO check condition
+        Jama.Matrix base = exponent < 0 ? this.value.inverse() : this.value;
+        Jama.Matrix result = base;
+        for(int i = 1 /* No mistake, should be one */; i < Math.abs(exponent); i++) result = result.times(base);
+        return new Matrix(result);
     }
     
     @Override
-    public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
-        // TODO
-        return null;
+    public Value sum(final State state, final Value summand) throws MatrixException {
+        if(summand instanceof Matrix) {
+            Matrix b = (Matrix)summand;
+            // TODO check conditions
+            return new Matrix(this.value.plus(b.value));
+        } else {
+            throw new MatrixException("Summand is not of type Matrix.");
+        }
     }
     
     @Override
-    public Value sumAssign(final State state, final Value summand) throws SetlException {
-        // TODO
-        return null;
+    public Value sumAssign(final State state, final Value summand) throws MatrixException {
+        if(summand instanceof Matrix) {
+            Matrix b = (Matrix)summand;
+            // TODO check conditions
+            this.value.plusEquals(b.value);
+            return this;
+        } else {
+            throw new MatrixException("Summand is not of type Matrix.");
+        }
     }
     
     @Override

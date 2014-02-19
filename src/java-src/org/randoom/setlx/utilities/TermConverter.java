@@ -33,8 +33,8 @@ import java.util.Map;
 
 public class TermConverter {
 
-    private static Map<String, Method> sExprConverters      = new HashMap<String, Method>();
-    private static Map<String, Method> sStatementConverters = new HashMap<String, Method>();
+    private static Map<String, Method> sExprConverters      = new HashMap<>();
+    private static Map<String, Method> sStatementConverters = new HashMap<>();
 
     public static Value valueTermToValue(final Value value) throws TermConversionException {
         if (value instanceof Term) {

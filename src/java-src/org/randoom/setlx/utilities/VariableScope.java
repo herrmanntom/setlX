@@ -349,13 +349,7 @@ public class VariableScope {
         // also check in scopes of surrounding objects
         if (thisObject != null) {
             final Value now = thisObject.getObjectMemberUnCloned(state, var);
-            if (now != Om.OM) { // already saved there
-                if (now.equalTo(value)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+            if (now != Om.OM) return now.equalTo(value);
         }
         // to get here, `var' is not stored in any upper scope up to outerScope
         bindings.put(var, value);
@@ -406,7 +400,7 @@ public class VariableScope {
      * @return                 Map of all reachable bindings.
      */
     /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final HashMap<String, SetlClass> classDefinitions) {
-        final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
+        final SetlHashMap<Value> allVars = new SetlHashMap<>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
         if (classDefinitions != null) {
@@ -455,7 +449,6 @@ public class VariableScope {
                 for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
                     try {
                         newScope.storeValue(entry.getKey(), entry.getValue());
-                        continue;
                     } catch (final IllegalRedefinitionException e) {
                         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
                     }

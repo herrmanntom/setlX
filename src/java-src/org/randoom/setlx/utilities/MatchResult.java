@@ -20,7 +20,7 @@ public class MatchResult {
      */
     public MatchResult(final boolean matches) {
         this.matches        = matches;
-        this.varBindings    = new HashMap<String, Value>();
+        this.varBindings    = new HashMap<>();
     }
 
     /**

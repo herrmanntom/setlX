@@ -50,7 +50,7 @@ public class SetlX {
 
         String              expression   = null;  // expression to be evaluated using -ev option
         String              statement    = null;  // code to be executed when using -ex option
-        final List<String>  files        = new ArrayList<String>();
+        final List<String>  files        = new ArrayList<>();
 
         String              libraryPath  = null;
         if ((libraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
@@ -177,7 +177,7 @@ public class SetlX {
         }
 
         // interactive == no files and no code supplied as parameters
-        interactive = (files.size() == 0 && expression == null && statement == null);
+        interactive = (files.isEmpty() && expression == null && statement == null);
         // display help if options specify to execute both files and a single expression/statement
         help        = help || (! interactive && files.size() > 0 && (expression != null || statement != null));
 
@@ -273,7 +273,7 @@ public class SetlX {
         } else if (statement != null) {
             nPrograms += 1;
         }
-        final List<Block> programs = new ArrayList<Block>(nPrograms);
+        final List<Block> programs = new ArrayList<>(nPrograms);
 
         // parse content of all files
         try {

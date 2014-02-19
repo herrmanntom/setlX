@@ -75,7 +75,7 @@ public class Procedure extends Value {
         this.parameters = parameters;
         this.statements = statements;
         if (closure != null) {
-            this.closure = new HashMap<String, Value>(closure);
+            this.closure = new HashMap<>(closure);
         } else {
             this.closure = null;
         }
@@ -128,9 +128,9 @@ public class Procedure extends Value {
         final List<String> usedVariables
     ) {
         /* first collect and optimize the inside */
-        final List<String> innerBoundVariables   = new ArrayList<String>();
-        final List<String> innerUnboundVariables = new ArrayList<String>();
-        final List<String> innerUsedVariables    = new ArrayList<String>();
+        final List<String> innerBoundVariables   = new ArrayList<>();
+        final List<String> innerUnboundVariables = new ArrayList<>();
+        final List<String> innerUsedVariables    = new ArrayList<>();
 
         // add all parameters to bound
         for (final ParameterDef def : parameters) {

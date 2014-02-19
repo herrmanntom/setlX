@@ -30,9 +30,9 @@ public abstract class CodeFragment {
      * contained inside it.
      */
     public final void optimize() {
-        final List<String> boundVariables   = new ArrayList<String>();
-        final List<String> unboundVariables = new ArrayList<String>();
-        final List<String> usedVariables    = new ArrayList<String>();
+        final List<String> boundVariables   = new ArrayList<>();
+        final List<String> unboundVariables = new ArrayList<>();
+        final List<String> usedVariables    = new ArrayList<>();
         collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 

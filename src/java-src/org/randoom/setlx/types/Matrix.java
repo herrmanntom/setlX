@@ -5,8 +5,6 @@ package org.randoom.setlx.types;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;

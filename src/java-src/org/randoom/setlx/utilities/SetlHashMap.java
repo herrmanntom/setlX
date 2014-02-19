@@ -38,7 +38,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> {
 
     public static SetlHashMap<Value> valueToSetlHashMap(final Value value) throws TermConversionException {
         if (value instanceof SetlSet) {
-            final SetlHashMap<Value> result = new SetlHashMap<Value>();
+            final SetlHashMap<Value> result = new SetlHashMap<>();
             for (final Value val : (SetlSet) value) {
                 if (val instanceof SetlList) {
                     final SetlList binding = (SetlList) val;

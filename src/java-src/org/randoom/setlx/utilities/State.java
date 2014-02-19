@@ -106,8 +106,8 @@ public class State {
         this.envProvider                 = envProvider;
         parserErrorCapture               = null;
         parserErrorCount                 = 0;
-        loadedLibraries                  = new HashSet<String>();
-        classDefinitions                 = new HashMap<String, SetlClass>();
+        loadedLibraries                  = new HashSet<>();
+        classDefinitions                 = new HashMap<>();
         isHuman                          = false;
         isRandoomPredictable             = false;
         multiLineMode                    = false;
@@ -748,11 +748,7 @@ public class State {
     public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final String context) throws SetlException {
         final Value now = classDefinitions.get(var);
         if (now != null) {
-            if (now.equalTo(value)) {
-                return true;
-            } else {
-                return false;
-            }
+            return now.equalTo(value);
         }
         if (traceAssignments) {
             final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope);
@@ -783,7 +779,7 @@ public class State {
             }
         }
         if (traceAssignments) {
-            final HashMap<String, Value> assignments = new HashMap<String, Value>();
+            final HashMap<String, Value> assignments = new HashMap<>();
             variableScope.storeAllValuesTrace(scope, assignments);
             for (final Map.Entry<String, Value> entry : assignments.entrySet()) {
                 printTrace(entry.getKey(), entry.getValue(), context);

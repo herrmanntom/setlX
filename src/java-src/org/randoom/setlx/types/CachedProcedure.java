@@ -49,7 +49,7 @@ public class CachedProcedure extends Procedure {
      */
     public CachedProcedure(final List<ParameterDef> parameters, final Block statements) {
         super(parameters, statements);
-        cache     = new HashMap<SetlList, SoftReference<Value>>();
+        cache     = new HashMap<>();
         cacheHits = 0;
     }
 
@@ -93,7 +93,7 @@ public class CachedProcedure extends Procedure {
      * Remove references from cache, which where garbage collected.
      */
     private void validateCache() {
-        final ArrayList<SetlList> rmKeys = new ArrayList<SetlList>();
+        final ArrayList<SetlList> rmKeys = new ArrayList<>();
         for (final SetlList key : cache.keySet()) {
             final SoftReference<Value> valueRef = cache.get(key);
             if (valueRef == null || valueRef.get() == null) {
@@ -150,7 +150,7 @@ public class CachedProcedure extends Procedure {
         }
 
         // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(size);
+        final ArrayList<Value> values = new ArrayList<>(size);
         final SetlList         key    = new SetlList(size);
         for (int i = 0; i < size; ++i) {
             if (parameters.get(i).getType() == ParameterDef.READ_WRITE) {
@@ -183,7 +183,7 @@ public class CachedProcedure extends Procedure {
                 // call function
                 cachedResult = callAfterEval(state, args, values, object);
                 // put value into cache
-                cache.put(key, new SoftReference<Value>(cachedResult));
+                cache.put(key, new SoftReference<>(cachedResult));
                 // return value
                 return cachedResult.clone();
 
@@ -244,7 +244,7 @@ public class CachedProcedure extends Procedure {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList            paramList   = (SetlList) term.firstMember();
-            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            final List<ParameterDef>  parameters  = new ArrayList<>(paramList.size());
             for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(v));
             }

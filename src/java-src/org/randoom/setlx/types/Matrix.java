@@ -149,6 +149,29 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     }
     
     @Override
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
+        if(subtrahend instanceof Matrix) {
+            Matrix b = (Matrix)subtrahend;
+            // TODO check conditions
+            return new Matrix(this.value.minus(b.value));
+        } else {
+            throw new MatrixException("Subtrahend is not of type Matrix.");
+        }
+    }
+    
+    @Override
+    public Value differenceAssign(final State state, final Value subtrahend) throws SetlException {
+        if(subtrahend instanceof Matrix) {
+            Matrix b = (Matrix)subtrahend;
+            // TODO check conditions
+            this.value.minusEquals(b.value);
+            return this;
+        } else {
+            throw new MatrixException("Subtrahend is not of type Matrix.");
+        }
+    }
+    
+    @Override
     public void canonical(final State state, final StringBuilder sb) {
         double[][] a = value.getArray();
         sb.append("«");

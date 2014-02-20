@@ -55,7 +55,7 @@ public class SetlDouble extends NumberValue {
      */
     public  final static SetlDouble    PI                     = SetlDouble.valueOfNoEx(Math.PI);
 
-    public SetlDouble(final Double d) {
+    private SetlDouble(final Double d) {
         this.doubleValue = d;
     }
 

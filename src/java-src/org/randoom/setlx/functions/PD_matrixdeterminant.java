@@ -22,8 +22,11 @@ public class PD_matrixdeterminant extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if(!(args.get(0) instanceof Matrix)) throw new MatrixException("The parameter needs to be a matrix.");
-        // TODO are there conditions for determinant?
-        return new SetlDouble(((Matrix)args.get(0)).value.det());
+        if(args.get(0) instanceof Matrix) {
+            // TODO are there conditions for determinant?
+            return SetlDouble.valueOf(((Matrix)args.get(0)).value.det());
+        } else {
+            throw new MatrixException("The parameter needs to be a matrix.");
+        }
     }
 }

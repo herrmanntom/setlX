@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -194,15 +195,32 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         for(double d : this.value.getArray()[index - 1]) container.addMember(null, SetlDouble.valueOf(d));
         return container;
     }
+    
+    private SetlList toSetlList() {
+        SetlList container = new SetlList(this.value.getRowDimension());
+        for(double[] a : this.value.getArray()) {
+            SetlList row = new SetlList(this.value.getColumnDimension());
+            for(double b : a) {
+                try {
+                    row.addMember(null, SetlDouble.valueOf(b));
+                } catch (UndefinedOperationException ex) {
+                    // TODO wtf?
+                }
+            }
+            container.addMember(null, row);
+        }
+        return container;
+    }
 
     @Override
     public Iterator<Value> iterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        return this.toSetlList().iterator();
     }
 
     @Override
     public Iterator<Value> descendingIterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.toSetlList().descendingIterator();
     }
 
     @Override

@@ -59,7 +59,7 @@ public class SetlList extends IndexedCollectionValue {
      * @param initialCapacity Number of elements to store without resizing.
      */
     public SetlList(final int initialCapacity) {
-        this.list     = new ArrayList<Value>(initialCapacity);
+        this.list     = new ArrayList<>(initialCapacity);
         this.isCloned = false; // new lists are not a clone
     }
 

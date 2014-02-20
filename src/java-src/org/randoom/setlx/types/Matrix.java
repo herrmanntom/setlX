@@ -1,7 +1,10 @@
 package org.randoom.setlx.types;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -188,7 +191,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     @Override
     public Value getMember(int index) throws SetlException {
         SetlList container = new SetlList(this.value.getColumnDimension());
-        for(double d : this.value.getArray()[index - 1]) container.addMember(null, new SetlDouble(d));
+        for(double d : this.value.getArray()[index - 1]) container.addMember(null, SetlDouble.valueOf(d));
         return container;
     }
 
@@ -206,10 +209,45 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     public void addMember(State state, Value element) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    private static double epsilon = 1E-5;
+    
     @Override
     public SetlBoolean containsMember(State state, Value element) throws IncompatibleTypeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(element instanceof CollectionValue) {
+            CollectionValue c = (CollectionValue)element;
+            double[] v = new double[c.size()];
+            int i = 0;
+            for(Value subelem : c) {
+                try {
+                    v[i] = subelem.toJDoubleValue(state);
+                } catch (SetlException ex) {
+                    return SetlBoolean.FALSE;
+                }
+                i++;
+            }
+            for(double[] a : this.value.getArray()) {
+                if(Arrays.equals(a,v)) {
+                    return SetlBoolean.TRUE;
+                }
+            }
+            return SetlBoolean.FALSE;
+        } else if(element instanceof NumberValue) {
+            try {
+                double v = ((NumberValue)element).toJDoubleValue(state);
+                for(double[] a : this.value.getArray()) {
+                    for(double b : a) {
+                        if(Math.abs(b - v) < epsilon) {
+                            return SetlBoolean.TRUE;
+                        }
+                    }
+                }
+            } catch (SetlException ex) {
+                // TODO Do something more?
+                return SetlBoolean.FALSE;
+            }
+        }
+        return SetlBoolean.FALSE;
     }
 
     @Override
@@ -219,14 +257,17 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         } catch (SetlException ex) {
             // TODO do something
             // Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            return Om.OM;
         }
     }
 
     @Override
     public Value getMember(State state, Value index) throws SetlException {
-        if(!(index instanceof NumberValue)) throw new MatrixException("Given index is not a number.");
-        return this.getMember(((NumberValue)index).toJIntValue(state));
+        if((index instanceof NumberValue)) {
+            return this.getMember(((NumberValue)index).toJIntValue(state));
+        } else {
+            throw new MatrixException("Given index is not a number.");
+        }
     }
 
     @Override
@@ -236,18 +277,30 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         } catch (SetlException ex) {
             // TODO do something
             // Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
+            return Om.OM;
         }
     }
 
     @Override
     public Value maximumMember(State state) throws SetlException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        double momentaryMax = Double.NEGATIVE_INFINITY;
+        for(double[] a : this.value.getArray()) {
+            for(double b : a) {
+                if(b > momentaryMax) momentaryMax = b;
+            }
+        }
+        return SetlDouble.valueOf(momentaryMax);
     }
 
     @Override
     public Value minimumMember(State state) throws SetlException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        double momentaryMin = Double.POSITIVE_INFINITY;
+        for(double[] a : this.value.getArray()) {
+            for(double b : a) {
+                if(b < momentaryMin) momentaryMin = b;
+            }
+        }
+        return SetlDouble.valueOf(momentaryMin);
     }
 
     @Override

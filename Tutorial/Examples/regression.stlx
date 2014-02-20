@@ -1,0 +1,43 @@
+mean := procedure(xs) {
+    return +/ xs / #xs;
+};
+
+squaredSum := procedure(xs) {
+    xMean := mean(xs);
+    return +/ [ (x-xMean)**2 : x in xs ];
+};
+
+sumOfProds := procedure(xs, ys) {
+    xMean := mean(xs);
+    yMean := mean(ys);
+    return +/ [ (x-xMean)*(y-yMean) : [x,y] in xs >< ys ];
+};
+
+beta := procedure(xs, ys) {
+    xMean := mean(xs);
+    yMean := mean(ys);
+    return sumOfProds(xs, ys) / squaredSum(xs);
+};
+
+alpha := procedure(xs, ys) {
+    xMean := mean(xs);
+    yMean := mean(ys);
+    return yMean - beta(xs, ys) * xMean;
+};
+
+test := procedure(lower, upper) {
+    a := 1; 
+    b := 2;
+    n := lower;
+    while (n < upper) {
+        resetRandom();
+        print("n = $n$");
+        xs := [a + i * (b-a) / n                  : i in [0 .. n]];
+        ys := [a + i * (b-a) / n - 0.5 + random() : i in [0 .. n]];
+        print("regression  coefficient beta  = ", beta( xs, ys));
+        print("regression  coefficient alpha = ", alpha(xs, ys));
+        n *= 2;
+    }
+};
+
+test(10, 100);

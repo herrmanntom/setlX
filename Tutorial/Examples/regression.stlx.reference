@@ -1,0 +1,12 @@
+n = 10
+regression  coefficient beta  = 1.173139109382876
+regression  coefficient alpha = -0.163750600517919
+n = 20
+regression  coefficient beta  = 1.0470499111096618
+regression  coefficient alpha = -0.033766744274152494
+n = 40
+regression  coefficient beta  = 0.9696546140542909
+regression  coefficient alpha = 0.08588488420480411
+n = 80
+regression  coefficient beta  = 1.0356855466628982
+regression  coefficient alpha = 0.005385847731355753

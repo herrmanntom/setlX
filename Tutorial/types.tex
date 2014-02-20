@@ -984,43 +984,65 @@ relations.  Then the
 \texttt{r2} can be computed as
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{\{ [x,z] : [x,y] in r1, [y,z] in r2 \}}.
-\\[0.2cm] 
-There are two infix operators for lists: The first is the operator ``\texttt{+}'' which
-concatenates its arguments.  For example
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{[1 .. 3] + [5 .. 10];}
-\\[0.2cm]
-yields 
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{[1, 2, 3, 5, 6, 7, 8, 9, 10]}.
-\\[0.2cm]
-The second infix operator is ``\texttt{*}''.  While the first argument of this operator is
-a list, the second  needs to be an integer.  An expression of the form
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{l * n}
-\\[0.2cm]
-concatenates \texttt{n} copies of the list \texttt{l}.  Therefore, the expression
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{[1, 2, 3] * 3}
-\\[0.2cm]
-yields the result
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{[1, 2, 3, 1, 2, 3, 1, 2, 3]}.
-\\[0.2cm]
-The cardinality operator ``\texttt{\#}'' works for lists the same way it works for sets:
-It returns the number of elements.  For example 
-\\[0.2cm]
-\hspace*{1.3cm}
-\texttt{\# [ 7, 4, 5 ];}
-\\[0.2cm]
-yields the result $3$.
+\texttt{\{ [x,z]:$\;$[x,y] in r1, [y,z] in r2 \}}.
 
+\subsection{Operators on Lists}
+Currently, there are four operators for lists.  These are discussed below.
+\begin{enumerate}
+\item The operator ``\texttt{+}'' concatenates its arguments.  For example
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1 .. 3] + [5 .. 10];}
+      \\[0.2cm]
+      yields 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1, 2, 3, 5, 6, 7, 8, 9, 10]}.
+\item The operator ``\texttt{*}'' takes a list as its first argument,  while the second argument
+      needs to be an integer.  An expression of the form 
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{l * n}
+      \\[0.2cm]
+      concatenates \texttt{n} copies of the list \texttt{l}.  Therefore, the expression
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1, 2, 3] * 3}
+      \\[0.2cm]
+      yields the result
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1, 2, 3, 1, 2, 3, 1, 2, 3]}.
+\item The cardinality operator ``\texttt{\#}'' is a prefix operator that works for lists the same
+      way it works for sets, i.e.~it returns the number of elements of the list given as argument.  For example,
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{\# [ 7, 4, 5 ];}
+      \\[0.2cm]
+      yields the result $3$.
+\item The infix operator ``\texttt{><}'' takes two lists $l_1$ and $l_2$.  The length of $l_1$ has
+      to be the same as the length of $l_2$.  The operator \emph{zips} the lists given as arguments
+      to produce a list of pairs, where the first component of each  pair is from the list $l_1$,
+      while the second component is the corresponding element from the list $l_2$.  For example, the
+      expression      
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[1, 2, 3] >< ["a", "b", "c"]};
+      \\[0.2cm]
+      returns the list
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{[[1, "a"], [2, "b"], [3, "c"]]}.
+      \\[0.2cm]
+      Formally, the behaviour of the operator ``\texttt{><}'' on lists $l_1$ and $l_2$ is specified as follows:
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{$l_1$ >< $l_2$ == [ [$l_1$[$i$], $l_2$[$i$]]:$\;i$ in [1$\;$..$\;$\#$l_1$] ]}.
+      \\[0.2cm]
+      Here, \texttt{$l$[$i$]} denotes the $i$-th element of the list $l$.
+\end{enumerate}
+
+\subsection{Extracting Elements from a List}
 As the elements of a list are ordered, it is possible to extract an element from a list with respect
 to its position.  In general, for a list $l$ and a positive natural number $n$, the expression
 \\[0.2cm]

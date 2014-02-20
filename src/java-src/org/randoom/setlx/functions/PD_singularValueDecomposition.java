@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.randoom.setlx.functions;
 
 import Jama.SingularValueDecomposition;
@@ -17,8 +11,7 @@ import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
 /**
- *
- * @author autarch
+ * @author Patrick Robinson
  */
 public class PD_singularValueDecomposition extends PreDefinedProcedure {
     public final static PreDefinedProcedure DEFINITION = new PD_singularValueDecomposition();

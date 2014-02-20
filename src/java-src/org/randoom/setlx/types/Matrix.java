@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.randoom.setlx.types;
 
 import java.util.Arrays;
@@ -13,9 +10,8 @@ import org.randoom.setlx.utilities.State;
 
 /**
  * @author Patrick Robinson
- *
  */
-public class Matrix extends IndexedCollectionValue { // CollectionValue ?
+public class Matrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
     public Jama.Matrix value;
 
     public Matrix(Jama.Matrix v) {

@@ -731,7 +731,7 @@ public class SetlString extends IndexedCollectionValue {
 
             return result;
         } catch (final PatternSyntaxException pse) {
-            final LinkedList<String> errors = new LinkedList<String>();
+            final LinkedList<String> errors = new LinkedList<>();
             errors.add("Error while parsing regex-pattern '" + p + "' {");
             errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
             errors.add("}");

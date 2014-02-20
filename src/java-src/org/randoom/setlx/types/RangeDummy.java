@@ -41,11 +41,7 @@ public class RangeDummy extends Value {
 
     @Override
     public boolean equalTo(final Value v) {
-        if (v == RD) {
-            return true;
-        } else {
-            return false;
-        }
+        return v == RD;
     }
 
     private final static int initHashCode = RangeDummy.class.hashCode();

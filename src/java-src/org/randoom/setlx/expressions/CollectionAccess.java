@@ -55,7 +55,7 @@ public class CollectionAccess extends AssignableExpression {
             );
         }
         // evaluate all arguments
-        final List<Value> args = new ArrayList<Value>(this.args.size());
+        final List<Value> args = new ArrayList<>(this.args.size());
         for (final Expr arg: this.args) {
             if (arg != null) {
                 args.add(arg.eval(state).clone());
@@ -76,7 +76,7 @@ public class CollectionAccess extends AssignableExpression {
             }
 
             // evaluate all arguments
-            final List<Value> args = new ArrayList<Value>(this.args.size());
+            final List<Value> args = new ArrayList<>(this.args.size());
             for (final Expr arg: this.args) {
                 if (arg != null) {
                     args.add(arg.eval(state).clone());
@@ -194,7 +194,7 @@ public class CollectionAccess extends AssignableExpression {
         } else {
             final Expr        lhs     = TermConverter.valueToExpr(term.firstMember());
             final SetlList    argsLst = (SetlList) term.lastMember();
-            final List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
+            final List<Expr>  args    = new ArrayList<>(argsLst.size());
             for (final Value v : argsLst) {
                 args.add(TermConverter.valueToExpr(v));
             }

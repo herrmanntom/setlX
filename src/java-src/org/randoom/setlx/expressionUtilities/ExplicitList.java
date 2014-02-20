@@ -121,6 +121,7 @@ public class ExplicitList extends CollectionBuilder {
      * @param state          Current state of the running setlX program.
      * @param collection     Collection to assign from.
      * @param outerScope     Root scope of scopes to check.
+     * @param context
      * @return               True, if variable is undefined or already equal the the value to be set.
      * @throws SetlException Thrown in case of some (user-) error.
      */
@@ -183,7 +184,7 @@ public class ExplicitList extends CollectionBuilder {
     }
 
     public static ExplicitList collectionValueToExplicitList(final CollectionValue value) throws TermConversionException {
-        final List<Expr> exprList = new ArrayList<Expr>(value.size());
+        final List<Expr> exprList = new ArrayList<>(value.size());
         for (final Value v : value) {
             exprList.add(TermConverter.valueToExpr(v));
         }

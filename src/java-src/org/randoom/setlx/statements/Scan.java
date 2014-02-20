@@ -210,7 +210,7 @@ public class Scan extends Statement {
 
         /* The Variable in this statement get assigned temporarily.
            Collect it into a temporary list and remove it again before returning. */
-        final List<String> tempAssigned = new ArrayList<String>();
+        final List<String> tempAssigned = new ArrayList<>();
         if (posVar != null) {
             posVar.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }
@@ -221,12 +221,12 @@ public class Scan extends Statement {
         // and last branch is an default-branch
         List<String> boundHere = null;
         for (final MatchAbstractBranch br : branchList) {
-            final List<String> boundTmp = new ArrayList<String>(boundVariables);
+            final List<String> boundTmp = new ArrayList<>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
-                boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
+                boundHere = new ArrayList<>(boundTmp.subList(preBound, boundTmp.size()));
             } else {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
@@ -304,7 +304,7 @@ public class Scan extends Statement {
                 final Expr                          expr        = TermConverter.valueToExpr(term.getMember(2));
 
                 final SetlList                      branches    = (SetlList) term.lastMember();
-                final List<MatchAbstractScanBranch> branchList  = new ArrayList<MatchAbstractScanBranch>(branches.size());
+                final List<MatchAbstractScanBranch> branchList  = new ArrayList<>(branches.size());
                 for (final Value v : branches) {
                     branchList.add(MatchAbstractScanBranch.valueToMatchAbstractScanBranch(v));
                 }

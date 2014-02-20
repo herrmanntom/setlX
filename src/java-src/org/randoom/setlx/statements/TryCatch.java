@@ -132,7 +132,7 @@ public class TryCatch extends Statement {
         } else {
             final Block                           block       = TermConverter.valueToBlock(term.firstMember());
             final SetlList                        branches    = (SetlList) term.lastMember();
-            final List<TryCatchAbstractBranch>    branchList  = new ArrayList<TryCatchAbstractBranch>(branches.size());
+            final List<TryCatchAbstractBranch>    branchList  = new ArrayList<>(branches.size());
             for (final Value v : branches) {
                 branchList.add(TryCatchAbstractBranch.valueToTryCatchAbstractBranch(v));
             }

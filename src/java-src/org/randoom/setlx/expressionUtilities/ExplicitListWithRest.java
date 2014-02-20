@@ -139,7 +139,7 @@ public class ExplicitListWithRest extends CollectionBuilder {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList   exprs    = (SetlList) term.firstMember();
-            final List<Expr> exprList = new ArrayList<Expr>(exprs.size());
+            final List<Expr> exprList = new ArrayList<>(exprs.size());
             for (final Value v : exprs) {
                 exprList.add(TermConverter.valueToExpr(v));
             }

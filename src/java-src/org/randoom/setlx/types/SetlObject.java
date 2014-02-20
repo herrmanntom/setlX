@@ -48,7 +48,6 @@ import org.randoom.setlx.functions.PD_permutations;
 import org.randoom.setlx.functions.PD_pow;
 import org.randoom.setlx.functions.PD_range;
 import org.randoom.setlx.functions.PD_rational;
-import org.randoom.setlx.functions.PD_double;
 import org.randoom.setlx.functions.PD_reverse;
 import org.randoom.setlx.functions.PD_round;
 import org.randoom.setlx.functions.PD_shuffle;
@@ -132,7 +131,7 @@ public class SetlObject extends Value {
      */
     private void separateFromOriginal() {
         if (isCloned) {
-            final SetlHashMap<Value> members = new SetlHashMap<Value>();
+            final SetlHashMap<Value> members = new SetlHashMap<>();
             for (final Entry<String, Value> entry: this.members.entrySet()) {
                 members.put(entry.getKey(), entry.getValue().clone());
             }
@@ -144,7 +143,7 @@ public class SetlObject extends Value {
     private Value overload(final State  state,
                            final String member
     ) throws SetlException {
-        final ArrayList<Expr> args = new ArrayList<Expr>();
+        final ArrayList<Expr> args = new ArrayList<>();
         return overloadQuerry(state, member).call(state, args);
     }
 
@@ -158,7 +157,7 @@ public class SetlObject extends Value {
                            final String member,
                            final Value  other
     ) throws SetlException {
-        final ArrayList<Expr> args = new ArrayList<Expr>();
+        final ArrayList<Expr> args = new ArrayList<>();
         args.add(new ValueExpr(other));
         return overloadQuerry(state, member).call(state, args);
     }
@@ -520,11 +519,7 @@ public class SetlObject extends Value {
 
     public boolean isObjectMemberDefinied(final String variable) {
         final Value val = members.get(variable);
-        if (val != null && val != Om.OM) {
-            return true;
-        } {
-            return false;
-        }
+        return val != null && val != Om.OM;
     }
 
     private Value getObjectMemberUnClonedUnSafe(final State state, final String variable) throws SetlException {
@@ -572,7 +567,7 @@ public class SetlObject extends Value {
                 return;
             }
         } catch (final SetlException e) {
-            sb.append("Error during execution of member '" + STR + "': " + e.getMessage());
+            sb.append("Error during execution of member '").append(STR).append("': ").append(e.getMessage());
         }
 
         canonical(state, sb, tabs);

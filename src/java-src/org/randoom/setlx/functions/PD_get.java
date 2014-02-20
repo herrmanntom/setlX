@@ -27,7 +27,7 @@ public class PD_get extends PreDefinedProcedure {
         Value          inputValue = Om.OM;
         String         input      = null;
         String         prompt     = null;
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             prompt = ": ";
         } else {
             prompt = "";

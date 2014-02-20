@@ -144,7 +144,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                     runtimePattern = pttrn;
                 }
             } catch (final PatternSyntaxException pse) {
-                final LinkedList<String> errors = new LinkedList<String>();
+                final LinkedList<String> errors = new LinkedList<>();
                 errors.add("Error while parsing regex-pattern '" + p + "' {");
                 errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
                 errors.add("}");
@@ -192,7 +192,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<String> tempAssigned = new ArrayList<String>();
+        final List<String> tempAssigned = new ArrayList<>();
         if (assignTo != null) {
             assignTo.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }

@@ -4,7 +4,6 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
-import java.text.FieldPosition;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.StreamTokenizer;
@@ -68,7 +67,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    @serial row dimension.
    @serial column dimension.
    */
-   private int m, n;
+   private final int m, n;
 
 /* ------------------------
    Constructors
@@ -157,6 +156,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
    /** Construct a matrix from a copy of a 2-D array.
    @param A    Two-dimensional array of doubles.
+     * @return 
    @exception  IllegalArgumentException All rows must have the same length
    */
 
@@ -170,23 +170,20 @@ public class Matrix implements Cloneable, java.io.Serializable {
             throw new IllegalArgumentException
                ("All rows must have the same length.");
          }
-         for (int j = 0; j < n; j++) {
-            C[i][j] = A[i][j];
-         }
+          System.arraycopy(A[i], 0, C[i], 0, n);
       }
       return X;
    }
 
    /** Make a deep copy of a matrix
+     * @return 
    */
 
    public Matrix copy () {
       Matrix X = new Matrix(m,n);
       double[][] C = X.getArray();
       for (int i = 0; i < m; i++) {
-         for (int j = 0; j < n; j++) {
-            C[i][j] = A[i][j];
-         }
+          System.arraycopy(A[i], 0, C[i], 0, n);
       }
       return X;
    }
@@ -213,9 +210,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    public double[][] getArrayCopy () {
       double[][] C = new double[m][n];
       for (int i = 0; i < m; i++) {
-         for (int j = 0; j < n; j++) {
-            C[i][j] = A[i][j];
-         }
+          System.arraycopy(A[i], 0, C[i], 0, n);
       }
       return C;
    }
@@ -241,9 +236,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    public double[] getRowPackedCopy () {
       double[] vals = new double[m*n];
       for (int i = 0; i < m; i++) {
-         for (int j = 0; j < n; j++) {
-            vals[i*n+j] = A[i][j];
-         }
+          System.arraycopy(A[i], 0, vals, i*n, n);
       }
       return vals;
    }
@@ -980,6 +973,8 @@ public class Matrix implements Cloneable, java.io.Serializable {
      * whitespace, all the elements for each row appear on a single line,
      * the last row is followed by a blank line.
    @param input the input stream.
+     * @return 
+     * @throws java.io.IOException
    */
 
    public static Matrix read (BufferedReader input) throws java.io.IOException {
@@ -995,7 +990,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
       tokenizer.wordChars(0,255);
       tokenizer.whitespaceChars(0, ' ');
       tokenizer.eolIsSignificant(true);
-      java.util.Vector<Double> vD = new java.util.Vector<Double>();
+      java.util.Vector<Double> vD = new java.util.Vector<>();
 
       // Ignore initial empty lines
       while (tokenizer.nextToken() == StreamTokenizer.TT_EOL);
@@ -1009,7 +1004,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
       double row[] = new double[n];
       for (int j=0; j<n; j++)  // extract the elements of the 1st row.
          row[j]=vD.elementAt(j).doubleValue();
-      java.util.Vector<double[]> v = new java.util.Vector<double[]>();
+      java.util.Vector<double[]> v = new java.util.Vector<>();
       v.addElement(row);  // Start storing rows instead of columns.
       while (tokenizer.nextToken() == StreamTokenizer.TT_WORD) {
          // While non-empty lines

@@ -28,7 +28,7 @@ public class PD_read extends PreDefinedProcedure {
         Value          inputValue = Om.OM;
         String         input      = null;
         String         prompt     = null;
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             prompt = ": ";
         } else {
             prompt = "";

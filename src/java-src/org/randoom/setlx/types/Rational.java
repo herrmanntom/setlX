@@ -223,11 +223,7 @@ public class Rational extends NumberValue {
         }
         for (int i = 0; i < SOME_PRIMES.length; ++i) {
             if (nominator.mod(SOME_PRIMES[i]).equals(BigInteger.ZERO)) {
-                if (nominator.equals(SOME_PRIMES[i])) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return nominator.equals(SOME_PRIMES[i]);
             } else if (SOME_PRIMES_SQUARED[i].compareTo(nominator) >= 0) {
                 return true;
             }
@@ -343,10 +339,7 @@ public class Rational extends NumberValue {
         if (a.compareTo(RAT_BIG) > 0) {
             return false; // too big
         }
-        if (a.compareTo(RAT_SMALL) < 0) {
-            return false; // too small
-        }
-        return true;
+        return a.compareTo(RAT_SMALL) >= 0;
     }
 
     /* native type conversions */

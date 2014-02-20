@@ -97,7 +97,7 @@ public class SetlList extends IndexedCollectionValue {
     private void separateFromOriginal() {
         if (isCloned) {
             final ArrayList<Value> original = this.list;
-            this.list = new ArrayList<Value>(original.size());
+            this.list = new ArrayList<>(original.size());
             for (final Value v: original) {
                 this.list.add(v.clone());
             }
@@ -232,7 +232,7 @@ public class SetlList extends IndexedCollectionValue {
         } else if (summand instanceof SetlString) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else if (summand instanceof CollectionValue) {
-            final ArrayList<Value> list = new ArrayList<Value>(this.list.size() + summand.size());
+            final ArrayList<Value> list = new ArrayList<>(this.list.size() + summand.size());
             for (final Value v: this.list) {
                 list.add(v.clone());
             }
@@ -285,7 +285,7 @@ public class SetlList extends IndexedCollectionValue {
      * @return      Collection of all contained members.
      */
     public SetlSet collect(final State state) {
-        final HashMap<Value, Integer> map        = new HashMap<Value, Integer>();
+        final HashMap<Value, Integer> map        = new HashMap<>();
               Integer                 occurences = null;
         for (final Value v : list) {
             occurences = map.get(v);
@@ -521,7 +521,7 @@ public class SetlList extends IndexedCollectionValue {
             return Om.OM;
         }
 
-        final ArrayList<Value> p = new ArrayList<Value>(list);
+        final ArrayList<Value> p = new ArrayList<>(list);
 
         // Inspired by permutation from
         // http://code.google.com/p/algorithms-java/source/browse/trunk/src/main/java/com/google/code/Permutations.java?r=3
@@ -614,7 +614,7 @@ public class SetlList extends IndexedCollectionValue {
         // mark this list to be clone
         isCloned = true;
         // create reversed clone of this list
-        final ArrayList<Value>  reverse = new ArrayList<Value>(size);
+        final ArrayList<Value>  reverse = new ArrayList<>(size);
         for (int i = size - 1; i >= 0; --i) {
             reverse.add(list.get(i));
         }
@@ -675,7 +675,7 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlList sort(final State state) {
-        final ArrayList<Value> list = new ArrayList<Value>(this.list);
+        final ArrayList<Value> list = new ArrayList<>(this.list);
         Collections.sort(list);
         return new SetlList(list);
     }

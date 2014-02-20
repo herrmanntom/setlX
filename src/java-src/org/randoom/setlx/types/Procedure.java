@@ -145,7 +145,6 @@ public class Procedure extends Value {
         // will be read to create the closure for this procedure
         for (final String var : innerUnboundVariables) {
             if (var == Variable.PREVENT_OPTIMIZATION_DUMMY) {
-                continue;
             } else if (boundVariables.contains(var)) {
                 usedVariables.add(var);
             } else {
@@ -182,7 +181,7 @@ public class Procedure extends Value {
             }
 
             // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<Value>(size);
+            final ArrayList<Value> values = new ArrayList<>(size);
             for (final Expr arg : args) {
                 values.add(arg.eval(state));
             }
@@ -352,7 +351,7 @@ public class Procedure extends Value {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList            paramList   = (SetlList) term.firstMember();
-            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            final List<ParameterDef>  parameters  = new ArrayList<>(paramList.size());
             for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(v));
             }

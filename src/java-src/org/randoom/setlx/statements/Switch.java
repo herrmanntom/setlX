@@ -62,12 +62,12 @@ public class Switch extends Statement {
         final int      preBound  = boundVariables.size();
         List<String> boundHere = null;
         for (final SwitchAbstractBranch br : branchList) {
-            final List<String> boundTmp = new ArrayList<String>(boundVariables);
+            final List<String> boundTmp = new ArrayList<>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
-                boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
+                boundHere = new ArrayList<>(boundTmp.subList(preBound, boundTmp.size()));
             } else {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
@@ -118,7 +118,7 @@ public class Switch extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList                    branches    = (SetlList) term.firstMember();
-            final List<SwitchAbstractBranch>  branchList  = new ArrayList<SwitchAbstractBranch>(branches.size());
+            final List<SwitchAbstractBranch>  branchList  = new ArrayList<>(branches.size());
             for (final Value v : branches) {
                 branchList.add(SwitchAbstractBranch.valueToSwitchAbstractBranch(v));
             }

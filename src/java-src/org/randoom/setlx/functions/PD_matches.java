@@ -80,7 +80,7 @@ public class PD_matches extends PreDefinedProcedure {
                 return SetlBoolean.valueOf(string.getUnquotedString().matches(patternStr.getUnquotedString()));
             }
         } catch (final PatternSyntaxException pse) {
-            final LinkedList<String> errors = new LinkedList<String>();
+            final LinkedList<String> errors = new LinkedList<>();
             errors.add("Error while parsing regex-pattern '" + patternStr.getUnquotedString() + "' {");
             errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
             errors.add("}");

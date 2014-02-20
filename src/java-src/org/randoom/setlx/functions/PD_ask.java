@@ -30,7 +30,7 @@ public class PD_ask extends PreDefinedProcedure {
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final String            question          = args.get(0).getUnquotedString();
         final Value             answersCollection = args.get(1);
-        final ArrayList<String> answers           = new ArrayList<String>();
+        final ArrayList<String> answers           = new ArrayList<>();
         if (answersCollection instanceof CollectionValue && ! (answersCollection instanceof SetlString)) {
             for (final Value answer : (CollectionValue) answersCollection) {
                 answers.add(answer.getUnquotedString());

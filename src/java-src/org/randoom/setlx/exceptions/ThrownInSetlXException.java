@@ -5,7 +5,7 @@ import org.randoom.setlx.types.Value;
 public class ThrownInSetlXException extends CatchableInSetlXException {
 
     private static final long   serialVersionUID = -6807457645603862681L;
-    private              Value  mValue;
+    private final        Value  mValue;
 
     public ThrownInSetlXException(Value value) {
         super("Uncaught user exception: " + value.toString());

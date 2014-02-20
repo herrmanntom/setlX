@@ -48,11 +48,7 @@ public class TryCatchLngBranch extends TryCatchAbstractBranch {
 
     @Override
     public boolean catches(final State state, final CatchableInSetlXException cise) {
-        if (cise instanceof ThrownInSetlXException) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(cise instanceof ThrownInSetlXException);
     }
 
     @Override

@@ -19,12 +19,12 @@ public class CholeskyDecomposition implements java.io.Serializable {
    /** Array for internal storage of decomposition.
    @serial internal array storage.
    */
-   private double[][] L;
+   private final double[][] L;
 
    /** Row and column dimension (square matrix).
    @serial matrix dimension.
    */
-   private int n;
+   private final int n;
 
    /** Symmetric and positive definite flag.
    @serial is symmetric and positive definite flag.

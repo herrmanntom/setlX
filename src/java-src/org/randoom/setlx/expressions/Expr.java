@@ -16,7 +16,7 @@ import java.util.List;
 public abstract class Expr extends CodeFragment {
 
     // collection of reusable replacement values
-    private final static HashMap<String, SoftReference<Value>> REPLACEMENTS = new HashMap<String, SoftReference<Value>>();
+    private final static HashMap<String, SoftReference<Value>> REPLACEMENTS = new HashMap<>();
 
     // false if expression is `static' (does not contain variables) and can be replaced by a static result
     private Boolean isNotReplaceable = true;
@@ -58,7 +58,7 @@ public abstract class Expr extends CodeFragment {
                 if (replacement == null) { // not found
                     replacement = evaluate(state);
                     synchronized (REPLACEMENTS) {
-                        REPLACEMENTS.put(_this, new SoftReference<Value>(replacement));
+                        REPLACEMENTS.put(_this, new SoftReference<>(replacement));
                     }
                 }
 
@@ -141,7 +141,7 @@ public abstract class Expr extends CodeFragment {
             // or if all used variables are not prebound
             else {
                 final List<String> prebound     = boundVariables.subList(0, preBoundSize);
-                final List<String> usedHere     = new ArrayList<String>(usedVariables.subList(preUsedSize, usedVariables.size()));
+                final List<String> usedHere     = new ArrayList<>(usedVariables.subList(preUsedSize, usedVariables.size()));
                 final int          usedHereSize = usedHere.size();
 
                 // check if any prebound variables could have been used

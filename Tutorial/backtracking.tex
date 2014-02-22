@@ -46,7 +46,7 @@ Typically, exception handling is necessary when  processing user input.  Conside
 shown in Figure \ref{fig:bisection-exception.stlx}.  The function \texttt{findZero} implements
 the bisection method which can be used to find the zero of a function.  The first argument of
 \texttt{findZero} is a function $f$, while the arguments $a$ and $b$ are the left and right
-boundary of the intervall where the zero of $f$ is sought.  Therefore, $a$ has to be less than
+boundary of the interval where the zero of $f$ is sought.  Therefore, $a$ has to be less than
 $b$.  Finally, for the bisection algorithm implemented in the function \texttt{findZero} to
 work, the function $f$ needs to have a sign change in the interval $[a,b]$.  
 
@@ -401,7 +401,7 @@ are as follows.
       queens puzzle.   In this case, it is the function \texttt{solve} that backtracks
       in line 11.  This happens when the \texttt{for} loop in line 5 is exhausted and we
       have not found a solution.  Then
-      control  reaches line 11, where the backtrack statment  signals that the list \texttt{l}
+      control  reaches line 11, where the backtrack statement  signals that the list \texttt{l}
       could not be completed into a solution to the \texttt{n} queens puzzle.
 \item The function \texttt{testNext} in line 13 has two parameters:  The first parameter is the list
       of already positioned queens while the second parameter specifies the column of the next
@@ -409,7 +409,7 @@ are as follows.
       diagonal as any of the queens in \texttt{l}.
       
       In order to understand the calculation in line 15 we have to realize that the
-      cartesian coordinates of the queens in column \texttt{x} are 
+      Cartesian coordinates of the queens in column \texttt{x} are 
       \\[0.2cm]
       \hspace*{1.3cm}
       $\pair(\texttt{\#l}+1, \mathtt{x})$.

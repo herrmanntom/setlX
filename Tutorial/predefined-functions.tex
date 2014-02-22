@@ -432,14 +432,14 @@ The following functions support terms.
       $\mathtt{parse}(s)$ 
       \\[0.2cm]
       tries to parse the string $s$ into a term.  In order to visualize the structure of
-      this term,  the function \texttt{canonical} disussed above can be used.      
+      this term,  the function \texttt{canonical} discussed above can be used.      
 \item \texttt{parseStatements}:  Given a string $s$, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
       $\mathtt{parseStatements}(s)$ 
       \\[0.2cm]
       tries to parse the string $s$ as a sequence of \setlx\ statements.   In order to visualize the structure of
-      this term,  the function \texttt{canonical} disussed above can be used.  For
+      this term,  the function \texttt{canonical} discussed above can be used.  For
       example, the expression
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -468,7 +468,7 @@ The function \setlx\ provides the following mathematical functions.
       \\[0.2cm]
       \hspace*{1.3cm}
       $0 \leq a \,\texttt{\symbol{37}}\, b$ \quad and \quad $a \,\texttt{\symbol{37}}\, b < b$.
-\item The operator ``\texttt{\symbol{92}}'' computes integer divsion of its arguments.
+\item The operator ``\texttt{\symbol{92}}'' computes integer division of its arguments.
       For two integers $a$ and $b$, this is defined such that 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -592,9 +592,9 @@ The function \setlx\ provides the following mathematical functions.
       \texttt{sin(mathConst(\symbol{34}pi\symbol{34})/2);}
       \\[0.2cm]
       yields $1.0$.
-\item The functions $\texttt{atan2}(y,x)$ and $\texttt{hypot}(x,y)$ are usefull when converting 
-      a point $\langle x, y \rangle$ from cartesian coordinates into polar coordinates.  If a
-      point $p$ has cartesian coordinates $\langle x, y \rangle$ and polar coordinates 
+\item The functions $\texttt{atan2}(y,x)$ and $\texttt{hypot}(x,y)$ are useful when converting 
+      a point $\langle x, y \rangle$ from Cartesian coordinates into polar coordinates.  If a
+      point $p$ has Cartesian coordinates $\langle x, y \rangle$ and polar coordinates 
       $\langle r, \varphi \rangle$, then 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -612,7 +612,7 @@ The function \setlx\ provides the following mathematical functions.
       \texttt{exp(1)}
       \\[0.2cm]
       yields $2.718281828459046$.
-\item $\texttt{expm1}(x)$ computes $e^x - 1$.  This function is usefull when computing values of
+\item $\texttt{expm1}(x)$ computes $e^x - 1$.  This function is useful when computing values of
       $e^x$ where the absolute value of $x$ is very small.
 \item \texttt{log($x$)} computes the natural logarithm of $x$.  This function is the
       inverse function of the exponential function \texttt{exp}.  Therefore, we have
@@ -687,7 +687,7 @@ The function \setlx\ provides the following mathematical functions.
 \item \texttt{isProbablePrime} tests whether its argument is a prime number.  The test
       used is probabilistic.  If the function tested is indeed  prime, the test 
       will succeed.  If the function is not prime, the predicate \texttt{isProbablePrime}
-      neverthelsee might return \texttt{true}.  However, the probability that this happens
+      nevertheless might return \texttt{true}.  However, the probability that this happens
       is less than $2^{-30}$.
 
       It should be noticed that the implementation of \texttt{isProbablePrime} is
@@ -771,7 +771,7 @@ The function \texttt{rnd} has a number of different uses.
       \texttt{rnd($n-1$) * a / ($b$ * ($n-1$))}.
       \\[0.2cm]
       Therefore, if $a$ is positive, the number returned is a random number between $0$ and the
-      fraction $a/b$ and there will be $n$ different possiblities, so the parameter $n$ is used to
+      fraction $a/b$ and there will be $n$ different possibilities, so the parameter $n$ is used to
       control the granularity of the results.  For example,  the expression 
       \\[0.2cm]
       \hspace*{1.3cm}
@@ -788,7 +788,7 @@ The function \texttt{rnd} has a number of different uses.
       \hspace*{1.3cm}
       $a/100$ \quad such that $a \in \{0, 1, \cdots 100\}$.
       \\[0.2cm]
-      Of course, the user will never see a result of the form $50/100$ as this is immmediately
+      Of course, the user will never see a result of the form $50/100$ as this is immediately
       reduced to $1/2$. 
 
       The second parameter also works if the first argument is a natural number.  For example, the
@@ -1039,7 +1039,7 @@ The function \texttt{loadLibrary}  is called as
 \hspace*{1.3cm}
 $\mathtt{loadLibrary}(\textsl{file})$.
 \\[0.2cm]
-Here, \textsl{file} has to be a string that denotes a file name, \underline{excludin}g  the extension
+Here, \textsl{file} has to be a string that denotes a file name, \underline{excluding} the extension
 of the file.  This file is assumed to be located in the directory that is specified by the
 environment variable 
 \\[0.2cm]
@@ -1066,7 +1066,7 @@ Here, \texttt{flag} should be an expression that evaluates to a  Boolean value. 
 function either activates or deactivates \emph{multi line mode}.  If multi line mode is
 activated, then in a shell the next input expression is only evaluated after  the user
 hits the return key twice.  Multi line mode makes it possible to enter statements spanning
-serveral lines interactively.  However, normally this mode is inconvenient, as it requires
+several lines interactively.  However, normally this mode is inconvenient, as it requires
 the user to press the return key twice in order to evaluate an expression.  Therefore, by
 default multi line mode is not active.  Multi line mode can also be activated using the option 
 ``\texttt{--multiLineMode}'' when starting \setlx.
@@ -1098,7 +1098,7 @@ The function \texttt{print}  is called as
 $\mathtt{print}(a_1, \cdots, a_n)$.
 \\[0.2cm]
 It takes any number of arguments and prints these arguments onto the standard output
-stream.  After all arguments are
+stream. After all arguments are
 printed, this function appends a newline to the output.
 
 \subsection{\texttt{printErr}}

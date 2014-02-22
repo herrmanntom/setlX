@@ -2,7 +2,7 @@
 \href{http://en.wikipedia.org/wiki/Regular_expression}{\emph{Regular expressions}}
 are a very powerful tool when processing strings.
 Therefore, most modern programming languages support them.  \setlx\ is no exception.  
-As the \setlx\ interpreter is impemented in \textsl{Java}, the syntax of the regular expressions supported by
+As the \setlx\ interpreter is implemented in \textsl{Java}, the syntax of the regular expressions supported by
 \setlx\ is the same as the syntax of regular expressions in \textsl{Java}.  Therefore, 
 we will not to describe the syntax of regular expressions in this document.  The
 documentation of the \textsl{Java} class \texttt{java.util.regex.Pattern}, which can
@@ -132,7 +132,7 @@ enclosed in parentheses.  These parts are collected in a list of the form
 $[s, p_1, \cdots, p_n]$.
 \\[0.2cm]
 The first element $s$ of this list is the string that matched the regular expression.  The
-remaning elements $p_i$ correspond to the different parts of the regular expression: $p_1$
+remaining elements $p_i$ correspond to the different parts of the regular expression: $p_1$
 corresponds to the first group of parentheses, $p_2$ corresponds to the second group, and
 in general $p_i$ corresponds to the $i$-th group.  In line 3 this list is the matched
 against the pattern
@@ -219,7 +219,7 @@ in line 6 matches comments that start with the string ``\texttt{/*}'' and end wi
 string ``\texttt{*/}''.  This regular expression is quite difficult to read for two
 reasons:
 \begin{enumerate}
-\item We have to preceed the symbol ``\texttt{*}'' with a backslash in order to prevent it
+\item We have to precede the symbol ``\texttt{*}'' with a backslash in order to prevent it
       from being interpreted as a quantifier.
 \item We have to ensure that the string between  ``\texttt{/*}'' and ``\texttt{*/}'' does
       not contain the substring ``\texttt{*/}''.  The regular expression
@@ -228,10 +228,10 @@ reasons:
       \verb"([^*]|\*+[^*/])*"
       \\[0.2cm]
       specifies this substring:  This substring can have an arbitrary number of parts
-      that satisfy the follwing specification:
+      that satisfy the following specification:
       \begin{enumerate}
       \item A part may consists of any character different from
-            the character ``\texttt{*}''.  This is specificed by the regular expression
+            the character ``\texttt{*}''.  This is specified by the regular expression
             \verb"'[^*]'".
       \item A part may be a sequence of ``\texttt{*}'' characters
             that is neither followed by the character ``\texttt{/}'' nor the character
@@ -385,7 +385,7 @@ argument.  This string is interpreted as the name of a file.  In line 2, the fun
 \texttt{readFile} reads this file.  This function produces a list of strings.  Each string
 corresponds to a single line of the file without the trailing line break.  The function
 \texttt{join} joins all these lines into a single string.  As the second argument of
-\texttt{join} is the string ``\texttt{\symbol{92}n}'', a newline is put inbetween the
+\texttt{join} is the string ``\texttt{\symbol{92}n}'', a newline is put in between the
 lines that are joined.  The end result is that the variable \texttt{s} contains the
 content of the file as one string.  This string is then scanned using the \texttt{scan}
 statement in line 3. The general form of a scan statement is as follows:
@@ -453,7 +453,7 @@ this, the mark can easily be calculated.
     Exam:  Algorithms
     
     Exercises:                1. 2. 3. 4. 5. 6.
-    Max Müller-Lüdenscheidt:  8  9  8  -  7  6
+    Max Mï¿½ller-Lï¿½denscheidt:  8  9  8  -  7  6
     Daniel Dumpfbacke:        4  4  2  0  -  -
     Susi Sorglos:             9 12 12  9  9  6
     Jacky Jeckle:             9 12 12  -  9  6
@@ -480,7 +480,7 @@ this, the mark can easily be calculated.
         state := "normal";
         scan(all) using map {
             regex '[a-zA-Z]+:.*\n': // skip header
-            regex '[A-Za-zäöüÄÖÜß]+\s[A-Za-zäöüÄÖÜß\-]+:' as [ name ]:
+            regex '[A-Za-zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]+\s[A-Za-zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\-]+:' as [ name ]:
                   nPrint(name);
                   state := "printBlanks";
                   sumPoints := 0;
@@ -552,7 +552,7 @@ program line by line.
       The white space matched by the regular expression is then printed and the state is switched back to
       \texttt{"normal"}.
 
-      In effect, this rule will guarantee that the output is formated in the same way as
+      In effect, this rule will guarantee that the output is formatted in the same way as
       the input, as the white space following a student's name is just copied to the output.
 \item Line 13 skips over white space that is encountered in state \texttt{"normal"}.
 \item The clause in line 15 recognizes strings that can be interpreted as numbers.  These
@@ -565,7 +565,7 @@ program line by line.
       is not undefined.  In this case, the mark for this student is computed and printed.
       Furthermore, the variable \texttt{sumPoints} is set back to the undefined status.
 \item Any empty lines are skipped in line 22.
-\item Finally, if we encounter any remaing character, then there is a syntax error
+\item Finally, if we encounter any remaining character, then there is a syntax error
       in our input file.  In this case, line 24 recognizes this character and
       produces an error message.  This error message
       specifies the line and column of the character.  This is done with the help of the
@@ -597,7 +597,7 @@ There are three predefined functions that use regular expressions.
       \hspace*{1.3cm}
       $\texttt{matches}(s, r, \mathtt{true})$.
       \\[0.2cm]
-      In this case, $r$ should be a regular expression containing serveral \emph{groups},
+      In this case, $r$ should be a regular expression containing several \emph{groups},
       i.e.~there should be several subexpressions in $r$ that are enclosed in
       parentheses.  Then, if $r$ matches $s$, the function \texttt{matches} returns a list
       of substrings of $s$.  The first element of this list is  the  string $s$,

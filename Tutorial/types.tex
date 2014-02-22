@@ -14,7 +14,7 @@ preconditions are satisfied, the command
 \texttt{setlX}
 \\[0.2cm]
  launches the interpreter.  The interpreter first prints the banner shown in Figure
-\ref{fig:banner}, followed by a promt``\texttt{=>}''.  Commands are typed after the prompt.    
+\ref{fig:banner}, followed by a prompt``\texttt{=>}''.  Commands are typed after the prompt.    
 If the command is an assignment or an expression, then it is terminated by a semicolon.
 However, complex commands like, for example, loops are not terminated by a semicolon.
 
@@ -28,12 +28,12 @@ However, complex commands like, for example, loops are not terminated by a semic
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
--====================================setlX=============================v2.2.0=-
+-====================================setlX=============================v2.2.2=-
 
 Welcome to the setlX interpreter!
 
 Open Source Software from http://setlX.randoom.org/
-(c) 2011-2013 by Herrmann, Tom
+(c) 2011-2014 by Herrmann, Tom
 
 You can display some helpful information by using '--help' as parameter when
 launching this program.
@@ -113,7 +113,7 @@ Typing
 \texttt{=>} \texttt{\textsl{1/3 + 2/5;}}
 \\[0.2cm]
 and then hitting the return key\footnote{
-In \setlx, statements can extend over many lines.  If the user intends to use multiline
+In \setlx, statements can extend over many lines.  If the user intends to use multi line
 statements, then she can start the interpreter using the commandline switch ``\texttt{--multiLineMode}''.
 In multi line mode, the return key needs to be hit twice to signal
 the end of the input.  Instead of using a commandline switch, the user can also issue the command
@@ -134,7 +134,7 @@ be entered.  Incidently, the last
 example shows the first data type supported by \setlx: rational numbers.  A rational number
 consists of a nominator and a denominator, both of which are integers.  \setlx\ takes care to
 ensure that nominator and denominator are always in lowest terms.  Furthermore, if the
-denominator has the value 1, only the nominator ist printed.  Therefore, after typing
+denominator has the value 1, only the nominator is printed.  Therefore, after typing
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{=>} \texttt{\textsl{1/3 + 2/3;}}
@@ -251,7 +251,7 @@ The output of the program is shown in Figure \ref{fig:sqrt-output}.
 \noindent
 The last program also demonstrates that \setlx\ supports strings.  In \setlx, any sequence of
 characters enclosed in double quote characters is a string.  For example, the 
-\emph{hello world progam} in \setlx\ is just 
+\emph{hello world program} in \setlx\ is just 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{=> \textsl{\symbol{34}Hello world!\symbol{34};}}
@@ -470,7 +470,7 @@ yields the result
 \hspace*{1.3cm}
 \texttt{Result: true}
 \\[0.2cm]
-since the order of elements in a set does not matter.  This behaviour can lead to
+since the order of elements in a set does not matter.  This behavior can lead to
 results that are sometimes surprising for the novice.  For example, the command
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -739,7 +739,7 @@ is used as an infix operator.  For a number $x$ and a set $s$, the expression
 \texttt{$x$ +/ s}
 \\[0.2cm]
 will insert $x$ into the set $s$ if the set $s$ is empty.  After that, it returns the sum of all elements in the
-resulting set.  This is usefull as the expression ``\texttt{+/ \{\}}'' is undefined.  So
+resulting set.  This is useful as the expression ``\texttt{+/ \{\}}'' is undefined.  So
 if we want to compute the sum of all numbers in $s$ but we are not sure whether $s$ might
 be empty, we can use the expression
 \\[0.2cm]
@@ -810,7 +810,7 @@ The expression given above computes the set of prime numbers smaller
 than $100$ correctly, as a prime number
 is any number bigger than 1 that is not a proper product.  Therefore, if we subtract the
 set of all proper products from the set of numbers, we get the set of prime numbers.
-Obviously, this is not an effcient way to calculate primes, but efficiency is not the
+Obviously, this is not an efficient way to calculate primes, but efficiency is not the
 point of this example.  It rather shows that \setlx\ is well suited to execute a
 mathematical definition as it is.
 
@@ -879,10 +879,10 @@ returns the \emph{first} element of the set $s$, while
 \\[0.2cm]
 yields the \emph{last} element.  Internally, sets are represented as ordered binary trees.  As long
 as the sets contain only numbers, the ordering of these numbers is the usual ordering on
-numbers. Therefore, in this case the \emph{element} is just the smalllest number and the 
+numbers. Therefore, in this case the \emph{element} is just the smallest number and the 
 \emph{last element} is the biggest number.  If the sets contain sets (or lists), these sets (or
 lists) are themselves compared lexicographically.  
-Things get a little bit more complicated if a set is heterogenous and contains both number and sets.
+Things get a little bit more complicated if a set is heterogeneous and contains both number and sets.
 Programs should not rely on the ordering implemented in these cases.
 
 For a given set $s$, the expression
@@ -902,7 +902,7 @@ The function $\mathtt{rnd}()$ is also supported for integer numbers, for example
 \\[0.2cm]
 computes a random natural number less or equal than $5$. Essentially it is equal to the expression
 \texttt{rnd(\{1..5\})}.  While we are at it: The function \texttt{random} computes pseudo-random
-values in the intervall $[0,1]$.  This function does not take an argument. Therefore, the expression
+values in the interval $[0,1]$.  This function does not take an argument. Therefore, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{random()}
@@ -919,7 +919,7 @@ can contain the same element multiple times.  For example
 \hspace*{1.3cm}
 \texttt{[1,4,7,2,4,7]}
 \\[0.2cm]
-is a typical list.  The easiest way to construct a list is by defining the list explicitely. For
+is a typical list.  The easiest way to construct a list is by defining the list explicitly. For
 example, the assignment
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -1130,7 +1130,7 @@ The variants
 \hspace*{1.3cm}
 \texttt{l[$a$..]} \quad and \quad \texttt{l[..$b$]}
 \\[0.2cm]
-also work with negative valus of $a$ and $b$.  For example, the expression
+also work with negative values of $a$ and $b$.  For example, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{$l$[..-2]}
@@ -1154,18 +1154,18 @@ yields the empty list.
 
 \pagebreak
 
-Lists of variables can be used on the left hand side of an assigment.  This feature enables the
+Lists of variables can be used on the left hand side of an assignment.  This feature enables the
 simultaneous assignment of variables.  The statement
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[x,y] := [1,2];}
 \\[0.2cm]
-sets the variable $x$ to 1 and $y$ to 2.  A more interesting example is the following assigment:
+sets the variable $x$ to 1 and $y$ to 2.  A more interesting example is the following assignment:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[y,x] := [x,y];}
 \\[0.2cm]
-This assigment swaps the values of $x$ and $y$.
+This assignment swaps the values of $x$ and $y$.
 
 \section{Pairs, Relations,  and Functions}
 In \textsc{Setl}, a pair of the form $\langle x, y \rangle$ is represented as the list $[x,y]$.
@@ -1651,8 +1651,8 @@ the \texttt{switch} construct will be given in the next chapter.
 Sometimes, the fact that a functor has to be written in uppercase is inconvenient.  For these cases,
 there is an escape mechanism:  If the functor of a term is preceded be the symbol
 ``\texttt{\symbol{64}}'', then it may start with a lowercase letter.  For example, if we want to
-have terms representing algebraic expressions involving trancendental functions, we could use the
-same function names that are also used in \setlx\ to denote the corresponding trancendental
+have terms representing algebraic expressions involving transcendental functions, we could use the
+same function names that are also used in \setlx\ to denote the corresponding transcendental
 functions.  For example, we can write
 \\[0.2cm]
 \hspace*{1.3cm}

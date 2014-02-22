@@ -14,7 +14,7 @@ However, this chapter is \underline{not} intended to be an introduction into obj
 programming.  Therefore,  we assume that the reader 
 has had some previous exposition to object oriented programming in a language like \textsl{Java} or
 \texttt{C++}.   In the first section of this chapter, we give some simple examples of class definitions.
-The programs presented in that section are not intended to compute anything usefull.  Their
+The programs presented in that section are not intended to compute anything useful.  Their
 purpose is just to demonstrate the basic features of object-oriented programming that are available
 in \textsc{SetlX}.  The second  and third subsection will then discuss more interesting examples:
 The second subsection shows how to implement weighted directed graphs via classes and the final
@@ -178,7 +178,7 @@ origin.
 \end{figure}
 
 At first, the fact that all methods are stored as part of the object \texttt{origin} might seem quite
-wastefull.  However, this fact enables us to change these methods dynamically.  For example, we can
+wasteful.  However, this fact enables us to change these methods dynamically.  For example, we can
 realize that the $x$ and $y$-coordinates of the object \texttt{origin} really are fixed.  Therefore,
 the getter methods can be 
 simplified and the setter methods can even be eliminated.  Assuming \texttt{origin} is defined as
@@ -721,8 +721,8 @@ The algorithm to compute all distances maintains two data structures.
       particular) are ordered lexicographically, the first element in the set \texttt{fringe} is 
       the pair $[d, u]$ with the smallest value of $d$, i.e.~the node $u$ in the set \texttt{fringe}
       that is closest to the \texttt{source}.
-\item \texttt{visited} is the set of nodes that habe been \emph{visited} in the following sense:
-      A node $x$ is said to have been \emph{visited} if all of the neighbours of $x$, i.e.~all nodes
+\item \texttt{visited} is the set of nodes that have been \emph{visited} in the following sense:
+      A node $x$ is said to have been \emph{visited} if all of the neighbors of $x$, i.e.~all nodes
       $y$ such that there is an edge $\pair(x,y)$ have been inspected and have been assigned a 
       distance.  It may be the case that the distance assigned to $y$ will improve later,
       but once a node $x$ is added to the set \texttt{visited}, the distance of $x$ from
@@ -869,7 +869,7 @@ numbers that can be accessed as
 \\[0.2cm]
 In order to work with complex numbers we need methods to perform the basic arithmetic operations.
 The class \texttt{complex} in Figure \ref{fig:complex.stlx} provides the implementation of functions
-to add, subtract, multiply, and divide complex numbers.  As these functions are not properies of a
+to add, subtract, multiply, and divide complex numbers.  As these functions are not properties of a
 specific complex number but rather apply to all complex numbers, these functions are defined as
 \emph{static members} of the class \texttt{complex}.  We refer to these functions as methods and discuss 
 them next.
@@ -932,7 +932,7 @@ them next.
       \end{enumerate}
       Furthermore, the operators ``\texttt{+/}'' and ``\texttt{*/}'' are reduced to applications of
       the operators ``\texttt{+}'' and ``\texttt{*}''.  Therefore, it does not make sense to
-      overload these operators on their own.  They are implictitly overloaded when the operators 
+      overload these operators on their own.  They are implicitly overloaded when the operators 
       ``\texttt{+}'' and ``\texttt{*}'' are overloaded.
       \begin{table}[!hbt]
         \centering
@@ -1074,7 +1074,7 @@ them next.
       \hspace*{1.3cm}
       $\log(z) = \log\bigl(r \cdot e^{\varphi \cdot i}\bigr) = \log r + \varphi \cdot i$.
 \item Line 30 defines a function that converts a complex number into a string.  If a class
-      $C$ provides a method with the name ``\texttt{f\_str}'', then everytime that an object
+      $C$ provides a method with the name ``\texttt{f\_str}'', then every time that an object
       of class $C$ needs to be converted into a string this function is called implicitly.
 
 \item Finally, we define the method \texttt{equals} in line 31.  This method is automatically

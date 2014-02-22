@@ -1,7 +1,7 @@
 \chapter{Statements}
 This section discusses the various possibilities to write statements and the 
 features offered by \setlx\ to steer the control flow in a program.
-\setlx\ supports the follwing means to control the order of statement execution:
+\setlx\ supports the following means to control the order of statement execution:
 \begin{enumerate}
 \item branching statements like \texttt{if-then-else}, \texttt{switch}, and \texttt{match},
 \item the looping statements \texttt{for} and \texttt{while} together with \texttt{break} and
@@ -143,7 +143,7 @@ The meaning of the symbols used in this grammar rule are as follows:
 \end{enumerate}
 Note that the definition of a function has to be terminated by the symbol ``\texttt{;}''.
 
-There is a variant syntax for definining function which is appropriate if the definition of the
+There is a variant syntax for defining a function which is appropriate if the definition of the
 function is just a single expression.  For example, the function mapping $x$ to the square
 $x*x$ can be defined as
 \\[0.2cm]
@@ -206,7 +206,7 @@ Of course, it is much easier to build the list of the first 10 squares using the
 The function $\textsl{fib}: \mathbb{N} \rightarrow
 \mathbb{N}$ computing the
 \href{http://en.wikipedia.org/wiki/Fibonacci_numbers}{\emph{Fibonacci numbers}}
-is defined recursivly by the following set of recurrence equations:
+is defined recursively by the following set of recurrence equations:
 \\[0.2cm]
 \hspace*{1.3cm}
 $\textsl{fib}(0) = 0$, \quad
@@ -531,7 +531,7 @@ where the syntactical variable \textsl{caseList} is defined via the rule:
 $\textsl{caseList} \;\rightarrow\; (\squoted{case}\; \textsl{boolExpr} \quoted{:} \textsl{block})^* 
  (\squoted{default} \quoted{:} \textsl{block})?$
 \\[0.2cm]
-Here, \textsl{boolExpr} is a boolean expression and \textsl{block} represents a sequence of statements.
+Here, \textsl{boolExpr} is a Boolean expression and \textsl{block} represents a sequence of statements.
 
 In contrast to the programming languages \texttt{C} and \textsl{Java}, the \texttt{switch}
 statement in \setlx\ doesn't have a fall through.  Therefore, we don't need a \texttt{break} statement in the
@@ -554,7 +554,7 @@ data types that support matching.  Matching has been implemented for the data ty
 
 \subsection{String Matching}
 Many algorithms that deal with a given string $s$ have to deal with two cases:  Either the string $s$ is
-empty or it is nonempty and has to be split into its first character $c$ and the remaning characters $r$,
+empty or it is nonempty and has to be split into its first character $c$ and the remaining characters $r$,
 that is we have 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -774,7 +774,7 @@ For this reason, we could also transform a set $s$ into a sorted list by using t
 \hspace*{1.3cm}
 \texttt{[] + s}.
 \\[0.2cm]
-In general, for a list $l$ and a set $s$ the exression \texttt{$l$ + $s$} creates a new
+In general, for a list $l$ and a set $s$ the expression \texttt{$l$ + $s$} creates a new
 list containing all elements of $l$.  Then, the elements of $s$ are appended to this
 list.  The expression \texttt{$s$ + $l$} creates a new set containing the elements of
 $s$.  Then, the elements of $l$ are inserted into this set.
@@ -1121,7 +1121,7 @@ of the guessing game.  The implementation works as follows:
 \item In line 2, the secret number is generated as a random number.  This is the number that has to
       be guessed by the player.
 \item The variable \texttt{count} is used to count the number of guessing attempts.
-      This variable is initialised in line 3.
+      This variable is initialized in line 3.
 \item Since the user has to enter at least one number, we use a \texttt{do-while} loop that loops as
       long as the user has not yet guessed the secret number.
 
@@ -1336,7 +1336,7 @@ Figure \ref{fig:relational-product.stlx} on page \pageref{fig:relational-product
 an implementation that is based on set comprehension.  It is a bit shorter as the test in
 line 4 of Figure \ref{fig:relational-product-for.stlx} is essentially integrated in the
 definition of the set in line 2 of Figure \ref{fig:relational-product.stlx}.
-In general, most occurences of \texttt{for} loops can be replaced by equivalent set
+In general, most occurrences of \texttt{for} loops can be replaced by equivalent set
 definitions. Our experience shows that the resulting code will be both shorter and easier to understand.
 
 

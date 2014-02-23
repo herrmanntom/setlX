@@ -17,7 +17,7 @@
 /src/java-src/org/randoom/setlx/grammar
 /src/build
 /src/*.jar
-/src_gfx/bin
+/src_gfx/build
 /src_gfx/*.jar
 /Tutorial/*.?00pk
 /Tutorial/*.aux

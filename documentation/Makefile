@@ -1,7 +1,7 @@
 pdf: developmentGuide.pdf manual.pdf
 
 %.pdf: %.dvi
-	dvipdf -sPAPERSIZE=a4 $<
+	dvipdf $<
 
 %.dvi: %.tex
 	latex $<

@@ -452,11 +452,11 @@ this, the mark can easily be calculated.
                 ]
     Exam:  Algorithms
     
-    Exercises:                1. 2. 3. 4. 5. 6.
-    Max M�ller-L�denscheidt:  8  9  8  -  7  6
-    Daniel Dumpfbacke:        4  4  2  0  -  -
-    Susi Sorglos:             9 12 12  9  9  6
-    Jacky Jeckle:             9 12 12  -  9  6
+    Exercises:          1. 2. 3. 4. 5. 6.
+    Magnus Peacemaker:   8  9  8  -  7  6
+    Dewy Dullamore:      4  4  2  0  -  -
+    Alice Airy:          9 12 12  9  9  6
+    Jacob James:         9 12 12  -  9  6
 \end{Verbatim}
 \vspace*{-0.3cm}
 \caption{Typical results from an exam.}
@@ -480,7 +480,7 @@ this, the mark can easily be calculated.
         state := "normal";
         scan(all) using map {
             regex '[a-zA-Z]+:.*\n': // skip header
-            regex '[A-Za-z�������]+\s[A-Za-z�������\-]+:' as [ name ]:
+            regex '[A-Za-z]+\s[A-Za-z\-]+:' as [ name ]:
                   nPrint(name);
                   state := "printBlanks";
                   sumPoints := 0;
@@ -537,9 +537,11 @@ program line by line.
       Line 3 therefore initializes the variable \texttt{state} to \texttt{"normal"}.
 \item The regular expression in line 5 is needed to skip the header of the file.  The
       header line can be recognized by the fact that there is a single word followed by a colon
-      `\texttt{:}''.   In contrast, the names of students always consist of two words.
-\item The regular expression in line 5 matches the name of a student. 
-      This name is printed and the number of points for this student is set to $0$.
+      ``\texttt{:}''.   In contrast, the names of students always consist of two words.
+\item The regular expression in line 5 matches the name of a student.  Notice, that we have used 
+      ``\texttt{\symbol{92}s}'' to specify the blank between the given name and the family name.
+      Furthermore, the family name is allowed to contain a hyphen ``\texttt{-}''.
+      The student's name is printed and the number of points for this student is set to $0$.
       Furthermore, when the name of a student is seen, the state is changed to the state
       \texttt{"printBlanks"}.
 \item The regular expression in line 10 matches the white space following the name of a

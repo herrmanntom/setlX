@@ -340,8 +340,11 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Value product(final State state, final Value multiplier)
-        throws IncompatibleTypeException, UndefinedOperationException, NumberToLargeException
+        throws IncompatibleTypeException, UndefinedOperationException, NumberToLargeException, SetlException
     {
+        if(multiplier instanceof Matrix) {
+            return ((Matrix)multiplier).product(state, this);
+        }
         if (multiplier instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) multiplier;
             return SetlDouble.valueOf(this.doubleValue * rhs.jDoubleValue());

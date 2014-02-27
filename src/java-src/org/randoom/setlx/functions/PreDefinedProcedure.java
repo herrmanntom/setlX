@@ -127,7 +127,7 @@ public abstract class PreDefinedProcedure extends Procedure {
                     // no error
                 } else {
                     final StringBuilder error = new StringBuilder();
-                    error.append("Procedure is defined with fewer parameters: ");
+                    error.append("'");
                     error.append(getName());
                     error.append("(");
                     final Iterator<ParameterDef> iter = parameters.iterator();
@@ -144,6 +144,15 @@ public abstract class PreDefinedProcedure extends Procedure {
                         }
                     }
                     error.append(")");
+                    error.append("' is defined with ");
+                    if (allowFewerParameters) {
+                        error.append("fewer parameters.");
+                    } else {
+                        error.append(parameters.size());
+                        error.append(" instead of ");
+                        error.append(argsSize);
+                        error.append(" parameters.");
+                    }
                     throw new IncorrectNumberOfParametersException(error.toString());
                 }
             } else if (paramSize > argsSize) {
@@ -152,7 +161,7 @@ public abstract class PreDefinedProcedure extends Procedure {
                     // no error
                 } else {
                     final StringBuilder error = new StringBuilder();
-                    error.append("Procedure is defined with more parameters: ");
+                    error.append("'");
                     error.append(getName());
                     error.append("(");
                     final Iterator<ParameterDef> iter = parameters.iterator();
@@ -169,6 +178,15 @@ public abstract class PreDefinedProcedure extends Procedure {
                         error.append("...");
                     }
                     error.append(")");
+                    error.append("' is defined with ");
+                    if (unlimitedParameters) {
+                        error.append("more parameters");
+                    } else {
+                        error.append(parameters.size());
+                        error.append(" instead of ");
+                        error.append(argsSize);
+                        error.append(" parameters.");
+                    }
                     throw new IncorrectNumberOfParametersException(error.toString());
                 }
             }

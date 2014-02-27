@@ -175,10 +175,15 @@ public class Procedure extends Value {
             this.object = null;
 
             if (parameters.size() != size) {
-                throw new IncorrectNumberOfParametersException(
-                    "'" + this + "' is defined with "+ parameters.size()+" instead of " +
-                    size + " parameters."
-                );
+                final StringBuilder error = new StringBuilder();
+                error.append("'");
+                appendStringWithoutStatements(state, error);
+                error.append("' is defined with ");
+                error.append(parameters.size());
+                error.append(" instead of ");
+                error.append(size);
+                error.append(" parameters.");
+                throw new IncorrectNumberOfParametersException(error.toString());
             }
 
             // evaluate arguments
@@ -309,6 +314,21 @@ public class Procedure extends Value {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        appendStringWithoutStatements(state, sb);
+        sb.append(" ");
+        statements.appendString(state, sb, tabs, /* brackets = */ true);
+    }
+
+    /**
+     * Appends a string representation of this Procedure to the given
+     * StringBuilder object, but does not append the statements inside the procedure.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toString(State)
+     *
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     */
+    protected void appendStringWithoutStatements(final State state, final StringBuilder sb) {
         object = null;
         sb.append("procedure(");
         final Iterator<ParameterDef> iter = parameters.iterator();
@@ -318,8 +338,7 @@ public class Procedure extends Value {
                 sb.append(", ");
             }
         }
-        sb.append(") ");
-        statements.appendString(state, sb, tabs, /* brackets = */ true);
+        sb.append(")");
     }
 
     /* term operations */

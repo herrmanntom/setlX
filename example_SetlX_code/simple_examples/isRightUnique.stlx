@@ -1,0 +1,24 @@
+isRightUnique := procedure(r) {
+    return forall([x,y1] in r | forall([x,y2] in r | y1 == y2));
+};
+
+test1 := procedure(r) {
+    print("isRightUnique($r$) = $isRightUnique(r)$");
+};
+
+isRightUniqueClumsy := procedure(r) {
+    return forall([x1,y1] in r | forall([x2,y2] in r | x1 == x2 => y1 == y2));
+};
+
+test2 := procedure(r) {
+    print("isRightUniqueClumsy($r$) = $isRightUniqueClumsy(r)$");
+};
+
+r1 := { [1,1], [2,2] };
+r2 := { [1,1], [1,2] };
+
+test1(r1);
+test1(r2);
+
+test2(r1);
+test2(r2);

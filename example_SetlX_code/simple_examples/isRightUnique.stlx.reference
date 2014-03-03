@@ -1,0 +1,4 @@
+isRightUnique({[1, 1], [2, 2]}) = true
+isRightUnique({[1, 1], [1, 2]}) = false
+isRightUniqueClumsy({[1, 1], [2, 2]}) = true
+isRightUniqueClumsy({[1, 1], [1, 2]}) = false

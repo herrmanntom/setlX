@@ -1,5 +1,7 @@
 package org.randoom.setlx.types;
 
+import Jama.EigenvalueDecomposition;
+import Jama.SingularValueDecomposition;
 import java.util.Arrays;
 import java.util.Iterator;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
@@ -341,5 +343,26 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     @Override
     public MatchResult matchesTerm(State state, Value other) throws SetlException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public SetlList eigenValues(State state) throws UndefinedOperationException {
+        // TODO check condition
+        EigenvalueDecomposition result = this.value.eig();
+        // return new Matrix(result.getD()); // TODO right result?
+        double[][] values = result.getD().getArray();
+        SetlList composition = new SetlList(values.length);
+        for(int i = 0; i < values.length; i++) {
+            composition.addMember(state, SetlDouble.valueOf(values[i][i]));
+        }
+        return composition;
+    }
+    
+    public SetlList singularValueDecomposition(State state) {
+        SingularValueDecomposition result = this.value.svd();
+        SetlList container = new SetlList(3);
+        container.addMember(state, new Matrix(result.getU())); // TODO right format?
+        container.addMember(state, new Matrix(result.getS())); // TODO Is this sigma? format?
+        container.addMember(state, new Matrix(result.getV())); // TODO right format?
+        return container;
     }
 }

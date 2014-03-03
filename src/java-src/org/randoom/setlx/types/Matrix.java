@@ -177,15 +177,15 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     @Override
     public void canonical(final State state, final StringBuilder sb) {
         double[][] a = value.getArray();
-        sb.append("«");
+        sb.append("<");
         for(double[] a1 : a) {
-            sb.append(" ‹");
+            sb.append(" [");
             for(double a2 : a1) {
                 sb.append(" ").append(a2).append(" ");
             }
-            sb.append("› ");
+            sb.append("] ");
         }
-        sb.append("»");
+        sb.append(">");
     }
 
     @Override

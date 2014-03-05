@@ -150,13 +150,13 @@ public abstract class PreDefinedProcedure extends Procedure {
             }
 
             // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<>(argsSize);
+            final ArrayList<Value> values = new ArrayList<Value>(argsSize);
             for (final Expr arg : args) {
                 values.add(arg.eval(state).clone());
             }
 
             // List of writeBack-values, which should be stored into the outer scope
-            final ArrayList<Value> writeBackVars = new ArrayList<>(paramSize);
+            final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
 
             // call predefined function (which may add writeBack-values to List)
             final Value result  = this.execute(state, values, writeBackVars);

@@ -131,7 +131,7 @@ public class SetlObject extends Value {
      */
     private void separateFromOriginal() {
         if (isCloned) {
-            final SetlHashMap<Value> members = new SetlHashMap<>();
+            final SetlHashMap<Value> members = new SetlHashMap<Value>();
             for (final Entry<String, Value> entry: this.members.entrySet()) {
                 members.put(entry.getKey(), entry.getValue().clone());
             }
@@ -143,7 +143,7 @@ public class SetlObject extends Value {
     private Value overload(final State  state,
                            final String member
     ) throws SetlException {
-        final ArrayList<Expr> args = new ArrayList<>();
+        final ArrayList<Expr> args = new ArrayList<Expr>();
         return overloadQuerry(state, member).call(state, args);
     }
 
@@ -157,7 +157,7 @@ public class SetlObject extends Value {
                            final String member,
                            final Value  other
     ) throws SetlException {
-        final ArrayList<Expr> args = new ArrayList<>();
+        final ArrayList<Expr> args = new ArrayList<Expr>();
         args.add(new ValueExpr(other));
         return overloadQuerry(state, member).call(state, args);
     }

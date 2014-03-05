@@ -22,8 +22,8 @@ public class WriteBackAgent {
      * @param size Number of write-back values used.
      */
     public WriteBackAgent(final int size) {
-        this.expressions = new ArrayList<>(size);
-        this.values      = new ArrayList<>(size);
+        this.expressions = new ArrayList<AssignableExpression>(size);
+        this.values      = new ArrayList<Value>(size);
     }
 
     /**

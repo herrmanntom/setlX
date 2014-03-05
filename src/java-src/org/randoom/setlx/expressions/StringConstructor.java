@@ -237,8 +237,8 @@ public class StringConstructor extends Expr {
             final SetlList            frags       = (SetlList) term.firstMember();
             final SetlList            exps        = (SetlList) term.lastMember();
 
-            final ArrayList<String>   fragments   = new ArrayList<>(frags.size());
-            final ArrayList<Expr>     exprs       = new ArrayList<>(exps.size());
+            final ArrayList<String>   fragments   = new ArrayList<String>(frags.size());
+            final ArrayList<Expr>     exprs       = new ArrayList<Expr>(exps.size());
 
             final Iterator<Value>     fIter       = frags.iterator();
             final Iterator<Value>     eIter       = exps.iterator();

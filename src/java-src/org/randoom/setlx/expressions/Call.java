@@ -143,7 +143,7 @@ public class Call extends Expr {
                 lhs = TermConverter.valueToExpr(lhsTerm);
             }
             final SetlList    argsLst = (SetlList) term.lastMember();
-            final List<Expr>  args    = new ArrayList<>(argsLst.size());
+            final List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
             for (final Value v : argsLst) {
                 args.add(TermConverter.valueToExpr(v));
             }

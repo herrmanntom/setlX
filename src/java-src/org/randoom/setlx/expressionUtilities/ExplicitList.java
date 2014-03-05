@@ -184,7 +184,7 @@ public class ExplicitList extends CollectionBuilder {
     }
 
     public static ExplicitList collectionValueToExplicitList(final CollectionValue value) throws TermConversionException {
-        final List<Expr> exprList = new ArrayList<>(value.size());
+        final List<Expr> exprList = new ArrayList<Expr>(value.size());
         for (final Value v : value) {
             exprList.add(TermConverter.valueToExpr(v));
         }

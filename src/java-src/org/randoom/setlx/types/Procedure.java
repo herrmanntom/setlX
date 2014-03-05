@@ -75,7 +75,7 @@ public class Procedure extends Value {
         this.parameters = parameters;
         this.statements = statements;
         if (closure != null) {
-            this.closure = new HashMap<>(closure);
+            this.closure = new HashMap<String, Value>(closure);
         } else {
             this.closure = null;
         }
@@ -128,9 +128,9 @@ public class Procedure extends Value {
         final List<String> usedVariables
     ) {
         /* first collect and optimize the inside */
-        final List<String> innerBoundVariables   = new ArrayList<>();
-        final List<String> innerUnboundVariables = new ArrayList<>();
-        final List<String> innerUsedVariables    = new ArrayList<>();
+        final List<String> innerBoundVariables   = new ArrayList<String>();
+        final List<String> innerUnboundVariables = new ArrayList<String>();
+        final List<String> innerUsedVariables    = new ArrayList<String>();
 
         // add all parameters to bound
         for (final ParameterDef def : parameters) {
@@ -181,7 +181,7 @@ public class Procedure extends Value {
             }
 
             // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<>(size);
+            final ArrayList<Value> values = new ArrayList<Value>(size);
             for (final Expr arg : args) {
                 values.add(arg.eval(state));
             }
@@ -351,7 +351,7 @@ public class Procedure extends Value {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList            paramList   = (SetlList) term.firstMember();
-            final List<ParameterDef>  parameters  = new ArrayList<>(paramList.size());
+            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
             for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(v));
             }

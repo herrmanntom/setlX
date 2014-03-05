@@ -111,7 +111,7 @@ public class LambdaDefinition extends Procedure {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList            paramList   = (SetlList) term.firstMember();
-            final List<ParameterDef>  parameters  = new ArrayList<>(paramList.size());
+            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
             for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(v));
             }

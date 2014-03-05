@@ -299,7 +299,7 @@ public class Term extends IndexedCollectionValue {
     // viral operation
     @Override
     public Term collectionAccess(final State state, final List<Value> args) {
-        final List<Expr> argExprs = new ArrayList<>(args.size());
+        final List<Expr> argExprs = new ArrayList<Expr>(args.size());
         for (final Value v : args) {
             argExprs.add(TermConverter.valueToExpr(v));
         }

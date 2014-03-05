@@ -108,7 +108,7 @@ public class SetlClass extends Value {
     public SetlClass clone() {
         HashSet<String> initVars = null;
         if (this.initVars != null) {
-            initVars = new HashSet<>(this.initVars);
+            initVars = new HashSet<String>(this.initVars);
         }
         Block staticBlock = null;
         if (getStaticBlock() != null) {
@@ -116,11 +116,11 @@ public class SetlClass extends Value {
         }
         HashSet<String> staticVars = null;
         if (this.staticVars != null) {
-            staticVars = new HashSet<>(this.staticVars);
+            staticVars = new HashSet<String>(this.staticVars);
         }
         SetlHashMap<Value> staticDefs = null;
         if (this.staticDefs != null) {
-            staticDefs = new SetlHashMap<>();
+            staticDefs = new SetlHashMap<Value>();
             for (final Entry<String, Value> entry: this.staticDefs.entrySet()) {
                 staticDefs.put(entry.getKey(), entry.getValue().clone());
             }
@@ -135,9 +135,9 @@ public class SetlClass extends Value {
         final List<String> usedVariables
     ) {
         /* collect and optimize the inside */
-        final List<String> innerBoundVariables   = new ArrayList<>();
-        final List<String> innerUnboundVariables = new ArrayList<>();
-        final List<String> innerUsedVariables    = new ArrayList<>();
+        final List<String> innerBoundVariables   = new ArrayList<String>();
+        final List<String> innerUnboundVariables = new ArrayList<String>();
+        final List<String> innerUsedVariables    = new ArrayList<String>();
 
         // add all parameters to bound
         for (final ParameterDef def : parameters) {
@@ -151,8 +151,8 @@ public class SetlClass extends Value {
             getStaticBlock().collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
 
-        this.initVars   = new HashSet<>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
-        this.staticVars = new HashSet<>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+        this.initVars   = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+        this.staticVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
     }
 
     /* function call */
@@ -177,7 +177,7 @@ public class SetlClass extends Value {
         }
 
         // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<>(nArguments);
+        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
         for (final Expr arg : args) {
             values.add(arg.eval(state));
         }
@@ -199,7 +199,7 @@ public class SetlClass extends Value {
             }
         }
 
-        final SetlHashMap<Value> members     = new SetlHashMap<>();
+        final SetlHashMap<Value> members     = new SetlHashMap<Value>();
         final SetlObject         newObject   = SetlObject.createNew(members, this);
 
         newScope.linkToThisObject(newObject);
@@ -268,7 +268,7 @@ public class SetlClass extends Value {
     }
 
     private SetlHashMap<Value> extractBindings(final State state, final HashSet<String> vars) throws SetlException {
-        final SetlHashMap<Value> bindings = new SetlHashMap<>();
+        final SetlHashMap<Value> bindings = new SetlHashMap<Value>();
 
         for (final String var : vars) {
             final Value value = state.findValue(var);
@@ -416,7 +416,7 @@ public class SetlClass extends Value {
         } else {
             try {
                 final SetlList            paramList   = (SetlList) term.firstMember();
-                final List<ParameterDef>  parameters  = new ArrayList<>(paramList.size());
+                final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
                 for (final Value v : paramList) {
                     parameters.add(ParameterDef.valueToParameterDef(v));
                 }

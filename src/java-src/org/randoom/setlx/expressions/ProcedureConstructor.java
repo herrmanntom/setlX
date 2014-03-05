@@ -44,7 +44,7 @@ public class ProcedureConstructor extends Expr {
             this.optimize();
         }
         if (! closureVariables.isEmpty()) {
-            final HashMap<String, Value> closure = new HashMap<>();
+            final HashMap<String, Value> closure = new HashMap<String, Value>();
             for (final String var : closureVariables) {
                 if (var.equals("this")) {
                     continue;
@@ -79,7 +79,7 @@ public class ProcedureConstructor extends Expr {
         final int preUsed    = usedVariables.size();
         definition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
-        final HashSet<String> closureVariables = new HashSet<>();
+        final HashSet<String> closureVariables = new HashSet<String>();
         closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
         closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
         this.closureVariables = closureVariables;

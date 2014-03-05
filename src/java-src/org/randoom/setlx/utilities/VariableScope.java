@@ -400,7 +400,7 @@ public class VariableScope {
      * @return                 Map of all reachable bindings.
      */
     /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final HashMap<String, SetlClass> classDefinitions) {
-        final SetlHashMap<Value> allVars = new SetlHashMap<>();
+        final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
         if (classDefinitions != null) {

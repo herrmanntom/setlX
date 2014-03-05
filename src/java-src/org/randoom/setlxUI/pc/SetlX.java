@@ -50,7 +50,7 @@ public class SetlX {
 
         String              expression   = null;  // expression to be evaluated using -ev option
         String              statement    = null;  // code to be executed when using -ex option
-        final List<String>  files        = new ArrayList<>();
+        final List<String>  files        = new ArrayList<String>();
 
         String              libraryPath  = null;
         if ((libraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
@@ -273,7 +273,7 @@ public class SetlX {
         } else if (statement != null) {
             nPrograms += 1;
         }
-        final List<Block> programs = new ArrayList<>(nPrograms);
+        final List<Block> programs = new ArrayList<Block>(nPrograms);
 
         // parse content of all files
         try {

@@ -49,7 +49,7 @@ public class SetlSet extends CollectionValue {
      * Create a new empty set.
      */
     public SetlSet() {
-        this.set      = new TreeSet<>();
+        this.set      = new TreeSet<Value>();
         this.isCloned = false; // new sets are not a clone
     }
 
@@ -82,7 +82,7 @@ public class SetlSet extends CollectionValue {
     private final void separateFromOriginal() {
         if (isCloned) {
             final TreeSet<Value> original = set;
-            set = new TreeSet<>();
+            set = new TreeSet<Value>();
             for (final Value v: original) {
                 set.add(v.clone());
             }
@@ -142,7 +142,7 @@ public class SetlSet extends CollectionValue {
      * @return SetlList of the members in this set.
      */
     /*package*/ SetlList toList() {
-        return new SetlList(new ArrayList<>(set));
+        return new SetlList(new ArrayList<Value>(set));
     }
 
     /* arithmetic operations */
@@ -448,7 +448,7 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public SetlSet domain(final State state) throws SetlException {
-        final TreeSet<Value> result = new TreeSet<>();
+        final TreeSet<Value> result = new TreeSet<Value>();
         for (final Value v: set) {
             if (v instanceof SetlList && v.size() == 2) {
                 result.add(v.firstMember(state));
@@ -670,7 +670,7 @@ public class SetlSet extends CollectionValue {
         upperBound.addMember(state, Top.TOP);
 
         // remove all previously map entries which key == `index'
-        set.removeAll(new TreeSet<>(set.subSet(lowerBound, true, upperBound, true)));
+        set.removeAll(new TreeSet<Value>(set.subSet(lowerBound, true, upperBound, true)));
 
         // now this set must either be empty or a map without an entry with `index' as key
         if (v != Om.OM) {
@@ -755,8 +755,8 @@ public class SetlSet extends CollectionValue {
         }
 
         // first match all atomic values
-        final TreeSet<Value> thisCopy   = new TreeSet<>(set);
-        final TreeSet<Value> otherCopy  = new TreeSet<>(((SetlSet) otr).set);
+        final TreeSet<Value> thisCopy   = new TreeSet<Value>(set);
+        final TreeSet<Value> otherCopy  = new TreeSet<Value>(((SetlSet) otr).set);
 
         for (final Value v : set) {
             // remove value from both sets, if
@@ -782,9 +782,9 @@ public class SetlSet extends CollectionValue {
         }
 
         // copy remaining members into a new list
-        final SetlList  thisList            = new SetlList(new ArrayList<>(thisCopy));
+        final SetlList  thisList            = new SetlList(new ArrayList<Value>(thisCopy));
         // permute remaining members from `other'
-              Value     otherPermutation    = new SetlList(new ArrayList<>(otherCopy));
+              Value     otherPermutation    = new SetlList(new ArrayList<Value>(otherCopy));
 
         // both set match, when (at least) one permutation matches
         MatchResult match = null;

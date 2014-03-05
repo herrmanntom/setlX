@@ -49,7 +49,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
      */
     public MatchCaseBranch(final List<Expr> exprs, final Condition condition, final Block statements){
         this.exprs      = exprs;
-        this.terms      = new ArrayList<>(exprs.size());
+        this.terms      = new ArrayList<Value>(exprs.size());
         this.condition  = condition;
         this.statements = statements;
     }
@@ -95,7 +95,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         /* Variables in these expressions get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<String> tempAssigned = new ArrayList<>();
+        final List<String> tempAssigned = new ArrayList<String>();
         for (final Expr expr : exprs) {
             expr.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
         }
@@ -177,7 +177,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         } else {
             try {
                 final SetlList    termList  = (SetlList) term.firstMember();
-                final List<Expr>  exprs     = new ArrayList<>(termList.size());
+                final List<Expr>  exprs     = new ArrayList<Expr>(termList.size());
                 for (final Value v : termList) {
                     exprs.add(TermConverter.valueToExpr(v));
                 }

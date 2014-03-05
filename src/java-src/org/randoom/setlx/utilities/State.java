@@ -106,8 +106,8 @@ public class State {
         this.envProvider                 = envProvider;
         parserErrorCapture               = null;
         parserErrorCount                 = 0;
-        loadedLibraries                  = new HashSet<>();
-        classDefinitions                 = new HashMap<>();
+        loadedLibraries                  = new HashSet<String>();
+        classDefinitions                 = new HashMap<String, SetlClass>();
         isHuman                          = false;
         isRandoomPredictable             = false;
         multiLineMode                    = false;
@@ -779,7 +779,7 @@ public class State {
             }
         }
         if (traceAssignments) {
-            final HashMap<String, Value> assignments = new HashMap<>();
+            final HashMap<String, Value> assignments = new HashMap<String, Value>();
             variableScope.storeAllValuesTrace(scope, assignments);
             for (final Map.Entry<String, Value> entry : assignments.entrySet()) {
                 printTrace(entry.getKey(), entry.getValue(), context);

@@ -990,7 +990,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
       tokenizer.wordChars(0,255);
       tokenizer.whitespaceChars(0, ' ');
       tokenizer.eolIsSignificant(true);
-      java.util.Vector<Double> vD = new java.util.Vector<>();
+      java.util.Vector<Double> vD = new java.util.Vector<Double>();
 
       // Ignore initial empty lines
       while (tokenizer.nextToken() == StreamTokenizer.TT_EOL);
@@ -1004,7 +1004,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
       double row[] = new double[n];
       for (int j=0; j<n; j++)  // extract the elements of the 1st row.
          row[j]=vD.elementAt(j).doubleValue();
-      java.util.Vector<double[]> v = new java.util.Vector<>();
+      java.util.Vector<double[]> v = new java.util.Vector<double[]>();
       v.addElement(row);  // Start storing rows instead of columns.
       while (tokenizer.nextToken() == StreamTokenizer.TT_WORD) {
          // While non-empty lines

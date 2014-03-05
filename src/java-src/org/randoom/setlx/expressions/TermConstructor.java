@@ -100,7 +100,7 @@ public class TermConstructor extends Expr {
 
     public static Expr termToExpr(final Term term) {
         final String        functionalCharacter = term.functionalCharacter().getUnquotedString();
-        final List<Expr>    args                = new ArrayList<>(term.size());
+        final List<Expr>    args                = new ArrayList<Expr>(term.size());
         for (final Value v : term) {
             args.add(TermConverter.valueToExpr(v));
         }

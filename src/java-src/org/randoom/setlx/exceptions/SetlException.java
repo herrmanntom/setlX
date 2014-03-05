@@ -16,7 +16,7 @@ public abstract class SetlException extends Exception {
 
     public SetlException(final String msg) {
         super(msg);
-        trace = new ArrayList<>();
+        trace = new ArrayList<String>();
         trace.add(msg);
     }
 

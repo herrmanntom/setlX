@@ -59,7 +59,7 @@ public class PD_readFile extends PreDefinedProcedure {
                     "ListOfLineNumbers-argument '" + numbers + "' is not a collection value."
                 );
             }
-            lineNumbers = new HashSet<>(numbers.size());
+            lineNumbers = new HashSet<Integer>(numbers.size());
             for (final Value num : (CollectionValue) numbers) {
                 if (num.isInteger() == SetlBoolean.FALSE) {
                     throw new IncompatibleTypeException(

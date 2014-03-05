@@ -116,7 +116,7 @@ public class SetlIterator extends CodeFragment {
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<String> tempAssigned = new ArrayList<>();
+        final List<String> tempAssigned = new ArrayList<String>();
         assignable.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
 
         final int preIndex = boundVariables.size();

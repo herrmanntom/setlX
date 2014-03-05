@@ -64,12 +64,12 @@ public class IfThen extends Statement {
         final int    preBound  = boundVariables.size();
         List<String> boundHere = null;
         for (final IfThenAbstractBranch br : branchList) {
-            final List<String> boundTmp = new ArrayList<>(boundVariables);
+            final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
-                boundHere = new ArrayList<>(boundTmp.subList(preBound, boundTmp.size()));
+                boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
             } else {
                 boundHere.retainAll(boundTmp.subList(preBound, boundTmp.size()));
             }
@@ -115,7 +115,7 @@ public class IfThen extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList                   branches   = (SetlList) term.firstMember();
-            final List<IfThenAbstractBranch> branchList = new ArrayList<>(branches.size());
+            final List<IfThenAbstractBranch> branchList = new ArrayList<IfThenAbstractBranch>(branches.size());
             for (final Value v : branches) {
                 branchList.add(IfThenAbstractBranch.valueToIfThenAbstractBranch(v));
             }

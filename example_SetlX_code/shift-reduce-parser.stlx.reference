@@ -1,0 +1,86 @@
+tokenlist: ["int", "+", "int", "*", "int"]
+
+states:  [ s0 ]
+symbols:  | int + int * int EOF
+state:   { E -> * E '+' P, E -> * E '-' P, E -> * P, F -> * '(' E ')', F -> * int, P -> * F, P -> * P '*' F, P -> * P '/' F, S -> * E }
+shifting state s2
+state:   { F -> 'int' * }
+
+states:  [ s0, s2 ]
+symbols: int | + int * int EOF
+state:   { F -> 'int' * }
+reducing with rule F -> int
+state:   { P -> F * }
+
+states:  [ s0, s1 ]
+symbols: F | + int * int EOF
+state:   { P -> F * }
+reducing with rule P -> F
+state:   { E -> P *, P -> P * '*' F, P -> P * '/' F }
+
+states:  [ s0, s3 ]
+symbols: P | + int * int EOF
+state:   { E -> P *, P -> P * '*' F, P -> P * '/' F }
+reducing with rule E -> P
+state:   { E -> E * '+' P, E -> E * '-' P, S -> E * }
+
+states:  [ s0, s4 ]
+symbols: E | + int * int EOF
+state:   { E -> E * '+' P, E -> E * '-' P, S -> E * }
+shifting state s8
+state:   { E -> E '+' * P, F -> * '(' E ')', F -> * int, P -> * F, P -> * P '*' F, P -> * P '/' F }
+
+states:  [ s0, s4, s8 ]
+symbols: E + | int * int EOF
+state:   { E -> E '+' * P, F -> * '(' E ')', F -> * int, P -> * F, P -> * P '*' F, P -> * P '/' F }
+shifting state s2
+state:   { F -> 'int' * }
+
+states:  [ s0, s4, s8, s2 ]
+symbols: E + int | * int EOF
+state:   { F -> 'int' * }
+reducing with rule F -> int
+state:   { P -> F * }
+
+states:  [ s0, s4, s8, s1 ]
+symbols: E + F | * int EOF
+state:   { P -> F * }
+reducing with rule P -> F
+state:   { E -> E '+' P *, P -> P * '*' F, P -> P * '/' F }
+
+states:  [ s0, s4, s8, s15 ]
+symbols: E + P | * int EOF
+state:   { E -> E '+' P *, P -> P * '*' F, P -> P * '/' F }
+shifting state s12
+state:   { F -> * '(' E ')', F -> * int, P -> P '*' * F }
+
+states:  [ s0, s4, s8, s15, s12 ]
+symbols: E + P * | int EOF
+state:   { F -> * '(' E ')', F -> * int, P -> P '*' * F }
+shifting state s2
+state:   { F -> 'int' * }
+
+states:  [ s0, s4, s8, s15, s12, s2 ]
+symbols: E + P * int | EOF
+state:   { F -> 'int' * }
+reducing with rule F -> int
+state:   { P -> P '*' F * }
+
+states:  [ s0, s4, s8, s15, s12, s13 ]
+symbols: E + P * F | EOF
+state:   { P -> P '*' F * }
+reducing with rule P -> P * F
+state:   { E -> E '+' P *, P -> P * '*' F, P -> P * '/' F }
+
+states:  [ s0, s4, s8, s15 ]
+symbols: E + P | EOF
+state:   { E -> E '+' P *, P -> P * '*' F, P -> P * '/' F }
+reducing with rule E -> E + P
+state:   { E -> E * '+' P, E -> E * '-' P, S -> E * }
+
+states:  [ s0, s4 ]
+symbols: E | EOF
+state:   { E -> E * '+' P, E -> E * '-' P, S -> E * }
+accepting
+
+Parse successful!

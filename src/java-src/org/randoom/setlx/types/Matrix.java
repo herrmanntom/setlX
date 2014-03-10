@@ -15,27 +15,34 @@ import org.randoom.setlx.utilities.State;
  * @author Patrick Robinson
  */
 public class Matrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
-    private final Jama.Matrix value;
+    private Jama.Matrix value;
 
-    public Matrix(Jama.Matrix v) {
+    private Matrix(Jama.Matrix v) {
         super();
         this.value = v;
     }
 
-    public Matrix(final CollectionValue Init) throws SetlException {
+    public Matrix(final State state, final CollectionValue Init) throws SetlException {
         super();
         final int rowCount = Init.size();
         final int columnCount = ((CollectionValue)Init.firstMember()).size();
         double[][] base = new double[rowCount][columnCount];
         int currentRow = 0;
         for(Value row : Init) {
-            if(!(row instanceof CollectionValue)) throw new MatrixException("Row " + (currentRow + 1) + " is not of collection type.");
+            if(!(row instanceof CollectionValue)) {
+                throw new IncompatibleTypeException("Row " + (currentRow + 1) + " is not of collection type.");
+            }
             CollectionValue rowAsCollection = (CollectionValue)row;
-            if(rowAsCollection.size() != columnCount) throw new MatrixException("Row " + (currentRow + 1) + " does not have the same length as the first row.");
+            if(rowAsCollection.size() != columnCount) {
+                // TODO is this an IncompatibleTypeException?
+                throw new IncompatibleTypeException("Row " + (currentRow + 1) + " does not have the same length as the first row.");
+            }
             int currentColumn = 0;
             for(Value cell : rowAsCollection) {
-                if(!(cell instanceof NumberValue)) throw new MatrixException("Cell(row " + (currentRow + 1) + " column " + (currentColumn + 1) + ") is not a number.");
-                base[currentRow][currentColumn] = cell.toJDoubleValue(null); // TODO State
+                if(!(cell instanceof NumberValue)) {
+                    throw new IncompatibleTypeException("Cell(row " + (currentRow + 1) + " column " + (currentColumn + 1) + ") is not a number.");
+                }
+                base[currentRow][currentColumn] = cell.toJDoubleValue(state); // TODO State
                 currentColumn++;
             }
             currentRow++;
@@ -104,14 +111,24 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
             NumberValue n = (NumberValue)multiplier;
             return new Matrix(this.value.times(n.toJDoubleValue(null)));
         } else {
-            throw new MatrixException("Summand is not of type Matrix.");
+            throw new IncompatibleTypeException("Summand is not of type Matrix.");
         }
     }
     
     @Override
-    public Value productAssign(final State state, final Value multiplier) throws MatrixException {
-        // TODO
-        return null;
+    public Value productAssign(final State state, final Value multiplier) throws SetlException {
+        if(multiplier instanceof Matrix) {
+            Matrix b = (Matrix)multiplier;
+            // TODO check conditions
+            this.value = this.value.times(b.value);
+            return this;
+        } else if(multiplier instanceof NumberValue) {
+            NumberValue n = (NumberValue)multiplier;
+            this.value.timesEquals(n.toJDoubleValue(state));
+            return this;
+        } else {
+            throw new IncompatibleTypeException("Summand is not of type Matrix.");
+        }
     }
     
     public Matrix transpose() {
@@ -124,7 +141,9 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         // TODO check condition
         Jama.Matrix base = exponent < 0 ? this.value.inverse() : this.value;
         Jama.Matrix result = base;
-        for(int i = 1 /* No mistake, should be one */; i < Math.abs(exponent); i++) result = result.times(base);
+        for(int i = 1 /* No mistake, should be one */; i < Math.abs(exponent); i++) {
+            result = result.times(base);
+        }
         return new Matrix(result);
     }
     
@@ -191,7 +210,9 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     @Override
     public Value getMember(int index) throws SetlException {
         SetlList container = new SetlList(this.value.getColumnDimension());
-        for(double d : this.value.getArray()[index - 1]) container.addMember(null, SetlDouble.valueOf(d));
+        for(double d : this.value.getArray()[index - 1]) {
+            container.addMember(null, SetlDouble.valueOf(d));
+        }
         return container;
     }
     
@@ -283,7 +304,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         if((index instanceof NumberValue)) {
             return this.getMember(((NumberValue)index).toJIntValue(state));
         } else {
-            throw new MatrixException("Given index is not a number.");
+            throw new IncompatibleTypeException("Given index is not a number.");
         }
     }
 

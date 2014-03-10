@@ -4,10 +4,13 @@ import Jama.EigenvalueDecomposition;
 import Jama.SingularValueDecomposition;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.EnvironmentProvider;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -109,7 +112,10 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
             return new Matrix(this.value.times(b.value));
         } else if(multiplier instanceof NumberValue) {
             NumberValue n = (NumberValue)multiplier;
-            return new Matrix(this.value.times(n.toJDoubleValue(null)));
+            return new Matrix(this.value.times(n.toJDoubleValue(state)));
+        } else if(multiplier instanceof Term) {
+            // TODO implement this:
+            return ((Term)multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Summand is not of type Matrix.");
         }
@@ -126,6 +132,9 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
             NumberValue n = (NumberValue)multiplier;
             this.value.timesEquals(n.toJDoubleValue(state));
             return this;
+        } else if(multiplier instanceof Term) {
+            // TODO implement this
+            throw new MatrixException("Not implemented");
         } else {
             throw new IncompatibleTypeException("Summand is not of type Matrix.");
         }
@@ -216,31 +225,30 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         return container;
     }
     
-    private SetlList toSetlList() {
+    private SetlList toSetlList(final State state) {
         SetlList container = new SetlList(this.value.getRowDimension());
         for(double[] a : this.value.getArray()) {
             SetlList row = new SetlList(this.value.getColumnDimension());
             for(double b : a) {
                 try {
-                    row.addMember(null, SetlDouble.valueOf(b));
+                    row.addMember(state, SetlDouble.valueOf(b));
                 } catch (UndefinedOperationException ex) {
                     // TODO wtf?
                 }
             }
-            container.addMember(null, row);
+            container.addMember(state, row);
         }
         return container;
     }
 
     @Override
     public Iterator<Value> iterator() {
-        
-        return this.toSetlList().iterator();
+        return this.toSetlList(null).iterator();
     }
 
     @Override
     public Iterator<Value> descendingIterator() {
-        return this.toSetlList().descendingIterator();
+        return this.toSetlList(null).descendingIterator();
     }
 
     @Override

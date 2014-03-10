@@ -1,10 +1,9 @@
 package org.randoom.setlx.functions;
 
 import java.util.List;
-import org.randoom.setlx.exceptions.MatrixException;
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Matrix;
-import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
@@ -23,10 +22,9 @@ public class PD_matrixdeterminant extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         if(args.get(0) instanceof Matrix) {
-            // TODO are there conditions for determinant?
-            return SetlDouble.valueOf(((Matrix)args.get(0)).value.det());
+            return ((Matrix)args.get(0)).determinant();
         } else {
-            throw new MatrixException("The parameter needs to be a matrix.");
+            throw new IncompatibleTypeException("The parameter needs to be a matrix.");
         }
     }
 }

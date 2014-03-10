@@ -23,8 +23,6 @@ public class PD_eigenVectors extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         if(!(args.get(0) instanceof Matrix)) throw new MatrixException("The parameter needs to be a matrix.");
-        // TODO check condition
-        EigenvalueDecomposition result = ((Matrix)args.get(0)).value.eig();
-        return new Matrix(result.getV()); // TODO right result?
+        return ((Matrix)args.get(0)).eigenVectors();
     }
 }

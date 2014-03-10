@@ -15,7 +15,7 @@ import org.randoom.setlx.utilities.State;
  * @author Patrick Robinson
  */
 public class Matrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
-    public Jama.Matrix value;
+    private final Jama.Matrix value;
 
     public Matrix(Jama.Matrix v) {
         super();
@@ -357,6 +357,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         return composition;
     }
     
+    // TODO check conditions
     public SetlList singularValueDecomposition(State state) {
         SingularValueDecomposition result = this.value.svd();
         SetlList container = new SetlList(3);
@@ -364,5 +365,19 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         container.addMember(state, new Matrix(result.getS())); // TODO Is this sigma? format?
         container.addMember(state, new Matrix(result.getV())); // TODO right format?
         return container;
+    }
+    
+    // TODO check conditions
+    public Matrix eigenVectors() {
+        return new Matrix(this.value.eig().getV());
+    }
+    
+    // TODO are there any conditions
+    public SetlDouble determinant() throws UndefinedOperationException {
+        return SetlDouble.valueOf(this.value.det());
+    }
+    
+    public Matrix solve(Matrix B) {
+        return new Matrix(this.value.solve(B.value));
     }
 }

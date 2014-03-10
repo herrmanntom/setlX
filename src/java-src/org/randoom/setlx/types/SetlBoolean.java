@@ -154,7 +154,11 @@ public class SetlBoolean extends Value {
 
     @Override
     public boolean equalTo(final Value v){
-        return this == v;
+        if(this == v) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

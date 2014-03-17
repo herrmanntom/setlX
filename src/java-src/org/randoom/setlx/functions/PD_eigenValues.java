@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import java.util.List;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Matrix;
 import org.randoom.setlx.types.Value;

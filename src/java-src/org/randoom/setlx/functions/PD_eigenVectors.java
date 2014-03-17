@@ -1,6 +1,5 @@
 package org.randoom.setlx.functions;
 
-import Jama.EigenvalueDecomposition;
 import java.util.List;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;

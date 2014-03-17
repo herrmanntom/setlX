@@ -4,13 +4,10 @@ import Jama.EigenvalueDecomposition;
 import Jama.SingularValueDecomposition;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.utilities.EnvironmentProvider;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -19,38 +16,59 @@ import org.randoom.setlx.utilities.State;
  */
 public class Matrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
     private Jama.Matrix value;
+    
+    private boolean isVector; // TODO check in all necessary methods;
 
     private Matrix(Jama.Matrix v) {
         super();
         this.value = v;
     }
 
-    public Matrix(final State state, final CollectionValue Init) throws SetlException {
+    public Matrix(final State state, final CollectionValue Init, final boolean vector) throws SetlException {
         super();
-        final int rowCount = Init.size();
-        final int columnCount = ((CollectionValue)Init.firstMember()).size();
-        double[][] base = new double[rowCount][columnCount];
-        int currentRow = 0;
-        for(Value row : Init) {
-            if(!(row instanceof CollectionValue)) {
-                throw new IncompatibleTypeException("Row " + (currentRow + 1) + " is not of collection type.");
-            }
-            CollectionValue rowAsCollection = (CollectionValue)row;
-            if(rowAsCollection.size() != columnCount) {
-                // TODO is this an IncompatibleTypeException?
-                throw new IncompatibleTypeException("Row " + (currentRow + 1) + " does not have the same length as the first row.");
-            }
-            int currentColumn = 0;
-            for(Value cell : rowAsCollection) {
-                if(!(cell instanceof NumberValue)) {
-                    throw new IncompatibleTypeException("Cell(row " + (currentRow + 1) + " column " + (currentColumn + 1) + ") is not a number.");
+        this.isVector = vector;
+        if(this.isVector) {
+            final int itemCount = Init.size();
+            double[][] base = new double[itemCount][1];
+            int currentItem = 0;
+            for(Value item : Init) {
+                if(item.jDoubleConvertable()) {
+                    base[currentItem][0] = item.toJDoubleValue(state);
+                } else {
+                    throw new IncompatibleTypeException("Item " + (currentItem + 1) + " cannot be evaluated to a number.");
                 }
-                base[currentRow][currentColumn] = cell.toJDoubleValue(state); // TODO State
-                currentColumn++;
+                currentItem++;
             }
-            currentRow++;
+            value = new Jama.Matrix(base);
+        } else {
+            final int rowCount = Init.size();
+            final int columnCount = ((CollectionValue)Init.firstMember()).size();
+            double[][] base = new double[rowCount][columnCount];
+            int currentRow = 0;
+            for(Value row : Init) {
+                if(!(row instanceof CollectionValue)) {
+                    throw new IncompatibleTypeException("Row " + (currentRow + 1) + " is not of collection type.");
+                }
+                CollectionValue rowAsCollection = (CollectionValue)row;
+                if(rowAsCollection.size() < 1) {
+                    throw new IncompatibleTypeException("Row " + (currentRow + 1) + "is empty.");
+                }
+                if(rowAsCollection.size() != columnCount) {
+                    // TODO is this an IncompatibleTypeException?
+                    throw new IncompatibleTypeException("Row " + (currentRow + 1) + " does not have the same length as the first row.");
+                }
+                int currentColumn = 0;
+                for(Value cell : rowAsCollection) {
+                    if(!(cell instanceof NumberValue)) { // TODO Term? or isJDoubleConvertable then convert
+                        throw new IncompatibleTypeException("Cell(row " + (currentRow + 1) + " column " + (currentColumn + 1) + ") is not a number.");
+                    }
+                    base[currentRow][currentColumn] = cell.toJDoubleValue(state);
+                    currentColumn++;
+                }
+                currentRow++;
+            }
+            value = new Jama.Matrix(base);
         }
-        value = new Jama.Matrix(base);
     }
 
     /* (non-Javadoc)
@@ -75,8 +93,8 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
      */
     @Override
     public int compareTo(Value other) {
-        // TODO Auto-generated method stub
-        return 0;
+        // TODO Encoding right?
+        return this.equalTo(other) ? 0 : 1;
     }
 
     /* (non-Javadoc)
@@ -141,19 +159,33 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     }
     
     public Matrix transpose() {
-        // TODO map this to !
         return new Matrix(this.value.transpose());
     }
     
-    public Matrix power(final State state, final int exponent) throws SetlException {
-        // TODO exponent == 0 ?
+    // TODO broken
+    @Override
+    public Value power(final State state, final Value exponent) throws SetlException {
         // TODO check condition
-        Jama.Matrix base = exponent < 0 ? this.value.inverse() : this.value;
-        Jama.Matrix result = base;
-        for(int i = 1 /* No mistake, should be one */; i < Math.abs(exponent); i++) {
-            result = result.times(base);
+        if(exponent.jIntConvertable()) {
+            int ex = exponent.toJIntValue(state);
+            Jama.Matrix base;
+            if(ex < 0) {
+                base = this.value.inverse();
+                ex = -ex;
+            } else {
+                if(ex == 0) {
+                    // TODO What now? How is this defined on Matrix
+                }
+                base = this.value;
+            }
+            Jama.Matrix result = base;
+            for(int i = 1 /* No mistake, should be one */; i < ex; i++) {
+                result = result.times(base);
+            }
+            return new Matrix(result);
+        } else {
+            throw new IncompatibleTypeException("Power is only defined for integer exponents on matrices."); // TODO Check English
         }
-        return new Matrix(result);
     }
     
     @Override
@@ -396,7 +428,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         return container;
     }
     
-    // TODO check conditions
+    // TODO check conditions & TODO vectors
     public Matrix eigenVectors() {
         return new Matrix(this.value.eig().getV());
     }
@@ -408,5 +440,10 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     
     public Matrix solve(Matrix B) {
         return new Matrix(this.value.solve(B.value));
+    }
+    
+    @Override
+    public Value factorial(final State state) throws SetlException {
+        return this.transpose();
     }
 }

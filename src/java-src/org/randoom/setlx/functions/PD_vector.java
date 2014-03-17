@@ -1,10 +1,9 @@
-/**
- * 
+/*
  */
+
 package org.randoom.setlx.functions;
 
 import java.util.List;
-
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Matrix;
@@ -14,12 +13,11 @@ import org.randoom.setlx.utilities.State;
 
 /**
  * @author Patrick Robinson
- *
  */
-public class PD_matrix extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_matrix();
+public class PD_vector extends PreDefinedProcedure {
+    public final static PreDefinedProcedure DEFINITION = new PD_vector();
     
-    private PD_matrix() {
+    private PD_vector() {
         super();
         addParameter("collectionValue", ParameterDef.READ_ONLY);
     }
@@ -29,6 +27,6 @@ public class PD_matrix extends PreDefinedProcedure {
      */
     @Override
     public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-            return new Matrix(state, (CollectionValue)args.get(0), false);
-    }
+        return new Matrix(state, (CollectionValue)args.get(0), true);
+    }  
 }

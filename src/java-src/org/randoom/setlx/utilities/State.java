@@ -775,7 +775,7 @@ public class State {
      * Store `value' for variable into current scope.
      *
      * @param var                           Variable to set.
-     * @param value                         Value to set variable to
+     * @param value                         Value to set variable to.
      * @param context                       Context description of the assignment for trace.
      * @throws IllegalRedefinitionException Thrown in case of redefining a class.
      */

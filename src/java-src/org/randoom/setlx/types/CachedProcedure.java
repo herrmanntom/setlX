@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -153,7 +154,7 @@ public class CachedProcedure extends Procedure {
         final ArrayList<Value> values = new ArrayList<Value>(size);
         final SetlList         key    = new SetlList(size);
         for (int i = 0; i < size; ++i) {
-            if (parameters.get(i).getType() == ParameterDef.READ_WRITE) {
+            if (parameters.get(i).getType() == ParameterType.READ_WRITE) {
                 throw new IncompatibleTypeException(
                     "Procedures using read-write ('rw') parameters can not be cached."
                 );

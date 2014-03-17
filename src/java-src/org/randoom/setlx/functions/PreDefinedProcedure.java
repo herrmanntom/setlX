@@ -9,6 +9,7 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
@@ -70,7 +71,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @param param Parameter name to add.
      */
     protected final void addParameter(final String param) {
-        parameters.add(new ParameterDef(param, ParameterDef.READ_ONLY));
+        parameters.add(new ParameterDef(param, ParameterType.READ_ONLY));
     }
 
     /**
@@ -82,7 +83,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @param param Parameter name to add.
      * @param type  Type of the parameter (RW, RO).
      */
-    protected final void addParameter(final String param, final int type) {
+    protected final void addParameter(final String param, final ParameterType type) {
         parameters.add(new ParameterDef(param, type));
     }
 
@@ -208,7 +209,7 @@ public abstract class PreDefinedProcedure extends Procedure {
                 final WriteBackAgent wba = new WriteBackAgent(writeBackVars.size());
                 for (int i = 0; i < paramSize; ++i) {
                     final ParameterDef param = parameters.get(i);
-                    if (param.getType() == ParameterDef.READ_WRITE && writeBackVars.size() > 0) {
+                    if (param.getType() == ParameterType.READ_WRITE && writeBackVars.size() > 0) {
                         // value of parameter after execution
                         final Value postValue = writeBackVars.remove(0);
                         // expression used to fill parameter before execution

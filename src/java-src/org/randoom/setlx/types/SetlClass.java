@@ -10,6 +10,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -195,7 +196,7 @@ public class SetlClass extends Value {
         final int size = values.size();
         for (int i = 0; i < size; ++i) {
             final ParameterDef param = parameters.get(i);
-            if (param.getType() == ParameterDef.READ_WRITE) {
+            if (param.getType() == ParameterType.READ_WRITE) {
                 param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
             } else {
                 param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
@@ -217,7 +218,7 @@ public class SetlClass extends Value {
             // extract 'rw' arguments from scope, store them into WriteBackAgent
             for (int i = 0; i < parameters.size(); ++i) {
                 final ParameterDef param = parameters.get(i);
-                if (param.getType() == ParameterDef.READ_WRITE) {
+                if (param.getType() == ParameterType.READ_WRITE) {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
                     // expression used to fill parameter before execution

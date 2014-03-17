@@ -7,6 +7,7 @@ import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlDouble;
+import org.randoom.setlx.types.SetlDouble.DoublePrintMode;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -31,7 +32,7 @@ public class State {
     /**
      * Printing mode for doubles
      */
-    public                  int                 doublePrintMode;
+    public                  DoublePrintMode           doublePrintMode;
     /**
      * Print a trace when assigning variables.
      */
@@ -113,7 +114,7 @@ public class State {
         multiLineMode                    = false;
         isInteractive                    = false;
         printVerbose                     = false;
-        doublePrintMode                    = SetlDouble.PRINT_MODE_DEFAULT;
+        doublePrintMode                  = DoublePrintMode.DEFAULT;
         traceAssignments                 = false;
         assertsDisabled                  = false;
         isRuntimeDebuggingEnabled        = false;
@@ -404,19 +405,19 @@ public class State {
     }
 
     public void setDoublePrintMode_default() {
-        doublePrintMode = SetlDouble.PRINT_MODE_DEFAULT;
+        doublePrintMode = DoublePrintMode.DEFAULT;
     }
 
     public void setDoublePrintMode_scientific() {
-        doublePrintMode = SetlDouble.PRINT_MODE_SCIENTIFIC;
+        doublePrintMode = DoublePrintMode.SCIENTIFIC;
     }
 
     public void setDoublePrintMode_engineering() {
-        doublePrintMode = SetlDouble.PRINT_MODE_ENGINEERING;
+        doublePrintMode = DoublePrintMode.ENGINEERING;
     }
 
     public void setDoublePrintMode_plain() {
-        doublePrintMode = SetlDouble.PRINT_MODE_PLAIN;
+        doublePrintMode = DoublePrintMode.PLAIN;
     }
 
     // allow modification of fileName/path when reading files

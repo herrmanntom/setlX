@@ -25,8 +25,10 @@ import java.util.List;
  */
 public class ParseSetlX {
 
-    private final static int EXPR  =  1337;
-    private final static int BLOCK = 31337;
+    private enum CodeType {
+        EXPR,
+        BLOCK
+    }
 
     /**
      * Parse a code block from a file.
@@ -150,14 +152,14 @@ public class ParseSetlX {
     /* private methods */
 
     private static Block parseBlock(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
-        return (Block) handleFragmentParsing(state, input, BLOCK);
+        return (Block) handleFragmentParsing(state, input, CodeType.BLOCK);
     }
 
     private static Expr parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
-        return (Expr) handleFragmentParsing(state, input, EXPR);
+        return (Expr) handleFragmentParsing(state, input, CodeType.EXPR);
     }
 
-    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final int type) throws SyntaxErrorException, StopExecutionException {
+    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final CodeType type) throws SyntaxErrorException, StopExecutionException {
               SetlXgrammarLexer  lexer  = null;
               SetlXgrammarParser parser = null;
         final LinkedList<String> oldCap = state.getParserErrorCapture();
@@ -270,12 +272,12 @@ public class ParseSetlX {
     // private subclass to execute the parser in a different thread
     private static class ParserThread extends Thread {
         private final SetlXgrammarParser parser;
-        private final int                type;
+        private final CodeType           type;
         /*package*/   CodeFragment       result;
         /*package*/   Throwable          error;
 
 
-        /*package*/ ParserThread(final SetlXgrammarParser parser, final int type) {
+        /*package*/ ParserThread(final SetlXgrammarParser parser, final CodeType type) {
             this.parser = parser;
             this.type   = type;
             this.result = null;

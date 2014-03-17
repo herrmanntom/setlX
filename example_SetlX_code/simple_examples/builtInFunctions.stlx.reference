@@ -88,6 +88,6 @@ false
 true
 this is a test
 
-[["simpleClosure.stlx", "simpleClosure.stlx.reference"], []]
+[["simpleClosure.stlx", "simpleClosure.stlx.reference", "slr-table-generator.stlx", "slr-table-generator.stlx.reference"], []]
 
 Assertion failed: "assert function works"

@@ -1,5 +1,5 @@
 isRightUnique := procedure(r) {
-    return forall([x,y1] in r | forall([x,y2] in r | y1 == y2));
+    return forall([x,y1] in r, [x,y2] in r | y1 == y2);
 };
 
 test1 := procedure(r) {

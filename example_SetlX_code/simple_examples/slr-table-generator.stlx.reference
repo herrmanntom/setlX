@@ -1,0 +1,131 @@
+expr -> expr '+' product
+expr -> expr '-' product
+expr -> product
+product -> product '*' factor
+product -> product '/' factor
+product -> factor
+factor -> '(' expr ')'
+factor -> NUMBER
+Given grammar:
+expr -> expr '+' product;
+expr -> expr '-' product;
+expr -> product;
+product -> product '*' factor;
+product -> product '/' factor;
+product -> factor;
+factor -> '(' expr ')';
+factor -> NUMBER;
+S -> expr;
+
+First sets:
+First(S) = {"'('", "NUMBER"}
+First(expr) = {"'('", "NUMBER"}
+First(factor) = {"'('", "NUMBER"}
+First(product) = {"'('", "NUMBER"}
+
+Follow sets (note that "$" denotes the end of file):
+Follow(S) = {"$"}
+Follow(expr) = {"$", "')'", "'+'", "'-'"}
+Follow(factor) = {"$", "')'", "'*'", "'+'", "'-'", "'/'"}
+Follow(product) = {"$", "')'", "'*'", "'+'", "'-'", "'/'"}
+
+All SLR-states:
+s0 = {S -> (*) expr, expr -> (*) expr '+' product, expr -> (*) expr '-' product, expr -> (*) product, factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor}
+s1 = {expr -> (*) expr '+' product, expr -> (*) expr '-' product, expr -> (*) product, factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor, factor -> '(' (*) expr ')'}
+s2 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor, expr -> expr '+' (*) product}
+s3 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor, expr -> expr '-' (*) product}
+s4 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> product '*' (*) factor}
+s5 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> product '/' (*) factor}
+s6 = {factor -> '(' expr (*) ')', expr -> expr (*) '+' product, expr -> expr (*) '-' product}
+s7 = {factor -> '(' expr ')' (*)}
+s8 = {factor -> NUMBER (*)}
+s9 = {S -> expr (*), expr -> expr (*) '+' product, expr -> expr (*) '-' product}
+s10 = {expr -> expr '+' product (*), product -> product (*) '*' factor, product -> product (*) '/' factor}
+s11 = {expr -> expr '-' product (*), product -> product (*) '*' factor, product -> product (*) '/' factor}
+s12 = {product -> factor (*)}
+s13 = {expr -> product (*), product -> product (*) '*' factor, product -> product (*) '/' factor}
+s14 = {product -> product '*' factor (*)}
+s15 = {product -> product '/' factor (*)}
+
+Action Table:
+action("s0", '(') = Shift("s1")
+action("s0", NUMBER) = Shift("s8")
+action("s1", '(') = Shift("s1")
+action("s1", NUMBER) = Shift("s8")
+action("s2", '(') = Shift("s1")
+action("s2", NUMBER) = Shift("s8")
+action("s3", '(') = Shift("s1")
+action("s3", NUMBER) = Shift("s8")
+action("s4", '(') = Shift("s1")
+action("s4", NUMBER) = Shift("s8")
+action("s5", '(') = Shift("s1")
+action("s5", NUMBER) = Shift("s8")
+action("s6", ')') = Shift("s7")
+action("s6", '+') = Shift("s2")
+action("s6", '-') = Shift("s3")
+action("s7", $) = Reduce(factor -> '(' expr ')')
+action("s7", ')') = Reduce(factor -> '(' expr ')')
+action("s7", '*') = Reduce(factor -> '(' expr ')')
+action("s7", '+') = Reduce(factor -> '(' expr ')')
+action("s7", '-') = Reduce(factor -> '(' expr ')')
+action("s7", '/') = Reduce(factor -> '(' expr ')')
+action("s8", $) = Reduce(factor -> NUMBER)
+action("s8", ')') = Reduce(factor -> NUMBER)
+action("s8", '*') = Reduce(factor -> NUMBER)
+action("s8", '+') = Reduce(factor -> NUMBER)
+action("s8", '-') = Reduce(factor -> NUMBER)
+action("s8", '/') = Reduce(factor -> NUMBER)
+action("s9", '+') = Shift("s2")
+action("s9", '-') = Shift("s3")
+action("s9", $) = Reduce(S -> expr)
+action("s10", '*') = Shift("s4")
+action("s10", '/') = Shift("s5")
+action("s10", $) = Reduce(expr -> expr '+' product)
+action("s10", ')') = Reduce(expr -> expr '+' product)
+action("s10", '+') = Reduce(expr -> expr '+' product)
+action("s10", '-') = Reduce(expr -> expr '+' product)
+action("s11", '*') = Shift("s4")
+action("s11", '/') = Shift("s5")
+action("s11", $) = Reduce(expr -> expr '-' product)
+action("s11", ')') = Reduce(expr -> expr '-' product)
+action("s11", '+') = Reduce(expr -> expr '-' product)
+action("s11", '-') = Reduce(expr -> expr '-' product)
+action("s12", $) = Reduce(product -> factor)
+action("s12", ')') = Reduce(product -> factor)
+action("s12", '*') = Reduce(product -> factor)
+action("s12", '+') = Reduce(product -> factor)
+action("s12", '-') = Reduce(product -> factor)
+action("s12", '/') = Reduce(product -> factor)
+action("s13", '*') = Shift("s4")
+action("s13", '/') = Shift("s5")
+action("s13", $) = Reduce(expr -> product)
+action("s13", ')') = Reduce(expr -> product)
+action("s13", '+') = Reduce(expr -> product)
+action("s13", '-') = Reduce(expr -> product)
+action("s14", $) = Reduce(product -> product '*' factor)
+action("s14", ')') = Reduce(product -> product '*' factor)
+action("s14", '*') = Reduce(product -> product '*' factor)
+action("s14", '+') = Reduce(product -> product '*' factor)
+action("s14", '-') = Reduce(product -> product '*' factor)
+action("s14", '/') = Reduce(product -> product '*' factor)
+action("s15", $) = Reduce(product -> product '/' factor)
+action("s15", ')') = Reduce(product -> product '/' factor)
+action("s15", '*') = Reduce(product -> product '/' factor)
+action("s15", '+') = Reduce(product -> product '/' factor)
+action("s15", '-') = Reduce(product -> product '/' factor)
+action("s15", '/') = Reduce(product -> product '/' factor)
+
+Goto Table:
+goto(s0, expr) = s9
+goto(s0, factor) = s12
+goto(s0, product) = s13
+goto(s1, expr) = s6
+goto(s1, factor) = s12
+goto(s1, product) = s13
+goto(s2, factor) = s12
+goto(s2, product) = s10
+goto(s3, factor) = s12
+goto(s3, product) = s11
+goto(s4, factor) = s14
+goto(s5, factor) = s15
+The grammar is an SLR grammar.

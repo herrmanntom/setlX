@@ -17,58 +17,40 @@ import org.randoom.setlx.utilities.State;
 public class Matrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
     private Jama.Matrix value;
     
-    private boolean isVector; // TODO check in all necessary methods;
-
     private Matrix(Jama.Matrix v) {
         super();
         this.value = v;
     }
 
-    public Matrix(final State state, final CollectionValue Init, final boolean vector) throws SetlException {
+    public Matrix(final State state, final CollectionValue init) throws SetlException {
         super();
-        this.isVector = vector;
-        if(this.isVector) {
-            final int itemCount = Init.size();
-            double[][] base = new double[itemCount][1];
-            int currentItem = 0;
-            for(Value item : Init) {
-                if(item.jDoubleConvertable()) {
-                    base[currentItem][0] = item.toJDoubleValue(state);
-                } else {
-                    throw new IncompatibleTypeException("Item " + (currentItem + 1) + " cannot be evaluated to a number.");
-                }
-                currentItem++;
+        final int rowCount = init.size();
+        final int columnCount = ((CollectionValue)init.firstMember()).size();
+        double[][] base = new double[rowCount][columnCount];
+        int currentRow = 0;
+        for(Value row : init) {
+            if(!(row instanceof CollectionValue)) {
+                throw new IncompatibleTypeException("Row " + (currentRow + 1) + " is not of collection type.");
             }
-            value = new Jama.Matrix(base);
-        } else {
-            final int rowCount = Init.size();
-            final int columnCount = ((CollectionValue)Init.firstMember()).size();
-            double[][] base = new double[rowCount][columnCount];
-            int currentRow = 0;
-            for(Value row : Init) {
-                if(!(row instanceof CollectionValue)) {
-                    throw new IncompatibleTypeException("Row " + (currentRow + 1) + " is not of collection type.");
-                }
-                CollectionValue rowAsCollection = (CollectionValue)row;
-                if(rowAsCollection.size() < 1) {
-                    throw new IncompatibleTypeException("Row " + (currentRow + 1) + "is empty.");
-                }
-                if(rowAsCollection.size() != columnCount) {
-                    // TODO is this an IncompatibleTypeException?
-                    throw new IncompatibleTypeException("Row " + (currentRow + 1) + " does not have the same length as the first row.");
-                }
-                int currentColumn = 0;
-                for(Value cell : rowAsCollection) {
-                    if(!(cell instanceof NumberValue)) { // TODO Term? or isJDoubleConvertable then convert
-                        throw new IncompatibleTypeException("Cell(row " + (currentRow + 1) + " column " + (currentColumn + 1) + ") is not a number.");
-                    }
-                    base[currentRow][currentColumn] = cell.toJDoubleValue(state);
-                    currentColumn++;
-                }
-                currentRow++;
+            CollectionValue rowAsCollection = (CollectionValue)row;
+            if(rowAsCollection.size() < 1) {
+                throw new IncompatibleTypeException("Row " + (currentRow + 1) + "is empty.");
             }
-            value = new Jama.Matrix(base);
+            if(rowAsCollection.size() != columnCount) {
+                // TODO is this an IncompatibleTypeException?
+                throw new IncompatibleTypeException("Row " + (currentRow + 1) + " does not have the same length as the first row.");
+            }
+            int currentColumn = 0;
+            for(Value cell : rowAsCollection) {
+                if(!(cell instanceof NumberValue)) { // TODO Term? or isJDoubleConvertable then convert
+                    throw new IncompatibleTypeException("Cell(row " + (currentRow + 1) + " column " + (currentColumn + 1) + ") is not a number.");
+                }
+                base[currentRow][currentColumn] = cell.toJDoubleValue(state);
+                currentColumn++;
+            }
+            currentRow++;
         }
+        value = new Jama.Matrix(base);
     }
 
     /* (non-Javadoc)

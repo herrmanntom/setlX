@@ -6,7 +6,7 @@ package org.randoom.setlx.functions;
 import java.util.List;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.CollectionValue;
-import org.randoom.setlx.types.Matrix;
+import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
@@ -27,6 +27,6 @@ public class PD_vector extends PreDefinedProcedure {
      */
     @Override
     public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        return new Matrix(state, (CollectionValue)args.get(0), true);
+        return new SetlVector(state, (CollectionValue)args.get(0));
     }  
 }

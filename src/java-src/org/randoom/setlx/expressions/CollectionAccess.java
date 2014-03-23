@@ -36,11 +36,23 @@ public class CollectionAccess extends AssignableExpression {
     private final Expr       lhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
     private final List<Expr> args;      // list of arguments
 
+    /**
+     * Constructor.
+     *
+     * @param lhs Left hand side (Variable, CollectMap, other CollectionAccess, etc).
+     * @param arg Parameter.
+     */
     public CollectionAccess(final Expr lhs, final Expr arg) {
         this(lhs, new ArrayList<Expr>(1));
         args.add(arg);
     }
 
+    /**
+     * Constructor.
+     *
+     * @param lhs  Left hand side (Variable, CollectMap, other CollectionAccess, etc).
+     * @param args List of parameters.
+     */
     public CollectionAccess(final Expr lhs, final List<Expr> args) {
         this.lhs  = lhs;
         this.args = args;
@@ -122,7 +134,7 @@ public class CollectionAccess extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v, final String context) throws SetlException {
+    public void assignUncloned(final State state, final Value value, final String context) throws SetlException {
         if (args.size() == 1 && lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
@@ -130,10 +142,10 @@ public class CollectionAccess extends AssignableExpression {
                     "Left hand side \"" + lhs + "\" is undefined."
                 );
             }
-            lhs.setMember(state, args.get(0).eval(state), v);
+            lhs.setMember(state, args.get(0).eval(state), value);
         } else {
             throw new IncompatibleTypeException(
-                "Left-hand-side of \"" + this + " := " + v + "\" is unusable for list assignment."
+                "Left-hand-side of \"" + this + " := " + value + "\" is unusable for list assignment."
             );
         }
     }
@@ -188,6 +200,13 @@ public class CollectionAccess extends AssignableExpression {
         return result;
     }
 
+    /**
+     * Convert a term representing a CollectionAccess into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting CollectionAccess Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static CollectionAccess termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

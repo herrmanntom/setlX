@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class Assignment extends Expr {
     // functional character used in terms
-    public  final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assignment.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assignment.class);
 
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1000;
@@ -31,6 +31,12 @@ public class Assignment extends Expr {
     private final AssignableExpression lhs;
     private final Expr                 rhs;
 
+    /**
+     * Constructor.
+     *
+     * @param lhs Left hand side of the assignment.
+     * @param rhs Right hand side of the assignment.
+     */
     public Assignment(final AssignableExpression lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
@@ -71,6 +77,13 @@ public class Assignment extends Expr {
         return result;
     }
 
+    /**
+     * Convert a term representing a Assignment into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Assignment Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Assignment termToExpr(final Term term) throws TermConversionException {
         if (term.size() == 2) {
             final Expr lhs = TermConverter.valueToExpr(term.firstMember());

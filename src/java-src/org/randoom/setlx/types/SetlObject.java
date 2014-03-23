@@ -48,7 +48,6 @@ import org.randoom.setlx.functions.PD_permutations;
 import org.randoom.setlx.functions.PD_pow;
 import org.randoom.setlx.functions.PD_range;
 import org.randoom.setlx.functions.PD_rational;
-import org.randoom.setlx.functions.PD_double;
 import org.randoom.setlx.functions.PD_reverse;
 import org.randoom.setlx.functions.PD_round;
 import org.randoom.setlx.functions.PD_shuffle;

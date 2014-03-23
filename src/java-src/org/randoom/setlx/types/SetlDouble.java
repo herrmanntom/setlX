@@ -15,22 +15,28 @@ import java.text.DecimalFormat;
  */
 public class SetlDouble extends NumberValue {
     /**
-     * Flag for printing doubles with the default way of displaying the exponent.
+     * Flag to define how to format doubles when printing them.
      */
-    public  final static int           PRINT_MODE_DEFAULT     = 1;
-    /**
-     * Flag for printing doubles with always displaying the exponent.
-     */
-    public  final static int           PRINT_MODE_SCIENTIFIC  = 2;
-    /**
-     * Flag for printing doubles with always displaying a exponent which is a multiple of 3.
-     */
-    public  final static int           PRINT_MODE_ENGINEERING = 3;
-    /**
-     * Flag for printing doubles without displaying the exponent.
-     */
-    public  final static int           PRINT_MODE_PLAIN       = 4;
-    private final static DecimalFormat PLAIN_FORMAT           = new DecimalFormat("#.#");
+    public enum DoublePrintMode {
+        /**
+         * Flag for printing doubles with the default way of displaying the exponent.
+         */
+        DEFAULT,
+        /**
+         * Flag for printing doubles with always displaying the exponent.
+         */
+        SCIENTIFIC,
+        /**
+         * Flag for printing doubles with always displaying a exponent which is a multiple of 3.
+         */
+        ENGINEERING,
+        /**
+         * Flag for printing doubles without displaying the exponent.
+         */
+        PLAIN
+    }
+
+    private final static DecimalFormat PLAIN_FORMAT = new DecimalFormat("#.#");
     static {
         PLAIN_FORMAT.setGroupingUsed(false);
         PLAIN_FORMAT.setMaximumFractionDigits(340);
@@ -435,13 +441,13 @@ public class SetlDouble extends NumberValue {
     @SuppressWarnings("fallthrough")
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         switch (state.doublePrintMode) {
-            case PRINT_MODE_SCIENTIFIC:
+            case SCIENTIFIC:
                 if ( ! Double.isInfinite(doubleValue)) {
                     sb.append(String.format("%e", this.doubleValue));
                     break;
                 } // else: fall-through
 
-            case PRINT_MODE_ENGINEERING:
+            case ENGINEERING:
                 if ( ! Double.isInfinite(doubleValue)) {
                     double val = this.doubleValue;
 
@@ -461,13 +467,13 @@ public class SetlDouble extends NumberValue {
                     break;
                 } // else: fall-through
 
-            case PRINT_MODE_PLAIN:
+            case PLAIN:
                 if ( ! Double.isInfinite(doubleValue)) {
                     sb.append(PLAIN_FORMAT.format(this.doubleValue));
                     break;
                 } // else: fall-through
 
-            case PRINT_MODE_DEFAULT:
+            case DEFAULT:
             default:
                 sb.append(String.valueOf(this.doubleValue));
                 break;

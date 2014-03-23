@@ -9,6 +9,7 @@ grammar SetlXgrammar;
     import org.randoom.setlx.statementBranches.*;
     import org.randoom.setlx.types.*;
     import org.randoom.setlx.utilities.*;
+    import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 
     import java.util.ArrayList;
     import java.util.List;
@@ -258,12 +259,12 @@ lambdaParameters returns [List<ParameterDef> paramList]
     @init {
         $paramList = new ArrayList<ParameterDef>();
     }
-    : variable             { $paramList.add(new ParameterDef($variable.v, ParameterDef.READ_ONLY)); }
+    : variable             { $paramList.add(new ParameterDef($variable.v, ParameterType.READ_ONLY)); }
     | '['
       (
-       v1 = variable       { $paramList.add(new ParameterDef($v1.v, ParameterDef.READ_ONLY));       }
+       v1 = variable       { $paramList.add(new ParameterDef($v1.v, ParameterType.READ_ONLY));       }
        (
-         ',' v2 = variable { $paramList.add(new ParameterDef($v2.v, ParameterDef.READ_ONLY));       }
+         ',' v2 = variable { $paramList.add(new ParameterDef($v2.v, ParameterType.READ_ONLY));       }
        )*
       )?
       ']'
@@ -395,8 +396,8 @@ procedureParameters returns [List<ParameterDef> paramList]
     ;
 
 procedureParameter returns [ParameterDef param]
-    : 'rw' variable { $param = new ParameterDef($variable.v, ParameterDef.READ_WRITE); }
-    | variable      { $param = new ParameterDef($variable.v, ParameterDef.READ_ONLY);  }
+    : 'rw' variable { $param = new ParameterDef($variable.v, ParameterType.READ_WRITE); }
+    | variable      { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY);  }
     ;
 
 call [boolean enableIgnore, Expr lhs] returns [Expr c]

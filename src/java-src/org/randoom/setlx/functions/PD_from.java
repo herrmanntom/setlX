@@ -3,7 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public class PD_from extends PreDefinedProcedure {
 
     private PD_from() {
         super();
-        addParameter("collectionValue", ParameterDef.READ_WRITE);
+        addParameter("collectionValue", ParameterType.READ_WRITE);
     }
 
     @Override

@@ -2,19 +2,21 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// fromE(rw collectionValue)     : selects and removes the last member from `collectionValue'
-
+/**
+ * fromE(rw collectionValue)     : selects and removes the last member from `collectionValue'
+ */
 public class PD_fromE extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `fromE'. */
     public final static PreDefinedProcedure DEFINITION = new PD_fromE();
 
     private PD_fromE() {
         super();
-        addParameter("collectionValue", ParameterDef.READ_WRITE);
+        addParameter("collectionValue", ParameterType.READ_WRITE);
     }
 
     @Override

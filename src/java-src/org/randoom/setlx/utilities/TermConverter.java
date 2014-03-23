@@ -37,8 +37,8 @@ import java.util.Map;
  */
 public class TermConverter {
 
-    private static Map<String, Method> sExprConverters      = new HashMap<String, Method>();
-    private static Map<String, Method> sStatementConverters = new HashMap<String, Method>();
+    private final static Map<String, Method> EXPR_CONVERTERS      = new HashMap<String, Method>();
+    private final static Map<String, Method> STATEMENT_CONVERTERS = new HashMap<String, Method>();
 
     /**
      * Convert a term (or value) representing a setlX-Value into such a value.
@@ -92,12 +92,12 @@ public class TermConverter {
             try {
                 if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
                     Method  converter   = null;
-                    synchronized (sExprConverters) {
+                    synchronized (EXPR_CONVERTERS) {
                         // search in expr map
-                        converter = sExprConverters.get(fc);
+                        converter = EXPR_CONVERTERS.get(fc);
                         // and in statement map if allowed and nothing was found (yet)
                         if ( ! restrictToExpr && converter == null) {
-                            converter = sStatementConverters.get(fc);
+                            converter = STATEMENT_CONVERTERS.get(fc);
                         }
                     }
                     // search via reflection, if method was not found in maps
@@ -114,8 +114,8 @@ public class TermConverter {
                             clAss       = Class.forName(packageNameBExpr + '.' + needle);
                             converter   = clAss.getMethod("termToExpr", Term.class);
 
-                            synchronized (sExprConverters) {
-                                sExprConverters.put(fc, converter);
+                            synchronized (EXPR_CONVERTERS) {
+                                EXPR_CONVERTERS.put(fc, converter);
                             }
                         } catch (final Exception e1) {
                             // look-up failed, try next package
@@ -123,8 +123,8 @@ public class TermConverter {
                                 clAss       = Class.forName(packageNameExpr + '.' + needle);
                                 converter   = clAss.getMethod("termToExpr", Term.class);
 
-                                synchronized (sExprConverters) {
-                                    sExprConverters.put(fc, converter);
+                                synchronized (EXPR_CONVERTERS) {
+                                    EXPR_CONVERTERS.put(fc, converter);
                                 }
                             } catch (final Exception e2) {
                                 // look-up failed, try next package
@@ -135,8 +135,8 @@ public class TermConverter {
                                         clAss       = Class.forName(packageNameStmnt + '.' + needle);
                                         converter   = clAss.getMethod("termToStatement", Term.class);
 
-                                        synchronized (sExprConverters) {
-                                            sStatementConverters.put(fc, converter);
+                                        synchronized (EXPR_CONVERTERS) {
+                                            STATEMENT_CONVERTERS.put(fc, converter);
                                         }
                                     } catch (final Exception e3) {
                                         // look-up failed, nothing more to try

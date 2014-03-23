@@ -8,6 +8,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -243,7 +244,7 @@ public class Procedure extends Value {
         for (int i = 0; i < parametersSize; ++i) {
             final ParameterDef param = parameters.get(i);
             final Value        value = values.get(i);
-            if (param.getType() == ParameterDef.READ_WRITE) {
+            if (param.getType() == ParameterType.READ_WRITE) {
                 param.assign(state, value, FUNCTIONAL_CHARACTER);
             } else {
                 param.assign(state, value.clone(), FUNCTIONAL_CHARACTER);
@@ -269,7 +270,7 @@ public class Procedure extends Value {
                     continue;
                 }
                 final ParameterDef param = parameters.get(i);
-                if (param.getType() == ParameterDef.READ_WRITE) {
+                if (param.getType() == ParameterType.READ_WRITE) {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
                     // expression used to fill parameter before execution

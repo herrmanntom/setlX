@@ -155,7 +155,7 @@ Hereby \command{"value"} is the name of the parameter. The name of the parameter
 
 Read-Write parameters (`\command{rw}') can be defined using:
 \begin{lstlisting}[frame=none,numbers=none]
-addParameter("value", ParameterDef.READ_WRITE);
+addParameter("value", ParameterType.READ_WRITE);
 \end{lstlisting}
 
 When `\command{execute(List<Value> args, List<Value> writeBackVars)}' is called, the current values of these parameters are placed inside the `\command{args}' list in \emph{the same order as they are added in the constructor}. When the procedure is called with a different number of parameters from within \SetlX{}, the user gets an error and the execution is halted. If a procedure should be allowed to handle more or fewer parameters as defined, the following methods can be called inside the constructor after parameter definitions:

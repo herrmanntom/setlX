@@ -1,6 +1,7 @@
 <project name="setlX" basedir="." default="jar">
     <!-- variables which determine paths and other information used later -->
     <property name="main-class"  value="org.randoom.setlxUI.pc.SetlX"/>
+    <property name="j16rt.dir"   value="java_1_6"/>
     <property name="src.dir"     value="java-src"/>
     <property name="build.dir"   value="build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
@@ -24,7 +25,7 @@
 
     <!-- discover rt.jar from java-1.6 for building 1.6 compatible with newer javac -->
     <path id="rt.jar-j1.6">
-        <fileset dir="${user.home}/programs/rt_jar_openJDK_1-6-0/" includes="rt.jar"/>
+        <fileset dir="${j16rt.dir}/" includes="rt.jar"/>
     </path>
 
     <target name="test" depends="jar">
@@ -51,7 +52,7 @@
         </javac>
     </target>
 
-    <target name="compile-j1.6-compatible" depends="grammar">
+    <target name="compile-j1.6-compatible" depends="grammar,download-j1.6-rt.jar">
         <javac srcdir="${src.dir}" destdir="${classes.dir}"
                debug="true" debuglevel="lines,source"
                classpathref="classpath" includeantruntime="false"
@@ -129,6 +130,12 @@
         </unjar>
     </target>
 
+    <target name="download-j1.6-rt.jar" depends="grammar">
+        <mkdir dir="${j16rt.dir}"/>
+        <get src="http://external.randoom.org/openJDK_1-6-0_28_rt_jar/rt.jar"
+             verbose="true" skipexisting="true" dest="${j16rt.dir}/rt.jar"/>
+    </target>
+
     <!-- clean up the mess we made by building -->
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -141,6 +148,7 @@
         <delete>
             <fileset dir="${basedir}" includes="*.jar"/>
         </delete>
+        <delete dir="${j16rt.dir}"/>
     </target>
 </project>
 

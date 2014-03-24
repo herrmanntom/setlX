@@ -1,0 +1,389 @@
+// The parser implemented in the function parseExpr parses an arithmetic 
+// expression according to the following EBNF grammar.
+// 
+// grammar : rule+ 
+//         ;
+// 
+// rule : VAR ':' body ('|' body )* ';' 
+//      ;
+//  
+// body : item*
+//      ; 
+// 
+// item : VAR     
+//      | TOKEN   
+//      | LITERAL 
+//      ;
+
+// Read a grammar from the file f, parse the grammar, and return it.
+readGrammar := procedure(f) {
+    gs := join(readFile(f), "\n");
+    tl := tokenizeString(gs);
+    return parseGrammar(tl);
+};
+
+// This procedure takes a token list tl and tries to interpret this list
+// as an arithmetic expression.
+parseGrammar := procedure(tl) {
+    [rule, rl] := parseRule(tl);
+    ruleList := [ rule ];
+    while (#rl >= 1) {
+        [rule, rl] := parseRule(rl);
+        ruleList += [ rule ];
+    }
+    return collectSimpleRules(ruleList);
+};
+
+collectSimpleRules := procedure(ruleList) {
+    rules     := [];
+    variables := {};
+    for ([v, bodyList] in ruleList) {
+        variables += { v };
+        for (body in bodyList) {
+            rules += [ [v, body] ];
+        }
+    }
+    start := rules[1][1];
+    return [rules, variables, start];
+};
+
+parseRule := procedure(tl) {
+    [head, rl] := [args(tl[1])[1], tl[2..]];
+    assert(fct(tl[1]) == "Var", "parseRule($tl$)");
+    assert(rl[1] == ":", "parseRule($tl$)");
+    [body, rl] := parseBody(rl[2..]);
+    bodyList := [ body ];
+    while (#rl >= 1 && rl[1] == "|") {
+        [body, rl] := parseBody(rl[2..]);
+        bodyList += [ body ];
+    }
+    assert(rl[1] == ";", "parseRule($tl$), rl = $rl$");
+    return [ [head, bodyList], rl[2..]];
+};
+
+parseBody := procedure(tl) {
+    itemList := [];
+    while (#tl >= 1 && !(tl[1] in [ "|", ";" ])) {
+        [item, tl] := parseItem(tl);
+        itemList += [ item ];
+    }
+    return [itemList, tl];
+};
+
+parseItem := procedure(tl) {
+    match (tl) {
+        case [ Var(v  ) | rl] : return [ Var(v),     rl];
+        case [ Token(t) | rl] : return [ Token(t),   rl];
+        default : abort("parse error in parseItem($tl$)");
+    }
+};
+
+// This procedure partitions the string s into a list of tokens.
+// It recognizes numbers, the operator symbols "+", "-", "*", "/", "**"
+// and the parentheses "(" and ")".
+tokenizeString := procedure(s) {
+    tokenList := [];
+    scan (s) {
+        regex '[:|;]'              as [ o ]: tokenList += [ o        ];
+        regex '[a-z][a-zA-Z_0-9]*' as [ v ]: tokenList += [ Var(v)   ];
+        regex '[A-Z][A-Z_0-9]*'    as [ t ]: tokenList += [ Token(t) ];
+        regex '''[^'']*'''         as [ l ]: tokenList += [ Token(l) ];
+        regex '[ \t\v\n\r]+'               : // skip
+        regex '.|\n'               as [ c ]: abort("tokenizeString: $c$");
+    }
+    return tokenList;
+};
+
+/* Combine a list of grammar symbols, i.e. of variables and tokens into a 
+   string.
+ */
+list2str := procedure(l) {
+    result := "";
+    for (x in l) {
+        match (x) {
+            case Var(v)   : result += " " + v;
+            case Token(t) : result += " " + t;
+        }
+    }
+    return result;
+};
+
+/* The objects of this class represent extended marked rules of the form
+   variable -> alpha * beta : L.
+*/
+class markedRule(variable, alpha, beta, followSet) {
+    this.mVariable  := variable;
+    this.mAlpha     := alpha;
+    this.mBeta      := beta;
+    this.mFollowSet := followSet;
+
+    // check whether the * is at the end of of the rule
+    isComplete := procedure() { return mBeta == []; };
+    nextVar    := procedure() {
+        if (#mBeta > 0) {
+            match (mBeta[1]) {
+                case Var(v): return v;
+            }
+        }
+    };
+    symbolAfterDot := procedure() {
+        if (#mBeta > 0) { return mBeta[1]; }
+    };
+    restAfterVariable := procedure() {
+        if (#mBeta > 1) { return mBeta[2..]; }
+        return [];
+    };
+    moveDot := procedure() {
+        return markedRule(mVariable, mAlpha + [mBeta[1]], mBeta[2..], mFollowSet);
+    };  
+    // turn a marked rule into a grammar rule
+    toRule := procedure() {
+        return grammarRule(mVariable, mAlpha + mBeta);
+    };
+    f_str := procedure() {
+        return mVariable + " ->" + list2str(mAlpha) + " (*)" + list2str(mBeta) +
+               " : " + mFollowSet;
+    };
+
+  static {
+    // take a core rule and attach a follow set
+    createRule := procedure(cr, followSet) {
+        return markedRule(cr.mVariable, cr.mAlpha, cr.mBeta, followSet);
+    };  
+  }
+}
+
+// A coreRule is a markedRule without a follow set.
+class coreRule(mr) {
+    this.mVariable  := mr.mVariable;
+    this.mAlpha     := mr.mAlpha;
+    this.mBeta      := mr.mBeta;
+
+    static {
+        equals := procedure(that) {
+            return this.mVariable == that.mVariable &&
+                   this.mAlpha    == that.mAlpha    &&
+                   this.mBeta     == that.mBeta;
+        };
+    }
+}
+
+/* This class represents a grammar rule. */
+class grammarRule(variable, gamma) {
+    this.mVariable := variable;
+    this.mGamma    := gamma;
+    f_str := procedure() {
+        return mVariable + " ->" + list2str(mGamma);
+    };
+}
+
+// assign the empty set to all variables
+initializeMap := procedure(variables) {
+    return { [a, {}] : a in variables };
+};
+
+/* This class represents a context-free grammar */
+class grammar(rules, variables, start) {
+    this.mRules       := rules;
+    this.mVariables   := variables;
+    this.mStart       := start;
+    this.mRules       += { ["S", [Var(mStart)]] }; // augment grammar
+    this.mVariables   += { "S" };
+    this.mFirst       := initializeMap(mVariables);
+    this.mFollow      := initializeMap(mVariables);
+    this.mTokens      := {};
+    this.mStates      := {};
+    this.mStateNames  := {};
+    this.mConflicts   := false;
+
+  static {
+    // check, whether this grammar is an LR-grammar  
+    checkLR := procedure() {
+        computeTokens();
+        computeFirst();
+        computeAllStates();
+        computeActionTable();
+        computeGotoTable();
+        if (!mConflicts) {
+            print("This grammar is a canonical LR grammar.");
+        } else {
+            print("This grammar is not LR!");
+        }
+    };
+    // collect all tokens  
+    computeTokens := procedure() {
+        for ([_, body] in mRules, x in body) {
+            match (x) {
+                case Token(t): this.mTokens += { x };
+            }
+        }
+    };
+    startRule := procedure() {
+        return markedRule("S", [], [ Var(mStart) ], { '$' });
+    };
+    firstList := procedure(alpha) {
+        match (alpha) {
+             case []:               return { "" };
+             case [ Var(v)   | r ]: return epsAppend(mFirst[v], firstList(r));
+             case [ Token(t) | r ]: return { t };
+        }
+    };
+    computeFirst := procedure() {
+        change := true;
+        while (change) {
+            change := false;    
+            for ([a, body] in mRules) {
+                firstBody := firstList(body);
+                if (!(firstBody <= mFirst[a])) { 
+                    change := true;
+                    this.mFirst[a] += firstBody;
+                }
+            }
+        }
+    };
+    epsClosure := cachedProcedure(markedRules) {
+        allRules := markedRules;
+        newRules := markedRules;
+        while (true) {
+            moreRules := {};
+            for (mr in newRules) {
+                c := mr.nextVar();
+                if (c == om) { continue; }
+                for ([head, alpha] in mRules | c == head) {
+                    followSet := epsAppend(firstList(mr.restAfterVariable()), mr.mFollowSet);
+                    moreRules += { markedRule(head, [], alpha, followSet) };
+                }
+            }
+            if (moreRules <= allRules) {
+                return combineRules(allRules);
+            }
+            newRules := moreRules - allRules;
+            allRules += newRules;
+        }
+    };
+    // combine those marked rules in the given set that have the same core
+    combineRules := procedure(markedRules) {
+        cores   := { coreRule(mr) : mr in markedRules };
+        combine := procedure(rules, cr) {
+            return +/ { mr.mFollowSet : mr in rules | cr == coreRule(mr) };
+        };
+        return { markedRule.createRule(cr, combine(markedRules, cr)) : cr in cores };
+    };
+    goto := procedure(markedRules, x) {
+        result := {};
+        for (mr in markedRules | mr.symbolAfterDot() == x) {
+            result += { mr.moveDot() };
+        }
+        return epsClosure(result);
+    };
+    computeAllStates := procedure() {
+        this.mStates := newStates := { epsClosure({ startRule() }) };
+        while (true) {
+            moreStates := {};
+            for (ruleSet in newStates) {
+                for (mr in ruleSet | !mr.isComplete()) {
+                    x := mr.symbolAfterDot();
+                    moreStates += { goto(ruleSet, x) };
+                }
+            }
+            if (moreStates <= mStates) {
+                break;
+            }
+            newStates := moreStates - mStates;
+            print("$#newStates$ new states found");
+            this.mStates += newStates;
+        }
+        print("Total number of LR-states: $#mStates$");
+        counter := 0;
+        for (state in mStates) {
+            this.mStateNames[state] := "s" + counter;
+            counter += 1;
+        }
+    };
+    computeActionTable := procedure() {
+        // print("\nAction Table:");
+        this.mActionTable := {};
+        for (state in mStates) {
+            stateName := mStateNames[state];
+            // compute shift actions
+            for (token in mTokens) {
+                newState  := goto(state, token);
+                if (newState != {}) {
+                    newName := mStateNames[newState];
+                    t       := extractArg(token);
+                    this.mActionTable[[stateName,t]] := Shift(newName);
+                    // print("action(\"$stateName$\", $t$) = $Shift(newName)$");
+                }
+            }
+            // compute reduce actions
+            for (mr in state | mr.isComplete()) {
+                for (t in mr.mFollowSet) {
+                action1 := this.mActionTable[[stateName,t]];
+                    action2 := Reduce(mr.toRule());
+                    if (action1 == om) {
+                        this.mActionTable[[stateName,t]] := action2;
+                        // print("action(\"$stateName$\", $t$) = $action2$");
+                    } else if (action1 != action2) {
+                        this.mConflicts := true;
+                        print("");
+                        print("conflict:");
+                        print("action(\"$stateName$\", $t$) = $action1$");                        
+                        print("action(\"$stateName$\", $t$) = $action2$");
+                        print("");
+                    }
+                }
+            }
+        }
+        print("Total size of action table: $#mActionTable$");
+    };
+    computeGotoTable := procedure() {
+        gotoTable := {};
+        // print("\nGoto Table:");
+        for (state in mStates, var in mVariables) {
+            newState := goto(state, Var(var));
+            if (newState != {}) {
+                stateName := mStateNames[state];
+                newName   := mStateNames[newState];
+                gotoTable[[state, var]] := newName;
+                // print("goto($stateName$, $var$) = $newName$");
+            }
+        }
+        print("Total size of goto table: $#gotoTable$");
+    };
+    // auxilliary procedures
+    f_str := procedure() {
+        result := "";
+        for ([head, body] in mRules) {
+            result += "$head$ ->";
+            for (i in body) {
+                result += " " + extractArg(i);
+            }
+            result += " ;\n";
+        }                  
+        return result;
+    };
+    epsAppend := procedure(s, t) {
+        if ("" in s) {
+            if ("" in t) {
+                return s + t;
+            } 
+            return s + t - { "" };
+        }
+        return s;
+    };
+    extractArg := procedure(x) {
+        match (x) {
+            case Var(v)   : return v;
+            case Token(t) : return t;
+        }
+    };
+  }  
+}
+
+main := procedure(file) {
+    [rules, variables, start] := readGrammar(file);
+    gr := grammar(rules, variables, start);
+    gr.checkLR();
+};
+
+main("c-grammar.g");

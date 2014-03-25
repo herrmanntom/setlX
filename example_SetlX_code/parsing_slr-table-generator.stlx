@@ -1,4 +1,4 @@
-load("grammar-parser.stlx");
+load("parsing_grammar-parser.stlx");
 
 /* Combine a list of grammar symbols, i.e. of variables and tokens into a 
    string.
@@ -283,7 +283,7 @@ test := procedure(file) {
     gr.checkSLR();
 };
 
-test("expr.g");
+test("parsing_expr.g");
 
 
 // The subdirectory Examples contains serveral example grammars.  A grammar for arithmetical

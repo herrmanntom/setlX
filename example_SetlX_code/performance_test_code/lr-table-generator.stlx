@@ -386,4 +386,4 @@ main := procedure(file) {
     gr.checkLR();
 };
 
-main("c-grammar.g");
+main("lr-table-generator_c-grammar.g");

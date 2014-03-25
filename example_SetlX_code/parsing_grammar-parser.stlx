@@ -138,4 +138,4 @@ testParser := procedure(f) {
     }
 };
 
-testParser("expr.g");
+testParser("parsing_expr.g");

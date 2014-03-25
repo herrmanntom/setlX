@@ -46,7 +46,7 @@ public class SetlX {
         boolean             help         = false;
         boolean             interactive  = false;
         boolean             noExecution  = false;
-        boolean             termLoop     = false;  // convert loaded code to term and back
+        boolean             termLoop     = false; // convert loaded code to term and back
 
         String              expression   = null;  // expression to be evaluated using -ev option
         String              statement    = null;  // code to be executed when using -ex option
@@ -60,15 +60,27 @@ public class SetlX {
         final PcEnvProvider envProvider  = new PcEnvProvider(libraryPath);
         final State         state        = new State(envProvider);
 
-        final SetlList parameters = new SetlList(); // can/will be filled later
+        final SetlList      parameters   = new SetlList(); // can/will be filled later
         try {
             state.putValue("params", parameters, "init");
         } catch (final IllegalRedefinitionException e) {
             // impossible
         }
 
-        for (int i = 0; i < args.length; ++i) {
-            final String s = args[i];
+        // split combined short options like -amn into -a -m -n
+        final List<String> arguments = new ArrayList<String>(args.length);
+        for (final String arg : args) {
+            if (arg.matches("-\\{2,}")) {
+                for (final char c : arg.substring(1).toCharArray()) {
+                    arguments.add("-" + c);
+                }
+            } else {
+                arguments.add(arg);
+            }
+        }
+
+        for (int i = 0; i < arguments.size(); ++i) {
+            final String s = arguments.get(i);
             if (s.equals("--version")) {
                 state.outWriteLn(VERSION);
 
@@ -85,8 +97,8 @@ public class SetlX {
             } else if (s.equals("--dump")) {
                 dumpFile = "";
                 ++i; // set to next argument
-                if (i < args.length) {
-                    dumpFile = args[i];
+                if (i < arguments.size()) {
+                    dumpFile = arguments.get(i);
                 }
                 // check for incorrect dumpFile contents
                 if (  dumpFile.equals("") ||
@@ -98,8 +110,8 @@ public class SetlX {
             } else if (s.equals("--dumpTerm")) {
                 dumpTermFile = "";
                 ++i; // set to next argument
-                if (i < args.length) {
-                    dumpTermFile = args[i];
+                if (i < arguments.size()) {
+                    dumpTermFile = arguments.get(i);
                 }
                 // check for incorrect dumpTermFile contents
                 if (  dumpTermFile.equals("") ||
@@ -110,8 +122,8 @@ public class SetlX {
                 }
             } else if (s.equals("-e") || s.equals("--eval")) {
                 ++i; // set to next argument
-                if (i < args.length) {
-                    expression = args[i];
+                if (i < arguments.size()) {
+                    expression = arguments.get(i);
                 }
                 // check for incorrect expression content
                 if (  statement != null || expression.equals("") ||
@@ -122,8 +134,8 @@ public class SetlX {
                 }
             } else if (s.equals("-x") || s.equals("--exec")) {
                 ++i; // set to next argument
-                if (i < args.length) {
-                    statement = args[i];
+                if (i < arguments.size()) {
+                    statement = arguments.get(i);
                 }
                 // check for incorrect statement content
                 if (  expression != null || statement.equals("") ||
@@ -136,8 +148,8 @@ public class SetlX {
                 help = true;
             } else if (s.equals("-l") || s.equals("--libraryPath")) {
                 ++i; // set to next argument
-                if (i < args.length) {
-                    libraryPath = args[i];
+                if (i < arguments.size()) {
+                    libraryPath = arguments.get(i);
                     envProvider.setlibraryPath(libraryPath);
                 }
                 // check for incorrect contents
@@ -158,8 +170,8 @@ public class SetlX {
             } else if (s.equals("-p") || s.equals("--params")) {
                 // all remaining arguments are passed into the program
                 ++i; // set to next argument
-                for (; i < args.length; ++i) {
-                    parameters.addMember(state, new SetlString(args[i]));
+                for (; i < arguments.size(); ++i) {
+                    parameters.addMember(state, new SetlString(arguments.get(i)));
                 }
             } else if (s.equals("-r") || s.equals("--predictableRandom")) { // easier debugging
                 state.setRandoomPredictable(true);

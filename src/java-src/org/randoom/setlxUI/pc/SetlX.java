@@ -44,6 +44,7 @@ public class SetlX {
         String              dumpFile     = null;  // file to write loaded code into
         String              dumpTermFile = null;  // file to write loaded code as term into
         boolean             help         = false;
+        boolean             harshWelcome = false; // do not print entire welcome message
         boolean             interactive  = false;
         boolean             noExecution  = false;
         boolean             termLoop     = false; // convert loaded code to term and back
@@ -144,7 +145,9 @@ public class SetlX {
                     help      = true;
                     statement = null;
                 }
-            } else if (s.equals("-h") || s.equals("--help")) {
+            } else if (s.equals("-h") || s.equals("--harshWelcome")) {
+                harshWelcome = true;
+            } else if (s.equals("--help")) {
                 help = true;
             } else if (s.equals("-l") || s.equals("--libraryPath")) {
                 ++i; // set to next argument
@@ -195,12 +198,14 @@ public class SetlX {
 
         if (interactive || verbose || help) {
             printHeader(state);
-            if (! help) {
+            if (! help && ! harshWelcome) {
                 printShortHelp(state);
             }
         }
         if (interactive && ! help) {
-            printInteractiveBegin(state);
+            if (! harshWelcome) {
+                printInteractiveBegin(state);
+            }
             parseAndExecuteInteractive(state);
         } else if ( ! help ) {
             final List<Block> programs = parseAndEchoCode(
@@ -433,11 +438,12 @@ public class SetlX {
         String  header      = HEADER.substring(0, HEADER.length() - (versionSize + 2) );
         header             += VERSION_PREFIX + VERSION + HEADER.substring(HEADER.length() - 2);
         // print header
-        state.outWriteLn("\n" + header + "\n");
+        state.outWriteLn("\n" + header);
     }
 
     private static void printShortHelp(final State state) {
         state.outWriteLn(
+            "\n" +
             "Welcome to the setlX interpreter!\n" +
             "\n" +
             "Open Source Software from " + SETLX_URL +"\n" +
@@ -464,35 +470,38 @@ public class SetlX {
 
     private static void printHelp(final State state) {
         state.outWriteLn(
+            "\n" +
             "File paths supplied as parameters for this program will be parsed and executed.\n" +
             "The interactive mode will be started if called without any file parameters.\n"
         );
         printHelpInteractive(state);
         state.outWriteLn(
             "Additional parameters:\n" +
-            "  -e <expression>, --eval <expression>\n" +
-            "      Evaluates next argument as expression and exits.\n" +
-            "  -x <statement>, --exec <statement>\n" +
-            "      Executes next argument as statement and exits.\n" +
             "  -l <path>, --libraryPath <path>\n" +
             "      Override SETLX_LIBRARY_PATH environment variable.\n" +
-            "  -m, --multiLineMode\n" +
-            "      Only accept input in interactive mode after additional new line.\n" +
             "  -a, --noAssert\n" +
             "      Disables all assert functions.\n" +
             "  -n, --noExecution\n" +
             "      Load and check code for syntax errors, but do not execute it.\n" +
-            "  -p <argument> ..., --params <argument> ...\n" +
-            "      Pass all following arguments to executed program via `params' variable.\n" +
             "  -r, --predictableRandom\n" +
             "      Always use same random sequence (debugging).\n" +
+            "  -p <argument> ..., --params <argument> ...\n" +
+            "      Pass all following arguments to executed program via `params' variable.\n" +
+            "  -e <expression>, --eval <expression>\n" +
+            "      Evaluates next argument as expression and exits.\n" +
+            "  -x <statement>, --exec <statement>\n" +
+            "      Executes next argument as statement and exits.\n" +
+            "  -v, --verbose\n" +
+            "      Display the parsed program before executing it.\n" +
             "  --doubleDefault\n" +
             "  --doubleScientific\n" +
             "  --doubleEngineering\n" +
             "  --doublePlain\n" +
-            "      Sets how the exponent of doubles is displayed.\n" +
-            "  -v, --verbose\n" +
-            "      Display the parsed program before executing it.\n" +
+            "      Sets how the exponent of doubles is printed.\n" +
+            "  -h, --harshWelcome\n" +
+            "      Interactive mode: Reduce welcome message to a bare minimum.\n" +
+            "  -m, --multiLineMode\n" +
+            "      Interactive mode: Only accept input after additional new line.\n" +
             "  --version\n" +
             "      Display interpreter version and terminate.\n"
         );

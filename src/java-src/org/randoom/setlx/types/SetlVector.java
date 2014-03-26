@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package org.randoom.setlx.types;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -18,7 +14,7 @@ import org.randoom.setlx.utilities.State;
  * @author Patrick Robinson
  */
 public class SetlVector extends IndexedCollectionValue {
-    private final NumberValue[] value;
+    private NumberValue[] value;
     
     private SetlVector(final NumberValue[] value) throws IncompatibleTypeException {
         if(value.length > 0) this.value = value;
@@ -60,6 +56,7 @@ public class SetlVector extends IndexedCollectionValue {
             return new SetlVector((NumberValue[])result);
         } catch (IncompatibleTypeException ex) {
             // TODO This cannot happen!
+            return Om.OM;
         }
     }
 
@@ -105,7 +102,7 @@ public class SetlVector extends IndexedCollectionValue {
 
     @Override
     public Iterator<Value> iterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return Arrays.asList((Value[])value).iterator();
     }
 
     @Override
@@ -115,7 +112,14 @@ public class SetlVector extends IndexedCollectionValue {
 
     @Override
     public void addMember(State state, Value element) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(element instanceof NumberValue) { // TODO Term
+            int newLength = this.value.length + 1;
+            this.value = Arrays.copyOf(this.value, newLength);
+            this.value[newLength - 1] = (NumberValue)element;
+        } else {
+            // throw new IncompatibleTypeException("Element to be added to vector is not a number.");
+            // TODO cannot throw Exception, because base class doesn't throw exception
+        }
     }
 
     @Override
@@ -166,20 +170,42 @@ public class SetlVector extends IndexedCollectionValue {
         }
         return result;
     }
+    
+    public void removeMember(int index) {
+        NumberValue[] newValue = new NumberValue[value.length - 1];
+        System.arraycopy(value, 0, newValue, 0, index);
+        System.arraycopy(value, index+1, newValue, index, value.length - 1 - index);
+        value = newValue;
+    }
 
     @Override
     public void removeMember(Value element) throws IncompatibleTypeException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(element instanceof NumberValue) { // TODO Term
+            NumberValue elem = (NumberValue)element;
+            List<NumberValue> newValue = new ArrayList<NumberValue>(this.value.length - 1);
+            for(NumberValue i : this.value)
+                if(i != element) newValue.add(i);
+            // TODO Should it be checked, whether something was removed?
+            this.value = (NumberValue[])newValue.toArray();
+        } else {
+            throw new IncompatibleTypeException("Element to be removed from vector is not a number.");
+        }
     }
 
     @Override
     public Value removeFirstMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NumberValue[] newValue = new NumberValue[value.length - 1];
+        System.arraycopy(value, 1, newValue, 0, value.length - 1);
+        this.value = newValue;
+        return this;
     }
 
     @Override
     public Value removeLastMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        NumberValue[] newValue = new NumberValue[value.length - 1];
+        System.arraycopy(value, 0, newValue, 0, value.length - 1);
+        this.value = newValue;
+        return this;
     }
 
     @Override

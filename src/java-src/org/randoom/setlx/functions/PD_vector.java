@@ -27,7 +27,9 @@ public class PD_vector extends PreDefinedProcedure {
      */
     @Override
     public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if(!(args.get(0) instanceof CollectionValue)) System.err.println("[DEBUG]: vector param notcollection");
+        if (!(args.get(0) instanceof CollectionValue)) {
+            System.err.println("[DEBUG]: vector param notcollection");
+        }
         return new SetlVector(state, (CollectionValue)args.get(0));
     }  
 }

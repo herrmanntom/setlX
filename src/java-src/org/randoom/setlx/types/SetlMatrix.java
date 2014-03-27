@@ -241,9 +241,9 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
     
     private SetlList toSetlList(final State state) {
         SetlList container = new SetlList(this.value.getRowDimension());
-        for(double[] a : this.value.getArray()) {
+        for (double[] a : this.value.getArray()) {
             SetlList row = new SetlList(this.value.getColumnDimension());
-            for(double b : a) {
+            for (double b : a) {
                 try {
                     row.addMember(state, SetlDouble.valueOf(b));
                 } catch (UndefinedOperationException ex) {

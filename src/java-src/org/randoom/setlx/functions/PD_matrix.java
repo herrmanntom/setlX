@@ -29,6 +29,7 @@ public class PD_matrix extends PreDefinedProcedure {
      */
     @Override
     public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-            return new SetlMatrix(state, (CollectionValue)args.get(0));
+        if(!(args.get(0) instanceof CollectionValue)) System.err.println("[DEBUG]: matrix param notcollection");
+        return new SetlMatrix(state, (CollectionValue)args.get(0));
     }
 }

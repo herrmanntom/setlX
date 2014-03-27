@@ -67,7 +67,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
         // TODO does this work as it should?
-        canonical(state, sb);
+        this.canonical(state, sb);
     }
 
     /* (non-Javadoc)
@@ -370,12 +370,16 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
     @Override
     public Value removeFirstMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        double[][] result = new double[this.value.getColumnDimension() - 1][this.value.getRowDimension()];
+        System.arraycopy(this.value.getArray(), 1, result, 0, this.value.getColumnDimension() - 1);
+        return new SetlMatrix(new Jama.Matrix(result));
     }
 
     @Override
     public Value removeLastMember() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        double[][] result = new double[this.value.getColumnDimension() - 1][this.value.getRowDimension()];
+        System.arraycopy(this.value.getArray(), 0, result, 0, this.value.getColumnDimension() - 1);
+        return new SetlMatrix(new Jama.Matrix(result));
     }
 
     @Override

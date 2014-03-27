@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -22,6 +25,7 @@ public class SetlVector extends IndexedCollectionValue {
     }
     
     public SetlVector(final State state, final CollectionValue init) throws IncompatibleTypeException {
+        // System.err.println("[DEBUG]: new SetlVector begin");
         final int itemCount = init.size();
         if(itemCount > 0) {
             value = new NumberValue[itemCount];
@@ -36,6 +40,7 @@ public class SetlVector extends IndexedCollectionValue {
                 }
                 currentItem++;
             }
+            // System.err.println("[DEBUG]: new SetlVector end");
         } else {
             throw new IncompatibleTypeException("Initialization collection empty.");
         }
@@ -62,7 +67,7 @@ public class SetlVector extends IndexedCollectionValue {
 
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.canonical(state, sb);
     }
 
     @Override
@@ -87,7 +92,8 @@ public class SetlVector extends IndexedCollectionValue {
 
     @Override
     protected int compareToOrdering() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO Auto-generated method stub
+        return 0;
     }
 
     @Override
@@ -107,7 +113,23 @@ public class SetlVector extends IndexedCollectionValue {
 
     @Override
     public Iterator<Value> descendingIterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        final ListIterator<Value> ascendingIterator = Arrays.asList((Value[])value).listIterator();
+        return new Iterator<Value>() {
+            @Override
+            public boolean hasNext() {
+                return ascendingIterator.hasPrevious();
+            }
+
+            @Override
+            public Value next() {
+                return ascendingIterator.previous();
+            }
+
+            @Override
+            public void remove() {
+                ascendingIterator.remove();
+            }
+        };
     }
 
     @Override
@@ -215,7 +237,12 @@ public class SetlVector extends IndexedCollectionValue {
 
     @Override
     public void canonical(State state, StringBuilder sb) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        sb.append('<');
+        for(NumberValue a : this.value) {
+            try {
+                sb.append(' ').append(a.toJDoubleValue(state)).append(' ');
+            } catch (SetlException ex) {}
+        }
     }
 
     @Override

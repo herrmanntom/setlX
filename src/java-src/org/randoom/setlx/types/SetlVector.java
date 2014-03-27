@@ -320,8 +320,9 @@ public class SetlVector extends IndexedCollectionValue {
 	/**
 	 * ¿Is this algorithm correct?:
 	 *
-	 * i j k l
-	 * ax ay az at bx by bz bt
+	 * i	j	k	l
+	 * ax	ay	az	at
+	 * bx	by	bz	bt
 	 *
 	 * a × b = (ay·bz - at·bz)·i + (az·bt - ax·bt)·j + (at·bx - ay·bx)·k +
 	 * (ax·by - az·by)·t
@@ -334,10 +335,26 @@ public class SetlVector extends IndexedCollectionValue {
 	public SetlVector vectorProduct(final State state, final SetlVector B) throws SetlException {
 		if(this.size() == B.size()) {
 			NumberValue[] result = new NumberValue[this.size()];
-
+			for(int i = 0; i < this.size(); i++) {
+				result[i] = (NumberValue)(this.value[loopingIndex(1, i, this.size())].product(state, B.value[loopingIndex(2, i, this.size())]));
+				result[i].sum(state, (NumberValue)(this.value[loopingIndex(-1, i, this.size())].product(state, B.value[loopingIndex(-2, i, this.size())])).minus(state));
+			}
 			return new SetlVector(result);
 		} else {
 			throw new IncompatibleTypeException("Vector produkt cannot be called with vectors with different number of dimensions.");
 		}
+	}
+
+	private int loopingIndex(int diff, int currentIndex, int length) {
+		int a = currentIndex + diff;
+		while(a < 0 || a > length) {
+			if(a > length) {
+				a -= length;
+			}
+			if(a < 0) {
+				a = length + a;
+			}
+		}
+		return a;
 	}
 }

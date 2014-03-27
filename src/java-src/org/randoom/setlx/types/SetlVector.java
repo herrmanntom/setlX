@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -105,8 +106,26 @@ public class SetlVector extends IndexedCollectionValue {
     public int hashCode() {
         return this.value.hashCode();
     }
-
+    
+    private SetlList toSetlList(final State state) {
+        SetlList container = new SetlList(this.value.length);
+        for(NumberValue a : this.value) {
+            container.addMember(state, a);
+        }
+        return container;
+    }
+    
     @Override
+    public Iterator<Value> iterator() {
+        return this.toSetlList(null).iterator();
+    }
+    
+    @Override
+    public Iterator<Value> descendingIterator() {
+        return this.toSetlList(null).descendingIterator();
+    }
+
+    /*@Override
     public Iterator<Value> iterator() {
         return Arrays.asList((Value[])value).iterator();
     }
@@ -130,7 +149,7 @@ public class SetlVector extends IndexedCollectionValue {
                 ascendingIterator.remove();
             }
         };
-    }
+    }*/
 
     @Override
     public void addMember(State state, Value element) {

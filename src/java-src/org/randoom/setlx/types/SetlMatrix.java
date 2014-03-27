@@ -14,15 +14,15 @@ import org.randoom.setlx.utilities.State;
 /**
  * @author Patrick Robinson
  */
-public class Matrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
+public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
     private Jama.Matrix value;
     
-    private Matrix(Jama.Matrix v) {
+    private SetlMatrix(Jama.Matrix v) {
         super();
         this.value = v;
     }
 
-    public Matrix(final State state, final CollectionValue init) throws SetlException {
+    public SetlMatrix(final State state, final CollectionValue init) throws SetlException {
         super();
         final int rowCount = init.size();
         final int columnCount = ((CollectionValue)init.firstMember()).size();
@@ -58,7 +58,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
      */
     @Override
     public Value clone() {
-        return new Matrix(value.copy());
+        return new SetlMatrix(value.copy());
     }
 
     /* (non-Javadoc)
@@ -93,7 +93,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
      */
     @Override
     public boolean equalTo(Value other) {
-        return other instanceof Matrix && Arrays.deepEquals(this.value.getArray(), ((Matrix)other).value.getArray());
+        return other instanceof SetlMatrix && Arrays.deepEquals(this.value.getArray(), ((SetlMatrix)other).value.getArray());
     }
 
     /* (non-Javadoc)
@@ -106,13 +106,13 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
-        if(multiplier instanceof Matrix) {
-            Matrix b = (Matrix)multiplier;
+        if(multiplier instanceof SetlMatrix) {
+            SetlMatrix b = (SetlMatrix)multiplier;
             // TODO check conditions
-            return new Matrix(this.value.times(b.value));
+            return new SetlMatrix(this.value.times(b.value));
         } else if(multiplier instanceof NumberValue) {
             NumberValue n = (NumberValue)multiplier;
-            return new Matrix(this.value.times(n.toJDoubleValue(state)));
+            return new SetlMatrix(this.value.times(n.toJDoubleValue(state)));
         } else if(multiplier instanceof Term) {
             // TODO implement this:
             return ((Term)multiplier).productFlipped(state, this);
@@ -123,8 +123,8 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     
     @Override
     public Value productAssign(final State state, final Value multiplier) throws SetlException {
-        if(multiplier instanceof Matrix) {
-            Matrix b = (Matrix)multiplier;
+        if(multiplier instanceof SetlMatrix) {
+            SetlMatrix b = (SetlMatrix)multiplier;
             // TODO check conditions
             this.value = this.value.times(b.value);
             return this;
@@ -140,8 +140,8 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         }
     }
     
-    public Matrix transpose() {
-        return new Matrix(this.value.transpose());
+    public SetlMatrix transpose() {
+        return new SetlMatrix(this.value.transpose());
     }
     
     // TODO broken
@@ -156,7 +156,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
                 ex = -ex;
             } else {
                 if(ex == 0) {
-                    // TODO What now? How is this defined on Matrix
+                    // TODO What now? How is this defined on SetlMatrix
                 }
                 base = this.value;
             }
@@ -164,7 +164,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
             for(int i = 1 /* No mistake, should be one */; i < ex; i++) {
                 result = result.times(base);
             }
-            return new Matrix(result);
+            return new SetlMatrix(result);
         } else {
             throw new IncompatibleTypeException("Power is only defined for integer exponents on matrices."); // TODO Check English
         }
@@ -172,10 +172,10 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     
     @Override
     public Value sum(final State state, final Value summand) throws MatrixException {
-        if(summand instanceof Matrix) {
-            Matrix b = (Matrix)summand;
+        if(summand instanceof SetlMatrix) {
+            SetlMatrix b = (SetlMatrix)summand;
             // TODO check conditions
-            return new Matrix(this.value.plus(b.value));
+            return new SetlMatrix(this.value.plus(b.value));
         } else {
             throw new MatrixException("Summand is not of type Matrix.");
         }
@@ -183,8 +183,8 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     
     @Override
     public Value sumAssign(final State state, final Value summand) throws MatrixException {
-        if(summand instanceof Matrix) {
-            Matrix b = (Matrix)summand;
+        if(summand instanceof SetlMatrix) {
+            SetlMatrix b = (SetlMatrix)summand;
             // TODO check conditions
             this.value.plusEquals(b.value);
             return this;
@@ -195,10 +195,10 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-        if(subtrahend instanceof Matrix) {
-            Matrix b = (Matrix)subtrahend;
+        if(subtrahend instanceof SetlMatrix) {
+            SetlMatrix b = (SetlMatrix)subtrahend;
             // TODO check conditions
-            return new Matrix(this.value.minus(b.value));
+            return new SetlMatrix(this.value.minus(b.value));
         } else {
             throw new MatrixException("Subtrahend is not of type Matrix.");
         }
@@ -206,8 +206,8 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     
     @Override
     public Value differenceAssign(final State state, final Value subtrahend) throws SetlException {
-        if(subtrahend instanceof Matrix) {
-            Matrix b = (Matrix)subtrahend;
+        if(subtrahend instanceof SetlMatrix) {
+            SetlMatrix b = (SetlMatrix)subtrahend;
             // TODO check conditions
             this.value.minusEquals(b.value);
             return this;
@@ -316,7 +316,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
             return this.getMember(1);
         } catch (SetlException ex) {
             // TODO do something
-            // Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
+            // Logger.getLogger(SetlMatrix.class.getName()).log(Level.SEVERE, null, ex);
             return Om.OM;
         }
     }
@@ -336,7 +336,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
             return this.getMember(this.value.getRowDimension());
         } catch (SetlException ex) {
             // TODO do something
-            // Logger.getLogger(Matrix.class.getName()).log(Level.SEVERE, null, ex);
+            // Logger.getLogger(SetlMatrix.class.getName()).log(Level.SEVERE, null, ex);
             return Om.OM;
         }
     }
@@ -391,7 +391,7 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     public SetlList eigenValues(State state) throws UndefinedOperationException {
         // TODO check condition
         EigenvalueDecomposition result = this.value.eig();
-        // return new Matrix(result.getD()); // TODO right result?
+        // return new SetlMatrix(result.getD()); // TODO right result?
         double[][] values = result.getD().getArray();
         SetlList composition = new SetlList(values.length);
         for(int i = 0; i < values.length; i++) {
@@ -404,15 +404,15 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
     public SetlList singularValueDecomposition(State state) {
         SingularValueDecomposition result = this.value.svd();
         SetlList container = new SetlList(3);
-        container.addMember(state, new Matrix(result.getU())); // TODO right format?
-        container.addMember(state, new Matrix(result.getS())); // TODO Is this sigma? format?
-        container.addMember(state, new Matrix(result.getV())); // TODO right format?
+        container.addMember(state, new SetlMatrix(result.getU())); // TODO right format?
+        container.addMember(state, new SetlMatrix(result.getS())); // TODO Is this sigma? format?
+        container.addMember(state, new SetlMatrix(result.getV())); // TODO right format?
         return container;
     }
     
     // TODO check conditions & TODO vectors
-    public Matrix eigenVectors() {
-        return new Matrix(this.value.eig().getV());
+    public SetlMatrix eigenVectors() {
+        return new SetlMatrix(this.value.eig().getV());
     }
     
     // TODO are there any conditions
@@ -420,8 +420,8 @@ public class Matrix extends IndexedCollectionValue { // TODO Is not a Collection
         return SetlDouble.valueOf(this.value.det());
     }
     
-    public Matrix solve(Matrix B) {
-        return new Matrix(this.value.solve(B.value));
+    public SetlMatrix solve(SetlMatrix B) {
+        return new SetlMatrix(this.value.solve(B.value));
     }
     
     @Override

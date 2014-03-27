@@ -342,8 +342,8 @@ public class SetlDouble extends NumberValue {
     public Value product(final State state, final Value multiplier)
         throws IncompatibleTypeException, UndefinedOperationException, NumberToLargeException, SetlException
     {
-        if(multiplier instanceof Matrix) {
-            return ((Matrix)multiplier).product(state, this);
+        if(multiplier instanceof SetlMatrix) {
+            return ((SetlMatrix)multiplier).product(state, this);
         }
         if (multiplier instanceof SetlDouble) {
             final SetlDouble rhs = (SetlDouble) multiplier;

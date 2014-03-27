@@ -3,7 +3,7 @@ package org.randoom.setlx.functions;
 import java.util.List;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.Matrix;
+import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
@@ -21,7 +21,10 @@ public class PD_eigenVectors extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if(!(args.get(0) instanceof Matrix)) throw new MatrixException("The parameter needs to be a matrix.");
-        return ((Matrix)args.get(0)).eigenVectors();
+        if((args.get(0) instanceof SetlMatrix)) {
+            return ((SetlMatrix)args.get(0)).eigenVectors();
+        } else {
+            throw new MatrixException("The parameter needs to be a matrix.");
+        }
     }
 }

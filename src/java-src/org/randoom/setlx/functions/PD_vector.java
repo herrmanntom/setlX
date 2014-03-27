@@ -1,6 +1,5 @@
 /*
  */
-
 package org.randoom.setlx.functions;
 
 import java.util.List;
@@ -15,21 +14,19 @@ import org.randoom.setlx.utilities.State;
  * @author Patrick Robinson
  */
 public class PD_vector extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_vector();
-    
-    private PD_vector() {
-        super();
-        addParameter("collectionValue", ParameterDef.READ_ONLY);
-    }
-    
-    /* (non-Javadoc)
-     * @see org.randoom.setlx.functions.PreDefinedProcedure#execute(org.randoom.setlx.utilities.State, java.util.List, java.util.List)
-     */
-    @Override
-    public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if (!(args.get(0) instanceof CollectionValue)) {
-            System.err.println("[DEBUG]: vector param notcollection");
-        }
-        return new SetlVector(state, (CollectionValue)args.get(0));
-    }  
+
+	public final static PreDefinedProcedure DEFINITION = new PD_vector();
+
+	private PD_vector() {
+		super();
+		addParameter("collectionValue", ParameterDef.READ_ONLY);
+	}
+
+	@Override
+	public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+		if(!(args.get(0) instanceof CollectionValue)) {
+			System.err.println("[DEBUG]: vector param notcollection");
+		}
+		return new SetlVector(state, (CollectionValue)args.get(0));
+	}
 }

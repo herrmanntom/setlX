@@ -1,5 +1,6 @@
 package org.randoom.setlx.types;
 
+import com.sun.java.swing.plaf.windows.resources.windows_zh_TW;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -44,6 +45,23 @@ public class SetlVector extends IndexedCollectionValue {
 			// System.err.println("[DEBUG]: new SetlVector end");
 		} else {
 			throw new IncompatibleTypeException("Initialization collection empty.");
+		}
+	}
+
+	public SetlVector(final State state, final SetlMatrix matrix) throws SetlException {
+		Jama.Matrix base = matrix.getBase();
+		if(base.getColumnDimension() == 1) {
+			value = new NumberValue[base.getRowDimension()];
+			for(int i = 0; i < base.getRowDimension(); i++) {
+				value[i] = SetlDouble.valueOf(base.getArray()[i][0]);
+			}
+		} else if(base.getRowDimension() == 1) {
+			value = new NumberValue[base.getColumnDimension()];
+			for(int i = 0; i < base.getColumnDimension(); i++) {
+				value[i] = SetlDouble.valueOf(base.getArray()[0][i]);
+			}
+		} else {
+			throw new IncompatibleTypeException("Matrix could not be converted to a vector, because it doesn't have just one column or just one row.");
 		}
 	}
 
@@ -128,16 +146,30 @@ public class SetlVector extends IndexedCollectionValue {
 	/*
 	 * @Override public Iterator<Value> iterator() { return
 	 * Arrays.asList((Value[])value).iterator(); }
+	 */
+	/*
+	 * @Override
+	 * public Iterator<Value> descendingIterator() {
+	 * final ListIterator<Value> ascendingIterator
+	 * = Arrays.asList((Value[])value).listIterator();
+	 * return new Iterator<Value>() {
+	 * @Override
+	 * public boolean hasNext() {
+	 * return ascendingIterator.hasPrevious();
+	 * }
 	 *
-	 * @Override public Iterator<Value> descendingIterator() { final
-	 * ListIterator<Value> ascendingIterator =
-	 * Arrays.asList((Value[])value).listIterator(); return new
-	 * Iterator<Value>() { @Override public boolean hasNext() { return
-	 * ascendingIterator.hasPrevious(); }
+	 * @Override
+	 * public Value next() {
+	 * return ascendingIterator.previous();
+	 * }
 	 *
-	 * @Override public Value next() { return ascendingIterator.previous(); }
+	 * @Override
+	 * public void remove() {
+	 * ascendingIterator.remove();
+	 * }
+	 * };
+	 * }
 	 *
-	 * @Override public void remove() { ascendingIterator.remove(); } }; }
 	 */
 	/**
 	 *

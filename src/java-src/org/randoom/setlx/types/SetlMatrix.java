@@ -18,6 +18,10 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
 	private Jama.Matrix value;
 
+	public Jama.Matrix getBase() {
+		return this.value;
+	}
+
 	private SetlMatrix(Jama.Matrix v) {
 		super();
 		this.value = v;

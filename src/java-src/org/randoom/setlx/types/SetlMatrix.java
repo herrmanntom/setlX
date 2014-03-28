@@ -54,6 +54,20 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		value = new Jama.Matrix(base);
 	}
 
+	public SetlMatrix(final State state, final SetlVector vector) throws SetlException {
+		super();
+		double[][] base = new double[vector.size()][1];
+		for(int i = 0; i < vector.size(); i++) {
+			Value elem = vector.getMember(i);
+			if(elem.jDoubleConvertable()) {
+				base[i][0] = elem.toJDoubleValue(state);
+			} else {
+				throw new IncompatibleTypeException("Vector could not be converted to a matrix, because its dimension " + i + " value could not be converted to a double.");
+			}
+		}
+		value = new Jama.Matrix(base);
+	}
+
 	/*
 	 * (non-Javadoc) @see org.randoom.setlx.types.Value#clone()
 	 */

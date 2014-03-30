@@ -142,33 +142,35 @@ Executing the `\command{exit;}' statement will terminate the interpreter.
 In addition to file-paths a number of options can be used when running \setlX{}:
 
 \begin{itemize}
+    \param{-l <path>, --libraryPath <path>}
+	      {Override SETLX\_LIBRARY\_PATH environment variable.}
+	\param{-a, --noAssert}
+	      {Disables all assert functions.}
+	\param{-n, --noExecution}
+	      {Load and check code for syntax errors, but do not execute it (has no effect in interactive mode).}
+	\param{-r, --predictableRandom}
+	      {Always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging).}
+	\param{-p <argument> ..., --params <argument> ...}
+	      {Pass all following arguments to the executed program via `params' variable.}
 	\param{-e <expression>, --eval <expression>}
 	      {Evaluates next argument as expression and exits (cannot be combined with execution of a statement or files).}
 	\param{-x <statement>, --exec <statement>}
 	      {Executes next argument as statement and exits (cannot be combined with evaluation of an expression or execution of files).}
-	\param{-h, --help}
-	      {Displays some helpful information.}
-	\param{-l <path>, --libraryPath <path>}
-	      {Override SETLX\_LIBRARY\_PATH environment variable.}
-	\param{-m, --multiLineMode}
-	      {Only accept input in interactive mode after additional new line.}
-	\param{-a, --noAssert}
-	      {Disables all assert functions.}
-	\param{-n, --noExecution}
-	      {Load and check code for syntax errors, but do not execute it.}
-	\param{-p <argument> ..., --params <argument> ...}
-	      {Pass all following arguments to the executed program via `params' variable.}
-	\param{-r, --predictableRandom}
-	      {Always returns the same pseudo random sequence of numbers from the internal random number generator (for debugging).}
+	\param{-v, --verbose}
+          {Display the parsed program before executing it (has no effect in interactive mode).}
 	\param{--doubleDefault\\
 	       --doubleScientific\\
 	       --doubleEngineering\\
 	       --doublePlain}
-           {Sets how the exponent of doubles is displayed.}
-	\param{-v, --verbose}
-           {Display the parsed program before executing it (has no effect in interactive mode).}
+          {Sets how the exponent of doubles is printed.}
+	\param{-h, --harshWelcome}
+	      {Interactive mode: Reduce welcome message to a bare minimum.}
+	\param{-m, --multiLineMode}
+	      {Interactive mode: Only accept input after additional new line.}
+	\param{--help}
+	      {Displays some helpful information.}
 	\param{--version}
-           {Display interpreter version and terminate.}
+          {Display interpreter version and terminate.}
 \end{itemize}
 
 \section{System Requirements}

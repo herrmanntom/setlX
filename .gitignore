@@ -1,3 +1,4 @@
+/buildTools
 /documentation/*.aux
 /documentation/*.dvi
 /documentation/*.log
@@ -14,7 +15,6 @@
 /grammar_pure/PureParser.java
 /grammar_pure/*.class
 /grammar_pure/Pure.g
-/src/java_1_6
 /src/java-src/org/randoom/setlx/grammar
 /src/build
 /src/*.jar

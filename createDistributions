@@ -6,17 +6,16 @@ export OVERRIDE_setlXJarDirectory="$PWD/src/"
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"
 
-cd src
-
 # clean the interpreter source
 echo "=> Cleaning the setlX interpreter's source ..."
 ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
-ant jar-j1.6
-if [ -f "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" ]; then
+ant buildAll-j1.6
+if [[ -f "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" && "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" ]]; then
     mv "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX.jar"
+    mv "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar"
     # clean it up again (does not remove the jar)
     ant clean
     echo "=> The setlX interpreter was build correctly."
@@ -28,30 +27,8 @@ fi
 
 # ensure some files use Windows line-endings
 if [ $(which unix2dos > /dev/null 2>&1; echo $?) -eq 0 ]; then
-    unix2dos setlX.cmd
+    unix2dos src/setlX.cmd
 fi
-
-cd ../src_gfx
-
-# clean the interpreter source
-echo "=> Cleaning the setlX graphics library's source ..."
-ant dist-clean
-
-# build the binary version
-echo "=> Rebuilding the setlX graphics library ..."
-ant jar-j1.6
-if [ -f "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" ]; then
-    mv "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar"
-    # clean it up again (does not remove the jar)
-    ant clean
-    echo "=> The setlX graphics library was build correctly."
-else
-    echo "=> Building the setlX graphics library failed ..."
-    # break
-    exit 1
-fi
-
-cd ..
 
 # get version from executable (jar)
 version=$("$setlXlaunchScript" --version)
@@ -186,8 +163,7 @@ rm -rf zipContents
 echo "done"
 
 # remove the jars
-cd src;ant dist-clean;cd ..
-cd src_gfx;ant dist-clean;cd ..
+ant dist-clean
 
 # create development zip
 echo -n "=> Creating development kit ... "

@@ -1,6 +1,6 @@
+// TODO does not construct
 package org.randoom.setlx.types;
 
-import com.sun.java.swing.plaf.windows.resources.windows_zh_TW;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -302,12 +302,26 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public Value product(final State state, final Value multiplier) throws SetlException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@Override
-	public Value productAssign(final State state, final Value multiplier) throws SetlException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// TODO Term
+		if(multiplier instanceof SetlVector) {
+			return this.scalarProduct(state, (SetlVector)multiplier);
+		} else if(multiplier instanceof SetlMatrix) {
+			return this.scalarProduct(state, new SetlVector(state, (SetlMatrix)multiplier));
+		} else if(multiplier.isNumber() == SetlBoolean.TRUE) {
+			NumberValue[] result = new NumberValue[this.size()];
+			for(int i = 0; i < this.size(); i++) {
+				result[i] = (NumberValue)this.value[i].product(state, multiplier); // TODO CHECK Conversion Safety
+			}
+			return new SetlVector(result);
+		} else if(multiplier.jDoubleConvertable()) {
+			NumberValue[] result = new NumberValue[this.size()];
+			for(int i = 0; i < this.size(); i++) {
+				result[i] = (NumberValue)this.value[i].product(state, SetlDouble.valueOf(multiplier.toJDoubleValue(state))); // TODO CHECK Conversion Safety
+			}
+			return new SetlVector(result);
+		} else {
+			throw new IncompatibleTypeException("Given parameter is not of supported type."); // TODO better message
+		}
 	}
 
 	@Override
@@ -333,8 +347,25 @@ public class SetlVector extends IndexedCollectionValue {
 	}
 
 	@Override
-	public Value sumAssign(final State state, final Value summand) throws SetlException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	public Value power(final State state, final Value exponent) throws SetlException {
+		// TODO Term
+		if(exponent instanceof SetlVector) {
+			return this.vectorProduct(state, (SetlVector)exponent);
+		} else if(exponent instanceof SetlMatrix) {
+			return this.vectorProduct(state, new SetlVector(state, (SetlMatrix)exponent));
+		} else {
+			throw new IncompatibleTypeException("Incompatible exponent type.");
+		}
+		// TODO Vector ^ Number ?
+		/*
+		 * else if(exponent.isNumber()) {
+		 *
+		 * } else if(exponent.jIntConvertable()) {
+		 *
+		 * } else if(exponent.jDoubleConvertable()) {
+		 *
+		 * }
+		 */
 	}
 
 	public NumberValue scalarProduct(final State state, final SetlVector B) throws SetlException {

@@ -1,7 +1,8 @@
 <project name="setlX-gfx" basedir="." default="jar">
     <!-- variables which determine paths and other information used later -->
-    <property name="src.dir"     value="java-src"/>
-    <property name="build.dir"   value="build"/>
+    <property name="j16rt.dir"   value="${basedir}/../buildTools/java_1_6"/>
+    <property name="src.dir"     value="${basedir}/java-src"/>
+    <property name="build.dir"   value="${basedir}/build"/>
     <property name="classes.dir" value="${build.dir}/classes"/>
 
     <property name="main_setlX.dir" value="${basedir}/../src"/>
@@ -16,13 +17,21 @@
     <path id="setlX-jar">
         <fileset dir="${main_setlX.dir}" includes="setlX.jar"/>
     </path>
+    <path id="setlX-jar-j1.6">
+        <fileset dir="${main_setlX.dir}" includes="setlX-j1.6.jar"/>
+    </path>
     <path id="classpath">
         <path refid="setlX-jar"/>
+        <pathelement path="${classes.dir}"/>
+    </path>
+    <path id="classpath-j1.6">
+        <path refid="setlX-jar-j1.6"/>
+        <pathelement path="${classes.dir}"/>
     </path>
 
     <!-- discover rt.jar from java-1.6 for building 1.6 compatible with newer javac -->
     <path id="rt.jar-j1.6">
-        <fileset dir="${user.home}/programs/rt_jar_openJDK_1-6-0/" includes="rt.jar"/>
+        <fileset dir="${j16rt.dir}/" includes="rt.jar"/>
     </path>
 
     <target name="test" depends="jar">
@@ -46,11 +55,11 @@
         </javac>
     </target>
 
-    <target name="compile-j1.6-compatible">
+    <target name="compile-j1.6-compatible" depends="download-j1.6-rt.jar">
         <mkdir dir="${classes.dir}"/>
         <javac srcdir="${src.dir}" destdir="${classes.dir}"
                debug="true" debuglevel="lines,source"
-               classpathref="classpath" includeantruntime="false"
+               classpathref="classpath-j1.6" includeantruntime="false"
                fork="true" source="1.6" target="1.6" bootclasspathref="rt.jar-j1.6">
             <compilerarg value="-Xlint:all"/>
         </javac>
@@ -72,6 +81,10 @@
         <jar destfile="${main_setlX.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
              index="true" />
         <antcall target="clean"/>
+    </target>
+
+    <target name="download-j1.6-rt.jar" unless="isJava6">
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="${basedir}/../" target="download-j1.6-rt.jar"/>
     </target>
 
     <!-- clean up the mess we made by building -->

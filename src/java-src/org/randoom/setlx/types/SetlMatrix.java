@@ -204,48 +204,80 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	}
 
 	@Override
-	public Value sum(final State state, final Value summand) throws MatrixException {
-		if(summand instanceof SetlMatrix) {
-			SetlMatrix b = (SetlMatrix)summand;
-			// TODO check conditions
-			return new SetlMatrix(this.value.plus(b.value));
+	public Value sum(final State state, final Value summand) throws SetlException {
+		boolean isMatrix = summand instanceof SetlMatrix;
+		if(isMatrix || summand instanceof SetlVector) {
+			SetlMatrix b = isMatrix ? (SetlMatrix)summand : new SetlMatrix(state, (SetlVector)summand);
+			if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
+				if(this.value.getRowDimension() == b.value.getRowDimension()) {
+					return new SetlMatrix(this.value.plus(b.value));
+				} else {
+					throw new IncompatibleTypeException("Summands have different number of rows.");
+				}
+			} else {
+				throw new IncompatibleTypeException("Summands have different number of columns.");
+			}
 		} else {
-			throw new MatrixException("Summand is not of type Matrix.");
+			throw new IncompatibleTypeException("Summand is not of type Matrix.");
 		}
 	}
 
 	@Override
-	public Value sumAssign(final State state, final Value summand) throws MatrixException {
-		if(summand instanceof SetlMatrix) {
-			SetlMatrix b = (SetlMatrix)summand;
-			// TODO check conditions
-			this.value.plusEquals(b.value);
-			return this;
+	public Value sumAssign(final State state, final Value summand) throws SetlException {
+		boolean isMatrix = summand instanceof SetlMatrix;
+		if(isMatrix || summand instanceof SetlVector) {
+			SetlMatrix b = isMatrix ? (SetlMatrix)summand : new SetlMatrix(state, (SetlVector)summand);
+			if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
+				if(this.value.getRowDimension() == b.value.getRowDimension()) {
+					this.value.plusEquals(b.value);
+					return this;
+				} else {
+					throw new IncompatibleTypeException("Summands have different number of rows.");
+				}
+			} else {
+				throw new IncompatibleTypeException("Summands have different number of columns.");
+			}
 		} else {
-			throw new MatrixException("Summand is not of type Matrix.");
+			throw new IncompatibleTypeException("Summand is not of type Matrix.");
 		}
 	}
 
 	@Override
 	public Value difference(final State state, final Value subtrahend) throws SetlException {
-		if(subtrahend instanceof SetlMatrix) {
-			SetlMatrix b = (SetlMatrix)subtrahend;
-			// TODO check conditions
-			return new SetlMatrix(this.value.minus(b.value));
+		boolean isMatrix = subtrahend instanceof SetlMatrix;
+		if(isMatrix || subtrahend instanceof SetlVector) {
+			SetlMatrix b = isMatrix ? (SetlMatrix)subtrahend : new SetlMatrix(state, (SetlVector)subtrahend);
+			if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
+				if(this.value.getRowDimension() == b.value.getRowDimension()) {
+					return new SetlMatrix(this.value.minus(b.value));
+				} else {
+					throw new IncompatibleTypeException("Subtrahend have different number of rows.");
+				}
+			} else {
+				throw new IncompatibleTypeException("Subtrahend have different number of columns.");
+			}
 		} else {
-			throw new MatrixException("Subtrahend is not of type Matrix.");
+			throw new IncompatibleTypeException("Subtrahend is not of type Matrix.");
 		}
 	}
 
 	@Override
 	public Value differenceAssign(final State state, final Value subtrahend) throws SetlException {
-		if(subtrahend instanceof SetlMatrix) {
-			SetlMatrix b = (SetlMatrix)subtrahend;
-			// TODO check conditions
-			this.value.minusEquals(b.value);
-			return this;
+		boolean isMatrix = subtrahend instanceof SetlMatrix;
+		if(isMatrix || subtrahend instanceof SetlVector) {
+			SetlMatrix b = isMatrix ? (SetlMatrix)subtrahend : new SetlMatrix(state, (SetlVector)subtrahend);
+			if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
+				if(this.value.getRowDimension() == b.value.getRowDimension()) {
+					this.value.minusEquals(b.value);
+					return this;
+				} else {
+					throw new IncompatibleTypeException("Subtrahend have different number of rows.");
+				}
+			} else {
+				throw new IncompatibleTypeException("Subtrahend have different number of columns.");
+			}
 		} else {
-			throw new MatrixException("Subtrahend is not of type Matrix.");
+			throw new IncompatibleTypeException("Subtrahend is not of type Matrix.");
 		}
 	}
 
@@ -356,8 +388,8 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
 	@Override
 	public Value getMember(State state, Value index) throws SetlException {
-		if((index instanceof NumberValue)) {
-			return this.getMember(((NumberValue)index).toJIntValue(state));
+		if(index.jIntConvertable()) {
+			return this.getMember(index.toJIntValue(state));
 		} else {
 			throw new IncompatibleTypeException("Given index is not a number.");
 		}

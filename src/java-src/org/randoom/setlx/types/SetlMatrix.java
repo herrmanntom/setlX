@@ -129,10 +129,14 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
 	@Override
 	public Value product(final State state, final Value multiplier) throws SetlException {
-		if(multiplier instanceof SetlMatrix) {
-			SetlMatrix b = (SetlMatrix)multiplier;
-			// TODO check conditions
-			return new SetlMatrix(this.value.times(b.value));
+		boolean isMatrix = multiplier instanceof SetlMatrix;
+		if(isMatrix || multiplier instanceof SetlVector) {
+			SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
+			if(this.value.getColumnDimension() == b.value.getRowDimension()) {
+				return new SetlMatrix(this.value.times(b.value));
+			} else {
+				throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
+			}
 		} else if(multiplier instanceof NumberValue) {
 			NumberValue n = (NumberValue)multiplier;
 			return new SetlMatrix(this.value.times(n.toJDoubleValue(state)));
@@ -146,11 +150,15 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
 	@Override
 	public Value productAssign(final State state, final Value multiplier) throws SetlException {
-		if(multiplier instanceof SetlMatrix) {
-			SetlMatrix b = (SetlMatrix)multiplier;
-			// TODO check conditions
-			this.value = this.value.times(b.value);
-			return this;
+		boolean isMatrix = multiplier instanceof SetlMatrix;
+		if(isMatrix || multiplier instanceof SetlVector) {
+			SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
+			if(this.value.getColumnDimension() == this.value.getRowDimension()) {
+				this.value = this.value.times(b.value);
+				return this;
+			} else {
+				throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
+			}
 		} else if(multiplier instanceof NumberValue) {
 			NumberValue n = (NumberValue)multiplier;
 			this.value.timesEquals(n.toJDoubleValue(state));

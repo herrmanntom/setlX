@@ -194,6 +194,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 					for(int i = 0; i < this.value.getRowDimension(); i++) {
 						base.getArray()[i][i] = 1;
 					}
+					return new SetlMatrix(base);
 				} else {
 					base = this.value;
 				}

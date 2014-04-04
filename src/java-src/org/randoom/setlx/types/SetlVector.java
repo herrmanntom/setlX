@@ -67,14 +67,14 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public Value getMember(int index) throws SetlException {
-		return value[index];
+		return getValue()[index];
 	}
 
 	@Override
 	public Value clone() {
-		final Value[] result = new NumberValue[value.length];
-		for(int i = 0; i <= value.length; i++) {
-			result[i] = value[i].clone();
+		final Value[] result = new NumberValue[getValue().length];
+		for(int i = 0; i <= getValue().length; i++) {
+			result[i] = getValue()[i].clone();
 		}
 		try {
 			return new SetlVector((NumberValue[])result);
@@ -95,7 +95,7 @@ public class SetlVector extends IndexedCollectionValue {
 			SetlVector otherVector = (SetlVector)other;
 			if(otherVector.size() == this.size()) {
 				for(int i = 0; i < this.size(); i++) {
-					int itemCompare = this.value[i].compareTo(otherVector.value[i]);
+					int itemCompare = this.getValue()[i].compareTo(otherVector.getValue()[i]);
 					if(itemCompare != 0) {
 						return itemCompare;
 					}
@@ -122,12 +122,12 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public int hashCode() {
-		return this.value.hashCode();
+		return this.getValue().hashCode();
 	}
 
 	private SetlList toSetlList(final State state) {
-		SetlList container = new SetlList(this.value.length);
-		for(NumberValue a : this.value) {
+		SetlList container = new SetlList(this.getValue().length);
+		for(NumberValue a : this.getValue()) {
 			container.addMember(state, a);
 		}
 		return container;
@@ -179,8 +179,8 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public void addMember(State state, Value element) {
 		if(element instanceof NumberValue) { // TODO Term
-			int newLength = this.value.length + 1;
-			this.value = Arrays.copyOf(this.value, newLength);
+			int newLength = this.getValue().length + 1;
+			this.value = Arrays.copyOf(this.getValue(), newLength);
 			this.value[newLength - 1] = (NumberValue)element;
 		} else {
 			// throw new IncompatibleTypeException("Element to be added to vector is not a number.");
@@ -190,7 +190,7 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public SetlBoolean containsMember(State state, Value element) throws IncompatibleTypeException {
-		for(NumberValue nv : this.value) {
+		for(NumberValue nv : this.getValue()) {
 			if(nv.equalTo(element)) {
 				return SetlBoolean.TRUE;
 			}
@@ -200,13 +200,13 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public Value firstMember() {
-		return this.value[0];
+		return this.getValue()[0];
 	}
 
 	@Override
 	public Value getMember(State state, Value index) throws SetlException {
 		if(index.jIntConvertable()) {
-			return this.value[index.toJIntValue(state)];
+			return this.getValue()[index.toJIntValue(state)];
 		} else {
 			throw new IncompatibleTypeException("Index is not an integer.");
 		}
@@ -214,15 +214,15 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public Value lastMember() {
-		return this.value[this.value.length];
+		return this.getValue()[this.getValue().length];
 	}
 
 	@Override
 	public Value maximumMember(State state) throws SetlException {
-		NumberValue result = this.value[0];
-		for(int i = 1; i < this.value.length; i++) {
-			if(this.value[i].compareTo(result) > 0) {
-				result = this.value[i];
+		NumberValue result = this.getValue()[0];
+		for(int i = 1; i < this.getValue().length; i++) {
+			if(this.getValue()[i].compareTo(result) > 0) {
+				result = this.getValue()[i];
 			}
 		}
 		return result;
@@ -230,19 +230,19 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public Value minimumMember(State state) throws SetlException {
-		NumberValue result = this.value[0];
-		for(int i = 1; i < this.value.length; i++) {
-			if(this.value[i].compareTo(result) < 0) {
-				result = this.value[i];
+		NumberValue result = this.getValue()[0];
+		for(int i = 1; i < this.getValue().length; i++) {
+			if(this.getValue()[i].compareTo(result) < 0) {
+				result = this.getValue()[i];
 			}
 		}
 		return result;
 	}
 
 	public void removeMember(int index) {
-		NumberValue[] newValue = new NumberValue[value.length - 1];
-		System.arraycopy(value, 0, newValue, 0, index);
-		System.arraycopy(value, index + 1, newValue, index, value.length - 1 - index);
+		NumberValue[] newValue = new NumberValue[getValue().length - 1];
+		System.arraycopy(getValue(), 0, newValue, 0, index);
+		System.arraycopy(getValue(), index + 1, newValue, index, getValue().length - 1 - index);
 		value = newValue;
 	}
 
@@ -250,8 +250,8 @@ public class SetlVector extends IndexedCollectionValue {
 	public void removeMember(Value element) throws IncompatibleTypeException {
 		if(element instanceof NumberValue) { // TODO Term
 			NumberValue elem = (NumberValue)element;
-			List<NumberValue> newValue = new ArrayList<NumberValue>(this.value.length - 1);
-			for(NumberValue i : this.value) {
+			List<NumberValue> newValue = new ArrayList<NumberValue>(this.getValue().length - 1);
+			for(NumberValue i : this.getValue()) {
 				if(i != element) {
 					newValue.add(i);
 				}
@@ -265,29 +265,29 @@ public class SetlVector extends IndexedCollectionValue {
 
 	@Override
 	public Value removeFirstMember() {
-		NumberValue[] newValue = new NumberValue[value.length - 1];
-		System.arraycopy(value, 1, newValue, 0, value.length - 1);
+		NumberValue[] newValue = new NumberValue[getValue().length - 1];
+		System.arraycopy(getValue(), 1, newValue, 0, getValue().length - 1);
 		this.value = newValue;
 		return this;
 	}
 
 	@Override
 	public Value removeLastMember() {
-		NumberValue[] newValue = new NumberValue[value.length - 1];
-		System.arraycopy(value, 0, newValue, 0, value.length - 1);
+		NumberValue[] newValue = new NumberValue[getValue().length - 1];
+		System.arraycopy(getValue(), 0, newValue, 0, getValue().length - 1);
 		this.value = newValue;
 		return this;
 	}
 
 	@Override
 	public int size() {
-		return this.value.length;
+		return this.getValue().length;
 	}
 
 	@Override
 	public void canonical(State state, StringBuilder sb) {
 		sb.append('<');
-		for(NumberValue a : this.value) {
+		for(NumberValue a : this.getValue()) {
 			try {
 				sb.append(' ').append(a.toJDoubleValue(state)).append(' ');
 			} catch(SetlException ex) {
@@ -310,13 +310,13 @@ public class SetlVector extends IndexedCollectionValue {
 		} else if(multiplier.isNumber() == SetlBoolean.TRUE) {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
-				result[i] = (NumberValue)this.value[i].product(state, multiplier); // TODO CHECK Conversion Safety
+				result[i] = (NumberValue)this.getValue()[i].product(state, multiplier); // TODO CHECK Conversion Safety
 			}
 			return new SetlVector(result);
 		} else if(multiplier.jDoubleConvertable()) {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
-				result[i] = (NumberValue)this.value[i].product(state, SetlDouble.valueOf(multiplier.toJDoubleValue(state))); // TODO CHECK Conversion Safety
+				result[i] = (NumberValue)this.getValue()[i].product(state, SetlDouble.valueOf(multiplier.toJDoubleValue(state))); // TODO CHECK Conversion Safety
 			}
 			return new SetlVector(result);
 		} else {
@@ -333,7 +333,7 @@ public class SetlVector extends IndexedCollectionValue {
 			}
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
-				Value tmp = this.value[i].sum(state, sumd.value[i]);
+				Value tmp = this.getValue()[i].sum(state, sumd.getValue()[i]);
 				if(tmp instanceof NumberValue) { // TODO do I need instanceof Term?
 					result[i] = (NumberValue)tmp;
 				} else {
@@ -372,7 +372,7 @@ public class SetlVector extends IndexedCollectionValue {
 		if(this.size() == B.size()) {
 			NumberValue result = SetlDouble.valueOf(0);
 			for(int i = 0; i < this.size(); i++) {
-				result.sumAssign(state, this.value[i].product(state, B.value[i]));
+				result.sumAssign(state, this.getValue()[i].product(state, B.getValue()[i]));
 			}
 			return result;
 		} else {
@@ -399,8 +399,8 @@ public class SetlVector extends IndexedCollectionValue {
 		if(this.size() == B.size()) {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
-				result[i] = (NumberValue)(this.value[loopingIndex(1, i, this.size())].product(state, B.value[loopingIndex(2, i, this.size())]));
-				result[i].sum(state, (NumberValue)(this.value[loopingIndex(-1, i, this.size())].product(state, B.value[loopingIndex(-2, i, this.size())])).minus(state));
+				result[i] = (NumberValue)(this.getValue()[loopingIndex(1, i, this.size())].product(state, B.getValue()[loopingIndex(2, i, this.size())]));
+				result[i].sum(state, (NumberValue)(this.getValue()[loopingIndex(-1, i, this.size())].product(state, B.getValue()[loopingIndex(-2, i, this.size())])).minus(state));
 			}
 			return new SetlVector(result);
 		} else {
@@ -419,5 +419,12 @@ public class SetlVector extends IndexedCollectionValue {
 			}
 		}
 		return a;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public NumberValue[] getValue() {
+		return value;
 	}
 }

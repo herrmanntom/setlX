@@ -4,6 +4,8 @@ import Jama.EigenvalueDecomposition;
 import Jama.SingularValueDecomposition;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -332,7 +334,38 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
 	@Override
 	public void addMember(State state, Value element) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if(element instanceof SetlVector) {
+			NumberValue[] elems = ((SetlVector)element).getValue();
+			double[] dElems = new double[elems.length];
+			for(int i = 0; i < elems.length; i++) {
+				if(elems[i].jDoubleConvertable()) {
+					try {
+						dElems[i] = elems[i].toJDoubleValue(state);
+					} catch(SetlException ex) {
+						return;
+					}
+				} else {
+					return;
+				}
+			}
+			if(dElems.length == this.value.getColumnDimension()) {
+				// Vector will be added as a row
+				double[][] result = new double[this.value.getRowDimension() + 1][this.value.getColumnDimension()];
+				System.arraycopy(this.value.getArray(), 0, result, 0, this.value.getRowDimension());
+				result[this.value.getRowDimension()] = dElems;
+				this.value = new Jama.Matrix(result);
+			} else if(dElems.length == this.value.getRowDimension()) {
+				// Vector will be added as a column
+				double[][] result = new double[this.value.getRowDimension()][this.value.getColumnDimension() + 1];
+				for(int i = 0; i < result.length; i++) {
+					System.arraycopy(this.value.getArray()[i], 0, result[i], 0, this.value.getColumnDimension());
+					result[i][this.value.getColumnDimension()] = dElems[i];
+				}
+				this.value = new Jama.Matrix(result);
+			}
+		} else if(element instanceof CollectionValue) {
+			// TODO isn't this combinable with above
+		}
 	}
 
 	private static double epsilon = 1E-5;

@@ -177,10 +177,11 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		return new SetlMatrix(this.value.transpose());
 	}
 
-	// TODO broken
 	@Override
 	public Value power(final State state, final Value exponent) throws SetlException {
-		// TODO check condition
+		if(this.value.getColumnDimension() != this.value.getRowDimension()) {
+			throw new IncompatibleTypeException("Power is only defined on square matrices."); // Same in Octave
+		}
 		if(exponent.jIntConvertable()) {
 			int ex = exponent.toJIntValue(state);
 			Jama.Matrix base;
@@ -189,14 +190,17 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 				ex = -ex;
 			} else {
 				if(ex == 0) {
-					// TODO What now? How is this defined on SetlMatrix
+					base = new Jama.Matrix(this.value.getRowDimension(), this.value.getRowDimension());
+					for(int i = 0; i < this.value.getRowDimension(); i++) {
+						base.getArray()[i][i] = 1;
+					}
+				} else {
+					base = this.value;
 				}
-				base = this.value;
 			}
 			Jama.Matrix result = base;
-			for(int i = 1 /*
-					 * No mistake, should be one
-					 */; i < ex; i++) {
+			// No mistake, should be one
+			for(int i = 1; i < ex; i++) {
 				result = result.times(base);
 			}
 			return new SetlMatrix(result);
@@ -334,9 +338,10 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
 	@Override
 	public void addMember(State state, Value element) {
+		double[] dElems;
 		if(element instanceof SetlVector) {
 			NumberValue[] elems = ((SetlVector)element).getValue();
-			double[] dElems = new double[elems.length];
+			dElems = new double[elems.length];
 			for(int i = 0; i < elems.length; i++) {
 				if(elems[i].jDoubleConvertable()) {
 					try {
@@ -348,23 +353,39 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 					return;
 				}
 			}
-			if(dElems.length == this.value.getColumnDimension()) {
-				// Vector will be added as a row
-				double[][] result = new double[this.value.getRowDimension() + 1][this.value.getColumnDimension()];
-				System.arraycopy(this.value.getArray(), 0, result, 0, this.value.getRowDimension());
-				result[this.value.getRowDimension()] = dElems;
-				this.value = new Jama.Matrix(result);
-			} else if(dElems.length == this.value.getRowDimension()) {
-				// Vector will be added as a column
-				double[][] result = new double[this.value.getRowDimension()][this.value.getColumnDimension() + 1];
-				for(int i = 0; i < result.length; i++) {
-					System.arraycopy(this.value.getArray()[i], 0, result[i], 0, this.value.getColumnDimension());
-					result[i][this.value.getColumnDimension()] = dElems[i];
-				}
-				this.value = new Jama.Matrix(result);
-			}
 		} else if(element instanceof CollectionValue) {
-			// TODO isn't this combinable with above
+			CollectionValue col = (CollectionValue)element;
+			dElems = new double[col.size()];
+			int idx = 0;
+			for(Value v : col) {
+				if(v.jDoubleConvertable()) {
+					try {
+						dElems[idx] = v.toJDoubleValue(state);
+					} catch(SetlException ex) {
+						return;
+					}
+				} else {
+					return;
+				}
+				idx++;
+			}
+		} else {
+			return;
+		}
+		if(dElems.length == this.value.getColumnDimension()) {
+			// Vector will be added as a row
+			double[][] result = new double[this.value.getRowDimension() + 1][this.value.getColumnDimension()];
+			System.arraycopy(this.value.getArray(), 0, result, 0, this.value.getRowDimension());
+			result[this.value.getRowDimension()] = dElems;
+			this.value = new Jama.Matrix(result);
+		} else if(dElems.length == this.value.getRowDimension()) {
+			// Vector will be added as a column
+			double[][] result = new double[this.value.getRowDimension()][this.value.getColumnDimension() + 1];
+			for(int i = 0; i < result.length; i++) {
+				System.arraycopy(this.value.getArray()[i], 0, result[i], 0, this.value.getColumnDimension());
+				result[i][this.value.getColumnDimension()] = dElems[i];
+			}
+			this.value = new Jama.Matrix(result);
 		}
 	}
 

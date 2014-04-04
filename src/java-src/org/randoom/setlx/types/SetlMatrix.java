@@ -4,8 +4,6 @@ import Jama.EigenvalueDecomposition;
 import Jama.SingularValueDecomposition;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -49,11 +47,13 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			}
 			int currentColumn = 0;
 			for(Value cell : rowAsCollection) {
-				if(!(cell instanceof NumberValue)) { // TODO Term? or isJDoubleConvertable then convert
+				if(cell.jDoubleConvertable()) {
+					base[currentRow][currentColumn] = cell.toJDoubleValue(state);
+					currentColumn++;
+				} else {
 					throw new IncompatibleTypeException("Cell(row " + (currentRow + 1) + " column " + (currentColumn + 1) + ") is not a number.");
 				}
-				base[currentRow][currentColumn] = cell.toJDoubleValue(state);
-				currentColumn++;
+
 			}
 			currentRow++;
 		}
@@ -192,7 +192,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 				if(ex == 0) {
 					base = new Jama.Matrix(this.value.getRowDimension(), this.value.getRowDimension());
 					for(int i = 0; i < this.value.getRowDimension(); i++) {
-						base.getArray()[i][i] = 1;
+						base.set(i, i, 0);
 					}
 					return new SetlMatrix(base);
 				} else {

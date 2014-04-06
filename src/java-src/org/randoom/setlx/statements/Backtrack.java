@@ -22,13 +22,16 @@ public class Backtrack extends Statement {
     // functional character used in terms
     private final static String    FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Backtrack.class);
 
+    /**
+     * Singleton Backtrack statement.
+     */
     public  final static Backtrack BT                   = new Backtrack();
 
     private Backtrack() { }
 
     @Override
     public ReturnMessage execute(final State state) throws BacktrackException {
-        throw new BacktrackException("Backtrack-statement was executed outside of check-statement.");
+        throw new BacktrackException();
     }
 
     @Override
@@ -53,6 +56,13 @@ public class Backtrack extends Statement {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
+    /**
+     * Convert a term representing a Backtrack statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting statement of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
     public static Backtrack termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 0) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

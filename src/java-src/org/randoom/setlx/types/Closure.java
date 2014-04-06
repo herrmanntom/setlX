@@ -3,11 +3,11 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -45,7 +45,7 @@ public class Closure extends Procedure {
      * @param statements statements in the body of the procedure
      * @param closure    Attached closure variables.
      */
-    protected Closure(final List<ParameterDef> parameters, final Block statements, final HashMap<String, Value> closure) {
+    protected Closure(final List<ParameterDef> parameters, final Block statements, final SetlHashMap<Value> closure) {
         super(parameters, statements, closure);
     }
 

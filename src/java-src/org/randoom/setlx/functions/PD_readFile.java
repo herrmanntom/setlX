@@ -20,13 +20,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 
-// readFile(fileName [, listOfLineNumbers]) :
-//                                 Reads a file and returns list of strings, each
-//                                 representing a single line of the file read.
-//                                 When the optional parameter `listOfLineNumbers/
-//                                 is used, only lines in this list will be read.
-
+/**
+ * readFile(fileName [, listOfLineNumbers]) :
+ *                               Reads a file and returns list of strings, each
+ *                               representing a single line of the file read.
+ *                               When the optional parameter `listOfLineNumbers'
+ *                               is used, only lines in this list will be read.
+ */
 public class PD_readFile extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `readFile'. */
     public final static PreDefinedProcedure DEFINITION = new PD_readFile();
 
     private PD_readFile() {

@@ -4,6 +4,7 @@ grammar SetlXgrammar;
     import org.randoom.setlx.boolExpressions.*;
     import org.randoom.setlx.exceptions.UndefinedOperationException;
     import org.randoom.setlx.expressions.*;
+    import org.randoom.setlx.expressions.SetListConstructor.CollectionType;
     import org.randoom.setlx.expressionUtilities.*;
     import org.randoom.setlx.statements.*;
     import org.randoom.setlx.statementBranches.*;
@@ -437,9 +438,9 @@ value [boolean enableIgnore, boolean quoted] returns [Expr v]
         CollectionBuilder cb = null;
     }
     : '[' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? ']'
-                           { $v = new SetListConstructor(SetListConstructor.LIST, cb);      }
+                           { $v = new SetListConstructor(CollectionType.LIST, cb);          }
     | '{' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? '}'
-                           { $v = new SetListConstructor(SetListConstructor.SET, cb);       }
+                           { $v = new SetListConstructor(CollectionType.SET, cb);           }
     | STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
     | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
     | atomicValue          { $v = new ValueExpr($atomicValue.av);                           }

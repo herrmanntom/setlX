@@ -9,13 +9,15 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 import java.util.Map.Entry;
 
-// stop(id)                      : interrupt the execution and show a prompt with
-//                                 some debugging functionality.
-
+/**
+ * stop(id) :    interrupt the execution and show a prompt with some
+ *               limited debugging functionality.
+ */
 public class PD_stop extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION   = new PD_stop();
+    /** Definition of the PreDefinedProcedure `stop'. */
+    public final static PreDefinedProcedure DEFINITION = new PD_stop();
 
-    private      static boolean             firstTimeUse = true;
+    private static boolean firstTimeUse = true;
 
     private PD_stop() {
         super();

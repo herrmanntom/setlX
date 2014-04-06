@@ -43,6 +43,12 @@ public class SetlIterator extends CodeFragment {
     private final Expr                 collection;
     private       SetlIterator         next;       // next iterator in iteratorChain
 
+    /**
+     * Create a new SetlIterator.
+     *
+     * @param assignable Expression assigned during the iteration.
+     * @param collection Collection to iterate over.
+     */
     public SetlIterator(final AssignableExpression assignable, final Expr collection) {
         this(assignable, collection, null);
     }
@@ -171,6 +177,13 @@ public class SetlIterator extends CodeFragment {
         return result;
     }
 
+    /**
+     * Convert a term representing a SetlIterator into such a CodeFragment.
+     *
+     * @param value                    Term to convert.
+     * @return                         Resulting SetlIterator.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static SetlIterator valueToIterator(final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -214,8 +227,8 @@ public class SetlIterator extends CodeFragment {
                 final VariableScope     innerScope  = state.getScope().createInteratorBlock();
                 // iterate over items
                 for (final Value v: coll) {
-                    if (state.isExecutionStopped) {
-                        throw new StopExecutionException("Interrupted");
+                    if (state.executionStopped) {
+                        throw new StopExecutionException();
                     }
 
                     // restore inner scope

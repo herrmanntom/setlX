@@ -485,7 +485,7 @@ public class Rational extends NumberValue {
                     threads[i].join();
                     result = result.multiply(threads[i].result);
                 } catch (final InterruptedException ie) {
-                    throw new StopExecutionException("Interrupted");
+                    throw new StopExecutionException();
                 }
             }
         }
@@ -521,15 +521,15 @@ public class Rational extends NumberValue {
         Rational i = this;
         if (step.compareTo(Rational.ZERO) > 0) {
             for (; i.compareTo(stop) <= 0; i = (Rational) i.sum(state, step)) {
-                if (state.isExecutionStopped) {
-                    throw new StopExecutionException("Interrupted");
+                if (state.executionStopped) {
+                    throw new StopExecutionException();
                 }
                 collection.addMember(state, i);
             }
         } else if (step.compareTo(Rational.ZERO) < 0) {
             for (; i.compareTo(stop) >= 0; i = (Rational) i.sum(state, step)) {
-                if (state.isExecutionStopped) {
-                    throw new StopExecutionException("Interrupted");
+                if (state.executionStopped) {
+                    throw new StopExecutionException();
                 }
                 collection.addMember(state, i);
             }

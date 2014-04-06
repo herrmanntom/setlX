@@ -5,11 +5,11 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -43,10 +43,10 @@ public class LambdaDefinition extends Procedure {
         statements.add(new Return(expr));
     }
     private LambdaDefinition(
-        final List<ParameterDef>     parameters,
-        final Block                  statements,
-        final HashMap<String, Value> closure,
-        final Expr                   expr
+        final List<ParameterDef> parameters,
+        final Block              statements,
+        final SetlHashMap<Value> closure,
+        final Expr               expr
     ) {
         super(parameters, statements, closure);
         this.expr = expr;

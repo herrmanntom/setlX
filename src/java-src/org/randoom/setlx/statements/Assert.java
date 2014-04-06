@@ -33,6 +33,12 @@ public class Assert extends Statement {
     private final Condition condition;
     private final Expr      message;
 
+    /**
+     * Create a new Assert statement.
+     *
+     * @param condition Condition to check before execution.
+     * @param message   Message to throw as exception, when condition evaluates to false.
+     */
     public Assert(final Condition condition, final Expr message) {
         this.condition = condition;
         this.message   = message;
@@ -78,6 +84,13 @@ public class Assert extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing an Assert statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting statement of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
     public static Assert termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

@@ -13,7 +13,6 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -228,7 +227,7 @@ public class VariableScope {
                         callExec.join();
                         v = callExec.result;
                     } catch (final InterruptedException e) {
-                        throw new StopExecutionException("Interrupted");
+                        throw new StopExecutionException();
                     }
 
                     // handle exceptions thrown in thread
@@ -246,7 +245,7 @@ public class VariableScope {
                                 // sleep a while
                                 Thread.sleep(50);
                             } catch (final InterruptedException e) {
-                                throw new StopExecutionException("Interrupted");
+                                throw new StopExecutionException();
                             }
                             throw (OutOfMemoryError) callExec.error;
                         } else if (callExec.error instanceof RuntimeException) {
@@ -399,7 +398,7 @@ public class VariableScope {
      * @param assignments                   Map to add assignments into.
      * @throws IllegalRedefinitionException Thrown when trying to overwrite `this'.
      */
-    /*package*/ void storeAllValuesTrace(final VariableScope scope, final HashMap<String, Value> assignments) throws IllegalRedefinitionException {
+    /*package*/ void storeAllValuesTrace(final VariableScope scope, final SetlHashMap<Value> assignments) throws IllegalRedefinitionException {
         for (final Map.Entry<String, Value> entry : scope.bindings.entrySet()) {
             storeValue(entry.getKey(), entry.getValue());
             assignments.put(entry.getKey(), entry.getValue());
@@ -415,7 +414,7 @@ public class VariableScope {
      * @param classDefinitions Existing class definitions to add.
      * @return                 Map of all reachable bindings.
      */
-    /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final HashMap<String, SetlClass> classDefinitions) {
+    /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final SetlHashMap<SetlClass> classDefinitions) {
         final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
         // collect all bindings reachable from current scope
         this.collectBindings(allVars, false);
@@ -436,7 +435,7 @@ public class VariableScope {
      * @param classDefinitions Existing class definitions to add.
      * @return                 Term of all reachable bindings.
      */
-    /*package*/ public Term toTerm(final State state, final HashMap<String, SetlClass> classDefinitions) {
+    /*package*/ public Term toTerm(final State state, final SetlHashMap<SetlClass> classDefinitions) {
         final SetlHashMap<Value> allVars = getAllVariablesInScope(classDefinitions);
 
         // term which represents the scope

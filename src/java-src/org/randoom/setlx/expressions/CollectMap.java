@@ -11,66 +11,66 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-/*
-grammar rule:
-call
-    : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
-    ;
-
-implemented here as:
-      ==================================                                       =======
-                   mLhs                                                          mArg
-*/
-
+/**
+ * Expression that collects specific members of a collection value.
+ *
+ * grammar rule:
+ * call
+ *     : variable ('(' callParameters ')')? ('[' collectionAccessParams ']' | '{' anyExpr '}')*
+ *     ;
+ *
+ * implemented here as:
+ *       ==================================                                       =======
+ *                    lhs                                                           arg
+ */
 public class CollectMap extends Expr {
-    // functional character used in terms (MUST be class name starting with lower case letter!)
-    private final static String FUNCTIONAL_CHARACTER = "^collectMap";
+    // functional character used in terms
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectMap.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private final Expr  mLhs;      // left hand side (Variable, other CollectMap, CollectionAccess, etc)
-    private final Expr  mArg;      // argument
+    private final Expr lhs;      // left hand side (Variable, other CollectMap, CollectionAccess, etc)
+    private final Expr arg;      // argument
 
+    /**
+     * Create a new CollectMap expression.
+     *
+     * @param lhs Left hand side to evaluate before collecting on its result.
+     * @param arg Expression to evaluate as argument to collect.
+     */
     public CollectMap(final Expr lhs, final Expr arg) {
-        mLhs = lhs;
-        mArg = arg;
+        this.lhs = lhs;
+        this.arg = arg;
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        final Value lhs = mLhs.eval(state);
+        final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + mLhs + "\" is undefined."
+                "Left hand side \"" + lhs + "\" is undefined."
             );
         }
-        return lhs.collectMap(state, mArg.eval(state).clone());
+        return lhs.collectMap(state, arg.eval(state).clone());
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        mLhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        mArg.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        arg.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        mLhs.appendString(state, sb, tabs);
+        lhs.appendString(state, sb, tabs);
         sb.append("{");
-        mArg.appendString(state, sb, tabs);
+        arg.appendString(state, sb, tabs);
         sb.append("}");
     }
 
@@ -79,19 +79,26 @@ public class CollectMap extends Expr {
     @Override
     public Term toTerm(final State state) {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTerm(state));
-        result.addMember(state, mArg.toTerm(state));
+        result.addMember(state, lhs.toTerm(state));
+        result.addMember(state, arg.toTerm(state));
         return result;
     }
 
     @Override
     public Term toTermQuoted(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, mLhs.toTermQuoted(state));
-        result.addMember(state, mArg.eval(state).toTerm(state));
+        result.addMember(state, lhs.toTermQuoted(state));
+        result.addMember(state, arg.eval(state).toTerm(state));
         return result;
     }
 
+    /**
+     * Convert a term representing a CollectMap expression into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting CollectMap expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static CollectMap termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -102,7 +109,6 @@ public class CollectMap extends Expr {
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

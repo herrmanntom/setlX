@@ -13,12 +13,17 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// writeFile(fileName, content)  : writes a list of strings into a file, each
-//                                 string representing a single line
-
+/**
+ * writeFile(fileName, content)  : Writes a list of strings into a file, each
+ *                                 string representing a single line.
+ */
 public class PD_writeFile extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `rnd'. */
     public final static PreDefinedProcedure DEFINITION = new PD_writeFile();
 
+    /**
+     * Create a new writeFile function.
+     */
     protected PD_writeFile() {
         super();
         addParameter("fileName");
@@ -30,6 +35,16 @@ public class PD_writeFile extends PreDefinedProcedure {
         return exec(state, args, false);
     }
 
+    /**
+     * Execute writeFile() functionality.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param args           Values of the call-parameters in the same order as defined.
+     * @param append         Defines if file should be appended, instead of newly created.
+     * @return               SetlBoolean.TRUE if writing was successful.
+     * @throws IncompatibleTypeException Thrown in case the wrong parameters are supplied.
+     * @throws FileNotWriteableException File to be written cannot be written.
+     */
     protected Value exec(final State state, final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
         final Value           fileArg     = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {

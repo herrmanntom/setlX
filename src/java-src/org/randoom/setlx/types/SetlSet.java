@@ -591,8 +591,8 @@ public class SetlSet extends CollectionValue {
     //     power(A + {x}) = power(A) + { {x} + s : s in power(A) }
     @Override
     public SetlSet powerSet(final State state) throws SetlException {
-        if (state.isExecutionStopped) {
-            throw new StopExecutionException("Interrupted");
+        if (state.executionStopped) {
+            throw new StopExecutionException();
         }
         if (size() == 0) {
             final SetlSet power = new SetlSet();

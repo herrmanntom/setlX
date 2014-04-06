@@ -64,7 +64,7 @@ public class TermConverter {
                     return Procedure.termToValue(term);
                 } else if (fc.equals(SetlClass.getFunctionalCharacter())) {
                     return SetlClass.termToValue(term);
-                } else if (fc.equals(SetlObject.FUNCTIONAL_CHARACTER)) {
+                } else if (fc.equals(SetlObject.getFunctionalCharacter())) {
                     return SetlObject.termToValue(term);
                 } else if (fc.equals(Om.getFunctionalCharacter())) {
                     return Om.OM;

@@ -7,10 +7,12 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// appendFile(fileName, content) : appends a list of strings to a file, each
-//                                 string representing a single line
-
+/**
+ * appendFile(fileName, content) : Appends a list of strings to a file, each
+ *                                 string representing a single line.
+ */
 public class PD_appendFile extends PD_writeFile {
+    /** Definition of the PreDefinedProcedure `appendFile'. */
     public final static PreDefinedProcedure DEFINITION = new PD_appendFile();
 
     private PD_appendFile() {

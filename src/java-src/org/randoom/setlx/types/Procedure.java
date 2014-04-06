@@ -10,13 +10,13 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -40,19 +40,19 @@ public class Procedure extends Value {
     /**
      * List of parameters.
      */
-    protected final List<ParameterDef>     parameters;
+    protected final List<ParameterDef> parameters;
     /**
      * Statements in the body of the procedure.
      */
-    protected final Block                  statements;
+    protected final Block              statements;
     /**
      * Variables and values used in closure.
      */
-    protected       HashMap<String, Value> closure;
+    protected       SetlHashMap<Value> closure;
     /**
      * Surrounding object for next call.
      */
-    protected       SetlObject             object;
+    protected       SetlObject         object;
 
     /**
      * Create new procedure definition.
@@ -72,11 +72,11 @@ public class Procedure extends Value {
      * @param statements statements in the body of the procedure
      * @param closure    Attached closure variables.
      */
-    protected Procedure(final List<ParameterDef> parameters, final Block statements, final HashMap<String, Value> closure) {
+    protected Procedure(final List<ParameterDef> parameters, final Block statements, final SetlHashMap<Value> closure) {
         this.parameters = parameters;
         this.statements = statements;
         if (closure != null) {
-            this.closure = new HashMap<String, Value>(closure);
+            this.closure = new SetlHashMap<Value>(closure);
         } else {
             this.closure = null;
         }
@@ -108,7 +108,7 @@ public class Procedure extends Value {
      *
      * @param closure Closure variables to attach.
      */
-    public void setClosure(final HashMap<String, Value> closure) {
+    public void setClosure(final SetlHashMap<Value> closure) {
         this.closure = closure;
     }
 

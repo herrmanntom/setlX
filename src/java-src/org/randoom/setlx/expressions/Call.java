@@ -42,6 +42,12 @@ public class Call extends Expr {
     private final Expr       lhs;  // left hand side
     private final List<Expr> args; // list of arguments
 
+    /**
+     * Create a new call expression.
+     *
+     * @param lhs  Left hand side to evaluate before execute the call on its result.
+     * @param args Expressions to evaluate as arguments of the call.
+     */
     public Call(final Expr lhs, final List<Expr> args) {
         this.lhs  = lhs;
         this.args = args;
@@ -131,6 +137,13 @@ public class Call extends Expr {
         return result;
     }
 
+    /**
+     * Convert a term representing a Call into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Call Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Call termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -157,6 +170,11 @@ public class Call extends Expr {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

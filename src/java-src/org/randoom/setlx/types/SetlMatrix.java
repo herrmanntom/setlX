@@ -155,7 +155,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		boolean isMatrix = multiplier instanceof SetlMatrix;
 		if(isMatrix || multiplier instanceof SetlVector) {
 			SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
-			if(this.value.getColumnDimension() == this.value.getRowDimension()) {
+			if(this.value.getColumnDimension() == b.value.getRowDimension()) {
 				this.value = this.value.times(b.value);
 				return this;
 			} else {
@@ -179,7 +179,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 
 	@Override
 	public Value power(final State state, final Value exponent) throws SetlException {
-		if(this.value.getColumnDimension() != this.value.getRowDimension()) {
+		if(!this.isSquare()) {
 			throw new IncompatibleTypeException("Power is only defined on square matrices."); // Same in Octave
 		}
 		if(exponent.jIntConvertable()) {
@@ -543,9 +543,16 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		return new SetlMatrix(this.value.eig().getV());
 	}
 
-	// TODO are there any conditions
-	public SetlDouble determinant() throws UndefinedOperationException {
-		return SetlDouble.valueOf(this.value.det());
+	public boolean isSquare() {
+		return this.value.getColumnDimension() == this.value.getRowDimension();
+	}
+
+	public SetlDouble determinant() throws SetlException {
+		if(this.isSquare()) {
+			return SetlDouble.valueOf(this.value.det());
+		} else {
+			throw new IncompatibleTypeException("Matrix needs to be square.");
+		}
 	}
 
 	public SetlMatrix solve(SetlMatrix B) {

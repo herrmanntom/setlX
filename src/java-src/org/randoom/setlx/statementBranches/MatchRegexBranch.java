@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
@@ -166,7 +167,12 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 final int      count  = matcher.groupCount() + 1;
                 final SetlList groups = new SetlList(count);
                 for (int i = 0; i < count; ++i) {
-                    groups.addMember(state, new SetlString(matcher.group(i)));
+                    final String group = matcher.group(i);
+                    if (group != null) {
+                        groups.addMember(state, new SetlString(group));
+                    } else {
+                        groups.addMember(state, Om.OM);
+                    }
                 }
                 return new ScanResult(assignTerm.matchesTerm(state, groups), matcher.end());
             } else {

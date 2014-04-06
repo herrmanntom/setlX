@@ -1,9 +1,10 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.2.3--- 2014-02-27
+---v2.2.3--- 2014-04-07
  + updated tutorial
  + add --harshWelcome option, that reduces the welcome message
  + allow combination of short command line options
+ + improve call and member access error messages
  # fix empty regular expression capture groups beeing returned as string "null",
    now they are returned as om
 

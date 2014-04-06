@@ -36,6 +36,12 @@ public class MemberAccess extends AssignableExpression {
     private final Variable member;   // member to access
     private final String   memberID; // member to access
 
+    /**
+     * Create new MemberAccess expression.
+     *
+     * @param lhs    Left hand side (Variable, Expr, CollectionAccess, etc)
+     * @param member Member to access.
+     */
     public MemberAccess(final Expr lhs, final Variable member) {
         this.lhs      = lhs;
         this.member   = member;
@@ -44,14 +50,37 @@ public class MemberAccess extends AssignableExpression {
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return lhs.eval(state).getObjectMemberUnCloned(state, memberID);
+        final Value lhs = this.lhs.eval(state);
+        try {
+            return lhs.getObjectMemberUnCloned(state, memberID);
+        } catch (final SetlException se) {
+            final StringBuilder error = new StringBuilder();
+            error.append("Error in \"");
+            lhs.appendString(state, error, 0);
+            error.append(".");
+            error.append(memberID);
+            error.append("\":");
+            se.addToTrace(error.toString());
+            throw se;
+        }
     }
 
     @Override
     /*package*/ Value evaluateUnCloned(final State state) throws SetlException {
         if (lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
-            return lhs.getObjectMemberUnCloned(state, memberID);
+            try {
+                return lhs.getObjectMemberUnCloned(state, memberID);
+            } catch (final SetlException se) {
+                final StringBuilder error = new StringBuilder();
+                error.append("Error in \"");
+                lhs.appendString(state, error, 0);
+                error.append(".");
+                error.append(memberID);
+                error.append("\":");
+                se.addToTrace(error.toString());
+                throw se;
+            }
         } else {
             throw new IncompatibleTypeException(
                 "\"" + this + "\" is unusable for list assignment."
@@ -112,6 +141,13 @@ public class MemberAccess extends AssignableExpression {
         return result;
     }
 
+    /**
+     * Convert a term representing a MemberAccess into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting MemberAccess expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static MemberAccess termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

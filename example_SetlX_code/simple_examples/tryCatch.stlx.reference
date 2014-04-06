@@ -8,4 +8,5 @@ Something else happened:
 Language error: 'om + om' is undefined.
 
 Error in "throw("the end is near")":
+Error in "procedure(value) { /* predefined procedure `throw' */ }("the end is near")":
 Uncaught user exception: "the end is near"

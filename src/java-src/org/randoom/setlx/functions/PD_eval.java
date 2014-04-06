@@ -10,14 +10,16 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// eval(expr)                    : evaluate a String of a SetlX expression
-
+/**
+ * eval(expr)                    : evaluate a String of a SetlX expression
+ */
 public class PD_eval extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `eval'. */
     public final static PreDefinedProcedure DEFINITION = new PD_eval();
 
     private PD_eval() {
         super();
-        addParameter("setlX_expr");
+        addParameter("setlX_expression");
     }
 
     @Override

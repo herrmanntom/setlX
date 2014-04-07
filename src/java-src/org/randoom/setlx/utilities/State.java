@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlDouble.DoublePrintMode;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -15,7 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,64 +30,64 @@ public class State {
     /**
      * Printing mode for doubles
      */
-    public                  DoublePrintMode           doublePrintMode;
+    public                  DoublePrintMode        doublePrintMode;
     /**
      * Print a trace when assigning variables.
      */
-    public                  boolean             traceAssignments;
+    public                  boolean                traceAssignments;
     /**
      * Current call stack depth assumption.
      */
-    public                  int                 callStackDepth;
+    public                  int                    callStackDepth;
     /**
      * Execution should be terminated at the next possibility.
      */
-    public                  boolean             isExecutionStopped;
+    public                  boolean                executionStopped;
 
     // private variables
 
     // interface provider to the outer world
-    private                 EnvironmentProvider envProvider;
+    private                 EnvironmentProvider    envProvider;
 
-    private                 LinkedList<String>  parserErrorCapture;
-    private                 int                 parserErrorCount;
+    private                 LinkedList<String>     parserErrorCapture;
+    private                 int                    parserErrorCount;
 
-    private final           HashSet<String>     loadedLibraries;
+    private final           HashSet<String>        loadedLibraries;
 
     /* This variable stores the root VariableScope:
        Predefined functions are dynamically loaded into this VariableScope and
        not only into the current one, to be accessible by any previous and future
        VariableScope clones (results in faster lookup).                       */
-    private final   static  VariableScope       ROOT_SCOPE = new VariableScope();
+    private final   static  VariableScope          ROOT_SCOPE = new VariableScope();
 
     // this scope stores all global variables
-    private final           HashMap<String, SetlClass> classDefinitions;
+    private final           SetlHashMap<SetlClass> classDefinitions;
 
     // this variable stores the variable assignment that is currently active
-    private                 VariableScope       variableScope;
+    private                 VariableScope          variableScope;
 
     // number of CPUs/Cores in System
-    private final   static  int                 CORES = Runtime.getRuntime().availableProcessors();
+    private final   static  int                    CORES = Runtime.getRuntime().availableProcessors();
     // measurement of this JVM's stack size
-    private         static  int                 STACK_MEASUREMENT  = -1;
+    private         static  int                    STACK_MEASUREMENT  = -1;
     // maximum accepted stack measurement; is roughly equal to -Xss48m using the 64 bit OpenJDK 7
-    private final   static  int                 ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
+    private final   static  int                    ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
 
 
     // is input feed by a human?
-    private                 boolean             isHuman;
+    private                 boolean                human;
 
     // random number generator
-    private                 Random              randoom;
+    private                 Random                 randoom;
 
-    private                 int                 firstCallStackDepth;
+    private                 int                    firstCallStackDepth;
 
-    private                 boolean             isRandoomPredictable;
-    private                 boolean             multiLineMode;
-    private                 boolean             isInteractive;
-    private                 boolean             printVerbose;
-    private                 boolean             assertsDisabled;
-    private                 boolean             isRuntimeDebuggingEnabled;
+    private                 boolean                randoomPredictable;
+    private                 boolean                multiLineMode;
+    private                 boolean                interactive;
+    private                 boolean                printVerbose;
+    private                 boolean                assertsDisabled;
+    private                 boolean                runtimeDebuggingEnabled;
 
     /**
      * Create new state implementation, using a dummy environment.
@@ -104,20 +102,20 @@ public class State {
      * @param envProvider Environment provider implementation to use.
      */
     public State(final EnvironmentProvider envProvider) {
-        this.envProvider                 = envProvider;
-        parserErrorCapture               = null;
-        parserErrorCount                 = 0;
-        loadedLibraries                  = new HashSet<String>();
-        classDefinitions                 = new HashMap<String, SetlClass>();
-        isHuman                          = false;
-        isRandoomPredictable             = false;
-        multiLineMode                    = false;
-        isInteractive                    = false;
-        printVerbose                     = false;
-        doublePrintMode                  = DoublePrintMode.DEFAULT;
-        traceAssignments                 = false;
-        assertsDisabled                  = false;
-        isRuntimeDebuggingEnabled        = false;
+        this.envProvider        = envProvider;
+        parserErrorCapture      = null;
+        parserErrorCount        = 0;
+        loadedLibraries         = new HashSet<String>();
+        classDefinitions        = new SetlHashMap<SetlClass>();
+        human                   = false;
+        randoomPredictable      = false;
+        multiLineMode           = false;
+        interactive             = false;
+        printVerbose            = false;
+        doublePrintMode         = DoublePrintMode.DEFAULT;
+        traceAssignments        = false;
+        assertsDisabled         = false;
+        runtimeDebuggingEnabled = false;
         resetState();
     }
 
@@ -133,7 +131,7 @@ public class State {
         parserErrorCount = 0;
         loadedLibraries.clear();
         classDefinitions.clear();
-        if (isRandoomPredictable) {
+        if (randoomPredictable) {
             randoom = new Random(0);
         } else {
             randoom = new Random();
@@ -141,7 +139,7 @@ public class State {
         variableScope       = ROOT_SCOPE.createLinkedScope();
         callStackDepth      = 15; // add a bit to account for initialization stuff
         firstCallStackDepth = -1;
-        isExecutionStopped  = false;
+        executionStopped    = false;
     }
 
     /**
@@ -383,9 +381,9 @@ public class State {
         // Also if at one time a prompt was displayed, display all following
         // prompts. (User may continue to type into stdin AFTER we last read
         // from it, causing stdin to be ready, but human controlled)
-        if (isHuman || ! envProvider.inReady()) {
+        if (human || ! envProvider.inReady()) {
             envProvider.promptForInput(prompt);
-            isHuman = true;
+            human = true;
             return true;
         }
         return false;
@@ -404,42 +402,80 @@ public class State {
         return envProvider.promptSelectionFromAnswers(question, answers);
     }
 
+    /**
+     * Set flag for printing doubles with the default way of displaying the exponent.
+     */
     public void setDoublePrintMode_default() {
         doublePrintMode = DoublePrintMode.DEFAULT;
     }
 
+    /**
+     * Set flag for printing doubles with always displaying the exponent.
+     */
     public void setDoublePrintMode_scientific() {
         doublePrintMode = DoublePrintMode.SCIENTIFIC;
     }
 
+    /**
+     * Set flag for printing doubles with always displaying a exponent which is a multiple of 3.
+     */
     public void setDoublePrintMode_engineering() {
         doublePrintMode = DoublePrintMode.ENGINEERING;
     }
 
+    /**
+     * Set flag for printing doubles without displaying the exponent.
+     */
     public void setDoublePrintMode_plain() {
         doublePrintMode = DoublePrintMode.PLAIN;
     }
 
-    // allow modification of fileName/path when reading files
-
+    /**
+     * Allow modification of fileName/path when reading files.
+     * System dependent changes may be performed by the current environment provider.
+     *
+     * @param fileName Original fileName/path
+     * @return         FileName/path after modification by the environment provider.
+     */
     public String filterFileName(final String fileName) {
         return envProvider.filterFileName(fileName);
     }
 
-    // allow modification of library name
-
+    /**
+     * Allow modification of library name when reading files.
+     * System dependent changes may be performed by the current environment provider.
+     *
+     * @param name Original library name
+     * @return     Library name after modification by the environment provider.
+     */
     public String filterLibraryName(final String name) {
         return envProvider.filterLibraryName(name);
     }
 
+    /**
+     * Check if a library with the given name was already marked as loaded.
+     *
+     * @param name Name of library loaded.
+     * @return     True if library with this name was loaded.
+     */
     public boolean isLibraryLoaded(final String name) {
         return loadedLibraries.contains(name);
     }
 
+    /**
+     * Mark library with the given name as already loaded.
+     *
+     * @param name Name of library loaded.
+     */
     public void libraryWasLoaded(final String name) {
         loadedLibraries.add(name);
     }
 
+    /**
+     * Get number of CPU cores detected in the executing system.
+     *
+     * @return Number of CPU cores detected.
+     */
     public int getNumberOfCores() {
         if (CORES >= 2) {
             return CORES;
@@ -463,9 +499,11 @@ public class State {
      * @param predictableRandoom True to set random number generator to be predictable.
      */
     public void setRandoomPredictable(final boolean predictableRandoom) {
-        isRandoomPredictable = predictableRandoom;
+        randoomPredictable = predictableRandoom;
         if (predictableRandoom) {
             randoom = new Random(0);
+        } else {
+            randoom = new Random();
         }
     }
 
@@ -475,7 +513,7 @@ public class State {
      * @return True if random number generator is predictable.
      */
     public boolean isRandoomPredictable() {
-        return isRandoomPredictable;
+        return randoomPredictable;
     }
 
     /**
@@ -593,41 +631,90 @@ public class State {
      * @param stopExecution True to stop execution, false otherwise.
      */
     public void stopExecution(final boolean stopExecution) {
-        isExecutionStopped = stopExecution;
+        executionStopped = stopExecution;
     }
 
+    /**
+     * Only accept input after additional new line when parsing in interactive mode.
+     *
+     * @param multiLineMode Enable multiple line mode.
+     *
+     * @see org.randoom.setlx.utilities.ParseSetlX#parseInteractive(State)
+     */
     public void setMultiLineMode(final boolean multiLineMode) {
         this.multiLineMode = multiLineMode;
     }
 
+    /**
+     * Check if input is only accepted after additional new line when parsing in interactive mode.
+     *
+     * @return True, if multiple line mode is enabled.
+     */
     public boolean isMultiLineEnabled() {
         return multiLineMode;
     }
 
-    public void setInteractive(final boolean isInteractive) {
-        this.isInteractive = isInteractive;
+    /**
+     * Flag as interactive session.
+     * Mostly influences how certain output is printed.
+     *
+     * @param interactive True, to enable interactive mode.
+     */
+    public void setInteractive(final boolean interactive) {
+        this.interactive = interactive;
     }
 
+    /**
+     * Check if this is an interactive session.
+     * Mostly influences how certain output is printed.
+     *
+     * @return True, to enable interactive mode.
+     */
     public boolean isInteractive() {
-        return isInteractive;
+        return interactive;
     }
 
+    /**
+     * Set verbose printing.
+     *
+     * @param printVerbose True, to enable verbose printing.
+     */
     public void setPrintVerbose(final boolean printVerbose) {
         this.printVerbose = printVerbose;
     }
 
+    /**
+     * Check if verbose printing is enabled.
+     *
+     * @return True, to enable verbose printing.
+     */
     public boolean isPrintVerbose() {
         return printVerbose;
     }
 
+    /**
+     * Set printing a trace when assigning variables.
+     *
+     * @param traceAssignments True, to enable tracing assignments.
+     */
     public void setTraceAssignments(final boolean traceAssignments) {
         this.traceAssignments = traceAssignments;
     }
 
+    /**
+     * Set if asserts are enabled and executed.
+     *
+     * @param assertsDisabled True, to disable asserts.
+     */
     public void setAssertsDisabled(final boolean assertsDisabled) {
         this.assertsDisabled = assertsDisabled;
     }
 
+    /**
+     * Check if asserts are disabled.
+     *
+     * @return True, if asserts are disabled.
+     */
     public boolean areAssertsDisabled() {
         return assertsDisabled;
     }
@@ -636,20 +723,20 @@ public class State {
      * 'secret' option to print stack trace of unhandled java exceptions and use
      * more checks.
      *
-     * @param isRuntimeDebuggingEnabled True to enable runtime debugging.
+     * @param isRuntimeDebuggingEnabled True, to enable runtime debugging.
      */
     public void setRuntimeDebugging(final boolean isRuntimeDebuggingEnabled) {
-        this.isRuntimeDebuggingEnabled = isRuntimeDebuggingEnabled;
+        this.runtimeDebuggingEnabled = isRuntimeDebuggingEnabled;
     }
 
     /**
      * Get 'secret' option to print stack trace of unhandled java exceptions and
      * use more checks.
      *
-     * @return True if runtime debugging is enabled.
+     * @return True, if runtime debugging is enabled.
      */
     public boolean isRuntimeDebuggingEnabled() {
-        return isRuntimeDebuggingEnabled;
+        return runtimeDebuggingEnabled;
     }
 
     /**
@@ -869,7 +956,7 @@ public class State {
             }
         }
         if (traceAssignments) {
-            final HashMap<String, Value> assignments = new HashMap<String, Value>();
+            final SetlHashMap<Value> assignments = new SetlHashMap<Value>();
             variableScope.storeAllValuesTrace(scope, assignments);
             for (final Map.Entry<String, Value> entry : assignments.entrySet()) {
                 printTrace(entry.getKey(), entry.getValue(), context);

@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
@@ -16,10 +17,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-// matches(string, pattern [, captureGroups]) : returns true if `string' matches the regular expression pattern
-//                                              if `captureGroups' is true, the captured groups are returned instead
-
+/**
+ *  matches(string, pattern [, captureGroups]) : returns true if `string' matches the regular expression pattern
+ *                                               if `captureGroups' is true, the captured groups are returned instead
+ */
 public class PD_matches extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `matches'. */
     public final static PreDefinedProcedure DEFINITION = new PD_matches();
 
     private PD_matches() {
@@ -70,7 +73,12 @@ public class PD_matches extends PreDefinedProcedure {
                     final int      count  = matcher.groupCount() + 1;
                     final SetlList groups = new SetlList(count);
                     for (int i = 0; i < count; ++i) {
-                        groups.addMember(state, new SetlString(matcher.group(i)));
+                        final String group = matcher.group(i);
+                        if (group != null) {
+                            groups.addMember(state, new SetlString(group));
+                        } else {
+                            groups.addMember(state, Om.OM);
+                        }
                     }
                     return groups;
                 } else {

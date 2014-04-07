@@ -8,47 +8,67 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// logo()                        : prints the setlX logo
-
-
-
-
-
-
-
-/*                            CHEATING IS BAD!                                */
-/*                            CHEATING IS BAD!                                */
-/*                            CHEATING IS BAD!                                */
-/*                            CHEATING IS BAD!                                */
-
-
-
-
-
-
-/*                  Don't look at the source, execute it!                     */
-
-
-
-
-
-
-
-/*                            CHEATING IS BAD!                                */
-/*                            CHEATING IS BAD!                                */
-/*                            CHEATING IS BAD!                                */
-/*                            CHEATING IS BAD!                                */
-
-
-
-
-
-
-
+/**
+ * logo() : prints the setlX logo
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *                             CHEATING IS BAD!
+ *                             CHEATING IS BAD!
+ *                             CHEATING IS BAD!
+ *                             CHEATING IS BAD!
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *                  Don't look at the source, execute it!
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *                             CHEATING IS BAD!
+ *                             CHEATING IS BAD!
+ *                             CHEATING IS BAD!
+ *                             CHEATING IS BAD!
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 public class PD_logo extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `logo'. */
     public  final static PreDefinedProcedure DEFINITION  = new PD_logo();
-    private       static int                count       = 0;
-    private final static String             LOGO_BIG    = "\n" +
+
+    private       static int    count    = 0;
+    private final static String LOGO_BIG = "\n" +
     "                                                                    " + "\n" +
     "        .mO0C0O0M0P0U0T0E0R0S000M0A0K0E000V0E0R0Y000F0A0S0T0Om.     " + "\n" +
     "       .OOOOOOOOOOOOOOOOOOOOOO0S0E0T0L0X0OOOOOOOOOOOOOOOOOOOOOO.    " + "\n" +
@@ -165,7 +185,7 @@ public class PD_logo extends PreDefinedProcedure {
                 timeSum += time;
                 Thread.sleep(time);
             } catch (final InterruptedException ie) {
-                throw new StopExecutionException("Interrupted");
+                throw new StopExecutionException();
             }
         }
 

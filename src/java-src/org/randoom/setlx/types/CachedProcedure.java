@@ -8,6 +8,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -67,7 +68,7 @@ public class CachedProcedure extends Procedure {
     private CachedProcedure(
         final List<ParameterDef>                      parameters,
         final Block                                   statements,
-        final HashMap<String, Value>                  closure,
+        final SetlHashMap<Value>                      closure,
         final HashMap<SetlList, SoftReference<Value>> cache,
         final int                                     cacheHits
     ) {

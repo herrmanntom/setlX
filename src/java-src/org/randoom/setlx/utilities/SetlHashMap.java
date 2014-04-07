@@ -11,18 +11,39 @@ import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
-public class SetlHashMap<V extends Value> extends HashMap<String, V> {
+/**
+ * Hash map, that maps a string to a setlX Value type.
+ *
+ * Various often used utility methods are provided in this class.
+ *
+ * @param <V> Value type that is mapped to.
+ */
+public class SetlHashMap<V extends Value> extends HashMap<String, V> implements Comparable<SetlHashMap<V>> {
 
     private static final long serialVersionUID = 2189938618356906560L;
 
+    /**
+     * Create a new SetlHashMap.
+     */
     public SetlHashMap() {
         super();
     }
 
+    /**
+     * Create a new SetlHashMap which contains all members from the given Map.
+     *
+     * @param m Map to copy all members from.
+     */
     public SetlHashMap(final Map<String, ? extends V> m) {
         super(m);
     }
 
+    /**
+     * Add contents of this map as SetlX map to given Term.
+     *
+     * @param state  Current state of the running setlX program.
+     * @param result Term to be added to.
+     */
     public void addToTerm(final State state, final Term result) {
         // list of bindings in this object
         final SetlSet   bindings    = new SetlSet();
@@ -36,6 +57,13 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> {
         result.addMember(state, bindings);
     }
 
+    /**
+     * Convert a SetlX map representing a SetlHashMap into such a map.
+     *
+     * @param value                    SetlHashMap to convert.
+     * @return                         Resulting SetlHashMap.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static SetlHashMap<Value> valueToSetlHashMap(final Value value) throws TermConversionException {
         if (value instanceof SetlSet) {
             final SetlHashMap<Value> result = new SetlHashMap<Value>();
@@ -59,6 +87,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> {
      * contain the same elements.
      * Useful output is only possible if both values are of the same type.
      */
+    @Override
     public int compareTo(final SetlHashMap<V> other) {
         if (this == other) {
             return 0;
@@ -98,12 +127,29 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> {
         return 0;
     }
 
-    public boolean equalTo(final SetlHashMap<V> other) {
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof SetlHashMap<?>) {
+            return this.equalTo((SetlHashMap<?>) o);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Test if two Values are equal.
+     * This operation can be much faster as ( compareTo(other) == 0 ).
+     *
+     * @param other Other value to compare to `this'
+     * @return      True if `this' equals `other', false otherwise.
+     */
+    public boolean equalTo(final SetlHashMap<?> other) {
         if (this == other) {
             return true;
         }
         return this.size() == other.size() &&
                this.entrySet().containsAll(other.entrySet());
     }
-
 }

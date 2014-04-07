@@ -30,6 +30,12 @@ public class Sum extends Expr {
     private final Expr lhs;
     private final Expr rhs;
 
+    /**
+     * Create a new Sum expression.
+     *
+     * @param lhs Left hand side of the addition.
+     * @param rhs Right hand side of the addition.
+     */
     public Sum(final Expr lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;

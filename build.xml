@@ -1,6 +1,7 @@
 <project name="setlX" basedir="." default="buildAll">
     <!-- variables which determine paths and other information used later -->
-    <property name="j16rt.dir"   value="buildTools/java_1_6"/>
+    <property name="buildTools.dir" value="${basedir}/buildTools"/>
+    <property name="j16rt.dir"      value="${buildTools.dir}/java_1_6"/>
 
     <condition property="isJava6">
         <contains string="${java.version}" substring="1.6" casesensitive="false"/>
@@ -36,7 +37,7 @@
     <target name="dist-clean" depends="clean">
         <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src"     target="dist-clean"/>
         <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src_gfx" target="dist-clean"/>
-        <delete dir="${j16rt.dir}"/>
+        <delete dir="${buildTools.dir}"/>
     </target>
 </project>
 

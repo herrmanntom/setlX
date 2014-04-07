@@ -21,13 +21,16 @@ public class Exit extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Exit.class);
 
+    /**
+     * Singleton Exit statement.
+     */
     public  final static Exit   E                    = new Exit();
 
     private Exit() { }
 
     @Override
     public ReturnMessage execute(final State state) throws ExitException {
-        throw new ExitException("Good Bye! (exit)");
+        throw new ExitException();
     }
 
     @Override
@@ -53,6 +56,13 @@ public class Exit extends Statement {
         return result;
     }
 
+    /**
+     * Convert a term representing an Exit statement into such a statement.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting statement of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
     public static Exit termToStatement(final Term term) throws TermConversionException {
         if (term.size() != 0) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

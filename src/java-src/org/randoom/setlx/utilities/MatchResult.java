@@ -3,7 +3,6 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.types.Value;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,7 +10,7 @@ import java.util.Map;
  */
 public class MatchResult {
     private        boolean              matches;       // does the term match?
-    private final  Map<String, Value>   varBindings;   // variables to set when term matches
+    private final  SetlHashMap<Value>   varBindings;   // variables to set when term matches
 
     /**
      * Create a new match result, without any matching variables.
@@ -20,7 +19,7 @@ public class MatchResult {
      */
     public MatchResult(final boolean matches) {
         this.matches        = matches;
-        this.varBindings    = new HashMap<String, Value>();
+        this.varBindings    = new SetlHashMap<Value>();
     }
 
     /**

@@ -97,8 +97,8 @@ public class Block extends Statement {
             if (executeInCurrentStack) {
                 ReturnMessage result = null;
                 for (final Statement stmnt : statements) {
-                    if (state.isExecutionStopped) {
-                        throw new StopExecutionException("Interrupted");
+                    if (state.executionStopped) {
+                        throw new StopExecutionException();
                     }
                     result = stmnt.execute(state);
                     if (result != null) {
@@ -116,7 +116,7 @@ public class Block extends Statement {
                         return callExec.result;
                     }
                 } catch (final InterruptedException e) {
-                    throw new StopExecutionException("Interrupted");
+                    throw new StopExecutionException();
                 }
 
                 // handle exceptions thrown in thread
@@ -134,7 +134,7 @@ public class Block extends Statement {
                             // sleep a while
                             Thread.sleep(50);
                         } catch (final InterruptedException e) {
-                            throw new StopExecutionException("Interrupted");
+                            throw new StopExecutionException();
                         }
                         throw (OutOfMemoryError) callExec.error;
                     } else if (callExec.error instanceof RuntimeException) {
@@ -238,7 +238,7 @@ public class Block extends Statement {
     }
 
     /**
-     * Convert a term to a Block-object.
+     * Convert a term representing a Block statement into such a statement.
      *
      * @param term                     Term to convert.
      * @return                         Resulting statement of this conversion.
@@ -277,8 +277,8 @@ public class Block extends Statement {
                 state.callStackDepth  = 0;
 
                 for (final Statement stmnt : statements) {
-                    if (state.isExecutionStopped) {
-                        throw new StopExecutionException("Interrupted");
+                    if (state.executionStopped) {
+                        throw new StopExecutionException();
                     }
                     result = stmnt.execute(state);
                     if (result != null) {

@@ -21,7 +21,7 @@ public final class InputReader {
      *
      * @param state               Current state of the running setlX program.
      * @param endl                End-of-line sequence to use.
-     * @param multiLine           Set to true if multiline mode should be enabled.
+     * @param multiLine           Set to true if multiple line mode should be enabled.
      * @return                    Text read from the input.
      * @throws EndOfFileException Thrown in case the user inserts a EOF character.
      */
@@ -34,7 +34,7 @@ public final class InputReader {
                 // line is read and returned without termination character(s)
                 line   = state.inReadLine();
                 if (line == null) {
-                    throw new EndOfFileException("EndOfFile");
+                    throw new EndOfFileException();
                 } else {
                     // append line
                     input.append(line);

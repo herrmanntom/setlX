@@ -6,9 +6,9 @@ import org.randoom.setlx.types.LambdaDefinition;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.Procedure;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class ProcedureConstructor extends Expr {
     // precedence level in SetlX-grammar
-    private final static int          LAMBDA_PRECEDENCE    = 1050;
-    private final static int          PRECEDENCE           = 9999;
+    private final static int      LAMBDA_PRECEDENCE = 1050;
+    private final static int      PRECEDENCE        = 9999;
 
     private final Procedure       definition;
     private       HashSet<String> closureVariables;
@@ -49,7 +49,7 @@ public class ProcedureConstructor extends Expr {
             this.optimize();
         }
         if (! closureVariables.isEmpty()) {
-            final HashMap<String, Value> closure = new HashMap<String, Value>();
+            final SetlHashMap<Value> closure = new SetlHashMap<Value>();
             for (final String var : closureVariables) {
                 if (var.equals("this")) {
                     continue;

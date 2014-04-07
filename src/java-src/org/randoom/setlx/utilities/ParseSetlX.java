@@ -103,7 +103,7 @@ public class ParseSetlX {
             return parseBlock(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
-            throw new EndOfFileException("eof");
+            throw new EndOfFileException();
         }
     }
 
@@ -124,7 +124,7 @@ public class ParseSetlX {
             return parseBlock(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
-            throw new EndOfFileException("eof");
+            throw new EndOfFileException();
         }
     }
 
@@ -145,7 +145,7 @@ public class ParseSetlX {
             return parseExpr(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
-            throw new EndOfFileException("eof");
+            throw new EndOfFileException();
         }
     }
 
@@ -197,7 +197,7 @@ public class ParseSetlX {
                 parserThread.join();
                 fragment = parserThread.result;
             } catch (final InterruptedException e) {
-                throw new StopExecutionException("Interrupted");
+                throw new StopExecutionException();
             }
 
             // handle exceptions thrown in thread
@@ -244,7 +244,10 @@ public class ParseSetlX {
 
             return fragment;
         } catch (final RecognitionException re) {
-            throw SyntaxErrorException.create(state.getParserErrorCapture(), re.getMessage());
+            throw SyntaxErrorException.create(
+                state.getParserErrorCapture(),
+                re.getMessage()
+            );
         } catch (final NullPointerException npe) {
             if (parser != null) {
                 state.addToParserErrorCount(parser.getNumberOfSyntaxErrors());

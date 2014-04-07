@@ -591,8 +591,8 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlSet permutations(final State state) throws SetlException {
-        if (state.isExecutionStopped) {
-            throw new StopExecutionException("Interrupted");
+        if (state.executionStopped) {
+            throw new StopExecutionException();
         }
         if (size() == 0) {
             final SetlSet permutations = new SetlSet();

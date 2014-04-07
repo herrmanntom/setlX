@@ -9,11 +9,13 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// read(message, ...)            : prompts the user with `message', then reads from
-//                                 stdin until user enters at least one character,
-//                                 converts input into integer or double if possible
-
+/**
+ * read(message, ...) : prompts the user with `message', then reads from
+ *                      stdin until user enters at least one character,
+ *                      converts input into integer or double if possible
+ */
 public class PD_read extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `read'. */
     public final static PreDefinedProcedure DEFINITION = new PD_read();
 
     private PD_read() {

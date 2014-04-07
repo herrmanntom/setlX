@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// throw(value)            : stops execution and throws value to be catched by try-catch block
-
+/**
+ * throw(value) : stops execution and throws value to be catched by try-catch block
+ */
 public class PD_throw extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `throw'. */
     public final static PreDefinedProcedure DEFINITION = new PD_throw();
 
     private PD_throw() {

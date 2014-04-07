@@ -42,6 +42,12 @@ public class Call extends Expr {
     private final Expr       lhs;  // left hand side
     private final List<Expr> args; // list of arguments
 
+    /**
+     * Create a new call expression.
+     *
+     * @param lhs  Left hand side to evaluate before execute the call on its result.
+     * @param args Expressions to evaluate as arguments of the call.
+     */
     public Call(final Expr lhs, final List<Expr> args) {
         this.lhs  = lhs;
         this.args = args;
@@ -52,11 +58,21 @@ public class Call extends Expr {
         final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + lhs + "\" is undefined."
+                "Left hand side of call (\"" + this.lhs + "\") is undefined."
             );
         }
-        // supply the original expressions (mArgs), which are needed for 'rw' parameters
-        return lhs.call(state, args);
+        // supply the original expressions (args), which are needed for 'rw' parameters
+        try {
+            return lhs.call(state, args);
+        } catch (final SetlException se) {
+            final StringBuilder error = new StringBuilder();
+            error.append("Error in \"");
+            lhs.appendString(state, error, 0);
+            appendArgsString(state, error, 0);
+            error.append("\":");
+            se.addToTrace(error.toString());
+            throw se;
+        }
     }
 
     @Override
@@ -78,6 +94,9 @@ public class Call extends Expr {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         lhs.appendString(state, sb, tabs);
+        appendArgsString(state, sb, tabs);
+    }
+    private void appendArgsString(final State state, final StringBuilder sb, final int tabs) {
         sb.append("(");
 
         final Iterator<Expr> iter = args.iterator();
@@ -131,6 +150,13 @@ public class Call extends Expr {
         return result;
     }
 
+    /**
+     * Convert a term representing a Call into such an expression.
+     *
+     * @param term                     Term to convert.
+     * @return                         Resulting Call Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
     public static Call termToExpr(final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
@@ -157,6 +183,11 @@ public class Call extends Expr {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

@@ -14,6 +14,11 @@ public abstract class SetlException extends Exception {
 
     private        final List<String> trace;
 
+    /**
+     * Create a new SetlException.
+     *
+     * @param msg Message describing the exception that occurred.
+     */
     public SetlException(final String msg) {
         super(msg);
         trace = new ArrayList<String>();

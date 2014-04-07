@@ -96,7 +96,7 @@ public class SetlClass extends Value {
      * @param result              Map to append static bindings to.
      * @param restrictToFunctions Only collect bindings of functions.
      */
-    public void collectBindings(final Map<String, Value> result, final boolean restrictToFunctions) {
+    public void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
         for (final Map.Entry<String, Value> entry : staticDefs.entrySet()) {
             final Value val = entry.getValue();
             if ( ! restrictToFunctions || val instanceof Procedure) {

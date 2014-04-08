@@ -24,7 +24,7 @@ public class VariableScope {
     /// how deep can the call stack be, before checking to replace the stack
     private         static  int        MAX_CALL_STACK_DEPTH = -1;
 
-    private final   SetlHashMap<Value> bindings;
+    private         SetlHashMap<Value> bindings;
 
     /**
      * stores reference scope of object
@@ -129,6 +129,19 @@ public class VariableScope {
     }
 
     /**
+     * Clear all undefined bindings in this scope (value = Om.OM).
+     */
+    /*package*/ void clearUndefinedBindings() {
+        final SetlHashMap<Value> cleanBindings = new SetlHashMap<Value>();
+        for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
+            if (entry.getValue() != Om.OM) {
+                cleanBindings.put(entry.getKey(), entry.getValue());
+            }
+        }
+        bindings = cleanBindings;
+    }
+
+    /**
      * Removes all links to other scopes and SetlObjects.
      */
     public void unlink() {
@@ -167,15 +180,6 @@ public class VariableScope {
     }
 
     /**
-     * Get the number of bindings in this scope.
-     *
-     * @return Number of bindings in this scope.
-     */
-    public int size() {
-        return bindings.size();
-    }
-
-    /**
      * Get the value of a specific bindings reachable from this scope.
      *
      * @param state          Current state of the running setlX program.
@@ -202,17 +206,21 @@ public class VariableScope {
                 final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
                 return new SetlString(new String(v));
             }
-            if (var.equals("this") && thisObject != null) {
-                return thisObject;
-            }
-            Value v = bindings.get(var);
-            if (v != null) {
-                return v;
-            }
-            if (thisObject != null) {
-                v = thisObject.getObjectMemberUnCloned(state, var);
-                if (v != Om.OM) {
+            Value v = null;
+            if (var.equals("this")) {
+                if (thisObject != null) {
+                    return thisObject;
+                }
+            } else {
+                v = bindings.get(var);
+                if (v != null) {
                     return v;
+                }
+                if (thisObject != null) {
+                    v = thisObject.getObjectMemberUnCloned(state, var);
+                    if (v != Om.OM) {
+                        return v;
+                    }
                 }
             }
             if (originalScope != null) {
@@ -253,16 +261,16 @@ public class VariableScope {
                         }
                     }
                 }
-                if (v != null) {
+                if (v != null && v != Om.OM) {
                     // found some value in outer scope
 
                     // return nothing, if value is not allowed to be read from outer scopes
-                    if (v != Om.OM && isRestrictedToFunctions && ! (v instanceof Procedure)) {
+                    if (isRestrictedToFunctions && ! (v instanceof Procedure)) {
                         return null;
                     }
 
                     // cache result, if this is allowed
-                    if ( ! readThrough && v != Om.OM) {
+                    if ( ! readThrough) {
                         bindings.put(var, v);
                     }
 
@@ -439,7 +447,7 @@ public class VariableScope {
         final SetlHashMap<Value> allVars = getAllVariablesInScope(classDefinitions);
 
         // term which represents the scope
-        final Term      result      = new Term(FUNCTIONAL_CHARACTER_SCOPE, 1);
+        final Term result = new Term(FUNCTIONAL_CHARACTER_SCOPE, 1);
 
         // list of bindings in scope
         allVars.addToTerm(state, result);

@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
@@ -46,13 +47,16 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public void addToTerm(final State state, final Term result) {
         // list of bindings in this object
-        final SetlSet   bindings    = new SetlSet();
+        final SetlSet bindings = new SetlSet();
         for (final Map.Entry<String, V> entry : entrySet()) {
-            final SetlList  binding = new SetlList(2);
-            binding.addMember(state, new SetlString(entry.getKey()));
-            binding.addMember(state, entry.getValue().toTerm(state));
+            final Value value = entry.getValue();
+            if (value != Om.OM) {
+                final SetlList binding = new SetlList(2);
+                binding.addMember(state, new SetlString(entry.getKey()));
+                binding.addMember(state, value.toTerm(state));
 
-            bindings.addMember(state, binding);
+                bindings.addMember(state, binding);
+            }
         }
         result.addMember(state, bindings);
     }

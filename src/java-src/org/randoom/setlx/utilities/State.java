@@ -30,64 +30,64 @@ public class State {
     /**
      * Printing mode for doubles
      */
-    public                  DoublePrintMode        doublePrintMode;
+    public                DoublePrintMode        doublePrintMode;
     /**
      * Print a trace when assigning variables.
      */
-    public                  boolean                traceAssignments;
+    public                boolean                traceAssignments;
     /**
      * Current call stack depth assumption.
      */
-    public                  int                    callStackDepth;
+    public                int                    callStackDepth;
     /**
      * Execution should be terminated at the next possibility.
      */
-    public                  boolean                executionStopped;
+    public                boolean                executionStopped;
 
     // private variables
 
     // interface provider to the outer world
-    private                 EnvironmentProvider    envProvider;
+    private               EnvironmentProvider    envProvider;
 
-    private                 LinkedList<String>     parserErrorCapture;
-    private                 int                    parserErrorCount;
+    private               LinkedList<String>     parserErrorCapture;
+    private               int                    parserErrorCount;
 
-    private final           HashSet<String>        loadedLibraries;
+    private final         HashSet<String>        loadedLibraries;
 
     /* This variable stores the root VariableScope:
        Predefined functions are dynamically loaded into this VariableScope and
        not only into the current one, to be accessible by any previous and future
        VariableScope clones (results in faster lookup).                       */
-    private final   static  VariableScope          ROOT_SCOPE = new VariableScope();
+    private final static  VariableScope          ROOT_SCOPE = new VariableScope();
 
     // this scope stores all global variables
-    private final           SetlHashMap<SetlClass> classDefinitions;
+    private final         SetlHashMap<SetlClass> classDefinitions;
 
     // this variable stores the variable assignment that is currently active
-    private                 VariableScope          variableScope;
+    private               VariableScope          variableScope;
 
     // number of CPUs/Cores in System
-    private final   static  int                    CORES = Runtime.getRuntime().availableProcessors();
+    private final static  int                    CORES = Runtime.getRuntime().availableProcessors();
     // measurement of this JVM's stack size
-    private         static  int                    STACK_MEASUREMENT  = -1;
+    private       static  int                    STACK_MEASUREMENT  = -1;
     // maximum accepted stack measurement; is roughly equal to -Xss48m using the 64 bit OpenJDK 7
-    private final   static  int                    ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
+    private final static  int                    ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
 
 
     // is input feed by a human?
-    private                 boolean                human;
+    private               boolean                human;
 
     // random number generator
-    private                 Random                 randoom;
+    private               Random                 randoom;
 
-    private                 int                    firstCallStackDepth;
+    private               int                    firstCallStackDepth;
 
-    private                 boolean                randoomPredictable;
-    private                 boolean                multiLineMode;
-    private                 boolean                interactive;
-    private                 boolean                printVerbose;
-    private                 boolean                assertsDisabled;
-    private                 boolean                runtimeDebuggingEnabled;
+    private               boolean                randoomPredictable;
+    private               boolean                multiLineMode;
+    private               boolean                interactive;
+    private               boolean                printVerbose;
+    private               boolean                assertsDisabled;
+    private               boolean                runtimeDebuggingEnabled;
 
     /**
      * Create new state implementation, using a dummy environment.
@@ -136,6 +136,7 @@ public class State {
         } else {
             randoom = new Random();
         }
+        ROOT_SCOPE.clearUndefinedBindings();
         variableScope       = ROOT_SCOPE.createLinkedScope();
         callStackDepth      = 15; // add a bit to account for initialization stuff
         firstCallStackDepth = -1;

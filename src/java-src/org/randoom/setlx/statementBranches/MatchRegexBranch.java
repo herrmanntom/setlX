@@ -7,9 +7,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -21,7 +19,6 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -156,30 +153,12 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             }
         }
 
-        // match pattern
-        final Matcher  matcher = pttrn.matcher(string.getUnquotedString());
-        final boolean  result  = matcher.lookingAt();
-        if (result) {
-            if (assignTo != null && assignTerm == null) {
-                assignTerm = assignTo.toTerm(state);
-            }
-            if (assignTerm != null) {
-                final int      count  = matcher.groupCount() + 1;
-                final SetlList groups = new SetlList(count);
-                for (int i = 0; i < count; ++i) {
-                    final String group = matcher.group(i);
-                    if (group != null) {
-                        groups.addMember(state, new SetlString(group));
-                    } else {
-                        groups.addMember(state, Om.OM);
-                    }
-                }
-                return new ScanResult(assignTerm.matchesTerm(state, groups), matcher.end());
-            } else {
-                return new ScanResult(true, matcher.end());
-            }
+        if (assignTo != null && assignTerm == null) {
+            assignTerm = assignTo.toTerm(state);
         }
-        return new ScanResult(false, -1);
+
+        // match pattern
+        return string.matchRegexPattern(state, pttrn, false, assignTerm);
     }
 
     @Override

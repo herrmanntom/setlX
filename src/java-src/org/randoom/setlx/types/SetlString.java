@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.StringConstructor;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -337,7 +339,7 @@ public class SetlString extends IndexedCollectionValue {
     public Value productAssign(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             separateFromOriginal();
-            final int    m       = multiplier.jIntValue();
+            final int m = multiplier.jIntValue();
             if (m < 0) {
                 throw new IncompatibleTypeException(
                     "String multiplier '" + multiplier + "' is negative."
@@ -837,6 +839,39 @@ public class SetlString extends IndexedCollectionValue {
     @Override
     public SetlString str(final State state) {
         return this;
+    }
+
+    /**
+     * Match string with regex pattern and return capture groups.
+     *
+     * @param state            Current state of the running setlX program.
+     * @param pattern          Compiled regular expression pattern to match.
+     * @param requireFullMatch Should entire input string be matched?
+     * @param assignTerm       SetlX Term to assign result to, or null.
+     * @return                 ScanResult.
+     * @throws SetlException   In case of some (user-) error.
+     */
+    public ScanResult matchRegexPattern(final State state, final Pattern pattern, final boolean requireFullMatch, final Value assignTerm) throws SetlException {
+        final Matcher matcher = pattern.matcher(content);
+        if ((requireFullMatch && matcher.matches()) || matcher.lookingAt()) {
+            if (assignTerm != null) {
+                final int      count  = matcher.groupCount() + 1;
+                final SetlList groups = new SetlList(count);
+                for (int i = 0; i < count; ++i) {
+                    final String group = matcher.group(i);
+                    if (group != null) {
+                        groups.addMember(state, new SetlString(group));
+                    } else {
+                        groups.addMember(state, Om.OM);
+                    }
+                }
+                return new ScanResult(assignTerm.matchesTerm(state, groups), matcher.end());
+            } else {
+                return new ScanResult(true, matcher.end());
+            }
+        } else {
+            return new ScanResult(false, -1);
+        }
     }
 
     /* term operations */

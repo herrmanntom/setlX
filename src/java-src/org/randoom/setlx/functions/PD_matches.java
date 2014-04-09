@@ -4,26 +4,29 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
-import org.randoom.setlx.types.Om;
+import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- *  matches(string, pattern [, captureGroups]) : returns true if `string' matches the regular expression pattern
- *                                               if `captureGroups' is true, the captured groups are returned instead
+ *  matches(string, pattern [, captureGroups]) :
+ *              returns true if `string' matches the regular expression pattern
+ *              if `captureGroups' is true, the captured groups are returned instead
  */
 public class PD_matches extends PreDefinedProcedure {
     /** Definition of the PreDefinedProcedure `matches'. */
     public final static PreDefinedProcedure DEFINITION = new PD_matches();
+
+    private Value assignTerm;
 
     private PD_matches() {
         super();
@@ -31,6 +34,8 @@ public class PD_matches extends PreDefinedProcedure {
         addParameter("pattern");
         addParameter("captureGroups");
         allowFewerParameters();
+
+        assignTerm = null;
     }
 
     @Override
@@ -66,26 +71,20 @@ public class PD_matches extends PreDefinedProcedure {
         }
 
         try {
+            final SetlString str     = (SetlString) string;
+            final Pattern    pattern = Pattern.compile(patternStr.getUnquotedString());
             if (captureGroups) {
-                final Pattern pattern = Pattern.compile(patternStr.getUnquotedString());
-                final Matcher matcher = pattern.matcher(string.getUnquotedString());
-                if (matcher.matches()) {
-                    final int      count  = matcher.groupCount() + 1;
-                    final SetlList groups = new SetlList(count);
-                    for (int i = 0; i < count; ++i) {
-                        final String group = matcher.group(i);
-                        if (group != null) {
-                            groups.addMember(state, new SetlString(group));
-                        } else {
-                            groups.addMember(state, Om.OM);
-                        }
-                    }
-                    return groups;
+                if (assignTerm == null) {
+                    assignTerm = (new Variable("x").toTerm(state));
+                }
+                final ScanResult result = str.matchRegexPattern(state, pattern, true, assignTerm);
+                if (result.isMatch()) {
+                    return result.getBinding("x");
                 } else {
                     return new SetlList(0);
                 }
             } else {
-                return SetlBoolean.valueOf(string.getUnquotedString().matches(patternStr.getUnquotedString()));
+                return SetlBoolean.valueOf(str.matchRegexPattern(state, pattern, true, null).isMatch());
             }
         } catch (final PatternSyntaxException pse) {
             final LinkedList<String> errors = new LinkedList<String>();

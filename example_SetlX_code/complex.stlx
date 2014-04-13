@@ -3,7 +3,7 @@ class complex(real, imag) {
     mImag := imag;
     
   static {
-    f_str := [] |-> mReal + " + " + mImag + " * i";
+    f_str := [] |-> (round(mReal * 10**15)/double(10**15)) + " + " + (round(mImag * 10**15)/double(10**15)) + " * i";
 
     sum := 
         that |-> complex(mReal + that.mReal, mImag + that.mImag);

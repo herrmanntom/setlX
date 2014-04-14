@@ -64,11 +64,11 @@ public class Match extends Statement {
                     state.setScope(innerScope);
 
                     // force match variables to be local to this block
-                    innerScope.setWriteThrough(false);
+                    final int writeThroughToken = innerScope.unsetWriteThrough();
                     // put all matching variables into current scope
                     result.setAllBindings(state, FUNCTIONAL_CHARACTER);
                     // reset WriteThrough, because changes during execution are not strictly local
-                    innerScope.setWriteThrough(true);
+                    innerScope.setWriteThrough(writeThroughToken);
 
                     if (br.evalConditionToBool(state)) {
                         // execute statements

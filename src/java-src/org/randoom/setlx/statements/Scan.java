@@ -133,7 +133,7 @@ public class Scan extends Statement {
                     state.setScope(innerScope);
 
                     // force match variables to be local to this block
-                    innerScope.setWriteThrough(false);
+                    final int writeThroughToken = innerScope.unsetWriteThrough();
                     // put current position into scope
                     if (posVar != null) {
                         posVar.assignUncloned(state, position, FUNCTIONAL_CHARACTER);
@@ -141,7 +141,7 @@ public class Scan extends Statement {
                     // put all matching variables into current scope
                     largestMatchResult.setAllBindings(state, FUNCTIONAL_CHARACTER);
                     // reset WriteThrough, because changes during execution are not strictly local
-                    innerScope.setWriteThrough(true);
+                    innerScope.setWriteThrough(writeThroughToken);
 
                     // execute statements
                     final ReturnMessage execResult = largestMatchBranch.getStatements().execute(state);

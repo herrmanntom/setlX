@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -136,8 +135,8 @@ public class State {
         } else {
             randoom = new Random();
         }
-        ROOT_SCOPE.clearUndefinedBindings();
-        variableScope       = ROOT_SCOPE.createLinkedScope();
+        ROOT_SCOPE.clearUndefinedAndInnerBindings();
+        setScope(ROOT_SCOPE.createLinkedScope());
         callStackDepth      = 15; // add a bit to account for initialization stuff
         firstCallStackDepth = -1;
         executionStopped    = false;
@@ -808,44 +807,45 @@ public class State {
      */
     public void setScope(final VariableScope newScope) {
         variableScope = newScope;
+        variableScope.setCurrent();
     }
 
     /**
      * Get the value of a specific bindings reachable from current scope.
      *
-     * @param var            Name of the variable to locate.
+     * @param variable       Name of the variable to locate.
      * @return               Located value or Om.OM.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value findValue(final String var) throws SetlException {
-        Value v = classDefinitions.get(var);
-        if (v != null) {
-            return v;
+    public Value findValue(final String variable) throws SetlException {
+        Value value = classDefinitions.get(variable);
+        if (value != null) {
+            return value;
         }
-        v = variableScope.locateValue(this, var, true);
-        if (v == null && ! var.equals("this")) {
+        value = variableScope.locateValue(this, variable);
+        if (value == null && ! variable.equals("this")) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedProcedure.class.getPackage().getName();
-            final String className   = "PD_" + var;
+            final String className   = "PD_" + variable;
             try {
                 final Class<?> c = Class.forName(packageName + '.' + className);
-                v                = (PreDefinedProcedure) c.getField("DEFINITION").get(null);
+                value            = (PreDefinedProcedure) c.getField("DEFINITION").get(null);
             } catch (final Exception e) {
                 /* Name does not match predefined function.
                    But return value already is null, no change necessary.     */
             }
-            if (v == null && var.toLowerCase(Locale.US).equals(var)) {
+            if (value == null && variable.toLowerCase(Locale.US).equals(variable)) {
                // search if name matches a java Math.x function (which are all lower case)
                 try {
-                    final Method f = Math.class.getMethod(var, double.class);
-                    v        = new MathFunction(var, f);
+                    final Method f = Math.class.getMethod(variable, double.class);
+                    value          = new MathFunction(variable, f);
                 } catch (final Exception e) {
                     /* Name also does not match java Math.x function.
                        But return value already is null, no change necessary.     */
                 }
             }
-            if (v == null) {
-                v = Om.OM;
+            if (value == null) {
+                value = Om.OM;
                 // identifier could not be looked up...
                 // return Om.OM and store it into initial scope to prevent reflection lookup next time
             }
@@ -853,11 +853,11 @@ public class State {
 
                Root scope is chosen, because it is at the end of every
                currently existing and all future scopes search paths.         */
-            ROOT_SCOPE.storeValue(var, v);
-        } else if (v == null) {
-            v = Om.OM;
+            ROOT_SCOPE.storeValue(variable, value);
+        } else if (value == null || value == VariableScope.ACCESS_DENIED_VALUE) {
+            value = Om.OM;
         }
-        return v;
+        return value;
     }
 
     /**

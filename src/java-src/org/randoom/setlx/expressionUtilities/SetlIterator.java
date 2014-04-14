@@ -256,7 +256,7 @@ public class SetlIterator extends CodeFragment {
                     // restore inner scope
                     state.setScope(innerScope);
                     // force iteration variables to be local to this block
-                    innerScope.setWriteThrough(false);
+                    final int writeThroughToken = innerScope.unsetWriteThrough();
 
                     // assign value from collection
                     final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, FUNCTIONAL_CHARACTER);
@@ -274,7 +274,7 @@ public class SetlIterator extends CodeFragment {
                     }
 
                     // reset WriteThrough, because changes during execution are not strictly local
-                    innerScope.setWriteThrough(true);
+                    innerScope.setWriteThrough(writeThroughToken);
                     /* Starts iteration of next iterator or execution if this is the
                        last iterator.
                        Stops iteration if requested by execution.                 */

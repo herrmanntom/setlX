@@ -53,11 +53,7 @@ public class VariableScope {
     private         boolean            readThrough;
     private         boolean            writeThrough;
 
-    /**
-     * Create a new VariableScope.
-     * Scopes have to be cloned from current one, therefore don't use from outside!
-     */
-    /*package*/ VariableScope() {
+    private VariableScope() {
         bindings                = new SetlHashMap<Value>();
         thisObject              = null;
         originalScope           = null;
@@ -80,6 +76,15 @@ public class VariableScope {
         newScope.readThrough             = readThrough;
         newScope.writeThrough            = writeThrough;
         return newScope;
+    }
+
+    /**
+     * Create a new root scope.
+     *
+     * @return              The new scope.
+     */
+    public static VariableScope createRootScope() {
+        return new VariableScope();
     }
 
     /**
@@ -377,43 +382,6 @@ public class VariableScope {
         // to get here, `var' is not stored in any upper scope up to outerScope
         bindings.put(var, value);
         return true;
-    }
-
-    /**
-     * Add bindings stored in `scope' into this scope or globals.
-     * This also adds variables in outer scopes of `scope' until reaching this
-     * as outer scope of `scope'.
-     *
-     * @param  scope                        Scope to add bindings from.
-     * @throws IllegalRedefinitionException Thrown when trying to overwrite `this'.
-     */
-    /*package*/ void storeAllValues(final VariableScope scope) throws IllegalRedefinitionException {
-        for (final Map.Entry<String, Value> entry : scope.bindings.entrySet()) {
-            storeValue(entry.getKey(), entry.getValue());
-        }
-        if (scope.originalScope != null && scope.originalScope != this) {
-            storeAllValues(scope.originalScope);
-        }
-    }
-
-    /**
-     * Add bindings stored in `scope' into this scope or globals.
-     * This also adds variables in outer scopes of `scope' until reaching this
-     * as outer scope of `scope'.
-     * Also adds all assignments into a Map to trace them.
-     *
-     * @param scope                         Scope to add bindings from.
-     * @param assignments                   Map to add assignments into.
-     * @throws IllegalRedefinitionException Thrown when trying to overwrite `this'.
-     */
-    /*package*/ void storeAllValuesTrace(final VariableScope scope, final SetlHashMap<Value> assignments) throws IllegalRedefinitionException {
-        for (final Map.Entry<String, Value> entry : scope.bindings.entrySet()) {
-            storeValue(entry.getKey(), entry.getValue());
-            assignments.put(entry.getKey(), entry.getValue());
-        }
-        if (scope.originalScope != null && scope.originalScope != this) {
-            storeAllValuesTrace(scope.originalScope, assignments);
-        }
     }
 
     /**

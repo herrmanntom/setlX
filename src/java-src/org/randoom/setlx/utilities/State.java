@@ -58,7 +58,7 @@ public class State {
        Predefined functions are dynamically loaded into this VariableScope and
        not only into the current one, to be accessible by any previous and future
        VariableScope clones (results in faster lookup).                       */
-    private final static  VariableScope          ROOT_SCOPE = new VariableScope();
+    private final         VariableScope          ROOT_SCOPE = VariableScope.createRootScope();
 
     // this scope stores all global variables
     private final         SetlHashMap<SetlClass> classDefinitions;
@@ -936,34 +936,6 @@ public class State {
             return result;
         } else {
             return variableScope.storeValueCheckUpTo(this, var, value, outerScope);
-        }
-    }
-
-    /**
-     * Add bindings stored in `scope' into current scope.
-     * This also adds variables in outer scopes of `scope' until reaching the
-     * current scope as outer scope of `scope'.
-     *
-     * @param scope          Scope to set variables from.
-     * @param context        Context description of the assignment for trace.
-     * @throws SetlException Thrown in case of some (user-) error.
-     */
-    public void putAllValues(final VariableScope scope, final String context) throws SetlException {
-        for (final String key : classDefinitions.keySet()) {
-            if (scope.locateValue(this, key, false) != null) {
-                throw new IllegalRedefinitionException(
-                    "Redefinition of classes is not allowed."
-                );
-            }
-        }
-        if (traceAssignments) {
-            final SetlHashMap<Value> assignments = new SetlHashMap<Value>();
-            variableScope.storeAllValuesTrace(scope, assignments);
-            for (final Map.Entry<String, Value> entry : assignments.entrySet()) {
-                printTrace(entry.getKey(), entry.getValue(), context);
-            }
-        } else {
-            variableScope.storeAllValues(scope);
         }
     }
 

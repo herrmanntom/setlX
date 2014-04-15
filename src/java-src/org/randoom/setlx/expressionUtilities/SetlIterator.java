@@ -113,29 +113,51 @@ public class SetlIterator extends CodeFragment {
      */
     public void collectVariablesAndOptimize (
         final SetlIteratorExecutionContainer container,
-        final List<String>             boundVariables,
-        final List<String>             unboundVariables,
-        final List<String>             usedVariables
+        final List<String>                   boundVariables,
+        final List<String>                   unboundVariables,
+        final List<String>                   usedVariables
+    ) {
+        final List<String> tempVariables = new ArrayList<String>();
+        collectVariablesAndOptimize(container, tempVariables, boundVariables, unboundVariables, usedVariables);
+    }
+
+    /**
+     * Gather all bound and unbound variables in this fragment and its siblings.
+     * Optimizes this fragment, if this can be safely done.
+     *
+     * @param container        Code fragments inside this specific iteration.
+     * @param tempVariables    Variables temporarily assigned in this iterator.
+     * @param boundVariables   Variables "assigned" in this fragment.
+     * @param unboundVariables Variables not present in bound when used.
+     * @param usedVariables    Variables present in bound when used.
+     */
+    public void collectVariablesAndOptimize (
+        final SetlIteratorExecutionContainer container,
+        final List<String>                   tempVariables,
+        final List<String>                   boundVariables,
+        final List<String>                   unboundVariables,
+        final List<String>                   usedVariables
     ) {
         collection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<String> tempAssigned = new ArrayList<String>();
-        assignable.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+        final List<String> tempVars = new ArrayList<String>();
+        assignable.collectVariablesWhenAssigned(tempVars, unboundVariables, usedVariables);
 
         final int preIndex = boundVariables.size();
-        boundVariables.addAll(tempAssigned);
+        boundVariables.addAll(tempVars);
+        tempVariables.addAll(tempVars);
 
         if (next != null) {
-            next.collectVariablesAndOptimize(container, boundVariables, unboundVariables, usedVariables);
+            next.collectVariablesAndOptimize(container, tempVariables, boundVariables, unboundVariables, usedVariables);
         } else {
             container.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
         }
 
         // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
-        for (int i = tempAssigned.size(); i > 0; --i) {
+        for (int i = tempVars.size(); i > 0; --i) {
             boundVariables.remove(preIndex + (i - 1));
         }
     }
@@ -233,7 +255,8 @@ public class SetlIterator extends CodeFragment {
 
                     // restore inner scope
                     state.setScope(innerScope);
-                    innerScope.setWriteThrough(false); // force iteration variables to be local to this block
+                    // force iteration variables to be local to this block
+                    innerScope.setWriteThrough(false);
 
                     // assign value from collection
                     final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, FUNCTIONAL_CHARACTER);

@@ -451,7 +451,9 @@ public class SetlVector extends IndexedCollectionValue {
 	}
 
 	/**
-	 * ¿Is this algorithm correct?:
+	 * TODO FIX
+	 *
+	 * is the following correct:
 	 *
 	 * i	j	k	l
 	 * ax	ay	az	at
@@ -473,7 +475,10 @@ public class SetlVector extends IndexedCollectionValue {
 			for(int i = 0; i < this.size(); i++) {
 				System.err.println("[DEBUG]: vecproduct iter " + i);
 				result[i] = (NumberValue)(this.getValue()[loopingIndex(1, i, this.size())].product(state, B.getValue()[loopingIndex(2, i, this.size())]));
-				result[i].sum(state, (NumberValue)(this.getValue()[loopingIndex(-1, i, this.size())].product(state, B.getValue()[loopingIndex(-2, i, this.size())])).minus(state));
+				System.err.println("[DEBUG]: vecproduct iter zrs " + result[i]);
+				System.err.println("[DEBUG]: vecproduct iter add " + (NumberValue)(this.getValue()[loopingIndex(-1, i, this.size())].product(state, B.getValue()[loopingIndex(-2, i, this.size())])).minus(state));
+				result[i] = (NumberValue)result[i].sum(state, (NumberValue)(this.getValue()[loopingIndex(-1, i, this.size())].product(state, B.getValue()[loopingIndex(-2, i, this.size())])).minus(state));
+				System.err.println("[DEBUG]: vecproduct iter res " + result[i]);
 			}
 			System.err.println("[DEBUG]: vecproduct end");
 			return new SetlVector(result);
@@ -483,16 +488,25 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	// TODO FIX
 	private int loopingIndex(int diff, int currentIndex, int length) {
 		// System.err.println("[DEBUG]: loopIdx begin");
-		int a = currentIndex + diff;
-		while(a < 0 || a >= length) {
-			if(a >= length) {
-				a -= length;
-			}
-			if(a < 0) {
-				a = length + a;
-			}
+		/*
+		 * int a = currentIndex + diff;
+		 * while(a < 0 || a >= length) {
+		 * if(a >= length) {
+		 * a -= length;
+		 * }
+		 * if(a < 0) {
+		 * a = length + a;
+		 * }
+		 * }
+		 * System.err.println("[DEBUG]: loopIdx " + a);
+		 * return a;
+		 */
+		int a = (currentIndex + diff) % length;
+		if(a < 0) {
+			a = length + a;
 		}
 		System.err.println("[DEBUG]: loopIdx " + a);
 		return a;

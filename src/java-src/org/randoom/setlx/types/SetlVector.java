@@ -440,7 +440,7 @@ public class SetlVector extends IndexedCollectionValue {
 		if(this.size() == B.size()) {
 			NumberValue result = SetlDouble.valueOf(0);
 			for(int i = 0; i < this.size(); i++) {
-				result.sumAssign(state, this.getValue()[i].product(state, B.getValue()[i]));
+				result = (NumberValue)result.sum(state, this.getValue()[i].product(state, B.getValue()[i]));
 			}
 			System.err.println("[DEBUG]: scalar end");
 			return result;

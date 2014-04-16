@@ -385,8 +385,9 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public Value sum(final State state, final Value summand) throws SetlException {
 		System.err.println("[DEBUG]: sum begin");
-		if(summand instanceof SetlVector) {
-			SetlVector sumd = (SetlVector)summand;
+		boolean isVector = summand instanceof SetlVector;
+		if(isVector || summand instanceof SetlMatrix) {
+			SetlVector sumd = isVector ? (SetlVector)summand : new SetlVector(state, (SetlMatrix)summand);
 			if(this.size() != sumd.size()) {
 				System.err.println("[DEBUG]: sum exc vector dim");
 				throw new IncompatibleTypeException("Vectors with different number of dimensions cannot be added to one another.");
@@ -518,5 +519,33 @@ public class SetlVector extends IndexedCollectionValue {
 	public NumberValue[] getValue() {
 		// System.err.println("[DEBUG]: getValue begin");
 		return value;
+	}
+
+	@Override
+	public Value difference(final State state, final Value subtrahend) throws SetlException {
+		System.err.println("[DEBUG]: difference begin");
+		boolean isVector = subtrahend instanceof SetlVector;
+		if(isVector || subtrahend instanceof SetlMatrix) {
+			SetlVector subd = isVector ? (SetlVector)subtrahend : new SetlVector(state, (SetlMatrix)subtrahend);
+			if(this.size() != subd.size()) {
+				System.err.println("[DEBUG]: difference exc vector dim");
+				throw new IncompatibleTypeException("Vectors with different number of dimensions cannot be added to one another.");
+			}
+			NumberValue[] result = new NumberValue[this.size()];
+			for(int i = 0; i < this.size(); i++) {
+				Value tmp = this.getValue()[i].difference(state, subd.getValue()[i]);
+				if(tmp instanceof NumberValue) { // TODO do I need instanceof Term?
+					result[i] = (NumberValue)tmp;
+				} else {
+					System.err.println("[DEBUG]: difference exc vector contains nonnumber");
+					throw new AbortException("Difference doesn't return Number!"); // TODO DEBUG if this happens
+				}
+			}
+			System.err.println("[DEBUG]: difference end");
+			return new SetlVector(result);
+		} else {
+			System.err.println("[DEBUG]: difference exc");
+			throw new IncompatibleTypeException("A difference cannot have a vector parameter and a parameter of another type.");
+		}
 	}
 }

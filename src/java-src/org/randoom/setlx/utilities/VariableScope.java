@@ -79,11 +79,6 @@ public class VariableScope {
     private final   long          scopeGeneration;
 
     /**
-     * stores reference scope of object
-     */
-    private         SetlObject    thisObject;
-
-    /**
      * scopes lower as this are only searched for functions, not variables
      */
     private         int           restrictedToFunctionsBeneath;
@@ -111,27 +106,10 @@ public class VariableScope {
         }
 
         this.scopeDepth                   = scopeStackDepth;
-        this.thisObject                   = null;
         this.restrictedToFunctionsBeneath = restrictedToFunctionsBeneath;
         this.writeAsDeepAs                = scopeStackDepth;
         this.writeAsDeepAsGeneration      = this.scopeGeneration;
     }
-
-   // @Override
-  //  public VariableScope clone() {
-  //      final VariableScope newScope     = new VariableScope(scopeDepth, restrictedToFunctionsBeneath);
-
-       // for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
-        //    newScope.bindings.put(entry.getKey(), entry.getValue().clone());
-            // TODO
-       // }
-
-   //     newScope.thisObject              = thisObject;
-   //     newScope.originalScope           = originalScope;
-   //     newScope.writeAsDeepAs           = writeAsDeepAs;
-   //     newScope.writeAsDeepAsGeneration = writeAsDeepAsGeneration;
-   //     return newScope;
-   // }
 
     /**
      * Create a new root scope.
@@ -207,20 +185,13 @@ public class VariableScope {
     }
 
     /**
-     * Removes link to SetlObjects.
-     */
-    public void unlink() {
-        thisObject = null;
-    }
-
-    /**
      * Link the given SetlObject to this scope. It will be accessible via the
      * `this' binding.
      *
      * @param thisObject Object to link.
      */
     public void linkToThisObject(final SetlObject thisObject) {
-        this.thisObject   = thisObject;
+        setBinding("this", thisObject);
     }
 
     /**
@@ -259,10 +230,10 @@ public class VariableScope {
         while (last != null) {
             if (last.scopeDepth > scopeBindings.currentScopeDepth || last.scopeGeneration < scopeBindings.validScopeGenerations.get(last.scopeDepth)) {
                 bindings.removeLast();
+                last = bindings.peekLast();
             } else {
                 return last;
             }
-            last = bindings.peekLast();
         }
         return null;
     }
@@ -272,7 +243,7 @@ public class VariableScope {
      *
      * @param state          Current state of the running setlX program.
      * @param variable       Name of the variable to locate.
-     * @return               Located value or null.
+     * @return               Located value, or ACCESS_DENIED_VALUE, or null.
      * @throws SetlException Thrown in case of some (user-) error.
      */
     /*package*/ Value locateValue(final State state, final String variable) throws SetlException {
@@ -280,22 +251,11 @@ public class VariableScope {
             final char[]v={87,97,114,32,110,101,118,101,114,32,99,104,97,110,103,101,115,46};
             return new SetlString(new String(v));
         }
-        Value v = null;
-        if (variable.equals("this")) {
-            if (thisObject != null) {
-                return thisObject;
-            }
-        }
 
-        final ScopeBinding binding = getBinding(variable);
+        final ScopeBinding binding = getBinding(state, variable);
 
         if (binding != null && binding.scopeDepth == scopeDepth) {
             return binding.value;
-        } else if (thisObject != null) {
-            v = thisObject.getObjectMemberUnCloned(state, variable);
-            if (v != Om.OM) {
-                return v;
-            }
         } else if (binding == ACCESS_DENIED_BINDING) {
             return ACCESS_DENIED_VALUE;
         } else if (binding != null) {
@@ -304,25 +264,62 @@ public class VariableScope {
         return null;
     }
 
-    private ScopeBinding getBinding(final String variable) {
+    private ScopeBinding getBinding(final State state, final String variable) throws SetlException {
         final LinkedList<ScopeBinding> bindings = scopeBindings.allBindings.get(variable);
+        ScopeBinding                   binding  = null;
         if (bindings != null) {
-            ScopeBinding scope = clearDeprecatedBindings(bindings);
-            if (scope != null) {
-                if (scope.scopeDepth > scopeDepth) {
+            binding = clearDeprecatedBindings(bindings);
+            if (binding != null) {
+                if (binding.scopeDepth > scopeDepth) {
                     final Iterator<ScopeBinding> iterator = bindings.descendingIterator();
-                    while (iterator.hasNext() && scope.scopeDepth > scopeDepth) {
-                        scope = iterator.next();
-                    }
-                    if (scope.scopeDepth > scopeDepth) {
-                        return null;
+                    do {
+                        binding = iterator.next();
+                    } while (iterator.hasNext() && binding.scopeDepth > scopeDepth);
+                    if (binding.scopeDepth > scopeDepth) {
+                        binding = null;
                     }
                 }
-                if (scope.scopeDepth >= restrictedToFunctionsBeneath || scope.value instanceof Procedure) {
-                    return scope;
+                if (binding != null && binding.scopeDepth == scopeDepth) {
+                    return binding;
+                }
+            }
+        }
+        // check if some attached object might hold the answer
+        final LinkedList<ScopeBinding> objects = scopeBindings.allBindings.get("this");
+        if (objects != null) {
+            ScopeBinding                 object   = clearDeprecatedBindings(objects);
+            final Iterator<ScopeBinding> iterator = objects.descendingIterator();
+            if (object != null && iterator.hasNext()) {
+                iterator.next(); // "throw away" last one, as that is 'object'
+            }
+            while (object != null && (binding == null || binding.scopeDepth < object.scopeDepth)) {
+                if (object.scopeDepth > scopeDepth) {
+                    if (iterator.hasNext()) {
+                        object = iterator.next();
+                    } else {
+                        break;
+                    }
                 } else {
-                    return ACCESS_DENIED_BINDING;
+                    final Value member = object.value.getObjectMemberUnCloned(state, variable);
+                    if (member != Om.OM) {
+                        if (object.scopeDepth >= restrictedToFunctionsBeneath || object.value instanceof Procedure) {
+                            return new ScopeBinding(object.scopeDepth, object.scopeGeneration, member);
+                        } else {
+                            return ACCESS_DENIED_BINDING;
+                        }
+                    } else if (iterator.hasNext()) {
+                        object = iterator.next();
+                    } else {
+                        break;
+                    }
                 }
+            }
+        }
+        if (binding != null) {
+            if (binding.scopeDepth >= restrictedToFunctionsBeneath || binding.value instanceof Procedure) {
+                return binding;
+            } else {
+                return ACCESS_DENIED_BINDING;
             }
         }
         return null;
@@ -333,29 +330,23 @@ public class VariableScope {
      *
      * Only works when called upon scope set as current scope.
      *
-     * @param result              Map to put bindings into.
-     * @param restrictToFunctions If true only functions are collected.
+     * @param result         Map to put bindings into.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
-    private void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
-        for (final Map.Entry<String, LinkedList<ScopeBinding>> entry : scopeBindings.allBindings.entrySet()) {
-            final LinkedList<ScopeBinding> bindings = entry.getValue();
-            final ScopeBinding scope = clearDeprecatedBindings(bindings);
-            if (scope != null) {
-                result.put(entry.getKey(), scope.value);
+    private void collectBindings(final State state, final SetlHashMap<Value> result) throws SetlException {
+        // add bindings from attached objects
+        final LinkedList<ScopeBinding> objects = scopeBindings.allBindings.get("this");
+        if (objects != null) {
+            for (final ScopeBinding object : objects) {
+                ((SetlObject) object.value).collectBindings(result, object.scopeDepth < restrictedToFunctionsBeneath);
             }
         }
-        // add bindings from attached object
-        if (thisObject != null) {
-            thisObject.collectBindings(result, restrictToFunctions);
-        }
-        // add bindings from exactly this scope (possibly overwriting values from inner bindings)
-        for (final Map.Entry<String, LinkedList<ScopeBinding>> entry : scopeBindings.allBindings.entrySet()) {
-            final LinkedList<ScopeBinding> bindings = entry.getValue();
-            if (bindings != null) {
-                final ScopeBinding last = bindings.peekLast();
-                if (last != null && last.scopeDepth == scopeDepth) {
-                   result.put(entry.getKey(), last.value);
-                }
+        // add all other bindings; getBinding() checks if same variable is member of attached object, so it is always
+        // save to replace bindings from attached objects inserted before
+        for (final String variable : scopeBindings.allBindings.keySet()) {
+            final ScopeBinding binding = getBinding(state, variable);
+            if (binding != null && binding != ACCESS_DENIED_BINDING) {
+                result.put(variable, binding.value);
             }
         }
     }
@@ -389,7 +380,7 @@ public class VariableScope {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     /*package*/ boolean storeValueCheckUpTo(final State state, final String variable, final Value value, final VariableScope outerScope) throws SetlException {
-        final ScopeBinding scope = getBinding(variable);
+        final ScopeBinding scope = getBinding(state, variable);
 
         if (scope != null && scope != ACCESS_DENIED_BINDING && scope.scopeDepth < scopeDepth && (outerScope == null || scope.scopeDepth > outerScope.scopeDepth)) {
             // found some existing value
@@ -397,17 +388,6 @@ public class VariableScope {
                 return true;
             } else if (scope.value != Om.OM) {
                 return false;
-            }
-        }
-        // also check in scopes of surrounding objects
-        if (thisObject != null) {
-            final Value now = thisObject.getObjectMemberUnCloned(state, variable);
-            if (now != Om.OM) { // already saved there
-                if (now.equalTo(value)) {
-                    return true;
-                } else {
-                    return false;
-                }
             }
         }
         // to get here, `variable' is not stored in any upper scope up to outerScope
@@ -446,13 +426,15 @@ public class VariableScope {
     /**
      * Collect all bindings reachable from current scope.
      *
+     * @param state            Current state of the running setlX program.
      * @param classDefinitions Existing class definitions to add.
      * @return                 Map of all reachable bindings.
+     * @throws SetlException   Thrown in case of some (user-) error.
      */
-    /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final SetlHashMap<SetlClass> classDefinitions) {
+    /*package*/ public SetlHashMap<Value> getAllVariablesInScope(final State state, final SetlHashMap<SetlClass> classDefinitions) throws SetlException {
         final SetlHashMap<Value> allVars = new SetlHashMap<Value>();
         // collect all bindings reachable from current scope
-        this.collectBindings(allVars, false);
+        this.collectBindings(state, allVars);
         if (classDefinitions != null) {
             for (final Map.Entry<String, SetlClass> entry : classDefinitions.entrySet()) {
                 allVars.put(entry.getKey(), entry.getValue());
@@ -469,9 +451,10 @@ public class VariableScope {
      * @param state            Current state of the running setlX program.
      * @param classDefinitions Existing class definitions to add.
      * @return                 Term of all reachable bindings.
+     * @throws SetlException   Thrown in case of some (user-) error.
      */
-    /*package*/ public Term toTerm(final State state, final SetlHashMap<SetlClass> classDefinitions) {
-        final SetlHashMap<Value> allVars = getAllVariablesInScope(classDefinitions);
+    /*package*/ public Term toTerm(final State state, final SetlHashMap<SetlClass> classDefinitions) throws SetlException {
+        final SetlHashMap<Value> allVars = getAllVariablesInScope(state, classDefinitions);
 
         // term which represents the scope
         final Term result = new Term(FUNCTIONAL_CHARACTER_SCOPE, 1);

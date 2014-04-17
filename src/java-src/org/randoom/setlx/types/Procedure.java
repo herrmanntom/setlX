@@ -295,8 +295,6 @@ public class Procedure extends Value {
             // restore old scope
             state.setScope(oldScope);
 
-            newScope.unlink();
-
             // write values in WriteBackAgent into restored scope
             wba.writeBack(state, FUNCTIONAL_CHARACTER);
 

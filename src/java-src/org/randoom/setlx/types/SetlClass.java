@@ -229,8 +229,6 @@ public class SetlClass extends Value {
                 }
             }
 
-            newScope.unlink();
-
             members.putAll(extractBindings(state, initVars));
 
             return newObject;
@@ -252,7 +250,7 @@ public class SetlClass extends Value {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the static definitions
-        final VariableScope newScope = oldScope.createFunctionsOnlyLinkedScope().createLinkedScope();
+        final VariableScope newScope = oldScope.createFunctionsOnlyLinkedScope();
         state.setScope(newScope);
 
         try {
@@ -260,8 +258,6 @@ public class SetlClass extends Value {
             if (getStaticBlock() != null) {
                 getStaticBlock().execute(state);
             }
-
-            newScope.unlink();
 
             return extractBindings(state, staticVars);
 

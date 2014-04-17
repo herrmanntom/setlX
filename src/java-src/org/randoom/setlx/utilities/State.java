@@ -956,18 +956,20 @@ public class State {
     /**
      * Collect all bindings reachable from current scope.
      *
-     * @return Map of all reachable bindings.
+     * @return               Map of all reachable bindings.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
-    public SetlHashMap<Value> getAllVariablesInScope() {
-        return variableScope.getAllVariablesInScope(classDefinitions);
+    public SetlHashMap<Value> getAllVariablesInScope() throws SetlException {
+        return variableScope.getAllVariablesInScope(this, classDefinitions);
     }
 
     /**
      * Collect all bindings reachable from current scope and represent them as a term.
      *
-     * @return Term of all reachable bindings.
+     * @return               Term of all reachable bindings.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Term scopeToTerm() {
+    public Term scopeToTerm() throws SetlException {
         return variableScope.toTerm(this, classDefinitions);
     }
 }

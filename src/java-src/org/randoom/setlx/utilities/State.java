@@ -115,7 +115,7 @@ public class State {
         traceAssignments        = false;
         assertsDisabled         = false;
         runtimeDebuggingEnabled = false;
-        resetState();
+        resetState(false);
     }
 
     /**
@@ -124,6 +124,10 @@ public class State {
      * Clears all scopes, class definitions, libraries and error captures.
      */
     public void resetState() {
+        resetState(true);
+    }
+
+    private void resetState(final boolean cleanup) {
         if (parserErrorCapture != null) {
             parserErrorCapture.clear();
         }
@@ -135,7 +139,9 @@ public class State {
         } else {
             randoom = new Random();
         }
-        ROOT_SCOPE.clearUndefinedAndInnerBindings();
+        if (cleanup) {
+            ROOT_SCOPE.clearUndefinedAndInnerBindings();
+        }
         setScope(ROOT_SCOPE.createLinkedScope());
         callStackDepth      = 15; // add a bit to account for initialization stuff
         firstCallStackDepth = -1;

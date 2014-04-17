@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *  Objects of this class collect the variable bindings and the function definitions in the current scope.
@@ -34,14 +36,25 @@ public class VariableScope {
     /*package*/ final static ScopeBinding ACCESS_DENIED_BINDING      = new ScopeBinding(Integer.MAX_VALUE, 0l, ACCESS_DENIED_VALUE);
 
     private static class ScopeBindings {
+        private     final Timer                                     timer;
         /*package*/       int                                       currentScopeDepth;
         /*package*/ final ArrayList<Long>                           validScopeGenerations;
         /*package*/       HashMap<String, LinkedList<ScopeBinding>> allBindings;
+        /*package*/       boolean                                   cleanAllBindings;
 
         /*package*/ ScopeBindings() {
+            timer                 = new Timer(true);
             currentScopeDepth     = 0;
             validScopeGenerations = new ArrayList<Long>();
             allBindings           = new HashMap<String, LinkedList<ScopeBinding>>();
+            cleanAllBindings      = false;
+
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    cleanAllBindings = true;
+                }
+            }, 60000, 60000);
         }
 
         @Override
@@ -161,27 +174,25 @@ public class VariableScope {
      * Clear all undefined bindings in this scope (value = Om.OM) and all bindings in inner scopes.
      */
     /*package*/ void clearUndefinedAndInnerBindings() {
+        scopeBindings.cleanAllBindings = false;
         final HashMap<String, LinkedList<ScopeBinding>> cleanBindings = new HashMap<String, LinkedList<ScopeBinding>>();
         for (final Map.Entry<String, LinkedList<ScopeBinding>> entry : scopeBindings.allBindings.entrySet()) {
             final LinkedList<ScopeBinding> bindings = entry.getValue();
-            ScopeBinding last = null;
-            do {
-                last = bindings.peekLast();
-                if (last != null) {
-                    if (last.scopeDepth > scopeDepth || (last.scopeDepth == scopeDepth && last.scopeGeneration < scopeGeneration)) {
-                        bindings.removeLast();
-                    } else if (last.value == Om.OM) {
-                        bindings.removeLast();
-                    } else {
-                        break;
-                    }
+            ScopeBinding last = clearDeprecatedBindings(bindings);
+            while (last != null) {
+                if (last.value == Om.OM) {
+                    bindings.removeLast();
+                    last = bindings.peekLast();
+                } else {
+                    break;
                 }
-            } while (last != null);
+            }
             if (! bindings.isEmpty()) {
                 cleanBindings.put(entry.getKey(), bindings);
             }
         }
         scopeBindings.allBindings = cleanBindings;
+        System.gc();
     }
 
     /**
@@ -223,6 +234,9 @@ public class VariableScope {
      */
     /*package*/ void setCurrent() {
         scopeBindings.currentScopeDepth = scopeDepth;
+        if (scopeBindings.cleanAllBindings) {
+            clearUndefinedAndInnerBindings();
+        }
     }
 
     private ScopeBinding clearDeprecatedBindings(final LinkedList<ScopeBinding> bindings) {

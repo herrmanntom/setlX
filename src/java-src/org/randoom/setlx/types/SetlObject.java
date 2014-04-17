@@ -96,6 +96,7 @@ public class SetlObject extends Value {
         this.members         = members;
         this.classDefinition = classDefinition;
         isCloned             = false; // new objects are not a clone
+        this.members.put("instanceOf", classDefinition);
     }
 
     /**
@@ -140,7 +141,12 @@ public class SetlObject extends Value {
         if (isCloned) {
             final SetlHashMap<Value> members = new SetlHashMap<Value>();
             for (final Entry<String, Value> entry: this.members.entrySet()) {
-                members.put(entry.getKey(), entry.getValue().clone());
+                final String key = entry.getKey();
+                if (key.equals("instanceOf")) {
+                    members.put(key, entry.getValue());
+                } else {
+                    members.put(key, entry.getValue().clone());
+                }
             }
             this.members  = members;
             this.isCloned = false;
@@ -605,14 +611,11 @@ public class SetlObject extends Value {
             sb.append(entry.getKey());
             sb.append(" := ");
             entry.getValue().appendString(state, sb, tabs);
-            sb.append(";");
             if (iter.hasNext()) {
-                sb.append(" ");
+                sb.append("; ");
             }
         }
-        sb.append(" ");
-        classDefinition.appendString(state, sb, tabs);
-        sb.append(" }>");
+        sb.append("}>");
     }
 
     @Override
@@ -642,8 +645,6 @@ public class SetlObject extends Value {
 
         members.addToTerm(state, result);
 
-        result.addMember(state, classDefinition.toTerm(state));
-
         return result;
     }
 
@@ -655,10 +656,12 @@ public class SetlObject extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SetlObject termToValue(final Term term) throws TermConversionException {
-        if (term.size() == 2 && term.lastMember() instanceof Term) {
+        if (term.size() == 1) {
             final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(term.firstMember());
-            final SetlClass          classDefinition = SetlClass.termToValue((Term) term.lastMember());
-            return createNew(members, classDefinition);
+            final Value              classDefinition = members.get("instanceOf");
+            if (classDefinition != null && classDefinition instanceof SetlClass) {
+                return createNew(members, (SetlClass) classDefinition);
+            }
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }

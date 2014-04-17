@@ -58,7 +58,7 @@ public class Call extends Expr {
         final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side of call (\"" + this.lhs + "\") is undefined."
+                "Left hand side \"" + this.lhs + "\" is undefined."
             );
         }
         // supply the original expressions (args), which are needed for 'rw' parameters

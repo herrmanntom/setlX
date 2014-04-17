@@ -48,7 +48,7 @@ public class CollectMap extends Expr {
         final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + lhs + "\" is undefined."
+                "Left hand side \"" + this.lhs + "\" is undefined."
             );
         }
         return lhs.collectMap(state, arg.eval(state).clone());

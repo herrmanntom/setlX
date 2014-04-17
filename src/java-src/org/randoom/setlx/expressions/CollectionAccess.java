@@ -63,7 +63,7 @@ public class CollectionAccess extends AssignableExpression {
         final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + lhs + "\" is undefined."
+                "Left hand side \"" + this.lhs + "\" is undefined."
             );
         }
         // evaluate all arguments
@@ -83,7 +83,7 @@ public class CollectionAccess extends AssignableExpression {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
-                    "Left hand side \"" + lhs + "\" is undefined."
+                    "Left hand side \"" + this.lhs + "\" is undefined."
                 );
             }
 
@@ -139,7 +139,7 @@ public class CollectionAccess extends AssignableExpression {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
-                    "Left hand side \"" + lhs + "\" is undefined."
+                    "Left hand side \"" + this.lhs + "\" is undefined."
                 );
             }
             lhs.setMember(state, args.get(0).eval(state), value);

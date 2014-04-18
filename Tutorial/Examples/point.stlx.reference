@@ -1,5 +1,5 @@
 <0, 0>
 <3, 4>
 5.0
-object<{distance := procedure(p) { return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); }; toStr := procedure() { return "<$mX$, $mY$>"; }; mX := 0; getY := procedure() { return 0; }; setX := om; getX := procedure() { return 0; }; setY := om; mY := 0; class (x, y) { mX := x; mY := y; distance := procedure(p) { return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); }; getX := procedure() { return mX; }; getY := procedure() { return mY; }; setX := procedure(x) { this.mX := x; }; setY := procedure(y) { this.mY := y; }; toStr := procedure() { return "<$mX$, $mY$>"; }; } }>
+object<{distance := procedure(p) { return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); }; toStr := procedure() { return "<$mX$, $mY$>"; }; mX := 0; getY := procedure() { return 0; }; setX := om; getX := procedure() { return 0; }; setY := om; instanceOf := class (x, y) { mX := x; mY := y; distance := procedure(p) { return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); }; getX := procedure() { return mX; }; getY := procedure() { return mY; }; setX := procedure(x) { this.mX := x; }; setY := procedure(y) { this.mY := y; }; toStr := procedure() { return "<$mX$, $mY$>"; }; }; mY := 0}>
 5.0

@@ -21,7 +21,7 @@ import java.util.List;
 ///
 /// implemented here as:
 ///       ======              ======
-///      mNeutral           mCollection
+///       neutral           collection
 ///
 public class ProductOfMembersBinary extends Expr {
     // functional character used in terms
@@ -32,6 +32,12 @@ public class ProductOfMembersBinary extends Expr {
     private final Expr neutral;
     private final Expr collection;
 
+    /**
+     * Constructor.
+     *
+     * @param neutral Left hand side of the operator.
+     * @param collection Right hand side of the operator.
+     */
     public ProductOfMembersBinary(final Expr neutral, final Expr collection) {
         this.neutral    = neutral;
         this.collection = collection;

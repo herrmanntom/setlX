@@ -32,6 +32,12 @@ public class SumOfMembersBinary extends Expr {
     private final Expr neutral;
     private final Expr collection;
 
+    /**
+     * Constructor.
+     *
+     * @param neutral Left hand side of the operator.
+     * @param collection Right hand side of the operator.
+     */
     public SumOfMembersBinary(final Expr neutral, final Expr collection) {
         this.neutral    = neutral;
         this.collection = collection;

@@ -3,6 +3,7 @@ package org.randoom.setlx.boolExpressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -55,7 +56,17 @@ public class Conjunction extends Expr {
         final List<String> usedVariables
     ) {
         lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        Value value = null;
+        if (lhs.isReplaceable()) {
+            try {
+                value = lhs.eval(state);
+            } catch (final Throwable t) {
+                value = null;
+            }
+        }
+        if (value == null || value != SetlBoolean.FALSE) {
+            rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        }
     }
 
     /* string operations */

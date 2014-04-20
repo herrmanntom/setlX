@@ -1,4 +1,4 @@
-<project name="setlX" basedir="." default="buildAll">
+<project name="setlX" basedir="." default="jar">
     <!-- variables which determine paths and other information used later -->
     <property name="buildTools.dir" value="${basedir}/buildTools"/>
     <property name="j16rt.dir"      value="${buildTools.dir}/java_1_6"/>

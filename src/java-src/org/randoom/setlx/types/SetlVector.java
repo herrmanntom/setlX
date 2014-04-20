@@ -1,4 +1,3 @@
-// TODO does not construct
 package org.randoom.setlx.types;
 
 import java.util.ArrayList;

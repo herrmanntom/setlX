@@ -271,7 +271,7 @@ public class Scan extends Statement {
         if (posVar != null) {
             result.addMember(state, posVar.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
 
         result.addMember(state, expr.toTerm(state));
@@ -299,7 +299,7 @@ public class Scan extends Statement {
         } else {
             try {
                 Variable posVar = null;
-                if (! term.firstMember().equals(new SetlString("nil"))) {
+                if (! term.firstMember().equals(SetlString.NIL)) {
                     posVar = Variable.termToExpr(state, (Term) term.firstMember());
                 }
 

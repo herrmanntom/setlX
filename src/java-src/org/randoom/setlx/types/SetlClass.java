@@ -178,7 +178,7 @@ public class SetlClass extends Value {
         final int nArguments = args.size();
         if (parameters.size() != nArguments) {
             throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with "+ parameters.size()+" instead of " +
+                "'" + this.toString(state) + "' is defined with "+ parameters.size()+" instead of " +
                 nArguments + " parameters."
             );
         }
@@ -401,7 +401,7 @@ public class SetlClass extends Value {
         if (getStaticBlock() != null) {
             result.addMember(state, staticBlock.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
 
         return result;
@@ -427,7 +427,7 @@ public class SetlClass extends Value {
                 }
                 final Block               init        = TermConverter.valueToBlock(state, term.getMember(2));
                       Block               staticBlock = null;
-                if (! term.lastMember().equals(new SetlString("nil"))) {
+                if (! term.lastMember().equals(SetlString.NIL)) {
                     staticBlock    = TermConverter.valueToBlock(state, term.lastMember());
                 }
                 return new SetlClass(parameters, init, staticBlock);

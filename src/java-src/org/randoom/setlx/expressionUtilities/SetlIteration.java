@@ -120,7 +120,7 @@ public class SetlIteration extends CollectionBuilder {
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         collection.addMember(state, result);
     }
@@ -138,16 +138,13 @@ public class SetlIteration extends CollectionBuilder {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
+                final Expr         expr     = TermConverter.valueToExpr(state, term.firstMember());
 
-                SetlIterator iterator = null;
-                if (! term.getMember(2).equals(new SetlString("nil"))) {
-                    iterator  = SetlIterator.valueToIterator(state, term.getMember(2));
-                }
+                final SetlIterator iterator = SetlIterator.valueToIterator(state, term.getMember(2));
 
                 Condition cond = null;
-                if (! term.lastMember().equals(new SetlString("nil"))) {
-                    cond    = TermConverter.valueToCondition(state, term.lastMember());
+                if (! term.lastMember().equals(SetlString.NIL)) {
+                    cond = TermConverter.valueToCondition(state, term.lastMember());
                 }
                 return new SetlIteration(expr, iterator, cond);
             } catch (final SetlException se) {

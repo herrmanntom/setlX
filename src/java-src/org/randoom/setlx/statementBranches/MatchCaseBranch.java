@@ -157,7 +157,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
 
         result.addMember(state, statements.toTerm(state));
@@ -184,7 +184,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
                     exprs.add(TermConverter.valueToExpr(state, v));
                 }
                 Condition condition = null;
-                if (! term.getMember(2).equals(new SetlString("nil"))) {
+                if (! term.getMember(2).equals(SetlString.NIL)) {
                     condition = TermConverter.valueToCondition(state, term.getMember(2));
                 }
                 final Block block = TermConverter.valueToBlock(state, term.lastMember());

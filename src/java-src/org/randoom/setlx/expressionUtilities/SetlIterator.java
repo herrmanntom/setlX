@@ -199,7 +199,7 @@ public class SetlIterator extends CodeFragment {
         if (next != null) {
             result.addMember(state, next.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         return result;
     }
@@ -231,7 +231,7 @@ public class SetlIterator extends CodeFragment {
                 final Expr          collection = TermConverter.valueToExpr(state, term.getMember(2));
 
                       SetlIterator  iterator   = null;
-                if (! term.lastMember().equals(new SetlString("nil"))) {
+                if (! term.lastMember().equals(SetlString.NIL)) {
                     iterator    = SetlIterator.valueToIterator(state, term.lastMember());
                 }
                 return new SetlIterator((AssignableExpression) assignable, collection, iterator);

@@ -123,7 +123,7 @@ public class For extends Statement {
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         result.addMember(state, statements.toTerm(state));
         return result;
@@ -144,7 +144,7 @@ public class For extends Statement {
             try {
                 final SetlIterator  iterator  = SetlIterator.valueToIterator(state, term.firstMember());
                       Condition condition = null;
-                if ( ! term.getMember(2).equals(new SetlString("nil"))) {
+                if ( ! term.getMember(2).equals(SetlString.NIL)) {
                     condition = TermConverter.valueToCondition(state, term.getMember(2));
                 }
                 final Block     block     = TermConverter.valueToBlock(state, term.lastMember());

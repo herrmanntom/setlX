@@ -23,6 +23,11 @@ import java.util.regex.PatternSyntaxException;
  * The setlX string data type.
  */
 public class SetlString extends IndexedCollectionValue {
+    /**
+     * String used in toTerm, when some member is null.
+     */
+    public final static SetlString NIL = new SetlString("nil");
+
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this SetlString carries a isClone flag.
      *

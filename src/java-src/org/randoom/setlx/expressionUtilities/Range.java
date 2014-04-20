@@ -94,7 +94,7 @@ public class Range extends CollectionBuilder {
         if (second != null) {
             result.addMember(state, second.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         result.addMember(state, stop.toTerm(state));
 
@@ -117,7 +117,7 @@ public class Range extends CollectionBuilder {
                 final Expr start  = TermConverter.valueToExpr(state, term.firstMember());
 
                       Expr second = null;
-                if (! term.getMember(2).equals(new SetlString("nil"))) {
+                if (! term.getMember(2).equals(SetlString.NIL)) {
                     second  = TermConverter.valueToExpr(state, term.getMember(2));
                 }
 

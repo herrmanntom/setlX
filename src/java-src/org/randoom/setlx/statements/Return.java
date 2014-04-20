@@ -84,7 +84,7 @@ public class Return extends Statement {
         if (this.result != null) {
             result.addMember(state, this.result.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         return result;
     }
@@ -102,7 +102,7 @@ public class Return extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Expr expr = null;
-            if (! term.firstMember().equals(new SetlString("nil"))) {
+            if (! term.firstMember().equals(SetlString.NIL)) {
                 expr = TermConverter.valueToExpr(state, term.firstMember());
             }
             return new Return(expr);

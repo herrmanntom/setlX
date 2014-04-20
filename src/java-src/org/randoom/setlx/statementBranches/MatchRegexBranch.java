@@ -237,13 +237,13 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         if (assignTo != null) {
             result.addMember(state, assignTo.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
 
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
 
         result.addMember(state, statements.toTerm(state));
@@ -267,12 +267,12 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 final Expr pattern = TermConverter.valueToExpr(state, term.firstMember());
 
                 Expr assignTo = null;
-                if (! term.getMember(2).equals(new SetlString("nil"))) {
+                if (! term.getMember(2).equals(SetlString.NIL)) {
                     assignTo = TermConverter.valueToExpr(state, term.getMember(2));
                 }
 
                 Condition condition = null;
-                if (! term.getMember(3).equals(new SetlString("nil"))) {
+                if (! term.getMember(3).equals(SetlString.NIL)) {
                     condition = TermConverter.valueToCondition(state, term.getMember(3));
                 }
 

@@ -2,7 +2,7 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
-import org.randoom.setlx.types.LambdaDefinition;
+import org.randoom.setlx.types.LambdaProcedure;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.Procedure;
@@ -76,17 +76,18 @@ public class ProcedureConstructor extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         final int preUnbound = unboundVariables.size();
         final int preUsed    = usedVariables.size();
-        definition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        definition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         final HashSet<String> closureVariables = new HashSet<String>();
         closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
-        closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
+        closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size())); // TODO check why we need used here
         this.closureVariables = closureVariables;
     }
 
@@ -104,10 +105,9 @@ public class ProcedureConstructor extends Expr {
         return definition.toTerm(state);
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
-        if (definition instanceof LambdaDefinition) {
+        if (definition instanceof LambdaProcedure) {
             return LAMBDA_PRECEDENCE;
         } else {
             return PRECEDENCE;

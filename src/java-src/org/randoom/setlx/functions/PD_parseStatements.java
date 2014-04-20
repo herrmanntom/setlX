@@ -10,9 +10,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// parseStatements(stmnts)       : parse SetlX statements into a term
-
+/**
+ * parseStatements(setlX_statements) : Parse SetlX statements into a term.
+ */
 public class PD_parseStatements extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `parseStatements'. */
     public final static PreDefinedProcedure DEFINITION = new PD_parseStatements();
 
     private PD_parseStatements() {
@@ -22,16 +24,16 @@ public class PD_parseStatements extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value   stmntArg = args.get(0);
+        final Value stmntArg = args.get(0);
         if ( ! (stmntArg instanceof SetlString)) {
-            throw new IncompatibleTypeException("Statement-argument '" + stmntArg + "' is not a string.");
+            throw new IncompatibleTypeException("Statement-argument '" + stmntArg.toString(state) + "' is not a string.");
         }
         // get statement string to be parsed
-        final String  stmntStr = stmntArg.getUnquotedString();
+        final String stmntStr = stmntArg.getUnquotedString(state);
 
         // parse statements
         state.resetParserErrorCount();
-        final Block   blk      = ParseSetlX.parseStringToBlock(state, stmntStr);
+        final Block  blk      = ParseSetlX.parseStringToBlock(state, stmntStr);
 
         // return term of result
         return blk.toTerm(state);

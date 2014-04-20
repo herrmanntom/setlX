@@ -9,6 +9,9 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import java.util.List;
 
+/**
+ * Base class for various expressions that can 'fill' a collection.
+ */
 public abstract class CollectionBuilder extends CodeFragment {
 
     /**
@@ -25,6 +28,7 @@ public abstract class CollectionBuilder extends CodeFragment {
 
     @Override // Explicit override to increase visibility to public.
     public abstract void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -33,7 +37,7 @@ public abstract class CollectionBuilder extends CodeFragment {
     /* String operations */
 
     @Override
-    public          void        appendString(final State state, final StringBuilder sb, final int tabs) {
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
         appendString(state, sb);
     }
 
@@ -46,12 +50,12 @@ public abstract class CollectionBuilder extends CodeFragment {
      * @param state Current state of the running setlX program.
      * @param sb    StringBuilder to append to.
      */
-    public abstract void        appendString(final State state, final StringBuilder sb);
+    public abstract void appendString(final State state, final StringBuilder sb);
 
     /* term operations */
 
     @Override
-    public          Om          toTerm(final State state) {
+    public Om toTerm(final State state) {
         return Om.OM;
     }
 
@@ -61,33 +65,34 @@ public abstract class CollectionBuilder extends CodeFragment {
      * @param state      Current state of the running setlX program.
      * @param collection CollectionValue to expand.
      */
-    public abstract void        addToTerm(final State state, final CollectionValue collection);
+    public abstract void addToTerm(final State state, final CollectionValue collection);
 
     /**
      * Regenerate CollectionBuilder from a CollectionValue containing a term
      * representation.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    CollectionValue containing the term representation.
      * @return                         Regenerated CollectionBuilder object.
      * @throws TermConversionException Thrown in case the term is malformed.
      */
-    public static   CollectionBuilder collectionValueToBuilder(final CollectionValue value) throws TermConversionException {
+    public static CollectionBuilder collectionValueToBuilder(final State state, final CollectionValue value) throws TermConversionException {
         if (value.size() == 1 && value.firstMember() instanceof Term) {
-            final Term    term    = (Term) value.firstMember();
-            final String  fc      = term.functionalCharacter().getUnquotedString();
-            if (fc.equals(SetlIteration.FUNCTIONAL_CHARACTER)) {
-                return SetlIteration.termToIteration(term);
-            } else if (fc.equals(Range.FUNCTIONAL_CHARACTER)) {
-                return Range.termToRange(term);
-            } else if (fc.equals(ExplicitListWithRest.FUNCTIONAL_CHARACTER)) {
-                return ExplicitListWithRest.termToExplicitListWithRest(term);
+            final Term    term = (Term) value.firstMember();
+            final String  fc   = term.getFunctionalCharacter();
+            if (fc.equals(SetlIteration.getFunctionalCharacter())) {
+                return SetlIteration.termToIteration(state, term);
+            } else if (fc.equals(Range.getFunctionalCharacter())) {
+                return Range.termToRange(state, term);
+            } else if (fc.equals(ExplicitListWithRest.getFunctionalCharacter())) {
+                return ExplicitListWithRest.termToExplicitListWithRest(state, term);
             } else {
                 // assume explicit list of a single term
-                return ExplicitList.collectionValueToExplicitList(value);
+                return ExplicitList.collectionValueToExplicitList(state, value);
             }
         } else {
             // assume explicit list;
-            return ExplicitList.collectionValueToExplicitList(value);
+            return ExplicitList.collectionValueToExplicitList(state, value);
         }
     }
 }

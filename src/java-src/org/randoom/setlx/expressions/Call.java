@@ -58,7 +58,7 @@ public class Call extends Expr {
         final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + this.lhs + "\" is undefined."
+                "Left hand side \"" + this.lhs.toString(state) + "\" is undefined."
             );
         }
         // supply the original expressions (args), which are needed for 'rw' parameters
@@ -77,16 +77,17 @@ public class Call extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         for (final Expr expr : args) {
-            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
         // add dummy variable to prevent optimization, behavior of called function is unknown here!
-        unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
+        unboundVariables.add(Variable.getPreventOptimizationDummy());
     }
 
     /* string operations */
@@ -114,15 +115,15 @@ public class Call extends Expr {
 
     @Override
     public Term toTerm(final State state) {
-        final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         if (lhs instanceof Variable) {
-            result.addMember(state, new SetlString(lhs.toString()));
+            result.addMember(state, new SetlString(((Variable) lhs).getID()));
         } else {
             result.addMember(state, lhs.toTerm(state));
         }
 
-        final SetlList  arguments   = new SetlList(args.size());
+        final SetlList arguments = new SetlList(args.size());
         for (final Expr arg: args) {
             arguments.addMember(state, arg.toTerm(state));
         }
@@ -133,15 +134,15 @@ public class Call extends Expr {
 
     @Override
     public Term toTermQuoted(final State state) throws SetlException {
-        final Term      result      = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         if (lhs instanceof Variable) {
-            result.addMember(state, new SetlString(lhs.toString()));
+            result.addMember(state, new SetlString(((Variable) lhs).getID()));
         } else {
             result.addMember(state, lhs.toTerm(state));
         }
 
-        final SetlList  arguments   = new SetlList(args.size());
+        final SetlList arguments = new SetlList(args.size());
         for (final Expr arg: args) {
             arguments.addMember(state, arg.eval(state).toTerm(state));
         }
@@ -153,25 +154,26 @@ public class Call extends Expr {
     /**
      * Convert a term representing a Call into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
-     * @return                         Resulting Call Expression.
-     * @throws TermConversionException Thrown in case of an malformed term.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static Call termToExpr(final Term term) throws TermConversionException {
+    public static Call termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Value       lhsTerm = term.firstMember();
-            final Expr        lhs;
+            final Value lhsTerm = term.firstMember();
+            final Expr  lhs;
             if (lhsTerm instanceof SetlString) {
-                lhs = new Variable(lhsTerm.getUnquotedString());
+                lhs = new Variable(lhsTerm.getUnquotedString(state));
             } else {
-                lhs = TermConverter.valueToExpr(lhsTerm);
+                lhs = TermConverter.valueToExpr(state, lhsTerm);
             }
-            final SetlList    argsLst = (SetlList) term.lastMember();
-            final List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
+            final SetlList   argsLst = (SetlList) term.lastMember();
+            final List<Expr> args    = new ArrayList<Expr>(argsLst.size());
             for (final Value v : argsLst) {
-                args.add(TermConverter.valueToExpr(v));
+                args.add(TermConverter.valueToExpr(state, v));
             }
             return new Call(lhs, args);
         }

@@ -22,7 +22,7 @@ import java.util.List;
  *
  * implemented here as:
  *                                                             =========         =====
- *                                                             mCondition     mStatements
+ *                                                             condition       statements
  */
 public class IfThenElseIfBranch extends IfThenAbstractBranch {
     // functional character used in terms
@@ -54,12 +54,13 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -85,16 +86,17 @@ public class IfThenElseIfBranch extends IfThenAbstractBranch {
     /**
      * Convert a term representing an else-if-(??)-then-branch branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static IfThenElseIfBranch termToBranch(final Term term) throws TermConversionException {
+    public static IfThenElseIfBranch termToBranch(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition   = TermConverter.valueToCondition(term.firstMember());
-            final Block     block       = TermConverter.valueToBlock(term.lastMember());
+            final Condition condition = TermConverter.valueToCondition(state, term.firstMember());
+            final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
             return new IfThenElseIfBranch(condition, block);
         }
     }

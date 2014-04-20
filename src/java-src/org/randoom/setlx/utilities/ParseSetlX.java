@@ -73,7 +73,7 @@ public class ParseSetlX {
             name = state.filterLibraryName(name + ".stlx");
             if (new File(name).isFile()) {
                 if (state.isLibraryLoaded(name)) {
-                    return new Block();
+                    return new Block(state);
                 } else {
                     state.libraryWasLoaded(name);
                     // parse the file contents

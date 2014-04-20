@@ -11,7 +11,7 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- * eval(expr)                    : evaluate a String of a SetlX expression
+ * eval(setlX_expression) : evaluate a String of a SetlX expression
  */
 public class PD_eval extends PreDefinedProcedure {
     /** Definition of the PreDefinedProcedure `eval'. */
@@ -26,10 +26,10 @@ public class PD_eval extends PreDefinedProcedure {
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final Value   exprArg  = args.get(0);
         if ( ! (exprArg instanceof SetlString)) {
-            throw new IncompatibleTypeException("Expression-argument '" + exprArg + "' is not a string.");
+            throw new IncompatibleTypeException("Expression-argument '" + exprArg.toString(state) + "' is not a string.");
         }
         // get expression string to be parsed
-        final String  exprStr = exprArg.getUnquotedString();
+        final String  exprStr = exprArg.getUnquotedString(state);
 
         state.resetParserErrorCount();
         final Expr    expr    = ParseSetlX.parseStringToExpr(state, exprStr);

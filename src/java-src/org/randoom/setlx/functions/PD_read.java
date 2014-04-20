@@ -10,9 +10,9 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- * read(message, ...) : prompts the user with `message', then reads from
- *                      stdin until user enters at least one character,
- *                      converts input into integer or double if possible
+ * read(message, ...) : Prompts the user with `message', then reads from
+ *                      stdin until user enters at least one character.
+ *                      Converts input into integer or double if possible.
  */
 public class PD_read extends PreDefinedProcedure {
     /** Definition of the PreDefinedProcedure `read'. */
@@ -27,20 +27,19 @@ public class PD_read extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        Value          inputValue = Om.OM;
-        String         input      = null;
-        String         prompt     = null;
+        Value               inputValue = Om.OM;
+        String              input      = null;
+        final StringBuilder prompt     = new StringBuilder();
         if (args.size() == 0) {
-            prompt = ": ";
+            prompt.append(": ");
         } else {
-            prompt = "";
             for (final Value arg : args) {
-                prompt += arg.getUnquotedString();
+                arg.appendUnquotedString(state, prompt, 0);
             }
         }
         try {
             do {
-                state.prompt(prompt);
+                state.prompt(prompt.toString());
                 input = state.inReadLine();
                 if (input != null) {
                     input = input.trim();

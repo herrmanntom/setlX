@@ -20,7 +20,7 @@ public class PD_throw extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws ThrownInSetlXException {
-        throw new ThrownInSetlXException(args.get(0));
+        throw new ThrownInSetlXException(state, args.get(0));
     }
 }
 

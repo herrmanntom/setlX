@@ -31,6 +31,11 @@ public class Not extends Expr {
 
     private final Expr expr;
 
+    /**
+     * Create new Not.
+     *
+     * @param expr Expression to evaluate and invert.
+     */
     public Not(final Expr expr) {
         this.expr = expr;
     }
@@ -42,11 +47,12 @@ public class Not extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -66,11 +72,19 @@ public class Not extends Expr {
         return result;
     }
 
-    public static Not termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a Not into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Not termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr expr = TermConverter.valueToExpr(term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
             return new Not(expr);
         }
     }
@@ -80,6 +94,11 @@ public class Not extends Expr {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

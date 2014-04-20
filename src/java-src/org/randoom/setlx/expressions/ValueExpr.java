@@ -6,7 +6,7 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- * Expression containing a single variable.
+ * Expression containing a single value.
  */
 public class ValueExpr extends Expr {
     // precedence level in SetlX-grammar
@@ -14,6 +14,12 @@ public class ValueExpr extends Expr {
 
     private final Value value;
 
+
+    /**
+     * Constructor.
+     *
+     * @param value Contained value.
+     */
     public ValueExpr(final Value value) {
         this.value = value;
     }
@@ -30,6 +36,7 @@ public class ValueExpr extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables

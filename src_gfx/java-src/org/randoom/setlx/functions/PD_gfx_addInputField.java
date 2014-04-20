@@ -19,7 +19,7 @@ public final static PreDefinedProcedure DEFINITION = new PD_gfx_addInputField();
 
     @Override
     protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        SetlXUserPanel.getInstance().addInput( stringFromValue( args.get(0) ) );
+        SetlXUserPanel.getInstance().addInput( stringFromValue( state, args.get(0) ) );
         return SetlBoolean.TRUE;
     }
 }

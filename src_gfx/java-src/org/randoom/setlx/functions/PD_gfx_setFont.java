@@ -22,7 +22,7 @@ public class PD_gfx_setFont extends GfxFunction {
     @Override
     protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
         if ( args.size() == 1 ){
-            final Font f = new Font( stringFromValue( args.get(0) ), StdDraw.getFont().getStyle(), StdDraw.getFont().getSize()  );
+            final Font f = new Font( stringFromValue( state, args.get(0) ), StdDraw.getFont().getStyle(), StdDraw.getFont().getSize()  );
             StdDraw.setFont(f);
         }else {
             StdDraw.setFont();

@@ -602,7 +602,7 @@ public class SetlSet extends CollectionValue {
         // get some arbitrary member
         final Value      arb       = set.iterator().next();
         final SetlSet    rest      = clone();
-        rest.removeMember(arb);
+        rest.removeMember(state, arb);
         // create power set of the rest
         final SetlSet    powerRest = rest.powerSet(state);
         final SetlSet    powerSet  = powerRest.clone();
@@ -688,7 +688,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public void removeMember(final Value element) {
+    public void removeMember(final State state, final Value element) {
         separateFromOriginal();
         set.remove(element);
     }
@@ -719,7 +719,7 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(this, false).appendString(state, sb, 0);
+        TermConverter.valueToCodeFragment(state, this, false).appendString(state, sb, 0);
     }
 
     @Override
@@ -843,12 +843,12 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 700;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlSet) {

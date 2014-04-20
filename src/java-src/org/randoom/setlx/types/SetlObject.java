@@ -205,7 +205,7 @@ public class SetlObject extends Value {
             return function;
         }
         throw new UndefinedOperationException(
-            "Member '" + member + "' is undefined in '" + this + "'."
+            "Member '" + member + "' is undefined in '" + this.toString(state) + "'."
         );
     }
     private static String createOverloadVariable(final String functionalCharacter) {
@@ -651,13 +651,14 @@ public class SetlObject extends Value {
     /**
      * Convert a term representing a SetlObject into such an object.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting SetlObject.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SetlObject termToValue(final Term term) throws TermConversionException {
+    public static SetlObject termToValue(final State state, final Term term) throws TermConversionException {
         if (term.size() == 1) {
-            final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(term.firstMember());
+            final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(state, term.firstMember());
             final Value              classDefinition = members.get("instanceOf");
             if (classDefinition != null && classDefinition instanceof SetlClass) {
                 return createNew(members, (SetlClass) classDefinition);
@@ -685,12 +686,12 @@ public class SetlObject extends Value {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 1100;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlObject) {

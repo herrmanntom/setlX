@@ -21,7 +21,7 @@ import java.util.List;
  *       ==== ========
  *       type   var
  */
-public class ParameterDef extends CodeFragment {
+public class ParameterDef extends CodeFragment implements Comparable<ParameterDef> {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER    = "^parameter";
     private final static String FUNCTIONAL_CHARACTER_RW = "^rwParameter";
@@ -85,11 +85,12 @@ public class ParameterDef extends CodeFragment {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        var.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        var.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /**
@@ -160,25 +161,63 @@ public class ParameterDef extends CodeFragment {
     /**
      * Convert a term representing a ParameterDef into such an object.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    Term to convert.
      * @return                         Resulting ParameterDef.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static ParameterDef valueToParameterDef(final Value value) throws TermConversionException {
+    public static ParameterDef valueToParameterDef(final State state, final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
-        final Term   term   = (Term) value;
-        final String fc     = term.functionalCharacter().getUnquotedString();
+        final Term   term = (Term) value;
+        final String fc   = term.getFunctionalCharacter();
         if (fc.equals(FUNCTIONAL_CHARACTER) && term.size() == 1 && term.firstMember() instanceof Term) {
-            final Variable var = Variable.termToExpr((Term) term.firstMember());
+            final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
             return new ParameterDef(var, ParameterType.READ_ONLY);
         } else if (fc.equals(FUNCTIONAL_CHARACTER_RW) && term.size() == 1 && term.firstMember() instanceof Term) {
-            final Variable var = Variable.termToExpr((Term) term.firstMember());
+            final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
             return new ParameterDef(var, ParameterType.READ_WRITE);
         } else {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
+    }
+
+    @Override
+    public int compareTo(final ParameterDef other) {
+        if (this == other) {
+            return 0;
+        } else {
+            final int cmp = type.compareTo(other.type);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return var.getID().compareTo(other.var.getID());
+        }
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof ParameterDef) {
+            return equalTo((ParameterDef) o);
+        }
+        return false;
+    }
+
+    /**
+     * Test if two ParameterDef are equal.
+     * This operation is much faster as ( compareTo(other) == 0 ).
+     *
+     * @param other Other ParameterDef to compare to `this'
+     * @return      True if `this' equals `other', false otherwise.
+     */
+    public boolean equalTo(final ParameterDef other) {
+        if (this == other) {
+            return true;
+        }
+        return this.type == other.type && this.var.equals(other.var);
     }
 }
 

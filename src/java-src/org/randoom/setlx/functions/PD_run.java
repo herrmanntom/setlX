@@ -12,9 +12,13 @@ import java.util.Locale;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
-// run(command)                  : executes a system command and returns the result as a list of output and error messages
+// run(command)                  :
 
+/**
+ * run(command) : Executes a system command and returns the result as a list of output and error messages.
+ */
 public class PD_run extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `run'. */
     public final static PreDefinedProcedure DEFINITION = new PD_run();
 
     private PD_run() {
@@ -26,11 +30,11 @@ public class PD_run extends PreDefinedProcedure {
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
         if ( ! (args.get(0) instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Argument '" + args.get(0) + "' is not a string."
+                "Argument '" + args.get(0).toString(state) + "' is not a string."
             );
         }
 
-        final String command = args.get(0).getUnquotedString();
+        final String command = args.get(0).getUnquotedString(state);
 
         try {
             final String   os      = System.getProperty("os.name").toLowerCase(Locale.US);
@@ -60,7 +64,7 @@ public class PD_run extends PreDefinedProcedure {
             final SetlList       out    = new SetlList();
             final SetlList       err    = new SetlList();
 
-            String         line   = null;
+            String line = null;
             while ((line = output.readLine()) != null) {
                 out.addMember(state, new SetlString(line));
             }
@@ -71,7 +75,7 @@ public class PD_run extends PreDefinedProcedure {
             }
             error.close();
 
-            final SetlList       result = new SetlList(2);
+            final SetlList result = new SetlList(2);
             result.addMember(state, out);
             result.addMember(state, err);
 

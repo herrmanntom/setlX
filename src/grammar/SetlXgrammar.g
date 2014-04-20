@@ -39,7 +39,7 @@ initBlock returns [Block blk]
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )+
-      { $blk = new Block(stmnts); }
+      { $blk = new Block(setlXstate, stmnts); }
     ;
 
 initExpr returns [Expr ae]
@@ -54,7 +54,7 @@ block returns [Block blk]
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )*
-      { $blk = new Block(stmnts); }
+      { $blk = new Block(setlXstate, stmnts); }
     ;
 
 statement returns [Statement stmnt]
@@ -68,7 +68,7 @@ statement returns [Statement stmnt]
         Expr                            expression = null;
     }
     : 'class' ID '(' procedureParameters ')' '{' b1 = block ('static' '{' b2 = block '}' {block = $b2.blk;})? '}'
-                       { $stmnt = new ClassDefiner($ID.text, new SetlClass($procedureParameters.paramList, $b1.blk, block)); }
+                         { $stmnt = new ClassConstructor($ID.text, new SetlClass($procedureParameters.paramList, $b1.blk, block)); }
       (
         ';' { customErrorHandling(SEMICOLON_FOLLOWING_CLASS); }
       )?
@@ -244,7 +244,7 @@ explicitAssignList returns [ExplicitList eil]
     ;
 
 expr [boolean enableIgnore] returns [Expr ex]
-    : lambdaDefinition        { $ex = new ProcedureConstructor($lambdaDefinition.ld); }
+    : lambdaProcedure          { $ex = new ProcedureConstructor($lambdaProcedure.lp); }
     | i1 = implication[$enableIgnore]           { $ex = $i1.i;                        }
       (
          '<==>' i2 = implication[$enableIgnore] { $ex = new BoolEquals  ($ex, $i2.i); }
@@ -252,8 +252,8 @@ expr [boolean enableIgnore] returns [Expr ex]
       )?
     ;
 
-lambdaDefinition returns [LambdaDefinition ld]
-    : lambdaParameters '|->' expr[false] { $ld = new LambdaDefinition($lambdaParameters.paramList, $expr.ex); }
+lambdaProcedure returns [LambdaProcedure lp]
+    : lambdaParameters '|->' expr[false] { $lp = new LambdaProcedure(setlXstate, $lambdaParameters.paramList, $expr.ex); }
     ;
 
 lambdaParameters returns [List<ParameterDef> paramList]

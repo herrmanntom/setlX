@@ -25,9 +25,9 @@ import java.util.List;
  */
 public class Variable extends AssignableExpression {
     // This functional character is used internally
-    public  final static String   FUNCTIONAL_CHARACTER          = "^Variable";
+    private final static String FUNCTIONAL_CHARACTER          = "^Variable";
     // this one is used externally (e.g. during toString)
-    public  final static String   FUNCTIONAL_CHARACTER_EXTERNAL = "^variable";
+    private final static String FUNCTIONAL_CHARACTER_EXTERNAL = "^variable";
     /* both are equal during matching and compare. However while terms with the
      * internal one always bind anything, terms with the external one only match
      * and do not bind.
@@ -39,13 +39,18 @@ public class Variable extends AssignableExpression {
      *      }
      */
 
-    public  final static String   PREVENT_OPTIMIZATION_DUMMY    = "@123456789*%%";
+    private final static String PREVENT_OPTIMIZATION_DUMMY    = "@123456789*%%";
 
     // precedence level in SetlX-grammar
-    private final static int      PRECEDENCE                    = 9999;
+    private final static int    PRECEDENCE                    = 9999;
 
     private final String id;
 
+    /**
+     * Create a new Variable expression.
+     *
+     * @param id ID/name of this variable.
+     */
     public Variable(final String id) {
         this.id = id;
     }
@@ -62,6 +67,7 @@ public class Variable extends AssignableExpression {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -75,6 +81,7 @@ public class Variable extends AssignableExpression {
 
     @Override
     public void collectVariablesWhenAssigned (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -99,6 +106,11 @@ public class Variable extends AssignableExpression {
         sb.append(id);
     }
 
+    /**
+     * Get ID/name of this variable.
+     *
+     * @return ID/name of this variable.
+     */
     public String getID() {
         return id;
     }
@@ -119,11 +131,19 @@ public class Variable extends AssignableExpression {
         return result;
     }
 
-    public static Variable termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a Variable expression into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static Variable termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final String id = ((SetlString) term.firstMember()).getUnquotedString();
+            final String id = ((SetlString) term.firstMember()).getUnquotedString(state);
             return new Variable(id);
         }
     }
@@ -145,6 +165,15 @@ public class Variable extends AssignableExpression {
             return false;
         }
     }
+
+    /**
+     * Same as default equals, only assumes that "other" is known to be a variable.
+     *
+     * @see Object#equals(Object)
+     *
+     * @param  v Other Variable to compare to.
+     * @return   True, if both Variables are equal.
+     */
     public final boolean equals(final Variable v) {
         if (this == v) {
             return true;
@@ -158,6 +187,33 @@ public class Variable extends AssignableExpression {
     @Override
     public int hashCode() {
         return initHashCode + id.hashCode();
+    }
+
+    /**
+     * Get the functional character internally used in terms.
+     *
+     * @return functional character internally used in terms.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
+    }
+
+    /**
+     * Get the functional character used externally (e.g. during toString).
+     *
+     * @return functional character used externally (e.g. during toString).
+     */
+    public static String getFunctionalCharacterExternal() {
+        return FUNCTIONAL_CHARACTER_EXTERNAL;
+    }
+
+    /**
+     * Get dummy Variable used to prevent optimization of some expressions.
+     *
+     * @return Dummy Variable used to prevent optimization.
+     */
+    public static String getPreventOptimizationDummy() {
+        return PREVENT_OPTIMIZATION_DUMMY;
     }
 }
 

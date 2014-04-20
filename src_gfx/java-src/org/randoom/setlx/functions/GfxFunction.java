@@ -34,7 +34,7 @@ public abstract class GfxFunction extends PreDefinedProcedure {
         }
     }
 
-    protected String stringFromValue(final Value v){
-        return v.getUnquotedString();
+    protected String stringFromValue(final State state, final Value v){
+        return v.getUnquotedString(state);
     }
 }

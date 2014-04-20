@@ -36,22 +36,23 @@ public abstract class TryCatchAbstractBranch extends CodeFragment {
     /**
      * Convert a term representing a catch branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    Term to convert.
      * @return                         Resulting branch.
-     * @throws TermConversionException Thrown in case of an malformed term.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static   TryCatchAbstractBranch valueToTryCatchAbstractBranch(final Value value) throws TermConversionException {
+    public static   TryCatchAbstractBranch valueToTryCatchAbstractBranch(final State state, final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed TryCatchAbstractBranch");
         } else {
-            final Term    term    = (Term) value;
-            final String  fc      = term.functionalCharacter().getUnquotedString();
+            final Term   term = (Term) value;
+            final String fc   = term.getFunctionalCharacter();
             if        (fc.equals(TryCatchBranch.getFunctionalCharacter())) {
-                return TryCatchBranch.termToBranch(term);
+                return TryCatchBranch.termToBranch(state, term);
             } else if (fc.equals(TryCatchLngBranch.getFunctionalCharacter())) {
-                return TryCatchLngBranch.termToBranch(term);
+                return TryCatchLngBranch.termToBranch(state, term);
             } else if (fc.equals(TryCatchUsrBranch.getFunctionalCharacter())) {
-                return TryCatchUsrBranch.termToBranch(term);
+                return TryCatchUsrBranch.termToBranch(state, term);
             } else {
                 throw new TermConversionException("malformed TryCatchAbstractBranch");
             }

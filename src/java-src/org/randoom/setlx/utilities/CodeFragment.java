@@ -15,11 +15,13 @@ public abstract class CodeFragment {
      * Gather all bound and unbound variables in this fragment and its siblings.
      * Optimizes this fragment, if this can be safely done.
      *
+     * @param state            Current state of the running setlX program.
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
      */
     public abstract void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -33,7 +35,7 @@ public abstract class CodeFragment {
         final List<String> boundVariables   = new ArrayList<String>();
         final List<String> unboundVariables = new ArrayList<String>();
         final List<String> usedVariables    = new ArrayList<String>();
-        collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        collectVariablesAndOptimize(new State(), boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -70,8 +72,7 @@ public abstract class CodeFragment {
 
     @Override
     public final String toString() {
-        final State bubble = new State();
-        return toString(bubble);
+        return toString(new State());
     }
 
     /* term operations */

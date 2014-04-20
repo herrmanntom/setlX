@@ -75,15 +75,16 @@ public class TryCatch extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        blockToTry.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        blockToTry.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         // catch blocks cannot be trusted to assign anything in any case
         final int preBound = boundVariables.size();
         for (final TryCatchAbstractBranch br : tryList) {
-            br.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            br.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
         while (boundVariables.size() > preBound) {
             boundVariables.remove(boundVariables.size() - 1);
@@ -122,19 +123,20 @@ public class TryCatch extends Statement {
     /**
      * Convert a term representing a try-catch statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting if-then-else Statement.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static TryCatch termToStatement(final Term term) throws TermConversionException {
+    public static TryCatch termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Block                           block       = TermConverter.valueToBlock(term.firstMember());
-            final SetlList                        branches    = (SetlList) term.lastMember();
-            final List<TryCatchAbstractBranch>    branchList  = new ArrayList<TryCatchAbstractBranch>(branches.size());
+            final Block                        block      = TermConverter.valueToBlock(state, term.firstMember());
+            final SetlList                     branches   = (SetlList) term.lastMember();
+            final List<TryCatchAbstractBranch> branchList = new ArrayList<TryCatchAbstractBranch>(branches.size());
             for (final Value v : branches) {
-                branchList.add(TryCatchAbstractBranch.valueToTryCatchAbstractBranch(v));
+                branchList.add(TryCatchAbstractBranch.valueToTryCatchAbstractBranch(state, v));
             }
             return new TryCatch(block, branchList);
         }

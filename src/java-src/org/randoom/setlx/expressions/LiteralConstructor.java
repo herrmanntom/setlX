@@ -45,6 +45,7 @@ public class LiteralConstructor extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -68,15 +69,15 @@ public class LiteralConstructor extends Expr {
         return result;
     }
 
-
     /**
      * Convert a term representing a LiteralConstructor into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting LiteralConstructor Expression.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static LiteralConstructor termToExpr(final Term term) throws TermConversionException {
+    public static LiteralConstructor termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
@@ -86,7 +87,6 @@ public class LiteralConstructor extends Expr {
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

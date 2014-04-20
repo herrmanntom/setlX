@@ -108,20 +108,21 @@ public class Closure extends Procedure {
     /**
      * Convert a term representing a Closure into such a procedure.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting Closure.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static Closure termToValue(final Term term) throws TermConversionException {
+    public static Closure termToValue(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList            paramList   = (SetlList) term.firstMember();
             final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
             for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(v));
+                parameters.add(ParameterDef.valueToParameterDef(state, v));
             }
-            final Block               block       = TermConverter.valueToBlock(term.lastMember());
+            final Block               block       = TermConverter.valueToBlock(state, term.lastMember());
             return new Closure(parameters, block);
         }
     }
@@ -131,7 +132,7 @@ public class Closure extends Procedure {
     @Override
     public int hashCode() {
         object = null;
-        return initHashCode + parameters.size();
+        return (initHashCode + parameters.size()) * 31 + statements.size();
     }
 
     /**

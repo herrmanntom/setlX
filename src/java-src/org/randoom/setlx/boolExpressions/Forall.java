@@ -49,7 +49,7 @@ public class Forall extends Expr {
     private class Exec implements SetlIteratorExecutionContainer {
         private final Condition          condition;
         private final Set<String>        iterationVariables;
-        public        SetlBoolean        result;
+        private       SetlBoolean        result;
         private       SetlHashMap<Value> sideEffectBindings;
 
         public Exec (final Condition condition, final Set<String> iterationVariables) {
@@ -74,11 +74,12 @@ public class Forall extends Expr {
 
         @Override
         public void collectVariablesAndOptimize (
+            final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
-            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -112,15 +113,16 @@ public class Forall extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         final List<String> tempVariables = new ArrayList<String>();
-        iterator.collectVariablesAndOptimize(new Exec(condition, null), tempVariables, boundVariables, unboundVariables, usedVariables);
+        iterator.collectVariablesAndOptimize(state, new Exec(condition, null), tempVariables, boundVariables, unboundVariables, usedVariables);
 
         // add dummy variable to prevent optimization, side effect variables cannot be optimized
-        unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
+        unboundVariables.add(Variable.getPreventOptimizationDummy());
 
         iterationVariables = new HashSet<String>(tempVariables);
     }
@@ -149,16 +151,17 @@ public class Forall extends Expr {
     /**
      * Convert a term representing a Forall into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting Forall expression.
-     * @throws TermConversionException Thrown in case of an malformed term.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static Forall termToExpr(final Term term) throws TermConversionException {
+    public static Forall termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlIterator  iterator  = SetlIterator.valueToIterator(term.firstMember());
-            final Condition condition = TermConverter.valueToCondition(term.lastMember());
+            final SetlIterator  iterator  = SetlIterator.valueToIterator(state, term.firstMember());
+            final Condition condition = TermConverter.valueToCondition(state, term.lastMember());
             return new Forall(iterator, condition);
         }
     }

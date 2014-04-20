@@ -20,6 +20,9 @@ public class Continue extends Statement {
     // functional character used in terms
     private final static String   FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Continue.class);
 
+    /**
+     * Singleton Continue statement.
+     */
     public  final static Continue C                    = new Continue();
 
     private Continue() {  }
@@ -31,6 +34,7 @@ public class Continue extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -51,7 +55,15 @@ public class Continue extends Statement {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
-    public static Continue termToStatement(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a Continue statement into such a statement.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting statement of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static Continue termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 0) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

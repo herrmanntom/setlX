@@ -29,7 +29,7 @@ public class PD_gfx_setPenColor extends GfxFunction {
         } else {
 	    	Color c = StdDraw.BLACK;
 	        try {
-	            final Field f = StdDraw.class.getField(args.get(0).getUnquotedString().toUpperCase());
+	            final Field f = StdDraw.class.getField(args.get(0).getUnquotedString(state).toUpperCase());
 	            c = (Color) f.get(null);
 	            StdDraw.setPenColor(c);
 	        } catch (final Exception e) {

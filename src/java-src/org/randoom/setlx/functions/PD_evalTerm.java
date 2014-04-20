@@ -12,9 +12,11 @@ import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.List;
 
-// evalTerm(term)                : execute a term which represents SetlX statements and/or expressions
-
+/**
+ * evalTerm(term) : execute a term which represents SetlX statements and/or expressions
+ */
 public class PD_evalTerm extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `evalTerm'. */
     public final static PreDefinedProcedure DEFINITION = new PD_evalTerm();
 
     private PD_evalTerm() {
@@ -24,17 +26,17 @@ public class PD_evalTerm extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value         termArg     = args.get(0);
+        final Value        termArg  = args.get(0);
 
         // get code to be executed
-        final CodeFragment  fragment    = TermConverter.valueToCodeFragment(termArg, false);
+        final CodeFragment fragment = TermConverter.valueToCodeFragment(state, termArg, false);
 
         // Value to be returned
-        Value               result      = Om.OM;
+        Value              result   = Om.OM;
 
         // execute the contents
         if (fragment instanceof Expr) {
-            result  = ((Expr) fragment).eval(state);
+            result = ((Expr) fragment).eval(state);
         } else if (fragment instanceof Statement) {
             ((Statement) fragment).execute(state);
         } else {

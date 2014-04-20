@@ -61,12 +61,13 @@ public class While extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -93,16 +94,17 @@ public class While extends Statement {
     /**
      * Convert a term representing a While statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting While Statement.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static While termToStatement(final Term term) throws TermConversionException {
+    public static While termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition   = TermConverter.valueToCondition(term.firstMember());
-            final Block     block       = TermConverter.valueToBlock(term.lastMember());
+            final Condition condition = TermConverter.valueToCondition(state, term.firstMember());
+            final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
             return new While(condition, block);
         }
     }

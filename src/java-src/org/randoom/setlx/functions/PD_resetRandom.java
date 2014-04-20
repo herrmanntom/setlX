@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// resetRandom()                 : reseeds the random number generator with 0
-
+/**
+ * resetRandom() : Reseeds the random number generator with 0.
+ */
 public class PD_resetRandom extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `resetRandom'. */
     public final static PreDefinedProcedure DEFINITION = new PD_resetRandom();
 
     private PD_resetRandom() {

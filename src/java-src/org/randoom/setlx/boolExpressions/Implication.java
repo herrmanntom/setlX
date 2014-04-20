@@ -31,6 +31,12 @@ public class Implication extends Expr {
     private final Expr lhs;
     private final Expr rhs;
 
+    /**
+     * Create new Implication.
+     *
+     * @param lhs Expression to evaluate.
+     * @param rhs Expression to evaluate and test.
+     */
     public Implication(final Expr lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
@@ -43,12 +49,13 @@ public class Implication extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -70,22 +77,34 @@ public class Implication extends Expr {
         return result;
     }
 
-    public static Implication termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing an Implication into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Implication termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(term.lastMember() );
+            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember() );
             return new Implication(lhs, rhs);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

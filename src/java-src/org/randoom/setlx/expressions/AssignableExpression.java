@@ -16,13 +16,15 @@ public abstract class AssignableExpression extends Expr {
      * Gather all bound and unbound variables in this expression and its siblings,
      * when it is used as an assignment.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(State, List, List, List)
      *
+     * @param state            Current state of the running setlX program.
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
      */
     public abstract void collectVariablesWhenAssigned (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables

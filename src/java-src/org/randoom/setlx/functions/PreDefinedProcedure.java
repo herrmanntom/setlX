@@ -25,6 +25,7 @@ public abstract class PreDefinedProcedure extends Procedure {
     private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
 
     private String  name;
+    private int     nameHashCode;
     private boolean unlimitedParameters;
     private boolean allowFewerParameters;
 
@@ -35,8 +36,9 @@ public abstract class PreDefinedProcedure extends Procedure {
      *       constructor directly.
      */
     protected PreDefinedProcedure() {
-        super(new ArrayList<ParameterDef>(), new Block());
+        super(new ArrayList<ParameterDef>(), new Block(null));
         this.name                 = null;
+        this.nameHashCode         = -1;
         this.unlimitedParameters  = false;
         this.allowFewerParameters = false;
     }
@@ -48,7 +50,8 @@ public abstract class PreDefinedProcedure extends Procedure {
      */
     public final String getName() {
         if (name == null) {
-            name = this.getClass().getSimpleName().substring(3);
+            name         = this.getClass().getSimpleName().substring(3);
+            nameHashCode = name.hashCode();
         }
         return name;
     }
@@ -279,6 +282,40 @@ public abstract class PreDefinedProcedure extends Procedure {
         result.addMember(state, new SetlString(getName()));
 
         return result;
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Value v) {
+        object = null;
+        if (this == v) {
+            return 0;
+        } else if (v instanceof PreDefinedProcedure) {
+            return getName().compareTo(((PreDefinedProcedure) v).getName());
+        } else {
+            return this.compareToOrdering() - v.compareToOrdering();
+        }
+    }
+
+    @Override
+    public boolean equalTo(final Object v) {
+        if (this == v) {
+            return true;
+        } else if (v instanceof PreDefinedProcedure) {
+            return getName().equals(((PreDefinedProcedure) v).getName());
+        }
+        return false;
+    }
+
+    private final static int initHashCode = PreDefinedProcedure.class.hashCode();
+
+    @Override
+    public int hashCode() {
+        if (nameHashCode == -1) {
+            nameHashCode = getName().hashCode();
+        }
+        return initHashCode + nameHashCode;
     }
 }
 

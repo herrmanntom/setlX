@@ -2,6 +2,7 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -43,12 +44,23 @@ public class ProductOfMembersBinary extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        collection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        neutral.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        collection.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        Value value = null;
+        if (collection.isReplaceable()) {
+            try {
+                value = collection.eval(state);
+            } catch (final Throwable t) {
+                value = null;
+            }
+        }
+        if (value == null || ! (value instanceof CollectionValue) || ((CollectionValue) value).size() == 0) {
+            neutral.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        }
     }
 
     /* string operations */
@@ -70,12 +82,20 @@ public class ProductOfMembersBinary extends Expr {
         return result;
     }
 
-    public static ProductOfMembersBinary termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a ProductOfMembersBinary expression into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static ProductOfMembersBinary termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr neutral    = TermConverter.valueToExpr(term.firstMember());
-            final Expr collection = TermConverter.valueToExpr(term.lastMember());
+            final Expr neutral    = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr collection = TermConverter.valueToExpr(state, term.lastMember());
             return new ProductOfMembersBinary(neutral, collection);
         }
     }
@@ -85,6 +105,11 @@ public class ProductOfMembersBinary extends Expr {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

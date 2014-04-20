@@ -65,15 +65,16 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         // add all variables found to bound by not supplying unboundVariables
         // as this expression is now used in an assignment
-        errorVar.collectVariablesAndOptimize(boundVariables, boundVariables, boundVariables);
+        errorVar.collectVariablesAndOptimize(state, boundVariables, boundVariables, boundVariables);
 
-        blockToRecover.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        blockToRecover.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -99,16 +100,17 @@ public class TryCatchBranch extends TryCatchAbstractBranch {
     /**
      * Convert a term representing an catch-branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting branch.
-     * @throws TermConversionException Thrown in case of an malformed term.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static TryCatchBranch termToBranch(final Term term) throws TermConversionException {
+    public static TryCatchBranch termToBranch(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Variable  var     = Variable.termToExpr((Term) term.firstMember());
-            final Block     block   = TermConverter.valueToBlock(term.lastMember());
+            final Variable var   = Variable.termToExpr(state, (Term) term.firstMember());
+            final Block    block = TermConverter.valueToBlock(state, term.lastMember());
             return new TryCatchBranch(var, block);
         }
     }

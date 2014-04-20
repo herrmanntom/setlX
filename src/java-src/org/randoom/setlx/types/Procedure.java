@@ -124,6 +124,7 @@ public class Procedure extends Value {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -135,17 +136,17 @@ public class Procedure extends Value {
 
         // add all parameters to bound
         for (final ParameterDef def : parameters) {
-            def.collectVariablesAndOptimize(innerBoundVariables, innerBoundVariables, innerBoundVariables);
+            def.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
         }
 
-        statements.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        statements.collectVariablesAndOptimize(state, innerBoundVariables, innerUnboundVariables, innerUsedVariables);
 
         /* compute variables as seen by the outside */
 
         // upon defining this procedure, all variables which are unbound inside
         // will be read to create the closure for this procedure
         for (final String var : innerUnboundVariables) {
-            if (var == Variable.PREVENT_OPTIMIZATION_DUMMY) {
+            if (var == Variable.getPreventOptimizationDummy()) {
                 continue;
             } else if (boundVariables.contains(var)) {
                 usedVariables.add(var);
@@ -361,20 +362,21 @@ public class Procedure extends Value {
     /**
      * Convert a term representing a Procedure into such a procedure.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting Procedure.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static Procedure termToValue(final Term term) throws TermConversionException {
+    public static Procedure termToValue(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList            paramList   = (SetlList) term.firstMember();
-            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            final SetlList           paramList  = (SetlList) term.firstMember();
+            final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
             for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(v));
+                parameters.add(ParameterDef.valueToParameterDef(state, v));
             }
-            final Block               block       = TermConverter.valueToBlock(term.lastMember());
+            final Block              block      = TermConverter.valueToBlock(state, term.lastMember());
             return new Procedure(parameters, block);
         }
     }
@@ -388,51 +390,45 @@ public class Procedure extends Value {
             return 0;
         } else if (v instanceof Procedure) {
             final Procedure other = (Procedure) v;
-            if (this instanceof PreDefinedProcedure && other instanceof PreDefinedProcedure) {
-                final PreDefinedProcedure _this  = (PreDefinedProcedure) this;
-                final PreDefinedProcedure _other = (PreDefinedProcedure) other;
-                return _this.getName().compareTo(_other.getName());
-            } else {
-                final int cmp = parameters.toString().compareTo(other.parameters.toString());
+            int cmp = Integer.compare(parameters.size(), other.parameters.size());
+            if (cmp != 0) {
+                return cmp;
+            }
+            for (int index = 0; index < parameters.size(); ++index) {
+                cmp = parameters.get(index).compareTo(other.parameters.get(index));
                 if (cmp != 0) {
                     return cmp;
                 }
-                return statements.toString().compareTo(other.statements.toString());
             }
+            return statements.compareTo(other.statements);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         object = null;
         return 1000;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         object = null;
         if (this == v) {
             return true;
-        } else if (v instanceof PreDefinedProcedure) {
-            if (this instanceof PreDefinedProcedure) {
-                final PreDefinedProcedure _this  = (PreDefinedProcedure) this;
-                final PreDefinedProcedure _other = (PreDefinedProcedure) v;
-                return _this.getName().equals(_other.getName());
-            } else {
-                return false;
-            }
-        } else if (v instanceof Procedure) {
+        } else if (v instanceof Procedure && ! (v instanceof PreDefinedProcedure)) {
             final Procedure other = (Procedure) v;
-            if (parameters.toString().equals(other.parameters.toString())) {
-                return statements.toString().equals(other.statements.toString());
-            } else {
-                return false;
+            if (parameters.size() == other.parameters.size()) {
+                for (int index = 0; index < parameters.size(); ++index) {
+                    if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
+                        return false;
+                    }
+                }
+                return statements.equalTo(other.statements);
             }
-        } else {
-            return false;
         }
+        return false;
     }
 
     private final static int initHashCode = Procedure.class.hashCode();
@@ -440,7 +436,7 @@ public class Procedure extends Value {
     @Override
     public int hashCode() {
         object = null;
-        return initHashCode + parameters.size();
+        return (initHashCode + parameters.size()) * 31 + statements.size();
     }
 
     /**

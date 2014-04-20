@@ -31,6 +31,12 @@ public class GreaterThan extends Expr {
     private final Expr lhs;
     private final Expr rhs;
 
+    /**
+     * Create new GreaterThan.
+     *
+     * @param lhs Expression to evaluate and compare.
+     * @param rhs Expression to evaluate and compare.
+     */
     public GreaterThan(final Expr lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
@@ -69,19 +75,20 @@ public class GreaterThan extends Expr {
             // note: rhs and lhs swapped!
             return rhs.eval(state).isLessThan(state, lhs.eval(state));
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"" + rhs + " < " + lhs +  "\":");
+            se.addToTrace("Error in substitute comparison \"" + rhs.toString(state) + " < " + rhs.toString(state) +  "\":");
             throw se;
         }
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -103,17 +110,24 @@ public class GreaterThan extends Expr {
         return result;
     }
 
-    public static GreaterThan termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a GreaterThan into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static GreaterThan termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new GreaterThan(lhs, rhs);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

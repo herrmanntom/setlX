@@ -616,7 +616,7 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public void removeMember(final Value element) {
+    public void removeMember(final State state, final Value element) {
         separateFromOriginal();
         list.remove(element);
         compress();
@@ -739,7 +739,7 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(this, false).appendString(state, sb, 0);
+        TermConverter.valueToCodeFragment(state, this, false).appendString(state, sb, 0);
     }
 
     @Override
@@ -849,12 +849,12 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 800;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlList) {

@@ -22,7 +22,7 @@ public class PD_gfx_textRight extends GfxFunction {
     protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final double x = doubleFromValue( state, args.get(0) );
         final double y = doubleFromValue( state, args.get(1) );
-        final String s = stringFromValue( args.get(2) );
+        final String s = stringFromValue( state, args.get(2) );
         StdDraw.textRight(x, y, s);
         return SetlBoolean.TRUE;
     }

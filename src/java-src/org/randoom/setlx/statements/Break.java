@@ -20,6 +20,9 @@ public class Break extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Break.class);
 
+    /**
+     * Singleton Break statement.
+     */
     public  final static Break  B                    = new Break();
 
     private Break() { }
@@ -31,6 +34,7 @@ public class Break extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -51,7 +55,15 @@ public class Break extends Statement {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
-    public static Break termToStatement(final Term term) throws TermConversionException {
+    /**
+     * Re-generate a Break statement from a term.
+     *
+     * @param  state                   Current state of the running setlX program.
+     * @param  term                    Term to regenerate from.
+     * @return                         Break statement.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Break termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 0) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

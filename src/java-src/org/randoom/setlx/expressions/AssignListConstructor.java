@@ -38,6 +38,11 @@ public class AssignListConstructor extends AssignableExpression {
 
     private final ExplicitList list;
 
+    /**
+     * Constructor.
+     *
+     * @param constructor Constructor for explicit list of variables.
+     */
     public AssignListConstructor(final ExplicitList constructor) {
         this.list = constructor;
     }
@@ -57,20 +62,22 @@ public class AssignListConstructor extends AssignableExpression {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        list.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        list.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     @Override
     public void collectVariablesWhenAssigned (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        list.collectVariablesWhenAssigned(boundVariables, unboundVariables, usedVariables);
+        list.collectVariablesWhenAssigned(state, boundVariables, unboundVariables, usedVariables);
     }
 
     @Override
@@ -79,7 +86,7 @@ public class AssignListConstructor extends AssignableExpression {
             list.assignUncloned(state, (IndexedCollectionValue) v, context);
         } else {
             throw new IncompatibleTypeException(
-                "The value '" + v + "' is unusable for assignment to \"" + this + "\"."
+                "The value '" + v.toString(state) + "' is unusable for assignment to \"" + this.toString(state) + "\"."
             );
         }
     }
@@ -90,7 +97,7 @@ public class AssignListConstructor extends AssignableExpression {
             return list.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope, context);
         } else {
             throw new IncompatibleTypeException(
-                "The value '" + v + "' is unusable for assignment to \"" + this + "\"."
+                "The value '" + v.toString(state) + "' is unusable for assignment to \"" + this.toString(state) + "\"."
             );
         }
     }
@@ -118,17 +125,24 @@ public class AssignListConstructor extends AssignableExpression {
         return result;
     }
 
-    public static AssignListConstructor termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a AssignListConstructor into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static AssignListConstructor termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList     list = (SetlList) term.firstMember();
-            final ExplicitList el   = ExplicitList.collectionValueToExplicitList(list);
+            final ExplicitList el   = ExplicitList.collectionValueToExplicitList(state, list);
             return new AssignListConstructor(el);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

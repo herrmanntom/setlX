@@ -25,10 +25,22 @@ import java.util.List;
 public class Condition extends CodeFragment {
     private final Expr expr;
 
+    /**
+     * Create a new Condition.
+     *
+     * @param expr Expression to evaluate to Boolean result.
+     */
     public Condition(final Expr expr) {
         this.expr = expr;
     }
 
+    /**
+     * Evaluate this condition.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Result of the evaluation.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public SetlBoolean eval(final State state) throws SetlException {
         final Value v = expr.eval(state);
         if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) { // is Boolean value?
@@ -40,11 +52,12 @@ public class Condition extends CodeFragment {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

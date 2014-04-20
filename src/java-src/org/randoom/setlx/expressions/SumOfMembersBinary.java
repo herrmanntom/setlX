@@ -44,21 +44,22 @@ public class SumOfMembersBinary extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        collection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        collection.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         Value value = null;
         if (collection.isReplaceable()) {
             try {
-                value = collection.eval(new State());
+                value = collection.eval(state);
             } catch (final Throwable t) {
                 value = null;
             }
         }
         if (value == null || ! (value instanceof CollectionValue) || ((CollectionValue) value).size() == 0) {
-            neutral.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            neutral.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -81,22 +82,34 @@ public class SumOfMembersBinary extends Expr {
         return result;
     }
 
-    public static SumOfMembersBinary termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a SumOfMembersBinary expression into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static SumOfMembersBinary termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr neutral    = TermConverter.valueToExpr(term.firstMember());
-            final Expr collection = TermConverter.valueToExpr(term.lastMember());
+            final Expr neutral    = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr collection = TermConverter.valueToExpr(state, term.lastMember());
             return new SumOfMembersBinary(neutral, collection);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

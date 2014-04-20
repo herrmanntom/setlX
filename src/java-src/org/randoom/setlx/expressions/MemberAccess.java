@@ -83,29 +83,31 @@ public class MemberAccess extends AssignableExpression {
             }
         } else {
             throw new IncompatibleTypeException(
-                "\"" + this + "\" is unusable for list assignment."
+                "\"" + this.toString(state) + "\" is unusable for list assignment."
             );
         }
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     @Override
     public void collectVariablesWhenAssigned (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         if (lhs instanceof AssignableExpression) {
             // lhs is read, not bound, so use collectVariablesAndOptimize()
-            lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -117,7 +119,7 @@ public class MemberAccess extends AssignableExpression {
             lhs.setObjectMember(state, memberID, v, context);
         } else {
             throw new IncompatibleTypeException(
-                "Left-hand-side of \"" + this + " := " + v + "\" is unusable for member assignment."
+                "Left-hand-side of \"" + this.toString(state) + " := " + v.toString(state) + "\" is unusable for member assignment."
             );
         }
     }
@@ -144,25 +146,21 @@ public class MemberAccess extends AssignableExpression {
     /**
      * Convert a term representing a MemberAccess into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting MemberAccess expression.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static MemberAccess termToExpr(final Term term) throws TermConversionException {
-        if (term.size() != 2) {
+    public static MemberAccess termToExpr(final State state, final Term term) throws TermConversionException {
+        if (term.size() != 2 || ! (term.lastMember() instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs    = TermConverter.valueToExpr(term.firstMember());
-            final Expr member = TermConverter.valueToExpr(term.lastMember());
-            if (member instanceof Variable) {
-                return new MemberAccess(lhs, (Variable) member);
-            } else {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-            }
+            final Expr     lhs    = TermConverter.valueToExpr(state, term.firstMember());
+            final Variable member = Variable.termToExpr(state, (Term) term.lastMember());
+            return new MemberAccess(lhs, member);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

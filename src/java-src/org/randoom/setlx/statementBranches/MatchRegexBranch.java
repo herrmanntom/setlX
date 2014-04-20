@@ -69,11 +69,11 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             if (patternReplacement != null) {
                 try {
                     this.runtimePattern = Pattern.compile(
-                        patternReplacement.getUnquotedString()
+                        patternReplacement.getUnquotedString(state)
                     );
                 } catch (final PatternSyntaxException pse) {
                     state.writeParserErrLn(
-                        "Error while parsing regex-pattern " + pattern + " {\n"
+                        "Error while parsing regex-pattern " + pattern.toString(state) + " {\n"
                       + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
                       + "}"
                     );
@@ -130,10 +130,10 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             final Value patternStr = pattern.eval(state);
             if ( ! (patternStr instanceof SetlString)) {
                 throw new IncompatibleTypeException(
-                    "Pattern argument '" + patternStr + "' is not a string."
+                    "Pattern argument '" + patternStr.toString(state) + "' is not a string."
                 );
             }
-            final String p = ((SetlString) patternStr).getUnquotedString();
+            final String p = ((SetlString) patternStr).getUnquotedString(state);
             // parse pattern
             try {
                 pttrn = Pattern.compile(p);
@@ -168,28 +168,29 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        pattern.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        pattern.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
         final List<String> tempAssigned = new ArrayList<String>();
         if (assignTo != null) {
-            assignTo.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+            assignTo.collectVariablesAndOptimize(state, new ArrayList<String>(), tempAssigned, tempAssigned);
         }
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempAssigned);
 
         if (condition != null) {
-            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
 
-        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
 
         if (assignTo != null) {
@@ -207,7 +208,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         state.appendLineStart(sb, tabs);
         sb.append("regex ");
 
-        sb.append(pattern);
+        pattern.appendString(state, sb, 0);
 
         if (assignTo != null) {
             sb.append(" as ");
@@ -253,28 +254,29 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
     /**
      * Convert a term representing a regex-branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static MatchRegexBranch termToBranch(final Term term) throws TermConversionException {
+    public static MatchRegexBranch termToBranch(final State state, final Term term) throws TermConversionException {
         if (term.size() != 4) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final Expr pattern = TermConverter.valueToExpr(term.firstMember());
+                final Expr pattern = TermConverter.valueToExpr(state, term.firstMember());
 
                 Expr assignTo = null;
                 if (! term.getMember(2).equals(new SetlString("nil"))) {
-                    assignTo = TermConverter.valueToExpr(term.getMember(2));
+                    assignTo = TermConverter.valueToExpr(state, term.getMember(2));
                 }
 
                 Condition condition = null;
                 if (! term.getMember(3).equals(new SetlString("nil"))) {
-                    condition = TermConverter.valueToCondition(term.getMember(3));
+                    condition = TermConverter.valueToCondition(state, term.getMember(3));
                 }
 
-                final Block block = TermConverter.valueToBlock(term.lastMember());
+                final Block block = TermConverter.valueToBlock(state, term.lastMember());
 
                 return new MatchRegexBranch(pattern, assignTo, condition, block);
             } catch (final SetlException se) {

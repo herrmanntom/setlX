@@ -26,20 +26,21 @@ public abstract class MatchAbstractScanBranch extends MatchAbstractBranch {
     /**
      * Convert a term representing a match branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    Term to convert.
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static   MatchAbstractScanBranch valueToMatchAbstractScanBranch(final Value value) throws TermConversionException {
+    public static   MatchAbstractScanBranch valueToMatchAbstractScanBranch(final State state, final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed MatchAbstractScanBranch");
         } else {
             final Term   term = (Term) value;
-            final String fc   = term.functionalCharacter().getUnquotedString();
+            final String fc   = term.getFunctionalCharacter();
             if (fc.equals(MatchRegexBranch.getFunctionalCharacter())) {
-                return MatchRegexBranch.termToBranch(term);
+                return MatchRegexBranch.termToBranch(state, term);
             } else if (fc.equals(MatchDefaultBranch.getFunctionalCharacter())) {
-                return MatchDefaultBranch.termToBranch(term);
+                return MatchDefaultBranch.termToBranch(state, term);
             } else {
                 throw new TermConversionException("malformed MatchScanAbstractScanBranch");
             }

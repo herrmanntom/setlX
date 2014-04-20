@@ -47,19 +47,20 @@ public class Assert extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         if (condition.eval(state) != SetlBoolean.TRUE) {
-            throw new AssertException("Assertion failed: " + message.eval(state).toString());
+            throw new AssertException("Assertion failed: " + message.eval(state).toString(state));
         }
         return null;
     }
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        message.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        message.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -87,16 +88,17 @@ public class Assert extends Statement {
     /**
      * Convert a term representing an Assert statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting statement of this conversion.
      * @throws TermConversionException If term is malformed.
      */
-    public static Assert termToStatement(final Term term) throws TermConversionException {
+    public static Assert termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition   = TermConverter.valueToCondition(term.firstMember());
-            final Expr      message     = TermConverter.valueToExpr(term.lastMember());
+            final Condition condition   = TermConverter.valueToCondition(state, term.firstMember());
+            final Expr      message     = TermConverter.valueToExpr(state, term.lastMember());
             return new Assert(condition, message);
         }
     }

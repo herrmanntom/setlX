@@ -3,11 +3,23 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
+/**
+ * Base class for SetlX statements, that have a result that can be printed.
+ */
 /*package*/ abstract class StatementWithPrintableResult extends Statement {
 
-    /*package*/ abstract void setPrintAfterEval();
+    /**
+     * Enable to print result after execution.
+     */
+    /*package*/ abstract void setPrintAfterExecution();
 
-    /*package*/ void printResult(final State state, final Value result) {
+    /**
+     * Print result value.
+     *
+     * @param state  Current state of the running setlX program.
+     * @param result Result value to print.
+     */
+    protected void printResult(final State state, final Value result) {
         final StringBuilder out = new StringBuilder();
 
         if (state.isInteractive()) {

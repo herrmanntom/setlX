@@ -158,7 +158,7 @@ public class Scan extends Statement {
                     charNr   += largestMatchSize;
                     columnNr += largestMatchSize;
                     // find lineEndings
-                    final String matched = string.getMembers(1, largestMatchSize).getUnquotedString();
+                    final String matched = string.getMembers(1, largestMatchSize).getUnquotedString(state);
                     int pos  = 0;
                     int tmp  = 0;
                     int size = 0;
@@ -202,17 +202,18 @@ public class Scan extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         /* The Variable in this statement get assigned temporarily.
            Collect it into a temporary list and remove it again before returning. */
         final List<String> tempAssigned = new ArrayList<String>();
         if (posVar != null) {
-            posVar.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+            posVar.collectVariablesAndOptimize(state, new ArrayList<String>(), tempAssigned, tempAssigned);
         }
         final int preBound = boundVariables.size();
         boundVariables.addAll(tempAssigned);
@@ -223,7 +224,7 @@ public class Scan extends Statement {
         for (final MatchAbstractBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
-            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+            br.collectVariablesAndOptimize(state, boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
                 boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
@@ -287,26 +288,27 @@ public class Scan extends Statement {
     /**
      * Convert a term representing a Scan statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting Scan Statement.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static Scan termToStatement(final Term term) throws TermConversionException {
+    public static Scan termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
                 Variable posVar = null;
                 if (! term.firstMember().equals(new SetlString("nil"))) {
-                    posVar = Variable.termToExpr((Term) term.firstMember());
+                    posVar = Variable.termToExpr(state, (Term) term.firstMember());
                 }
 
-                final Expr                          expr        = TermConverter.valueToExpr(term.getMember(2));
+                final Expr                          expr       = TermConverter.valueToExpr(state, term.getMember(2));
 
-                final SetlList                      branches    = (SetlList) term.lastMember();
-                final List<MatchAbstractScanBranch> branchList  = new ArrayList<MatchAbstractScanBranch>(branches.size());
+                final SetlList                      branches   = (SetlList) term.lastMember();
+                final List<MatchAbstractScanBranch> branchList = new ArrayList<MatchAbstractScanBranch>(branches.size());
                 for (final Value v : branches) {
-                    branchList.add(MatchAbstractScanBranch.valueToMatchAbstractScanBranch(v));
+                    branchList.add(MatchAbstractScanBranch.valueToMatchAbstractScanBranch(state, v));
                 }
 
                 return new Scan(expr, posVar, branchList);

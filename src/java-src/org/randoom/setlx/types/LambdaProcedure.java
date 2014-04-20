@@ -14,10 +14,10 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This class represents a lambda definition.
+ * This class represents a lambda procedure.
  *
  * grammar rule:
- * lambdaDefinition
+ * lambdaProcedure
  *     : lambdaParameters    '|->' sum
  *     ;
  *
@@ -25,24 +25,25 @@ import java.util.List;
  *       ----------------          ===
  *    parameters (inherited)       expr
  */
-public class LambdaDefinition extends Procedure {
+public class LambdaProcedure extends Procedure {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LambdaDefinition.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LambdaProcedure.class);
 
     private final Expr expr; // expression in the body of the definition; used directly only for toString() and toTerm()
 
     /**
      * Create new lambda definition.
      *
+     * @param state      Current state of the running setlX program.
      * @param parameters List of parameters.
      * @param expr       lambda-expression.
      */
-    public LambdaDefinition(final List<ParameterDef> parameters, final Expr expr) {
-        super(parameters, new Block(1));
+    public LambdaProcedure(final State state, final List<ParameterDef> parameters, final Expr expr) {
+        super(parameters, new Block(state, 1));
         this.expr = expr;
         statements.add(new Return(expr));
     }
-    private LambdaDefinition(
+    private LambdaProcedure(
         final List<ParameterDef> parameters,
         final Block              statements,
         final SetlHashMap<Value> closure,
@@ -53,14 +54,14 @@ public class LambdaDefinition extends Procedure {
     }
 
     @Override
-    public LambdaDefinition createCopy() {
-        return new LambdaDefinition(parameters, expr);
+    public LambdaProcedure createCopy() {
+        return new LambdaProcedure(parameters, statements, null, expr);
     }
 
     @Override
-    public LambdaDefinition clone() {
+    public LambdaProcedure clone() {
         if (closure != null || object != null) {
-            return new LambdaDefinition(parameters, statements, closure, expr);
+            return new LambdaProcedure(parameters, statements, closure, expr);
         } else {
             return this;
         }
@@ -106,21 +107,29 @@ public class LambdaDefinition extends Procedure {
         return result;
     }
 
-    public static LambdaDefinition termToValue(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a LambdaProcedure into such a procedure.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting LambdaProcedure.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static LambdaProcedure termToValue(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList            paramList   = (SetlList) term.firstMember();
-            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            final SetlList           paramList  = (SetlList) term.firstMember();
+            final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
             for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(v));
+                parameters.add(ParameterDef.valueToParameterDef(state, v));
             }
-            final Expr                expr        = TermConverter.valueToExpr(term.lastMember());
-            return new LambdaDefinition(parameters, expr);
+            final Expr               expr       = TermConverter.valueToExpr(state, term.lastMember());
+            return new LambdaProcedure(state, parameters, expr);
         }
     }
 
-    private final static int initHashCode = LambdaDefinition.class.hashCode();
+    private final static int initHashCode = LambdaProcedure.class.hashCode();
 
     @Override
     public int hashCode() {

@@ -25,13 +25,18 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     private final Expr    expr;
     private       boolean printAfterEval;
 
+    /**
+     * Create a new ExpressionStatement.
+     *
+     * @param expression Contained expression.
+     */
     public ExpressionStatement(final Expr expression) {
         this.expr           = expression;
         this.printAfterEval = false;
     }
 
     /*package*/ @Override
-    void setPrintAfterEval() {
+    void setPrintAfterExecution() {
         printAfterEval = true;
     }
 
@@ -46,11 +51,12 @@ public class ExpressionStatement extends StatementWithPrintableResult {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

@@ -295,7 +295,7 @@ public class SetlX {
         // parse content of all files
         try {
             if (expression != null) {
-                final Block exp = new Block();
+                final Block exp = new Block(state);
                 exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(state, expression)));
                 exp.markLastExprStatement();
                 programs.add(exp);
@@ -350,7 +350,7 @@ public class SetlX {
         if (termLoop) {
             for (int i = 0; i < programs.size(); ++i) {
                 try {
-                    programs.set(i, (Block) TermConverter.valueToStatement(programs.get(i).toTerm(state)));
+                    programs.set(i, (Block) TermConverter.valueToStatement(state, programs.get(i).toTerm(state)));
                 } catch (final TermConversionException tce) {
                     state.errWriteLn("Error during termLoop!");
                     if (state.isRuntimeDebuggingEnabled()) {

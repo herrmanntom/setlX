@@ -53,12 +53,13 @@ public class Return extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         if (result != null) {
-            result.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            result.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -91,17 +92,18 @@ public class Return extends Statement {
     /**
      * Convert a term representing an return statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting return statement.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static Return termToStatement(final Term term) throws TermConversionException {
+    public static Return termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             Expr expr = null;
             if (! term.firstMember().equals(new SetlString("nil"))) {
-                expr = TermConverter.valueToExpr(term.firstMember());
+                expr = TermConverter.valueToExpr(state, term.firstMember());
             }
             return new Return(expr);
         }

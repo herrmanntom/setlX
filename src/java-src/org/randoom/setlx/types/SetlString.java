@@ -455,7 +455,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public SetlBoolean containsMember(final State state, final Value element) throws IncompatibleTypeException {
-        if (content.indexOf(element.getUnquotedString()) >= 0) {
+        if (content.indexOf(element.getUnquotedString(state)) >= 0) {
             return SetlBoolean.TRUE;
         } else {
             return SetlBoolean.FALSE;
@@ -617,8 +617,8 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public void removeMember(final Value element) throws IncompatibleTypeException {
-        final String needle = element.getUnquotedString();
+    public void removeMember(final State state, final Value element) throws IncompatibleTypeException {
+        final String needle = element.getUnquotedString(state);
         final int    pos    = content.indexOf(needle);
         if (pos >= 0) {
             separateFromOriginal();
@@ -679,7 +679,7 @@ public class SetlString extends IndexedCollectionValue {
             );
         }
 
-        final String value = v.getUnquotedString();
+        final String value = v.getUnquotedString(state);
 
         // in java the index is one lower
         --index;
@@ -729,7 +729,7 @@ public class SetlString extends IndexedCollectionValue {
                 "Pattern '" + pattern  + "' is not a string."
             );
         }
-        final String p = ((SetlString) pattern).getUnquotedString();
+        final String p = ((SetlString) pattern).getUnquotedString(state);
 
         try {
             // parse pattern
@@ -832,7 +832,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public String getUnquotedString() {
+    public String getUnquotedString(final State state) {
         return content.toString();
     }
 
@@ -883,7 +883,7 @@ public class SetlString extends IndexedCollectionValue {
         } else if (other instanceof Term ) {
             final Term o = (Term) other;
             try {
-                if (o.functionalCharacter(state).getUnquotedString().equals(StringConstructor.getFunctionalCharacter())
+                if (o.functionalCharacter(state).getUnquotedString(state).equals(StringConstructor.getFunctionalCharacter())
                     && o.size() == 2 && o.firstMember().size() == 1 && o.lastMember().size() == 0
                 ) {
                     return matchesTerm(state, o.firstMember().firstMember(state));
@@ -909,12 +909,12 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 600;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlString) {

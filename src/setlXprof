@@ -23,7 +23,7 @@ javaParameters=""
 # parameters for developing the interpreter
 #javaParameters="$javaParameters -Xfuture"
 #javaParameters="$javaParameters -Xprof"
-javaParameters="$javaParameters -Xrunhprof:cpu=samples,depth=6,doe=y"
+javaParameters="$javaParameters -Xrunhprof:cpu=samples,interval=2,depth=8,doe=y"
 
 ################################################################################
 

@@ -67,6 +67,7 @@ public abstract class AssignableExpression extends Expr {
      * @param state          Current state of the running setlX program.
      * @param value          Value to assign.
      * @param outerScope     Root scope of scopes to check.
+     * @param checkObjects   Also check objects if they have 'value' set in them.
      * @param context        Context description of the assignment for trace.
      * @return               True, if variable is undefined or already equal to 'value'.
      * @throws SetlException Thrown in case of some (user-) error.
@@ -75,6 +76,7 @@ public abstract class AssignableExpression extends Expr {
         final State         state,
         final Value         value,
         final VariableScope outerScope,
+        final boolean       checkObjects,
         final String        context
     ) throws SetlException {
         throw new UndefinedOperationException(

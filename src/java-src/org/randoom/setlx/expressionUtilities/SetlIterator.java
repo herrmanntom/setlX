@@ -250,9 +250,9 @@ public class SetlIterator extends CodeFragment {
 
             final Value iterationValue = collection.eval(state); // trying to iterate over this value
             if (iterationValue instanceof CollectionValue) {
-                final CollectionValue   coll        = (CollectionValue) iterationValue;
+                final CollectionValue coll       = (CollectionValue) iterationValue;
                 // scope for inner execution/next iterator
-                final VariableScope     innerScope  = state.getScope().createInteratorBlock();
+                final VariableScope   innerScope = state.getScope().createInteratorBlock();
                 // iterate over items
                 for (final Value v: coll) {
                     if (state.executionStopped) {
@@ -265,7 +265,10 @@ public class SetlIterator extends CodeFragment {
                     final int writeThroughToken = innerScope.unsetWriteThrough();
 
                     // assign value from collection
-                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, FUNCTIONAL_CHARACTER);
+                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, false, FUNCTIONAL_CHARACTER);
+
+                    // reset WriteThrough, because changes during execution are not strictly local
+                    innerScope.setWriteThrough(writeThroughToken);
 
                     /*
                      * This check is done to allow the following statement to work as expected:
@@ -279,8 +282,6 @@ public class SetlIterator extends CodeFragment {
                         continue;
                     }
 
-                    // reset WriteThrough, because changes during execution are not strictly local
-                    innerScope.setWriteThrough(writeThroughToken);
                     /* Starts iteration of next iterator or execution if this is the
                        last iterator.
                        Stops iteration if requested by execution.                 */

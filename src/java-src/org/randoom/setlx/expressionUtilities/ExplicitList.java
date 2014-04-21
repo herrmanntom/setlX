@@ -129,6 +129,7 @@ public class ExplicitList extends CollectionBuilder {
      * @param state          Current state of the running setlX program.
      * @param collection     Collection to assign from.
      * @param outerScope     Root scope of scopes to check.
+     * @param checkObjects   Also check objects if they have 'value' set in them.
      * @param context        Context description of the assignment for trace.
      * @return               True, if variable is undefined or already equal the the value to be set.
      * @throws SetlException Thrown in case of some (user-) error.
@@ -137,6 +138,7 @@ public class ExplicitList extends CollectionBuilder {
         final State                  state,
         final IndexedCollectionValue collection,
         final VariableScope          outerScope,
+        final boolean                checkObjects,
         final String                 context
     ) throws SetlException {
         final int size = list.size();
@@ -148,7 +150,7 @@ public class ExplicitList extends CollectionBuilder {
         for (int i = 0; i < size; ++i) {
             final Expr expr = list.get(i);
             if (expr instanceof AssignableExpression) {
-                if ( ! ((AssignableExpression) expr).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope, context)) {
+                if ( ! ((AssignableExpression) expr).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope, checkObjects, context)) {
                     return false;
                 }
             } else {

@@ -921,11 +921,12 @@ public class State {
      * @param var            Variable to set.
      * @param value          Value to set variable to.
      * @param outerScope     Scope to up to which needs to be checked.
+     * @param checkObjects   Also check objects if they have 'value' set in them.
      * @param context        Context description of the assignment for trace.
      * @return               False if linked scope contained a different value under this variable, true otherwise.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final String context) throws SetlException {
+    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
         final Value now = classDefinitions.get(var);
         if (now != null) {
             if (now.equalTo(value)) {
@@ -934,15 +935,11 @@ public class State {
                 return false;
             }
         }
-        if (traceAssignments) {
-            final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope);
-            if (result) {
-                printTrace(var, value, context);
-            }
-            return result;
-        } else {
-            return variableScope.storeValueCheckUpTo(this, var, value, outerScope);
+        final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope, checkObjects);
+        if (traceAssignments && result) {
+            printTrace(var, value, context);
         }
+        return result;
     }
 
     /**

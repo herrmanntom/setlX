@@ -36,17 +36,20 @@ public class VariableScope {
     /*package*/ final static ScopeBinding ACCESS_DENIED_BINDING      = new ScopeBinding(Integer.MAX_VALUE, 0l, ACCESS_DENIED_VALUE);
 
     private static class ScopeBindings {
-        private     final Timer                                     timer;
-        /*package*/       int                                       currentScopeDepth;
-        /*package*/ final ArrayList<Long>                           validScopeGenerations;
-        /*package*/       HashMap<String, LinkedList<ScopeBinding>> allBindings;
-        /*package*/       boolean                                   cleanAllBindings;
+        private final Timer                                     timer;
+        private       int                                       currentScopeDepth;
+        private final ArrayList<Long>                           validScopeGenerations;
+        private       HashMap<String, LinkedList<ScopeBinding>> allBindings;
+        private       LinkedList<ScopeBinding>                  thisBindings;
 
-        /*package*/ ScopeBindings() {
+        private       boolean                                   cleanAllBindings;
+
+        private ScopeBindings() {
             timer                 = new Timer(true);
             currentScopeDepth     = 0;
             validScopeGenerations = new ArrayList<Long>();
             allBindings           = new HashMap<String, LinkedList<ScopeBinding>>();
+            thisBindings          = null;
             cleanAllBindings      = false;
 
             timer.schedule(new TimerTask() {
@@ -64,10 +67,10 @@ public class VariableScope {
     }
 
     private static class ScopeBinding {
-        /*package*/ int   scopeDepth;
-        /*package*/ long  scopeGeneration;
-        /*package*/ Value value;
-        /*package*/ ScopeBinding (final int scopeDepth, final long scopeGeneration, final Value value) {
+        private final int   scopeDepth;
+        private final long  scopeGeneration;
+        private       Value value;
+        private ScopeBinding (final int scopeDepth, final long scopeGeneration, final Value value) {
             this.scopeDepth      = scopeDepth;
             this.scopeGeneration = scopeGeneration;
             this.value           = value;
@@ -192,6 +195,9 @@ public class VariableScope {
             }
         }
         scopeBindings.allBindings = cleanBindings;
+        if (scopeBindings.thisBindings != null) {
+            clearDeprecatedBindings(scopeBindings.thisBindings);
+        }
         System.gc();
     }
 
@@ -202,7 +208,7 @@ public class VariableScope {
      * @param thisObject Object to link.
      */
     public void linkToThisObject(final SetlObject thisObject) {
-        setBinding("this", thisObject);
+        setBinding(null, "this", thisObject);
     }
 
     /**
@@ -242,7 +248,9 @@ public class VariableScope {
     private ScopeBinding clearDeprecatedBindings(final LinkedList<ScopeBinding> bindings) {
         ScopeBinding last = bindings.peekLast();
         while (last != null) {
-            if (last.scopeDepth > scopeBindings.currentScopeDepth || last.scopeGeneration < scopeBindings.validScopeGenerations.get(last.scopeDepth)) {
+            if (last.scopeDepth > scopeBindings.currentScopeDepth ||
+                last.scopeGeneration < scopeBindings.validScopeGenerations.get(last.scopeDepth)
+            ) {
                 bindings.removeLast();
                 last = bindings.peekLast();
             } else {
@@ -266,7 +274,7 @@ public class VariableScope {
             return new SetlString(new String(v));
         }
 
-        final ScopeBinding binding = getBinding(state, variable);
+        final ScopeBinding binding = getBinding(state, null, variable, true);
 
         if (binding != null && binding.scopeDepth == scopeDepth) {
             return binding.value;
@@ -278,9 +286,19 @@ public class VariableScope {
         return null;
     }
 
-    private ScopeBinding getBinding(final State state, final String variable) throws SetlException {
-        final LinkedList<ScopeBinding> bindings = scopeBindings.allBindings.get(variable);
-        ScopeBinding                   binding  = null;
+    private ScopeBinding getBinding(final State state, final LinkedList<ScopeBinding> locatedBindings, final String variable, final boolean checkObjects) throws SetlException {
+        final boolean            isThisBinding = variable.equals("this");
+        LinkedList<ScopeBinding> bindings      = null;
+        ScopeBinding             binding       = null;
+
+        if (isThisBinding) {
+            bindings = scopeBindings.thisBindings;
+        } else if (locatedBindings != null) {
+            bindings = locatedBindings;
+        } else {
+            bindings = scopeBindings.allBindings.get(variable);
+        }
+
         if (bindings != null) {
             binding = clearDeprecatedBindings(bindings);
             if (binding != null) {
@@ -299,32 +317,45 @@ public class VariableScope {
             }
         }
         // check if some attached object might hold the answer
-        final LinkedList<ScopeBinding> objects = scopeBindings.allBindings.get("this");
-        if (objects != null) {
-            ScopeBinding                 object   = clearDeprecatedBindings(objects);
-            final Iterator<ScopeBinding> iterator = objects.descendingIterator();
-            if (object != null && iterator.hasNext()) {
-                iterator.next(); // "throw away" last one, as that is 'object'
-            }
-            while (object != null && (binding == null || binding.scopeDepth < object.scopeDepth)) {
-                if (object.scopeDepth > scopeDepth) {
-                    if (iterator.hasNext()) {
-                        object = iterator.next();
-                    } else {
-                        break;
-                    }
-                } else {
-                    final Value member = object.value.getObjectMemberUnCloned(state, variable);
-                    if (member != Om.OM) {
-                        if (object.scopeDepth >= restrictedToFunctionsBeneath || object.value instanceof Procedure) {
-                            return new ScopeBinding(object.scopeDepth, object.scopeGeneration, member);
-                        } else {
-                            return ACCESS_DENIED_BINDING;
+        if (checkObjects && ! isThisBinding) {
+            final LinkedList<ScopeBinding> objects = scopeBindings.thisBindings;
+            if (objects != null) {
+                ScopeBinding           object   = clearDeprecatedBindings(objects);
+                Iterator<ScopeBinding> iterator = null;
+                while (object != null && (binding == null || binding.scopeDepth < object.scopeDepth)) {
+                    if (object.scopeDepth > scopeDepth) {
+                        if (iterator == null) {
+                            iterator = objects.descendingIterator();
+                            if (object != null && iterator.hasNext()) {
+                                iterator.next(); // "throw away" last one, as that already is current 'object'
+                            }
                         }
-                    } else if (iterator.hasNext()) {
-                        object = iterator.next();
+                        if (iterator.hasNext()) {
+                            object = iterator.next();
+                        } else {
+                            break;
+                        }
                     } else {
-                        break;
+                        final Value member = object.value.getObjectMemberUnCloned(state, variable);
+                        if (member != Om.OM) {
+                            if (object.scopeDepth >= restrictedToFunctionsBeneath || object.value instanceof Procedure) {
+                                return new ScopeBinding(object.scopeDepth, object.scopeGeneration, member);
+                            } else {
+                                return ACCESS_DENIED_BINDING;
+                            }
+                        } else {
+                            if (iterator == null) {
+                                iterator = objects.descendingIterator();
+                                if (object != null && iterator.hasNext()) {
+                                    iterator.next(); // "throw away" last one, as that already is current 'object'
+                                }
+                            }
+                            if (iterator.hasNext()) {
+                                object = iterator.next();
+                            } else {
+                                break;
+                            }
+                        }
                     }
                 }
             }
@@ -349,7 +380,7 @@ public class VariableScope {
      */
     private void collectBindings(final State state, final SetlHashMap<Value> result) throws SetlException {
         // add bindings from attached objects
-        final LinkedList<ScopeBinding> objects = scopeBindings.allBindings.get("this");
+        final LinkedList<ScopeBinding> objects = scopeBindings.thisBindings;
         if (objects != null) {
             for (final ScopeBinding object : objects) {
                 ((SetlObject) object.value).collectBindings(result, object.scopeDepth < restrictedToFunctionsBeneath);
@@ -357,8 +388,9 @@ public class VariableScope {
         }
         // add all other bindings; getBinding() checks if same variable is member of attached object, so it is always
         // save to replace bindings from attached objects inserted before
-        for (final String variable : scopeBindings.allBindings.keySet()) {
-            final ScopeBinding binding = getBinding(state, variable);
+        for (final Map.Entry<String, LinkedList<ScopeBinding>> entry : scopeBindings.allBindings.entrySet()) {
+            final String       variable = entry.getKey();
+            final ScopeBinding binding  = getBinding(state, entry.getValue(), variable, true);
             if (binding != null && binding != ACCESS_DENIED_BINDING) {
                 result.put(variable, binding.value);
             }
@@ -378,7 +410,7 @@ public class VariableScope {
                 "'this' may not be reassigned."
             );
         }
-        setBinding(variable, value);
+        setBinding(null, variable, value);
     }
 
     /**
@@ -390,11 +422,18 @@ public class VariableScope {
      * @param variable       Name of the variable to store.
      * @param value          New value to store.
      * @param outerScope     Check scope chain up until this scope.
+     * @param checkObjects   Also check objects if they have 'value' set in them.
      * @return               False if linked scope contained a different value under this variable, true otherwise.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    /*package*/ boolean storeValueCheckUpTo(final State state, final String variable, final Value value, final VariableScope outerScope) throws SetlException {
-        final ScopeBinding scope = getBinding(state, variable);
+    /*package*/ boolean storeValueCheckUpTo(final State state, final String variable, final Value value, final VariableScope outerScope, final boolean checkObjects) throws SetlException {
+        if (variable.equals("this")) {
+            throw new IllegalRedefinitionException(
+                "'this' may not be reassigned."
+            );
+        }
+        final LinkedList<ScopeBinding> bindings = scopeBindings.allBindings.get(variable);
+        final ScopeBinding             scope    = getBinding(state, bindings, variable, checkObjects);
 
         if (scope != null && scope != ACCESS_DENIED_BINDING && scope.scopeDepth < scopeDepth && (outerScope == null || scope.scopeDepth > outerScope.scopeDepth)) {
             // found some existing value
@@ -405,32 +444,48 @@ public class VariableScope {
             }
         }
         // to get here, `variable' is not stored in any upper scope up to outerScope
-        setBinding(variable, value);
+        setBinding(bindings, variable, value);
         return true;
     }
 
-    private void setBinding(final String variable, final Value value) {
-        LinkedList<ScopeBinding> bindings = scopeBindings.allBindings.get(variable);
-        ScopeBinding             scope    = null;
+    private void setBinding(final LinkedList<ScopeBinding> locatedBindings, final String variable, final Value value) {
+        final boolean            isThisBinding = variable.equals("this");
+        LinkedList<ScopeBinding> bindings      = null;
+        ScopeBinding             binding       = null;
+
+        if (isThisBinding) {
+            bindings = scopeBindings.thisBindings;
+        } else if (locatedBindings != null) {
+            bindings = locatedBindings;
+        } else {
+            bindings = scopeBindings.allBindings.get(variable);
+        }
+
         if (bindings == null) {
             bindings = new LinkedList<ScopeBinding>();
-            scopeBindings.allBindings.put(variable, bindings);
+            if (isThisBinding) {
+                scopeBindings.thisBindings = bindings;
+            } else {
+                scopeBindings.allBindings.put(variable, bindings);
+            }
+        } else if (locatedBindings != null) {
+            binding = locatedBindings.peekLast();
         } else {
-            scope = clearDeprecatedBindings(bindings);
+            binding = clearDeprecatedBindings(bindings);
         }
-        if (scope != null) {
-            if (scope.scopeDepth > scopeDepth) {
+        if (binding != null) {
+            if (binding.scopeDepth > scopeDepth) {
                 final Iterator<ScopeBinding> iterator = bindings.descendingIterator();
-                while (iterator.hasNext() && scope.scopeDepth > scopeDepth) {
-                    scope = iterator.next();
+                while (iterator.hasNext() && binding.scopeDepth > scopeDepth) {
+                    binding = iterator.next();
                 }
-                if (scope.scopeDepth > scopeDepth) {
+                if (binding.scopeDepth > scopeDepth) {
                     bindings.addFirst(new ScopeBinding(writeAsDeepAs, writeAsDeepAsGeneration, value));
                     return;
                 }
             }
-            if (scope.scopeDepth >= writeAsDeepAs) {
-                scope.value = value;
+            if (binding.scopeDepth >= writeAsDeepAs) {
+                binding.value = value;
                 return;
             }
         }

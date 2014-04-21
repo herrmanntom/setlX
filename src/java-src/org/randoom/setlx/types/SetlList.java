@@ -831,10 +831,9 @@ public class SetlList extends IndexedCollectionValue {
             final Iterator<Value> iterSecond = ((SetlList) v).list.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
                 final int cmp = iterFirst.next().compareTo(iterSecond.next());
-                if (cmp == 0) {
-                    continue;
+                if (cmp != 0) {
+                    return cmp;
                 }
-                return cmp;
             }
             if (iterFirst.hasNext()) {
                 return 1;

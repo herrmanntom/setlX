@@ -92,9 +92,9 @@ public class AssignListConstructor extends AssignableExpression {
     }
 
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) throws SetlException {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
         if (v instanceof IndexedCollectionValue) {
-            return list.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope, context);
+            return list.assignUnclonedCheckUpTo(state, (IndexedCollectionValue) v, outerScope, checkObjects, context);
         } else {
             throw new IncompatibleTypeException(
                 "The value '" + v.toString(state) + "' is unusable for assignment to \"" + this.toString(state) + "\"."

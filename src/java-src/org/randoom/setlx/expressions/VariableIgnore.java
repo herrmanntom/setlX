@@ -69,7 +69,7 @@ public class VariableIgnore extends AssignableExpression {
     }
 
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final boolean checkObjects, final String context) {
         return true;
     }
 

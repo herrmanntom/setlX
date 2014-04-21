@@ -95,8 +95,8 @@ public class Variable extends AssignableExpression {
     }
 
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) throws SetlException {
-        return state.putValueCheckUpTo(id, v, outerScope, context);
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
+        return state.putValueCheckUpTo(id, v, outerScope, checkObjects, context);
     }
 
     /* string operations */

@@ -14,7 +14,7 @@ public class PD_gfx_show extends GfxFunction {
     private PD_gfx_show(){
         super();
         addParameter("t");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

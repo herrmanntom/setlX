@@ -2,9 +2,11 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.utilities.State;
 
-// printErr(value, ...)          : same as print, but prints into stderr
-
+/**
+ *  printErr([value], ...) : Same as print, but prints into stderr.
+ */
 public class PD_printErr extends PD_print {
+    /** Definition of the PreDefinedProcedure `printErr'. */
     public final static PreDefinedProcedure DEFINITION = new PD_printErr();
 
     private PD_printErr() {

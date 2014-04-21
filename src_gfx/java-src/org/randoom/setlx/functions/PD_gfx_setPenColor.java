@@ -19,7 +19,7 @@ public class PD_gfx_setPenColor extends GfxFunction {
     public PD_gfx_setPenColor(){
         super();
         addParameter("color");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class PD_gfx_text extends GfxFunction {
         addParameter("y");
         addParameter("string");
         addParameter("degrees");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(3);
     }
 
     @Override

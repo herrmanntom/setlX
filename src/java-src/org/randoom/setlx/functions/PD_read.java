@@ -22,7 +22,7 @@ public class PD_read extends PreDefinedProcedure {
         super();
         addParameter("message");
         enableUnlimitedParameters();
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

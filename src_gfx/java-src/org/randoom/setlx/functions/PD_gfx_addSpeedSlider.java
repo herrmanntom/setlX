@@ -14,7 +14,7 @@ public class PD_gfx_addSpeedSlider extends PreDefinedProcedure {
     protected PD_gfx_addSpeedSlider() {
         super();
         addParameter("add");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

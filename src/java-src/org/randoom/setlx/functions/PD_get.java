@@ -19,7 +19,7 @@ public class PD_get extends PreDefinedProcedure {
         super();
         addParameter("message");
         enableUnlimitedParameters();
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

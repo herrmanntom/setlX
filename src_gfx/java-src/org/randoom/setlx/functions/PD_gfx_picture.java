@@ -20,7 +20,7 @@ public class PD_gfx_picture extends GfxFunction {
         addParameter("picture");
         addParameter("w");
         addParameter("h");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(3);
     }
 
 	@Override

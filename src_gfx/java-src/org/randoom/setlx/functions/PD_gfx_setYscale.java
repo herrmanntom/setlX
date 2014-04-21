@@ -15,7 +15,7 @@ public class PD_gfx_setYscale extends GfxFunction {
         super();
         addParameter("min");
         addParameter("max");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

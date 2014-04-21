@@ -1,7 +1,6 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.expressions.Variable;
@@ -33,18 +32,13 @@ public class PD_matches extends PreDefinedProcedure {
         addParameter("string");
         addParameter("pattern");
         addParameter("captureGroups");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(2);
 
         assignTerm = null;
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        if (args.size() < 2) {
-            throw new IncorrectNumberOfParametersException(
-                "Procedure is defined with a larger number of parameters (2 or 3)."
-            );
-        }
         final Value string     = args.get(0);
         final Value patternStr = args.get(1);
         final Value capture    = (args.size() == 3)? args.get(2) : null;

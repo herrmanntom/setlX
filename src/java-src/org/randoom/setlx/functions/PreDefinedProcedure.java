@@ -13,8 +13,8 @@ import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public abstract class PreDefinedProcedure extends Procedure {
     private String  name;
     private int     nameHashCode;
     private boolean unlimitedParameters;
-    private boolean allowFewerParameters;
+    private int     minimumNumberOfParameters;
 
     /**
      * Initialize a new predefined procedure.
@@ -37,10 +37,10 @@ public abstract class PreDefinedProcedure extends Procedure {
      */
     protected PreDefinedProcedure() {
         super(new ArrayList<ParameterDef>(), new Block(null));
-        this.name                 = null;
-        this.nameHashCode         = -1;
-        this.unlimitedParameters  = false;
-        this.allowFewerParameters = false;
+        this.name                      = null;
+        this.nameHashCode              = -1;
+        this.unlimitedParameters       = false;
+        this.minimumNumberOfParameters = 0;
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @param param Parameter name to add.
      */
     protected final void addParameter(final String param) {
-        parameters.add(new ParameterDef(param, ParameterType.READ_ONLY));
+        addParameter(param, ParameterType.READ_ONLY);
     }
 
     /**
@@ -88,20 +88,26 @@ public abstract class PreDefinedProcedure extends Procedure {
      */
     protected final void addParameter(final String param, final ParameterType type) {
         parameters.add(new ParameterDef(param, type));
+        ++minimumNumberOfParameters;
     }
 
     /**
      * Allow call with unlimited number of parameters.
      */
     protected final void enableUnlimitedParameters() {
-        unlimitedParameters    = true;
+        unlimitedParameters = true;
     }
 
     /**
-     * Allow call with a fewer number of parameters then specified.
+     * Allow call with more than this number of parameters, up to a maximum of the number of parameters.
+     *
+     * @param minimumNumberOfParameters Minimum parameters that must be supplied to the call.
      */
-    protected final void allowFewerParameters() {
-        allowFewerParameters   = true;
+    protected final void setMinimumNumberOfParameters(final int minimumNumberOfParameters) {
+        if (minimumNumberOfParameters > parameters.size() || minimumNumberOfParameters < 0) {
+            throw new InvalidParameterException("minimumNumberOfParameters in invalid");
+        }
+        this.minimumNumberOfParameters = minimumNumberOfParameters;
     }
 
     /**
@@ -125,74 +131,36 @@ public abstract class PreDefinedProcedure extends Procedure {
 
             final int paramSize = parameters.size();
             final int argsSize  = args.size();
-            if (paramSize < argsSize) {
-                if (unlimitedParameters) {
-                    // unlimited means: at least the number of defined parameters or more
-                    // no error
-                } else {
-                    final StringBuilder error = new StringBuilder();
-                    error.append("'");
-                    error.append(getName());
-                    error.append("(");
-                    final Iterator<ParameterDef> iter = parameters.iterator();
-                    while (iter.hasNext()) {
-                        if (allowFewerParameters) {
-                            error.append("[");
-                        }
-                        iter.next().appendString(state, error, 0);
-                        if (allowFewerParameters) {
-                            error.append("]");
-                        }
-                        if (iter.hasNext()) {
-                            error.append(", ");
-                        }
-                    }
-                    error.append(")");
-                    error.append("' is defined with ");
-                    if (allowFewerParameters) {
-                        error.append("fewer parameters.");
-                    } else {
-                        error.append(parameters.size());
-                        error.append(" instead of ");
-                        error.append(argsSize);
-                        error.append(" parameters.");
-                    }
-                    throw new IncorrectNumberOfParametersException(error.toString());
+            if (argsSize > paramSize && ! unlimitedParameters) {
+                final StringBuilder error = new StringBuilder();
+                error.append("'");
+                error.append(getName());
+                appendParameters(state, error);
+                error.append("' is defined with ");
+                if (minimumNumberOfParameters != paramSize) {
+                    error.append("between ");
+                    error.append(minimumNumberOfParameters);
+                    error.append(" and ");
                 }
-            } else if (paramSize > argsSize) {
-                if (allowFewerParameters) {
-                    // fewer parameters are allowed
-                    // no error
-                } else {
-                    final StringBuilder error = new StringBuilder();
-                    error.append("'");
-                    error.append(getName());
-                    error.append("(");
-                    final Iterator<ParameterDef> iter = parameters.iterator();
-                    while (iter.hasNext()) {
-                        iter.next().appendString(state, error, 0);
-                        if (iter.hasNext()) {
-                            error.append(", ");
-                        }
-                    }
-                    if (unlimitedParameters) {
-                        if (parameters.size() > 0) {
-                            error.append(", ");
-                        }
-                        error.append("...");
-                    }
-                    error.append(")");
-                    error.append("' is defined with ");
-                    if (unlimitedParameters) {
-                        error.append("more parameters");
-                    } else {
-                        error.append(parameters.size());
-                        error.append(" instead of ");
-                        error.append(argsSize);
-                        error.append(" parameters.");
-                    }
-                    throw new IncorrectNumberOfParametersException(error.toString());
+                error.append(paramSize);
+                error.append(" instead of ");
+                error.append(argsSize);
+                error.append(" parameters.");
+                throw new IncorrectNumberOfParametersException(error.toString());
+            } else if (argsSize < minimumNumberOfParameters) {
+                final StringBuilder error = new StringBuilder();
+                error.append("'");
+                error.append(getName());
+                appendParameters(state, error);
+                error.append("' is defined with ");
+                if (minimumNumberOfParameters != paramSize) {
+                    error.append("at least ");
                 }
+                error.append(minimumNumberOfParameters);
+                error.append(" instead of ");
+                error.append(argsSize);
+                error.append(" parameters.");
+                throw new IncorrectNumberOfParametersException(error.toString());
             }
 
             // evaluate arguments
@@ -242,27 +210,9 @@ public abstract class PreDefinedProcedure extends Procedure {
     @Override
     public final void appendString(final State state, final StringBuilder sb, final int tabs) {
         final String endl = state.getEndl();
-        sb.append("procedure(");
-        final Iterator<ParameterDef> iter = parameters.iterator();
-        while (iter.hasNext()) {
-            if (allowFewerParameters) {
-                sb.append("[");
-            }
-            iter.next().appendString(state, sb, 0);
-            if (allowFewerParameters) {
-                sb.append("]");
-            }
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
-        if (unlimitedParameters) {
-            if (parameters.size() > 0) {
-                sb.append(", ");
-            }
-            sb.append("...");
-        }
-        sb.append(") {");
+        sb.append("procedure");
+        appendParameters(state, sb);
+        sb.append(" {");
         sb.append(endl);
         state.appendLineStart(sb, tabs + 1);
         sb.append("/* predefined procedure `");
@@ -271,6 +221,34 @@ public abstract class PreDefinedProcedure extends Procedure {
         sb.append(endl);
         state.appendLineStart(sb, tabs);
         sb.append("}");
+    }
+
+    private final void appendParameters(final State state, final StringBuilder sb) {
+        sb.append("(");
+        final int     numberOfParameters = parameters.size();
+        final boolean optionalParameters = minimumNumberOfParameters < numberOfParameters;
+        for (int index = 0; index < numberOfParameters; ++index) {
+            if (optionalParameters && minimumNumberOfParameters == 0) {
+                sb.append("[");
+            }
+            parameters.get(index).appendString(state, sb, 0);
+            if (optionalParameters && index == (minimumNumberOfParameters - 1)) {
+                sb.append(" [");
+            }
+            if (index < (numberOfParameters - 1)) {
+                sb.append(", ");
+            }
+        }
+        if (optionalParameters) {
+            sb.append("]");
+        }
+        if (unlimitedParameters) {
+            if (parameters.size() > 0) {
+                sb.append(", ");
+            }
+            sb.append("...");
+        }
+        sb.append(")");
     }
 
     /* term operations */

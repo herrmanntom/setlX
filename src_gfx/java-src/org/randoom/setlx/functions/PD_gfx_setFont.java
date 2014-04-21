@@ -16,7 +16,7 @@ public class PD_gfx_setFont extends GfxFunction {
     public PD_gfx_setFont(){
         super();
         addParameter("fontName");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

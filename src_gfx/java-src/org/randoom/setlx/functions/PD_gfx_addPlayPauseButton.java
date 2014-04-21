@@ -15,7 +15,7 @@ public class PD_gfx_addPlayPauseButton extends PreDefinedProcedure {
     protected PD_gfx_addPlayPauseButton() {
         super();
         addParameter("add");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

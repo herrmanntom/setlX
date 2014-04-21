@@ -3,6 +3,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v2.2.4--- 2014-xx-xx
  + added "instanceOf" member to objects, that refers to the class used to create
    that object
+ + improve print() of predefined functions when they have optional parameters
  # fix some error messages when trying to perform operation on om
 
 ---v2.2.3--- 2014-04-07

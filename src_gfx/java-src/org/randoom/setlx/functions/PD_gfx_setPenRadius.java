@@ -14,7 +14,7 @@ public class PD_gfx_setPenRadius extends GfxFunction {
     private PD_gfx_setPenRadius(){
         super();
         addParameter("r");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
 

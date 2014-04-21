@@ -22,7 +22,7 @@ public class PD_stop extends PreDefinedProcedure {
     private PD_stop() {
         super();
         addParameter("id");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

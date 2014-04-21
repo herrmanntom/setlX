@@ -15,7 +15,7 @@ public class PD_gfx_setCanvasSize extends GfxFunction {
         super();
         addParameter("w");
         addParameter("h");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.CollectionValue;
@@ -35,17 +34,11 @@ public class PD_readFile extends PreDefinedProcedure {
         super();
         addParameter("fileName");
         addParameter("listOfLineNumbers");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(1);
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        if (args.size() < 1) {
-            String error = "Procedure is defined with a larger number of parameters ";
-            error +=       "(1 or 2).";
-            throw new IncorrectNumberOfParametersException(error);
-        }
-
         final Value fileArg = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
             throw new IncompatibleTypeException(

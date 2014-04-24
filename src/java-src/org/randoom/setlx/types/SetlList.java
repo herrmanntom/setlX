@@ -10,12 +10,14 @@ import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * This class implements a list of arbitrary SetlX values.
@@ -558,6 +560,7 @@ public class SetlList extends IndexedCollectionValue {
             return Om.OM;
         }
 
+        isCloned = true;
         final ArrayList<Value> p = new ArrayList<Value>(list);
 
         // Inspired by permutation from
@@ -586,41 +589,49 @@ public class SetlList extends IndexedCollectionValue {
             p.set(j,tmp);
         }
 
-        return new SetlList(p);
+        final SetlList result = new SetlList(p);
+        result.isCloned = true;
+        return result;
     }
 
     @Override
     public SetlSet permutations(final State state) throws SetlException {
         isCloned = true;
-        return permutations(state, list);
+        return new SetlSet(permutations(state, list));
     }
 
-    private SetlSet permutations(final State state, final List<Value> values) throws SetlException {
+    private Collection<SetlList> permutations(final State state, final List<Value> values) throws SetlException {
         if (state.executionStopped) {
             throw new StopExecutionException();
         }
-        final int valuesSize = values.size();
+        final int nPermutation = list.size(); // size of one final permutation
+        final int valuesSize   = values.size();
         if (valuesSize == 0) {
-            final SetlSet permutations = new SetlSet();
-            permutations.addMember(state, new SetlList());
+            final ArrayList<SetlList> permutations = new ArrayList<SetlList>(1);
+            permutations.add(new SetlList(nPermutation));
             return permutations;
         }
-        final Value   last         = values.get(valuesSize - 1);
-        final SetlSet permutations = new SetlSet();
-        for (final Value permutation_ : permutations(state, values.subList(0, valuesSize - 1))) {
-            final SetlList permutation = (SetlList) permutation_;
-            final int      size        = permutation.size();
-            for (int i = 0; i <= size; ++i) {
-                final ArrayList<Value> perm = new ArrayList<Value>(size + 1);
+        final Value                first            = values.get(0);
+        final Collection<SetlList> permutationsRest = permutations(state, values.subList(1, valuesSize));
+        final Collection<SetlList> permutations;
+        if (valuesSize == nPermutation || valuesSize % 3 == 0) {
+            permutations = new TreeSet<SetlList>();
+        } else {
+            permutations = new ArrayList<SetlList>(permutationsRest.size() * (permutationsRest.iterator().next().size() + 1));
+        }
+        for (final SetlList permutation : permutationsRest) {
+            final int size = permutation.size();
+            for (int i = 0; i < size; ++i) {
+                final ArrayList<Value> perm = new ArrayList<Value>(nPermutation);
                 if (i > 0) {
                     perm.addAll(permutation.list.subList(0, i));
                 }
-                perm.add(last);
-                if (i < size) {
-                    perm.addAll(permutation.list.subList(i, size));
-                }
-                permutations.addMember(state, new SetlList(perm));
+                perm.add(first);
+                perm.addAll(permutation.list.subList(i, size));
+                permutations.add(new SetlList(perm));
             }
+            permutation.list.add(first);
+            permutations.add(permutation);
         }
         return permutations;
     }
@@ -763,7 +774,7 @@ public class SetlList extends IndexedCollectionValue {
      *
      * @param state       Current state of the running setlX program.
      * @param sb          StringBuilder to append to.
-     * @param addBracktes Append enclosing brackes of the list.
+     * @param addBracktes Append enclosing brackets of the list.
      */
     public void canonical(final State state, final StringBuilder sb, final boolean addBracktes) {
         if (addBracktes) {

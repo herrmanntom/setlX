@@ -418,6 +418,8 @@ public class SetlX {
             printExecutionStart(state);
         }
 
+        Thread.currentThread().setName("setlXmain");
+
         // run the parsed code
         for (int program = 0; program < programs.size(); ++program) {
             if (programs.get(program).executeWithErrorHandling(state, true) != Block.EXECUTE_OK) {

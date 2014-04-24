@@ -139,10 +139,10 @@ public class State {
         } else {
             randoom = new Random();
         }
+        setScope(ROOT_SCOPE.createLinkedScope());
         if (cleanup) {
             ROOT_SCOPE.clearUndefinedAndInnerBindings();
         }
-        setScope(ROOT_SCOPE.createLinkedScope());
         callStackDepth      = 15; // add a bit to account for initialization stuff
         firstCallStackDepth = -1;
         executionStopped    = false;
@@ -592,6 +592,7 @@ public class State {
                     STACK_MEASUREMENT = measureStackSize_slave(2);
                 }
             });
+            stackEstimater.setName(Thread.currentThread().getName() + "::stackEstimator");
             stackEstimater.start();
             try {
                 stackEstimater.join();

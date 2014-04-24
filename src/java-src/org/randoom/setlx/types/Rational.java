@@ -476,6 +476,7 @@ public class Rational extends NumberValue {
                     to += n % CORES; // pick up the slack
                 }
                 threads[i] = new Factorial(from, to);
+                threads[i].setName(Thread.currentThread().getName() + "::factorial" + i);
                 // start thread
                 threads[i].start();
             }

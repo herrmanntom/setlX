@@ -45,7 +45,7 @@ public class VariableScope {
         private       boolean                                   cleanAllBindings;
 
         private ScopeBindings() {
-            timer                 = new Timer(true);
+            timer                 = new Timer(Thread.currentThread().getName() + "::timer", true);
             currentScopeDepth     = 0;
             validScopeGenerations = new ArrayList<Long>();
             allBindings           = new HashMap<String, LinkedList<ScopeBinding>>();

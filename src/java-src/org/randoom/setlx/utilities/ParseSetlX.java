@@ -193,6 +193,7 @@ public class ParseSetlX {
                   CodeFragment fragment     = null;
 
             try {
+                parserThread.setName(Thread.currentThread().getName() + "::parser");
                 parserThread.start();
                 parserThread.join();
                 fragment = parserThread.result;
@@ -211,7 +212,7 @@ public class ParseSetlX {
                         // free some memory
                         state.resetState();
                         // give hint to the garbage collector
-                        Runtime.getRuntime().gc();
+                        System.gc();
                         // sleep a while
                         Thread.sleep(50);
                     } catch (final InterruptedException e) {
@@ -239,6 +240,7 @@ public class ParseSetlX {
             Thread optimizer = null;
             if (fragment != null) {
                 optimizer = new OptimizerThread(fragment, state);
+                optimizer.setName(Thread.currentThread().getName() + "::optimizer");
                 optimizer.start();
             }
 

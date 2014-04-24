@@ -116,6 +116,7 @@ public class Block extends Statement implements Comparable<Block> {
             } else {
                 // prevent running out of stack by creating a new thread
                 final BlockExecThread callExec = new BlockExecThread(statements, state);
+                callExec.setName(Thread.currentThread().getName() + "::block");
 
                 try {
                     callExec.start();

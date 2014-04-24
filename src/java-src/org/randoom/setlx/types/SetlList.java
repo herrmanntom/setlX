@@ -591,25 +591,35 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public SetlSet permutations(final State state) throws SetlException {
+        isCloned = true;
+        return permutations(state, list);
+    }
+
+    private SetlSet permutations(final State state, final List<Value> values) throws SetlException {
         if (state.executionStopped) {
             throw new StopExecutionException();
         }
-        if (size() == 0) {
+        final int valuesSize = values.size();
+        if (valuesSize == 0) {
             final SetlSet permutations = new SetlSet();
-            permutations.addMember(state, clone());
+            permutations.addMember(state, new SetlList());
             return permutations;
         }
-        final SetlList  rest            = clone();
-        final Value     last            = rest.removeLastMember();
-        final SetlSet   permutatateRest = rest.permutations(state);
-        final SetlSet   permutations    = new SetlSet();
-        for (final Value permutation : permutatateRest) {
-            final int size = permutation.size();
-            for (int i = 0; i <= size; i++) {
-                final SetlList  perm    = (SetlList) permutation.clone();
-                perm.separateFromOriginal();
-                perm.list.add(i, last.clone());
-                permutations.addMember(state, perm);
+        final Value   last         = values.get(valuesSize - 1);
+        final SetlSet permutations = new SetlSet();
+        for (final Value permutation_ : permutations(state, values.subList(0, valuesSize - 1))) {
+            final SetlList permutation = (SetlList) permutation_;
+            final int      size        = permutation.size();
+            for (int i = 0; i <= size; ++i) {
+                final ArrayList<Value> perm = new ArrayList<Value>(size + 1);
+                if (i > 0) {
+                    perm.addAll(permutation.list.subList(0, i));
+                }
+                perm.add(last);
+                if (i < size) {
+                    perm.addAll(permutation.list.subList(i, size));
+                }
+                permutations.addMember(state, new SetlList(perm));
             }
         }
         return permutations;

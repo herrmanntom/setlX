@@ -288,7 +288,7 @@ public class SetlClass extends Value {
     /* type checks (sort of Boolean operation) */
 
     @Override
-    public SetlBoolean isConstructor() {
+    public SetlBoolean isClass() {
         return SetlBoolean.TRUE;
     }
 

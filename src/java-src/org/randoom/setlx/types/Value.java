@@ -62,7 +62,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
-    public SetlBoolean isConstructor() {
+    public SetlBoolean isClass() {
         return SetlBoolean.FALSE;
     }
 

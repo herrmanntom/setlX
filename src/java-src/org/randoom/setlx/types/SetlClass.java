@@ -167,7 +167,7 @@ public class SetlClass extends Value {
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
         if (staticVars == null) {
-            optimize();
+            optimize(state);
         }
 
         // compute static definition, if not already done
@@ -247,7 +247,7 @@ public class SetlClass extends Value {
 
     private SetlHashMap<Value> computeStaticDefinitions(final State state) throws SetlException {
         if (staticVars == null) {
-            optimize();
+            optimize(state);
         }
 
         // save old scope
@@ -315,7 +315,7 @@ public class SetlClass extends Value {
     @Override
     public void setObjectMember(final State state, final String variable, final Value value, final String context) throws SetlException {
         if (staticVars == null) {
-            optimize();
+            optimize(state);
         }
 
         if (value instanceof Procedure) {

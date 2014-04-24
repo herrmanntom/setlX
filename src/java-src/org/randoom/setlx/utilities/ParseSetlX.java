@@ -152,14 +152,14 @@ public class ParseSetlX {
     /* private methods */
 
     private static Block parseBlock(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
-        return (Block) handleFragmentParsing(state, input, CodeType.BLOCK);
+        return (Block) handleFragmentParsing(state, input, CodeType.BLOCK, false);
     }
 
     private static Expr parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
-        return (Expr) handleFragmentParsing(state, input, CodeType.EXPR);
+        return (Expr) handleFragmentParsing(state, input, CodeType.EXPR, true);
     }
 
-    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final CodeType type) throws SyntaxErrorException, StopExecutionException {
+    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final CodeType type, final boolean executeInThread) throws SyntaxErrorException, StopExecutionException {
               SetlXgrammarLexer  lexer  = null;
               SetlXgrammarParser parser = null;
         final LinkedList<String> oldCap = state.getParserErrorCapture();
@@ -194,8 +194,12 @@ public class ParseSetlX {
 
             try {
                 parserThread.setName(Thread.currentThread().getName() + "::parser");
-                parserThread.start();
-                parserThread.join();
+                if (executeInThread) {
+                    parserThread.run();
+                } else {
+                    parserThread.start();
+                    parserThread.join();
+                }
                 fragment = parserThread.result;
             } catch (final InterruptedException e) {
                 throw new StopExecutionException();
@@ -278,8 +282,8 @@ public class ParseSetlX {
     private static class ParserThread extends Thread {
         private final SetlXgrammarParser parser;
         private final CodeType           type;
-        /*package*/   CodeFragment       result;
-        /*package*/   Throwable          error;
+        private       CodeFragment       result;
+        private       Throwable          error;
 
 
         /*package*/ ParserThread(final SetlXgrammarParser parser, final CodeType type) {
@@ -329,7 +333,7 @@ public class ParseSetlX {
         @Override
         public void run() {
             try {
-                fragment.optimize();
+                fragment.optimize(state);
             } catch (final StackOverflowError soe) {
                 state.errWriteLn("Error while optimizing parsed code.");
                 state.errWriteOutOfStack(soe, false);

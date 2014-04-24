@@ -56,7 +56,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
      * @param statements Statements to execute when condition is met.
      */
     public MatchRegexBranch(final State state, final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
-        this(pattern, assignTo, condition, statements);
+        this(pattern, assignTo, condition, statements, state);
 
         // if pattern is static it can be compiled now
         if (pattern.isReplaceable()) {
@@ -88,7 +88,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         }
     }
 
-    private MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
+    private MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements, final State state) {
         this.pattern        = pattern;
         this.runtimePattern = null;
         this.assignTo       = assignTo;
@@ -97,7 +97,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
         this.statements     = statements;
 
         // optimize pattern
-        this.pattern.optimize();
+        this.pattern.optimize(state);
     }
 
     @Override
@@ -278,7 +278,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
                 final Block block = TermConverter.valueToBlock(state, term.lastMember());
 
-                return new MatchRegexBranch(pattern, assignTo, condition, block);
+                return new MatchRegexBranch(pattern, assignTo, condition, block, state);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }

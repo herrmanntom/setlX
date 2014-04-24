@@ -46,7 +46,7 @@ public class ProcedureConstructor extends Expr {
     @Override
     protected Procedure evaluate(final State state) throws SetlException {
         if (closureVariables == null) {
-            this.optimize();
+            this.optimize(state);
         }
         if (! closureVariables.isEmpty()) {
             final SetlHashMap<Value> closure = new SetlHashMap<Value>();

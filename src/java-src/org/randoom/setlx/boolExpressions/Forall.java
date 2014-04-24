@@ -98,7 +98,7 @@ public class Forall extends Expr {
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
         if (iterationVariables == null) {
-            optimize();
+            optimize(state);
         }
         final Exec e = new Exec(condition, iterationVariables);
         iterator.eval(state, e);

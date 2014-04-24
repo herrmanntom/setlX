@@ -30,12 +30,14 @@ public abstract class CodeFragment {
     /**
      * Optimize this fragment based upon variable and constant expressions
      * contained inside it.
+     *
+     * @param state Current state of the running setlX program.
      */
-    public final void optimize() {
+    public final void optimize(final State state) {
         final List<String> boundVariables   = new ArrayList<String>();
         final List<String> unboundVariables = new ArrayList<String>();
         final List<String> usedVariables    = new ArrayList<String>();
-        collectVariablesAndOptimize(new State(), boundVariables, unboundVariables, usedVariables);
+        collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

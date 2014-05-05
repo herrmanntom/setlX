@@ -354,7 +354,6 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public Value product(final State state, final Value multiplier) throws SetlException {
 		System.err.println("[DEBUG]: product begin");
-		// TODO Term
 		if(multiplier instanceof SetlVector) {
 			System.err.println("[DEBUG]: product end Vector");
 			return this.scalarProduct(state, (SetlVector)multiplier);
@@ -375,6 +374,8 @@ public class SetlVector extends IndexedCollectionValue {
 			}
 			System.err.println("[DEBUG]: product end double");
 			return new SetlVector(result);
+		} else if(multiplier instanceof Term) {
+			return ((Term)multiplier).productFlipped(state, this);
 		} else {
 			System.err.println("[DEBUG]: product exc");
 			throw new IncompatibleTypeException("Given parameter is not of supported type."); // TODO better message
@@ -403,6 +404,8 @@ public class SetlVector extends IndexedCollectionValue {
 			}
 			System.err.println("[DEBUG]: sum end");
 			return new SetlVector(result);
+		} else if(summand instanceof Term) {
+			return ((Term)summand).sumFlipped(state, this);
 		} else {
 			System.err.println("[DEBUG]: sum exc");
 			throw new IncompatibleTypeException("A sum cannot have a vector parameter and a parameter of another type.");
@@ -412,13 +415,14 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public Value power(final State state, final Value exponent) throws SetlException {
 		System.err.println("[DEBUG]: power begin");
-		// TODO Term
 		if(exponent instanceof SetlVector) {
 			System.err.println("[DEBUG]: power end vector");
 			return this.vectorProduct(state, (SetlVector)exponent);
 		} else if(exponent instanceof SetlMatrix) {
 			System.err.println("[DEBUG]: power end matrix");
 			return this.vectorProduct(state, new SetlVector(state, (SetlMatrix)exponent));
+		} else if(exponent instanceof Term) {
+			return ((Term)exponent).powerFlipped(state, this);
 		} else {
 			System.err.println("[DEBUG]: power exc");
 			throw new IncompatibleTypeException("Incompatible exponent type.");
@@ -451,10 +455,8 @@ public class SetlVector extends IndexedCollectionValue {
 	}
 
 	/**
-	 * TODO FIX
 	 *
-	 * is the following correct:
-	 *
+	 * A x B:
 	 * i	j	k	l
 	 * ax	ay	az	at
 	 * bx	by	bz	bt
@@ -488,7 +490,6 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
-	// TODO FIX
 	private int loopingIndex(int diff, int currentIndex, int length) {
 		// System.err.println("[DEBUG]: loopIdx begin");
 		/*
@@ -542,6 +543,8 @@ public class SetlVector extends IndexedCollectionValue {
 			}
 			System.err.println("[DEBUG]: difference end");
 			return new SetlVector(result);
+		} else if(subtrahend instanceof Term) {
+			return ((Term)subtrahend).differenceFlipped(state, this);
 		} else {
 			System.err.println("[DEBUG]: difference exc");
 			throw new IncompatibleTypeException("A difference cannot have a vector parameter and a parameter of another type.");

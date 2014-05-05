@@ -143,8 +143,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			NumberValue n = (NumberValue)multiplier;
 			return new SetlMatrix(this.value.times(n.toJDoubleValue(state)));
 		} else if(multiplier instanceof Term) {
-			// TODO implement this:
-			return ((Term)multiplier).productFlipped(state, this);
+			return ((Term)multiplier).productFlipped(state, this); // TOCHECK
 		} else {
 			throw new IncompatibleTypeException("Summand is not of type Matrix.");
 		}
@@ -166,8 +165,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			this.value.timesEquals(n.toJDoubleValue(state));
 			return this;
 		} else if(multiplier instanceof Term) {
-			// TODO implement this
-			throw new MatrixException("Not implemented");
+			return ((Term)multiplier).productAssign(state, this); // TOCHECK
 		} else {
 			throw new IncompatibleTypeException("Summand is not of type Matrix.");
 		}

@@ -5,7 +5,6 @@ import Jama.SingularValueDecomposition;
 import java.util.Arrays;
 import java.util.Iterator;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;

@@ -87,7 +87,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
      * @return        True if the element is contained, false otherwise.
      */
     public          SetlBoolean     containsMemberRecursive(final Value element) {
-        for (final Value v: this) {
+        for (final Value v : this) {
             if (v.equalTo(element)) {
                 return SetlBoolean.TRUE;
             } else if (v instanceof CollectionValue && !(v instanceof SetlString)) {
@@ -162,7 +162,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
 
     @Override
-    public abstract void            removeMember(final Value element) throws IncompatibleTypeException;
+    public abstract void            removeMember(final State state, final Value element) throws IncompatibleTypeException;
 
     @Override
     public final    Value           removeFirstMember(final State state) {

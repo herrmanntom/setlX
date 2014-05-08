@@ -7,9 +7,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// trim(string)                  : return a trimmed string
-
+/**
+ * trim(string) : Return a trimmed string.
+ */
 public class PD_trim extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `trim'. */
     public final static PreDefinedProcedure DEFINITION = new PD_trim();
 
     private PD_trim() {
@@ -22,10 +24,10 @@ public class PD_trim extends PreDefinedProcedure {
         final Value string  = args.get(0);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "String-argument '" + string + "' is not a string."
+                "String-argument '" + string.toString(state) + "' is not a string."
             );
         }
-        return new SetlString(string.getUnquotedString().trim());
+        return new SetlString(string.getUnquotedString(state).trim());
     }
 
 }

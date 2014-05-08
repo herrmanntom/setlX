@@ -1,6 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
 
 import java.util.Map;
@@ -9,8 +10,8 @@ import java.util.Map;
  * Result of a term-match, usually from inside the match-statement.
  */
 public class MatchResult {
-    private        boolean              matches;       // does the term match?
-    private final  SetlHashMap<Value>   varBindings;   // variables to set when term matches
+    private       boolean            matches;       // does the term match?
+    private final SetlHashMap<Value> varBindings;   // variables to set when term matches
 
     /**
      * Create a new match result, without any matching variables.
@@ -73,6 +74,21 @@ public class MatchResult {
     public void setAllBindings(final State state, final String context) throws IllegalRedefinitionException {
         for (final Map.Entry<String, Value> entry : varBindings.entrySet()) {
             state.putValue(entry.getKey(), entry.getValue().clone(), context);
+        }
+    }
+
+    /**
+     * Get one matched variable.
+     *
+     * @param id Name of the variable that matched.
+     * @return   Value bound to that variable, or Om.OM.
+     */
+    public Value getBinding(final String id) {
+        final Value value = varBindings.get(id);
+        if (value != null) {
+            return value;
+        } else {
+            return Om.OM;
         }
     }
 }

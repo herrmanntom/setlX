@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// args(term)              : get arguments of term
-
+/**
+ * args(term) : get arguments of term
+ */
 public class PD_args extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `args'. */
     public final static PreDefinedProcedure DEFINITION = new PD_args();
 
     private PD_args() {

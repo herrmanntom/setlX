@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// str(value)              : converts any value into a string
-
+/**
+ * str(value) : Converts any value into a string.
+ */
 public class PD_str extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `str'. */
     public final static PreDefinedProcedure DEFINITION = new PD_str();
 
     private PD_str() {

@@ -65,7 +65,7 @@ public abstract class Expr extends CodeFragment {
                 return replacement;
             }
         } catch (final SetlException se) {
-            se.addToTrace("Error in \"" + this + "\":");
+            se.addToTrace("Error in \"" + this.toString(state) + "\":");
             throw se;
         } catch (final StackOverflowError soe) {
             state.storeStackDepthOfFirstCall(state.callStackDepth);
@@ -101,13 +101,15 @@ public abstract class Expr extends CodeFragment {
      * NOTE: Use optimizeAndCollectVariables() when adding variables from
      *       sub-expressions.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(State, List, List, List)
      *
+     * @param state            Current state of the running setlX program.
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
      */
     protected abstract void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -115,6 +117,7 @@ public abstract class Expr extends CodeFragment {
 
     @Override
     public final void collectVariablesAndOptimize(
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -129,7 +132,7 @@ public abstract class Expr extends CodeFragment {
         final int preUsedSize    = usedVariables.size();
 
         // collect variables in this expression
-        collectVariables(boundVariables, unboundVariables, usedVariables);
+        collectVariables(state, boundVariables, unboundVariables, usedVariables);
 
         // prerequisite for optimization is that not variables are provided for later
         // expressions and that no used variables are unbound in this expression
@@ -210,7 +213,7 @@ public abstract class Expr extends CodeFragment {
      * Precedence level in SetlX-grammar. Manly used for automatic bracket insertion
      * when converting terms to expressions.
      *
-     * (See src/java-src/org/randoom/setlx/expressions/termConversionPrecedences.txt)
+     * (See src/grammar/OperatorPrecedences.txt)
      *
      * @return Precedence level.
      */

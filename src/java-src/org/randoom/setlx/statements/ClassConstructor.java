@@ -16,22 +16,29 @@ import java.util.List;
  * A wrapper statement for SetlX class definitions.
  *
  * grammar rule:
- * classDefinition
+ * statement
  *     : 'class' ID '(' procedureParameters ')' '{' block ('static' '{' block '}')? '}'
+ *     | [..]
  *     ;
  *
  * implemented here as:
  *               ==  ==================================================================
  *              name                            classDefinition
  */
-public class ClassDefiner extends Statement {
+public class ClassConstructor extends Statement {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ClassDefiner.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ClassConstructor.class);
 
     private final String    name;
     private final SetlClass classDefinition;
 
-    public ClassDefiner(final String name, final SetlClass classDefinition) {
+    /**
+     * Create new ClassConstructor.
+     *
+     * @param name            Name of the class to construct.
+     * @param classDefinition Definition of the class to create.
+     */
+    public ClassConstructor(final String name, final SetlClass classDefinition) {
         this.name            = name;
         this.classDefinition = classDefinition;
     }
@@ -44,12 +51,13 @@ public class ClassDefiner extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         boundVariables.add(name);
-        classDefinition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        classDefinition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -57,7 +65,7 @@ public class ClassDefiner extends Statement {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         state.appendLineStart(sb, tabs);
-        classDefinition.appendString(name, state, sb, tabs);
+        classDefinition.appendString(state, name, sb, tabs);
     }
 
     /* term operations */
@@ -73,20 +81,21 @@ public class ClassDefiner extends Statement {
     }
 
     /**
-     * Re-generate a ClassDefiner statement from a term.
+     * Re-generate a ClassConstructor statement from a term.
      *
+     * @param  state                   Current state of the running setlX program.
      * @param  term                    Term to regenerate from.
-     * @return                         ClassDefiner statement.
-     * @throws TermConversionException In case of error
+     * @return                         ClassConstructor statement.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static ClassDefiner termToStatement(final Term term) throws TermConversionException {
+    public static ClassConstructor termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final String name            = term.firstMember().getUnquotedString();
-            final Value  classDefinition = TermConverter.valueTermToValue(term.lastMember());
+            final String name            = term.firstMember().getUnquotedString(state);
+            final Value  classDefinition = TermConverter.valueTermToValue(state, term.lastMember());
             if (classDefinition instanceof SetlClass) {
-                return new ClassDefiner(name, (SetlClass) classDefinition);
+                return new ClassConstructor(name, (SetlClass) classDefinition);
             } else {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }

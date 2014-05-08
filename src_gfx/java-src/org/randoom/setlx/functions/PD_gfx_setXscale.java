@@ -15,7 +15,7 @@ public class PD_gfx_setXscale extends GfxFunction {
         super();
         addParameter("min");
         addParameter("max");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
 

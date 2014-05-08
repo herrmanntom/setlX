@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isProcedure(value)      : test if value-type is procedure
-
+/**
+ * isProcedure(value) : Test if value-type is procedure.
+ */
 public class PD_isProcedure extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isProcedure'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isProcedure();
 
     private PD_isProcedure() {

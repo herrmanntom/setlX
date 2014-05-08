@@ -6,23 +6,25 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
-grammar rule:
-collectionAccessParams
-    : (expr '..')=> expr '..' expr?
-    | [...]
-    ;
-
-this class implements a range token inside the parameters of a CollectionAccess:
-                         ====
-*/
-
+/**
+ * this class implements a range token inside the parameters of a CollectionAccess.
+ *
+ * grammar rules:
+ * collectionAccessParams
+ *     : expr '..' expr?
+ *     | [...]
+ *     ;
+ *
+ *            ====
+ */
 public class CollectionAccessRangeDummy extends Expr {
-    // functional character used in terms
     private final static String                     FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectionAccessRangeDummy.class);
     // precedence level in SetlX-grammar
     private final static int                        PRECEDENCE           = 9999;
 
+    /**
+     * Singleton VariableIgnore expression.
+     */
     public  final static CollectionAccessRangeDummy CARD                 = new CollectionAccessRangeDummy();
 
     private CollectionAccessRangeDummy() {}
@@ -32,15 +34,9 @@ public class CollectionAccessRangeDummy extends Expr {
         return RangeDummy.RD;
     }
 
-    /* Gather all bound and unbound variables in this expression and its siblings
-          - bound   means "assigned" in this expression
-          - unbound means "not present in bound set when used"
-          - used    means "present in bound set when used"
-       NOTE: Use optimizeAndCollectVariables() when adding variables from
-             sub-expressions
-    */
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -60,7 +56,14 @@ public class CollectionAccessRangeDummy extends Expr {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
-    public static CollectionAccessRangeDummy termToExpr(final Term term) {
+    /**
+     * Convert a term representing a CollectionAccessRangeDummy expression into such an expression.
+     *
+     * @param state Current state of the running setlX program.
+     * @param term  Term to convert.
+     * @return      Resulting expression of this conversion.
+     */
+    public static CollectionAccessRangeDummy termToExpr(final State state, final Term term) {
         return CARD;
     }
 

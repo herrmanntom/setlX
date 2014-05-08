@@ -1,7 +1,6 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.FileNotReadableException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.CollectionValue;
@@ -35,21 +34,15 @@ public class PD_readFile extends PreDefinedProcedure {
         super();
         addParameter("fileName");
         addParameter("listOfLineNumbers");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(1);
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        if (args.size() < 1) {
-            String error = "Procedure is defined with a larger number of parameters ";
-            error +=       "(1 or 2).";
-            throw new IncorrectNumberOfParametersException(error);
-        }
-
         final Value fileArg = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "FileName-argument '" + fileArg + "' is not a string."
+                "FileName-argument '" + fileArg.toString(state) + "' is not a string."
             );
         }
 
@@ -58,14 +51,14 @@ public class PD_readFile extends PreDefinedProcedure {
             final Value numbers = args.get(1);
             if ( ! (numbers instanceof CollectionValue)) {
                 throw new IncompatibleTypeException(
-                    "ListOfLineNumbers-argument '" + numbers + "' is not a collection value."
+                    "ListOfLineNumbers-argument '" + numbers.toString(state) + "' is not a collection value."
                 );
             }
             lineNumbers = new HashSet<Integer>(numbers.size());
             for (final Value num : (CollectionValue) numbers) {
                 if (num.isInteger() == SetlBoolean.FALSE) {
                     throw new IncompatibleTypeException(
-                        "Value '" + num + "' in listOfLineNumbers is not an integer."
+                        "Value '" + num.toString(state) + "' in listOfLineNumbers is not an integer."
                     );
                 }
                 final int n = num.jIntValue();
@@ -73,14 +66,14 @@ public class PD_readFile extends PreDefinedProcedure {
                     lineNumbers.add(n);
                 } else {
                     throw new IncompatibleTypeException(
-                        "Value '" + num + "' in listOfLineNumbers is illogical."
+                        "Value '" + num.toString(state) + "' in listOfLineNumbers is illogical."
                     );
                 }
             }
         }
 
         // get name of file to be read and allow modification of fileName/path by environment provider
-        final String    fileName    = state.filterFileName(fileArg.getUnquotedString());
+        final String    fileName    = state.filterFileName(fileArg.getUnquotedString(state));
 
         // read file
         FileInputStream fstream     = null;

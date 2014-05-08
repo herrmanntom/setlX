@@ -11,9 +11,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// load(path)                    : loads SetlX source code file and executes it
-
+/**
+ * load(path_to_setlX_file) : Loads SetlX source code file and executes it.
+ */
 public class PD_load extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `load'. */
     public final static PreDefinedProcedure DEFINITION = new PD_load();
 
     private PD_load() {
@@ -23,19 +25,19 @@ public class PD_load extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value   filePath            = args.get(0);
+        final Value filePath = args.get(0);
         if ( ! (filePath instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Path-argument '" + filePath + "' is not a string."
+                "Path-argument '" + filePath.toString(state) + "' is not a string."
             );
         }
 
         // get string of file path to be parsed
-        final String  file    = filePath.getUnquotedString();
+        final String file = filePath.getUnquotedString(state);
 
         // parse the file
         state.resetParserErrorCount();
-        final Block   blk     = ParseSetlX.parseFile(state, file);
+        final Block  blk  = ParseSetlX.parseFile(state, file);
 
         // execute the contents
         blk.execute(state);

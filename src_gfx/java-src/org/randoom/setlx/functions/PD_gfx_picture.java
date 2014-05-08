@@ -10,7 +10,7 @@ import org.randoom.setlx.utilities.StdDraw;
 
 public class PD_gfx_picture extends GfxFunction {
 
-	
+
 	public final static PreDefinedProcedure DEFINITION = new PD_gfx_picture();
 
     public PD_gfx_picture(){
@@ -20,30 +20,30 @@ public class PD_gfx_picture extends GfxFunction {
         addParameter("picture");
         addParameter("w");
         addParameter("h");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(3);
     }
-	
+
 	@Override
-	protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+	protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
 		try {
 			switch( args.size() ) {
 			case 3:
-				StdDraw.picture( doubleFromValue(state,args.get(0)), 
-						         doubleFromValue(state,args.get(1)), 
-						         stringFromValue(args.get(2)) );
+				StdDraw.picture( doubleFromValue(state,args.get(0)),
+						         doubleFromValue(state,args.get(1)),
+						         stringFromValue(state,args.get(2)) );
 				break;
 			case 5:
-				StdDraw.picture( doubleFromValue(state,args.get(0)), 
-						         doubleFromValue(state,args.get(1)), 
-						         stringFromValue(args.get(2)), 
-						         doubleFromValue(state,args.get(3)), 
-						         doubleFromValue(state,args.get(4)) 
+				StdDraw.picture( doubleFromValue(state,args.get(0)),
+						         doubleFromValue(state,args.get(1)),
+						         stringFromValue(state,args.get(2)),
+						         doubleFromValue(state,args.get(3)),
+						         doubleFromValue(state,args.get(4))
 						       );
 				break;
 		    default:
 		    	return SetlBoolean.FALSE;
 			}
-		} catch ( Exception ex ) {
+		} catch ( final Exception ex ) {
 		//some error in StdDraw
 	        return SetlBoolean.FALSE;
 		}

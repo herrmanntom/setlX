@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// getTerm(value)          : convert a value into a term
-
+/**
+ * getTerm(value) : convert a value into a term
+ */
 public class PD_getTerm extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `getTerm'. */
     public final static PreDefinedProcedure DEFINITION = new PD_getTerm();
 
     private PD_getTerm() {

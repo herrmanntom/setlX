@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -30,64 +29,64 @@ public class State {
     /**
      * Printing mode for doubles
      */
-    public                  DoublePrintMode        doublePrintMode;
+    public                DoublePrintMode        doublePrintMode;
     /**
      * Print a trace when assigning variables.
      */
-    public                  boolean                traceAssignments;
+    public                boolean                traceAssignments;
     /**
      * Current call stack depth assumption.
      */
-    public                  int                    callStackDepth;
+    public                int                    callStackDepth;
     /**
      * Execution should be terminated at the next possibility.
      */
-    public                  boolean                executionStopped;
+    public                boolean                executionStopped;
 
     // private variables
 
     // interface provider to the outer world
-    private                 EnvironmentProvider    envProvider;
+    private               EnvironmentProvider    envProvider;
 
-    private                 LinkedList<String>     parserErrorCapture;
-    private                 int                    parserErrorCount;
+    private               LinkedList<String>     parserErrorCapture;
+    private               int                    parserErrorCount;
 
-    private final           HashSet<String>        loadedLibraries;
+    private final         HashSet<String>        loadedLibraries;
 
     /* This variable stores the root VariableScope:
        Predefined functions are dynamically loaded into this VariableScope and
        not only into the current one, to be accessible by any previous and future
        VariableScope clones (results in faster lookup).                       */
-    private final   static  VariableScope          ROOT_SCOPE = new VariableScope();
+    private final         VariableScope          ROOT_SCOPE = VariableScope.createRootScope();
 
     // this scope stores all global variables
-    private final           SetlHashMap<SetlClass> classDefinitions;
+    private final         SetlHashMap<SetlClass> classDefinitions;
 
     // this variable stores the variable assignment that is currently active
-    private                 VariableScope          variableScope;
+    private               VariableScope          variableScope;
 
     // number of CPUs/Cores in System
-    private final   static  int                    CORES = Runtime.getRuntime().availableProcessors();
+    private final static  int                    CORES = Runtime.getRuntime().availableProcessors();
     // measurement of this JVM's stack size
-    private         static  int                    STACK_MEASUREMENT  = -1;
+    private       static  int                    STACK_MEASUREMENT  = -1;
     // maximum accepted stack measurement; is roughly equal to -Xss48m using the 64 bit OpenJDK 7
-    private final   static  int                    ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
+    private final static  int                    ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
 
 
     // is input feed by a human?
-    private                 boolean                human;
+    private               boolean                human;
 
     // random number generator
-    private                 Random                 randoom;
+    private               Random                 randoom;
 
-    private                 int                    firstCallStackDepth;
+    private               int                    firstCallStackDepth;
 
-    private                 boolean                randoomPredictable;
-    private                 boolean                multiLineMode;
-    private                 boolean                interactive;
-    private                 boolean                printVerbose;
-    private                 boolean                assertsDisabled;
-    private                 boolean                runtimeDebuggingEnabled;
+    private               boolean                randoomPredictable;
+    private               boolean                multiLineMode;
+    private               boolean                interactive;
+    private               boolean                printVerbose;
+    private               boolean                assertsDisabled;
+    private               boolean                runtimeDebuggingEnabled;
 
     /**
      * Create new state implementation, using a dummy environment.
@@ -116,7 +115,7 @@ public class State {
         traceAssignments        = false;
         assertsDisabled         = false;
         runtimeDebuggingEnabled = false;
-        resetState();
+        resetState(false);
     }
 
     /**
@@ -125,6 +124,10 @@ public class State {
      * Clears all scopes, class definitions, libraries and error captures.
      */
     public void resetState() {
+        resetState(true);
+    }
+
+    private void resetState(final boolean cleanup) {
         if (parserErrorCapture != null) {
             parserErrorCapture.clear();
         }
@@ -136,7 +139,10 @@ public class State {
         } else {
             randoom = new Random();
         }
-        variableScope       = ROOT_SCOPE.createLinkedScope();
+        setScope(ROOT_SCOPE.createLinkedScope());
+        if (cleanup) {
+            ROOT_SCOPE.clearUndefinedAndInnerBindings();
+        }
         callStackDepth      = 15; // add a bit to account for initialization stuff
         firstCallStackDepth = -1;
         executionStopped    = false;
@@ -586,6 +592,7 @@ public class State {
                     STACK_MEASUREMENT = measureStackSize_slave(2);
                 }
             });
+            stackEstimater.setName(Thread.currentThread().getName() + "::stackEstimator");
             stackEstimater.start();
             try {
                 stackEstimater.join();
@@ -807,44 +814,45 @@ public class State {
      */
     public void setScope(final VariableScope newScope) {
         variableScope = newScope;
+        variableScope.setCurrent();
     }
 
     /**
      * Get the value of a specific bindings reachable from current scope.
      *
-     * @param var            Name of the variable to locate.
+     * @param variable       Name of the variable to locate.
      * @return               Located value or Om.OM.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value findValue(final String var) throws SetlException {
-        Value v = classDefinitions.get(var);
-        if (v != null) {
-            return v;
+    public Value findValue(final String variable) throws SetlException {
+        Value value = classDefinitions.get(variable);
+        if (value != null) {
+            return value;
         }
-        v = variableScope.locateValue(this, var, true);
-        if (v == null && ! var.equals("this")) {
+        value = variableScope.locateValue(this, variable);
+        if (value == null && ! variable.equals("this")) {
             // search if name matches a predefined function (which start with 'PD_')
             final String packageName = PreDefinedProcedure.class.getPackage().getName();
-            final String className   = "PD_" + var;
+            final String className   = "PD_" + variable;
             try {
                 final Class<?> c = Class.forName(packageName + '.' + className);
-                v                = (PreDefinedProcedure) c.getField("DEFINITION").get(null);
+                value            = (PreDefinedProcedure) c.getField("DEFINITION").get(null);
             } catch (final Exception e) {
                 /* Name does not match predefined function.
                    But return value already is null, no change necessary.     */
             }
-            if (v == null && var.toLowerCase(Locale.US).equals(var)) {
+            if (value == null && variable.toLowerCase(Locale.US).equals(variable)) {
                // search if name matches a java Math.x function (which are all lower case)
                 try {
-                    final Method f = Math.class.getMethod(var, double.class);
-                    v        = new MathFunction(var, f);
+                    final Method f = Math.class.getMethod(variable, double.class);
+                    value          = new MathFunction(variable, f);
                 } catch (final Exception e) {
                     /* Name also does not match java Math.x function.
                        But return value already is null, no change necessary.     */
                 }
             }
-            if (v == null) {
-                v = Om.OM;
+            if (value == null) {
+                value = Om.OM;
                 // identifier could not be looked up...
                 // return Om.OM and store it into initial scope to prevent reflection lookup next time
             }
@@ -852,11 +860,11 @@ public class State {
 
                Root scope is chosen, because it is at the end of every
                currently existing and all future scopes search paths.         */
-            ROOT_SCOPE.storeValue(var, v);
-        } else if (v == null) {
-            v = Om.OM;
+            ROOT_SCOPE.storeValue(variable, value);
+        } else if (value == null || value == VariableScope.ACCESS_DENIED_VALUE) {
+            value = Om.OM;
         }
-        return v;
+        return value;
     }
 
     /**
@@ -914,11 +922,12 @@ public class State {
      * @param var            Variable to set.
      * @param value          Value to set variable to.
      * @param outerScope     Scope to up to which needs to be checked.
+     * @param checkObjects   Also check objects if they have 'value' set in them.
      * @param context        Context description of the assignment for trace.
      * @return               False if linked scope contained a different value under this variable, true otherwise.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final String context) throws SetlException {
+    public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
         final Value now = classDefinitions.get(var);
         if (now != null) {
             if (now.equalTo(value)) {
@@ -927,43 +936,11 @@ public class State {
                 return false;
             }
         }
-        if (traceAssignments) {
-            final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope);
-            if (result) {
-                printTrace(var, value, context);
-            }
-            return result;
-        } else {
-            return variableScope.storeValueCheckUpTo(this, var, value, outerScope);
+        final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope, checkObjects);
+        if (traceAssignments && result) {
+            printTrace(var, value, context);
         }
-    }
-
-    /**
-     * Add bindings stored in `scope' into current scope.
-     * This also adds variables in outer scopes of `scope' until reaching the
-     * current scope as outer scope of `scope'.
-     *
-     * @param scope          Scope to set variables from.
-     * @param context        Context description of the assignment for trace.
-     * @throws SetlException Thrown in case of some (user-) error.
-     */
-    public void putAllValues(final VariableScope scope, final String context) throws SetlException {
-        for (final String key : classDefinitions.keySet()) {
-            if (scope.locateValue(this, key, false) != null) {
-                throw new IllegalRedefinitionException(
-                    "Redefinition of classes is not allowed."
-                );
-            }
-        }
-        if (traceAssignments) {
-            final SetlHashMap<Value> assignments = new SetlHashMap<Value>();
-            variableScope.storeAllValuesTrace(scope, assignments);
-            for (final Map.Entry<String, Value> entry : assignments.entrySet()) {
-                printTrace(entry.getKey(), entry.getValue(), context);
-            }
-        } else {
-            variableScope.storeAllValues(scope);
-        }
+        return result;
     }
 
     /**
@@ -983,18 +960,20 @@ public class State {
     /**
      * Collect all bindings reachable from current scope.
      *
-     * @return Map of all reachable bindings.
+     * @return               Map of all reachable bindings.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
-    public SetlHashMap<Value> getAllVariablesInScope() {
-        return variableScope.getAllVariablesInScope(classDefinitions);
+    public SetlHashMap<Value> getAllVariablesInScope() throws SetlException {
+        return variableScope.getAllVariablesInScope(this, classDefinitions);
     }
 
     /**
      * Collect all bindings reachable from current scope and represent them as a term.
      *
-     * @return Term of all reachable bindings.
+     * @return               Term of all reachable bindings.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Term scopeToTerm() {
+    public Term scopeToTerm() throws SetlException {
         return variableScope.toTerm(this, classDefinitions);
     }
 }

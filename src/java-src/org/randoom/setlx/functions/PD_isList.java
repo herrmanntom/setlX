@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isList(value)           : test if value-type is list
-
+/**
+ * isList(value) : Test if value-type is list.
+ */
 public class PD_isList extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isList'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isList();
 
     private PD_isList() {

@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isString(value)         : test if value-type is string
-
+/**
+ * isString(value) : Test if value-type is string.
+ */
 public class PD_isString extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isString'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isString();
 
     private PD_isString() {

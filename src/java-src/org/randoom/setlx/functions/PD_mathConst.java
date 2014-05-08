@@ -25,14 +25,14 @@ public class PD_mathConst extends PreDefinedProcedure {
         throws UndefinedOperationException, IncompatibleTypeException
     {
         final Value name = args.get(0);
-        if (       name.getUnquotedString().equalsIgnoreCase( "e"        )) {
+        if (       name.getUnquotedString(state).equalsIgnoreCase( "e"        )) {
             return SetlDouble.E;
-        } else if (name.getUnquotedString().equalsIgnoreCase( "pi"       )) {
+        } else if (name.getUnquotedString(state).equalsIgnoreCase( "pi"       )) {
             return SetlDouble.PI;
-        } else if (name.getUnquotedString().equalsIgnoreCase( "infinity" )) {
+        } else if (name.getUnquotedString(state).equalsIgnoreCase( "infinity" )) {
             return SetlDouble.POSITIVE_INFINITY;
         } else {
-            throw new IncompatibleTypeException("Name-argument '" + name + "' is not a known constant or not a string.");
+            throw new IncompatibleTypeException("Name-argument '" + name.toString(state) + "' is not a known constant or not a string.");
         }
     }
 }

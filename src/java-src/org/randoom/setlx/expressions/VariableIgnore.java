@@ -10,7 +10,7 @@ import org.randoom.setlx.utilities.VariableScope;
 import java.util.List;
 
 /**
- * This class implements an ignored variable inside an assignable expression
+ * This class implements an ignored variable inside an assignable expression.
  *
  * grammar rules:
  * assignable
@@ -25,10 +25,13 @@ import java.util.List;
  */
 public class VariableIgnore extends AssignableExpression {
     // functional character used in terms
-    public  final static String         FUNCTIONAL_CHARACTER = generateFunctionalCharacter(VariableIgnore.class);
+    private final static String         FUNCTIONAL_CHARACTER = generateFunctionalCharacter(VariableIgnore.class);
     // precedence level in SetlX-grammar
     private final static int            PRECEDENCE           = 9999;
 
+    /**
+     * Singleton VariableIgnore expression.
+     */
     public  final static VariableIgnore VI                   = new VariableIgnore();
 
     private VariableIgnore() { }
@@ -45,6 +48,7 @@ public class VariableIgnore extends AssignableExpression {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -52,6 +56,7 @@ public class VariableIgnore extends AssignableExpression {
 
     @Override
     public void collectVariablesWhenAssigned (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -64,7 +69,7 @@ public class VariableIgnore extends AssignableExpression {
     }
 
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final String context) {
+    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final boolean checkObjects, final String context) {
         return true;
     }
 
@@ -82,14 +87,29 @@ public class VariableIgnore extends AssignableExpression {
         return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
-    public static VariableIgnore termToExpr(final Term term) {
+    /**
+     * Convert a term representing a VariableIgnore expression into such an expression.
+     *
+     * @param state Current state of the running setlX program.
+     * @param term  Term to convert.
+     * @return      Resulting expression of this conversion.
+     */
+    public static VariableIgnore termToExpr(final State state, final Term term) {
         return VI;
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    public static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

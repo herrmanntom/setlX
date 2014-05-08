@@ -58,17 +58,25 @@ public class For extends Statement {
 
         @Override
         public void collectVariablesAndOptimize (
+            final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
             if (condition != null) {
-                condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+                condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
             }
-            statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
+    /**
+     * Create a new For statement.
+     *
+     * @param iterator   Loop specification.
+     * @param condition  (Optional) loop condition.
+     * @param statements Statements to execute inside the loop.
+     */
     public For(final SetlIterator iterator, final Condition condition, final Block statements) {
         this.iterator   = iterator;
         this.condition  = condition;
@@ -83,11 +91,12 @@ public class For extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        iterator.collectVariablesAndOptimize(exec, boundVariables, unboundVariables, usedVariables);
+        iterator.collectVariablesAndOptimize(state, exec, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -114,23 +123,31 @@ public class For extends Statement {
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         result.addMember(state, statements.toTerm(state));
         return result;
     }
 
-    public static For termToStatement(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a For statement into such a statement.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting branch.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static For termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final SetlIterator  iterator  = SetlIterator.valueToIterator(term.firstMember());
+                final SetlIterator  iterator  = SetlIterator.valueToIterator(state, term.firstMember());
                       Condition condition = null;
-                if ( ! term.getMember(2).equals(new SetlString("nil"))) {
-                    condition = TermConverter.valueToCondition(term.getMember(2));
+                if ( ! term.getMember(2).equals(SetlString.NIL)) {
+                    condition = TermConverter.valueToCondition(state, term.getMember(2));
                 }
-                final Block     block     = TermConverter.valueToBlock(term.lastMember());
+                final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
                 return new For(iterator, condition, block);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

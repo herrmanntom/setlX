@@ -77,12 +77,13 @@ public class SetListConstructor extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         if (builder != null) {
-            builder.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            builder.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -124,11 +125,12 @@ public class SetListConstructor extends Expr {
     /**
      * Convert a term representing a StringConstructor into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    Term to convert.
      * @return                         Resulting StringConstructor Expression.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SetListConstructor valueToExpr(final Value value) throws TermConversionException {
+    public static SetListConstructor valueToExpr(final State state, final Value value) throws TermConversionException {
         if ( ! (value instanceof SetlList || value instanceof SetlSet)) {
             throw new TermConversionException("not a collectionValue");
         } else {
@@ -140,7 +142,7 @@ public class SetListConstructor extends Expr {
                     return new SetListConstructor(CollectionType.SET,  null);
                 }
             } else { // not empty
-                final CollectionBuilder c = CollectionBuilder.collectionValueToBuilder(cv);
+                final CollectionBuilder c = CollectionBuilder.collectionValueToBuilder(state, cv);
                 if (cv instanceof SetlList) {
                     return new SetListConstructor(CollectionType.LIST, c);
                 } else /* if (cv instanceof SetlSet) */ {

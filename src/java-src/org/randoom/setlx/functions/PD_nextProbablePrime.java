@@ -9,11 +9,13 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// nextProbablePrime(integer)    : returns the next probable prime greater as `integer'.
-//                                 The probability that the returned number is not a prime does
-//                                 not exceed 2**-100.
-
+/**
+ * nextProbablePrime(integer) : Returns the next probable prime greater as `integer'.
+ *                              The probability that the returned number is not a prime
+ *                              does not exceed 2**-100.
+ */
 public class PD_nextProbablePrime extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `nextProbablePrime'. */
     public final static PreDefinedProcedure DEFINITION = new PD_nextProbablePrime();
 
     private PD_nextProbablePrime() {

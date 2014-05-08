@@ -476,6 +476,7 @@ public class Rational extends NumberValue {
                     to += n % CORES; // pick up the slack
                 }
                 threads[i] = new Factorial(from, to);
+                threads[i].setName(Thread.currentThread().getName() + "::factorial" + i);
                 // start thread
                 threads[i].start();
             }
@@ -808,19 +809,22 @@ public class Rational extends NumberValue {
             } catch (final NumberToLargeException e) {
                 return this.compareTo(((SetlDouble)v).toRational());
             }
-        }  else {
+        } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 500;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
-        return this.compareTo(v) == 0;
+    public boolean equalTo(final Object o) {
+        if (o instanceof Value) {
+            return this.compareTo((Value) o) == 0;
+        }
+        return false;
     }
 
     private final static int initHashCode = Rational.class.hashCode();

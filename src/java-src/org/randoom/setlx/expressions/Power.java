@@ -42,12 +42,13 @@ public class Power extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        exponent.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        exponent.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -69,22 +70,34 @@ public class Power extends Expr {
         return result;
     }
 
-    public static Power termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a Power expression into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static Power termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs        = TermConverter.valueToExpr(term.firstMember());
-            final Expr exponent   = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs        = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr exponent   = TermConverter.valueToExpr(state, term.lastMember());
             return new Power(lhs, exponent);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

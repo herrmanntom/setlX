@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// last(collectionValue)         : selects the last member from `collectionValue'
-
+/**
+ * last(collectionValue) : Selects the last member from `collectionValue'.
+ */
 public class PD_last extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `last'. */
     public final static PreDefinedProcedure DEFINITION = new PD_last();
 
     private PD_last() {

@@ -11,15 +11,19 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The forall expression.
- * Note: This expression has a 'side-effect' of setting the iterations for which
+ * Note: This expression has a 'side-effect' of setting the iteration variables for which
  *       the condition is false in the current scope.
  *
  * grammar rule:
@@ -40,23 +44,29 @@ public class Forall extends Expr {
 
     private final SetlIterator  iterator;
     private final Condition     condition;
+    private       Set<String>   iterationVariables;
 
     private class Exec implements SetlIteratorExecutionContainer {
-        private final Condition     condition;
-        public        SetlBoolean   result;
-        public        VariableScope scope;
+        private final Condition          condition;
+        private final Set<String>        iterationVariables;
+        private       SetlBoolean        result;
+        private       SetlHashMap<Value> sideEffectBindings;
 
-        public Exec (final Condition condition) {
-            this.condition = condition;
-            this.result    = SetlBoolean.TRUE;
-            this.scope     = null;
+        public Exec (final Condition condition, final Set<String> iterationVariables) {
+            this.condition          = condition;
+            this.iterationVariables = iterationVariables;
+            this.result             = SetlBoolean.TRUE;
+            this.sideEffectBindings = null;
         }
 
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             result = condition.eval(state);
             if (result == SetlBoolean.FALSE) {
-                scope = state.getScope();  // save state where result is true
+                sideEffectBindings = new SetlHashMap<Value>();
+                for (final String variable : iterationVariables) {
+                    sideEffectBindings.put(variable, state.findValue(variable));
+                }
                 return ReturnMessage.BREAK; // stop iteration
             }
             return null;
@@ -64,40 +74,57 @@ public class Forall extends Expr {
 
         @Override
         public void collectVariablesAndOptimize (
+            final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
-            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
+    /**
+     * Constructor.
+     *
+     * @param iterator  Iteration definition.
+     * @param condition Condition to evaluate.
+     */
     public Forall(final SetlIterator iterator, final Condition condition) {
-        this.iterator  = iterator;
-        this.condition = condition;
+        this.iterator           = iterator;
+        this.condition          = condition;
+        this.iterationVariables = null;
     }
 
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
-        final Exec e = new Exec(condition);
+        if (iterationVariables == null) {
+            optimize(state);
+        }
+        final Exec e = new Exec(condition, iterationVariables);
         iterator.eval(state, e);
-        if (e.result == SetlBoolean.FALSE && e.scope != null) {
-            // restore state in which mBoolExpr is false
-            state.putAllValues(e.scope, FUNCTIONAL_CHARACTER);
+        if (e.result == SetlBoolean.FALSE && e.sideEffectBindings != null) {
+            // restore state in which condition is false
+            for (final Map.Entry<String, Value> entry : e.sideEffectBindings.entrySet()) {
+                state.putValue(entry.getKey(), entry.getValue(), FUNCTIONAL_CHARACTER);
+            }
         }
         return e.result;
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        iterator.collectVariablesAndOptimize(new Exec(condition), boundVariables, unboundVariables, usedVariables);
+        final List<String> tempVariables = new ArrayList<String>();
+        iterator.collectVariablesAndOptimize(state, new Exec(condition, null), tempVariables, boundVariables, unboundVariables, usedVariables);
 
         // add dummy variable to prevent optimization, side effect variables cannot be optimized
-        unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
+        unboundVariables.add(Variable.getPreventOptimizationDummy());
+
+        iterationVariables = new HashSet<String>(tempVariables);
     }
 
     /* string operations */
@@ -121,17 +148,24 @@ public class Forall extends Expr {
         return result;
     }
 
-    public static Forall termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a Forall into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting Forall expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Forall termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlIterator  iterator  = SetlIterator.valueToIterator(term.firstMember());
-            final Condition condition = TermConverter.valueToCondition(term.lastMember());
+            final SetlIterator  iterator  = SetlIterator.valueToIterator(state, term.firstMember());
+            final Condition condition = TermConverter.valueToCondition(state, term.lastMember());
             return new Forall(iterator, condition);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

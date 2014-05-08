@@ -48,12 +48,12 @@ public class Om extends Value {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 200;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (v == OM) {
             return true;
         } else {

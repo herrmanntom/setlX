@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// double(stringOrNumber)    : convert string or number into a double, returns om on failure
-
+/**
+ * double(stringOrNumber) : Convert string or number into a double, returns om on failure.
+ */
 public class PD_double extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `double'. */
     public final static PreDefinedProcedure DEFINITION = new PD_double();
 
     private PD_double() {

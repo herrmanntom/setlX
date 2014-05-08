@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isSet(value)            : test if value-type is set
-
+/**
+ * isSet(value) : Test if value-type is set.
+ */
 public class PD_isSet extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isSet'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isSet();
 
     private PD_isSet() {

@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// min(collectionValue) : select minimum member from collection value
-
+/**
+ * min(collectionValue) : Select minimum member from collection value.
+ */
 public class PD_min extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `min'. */
     public final static PreDefinedProcedure DEFINITION = new PD_min();
 
     private PD_min() {

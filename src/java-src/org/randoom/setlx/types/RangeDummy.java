@@ -35,12 +35,12 @@ public class RangeDummy extends Value {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 0;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (v == RD) {
             return true;
         } else {

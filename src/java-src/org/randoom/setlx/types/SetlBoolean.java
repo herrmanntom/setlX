@@ -148,13 +148,13 @@ public class SetlBoolean extends Value {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 400;
     }
 
     @Override
-    public boolean equalTo(final Value v){
-        if (this == v) {
+    public boolean equalTo(final Object o){
+        if (this == o) {
             // as only exactly one FALSE and TRUE object exist, we can compare by reference
             return true;
         } else {

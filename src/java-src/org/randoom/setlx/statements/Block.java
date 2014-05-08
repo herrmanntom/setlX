@@ -30,42 +30,48 @@ import java.util.List;
  *       =========
  *       statements
  */
-public class Block extends Statement {
+public class Block extends Statement implements Comparable<Block> {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Block.class);
     // how deep can the call stack be, before checking to replace the stack
     private       static int    MAX_CALL_STACK_DEPTH = -1;
 
     private final List<Statement> statements;
+    private       State           state; // reference to state object last used (for compare/equalTo)
 
     /**
      * Create a new empty block of setlX statements.
+     *
+     * @param state Current state of the running setlX program.
      */
-    public Block() {
-        this(new ArrayList<Statement>());
+    public Block(final State state) {
+        this(state, new ArrayList<Statement>());
     }
 
     /**
      * Create a new empty block of setlX statements.
      *
-     * @param size Initial statement capacity of the block.
+     * @param state Current state of the running setlX program.
+     * @param size  Initial statement capacity of the block.
      */
-    public Block(final int size) {
-        this(new ArrayList<Statement>(size));
+    public Block(final State state, final int size) {
+        this(state, new ArrayList<Statement>(size));
     }
 
     /**
      * Create a new block of setlX statements.
      *
+     * @param state      Current state of the running setlX program.
      * @param statements Statements in the new block.
      */
-    public Block(final List<Statement> statements) {
+    public Block(final State state, final List<Statement> statements) {
         this.statements = statements;
+        this.state      = state;
     }
 
     @Override
     public Block clone() {
-        final Block clone = new Block();
+        final Block clone = new Block(state, statements.size());
         clone.statements.addAll(statements);
         return clone;
     }
@@ -81,6 +87,8 @@ public class Block extends Statement {
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
+        this.state = state;
+
         // store and increase callStackDepth
         final int oldCallStackDepth = state.callStackDepth;
         state.callStackDepth += 2; // one for the block, one for the next statement
@@ -108,6 +116,7 @@ public class Block extends Statement {
             } else {
                 // prevent running out of stack by creating a new thread
                 final BlockExecThread callExec = new BlockExecThread(statements, state);
+                callExec.setName(Thread.currentThread().getName() + "::block");
 
                 try {
                     callExec.start();
@@ -154,12 +163,13 @@ public class Block extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         for (final Statement stmnt : statements) {
-            stmnt.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            stmnt.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -175,7 +185,7 @@ public class Block extends Statement {
         if (statements.size() > 0) {
             final Statement stmnt = statements.get(statements.size() - 1);
             if (stmnt instanceof StatementWithPrintableResult) {
-                ((StatementWithPrintableResult) stmnt).setPrintAfterEval();
+                ((StatementWithPrintableResult) stmnt).setPrintAfterExecution();
             }
         }
     }
@@ -238,23 +248,81 @@ public class Block extends Statement {
     }
 
     /**
+     * Get the number of contained statements.
+     *
+     * @return number of contained statements.
+     */
+    public int size() {
+        return statements.size();
+    }
+
+    /**
      * Convert a term representing a Block statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting statement of this conversion.
      * @throws TermConversionException If term is malformed.
      */
-    public static Block termToStatement(final Term term) throws TermConversionException {
+    public static Block termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList    stmnts  = (SetlList) term.lastMember();
-            final Block       block   = new Block(stmnts.size());
+            final SetlList stmnts = (SetlList) term.lastMember();
+            final Block    block  = new Block(state, stmnts.size());
             for (final Value v : stmnts) {
-                block.add(TermConverter.valueToStatement(v));
+                block.add(TermConverter.valueToStatement(state, v));
             }
             return block;
         }
+    }
+
+    @Override
+    public int compareTo(final Block other) {
+        if (this == other) {
+            return 0;
+        } else {
+            final int size = statements.size();
+            final int cmp  = Integer.compare(size, other.statements.size());
+            if (cmp != 0 || size == 0) {
+                return cmp;
+            }
+            // TODO implement compareTo without toString(), then remove state member
+            return toString(state).compareTo(other.toString(state));
+        }
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        } else if (o instanceof Block) {
+            return this.equalTo((Block) o);
+        }
+        return false;
+    }
+
+    /**
+     * Test if two Blocks are equal.
+     * This operation is much faster as ( compareTo(other) == 0 ).
+     *
+     * @param other Other Blocks to compare to `this'
+     * @return      True if `this' equals `other', false otherwise.
+     */
+    public boolean equalTo(final Block other) {
+        if (this == other) {
+            return true;
+        } else {
+            final int size = statements.size();
+            if (size == other.statements.size()) {
+                if (size == 0) {
+                    return true;
+                }
+                // TODO implement equals without toString(), then remove state member
+                return toString(state).equals(other.toString(state));
+            }
+        }
+        return false;
     }
 
     // private subclass to cheat the end of the world... or stack, whatever comes first

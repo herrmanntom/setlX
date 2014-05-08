@@ -40,12 +40,12 @@ public class Top extends Value {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 1300;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         // as only exactly one object of class Top ever exists, we can get away with comparing the reference
         return this == v;
     }

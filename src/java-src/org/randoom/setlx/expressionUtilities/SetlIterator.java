@@ -106,42 +106,69 @@ public class SetlIterator extends CodeFragment {
      * Gather all bound and unbound variables in this fragment and its siblings.
      * Optimizes this fragment, if this can be safely done.
      *
+     * @param state            Current state of the running setlX program.
      * @param container        Code fragments inside this specific iteration.
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
      */
     public void collectVariablesAndOptimize (
+        final State                          state,
         final SetlIteratorExecutionContainer container,
-        final List<String>             boundVariables,
-        final List<String>             unboundVariables,
-        final List<String>             usedVariables
+        final List<String>                   boundVariables,
+        final List<String>                   unboundVariables,
+        final List<String>                   usedVariables
     ) {
-        collection.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        final List<String> tempVariables = new ArrayList<String>();
+        collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
+    }
+
+    /**
+     * Gather all bound and unbound variables in this fragment and its siblings.
+     * Optimizes this fragment, if this can be safely done.
+     *
+     * @param state            Current state of the running setlX program.
+     * @param container        Code fragments inside this specific iteration.
+     * @param tempVariables    Variables temporarily assigned in this iterator.
+     * @param boundVariables   Variables "assigned" in this fragment.
+     * @param unboundVariables Variables not present in bound when used.
+     * @param usedVariables    Variables present in bound when used.
+     */
+    public void collectVariablesAndOptimize (
+        final State                          state,
+        final SetlIteratorExecutionContainer container,
+        final List<String>                   tempVariables,
+        final List<String>                   boundVariables,
+        final List<String>                   unboundVariables,
+        final List<String>                   usedVariables
+    ) {
+        collection.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
-        final List<String> tempAssigned = new ArrayList<String>();
-        assignable.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+        final List<String> tempVars = new ArrayList<String>();
+        assignable.collectVariablesWhenAssigned(state, tempVars, unboundVariables, usedVariables);
 
         final int preIndex = boundVariables.size();
-        boundVariables.addAll(tempAssigned);
+        boundVariables.addAll(tempVars);
+        tempVariables.addAll(tempVars);
 
         if (next != null) {
-            next.collectVariablesAndOptimize(container, boundVariables, unboundVariables, usedVariables);
+            next.collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
         } else {
-            container.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            container.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
 
         // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
-        for (int i = tempAssigned.size(); i > 0; --i) {
+        for (int i = tempVars.size(); i > 0; --i) {
             boundVariables.remove(preIndex + (i - 1));
         }
     }
 
     @Override
     public void collectVariablesAndOptimize (
+        final State                    state,
         final List<String>             boundVariables,
         final List<String>             unboundVariables,
         final List<String>             usedVariables
@@ -172,7 +199,7 @@ public class SetlIterator extends CodeFragment {
         if (next != null) {
             result.addMember(state, next.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         return result;
     }
@@ -180,31 +207,32 @@ public class SetlIterator extends CodeFragment {
     /**
      * Convert a term representing a SetlIterator into such a CodeFragment.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    Term to convert.
      * @return                         Resulting SetlIterator.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SetlIterator valueToIterator(final Value value) throws TermConversionException {
+    public static SetlIterator valueToIterator(final State state, final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final Term      term    = (Term) value;
-                final String    fc      = term.functionalCharacter().getUnquotedString();
+                final Term   term = (Term) value;
+                final String fc   = term.getFunctionalCharacter();
                 if (! fc.equals(FUNCTIONAL_CHARACTER) || term.size() != 3) {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
 
-                final Expr      assignable  = TermConverter.valueToExpr(term.firstMember());
+                final Expr assignable = TermConverter.valueToExpr(state, term.firstMember());
                 if ( ! (assignable instanceof AssignableExpression)) {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
 
-                final Expr      collection  = TermConverter.valueToExpr(term.getMember(2));
+                final Expr          collection = TermConverter.valueToExpr(state, term.getMember(2));
 
-                      SetlIterator  iterator    = null;
-                if (! term.lastMember().equals(new SetlString("nil"))) {
-                    iterator    = SetlIterator.valueToIterator(term.lastMember());
+                      SetlIterator  iterator   = null;
+                if (! term.lastMember().equals(SetlString.NIL)) {
+                    iterator    = SetlIterator.valueToIterator(state, term.lastMember());
                 }
                 return new SetlIterator((AssignableExpression) assignable, collection, iterator);
             } catch (final SetlException se) {
@@ -222,9 +250,9 @@ public class SetlIterator extends CodeFragment {
 
             final Value iterationValue = collection.eval(state); // trying to iterate over this value
             if (iterationValue instanceof CollectionValue) {
-                final CollectionValue   coll        = (CollectionValue) iterationValue;
+                final CollectionValue coll       = (CollectionValue) iterationValue;
                 // scope for inner execution/next iterator
-                final VariableScope     innerScope  = state.getScope().createInteratorBlock();
+                final VariableScope   innerScope = state.getScope().createInteratorBlock();
                 // iterate over items
                 for (final Value v: coll) {
                     if (state.executionStopped) {
@@ -233,10 +261,14 @@ public class SetlIterator extends CodeFragment {
 
                     // restore inner scope
                     state.setScope(innerScope);
-                    innerScope.setWriteThrough(false); // force iteration variables to be local to this block
+                    // force iteration variables to be local to this block
+                    final int writeThroughToken = innerScope.unsetWriteThrough();
 
                     // assign value from collection
-                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, FUNCTIONAL_CHARACTER);
+                    final boolean successful = assignable.assignUnclonedCheckUpTo(state, v.clone(), outerScope, false, FUNCTIONAL_CHARACTER);
+
+                    // reset WriteThrough, because changes during execution are not strictly local
+                    innerScope.setWriteThrough(writeThroughToken);
 
                     /*
                      * This check is done to allow the following statement to work as expected:
@@ -250,8 +282,6 @@ public class SetlIterator extends CodeFragment {
                         continue;
                     }
 
-                    // reset WriteThrough, because changes during execution are not strictly local
-                    innerScope.setWriteThrough(true);
                     /* Starts iteration of next iterator or execution if this is the
                        last iterator.
                        Stops iteration if requested by execution.                 */

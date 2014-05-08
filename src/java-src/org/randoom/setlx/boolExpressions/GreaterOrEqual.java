@@ -32,6 +32,12 @@ public class GreaterOrEqual extends Expr {
     private final Expr lhs;
     private final Expr rhs;
 
+    /**
+     * Create new GreaterOrEqual.
+     *
+     * @param lhs Expression to evaluate and compare.
+     * @param rhs Expression to evaluate and compare.
+     */
     public GreaterOrEqual(final Expr lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
@@ -72,19 +78,20 @@ public class GreaterOrEqual extends Expr {
             // note: rhs and lhs swapped!
             return SetlBoolean.valueOf(rhs.isEqualTo(state, lhs) == SetlBoolean.TRUE || rhs.isLessThan(state, lhs) == SetlBoolean.TRUE);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"(" + rhs + " == " + lhs + ") || (" + rhs + " < " + lhs +  ")\":");
+            se.addToTrace("Error in substitute comparison \"(" + rhs.toString(state) + " == " + lhs.toString(state) + ") || (" + rhs.toString(state) + " < " + lhs.toString(state) +  ")\":");
             throw se;
         }
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -106,17 +113,24 @@ public class GreaterOrEqual extends Expr {
         return result;
     }
 
-    public static GreaterOrEqual termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a GreaterOrEqual into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static GreaterOrEqual termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new GreaterOrEqual(lhs, rhs);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

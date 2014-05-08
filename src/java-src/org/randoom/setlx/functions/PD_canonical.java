@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// canonical(term)         : returns a string of a term in its true form
-
+/**
+ * canonical(term) : Returns a string of a term in its true form.
+ */
 public class PD_canonical extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `canonical'. */
     public final static PreDefinedProcedure DEFINITION = new PD_canonical();
 
     private PD_canonical() {

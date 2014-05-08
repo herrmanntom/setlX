@@ -18,7 +18,7 @@ public class PD_gfx_setMessage  extends GfxFunction {
 
     @Override
     protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        SetlXUserPanel.getInstance().setMessage( stringFromValue( args.get(0) ));
+        SetlXUserPanel.getInstance().setMessage( stringFromValue( state, args.get(0) ));
         return SetlBoolean.TRUE;
     }
 }

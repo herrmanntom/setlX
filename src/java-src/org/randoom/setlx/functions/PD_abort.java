@@ -7,7 +7,7 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- *  abort(message)          : stops execution and displays given error message(s)
+ *  abort(message) : stops execution and displays given error message(s)
  */
 public class PD_abort extends PreDefinedProcedure {
     /** Definition of the PreDefinedProcedure `abort'. */
@@ -21,11 +21,12 @@ public class PD_abort extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws AbortException {
-        String msg = "";
+        final StringBuilder message = new StringBuilder();
+        message.append("abort: ");
         for (final Value arg : args) {
-            msg += arg.getUnquotedString();
+            arg.appendUnquotedString(state, message, 0);
         }
-        throw new AbortException("abort: " + msg);
+        throw new AbortException(message.toString());
     }
 }
 

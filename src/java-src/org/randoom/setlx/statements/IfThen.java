@@ -55,6 +55,7 @@ public class IfThen extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -66,7 +67,7 @@ public class IfThen extends Statement {
         for (final IfThenAbstractBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
-            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+            br.collectVariablesAndOptimize(state, boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
                 boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
@@ -106,18 +107,19 @@ public class IfThen extends Statement {
     /**
      * Convert a term representing an if-then-else statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting if-then-else Statement.
-     * @throws TermConversionException Thrown in case of an malformed term.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static IfThen termToStatement(final Term term) throws TermConversionException {
+    public static IfThen termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList                   branches   = (SetlList) term.firstMember();
             final List<IfThenAbstractBranch> branchList = new ArrayList<IfThenAbstractBranch>(branches.size());
             for (final Value v : branches) {
-                branchList.add(IfThenAbstractBranch.valueToIfThenAbstractBranch(v));
+                branchList.add(IfThenAbstractBranch.valueToIfThenAbstractBranch(state, v));
             }
             return new IfThen(branchList);
         }

@@ -31,6 +31,12 @@ public class NotIn extends Expr {
     private final Expr lhs;
     private final Expr rhs;
 
+    /**
+     * Create new NotIn.
+     *
+     * @param lhs Expression to evaluate and locate.
+     * @param rhs Expression to evaluate and search.
+     */
     public NotIn(final Expr lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
@@ -42,19 +48,20 @@ public class NotIn extends Expr {
             // note: rhs and lhs swapped!
             return rhs.eval(state).containsMember(state, lhs.eval(state)).not(state);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"!(" + lhs + " in " + rhs +  ")\":");
+            se.addToTrace("Error in substitute comparison \"!(" + lhs.toString(state) + " in " + rhs.toString(state) +  ")\":");
             throw se;
         }
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -76,17 +83,24 @@ public class NotIn extends Expr {
         return result;
     }
 
-    public static NotIn termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a NotIn into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static NotIn termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new NotIn(lhs, rhs);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

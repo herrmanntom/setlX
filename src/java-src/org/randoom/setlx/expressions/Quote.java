@@ -41,11 +41,12 @@ public class Quote extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -70,16 +71,23 @@ public class Quote extends Expr {
         return result;
     }
 
-    public static Quote termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a Quote expression into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression of this conversion.
+     * @throws TermConversionException If term is malformed.
+     */
+    public static Quote termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr expr = TermConverter.valueToExpr(term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
             return new Quote(expr);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

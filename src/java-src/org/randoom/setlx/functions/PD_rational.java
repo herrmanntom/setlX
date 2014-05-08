@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// rational(stringOrNumber)      : convert string or number into a rational, returns om on failure
-
+/**
+ * rational(stringOrNumber) : Convert string or number into a rational, returns om on failure.
+ */
 public class PD_rational extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `rational'. */
     public final static PreDefinedProcedure DEFINITION = new PD_rational();
 
     private PD_rational() {

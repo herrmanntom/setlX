@@ -22,9 +22,10 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     @Override
     public void collectVariablesAndOptimize (
-      final List<String> boundVariables,
-      final List<String> unboundVariables,
-      final List<String> usedVariables
+        final State        state,
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
     ) {
         /* nothing to collect or optimize (for most, but not all, values) */
     }
@@ -33,25 +34,25 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public Value conjunction(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
-            "Left-hand-side of '" + this + " && " + other + "' is not a Boolean value."
+            "Left-hand-side of '" + this.toString(state) + " && " + other.toString(state) + "' is not a Boolean value."
         );
     }
 
     public Value disjunction(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
-            "Left-hand-side of '" + this + " || " + other + "' is not a Boolean value."
+            "Left-hand-side of '" + this.toString(state) + " || " + other.toString(state) + "' is not a Boolean value."
         );
     }
 
     public Value implication(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
-            "Left-hand-side of '" + this + " => " + other + "' is not a Boolean value."
+            "Left-hand-side of '" + this.toString(state) + " => " + other.toString(state) + "' is not a Boolean value."
         );
     }
 
     public Value not(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand of '!" + this + "' is not a Boolean value."
+            "Operand of '!" + this.toString(state) + "' is not a Boolean value."
         );
     }
 
@@ -61,7 +62,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
-    public SetlBoolean isConstructor() {
+    public SetlBoolean isClass() {
         return SetlBoolean.FALSE;
     }
 
@@ -228,7 +229,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return real.jDoubleValue();
         } else {
             throw new IncompatibleTypeException(
-                "'" + this + "' is not convertable to a double."
+                "'" + this.toString(state) + "' is not convertable to a double."
             );
         }
     }
@@ -246,7 +247,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return integer.jIntValue();
         } else {
             throw new IncompatibleTypeException(
-                "'" + this + "' is not convertable to integer."
+                "'" + this.toString(state) + "' is not convertable to integer."
             );
         }
     }
@@ -255,13 +256,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public Value absoluteValue(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a number or character."
+            "Operand '" + this.toString(state) + "' is not a number or character."
         );
     }
 
     public Value ceil(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a number."
+            "Argument '" + this.toString(state) + "' is not a number."
         );
     }
 
@@ -278,7 +279,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((Term) subtrahend).differenceFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this + " - " + subtrahend + "' is undefined."
+            "'" + this.toString(state) + " - " + subtrahend.toString(state) + "' is undefined."
         );
     }
 
@@ -288,19 +289,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public Value factorial(final State state) throws SetlException {
         throw new UndefinedOperationException(
-            "'" + this + "!' is undefined."
+            "'" + this.toString(state) + "!' is undefined."
         );
     }
 
     public void fillCollectionWithinRange(final State state, final Value step, final Value stop, final CollectionValue collection) throws SetlException {
         throw new IncompatibleTypeException(
-            "Start argument '" + this + "' is not a number."
+            "Start argument '" + this.toString(state) + "' is not a number."
         );
     }
 
     public Value floor(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a number."
+            "Argument '" + this.toString(state) + "' is not a number."
         );
     }
 
@@ -309,7 +310,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this + " \\ " + divisor + "' is undefined."
+            "'" + this.toString(state) + " \\ " + divisor.toString(state) + "' is undefined."
         );
     }
 
@@ -335,7 +336,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public Value minus(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a number."
+            "Operand '" + this.toString(state) + "' is not a number."
         );
     }
 
@@ -344,7 +345,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((Term) modulo).moduloFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this + " % " + modulo + "' is undefined."
+            "'" + this.toString(state) + " % " + modulo.toString(state) + "' is undefined."
         );
     }
 
@@ -365,7 +366,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((Term) exponent).powerFlipped(state, this);
         }
         throw new IncompatibleTypeException(
-            "Left-hand-side of '" + this + " ** " + exponent + "' is not a number."
+            "Left-hand-side of '" + this.toString(state) + " ** " + exponent.toString(state) + "' is not a number."
         );
     }
 
@@ -374,7 +375,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((Term) multiplier).productFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this + " * " + multiplier + "' is undefined."
+            "'" + this.toString(state) + " * " + multiplier.toString(state) + "' is undefined."
         );
     }
 
@@ -395,7 +396,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((Term) divisor).quotientFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this + " / " + divisor + "' is undefined."
+            "'" + this.toString(state) + " / " + divisor.toString(state) + "' is undefined."
         );
     }
 
@@ -405,19 +406,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public Value rnd(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a rational, integer or collection value."
+            "Argument '" + this.toString(state) + "' is not a rational, integer or collection value."
         );
     }
 
     public Value rnd(final State state, final Value numberOfChoices) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a rational or integer."
+            "Argument '" + this.toString(state) + "' is not a rational or integer."
         );
     }
 
     public Value round(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a number."
+            "Argument '" + this.toString(state) + "' is not a number."
         );
     }
 
@@ -428,7 +429,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((SetlString) summand).sumFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this + " + " + summand + "' is undefined."
+            "'" + this.toString(state) + " + " + summand.toString(state) + "' is undefined."
         );
     }
 
@@ -440,19 +441,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public void addMember(final State state, final Value element) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not add '" + element + "' into operand; '" + this + "' is not a collection value."
+            "Can not add '" + element.toString(state) + "' into operand; '" + this.toString(state) + "' is not a collection value."
         );
     }
 
     public Value arbitraryMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a collection value."
+            "Operand '" + this.toString(state) + "' is not a collection value."
         );
     }
 
     public Value arguments(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a term."
+            "Operand '" + this.toString(state) + "' is not a term."
         );
     }
 
@@ -474,29 +475,29 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             return ((Term) other).cartesianProductFlipped(state, this);
         }
         throw new UndefinedOperationException(
-            "'" + this + " >< " + other + "' is undefined."
+            "'" + this.toString(state) + " >< " + other.toString(state) + "' is undefined."
         );
     }
 
     public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not access elements using the arguments '" + args + "' on this operand-type;" +
-            " '" + this + "' is not a collection value."
+            " '" + this.toString(state) + "' is not a collection value."
         );
     }
 
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not access elements using the arguments '" + args + "' on this operand-type;" +
-            " '" + this + "' is not a collection value."
+            " '" + this.toString(state) + "' is not a collection value."
         );
     }
 
     // returns a set of all pairs which first element matches arg
     public Value collectMap(final State state, final Value arg) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not collect values of members matching the key '" + arg + "' on this operand-type;" +
-            " '" + this + "' is not a map."
+            "Can not collect values of members matching the key '" + arg.toString(state) + "' on this operand-type;" +
+            " '" + this.toString(state) + "' is not a map."
         );
     }
 
@@ -510,13 +511,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public SetlBoolean containsMember(final State state, final Value element) throws SetlException {
         throw new IncompatibleTypeException(
-            "Right-hand-side of '" + element  + " in " + this + "' is not a collection value."
+            "Right-hand-side of '" + element.toString(state)  + " in " + this.toString(state) + "' is not a collection value."
         );
     }
 
     public Value domain(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a set."
+            "Operand '" + this.toString(state) + "' is not a set."
         );
     }
 
@@ -529,13 +530,20 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value firstMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not get first member from operand; '" + this + "' is not a collection value."
+            "Can not get first member from operand; '" + this.toString(state) + "' is not a collection value."
         );
     }
 
+    /**
+     * Get the functional character (of a term).
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               functional character of this value.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value functionalCharacter(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a term."
+            "Operand '" + this.toString(state) + "' is not a term."
         );
     }
 
@@ -549,8 +557,8 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value getMember(final State state, final Value index) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not get member with index '" + index + "' from operand;" +
-            " '" + this + "' is not a collection value or direct access is unsupported for this type."
+            "Can not get member with index '" + index.toString(state) + "' from operand;" +
+            " '" + this.toString(state) + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
@@ -564,21 +572,21 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not get member with index '" + index + "' from operand;" +
-            " '" + this + "' is not a collection value or direct access is unsupported for this type."
+            "Can not get member with index '" + index.toString(state) + "' from operand;" +
+            " '" + this.toString(state) + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
     public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not get member between index '" + low + "' and '" + high + "' from operand;" +
-            " '" + this + "' is not a collection value or ranges are unsupported for this type."
+            "Can not get member between index '" + low.toString(state) + "' and '" + high.toString(state) + "' from operand;" +
+            " '" + this.toString(state) + "' is not a collection value or ranges are unsupported for this type."
         );
     }
 
     public Value join(final State state, final Value separator) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' not a collection value."
+            "Argument '" + this.toString(state) + "' not a collection value."
         );
     }
 
@@ -591,7 +599,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value lastMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not get last member from operand; '" + this + "' is not a collection value."
+            "Can not get last member from operand; '" + this.toString(state) + "' is not a collection value."
         );
     }
 
@@ -611,7 +619,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value maximumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument of 'max(" + this + "') is not a collection value."
+            "Argument of 'max(" + this.toString(state) + "') is not a collection value."
         );
     }
 
@@ -631,49 +639,50 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value minimumMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument of 'min(" + this + "') is not a collection value."
+            "Argument of 'min(" + this.toString(state) + "') is not a collection value."
         );
     }
 
     public Value productOfMembers(final State state, final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
-            "Right-hand-side of '*/ " + this + "' is not a collection value."
+            "Right-hand-side of '*/ " + this.toString(state) + "' is not a collection value."
         );
     }
 
     public Value nextPermutation(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a list or string."
+            "Operand '" + this.toString(state) + "' is not a list or string."
         );
     }
 
     public Value permutations(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a collection value."
+            "Operand '" + this.toString(state) + "' is not a collection value."
         );
     }
 
     public Value powerSet(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a set."
+            "Operand '" + this.toString(state) + "' is not a set."
         );
     }
 
     public Value range(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a set."
+            "Operand '" + this.toString(state) + "' is not a set."
         );
     }
 
     /**
      * Remove the specified member of this value.
      *
+     * @param state                      Current state of the running setlX program.
      * @param element                    Element to remove.
      * @throws IncompatibleTypeException Thrown in case of some (user-) error.
      */
-    public void removeMember(final Value element) throws IncompatibleTypeException {
+    public void removeMember(final State state, final Value element) throws IncompatibleTypeException {
         throw new IncompatibleTypeException(
-            "Can not remove '" + element + "' from operand; '" + this + "' is not a collection value."
+            "Can not remove '" + element.toString(state) + "' from operand; '" + this.toString(state) + "' is not a collection value."
         );
     }
 
@@ -686,7 +695,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value removeFirstMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not remove first member from operand; '" + this + "' is not a collection value."
+            "Can not remove first member from operand; '" + this.toString(state) + "' is not a collection value."
         );
     }
 
@@ -699,26 +708,26 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value removeLastMember(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not remove last member from operand; '" + this + "' is not a collection value."
+            "Can not remove last member from operand; '" + this.toString(state) + "' is not a collection value."
         );
     }
 
     public Value reverse(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a list or string."
+            "Operand '" + this.toString(state) + "' is not a list or string."
         );
     }
 
     public void setMember(final State state, final Value index, final Value v) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not set member with index '" + index + "' from operand;" +
-            " '" + this + "' is not a collection value or direct access is unsupported for this type."
+            "Can not set member with index '" + index.toString(state) + "' from operand;" +
+            " '" + this.toString(state) + "' is not a collection value or direct access is unsupported for this type."
         );
     }
 
     public Value shuffle(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a list or string."
+            "Argument '" + this.toString(state) + "' is not a list or string."
         );
     }
 
@@ -730,19 +739,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public Value sort(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a list or string."
+            "Argument '" + this.toString(state) + "' is not a list or string."
         );
     }
 
     public Value split(final State state, final Value pattern) throws SetlException {
         throw new IncompatibleTypeException(
-            "Argument '" + this + "' is not a string."
+            "Argument '" + this.toString(state) + "' is not a string."
         );
     }
 
     public Value sumOfMembers(final State state, final Value neutral) throws SetlException {
         throw new IncompatibleTypeException(
-            "Right-hand-side of '+/ " + this + "' is not a collection value."
+            "Right-hand-side of '+/ " + this.toString(state) + "' is not a collection value."
         );
     }
 
@@ -750,19 +759,19 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     public Value getObjectMember(final State state, final String variable) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
+            "Can not get member '" + variable + "' from operand; '" + this.toString(state) + "' is not an object."
         );
     }
 
     public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not get member '" + variable + "' from operand; '" + this + "' is not an object."
+            "Can not get member '" + variable + "' from operand; '" + this.toString(state) + "' is not an object."
         );
     }
 
     public void setObjectMember(final State state, final String variable, final Value value, final String context) throws SetlException {
         throw new IncompatibleTypeException(
-            "Can not add member '" + variable + "' into operand; '" + this + "' is not an object."
+            "Can not add member '" + variable + "' into operand; '" + this.toString(state) + "' is not an object."
         );
     }
 
@@ -772,7 +781,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         String param = args.toString();
         param = param.substring(1, param.length() - 1);
         throw new IncompatibleTypeException(
-            "Can not perform call with arguments '" + param + "' on this operand-type; '" + this + "' is not a procedure."
+            "Can not perform call with arguments '" + param + "' on this operand-type; '" + this.toString(state) + "' is not a procedure."
         );
     }
 
@@ -782,10 +791,8 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
 
     /**
-     * Appends a string representation of this class to the given StringBuilder
+     * Appends a string representation of this value to the given StringBuilder
      * object, but suppresses quotes when appending strings.
-     *
-     * @see org.randoom.setlx.utilities.CodeFragment#toString(State)
      *
      * @param state     Current state of the running setlX program.
      * @param sb        StringBuilder to append to.
@@ -807,19 +814,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     /**
-     * Get an uninterpreted string representation of this value.
-     *
-     * @return Uninterpreted string representation of this value.
-     */
-    public final String canonical() {
-        final State         bubble = new State();
-        final StringBuilder sb     = new StringBuilder();
-        canonical(bubble, sb);
-        return sb.toString();
-    }
-
-    /**
-     * Convert this value into a single character.
+     * Convert this value into a single ASCII character.
      *
      * @param state          Current state of the running setlX program.
      * @return               Character representation of this value.
@@ -827,14 +822,29 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      */
     public Value charConvert(final State state) throws SetlException {
         throw new IncompatibleTypeException(
-            "Operand '" + this + "' is not a number between 0 and 255."
+            "Operand '" + this.toString(state) + "' is not a number between 0 and 255."
         );
     }
 
-    public String getUnquotedString() {
-        return toString();
-    }
+    /**
+     * Get a string representation of this value, but suppresses quotes when appending strings.
+     *
+     * @param state Current state of the running setlX program.
+     * @return      String representation of this value.
+     */
+     public String getUnquotedString(final State state) {
+         final StringBuilder sb = new StringBuilder();
+         appendString(state, sb, 0);
+         return sb.toString();
+     }
 
+    /**
+     * Get an string representation of this value as SetlString.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               SetlString representation of this value.
+     * @throws SetlException Thrown in case some (user-)error occurs.
+     */
     public SetlString str(final State state) throws SetlException {
         final StringBuilder sb = new StringBuilder();
         appendString(state, sb, 0);
@@ -843,6 +853,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* term operations */
 
+    /**
+     * Match some value against a this value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Value to match.
+     * @return               Result of the match.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
         if (other == IgnoreDummy.ID || this.equalTo(other)) {
             return new MatchResult(true);
@@ -864,7 +882,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * Useful output is only possible if both values are of the same type.
      */
     @Override
-    public abstract int     compareTo(final Value other);
+    public abstract int compareTo(final Value other);
 
     /**
      * In order to compare "incomparable" values, e.g. of different types, the
@@ -878,7 +896,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      *
      * @return Number representing the order of this type in compareTo().
      */
-    protected abstract int  compareToOrdering();
+    public abstract int compareToOrdering();
 
     /**
      * Test if two Values are equal.
@@ -887,17 +905,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @param other Other value to compare to `this'
      * @return      True if `this' equals `other', false otherwise.
      */
-    public abstract boolean equalTo  (final Value other);
+    public abstract boolean equalTo (final Object other);
 
     @Override
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
-        } else if (o instanceof Value) {
-            return this.equalTo((Value) o);
-        } else {
-            return false;
         }
+        return this.equalTo(o);
     }
 
     @Override

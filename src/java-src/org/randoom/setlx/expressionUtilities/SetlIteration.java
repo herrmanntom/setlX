@@ -30,8 +30,7 @@ import java.util.List;
  *       expr       iterator         condition
  */
 public class SetlIteration extends CollectionBuilder {
-    // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIteration.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIteration.class);
 
     private final Expr         expr;
     private final SetlIterator iterator;
@@ -58,17 +57,25 @@ public class SetlIteration extends CollectionBuilder {
 
         @Override
         public void collectVariablesAndOptimize (
+            final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
             if (condition != null) {
-                condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+                condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
             }
-            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
+    /**
+     * Create a new SetlIteration.
+     *
+     * @param expr      Expression to evaluate before adding to collection.
+     * @param iterator  Iteration definition.
+     * @param condition Loop condition.
+     */
     public SetlIteration(final Expr expr, final SetlIterator iterator, final Condition condition) {
         this.expr      = expr;
         this.iterator  = iterator;
@@ -82,11 +89,12 @@ public class SetlIteration extends CollectionBuilder {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        iterator.collectVariablesAndOptimize(new Exec(expr, condition, null), boundVariables, unboundVariables, usedVariables);
+        iterator.collectVariablesAndOptimize(state, new Exec(expr, condition, null), boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -112,32 +120,46 @@ public class SetlIteration extends CollectionBuilder {
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         collection.addMember(state, result);
     }
 
-    /*package*/ static SetlIteration termToIteration(final Term term) throws TermConversionException {
+    /**
+     * Regenerate SetlIteration from a term representing this expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term representation.
+     * @return                         Regenerated SetlIteration.
+     * @throws TermConversionException Thrown in case the term is malformed.
+     */
+    /*package*/ static SetlIteration termToIteration(final State state, final Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final Expr expr = TermConverter.valueToExpr(term.firstMember());
+                final Expr         expr     = TermConverter.valueToExpr(state, term.firstMember());
 
-                SetlIterator iterator = null;
-                if (! term.getMember(2).equals(new SetlString("nil"))) {
-                    iterator  = SetlIterator.valueToIterator(term.getMember(2));
-                }
+                final SetlIterator iterator = SetlIterator.valueToIterator(state, term.getMember(2));
 
                 Condition cond = null;
-                if (! term.lastMember().equals(new SetlString("nil"))) {
-                    cond    = TermConverter.valueToCondition(term.lastMember());
+                if (! term.lastMember().equals(SetlString.NIL)) {
+                    cond = TermConverter.valueToCondition(state, term.lastMember());
                 }
                 return new SetlIteration(expr, iterator, cond);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

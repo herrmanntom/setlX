@@ -3,6 +3,7 @@ package org.randoom.setlx.boolExpressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -31,6 +32,12 @@ public class Disjunction extends Expr {
     private final Expr lhs;
     private final Expr rhs;
 
+    /**
+     * Create new Disjunction.
+     *
+     * @param lhs Expression to evaluate and combine.
+     * @param rhs Expression to evaluate and combine.
+     */
     public Disjunction(final Expr lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
@@ -43,12 +50,23 @@ public class Disjunction extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        Value value = null;
+        if (lhs.isReplaceable()) {
+            try {
+                value = lhs.eval(state);
+            } catch (final Throwable t) {
+                value = null;
+            }
+        }
+        if (value == null || value != SetlBoolean.TRUE) {
+            rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        }
     }
 
     /* string operations */
@@ -70,12 +88,20 @@ public class Disjunction extends Expr {
         return result;
     }
 
-    public static Disjunction termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a Disjunction into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Disjunction termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new Disjunction(lhs, rhs);
         }
     }
@@ -85,6 +111,11 @@ public class Disjunction extends Expr {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

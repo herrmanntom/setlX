@@ -11,11 +11,15 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The exists expression.
@@ -40,23 +44,29 @@ public class Exists extends Expr {
 
     private final SetlIterator  iterator;
     private final Condition     condition;
+    private       Set<String>   iterationVariables;
 
     private class Exec implements SetlIteratorExecutionContainer {
-        private final Condition     condition;
-        public        SetlBoolean   result;
-        public        VariableScope scope;
+        private final Condition          condition;
+        private final Set<String>        iterationVariables;
+        private       SetlBoolean        result;
+        private       SetlHashMap<Value> sideEffectBindings;
 
-        public Exec (final Condition condition) {
-            this.condition = condition;
-            this.result    = SetlBoolean.FALSE;
-            this.scope     = null;
+        public Exec (final Condition condition, final Set<String> iterationVariables) {
+            this.condition          = condition;
+            this.iterationVariables = iterationVariables;
+            this.result             = SetlBoolean.FALSE;
+            this.sideEffectBindings = null;
         }
 
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
             result = condition.eval(state);
             if (result == SetlBoolean.TRUE) {
-                scope = state.getScope();  // save state where result is true
+                sideEffectBindings = new SetlHashMap<Value>();
+                for (final String variable : iterationVariables) {
+                    sideEffectBindings.put(variable, state.findValue(variable));
+                }
                 return ReturnMessage.BREAK; // stop iteration
             }
             return null;
@@ -64,40 +74,57 @@ public class Exists extends Expr {
 
         @Override
         public void collectVariablesAndOptimize (
+            final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
-            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
+    /**
+     * Constructor.
+     *
+     * @param iterator  Iteration definition.
+     * @param condition Condition to evaluate.
+     */
     public Exists(final SetlIterator iterator, final Condition condition) {
-        this.iterator  = iterator;
-        this.condition = condition;
+        this.iterator           = iterator;
+        this.condition          = condition;
+        this.iterationVariables = null;
     }
 
     @Override
     protected SetlBoolean evaluate(final State state) throws SetlException {
-        final Exec e = new Exec(condition);
+        if (iterationVariables == null) {
+            optimize(state);
+        }
+        final Exec e = new Exec(condition, iterationVariables);
         iterator.eval(state, e);
-        if (e.result == SetlBoolean.TRUE && e.scope != null) {
+        if (e.result == SetlBoolean.TRUE && e.sideEffectBindings != null) {
             // restore state in which condition is true
-            state.putAllValues(e.scope, FUNCTIONAL_CHARACTER);
+            for (final Map.Entry<String, Value> entry : e.sideEffectBindings.entrySet()) {
+                state.putValue(entry.getKey(), entry.getValue(), FUNCTIONAL_CHARACTER);
+            }
         }
         return e.result;
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        iterator.collectVariablesAndOptimize(new Exec(condition), boundVariables, unboundVariables, usedVariables);
+        final List<String> tempVariables = new ArrayList<String>();
+        iterator.collectVariablesAndOptimize(state, new Exec(condition, null), tempVariables, boundVariables, unboundVariables, usedVariables);
 
         // add dummy variable to prevent optimization, side effect variables cannot be optimized
-        unboundVariables.add(Variable.PREVENT_OPTIMIZATION_DUMMY);
+        unboundVariables.add(Variable.getPreventOptimizationDummy());
+
+        iterationVariables = new HashSet<String>(tempVariables);
     }
 
     /* string operations */
@@ -121,17 +148,24 @@ public class Exists extends Expr {
         return result;
     }
 
-    public static Exists termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing an Exists into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting Exists expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Exists termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlIterator  iterator  = SetlIterator.valueToIterator(term.firstMember());
-            final Condition condition = TermConverter.valueToCondition(term.lastMember());
+            final SetlIterator  iterator  = SetlIterator.valueToIterator(state, term.firstMember());
+            final Condition condition = TermConverter.valueToCondition(state, term.lastMember());
             return new Exists(iterator, condition);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;

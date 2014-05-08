@@ -1,6 +1,5 @@
 package org.randoom.setlx.functions;
 
-import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -28,25 +27,15 @@ public class PD_rnd extends PreDefinedProcedure {
         super();
         addParameter("numberOrCollection");
         addParameter("numberOfChoices");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(1);
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         if (args.size() == 1) {
             return args.get(0).rnd(state);
-        } else if (args.size() == 2) {
+        } else /* if (args.size() == 2) */ {
             return args.get(0).rnd(state, args.get(1));
-        } else {
-            final StringBuilder error = new StringBuilder();
-            error.append("Procedure is defined with more parameters: ");
-            error.append(getName());
-            error.append("(");
-            parameters.get(0).appendString(state, error, 0);
-            error.append(", [");
-            parameters.get(1).appendString(state, error, 0);
-            error.append("])");
-            throw new IncorrectNumberOfParametersException(error.toString());
         }
     }
 }

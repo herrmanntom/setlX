@@ -8,9 +8,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// endsWith(string, suffix)      : return true if string ends with prefix
-
+/**
+ * endsWith(string, suffix) : Return true if string ends with suffix.
+ */
 public class PD_endsWith extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `endsWith'. */
     public final static PreDefinedProcedure DEFINITION = new PD_endsWith();
 
     private PD_endsWith() {
@@ -25,17 +27,17 @@ public class PD_endsWith extends PreDefinedProcedure {
         final Value suffix = args.get(1);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "String-argument '" + string + "' is not a string."
+                "String-argument '" + string.toString(state) + "' is not a string."
             );
         }
 
         if ( ! (suffix instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Suffix-argument '" + suffix + "' is not a string."
+                "Suffix-argument '" + suffix.toString(state) + "' is not a string."
             );
         }
 
-        if (string.getUnquotedString().endsWith(suffix.getUnquotedString())) {
+        if (string.getUnquotedString(state).endsWith(suffix.getUnquotedString(state))) {
             return SetlBoolean.TRUE;
         } else {
             return SetlBoolean.FALSE;

@@ -88,6 +88,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -97,17 +98,17 @@ public class MatchCaseBranch extends MatchAbstractBranch {
            remove them again before returning. */
         final List<String> tempAssigned = new ArrayList<String>();
         for (final Expr expr : exprs) {
-            expr.collectVariablesAndOptimize(new ArrayList<String>(), tempAssigned, tempAssigned);
+            expr.collectVariablesAndOptimize(state, new ArrayList<String>(), tempAssigned, tempAssigned);
         }
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempAssigned);
 
         if (condition != null) {
-            condition.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
 
-        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
         for (int i = tempAssigned.size(); i > 0; --i) {
@@ -156,7 +157,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
         if (condition != null) {
             result.addMember(state, condition.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
 
         result.addMember(state, statements.toTerm(state));
@@ -167,25 +168,26 @@ public class MatchCaseBranch extends MatchAbstractBranch {
     /**
      * Convert a term representing a case-branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static MatchCaseBranch termToBranch(final Term term) throws TermConversionException {
+    public static MatchCaseBranch termToBranch(final State state, final Term term) throws TermConversionException {
         if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final SetlList    termList  = (SetlList) term.firstMember();
-                final List<Expr>  exprs     = new ArrayList<Expr>(termList.size());
+                final SetlList   termList = (SetlList) term.firstMember();
+                final List<Expr> exprs    = new ArrayList<Expr>(termList.size());
                 for (final Value v : termList) {
-                    exprs.add(TermConverter.valueToExpr(v));
+                    exprs.add(TermConverter.valueToExpr(state, v));
                 }
                 Condition condition = null;
-                if (! term.getMember(2).equals(new SetlString("nil"))) {
-                    condition = TermConverter.valueToCondition(term.getMember(2));
+                if (! term.getMember(2).equals(SetlString.NIL)) {
+                    condition = TermConverter.valueToCondition(state, term.getMember(2));
                 }
-                final Block block = TermConverter.valueToBlock(term.lastMember());
+                final Block block = TermConverter.valueToBlock(state, term.lastMember());
                 return new MatchCaseBranch(exprs, condition, block);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

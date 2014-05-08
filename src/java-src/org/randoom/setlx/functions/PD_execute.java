@@ -11,9 +11,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// execute(stmnts)               : execute a String of SetlX statements
-
+/**
+ * execute(setlX_statements) : Execute a String of SetlX statements.
+ */
 public class PD_execute extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `execute'. */
     public final static PreDefinedProcedure DEFINITION = new PD_execute();
 
     private PD_execute() {
@@ -26,16 +28,16 @@ public class PD_execute extends PreDefinedProcedure {
         final Value   stmntArg = args.get(0);
         if ( ! (stmntArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Statement-argument '" + stmntArg + "' is not a string."
+                "Statement-argument '" + stmntArg.toString(state) + "' is not a string."
             );
         }
 
         // get statement string to be parsed
-        final String  stmntStr = stmntArg.getUnquotedString();
+        final String stmntStr = stmntArg.getUnquotedString(state);
 
         // parse statements
         state.resetParserErrorCount();
-        final Block   blk      = ParseSetlX.parseStringToBlock(state, stmntStr);
+        final Block  blk      = ParseSetlX.parseStringToBlock(state, stmntStr);
 
         // execute the contents
         blk.execute(state);

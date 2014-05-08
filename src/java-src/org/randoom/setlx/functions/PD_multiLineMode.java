@@ -7,9 +7,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// multiLineMode(toggle)         : only accept input after additional new line
-
+/**
+ * multiLineMode(toggle) : Only accept input after additional new line.
+ */
 public class PD_multiLineMode extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `multiLineMode'. */
     public final static PreDefinedProcedure DEFINITION = new PD_multiLineMode();
 
     private PD_multiLineMode() {

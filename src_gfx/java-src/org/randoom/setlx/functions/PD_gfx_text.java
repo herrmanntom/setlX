@@ -17,14 +17,14 @@ public class PD_gfx_text extends GfxFunction {
         addParameter("y");
         addParameter("string");
         addParameter("degrees");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(3);
     }
 
     @Override
     protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final double x = doubleFromValue(state, args.get(0));
         final double y = doubleFromValue(state, args.get(1));
-        final String s = stringFromValue(args.get(2));
+        final String s = stringFromValue(state, args.get(2));
         if ( args.size() == 3 ){
             StdDraw.text(x, y, s);
         }else if ( args.size()  == 4 ){

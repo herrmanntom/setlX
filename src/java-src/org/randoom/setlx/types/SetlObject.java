@@ -96,6 +96,7 @@ public class SetlObject extends Value {
         this.members         = members;
         this.classDefinition = classDefinition;
         isCloned             = false; // new objects are not a clone
+        this.members.put("instanceOf", classDefinition);
     }
 
     /**
@@ -140,7 +141,12 @@ public class SetlObject extends Value {
         if (isCloned) {
             final SetlHashMap<Value> members = new SetlHashMap<Value>();
             for (final Entry<String, Value> entry: this.members.entrySet()) {
-                members.put(entry.getKey(), entry.getValue().clone());
+                final String key = entry.getKey();
+                if (key.equals("instanceOf")) {
+                    members.put(key, entry.getValue());
+                } else {
+                    members.put(key, entry.getValue().clone());
+                }
             }
             this.members  = members;
             this.isCloned = false;
@@ -199,7 +205,7 @@ public class SetlObject extends Value {
             return function;
         }
         throw new UndefinedOperationException(
-            "Member '" + member + "' is undefined in '" + this + "'."
+            "Member '" + member + "' is undefined in '" + this.toString(state) + "'."
         );
     }
     private static String createOverloadVariable(final String functionalCharacter) {
@@ -605,14 +611,11 @@ public class SetlObject extends Value {
             sb.append(entry.getKey());
             sb.append(" := ");
             entry.getValue().appendString(state, sb, tabs);
-            sb.append(";");
             if (iter.hasNext()) {
-                sb.append(" ");
+                sb.append("; ");
             }
         }
-        sb.append(" ");
-        classDefinition.appendString(state, sb, tabs);
-        sb.append(" }>");
+        sb.append("}>");
     }
 
     @Override
@@ -642,23 +645,24 @@ public class SetlObject extends Value {
 
         members.addToTerm(state, result);
 
-        result.addMember(state, classDefinition.toTerm(state));
-
         return result;
     }
 
     /**
      * Convert a term representing a SetlObject into such an object.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting SetlObject.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SetlObject termToValue(final Term term) throws TermConversionException {
-        if (term.size() == 2 && term.lastMember() instanceof Term) {
-            final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(term.firstMember());
-            final SetlClass    classDefinition = SetlClass.termToValue((Term) term.lastMember());
-            return createNew(members, classDefinition);
+    public static SetlObject termToValue(final State state, final Term term) throws TermConversionException {
+        if (term.size() == 1) {
+            final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(state, term.firstMember());
+            final Value              classDefinition = members.get("instanceOf");
+            if (classDefinition != null && classDefinition instanceof SetlClass) {
+                return createNew(members, (SetlClass) classDefinition);
+            }
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
@@ -682,12 +686,12 @@ public class SetlObject extends Value {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 1100;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlObject) {

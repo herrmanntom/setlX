@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isError(value)          : test if value-type is error
-
+/**
+ * isError(value) : Test if value-type is error.
+ */
 public class PD_isError extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isError'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isError();
 
     private PD_isError() {

@@ -7,9 +7,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// trace(toggle)                 : configures output of all assignments
-
+/**
+ * trace(toggle) : Configures output of all assignments.
+ */
 public class PD_trace extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `trace'. */
     public final static PreDefinedProcedure DEFINITION = new PD_trace();
 
     private PD_trace() {
@@ -22,7 +24,7 @@ public class PD_trace extends PreDefinedProcedure {
         final Value   toggle  = args.get(0);
         if ( ! (toggle instanceof SetlBoolean)) {
             throw new IncompatibleTypeException(
-                "Toggle-argument '" + toggle + "' is not a Boolean value."
+                "Toggle-argument '" + toggle.toString(state) + "' is not a Boolean value."
             );
         }
 

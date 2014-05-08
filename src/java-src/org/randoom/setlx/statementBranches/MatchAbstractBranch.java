@@ -21,27 +21,28 @@ public abstract class MatchAbstractBranch extends AbstractBranch {
      * @return               Result of the match.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract MatchResult         matches(final State state, final Value term)   throws SetlException;
+    public abstract MatchResult matches(final State state, final Value term)   throws SetlException;
 
     /**
      * Convert a term representing a match branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    Term to convert.
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static   MatchAbstractBranch valueToMatchAbstractBranch(final Value value) throws TermConversionException {
+    public static MatchAbstractBranch valueToMatchAbstractBranch(final State state, final Value value) throws TermConversionException {
         if ( ! (value instanceof Term)) {
             throw new TermConversionException("malformed MatchAbstractBranch");
         } else {
-            final Term    term    = (Term) value;
-            final String  fc      = term.functionalCharacter().getUnquotedString();
+            final Term   term = (Term) value;
+            final String fc   = term.getFunctionalCharacter();
             if        (fc.equals(MatchCaseBranch.getFunctionalCharacter())) {
-                return MatchCaseBranch.termToBranch(term);
+                return MatchCaseBranch.termToBranch(state, term);
             } else if (fc.equals(MatchRegexBranch.getFunctionalCharacter())) {
-                return MatchRegexBranch.termToBranch(term);
+                return MatchRegexBranch.termToBranch(state, term);
             } else if (fc.equals(MatchDefaultBranch.getFunctionalCharacter())) {
-                return MatchDefaultBranch.termToBranch(term);
+                return MatchDefaultBranch.termToBranch(state, term);
             } else {
                 throw new TermConversionException("malformed MatchAbstractBranch");
             }

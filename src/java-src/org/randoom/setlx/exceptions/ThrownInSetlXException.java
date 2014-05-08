@@ -1,6 +1,7 @@
 package org.randoom.setlx.exceptions;
 
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
 
 /**
  * Exception thrown explicitly by SetlX code, via throw function.
@@ -14,10 +15,11 @@ public class ThrownInSetlXException extends CatchableInSetlXException {
     /**
      * Create a new ThrownInSetlXException.
      *
+     * @param state Current state of the running setlX program.
      * @param value User supplied value.
      */
-    public ThrownInSetlXException(final Value value) {
-        super("Uncaught user exception: " + value.toString());
+    public ThrownInSetlXException(final State state, final Value value) {
+        super("Uncaught user exception: " + value.toString(state));
         this.value = value;
     }
 

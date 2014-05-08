@@ -10,10 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
-// replaceFirst(string, pattern, replacement) : returns a string in wich substrings matching
-//                                              `pattern' are replaced with `replacement'
-
+/**
+ * replaceFirst(string, pattern, replacement) :
+ *                               Returns a string in which the first substring
+ *                               matching `pattern' is replaced with `replacement'.
+ */
 public class PD_replaceFirst extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `replaceFirst'. */
     public final static PreDefinedProcedure DEFINITION = new PD_replaceFirst();
 
     private PD_replaceFirst() {
@@ -30,28 +33,28 @@ public class PD_replaceFirst extends PreDefinedProcedure {
         final Value replacement = args.get(2);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Input-argument '" + string + "' is not a string."
+                "Input-argument '" + string.toString(state) + "' is not a string."
             );
         }
 
         if ( ! (pattern instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Pattern-argument '" + pattern + "' is not a string."
+                "Pattern-argument '" + pattern.toString(state) + "' is not a string."
             );
         }
 
         if ( ! (replacement instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Argument '" + replacement + "' is not a string."
+                "Argument '" + replacement.toString(state) + "' is not a string."
             );
         }
 
 
         try {
-            return new SetlString(string.getUnquotedString().replaceFirst(pattern.getUnquotedString(),replacement.getUnquotedString()));
+            return new SetlString(string.getUnquotedString(state).replaceFirst(pattern.getUnquotedString(state),replacement.getUnquotedString(state)));
         } catch (final PatternSyntaxException pse) {
             final LinkedList<String> errors = new LinkedList<String>();
-            errors.add("Error while parsing regex-pattern '" + pattern.getUnquotedString() + "' {");
+            errors.add("Error while parsing regex-pattern '" + pattern.getUnquotedString(state) + "' {");
             errors.add("\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1));
             errors.add("}");
             throw SyntaxErrorException.create(

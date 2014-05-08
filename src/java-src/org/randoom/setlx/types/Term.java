@@ -57,15 +57,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term conjunction(final State state, final Expr other) throws SetlException {
         return (    new Conjunction(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other.eval(state))
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, other.eval(state))
                     )
                ).toTerm(state);
     }
     public Term conjunctionFlipped(final State state, final Value other) {
         return (    new Conjunction(
-                        TermConverter.valueToExpr(other),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, other),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -74,15 +74,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term disjunction(final State state, final Expr other) throws SetlException {
         return (    new Disjunction(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other.eval(state))
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, other.eval(state))
                     )
                ).toTerm(state);
     }
     public Term disjunctionFlipped(final State state, final Value other) {
         return (    new Disjunction(
-                        TermConverter.valueToExpr(other),
-                        TermConverter.valueToExpr(this))
+                        TermConverter.valueToExpr(state, other),
+                        TermConverter.valueToExpr(state, this))
                ).toTerm(state);
     }
 
@@ -90,15 +90,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term implication(final State state, final Expr other) throws SetlException {
         return (    new Implication(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other.eval(state))
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, other.eval(state))
                     )
                ).toTerm(state);
     }
     public Term implicationFlipped(final State state, final Value other) {
         return (    new Implication(
-                        TermConverter.valueToExpr(other),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, other),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -107,7 +107,7 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term not(final State state) {
         return (    new Not(
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -125,15 +125,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term difference(final State state, final Value subtrahend) {
         return (    new Difference(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(subtrahend)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, subtrahend)
                     )
                ).toTerm(state);
     }
     public Term differenceFlipped(final State state, final Value subtrahend) {
         return (    new Difference(
-                        TermConverter.valueToExpr(subtrahend),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, subtrahend),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -142,7 +142,7 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Value factorial(final State state) {
         return (    new Factorial(
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -151,15 +151,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term integerDivision(final State state, final Value divisor) {
         return (    new IntegerDivision(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(divisor)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, divisor)
                     )
                ).toTerm(state);
     }
     public Term integerDivisionFlipped(final State state, final Value divisor) {
         return (    new IntegerDivision(
-                        TermConverter.valueToExpr(divisor),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, divisor),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -168,7 +168,7 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term minus(final State state) {
         return (    new Minus(
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -177,15 +177,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term modulo(final State state, final Value modulo) {
         return (    new Modulo(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(modulo)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, modulo)
                     )
                ).toTerm(state);
     }
     public Term moduloFlipped(final State state, final Value modulo) {
         return (    new Modulo(
-                        TermConverter.valueToExpr(modulo),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, modulo),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -194,15 +194,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term power(final State state, final Value exponent) {
         return (    new Power(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(exponent)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, exponent)
                     )
                ).toTerm(state);
     }
     public Term powerFlipped(final State state, final Value exponent) {
         return (    new Power(
-                        TermConverter.valueToExpr(exponent),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, exponent),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -211,15 +211,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term product(final State state, final Value multiplier) {
         return (    new Product(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(multiplier)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, multiplier)
                     )
                ).toTerm(state);
     }
     public Term productFlipped(final State state, final Value multiplier) {
         return (    new Product(
-                        TermConverter.valueToExpr(multiplier),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, multiplier),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -228,15 +228,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term quotient(final State state, final Value divisor) {
         return (    new Quotient(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(divisor)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, divisor)
                     )
                ).toTerm(state);
     }
     public Term quotientFlipped(final State state, final Value divisor) {
         return (    new Quotient(
-                        TermConverter.valueToExpr(divisor),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, divisor),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -245,15 +245,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term sum(final State state, final Value summand) {
         return (    new Sum(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(summand)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, summand)
                     )
                ).toTerm(state);
     }
     public Term sumFlipped(final State state, final Value summand) {
         return (    new Sum(
-                        TermConverter.valueToExpr(summand),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, summand),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -274,7 +274,7 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term cardinality(final State state) {
         return (    new Cardinality(
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -283,15 +283,15 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term cartesianProduct(final State state, final Value other) {
         return (    new CartesianProduct(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(other)
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, other)
                     )
                ).toTerm(state);
     }
     public Term cartesianProductFlipped(final State state, final Value other) {
         return (    new CartesianProduct(
-                        TermConverter.valueToExpr(other),
-                        TermConverter.valueToExpr(this)
+                        TermConverter.valueToExpr(state, other),
+                        TermConverter.valueToExpr(state, this)
                     )
                ).toTerm(state);
     }
@@ -301,10 +301,10 @@ public class Term extends IndexedCollectionValue {
     public Term collectionAccess(final State state, final List<Value> args) {
         final List<Expr> argExprs = new ArrayList<Expr>(args.size());
         for (final Value v : args) {
-            argExprs.add(TermConverter.valueToExpr(v));
+            argExprs.add(TermConverter.valueToExpr(state, v));
         }
         return (    new CollectionAccess(
-                        TermConverter.valueToExpr(this),
+                        TermConverter.valueToExpr(state, this),
                         argExprs)
                ).toTerm(state);
     }
@@ -318,8 +318,8 @@ public class Term extends IndexedCollectionValue {
     @Override
     public Term collectMap(final State state, final Value arg) {
         return (    new CollectMap(
-                        TermConverter.valueToExpr(this),
-                        TermConverter.valueToExpr(arg))
+                        TermConverter.valueToExpr(state, this),
+                        TermConverter.valueToExpr(state, arg))
                ).toTerm(state);
     }
 
@@ -339,11 +339,25 @@ public class Term extends IndexedCollectionValue {
         return functionalCharacter();
     }
 
+    /**
+     * Get the functional character of this term.
+     *
+     * @return functional character of this value.
+     */
     public SetlString functionalCharacter() {
-        if (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
-            return new SetlString(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
+        return new SetlString(getFunctionalCharacter());
+    }
+
+    /**
+     * Get the functional character of this term.
+     *
+     * @return functional character of this value.
+     */
+    public String getFunctionalCharacter() {
+        if (functionalCharacter.equals(Variable.getFunctionalCharacter())) {
+            return Variable.getFunctionalCharacterExternal();
         } else {
-            return new SetlString(functionalCharacter);
+            return functionalCharacter;
         }
     }
 
@@ -357,6 +371,14 @@ public class Term extends IndexedCollectionValue {
         return body.getMember(state, index);
     }
 
+    /**
+     * Get a specified member of this value, but return it without cloning.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          Index of the member to get.
+     * @return               Member of this value at the specified index.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value getMemberUnCloned(final State state, final int index) throws SetlException {
         return body.getMemberUnCloned(index);
     }
@@ -391,21 +413,21 @@ public class Term extends IndexedCollectionValue {
     public Term productOfMembers(final State state, final Value neutral) throws SetlException {
         if (neutral == Om.OM) {
             return (    new ProductOfMembers(
-                            TermConverter.valueToExpr(this)
+                            TermConverter.valueToExpr(state, this)
                         )
                    ).toTerm(state);
         } else {
             return (    new ProductOfMembersBinary(
-                    TermConverter.valueToExpr(neutral),
-                    TermConverter.valueToExpr(this)
+                    TermConverter.valueToExpr(state, neutral),
+                    TermConverter.valueToExpr(state, this)
                 )
            ).toTerm(state);
         }
     }
 
     @Override
-    public void removeMember(final Value element) {
-        body.removeMember(element);
+    public void removeMember(final State state, final Value element) {
+        body.removeMember(state, element);
     }
 
     @Override
@@ -433,13 +455,13 @@ public class Term extends IndexedCollectionValue {
     public Term sumOfMembers(final State state, final Value neutral) {
         if (neutral == Om.OM) {
             return (    new SumOfMembers(
-                    TermConverter.valueToExpr(this)
+                    TermConverter.valueToExpr(state, this)
                 )
            ).toTerm(state);
         } else {
             return (    new SumOfMembersBinary(
-                    TermConverter.valueToExpr(neutral),
-                    TermConverter.valueToExpr(this)
+                    TermConverter.valueToExpr(state, neutral),
+                    TermConverter.valueToExpr(state, this)
                 )
            ).toTerm(state);
         }
@@ -450,10 +472,10 @@ public class Term extends IndexedCollectionValue {
     // viral operation
     @Override
     public Term call(final State state, final List<Expr> args) throws IncompatibleTypeException {
-        if (functionalCharacter.equalsIgnoreCase(VariableIgnore.FUNCTIONAL_CHARACTER)) {
+        if (functionalCharacter.equalsIgnoreCase(VariableIgnore.getFunctionalCharacter())) {
             return (    new Call(
                             new Variable(
-                                TermConverter.valueToExpr(this).toString()
+                                TermConverter.valueToExpr(state, this).toString(state)
                             ),
                             args
                         )
@@ -469,13 +491,13 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(this, false).appendString(state, sb, 0);
+        TermConverter.valueToCodeFragment(state, this, false).appendString(state, sb, 0);
     }
 
     @Override
     public void canonical(final State state, final StringBuilder sb) {
-        if (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)) {
-            sb.append(Variable.FUNCTIONAL_CHARACTER_EXTERNAL);
+        if (functionalCharacter.equals(Variable.getFunctionalCharacter())) {
+            sb.append(Variable.getFunctionalCharacterExternal());
         } else {
             sb.append(functionalCharacter);
         }
@@ -489,13 +511,13 @@ public class Term extends IndexedCollectionValue {
 
     @Override
     public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
-        if ( functionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER) ||
+        if ( functionalCharacter.equals(VariableIgnore.getFunctionalCharacter()) ||
                 ( other instanceof Term &&
-                  ((Term) other).functionalCharacter.equals(VariableIgnore.FUNCTIONAL_CHARACTER)
+                  ((Term) other).functionalCharacter.equals(VariableIgnore.getFunctionalCharacter())
                 )
            ) {
             return new MatchResult(true); // one of the terms is `ignore'
-        } else if (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) && body.size() == 1) {
+        } else if (functionalCharacter.equals(Variable.getFunctionalCharacter()) && body.size() == 1) {
             // 'this' is a variable, which match anything (except ignore of course)
             final MatchResult result  = new MatchResult(true);
             // get name of variable
@@ -503,7 +525,7 @@ public class Term extends IndexedCollectionValue {
             if ( ! (idStr instanceof SetlString)) { // this is a wrong ^variable term
                 return new MatchResult(false);
             }
-            final String      id      = idStr.getUnquotedString();
+            final String id = idStr.getUnquotedString(state);
 
             // look up if this variable is currently defined
             final Value       thisVal = state.findValue(id);
@@ -527,8 +549,8 @@ public class Term extends IndexedCollectionValue {
 
         if ( ! functionalCharacter.equals(otherTerm.functionalCharacter)) {
             // functional characters do not match
-            if ( ! (functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
-                    otherTerm.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)   )
+            if ( ! (functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
+                    otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacter())   )
                ) {
                 // however this only unacceptable when ! (this == 'Variable AND other == 'variable)
                 // e.g 'Variable must match 'variable
@@ -565,11 +587,11 @@ public class Term extends IndexedCollectionValue {
                   int  cmp   = functionalCharacter.compareTo(other.functionalCharacter);
             if (cmp != 0 && (
                     (
-                        functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
-                        other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
+                        functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
+                        other.functionalCharacter.equals(Variable.getFunctionalCharacter())
                     ) || (
-                        functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
-                        other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
+                        functionalCharacter.equals(Variable.getFunctionalCharacter()) &&
+                        other.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
                     )
                 )
             ) {
@@ -586,23 +608,23 @@ public class Term extends IndexedCollectionValue {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 900;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof Term) {
             final Term other = (Term) v;
             if (functionalCharacter.equals(other.functionalCharacter)
                   || (
-                    functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL) &&
-                    other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER)
+                    functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
+                    other.functionalCharacter.equals(Variable.getFunctionalCharacter())
                 ) || (
-                    functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER) &&
-                    other.functionalCharacter.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)
+                    functionalCharacter.equals(Variable.getFunctionalCharacter()) &&
+                    other.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
                 )
             ) {
                 return body.equalTo(other.body);

@@ -6,11 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
- * ceil(numberValue)       : returns minumum integer which is greater or equal to numberValue
+/**
+ * ceil(numberValue) : Returns minimum integer which is greater or equal to numberValue.
  */
-
 public class PD_ceil extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `ceil'. */
     public final static PreDefinedProcedure DEFINITION = new PD_ceil();
 
     private PD_ceil() {

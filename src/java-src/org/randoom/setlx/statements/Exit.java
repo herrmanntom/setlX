@@ -35,6 +35,7 @@ public class Exit extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -59,11 +60,12 @@ public class Exit extends Statement {
     /**
      * Convert a term representing an Exit statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting statement of this conversion.
      * @throws TermConversionException If term is malformed.
      */
-    public static Exit termToStatement(final Term term) throws TermConversionException {
+    public static Exit termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 0) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {

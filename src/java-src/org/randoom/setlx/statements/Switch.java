@@ -53,6 +53,7 @@ public class Switch extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
@@ -64,7 +65,7 @@ public class Switch extends Statement {
         for (final SwitchAbstractBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
-            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+            br.collectVariablesAndOptimize(state, boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
                 boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
@@ -109,18 +110,19 @@ public class Switch extends Statement {
     /**
      * Convert a term representing an if-then-else statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting if-then-else Statement.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static Switch termToStatement(final Term term) throws TermConversionException {
+    public static Switch termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList                    branches    = (SetlList) term.firstMember();
-            final List<SwitchAbstractBranch>  branchList  = new ArrayList<SwitchAbstractBranch>(branches.size());
+            final SetlList                   branches   = (SetlList) term.firstMember();
+            final List<SwitchAbstractBranch> branchList = new ArrayList<SwitchAbstractBranch>(branches.size());
             for (final Value v : branches) {
-                branchList.add(SwitchAbstractBranch.valueToSwitchAbstractBranch(v));
+                branchList.add(SwitchAbstractBranch.valueToSwitchAbstractBranch(state, v));
             }
             return new Switch(branchList);
         }

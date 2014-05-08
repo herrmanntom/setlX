@@ -31,6 +31,12 @@ public class BoolNotEqual extends Expr {
     private final Expr lhs;
     private final Expr rhs;
 
+    /**
+     * Create new BoolNotEqual.
+     *
+     * @param lhs Expression to evaluate and compare.
+     * @param rhs Expression to evaluate and compare.
+     */
     public BoolNotEqual(final Expr lhs, final Expr rhs) {
         this.lhs = lhs;
         this.rhs = rhs;
@@ -41,19 +47,20 @@ public class BoolNotEqual extends Expr {
         try {
             return lhs.eval(state).isEqualTo(state, rhs.eval(state)).not(state);
         } catch (final SetlException se) {
-            se.addToTrace("Error in substitute comparison \"!(" + lhs + " == " + rhs + ")\":");
+            se.addToTrace("Error in substitute comparison \"!(" + lhs.toString(state) + " == " + rhs.toString(state) + ")\":");
             throw se;
         }
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -75,12 +82,20 @@ public class BoolNotEqual extends Expr {
         return result;
     }
 
-    public static BoolNotEqual termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a BoolNotEqual into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static BoolNotEqual termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new BoolNotEqual(lhs, rhs);
         }
     }

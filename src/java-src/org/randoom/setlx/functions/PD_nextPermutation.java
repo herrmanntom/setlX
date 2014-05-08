@@ -6,9 +6,12 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// nextPermutation(list)         : returns the next permutation of the list, om if there `list' already is the last permutation
-
+/**
+ * nextPermutation(list) : Returns the next permutation of the list,
+ *                         om if there `list' already is the last permutation.
+ */
 public class PD_nextPermutation extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `nextPermutation'. */
     public final static PreDefinedProcedure DEFINITION = new PD_nextPermutation();
 
     private PD_nextPermutation() {

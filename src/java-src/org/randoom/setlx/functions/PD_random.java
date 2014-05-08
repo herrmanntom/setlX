@@ -20,7 +20,7 @@ public class PD_random extends PreDefinedProcedure {
     private PD_random() {
         super();
         addParameter("upperBound");
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override

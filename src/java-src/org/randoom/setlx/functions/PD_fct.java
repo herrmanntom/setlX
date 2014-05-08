@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// fct(term)               : get functional char of a term
-
+/**
+ * fct(term) : Get functional char of a term.
+ */
 public class PD_fct extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `fct'. */
     public final static PreDefinedProcedure DEFINITION = new PD_fct();
 
     private PD_fct() {

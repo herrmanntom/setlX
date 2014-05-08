@@ -6,14 +6,16 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// compare(valueA, valueB)       : Compares two arbitrary values, returns an integer.
-//                                 Return value <  0 means: valueA "<" valueB
-//                                 Return value == 0 means: valueA ==  valueB
-//                                 Return value >  0 means: valueA ">" valueB
-//                                 Note that order between different types was chosen
-//                                 arbitrarily and implies no special meaning.
-
+/**
+ * compare(valueA, valueB) : Compares two arbitrary values, returns an integer.
+ *                           Return value <  0 means: valueA "<" valueB
+ *                           Return value == 0 means: valueA ==  valueB
+ *                           Return value >  0 means: valueA ">" valueB
+ *                           Note that order between different types was chosen
+ *                           arbitrarily and implies no special meaning.
+ */
 public class PD_compare extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `compare'. */
     public final static PreDefinedProcedure DEFINITION = new PD_compare();
 
     private PD_compare() {

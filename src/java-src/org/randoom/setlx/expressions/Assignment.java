@@ -49,13 +49,14 @@ public class Assignment extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        rhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
-        lhs.collectVariablesWhenAssigned(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesWhenAssigned(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -80,14 +81,15 @@ public class Assignment extends Expr {
     /**
      * Convert a term representing a Assignment into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting Assignment Expression.
-     * @throws TermConversionException Thrown in case of an malformed term.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static Assignment termToExpr(final Term term) throws TermConversionException {
+    public static Assignment termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() == 2) {
-            final Expr lhs = TermConverter.valueToExpr(term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(term.lastMember());
+            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
+            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             if (lhs instanceof AssignableExpression) {
                 return new Assignment((AssignableExpression) lhs, rhs);
             }

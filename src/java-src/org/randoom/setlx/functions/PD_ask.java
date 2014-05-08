@@ -22,24 +22,24 @@ public class PD_ask extends PreDefinedProcedure {
 
     private PD_ask() {
         super();
-        addParameter("message");
+        addParameter("question");
         addParameter("listOfAnswers");
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final String            question          = args.get(0).getUnquotedString();
+        final String            question          = args.get(0).getUnquotedString(state);
         final Value             answersCollection = args.get(1);
         final ArrayList<String> answers           = new ArrayList<String>();
         if (answersCollection instanceof CollectionValue && ! (answersCollection instanceof SetlString)) {
             for (final Value answer : (CollectionValue) answersCollection) {
-                answers.add(answer.getUnquotedString());
+                answers.add(answer.getUnquotedString(state));
             }
         } else {
-            throw new IncompatibleTypeException("ListOfAnswers-argument '" + answersCollection + "' is not a collection value.");
+            throw new IncompatibleTypeException("ListOfAnswers-argument '" + answersCollection.toString(state) + "' is not a collection value.");
         }
         if (answers.size() < 1) {
-            throw new IncorrectNumberOfParametersException("ListOfAnswers-argument '" + answersCollection + "' is empty.");
+            throw new IncorrectNumberOfParametersException("ListOfAnswers-argument '" + answersCollection.toString(state) + "' is empty.");
         }
         try {
             final String result = state.promptSelectionFromAnswerss(question, answers);

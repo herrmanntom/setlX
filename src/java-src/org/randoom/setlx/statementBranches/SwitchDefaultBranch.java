@@ -48,11 +48,12 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -78,15 +79,16 @@ public class SwitchDefaultBranch extends SwitchAbstractBranch {
     /**
      * Convert a term representing a default-branch into such a branch.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SwitchDefaultBranch termToBranch(final Term term) throws TermConversionException {
+    public static SwitchDefaultBranch termToBranch(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Block block = TermConverter.valueToBlock(term.firstMember());
+            final Block block = TermConverter.valueToBlock(state, term.firstMember());
             return new SwitchDefaultBranch(block);
         }
     }

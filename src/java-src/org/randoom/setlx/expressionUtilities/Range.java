@@ -23,16 +23,22 @@ import java.util.List;
  *
  * implemented here as:
  *       ====      ====        ====
- *      mStart    mSecond      mStop
+ *       start    second       stop
  */
 public class Range extends CollectionBuilder {
-    // functional character used in terms
-    /*package*/ final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Range.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Range.class);
 
     private final Expr start;
     private final Expr second;
     private final Expr stop;
 
+    /**
+     * Create new Range.
+     *
+     * @param start  Expression to evaluate to the start value.
+     * @param second Expression to evaluate to the step value.
+     * @param stop   Expression to evaluate to the stop value.
+     */
     public Range(final Expr start, final Expr second, final Expr stop) {
         this.start  = start;
         this.second = second;
@@ -54,15 +60,16 @@ public class Range extends CollectionBuilder {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        start.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        start.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         if (second != null) {
-            second.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            second.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
-        stop.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        stop.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -87,31 +94,48 @@ public class Range extends CollectionBuilder {
         if (second != null) {
             result.addMember(state, second.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         result.addMember(state, stop.toTerm(state));
 
         collection.addMember(state, result);
     }
 
-    /*package*/ static Range termToRange(final Term term) throws TermConversionException {
+    /**
+     * Regenerate Range from a term representing this expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term representation.
+     * @return                         Regenerated Range.
+     * @throws TermConversionException Thrown in case the term is malformed.
+     */
+    /*package*/ static Range termToRange(final State state, final Term term) throws TermConversionException {
         if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final Expr start  = TermConverter.valueToExpr(term.firstMember());
+                final Expr start  = TermConverter.valueToExpr(state, term.firstMember());
 
                       Expr second = null;
-                if (! term.getMember(2).equals(new SetlString("nil"))) {
-                    second  = TermConverter.valueToExpr(term.getMember(2));
+                if (! term.getMember(2).equals(SetlString.NIL)) {
+                    second  = TermConverter.valueToExpr(state, term.getMember(2));
                 }
 
-                final Expr stop   = TermConverter.valueToExpr(term.lastMember());
+                final Expr stop   = TermConverter.valueToExpr(state, term.lastMember());
                 return new Range(start, second, stop);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
+    /*package*/ static String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 }
 

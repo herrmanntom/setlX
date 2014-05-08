@@ -5,19 +5,21 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isConstructor(value)    : test if value-type is constructor
+/**
+ * isClass(value) : test if value-type is class
+ */
+public class PD_isClass extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isClass'. */
+    public final static PreDefinedProcedure DEFINITION = new PD_isClass();
 
-public class PD_isConstructor extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_isConstructor();
-
-    private PD_isConstructor() {
+    private PD_isClass() {
         super();
         addParameter("value");
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
-        return args.get(0).isConstructor();
+        return args.get(0).isClass();
     }
 }
 

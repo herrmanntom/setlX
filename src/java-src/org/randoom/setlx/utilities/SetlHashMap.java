@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
@@ -46,13 +47,16 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public void addToTerm(final State state, final Term result) {
         // list of bindings in this object
-        final SetlSet   bindings    = new SetlSet();
+        final SetlSet bindings = new SetlSet();
         for (final Map.Entry<String, V> entry : entrySet()) {
-            final SetlList  binding = new SetlList(2);
-            binding.addMember(state, new SetlString(entry.getKey()));
-            binding.addMember(state, entry.getValue().toTerm(state));
+            final Value value = entry.getValue();
+            if (value != Om.OM) {
+                final SetlList binding = new SetlList(2);
+                binding.addMember(state, new SetlString(entry.getKey()));
+                binding.addMember(state, value.toTerm(state));
 
-            bindings.addMember(state, binding);
+                bindings.addMember(state, binding);
+            }
         }
         result.addMember(state, bindings);
     }
@@ -60,18 +64,19 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
     /**
      * Convert a SetlX map representing a SetlHashMap into such a map.
      *
+     * @param state                    Current state of the running setlX program.
      * @param value                    SetlHashMap to convert.
      * @return                         Resulting SetlHashMap.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SetlHashMap<Value> valueToSetlHashMap(final Value value) throws TermConversionException {
+    public static SetlHashMap<Value> valueToSetlHashMap(final State state, final Value value) throws TermConversionException {
         if (value instanceof SetlSet) {
             final SetlHashMap<Value> result = new SetlHashMap<Value>();
             for (final Value val : (SetlSet) value) {
                 if (val instanceof SetlList) {
                     final SetlList binding = (SetlList) val;
                     if (binding.size() == 2 && binding.firstMember() instanceof SetlString) {
-                        result.put(binding.firstMember().getUnquotedString(), TermConverter.valueTermToValue(binding.lastMember()));
+                        result.put(binding.firstMember().getUnquotedString(state), TermConverter.valueTermToValue(state, binding.lastMember()));
                         continue;
                     }
                 }

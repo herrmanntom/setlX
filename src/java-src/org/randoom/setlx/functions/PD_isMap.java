@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isMap(value)            : test if value-type is map
-
+/**
+ * isMap(value) : Test if value-type is map.
+ */
 public class PD_isMap extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isMap'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isMap();
 
     private PD_isMap() {

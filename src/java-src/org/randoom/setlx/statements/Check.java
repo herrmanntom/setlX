@@ -23,7 +23,7 @@ import java.util.List;
  *
  * implemented here as:
  *                   =====                           =====
- *                mStatements                      mRecovery
+ *                 statements                       recovery
  */
 public class Check extends Statement {
     // functional character used in terms
@@ -32,6 +32,12 @@ public class Check extends Statement {
     private final Block statements;
     private final Block recovery;
 
+    /**
+     * Create new Check statement.
+     *
+     * @param statements Statements to execute.
+     * @param recovery   Statements to execute after backtracking.
+     */
     public Check(final Block statements, final Block recovery) {
         this.statements = statements;
         this.recovery   = recovery;
@@ -52,16 +58,17 @@ public class Check extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        statements.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         // bindings inside the recovery block are not always valid --- ignore them
         final int preBound = boundVariables.size();
         if (recovery != null) {
-            recovery.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            recovery.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
         while (boundVariables.size() > preBound) {
             boundVariables.remove(boundVariables.size() - 1);
@@ -90,19 +97,27 @@ public class Check extends Statement {
         if (recovery != null) {
             result.addMember(state, recovery.toTerm(state));
         } else {
-            result.addMember(state, new SetlString("nil"));
+            result.addMember(state, SetlString.NIL);
         }
         return result;
     }
 
-    public static Check termToStatement(final Term term) throws TermConversionException {
+    /**
+     * Re-generate a Check statement from a term.
+     *
+     * @param  state                   Current state of the running setlX program.
+     * @param  term                    Term to regenerate from.
+     * @return                         Check statement.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Check termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Block block    = TermConverter.valueToBlock(term.firstMember());
+            final Block block    = TermConverter.valueToBlock(state, term.firstMember());
                   Block recovery = null;
-            if ( ! term.lastMember().equals(new SetlString("nil"))) {
-                recovery = TermConverter.valueToBlock(term.lastMember());
+            if ( ! term.lastMember().equals(SetlString.NIL)) {
+                recovery = TermConverter.valueToBlock(state, term.lastMember());
             }
             return new Check(block, recovery);
         }

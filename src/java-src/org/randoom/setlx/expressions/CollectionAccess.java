@@ -63,7 +63,7 @@ public class CollectionAccess extends AssignableExpression {
         final Value lhs = this.lhs.eval(state);
         if (lhs == Om.OM) {
             throw new UnknownFunctionException(
-                "Left hand side \"" + lhs + "\" is undefined."
+                "Left hand side \"" + this.lhs.toString(state) + "\" is undefined."
             );
         }
         // evaluate all arguments
@@ -83,7 +83,7 @@ public class CollectionAccess extends AssignableExpression {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
-                    "Left hand side \"" + lhs + "\" is undefined."
+                    "Left hand side \"" + this.lhs.toString(state) + "\" is undefined."
                 );
             }
 
@@ -100,34 +100,36 @@ public class CollectionAccess extends AssignableExpression {
 
         } else {
             throw new IncompatibleTypeException(
-                "\"" + this + "\" is unusable for list assignment."
+                "\"" + this.toString(state) + "\" is unusable for list assignment."
             );
         }
     }
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         for (final Expr expr : args) {
-            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
     @Override
     public void collectVariablesWhenAssigned (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         if (lhs instanceof AssignableExpression) {
             // lhs & args are read, not bound, so use collectVariablesAndOptimize()
-            lhs.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
             for (final Expr expr : args) {
-                expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+                expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
             }
         }
     }
@@ -139,13 +141,13 @@ public class CollectionAccess extends AssignableExpression {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
-                    "Left hand side \"" + lhs + "\" is undefined."
+                    "Left hand side \"" + this.lhs.toString(state) + "\" is undefined."
                 );
             }
             lhs.setMember(state, args.get(0).eval(state), value);
         } else {
             throw new IncompatibleTypeException(
-                "Left-hand-side of \"" + this + " := " + value + "\" is unusable for list assignment."
+                "Left-hand-side of \"" + this.toString(state) + " := " + value.toString(state) + "\" is unusable for list assignment."
             );
         }
     }
@@ -172,11 +174,11 @@ public class CollectionAccess extends AssignableExpression {
 
     @Override
     public Term toTerm(final State state) {
-        final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term     result    = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(state, lhs.toTerm(state));
 
-        final SetlList    arguments   = new SetlList(args.size());
+        final SetlList arguments = new SetlList(args.size());
         for (final Expr arg: args) {
             arguments.addMember(state, arg.toTerm(state));
         }
@@ -187,11 +189,11 @@ public class CollectionAccess extends AssignableExpression {
 
     @Override
     public Term toTermQuoted(final State state) throws SetlException {
-        final Term        result      = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term     result    = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(state, lhs.toTermQuoted(state));
 
-        final SetlList    arguments   = new SetlList(args.size());
+        final SetlList arguments = new SetlList(args.size());
         for (final Expr arg: args) {
             arguments.addMember(state, arg.eval(state).toTerm(state));
         }
@@ -203,19 +205,20 @@ public class CollectionAccess extends AssignableExpression {
     /**
      * Convert a term representing a CollectionAccess into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting CollectionAccess Expression.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static CollectionAccess termToExpr(final Term term) throws TermConversionException {
+    public static CollectionAccess termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr        lhs     = TermConverter.valueToExpr(term.firstMember());
-            final SetlList    argsLst = (SetlList) term.lastMember();
-            final List<Expr>  args    = new ArrayList<Expr>(argsLst.size());
+            final Expr       lhs     = TermConverter.valueToExpr(state, term.firstMember());
+            final SetlList   argsLst = (SetlList) term.lastMember();
+            final List<Expr> args    = new ArrayList<Expr>(argsLst.size());
             for (final Value v : argsLst) {
-                args.add(TermConverter.valueToExpr(v));
+                args.add(TermConverter.valueToExpr(state, v));
             }
             return new CollectionAccess(lhs, args);
         }

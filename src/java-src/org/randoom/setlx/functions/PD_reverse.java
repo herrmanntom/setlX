@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// reverse(collectionValue)      : reverse the order of members in `collectionValue'
-
+/**
+ * reverse(collectionValue) : Reverse the order of members in `collectionValue'.
+ */
 public class PD_reverse extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `reverse'. */
     public final static PreDefinedProcedure DEFINITION = new PD_reverse();
 
     private PD_reverse() {

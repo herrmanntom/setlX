@@ -31,6 +31,11 @@ import java.util.List;
 public class ExplicitList extends CollectionBuilder {
     private final List<Expr> list;
 
+    /**
+     * Create new ExplicitList.
+     *
+     * @param exprList List of expressions to evaluate.
+     */
     public ExplicitList(final List<Expr> exprList) {
         this.list = exprList;
     }
@@ -44,12 +49,13 @@ public class ExplicitList extends CollectionBuilder {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         for (final Expr expr : list) {
-            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -57,20 +63,22 @@ public class ExplicitList extends CollectionBuilder {
      * Gather all bound and unbound variables in this expression and its siblings,
      * when it is used as an assignment.
      *
-     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(List, List, List)
+     * @see org.randoom.setlx.utilities.CodeFragment#collectVariablesAndOptimize(State, List, List, List)
      *
+     * @param state            Current state of the running setlX program.
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
      */
     public void collectVariablesWhenAssigned (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         for (final Expr expr : list) {
             if (expr instanceof AssignableExpression) {
-                ((AssignableExpression) expr).collectVariablesWhenAssigned(boundVariables, unboundVariables, usedVariables);
+                ((AssignableExpression) expr).collectVariablesWhenAssigned(state, boundVariables, unboundVariables, usedVariables);
             }
         }
     }
@@ -121,6 +129,8 @@ public class ExplicitList extends CollectionBuilder {
      * @param state          Current state of the running setlX program.
      * @param collection     Collection to assign from.
      * @param outerScope     Root scope of scopes to check.
+     * @param checkObjects   Also check objects if they have 'value' set in them.
+     * @param context        Context description of the assignment for trace.
      * @return               True, if variable is undefined or already equal the the value to be set.
      * @throws SetlException Thrown in case of some (user-) error.
      */
@@ -128,6 +138,7 @@ public class ExplicitList extends CollectionBuilder {
         final State                  state,
         final IndexedCollectionValue collection,
         final VariableScope          outerScope,
+        final boolean                checkObjects,
         final String                 context
     ) throws SetlException {
         final int size = list.size();
@@ -139,7 +150,7 @@ public class ExplicitList extends CollectionBuilder {
         for (int i = 0; i < size; ++i) {
             final Expr expr = list.get(i);
             if (expr instanceof AssignableExpression) {
-                if ( ! ((AssignableExpression) expr).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope, context)) {
+                if ( ! ((AssignableExpression) expr).assignUnclonedCheckUpTo(state, collection.getMember(i + 1), outerScope, checkObjects, context)) {
                     return false;
                 }
             } else {
@@ -182,10 +193,18 @@ public class ExplicitList extends CollectionBuilder {
         }
     }
 
-    public static ExplicitList collectionValueToExplicitList(final CollectionValue value) throws TermConversionException {
+    /**
+     * Regenerate ExplicitList from a CollectionValue containing terms representing expressions.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param value                    CollectionValue containing the term representation.
+     * @return                         Regenerated ExplicitList.
+     * @throws TermConversionException Thrown in case the term is malformed.
+     */
+    public static ExplicitList collectionValueToExplicitList(final State state, final CollectionValue value) throws TermConversionException {
         final List<Expr> exprList = new ArrayList<Expr>(value.size());
         for (final Value v : value) {
-            exprList.add(TermConverter.valueToExpr(v));
+            exprList.add(TermConverter.valueToExpr(state, v));
         }
         return new ExplicitList(exprList);
     }

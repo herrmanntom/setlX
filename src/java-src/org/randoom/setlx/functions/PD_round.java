@@ -6,11 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
- * round(numberValue)      : returns rounded numberValue
+/**
+ * round(numberValue) : Returns rounded numberValue.
  */
-
 public class PD_round extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `round'. */
     public final static PreDefinedProcedure DEFINITION = new PD_round();
 
     private PD_round() {

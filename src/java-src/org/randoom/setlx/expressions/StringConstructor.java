@@ -74,7 +74,7 @@ public class StringConstructor extends Expr {
                              */
                             if (state.getParserErrorCount() > errCount) {
                                 state.writeParserErrLn(
-                                    "Error(s) while parsing string " + this + " {"
+                                    "Error(s) while parsing string " + this.toString(state) + " {"
                                 );
                                 if (pe instanceof SyntaxErrorException) {
                                     for (final String err : ((SyntaxErrorException) pe).getErrors()) {
@@ -125,7 +125,7 @@ public class StringConstructor extends Expr {
                 state.addToParserErrorCount(1);
                 // However we can at least provide the user with some feedback.
                 state.writeParserErrLn(
-                    "Error(s) while parsing string " + this + " {\n"
+                    "Error(s) while parsing string " + this.toString(state) + " {\n"
                   + "\tclosing '$' missing\n"
                   + "}"
                 );
@@ -185,12 +185,13 @@ public class StringConstructor extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         for (final Expr expr : exprs) {
-            expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+            expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 
@@ -225,37 +226,38 @@ public class StringConstructor extends Expr {
     /**
      * Convert a term representing a StringConstructor into such an expression.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting StringConstructor Expression.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static Expr termToExpr(final Term term) throws TermConversionException {
+    public static Expr termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final StringBuilder       originalStr = new StringBuilder();
-            final SetlList            frags       = (SetlList) term.firstMember();
-            final SetlList            exps        = (SetlList) term.lastMember();
+            final StringBuilder     originalStr = new StringBuilder();
+            final SetlList          frags       = (SetlList) term.firstMember();
+            final SetlList          exps        = (SetlList) term.lastMember();
 
-            final ArrayList<String>   fragments   = new ArrayList<String>(frags.size());
-            final ArrayList<Expr>     exprs       = new ArrayList<Expr>(exps.size());
+            final ArrayList<String> fragments   = new ArrayList<String>(frags.size());
+            final ArrayList<Expr>   exprs       = new ArrayList<Expr>(exps.size());
 
-            final Iterator<Value>     fIter       = frags.iterator();
-            final Iterator<Value>     eIter       = exps.iterator();
+            final Iterator<Value>   fIter       = frags.iterator();
+            final Iterator<Value>   eIter       = exps.iterator();
 
             originalStr.append("\"");
 
             while (fIter.hasNext()) {
                 final SetlString  sstring = (SetlString) fIter.next();
-                final String      string  = sstring.getUnquotedString();
+                final String      string  = sstring.getUnquotedString(state);
                 originalStr.append(sstring.getEscapedString());
                 fragments.add(string);
 
                 if (eIter.hasNext()) {
-                    final Expr expr = TermConverter.valueToExpr(eIter.next());
+                    final Expr expr = TermConverter.valueToExpr(state, eIter.next());
                     exprs.add(expr);
                     originalStr.append("$");
-                    originalStr.append(expr.toString().replace("$", "\\$"));
+                    originalStr.append(expr.toString(state).replace("$", "\\$"));
                     originalStr.append("$");
                 }
             }

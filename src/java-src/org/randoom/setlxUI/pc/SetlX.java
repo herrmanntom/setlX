@@ -23,17 +23,17 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String     VERSION         = "2.2.3";
-    private final static String     SETLX_URL       = "http://setlX.randoom.org/";
-    private final static String     C_YEARS         = "2011-2014";
-    private final static String     VERSION_PREFIX  = "v";
-    private final static String     HEADER          = "-====================================setlX====================================-";
+    private final static String  VERSION         = "2.2.4";
+    private final static String  SETLX_URL       = "http://setlX.randoom.org/";
+    private final static String  C_YEARS         = "2011-2014";
+    private final static String  VERSION_PREFIX  = "v";
+    private final static String  HEADER          = "-====================================setlX====================================-";
 
-    private final static int        EXIT_OK         = 0;
-    private final static int        EXIT_ERROR      = 1;
+    private final static int     EXIT_OK         = 0;
+    private final static int     EXIT_ERROR      = 1;
 
     // print extra information and use correct indentation when printing statements etc
-    private       static boolean    verbose         = false;
+    private       static boolean verbose         = false;
 
     /**
      * The main method.
@@ -295,7 +295,7 @@ public class SetlX {
         // parse content of all files
         try {
             if (expression != null) {
-                final Block exp = new Block();
+                final Block exp = new Block(state);
                 exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(state, expression)));
                 exp.markLastExprStatement();
                 programs.add(exp);
@@ -350,7 +350,7 @@ public class SetlX {
         if (termLoop) {
             for (int i = 0; i < programs.size(); ++i) {
                 try {
-                    programs.set(i, (Block) TermConverter.valueToStatement(programs.get(i).toTerm(state)));
+                    programs.set(i, (Block) TermConverter.valueToStatement(state, programs.get(i).toTerm(state)));
                 } catch (final TermConversionException tce) {
                     state.errWriteLn("Error during termLoop!");
                     if (state.isRuntimeDebuggingEnabled()) {
@@ -417,6 +417,8 @@ public class SetlX {
         if (verbose) {
             printExecutionStart(state);
         }
+
+        Thread.currentThread().setName("setlXmain");
 
         // run the parsed code
         for (int program = 0; program < programs.size(); ++program) {

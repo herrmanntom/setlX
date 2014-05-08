@@ -64,11 +64,11 @@ public class Match extends Statement {
                     state.setScope(innerScope);
 
                     // force match variables to be local to this block
-                    innerScope.setWriteThrough(false);
+                    final int writeThroughToken = innerScope.unsetWriteThrough();
                     // put all matching variables into current scope
                     result.setAllBindings(state, FUNCTIONAL_CHARACTER);
                     // reset WriteThrough, because changes during execution are not strictly local
-                    innerScope.setWriteThrough(true);
+                    innerScope.setWriteThrough(writeThroughToken);
 
                     if (br.evalConditionToBool(state)) {
                         // execute statements
@@ -102,20 +102,21 @@ public class Match extends Statement {
 
     @Override
     public void collectVariablesAndOptimize (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         // binding inside an match are only valid if present in all branches
         // and last branch is an default-branch
-        final int      preBound  = boundVariables.size();
+        final int preBound = boundVariables.size();
         List<String> boundHere = null;
         for (final MatchAbstractBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
-            br.collectVariablesAndOptimize(boundTmp, unboundVariables, usedVariables);
+            br.collectVariablesAndOptimize(state, boundTmp, unboundVariables, usedVariables);
 
             if (boundHere == null) {
                 boundHere = new ArrayList<String>(boundTmp.subList(preBound, boundTmp.size()));
@@ -164,19 +165,20 @@ public class Match extends Statement {
     /**
      * Convert a term representing a Match statement into such a statement.
      *
+     * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
      * @return                         Resulting Match Statement.
-     * @throws TermConversionException Thrown in case of an malformed term.
+     * @throws TermConversionException Thrown in case of a malformed term.
      */
-    public static Match termToStatement(final Term term) throws TermConversionException {
+    public static Match termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr                        expr        = TermConverter.valueToExpr(term.firstMember());
-            final SetlList                    branches    = (SetlList) term.lastMember();
-            final List<MatchAbstractBranch>   branchList  = new ArrayList<MatchAbstractBranch>(branches.size());
+            final Expr                      expr       = TermConverter.valueToExpr(state, term.firstMember());
+            final SetlList                  branches   = (SetlList) term.lastMember();
+            final List<MatchAbstractBranch> branchList = new ArrayList<MatchAbstractBranch>(branches.size());
             for (final Value v : branches) {
-                branchList.add(MatchAbstractBranch.valueToMatchAbstractBranch(v));
+                branchList.add(MatchAbstractBranch.valueToMatchAbstractBranch(state, v));
             }
             return new Match(expr, branchList);
         }

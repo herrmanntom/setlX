@@ -13,17 +13,11 @@ public class PD_gfx_clear extends GfxFunction {
 
     private PD_gfx_clear(){
         super();
-        addParameter("color");
-        allowFewerParameters();
     }
 
     @Override
     protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        if (args.isEmpty()){
-            StdDraw.clear();
-        }else{
-            StdDraw.clear();
-        }
+        StdDraw.clear();
         return SetlBoolean.TRUE;
     }
 }

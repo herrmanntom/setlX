@@ -8,9 +8,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// startsWith(string, prefix)    : return true if string starts with prefix
-
+/**
+ * startsWith(string, prefix) : Return true if string starts with prefix.
+ */
 public class PD_startsWith extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `startsWith'. */
     public final static PreDefinedProcedure DEFINITION = new PD_startsWith();
 
     private PD_startsWith() {
@@ -25,18 +27,18 @@ public class PD_startsWith extends PreDefinedProcedure {
         final Value prefix = args.get(1);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "String-argument '" + string + "' is not a string."
+                "String-argument '" + string.toString(state) + "' is not a string."
             );
         }
 
         if ( ! (prefix instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Prefix-argument '" + prefix + "' is not a string."
+                "Prefix-argument '" + prefix.toString(state) + "' is not a string."
             );
         }
 
 
-        if (string.getUnquotedString().startsWith(prefix.getUnquotedString())) {
+        if (string.getUnquotedString(state).startsWith(prefix.getUnquotedString(state))) {
             return SetlBoolean.TRUE;
         } else {
             return SetlBoolean.FALSE;

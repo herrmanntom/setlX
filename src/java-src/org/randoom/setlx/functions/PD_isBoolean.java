@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isBoolean(value)        : test if value-type is boolean
-
+/**
+ * isBoolean(value) : Test if value-type is boolean.
+ */
 public class PD_isBoolean extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isBoolean'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isBoolean();
 
     private PD_isBoolean() {

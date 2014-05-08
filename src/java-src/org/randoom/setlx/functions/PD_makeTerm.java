@@ -10,9 +10,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// makeTerm(fnc, body)  : create a term with the form: fnc(body)
-
+/**
+ * makeTerm(functionalCharacter, body) : Create a term with the form: functionalCharacter(body)
+ */
 public class PD_makeTerm extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `makeTerm'. */
     public final static PreDefinedProcedure DEFINITION = new PD_makeTerm();
 
     private PD_makeTerm() {
@@ -27,21 +29,21 @@ public class PD_makeTerm extends PreDefinedProcedure {
         final Value arg1 = args.get(1);
         if ( ! (arg0 instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "FunctionalCharacter '" + arg0 + "' is not a string."
+                "FunctionalCharacter '" + arg0.toString(state) + "' is not a string."
             );
         }
         if ( ! (arg1 instanceof SetlList)) {
             throw new IncompatibleTypeException(
-                "Argument '" + arg1 + "' is not a list."
+                "Argument '" + arg1.toString(state) + "' is not a list."
             );
         }
-        String fct = arg0.getUnquotedString();
+        String fct = arg0.getUnquotedString(state);
 
         // check if name is usable as term (fist char is upper case or single quote ( ' ))
         if (fct.length() > 0 && (fct.charAt(0) == '^' || Character.isUpperCase(fct.charAt(0)))) {
             // use correct internal representation when user wants to create a variable
-            if (fct.equals(Variable.FUNCTIONAL_CHARACTER_EXTERNAL)) {
-                fct = Variable.FUNCTIONAL_CHARACTER;
+            if (fct.equals(Variable.getFunctionalCharacterExternal())) {
+                fct = Variable.getFunctionalCharacter();
             }
             // make the new Term
             return new Term(fct, (SetlList) arg1);

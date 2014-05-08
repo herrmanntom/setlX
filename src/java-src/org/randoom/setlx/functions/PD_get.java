@@ -9,7 +9,7 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- * get(message, ...)             : prompts the user with `message', then reads a single line from stdin
+ * get(message, ...) : Prompts the user with `message', then reads a single line from standard in (stdin).
  */
 public class PD_get extends PreDefinedProcedure {
     /** Definition of the PreDefinedProcedure `get'. */
@@ -19,24 +19,23 @@ public class PD_get extends PreDefinedProcedure {
         super();
         addParameter("message");
         enableUnlimitedParameters();
-        allowFewerParameters();
+        setMinimumNumberOfParameters(0);
     }
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
-        Value          inputValue = Om.OM;
-        String         input      = null;
-        String         prompt     = null;
+        Value               inputValue = Om.OM;
+        String              input      = null;
+        final StringBuilder prompt     = new StringBuilder();
         if (args.size() == 0) {
-            prompt = ": ";
+            prompt.append(": ");
         } else {
-            prompt = "";
             for (final Value arg : args) {
-                prompt += arg.getUnquotedString();
+                arg.appendUnquotedString(state, prompt, 0);
             }
         }
         try {
-            state.prompt(prompt);
+            state.prompt(prompt.toString());
             input = state.inReadLine();
         } catch (final JVMIOException ioe) {
             state.errWriteLn("IO error trying to read from stdin!");

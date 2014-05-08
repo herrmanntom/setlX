@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// join(collection, separator)   : returns a string with all the members in `collection' separated by `separator'.
-
+/**
+ * join(collection, separator) : Returns a string with all the members in `collection' separated by `separator'.
+ */
 public class PD_join extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `join'. */
     public final static PreDefinedProcedure DEFINITION = new PD_join();
 
     private PD_join() {

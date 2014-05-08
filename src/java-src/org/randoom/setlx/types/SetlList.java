@@ -10,12 +10,14 @@ import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * This class implements a list of arbitrary SetlX values.
@@ -558,6 +560,7 @@ public class SetlList extends IndexedCollectionValue {
             return Om.OM;
         }
 
+        isCloned = true;
         final ArrayList<Value> p = new ArrayList<Value>(list);
 
         // Inspired by permutation from
@@ -586,37 +589,55 @@ public class SetlList extends IndexedCollectionValue {
             p.set(j,tmp);
         }
 
-        return new SetlList(p);
+        final SetlList result = new SetlList(p);
+        result.isCloned = true;
+        return result;
     }
 
     @Override
     public SetlSet permutations(final State state) throws SetlException {
+        isCloned = true;
+        return new SetlSet(permutations(state, list));
+    }
+
+    private Collection<SetlList> permutations(final State state, final List<Value> values) throws SetlException {
         if (state.executionStopped) {
             throw new StopExecutionException();
         }
-        if (size() == 0) {
-            final SetlSet permutations = new SetlSet();
-            permutations.addMember(state, clone());
+        final int nPermutation = list.size(); // size of one final permutation
+        final int valuesSize   = values.size();
+        if (valuesSize == 0) {
+            final ArrayList<SetlList> permutations = new ArrayList<SetlList>(1);
+            permutations.add(new SetlList(nPermutation));
             return permutations;
         }
-        final SetlList  rest            = clone();
-        final Value     last            = rest.removeLastMember();
-        final SetlSet   permutatateRest = rest.permutations(state);
-        final SetlSet   permutations    = new SetlSet();
-        for (final Value permutation : permutatateRest) {
+        final Value                first            = values.get(0);
+        final Collection<SetlList> permutationsRest = permutations(state, values.subList(1, valuesSize));
+        final Collection<SetlList> permutations;
+        if (valuesSize == nPermutation || valuesSize % 3 == 0) {
+            permutations = new TreeSet<SetlList>();
+        } else {
+            permutations = new ArrayList<SetlList>(permutationsRest.size() * (permutationsRest.iterator().next().size() + 1));
+        }
+        for (final SetlList permutation : permutationsRest) {
             final int size = permutation.size();
-            for (int i = 0; i <= size; i++) {
-                final SetlList  perm    = (SetlList) permutation.clone();
-                perm.separateFromOriginal();
-                perm.list.add(i, last.clone());
-                permutations.addMember(state, perm);
+            for (int i = 0; i < size; ++i) {
+                final ArrayList<Value> perm = new ArrayList<Value>(nPermutation);
+                if (i > 0) {
+                    perm.addAll(permutation.list.subList(0, i));
+                }
+                perm.add(first);
+                perm.addAll(permutation.list.subList(i, size));
+                permutations.add(new SetlList(perm));
             }
+            permutation.list.add(first);
+            permutations.add(permutation);
         }
         return permutations;
     }
 
     @Override
-    public void removeMember(final Value element) {
+    public void removeMember(final State state, final Value element) {
         separateFromOriginal();
         list.remove(element);
         compress();
@@ -739,7 +760,7 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        TermConverter.valueToCodeFragment(this, false).appendString(state, sb, 0);
+        TermConverter.valueToCodeFragment(state, this, false).appendString(state, sb, 0);
     }
 
     @Override
@@ -753,7 +774,7 @@ public class SetlList extends IndexedCollectionValue {
      *
      * @param state       Current state of the running setlX program.
      * @param sb          StringBuilder to append to.
-     * @param addBracktes Append enclosing brackes of the list.
+     * @param addBracktes Append enclosing brackets of the list.
      */
     public void canonical(final State state, final StringBuilder sb, final boolean addBracktes) {
         if (addBracktes) {
@@ -831,10 +852,9 @@ public class SetlList extends IndexedCollectionValue {
             final Iterator<Value> iterSecond = ((SetlList) v).list.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
                 final int cmp = iterFirst.next().compareTo(iterSecond.next());
-                if (cmp == 0) {
-                    continue;
+                if (cmp != 0) {
+                    return cmp;
                 }
-                return cmp;
             }
             if (iterFirst.hasNext()) {
                 return 1;
@@ -849,12 +869,12 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 800;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlList) {

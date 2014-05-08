@@ -18,7 +18,7 @@ import java.util.List;
  *                                 string representing a single line.
  */
 public class PD_writeFile extends PreDefinedProcedure {
-    /** Definition of the PreDefinedProcedure `rnd'. */
+    /** Definition of the PreDefinedProcedure `writeFile'. */
     public final static PreDefinedProcedure DEFINITION = new PD_writeFile();
 
     /**
@@ -46,16 +46,16 @@ public class PD_writeFile extends PreDefinedProcedure {
      * @throws FileNotWriteableException File to be written cannot be written.
      */
     protected Value exec(final State state, final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
-        final Value           fileArg     = args.get(0);
+        final Value  fileArg = args.get(0);
         if ( ! (fileArg instanceof SetlString)) {
-            throw new IncompatibleTypeException("FileName-argument '" + fileArg + "' is not a string.");
+            throw new IncompatibleTypeException("FileName-argument '" + fileArg.toString(state) + "' is not a string.");
         }
-        final Value           contentArg  = args.get(1);
+        final Value contentArg = args.get(1);
 
         // get name of file to be written
-        final String          fileName    = fileArg.getUnquotedString();
+        final String    fileName = fileArg.getUnquotedString(state);
         // get content to be written into the file
-              CollectionValue content     = null;
+        CollectionValue content  = null;
         if (contentArg instanceof CollectionValue && ! (contentArg instanceof Term || contentArg instanceof SetlString)) {
             content = (CollectionValue) contentArg;
         } else {

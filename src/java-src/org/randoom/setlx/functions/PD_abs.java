@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// abs(value)              : returns the absolute (e.g. positive) value of the parameter
-
+/**
+ * abs(value) : returns the absolute (e.g. positive) value of the parameter
+ */
 public class PD_abs extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `abs'. */
     public final static PreDefinedProcedure DEFINITION = new PD_abs();
 
     private PD_abs() {

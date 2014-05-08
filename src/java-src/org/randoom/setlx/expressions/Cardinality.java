@@ -20,7 +20,7 @@ import java.util.List;
  *
  * implemented here as:
  *           ======
- *           mExpr
+ *            expr
  */
 public class Cardinality extends Expr {
     // functional character used in terms
@@ -30,6 +30,11 @@ public class Cardinality extends Expr {
 
     private final Expr expr;
 
+    /**
+     * Constructor.
+     *
+     * @param expr Expression to evaluate to a collection value.
+     */
     public Cardinality(final Expr expr) {
         this.expr = expr;
     }
@@ -41,11 +46,12 @@ public class Cardinality extends Expr {
 
     @Override
     protected void collectVariables (
+        final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(boundVariables, unboundVariables, usedVariables);
+        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -65,21 +71,33 @@ public class Cardinality extends Expr {
         return result;
     }
 
-    public static Cardinality termToExpr(final Term term) throws TermConversionException {
+    /**
+     * Convert a term representing a AssignListConstructor into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param term                     Term to convert.
+     * @return                         Resulting expression.
+     * @throws TermConversionException Thrown in case of a malformed term.
+     */
+    public static Cardinality termToExpr(final State state, final Term term) throws TermConversionException {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr expr = TermConverter.valueToExpr(term.firstMember());
+            final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
             return new Cardinality(expr);
         }
     }
 
-    // precedence level in SetlX-grammar
     @Override
     public int precedence() {
         return PRECEDENCE;
     }
 
+    /**
+     * Get the functional character used in terms.
+     *
+     * @return functional character used in terms.
+     */
     public static String functionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }

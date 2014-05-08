@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.StringConstructor;
 import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -21,6 +23,11 @@ import java.util.regex.PatternSyntaxException;
  * The setlX string data type.
  */
 public class SetlString extends IndexedCollectionValue {
+    /**
+     * String used in toTerm, when some member is null.
+     */
+    public final static SetlString NIL = new SetlString("nil");
+
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this SetlString carries a isClone flag.
      *
@@ -337,7 +344,7 @@ public class SetlString extends IndexedCollectionValue {
     public Value productAssign(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Rational) {
             separateFromOriginal();
-            final int    m       = multiplier.jIntValue();
+            final int m = multiplier.jIntValue();
             if (m < 0) {
                 throw new IncompatibleTypeException(
                     "String multiplier '" + multiplier + "' is negative."
@@ -453,7 +460,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public SetlBoolean containsMember(final State state, final Value element) throws IncompatibleTypeException {
-        if (content.indexOf(element.getUnquotedString()) >= 0) {
+        if (content.indexOf(element.getUnquotedString(state)) >= 0) {
             return SetlBoolean.TRUE;
         } else {
             return SetlBoolean.FALSE;
@@ -615,8 +622,8 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public void removeMember(final Value element) throws IncompatibleTypeException {
-        final String needle = element.getUnquotedString();
+    public void removeMember(final State state, final Value element) throws IncompatibleTypeException {
+        final String needle = element.getUnquotedString(state);
         final int    pos    = content.indexOf(needle);
         if (pos >= 0) {
             separateFromOriginal();
@@ -677,7 +684,7 @@ public class SetlString extends IndexedCollectionValue {
             );
         }
 
-        final String value = v.getUnquotedString();
+        final String value = v.getUnquotedString(state);
 
         // in java the index is one lower
         --index;
@@ -727,7 +734,7 @@ public class SetlString extends IndexedCollectionValue {
                 "Pattern '" + pattern  + "' is not a string."
             );
         }
-        final String p = ((SetlString) pattern).getUnquotedString();
+        final String p = ((SetlString) pattern).getUnquotedString(state);
 
         try {
             // parse pattern
@@ -830,13 +837,46 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public String getUnquotedString() {
+    public String getUnquotedString(final State state) {
         return content.toString();
     }
 
     @Override
     public SetlString str(final State state) {
         return this;
+    }
+
+    /**
+     * Match string with regex pattern and return capture groups.
+     *
+     * @param state            Current state of the running setlX program.
+     * @param pattern          Compiled regular expression pattern to match.
+     * @param requireFullMatch Should entire input string be matched?
+     * @param assignTerm       SetlX Term to assign result to, or null.
+     * @return                 ScanResult.
+     * @throws SetlException   In case of some (user-) error.
+     */
+    public ScanResult matchRegexPattern(final State state, final Pattern pattern, final boolean requireFullMatch, final Value assignTerm) throws SetlException {
+        final Matcher matcher = pattern.matcher(content);
+        if ((requireFullMatch && matcher.matches()) || matcher.lookingAt()) {
+            if (assignTerm != null) {
+                final int      count  = matcher.groupCount() + 1;
+                final SetlList groups = new SetlList(count);
+                for (int i = 0; i < count; ++i) {
+                    final String group = matcher.group(i);
+                    if (group != null) {
+                        groups.addMember(state, new SetlString(group));
+                    } else {
+                        groups.addMember(state, Om.OM);
+                    }
+                }
+                return new ScanResult(assignTerm.matchesTerm(state, groups), matcher.end());
+            } else {
+                return new ScanResult(true, matcher.end());
+            }
+        } else {
+            return new ScanResult(false, -1);
+        }
     }
 
     /* term operations */
@@ -848,7 +888,7 @@ public class SetlString extends IndexedCollectionValue {
         } else if (other instanceof Term ) {
             final Term o = (Term) other;
             try {
-                if (o.functionalCharacter(state).getUnquotedString().equals(StringConstructor.getFunctionalCharacter())
+                if (o.functionalCharacter(state).getUnquotedString(state).equals(StringConstructor.getFunctionalCharacter())
                     && o.size() == 2 && o.firstMember().size() == 1 && o.lastMember().size() == 0
                 ) {
                     return matchesTerm(state, o.firstMember().firstMember(state));
@@ -874,12 +914,12 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    protected int compareToOrdering() {
+    public int compareToOrdering() {
         return 600;
     }
 
     @Override
-    public boolean equalTo(final Value v) {
+    public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
         } else if (v instanceof SetlString) {

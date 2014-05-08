@@ -6,10 +6,12 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// arb(collectionValue)          : Selects an arbitrary member from `collectionValue'.
-//                                 Note that 'arb' is deterministic, while rnd is not.
-
+/**
+ * arb(collectionValue) : Selects an arbitrary member from `collectionValue'.
+ *                        Note that 'arb' is deterministic, while rnd is not.
+ */
 public class PD_arb extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `arb'. */
     public final static PreDefinedProcedure DEFINITION = new PD_arb();
 
     private PD_arb() {

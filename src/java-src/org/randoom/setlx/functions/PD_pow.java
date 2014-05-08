@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// pow(set)                : computes the power-set
-
+/**
+ * pow(set) : Computes the power-set.
+ */
 public class PD_pow extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `pow'. */
     public final static PreDefinedProcedure DEFINITION = new PD_pow();
 
     private PD_pow() {

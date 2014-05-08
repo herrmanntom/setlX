@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// first(collectionValue)        : selects the first member from `collectionValue'
-
+/**
+ * first(collectionValue) : Selects the first member from `collectionValue'.
+ */
 public class PD_first extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `first'. */
     public final static PreDefinedProcedure DEFINITION = new PD_first();
 
     private PD_first() {

@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isInteger(value)        : test if value-type is integer
-
+/**
+ * isInteger(value) : Test if value-type is integer.
+ */
 public class PD_isInteger extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isInteger'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isInteger();
 
     private PD_isInteger() {

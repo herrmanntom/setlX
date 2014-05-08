@@ -10,9 +10,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// nDecimalPlaces(rational, n) : get string of rational number with max of n digits after decimal point
-
+/**
+ * nDecimalPlaces(rational, n) : Get string of rational number with max of n digits after decimal point.
+ */
 public class PD_nDecimalPlaces extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `nDecimalPlaces'. */
     public final static PreDefinedProcedure DEFINITION = new PD_nDecimalPlaces();
 
     private PD_nDecimalPlaces() {

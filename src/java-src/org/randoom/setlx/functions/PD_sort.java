@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// sort(collectionValue)         : returns a sorted version of collectionValue.
-
+/**
+ * sort(collectionValue) : returns a sorted version of collectionValue.
+ */
 public class PD_sort extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `sort'. */
     public final static PreDefinedProcedure DEFINITION = new PD_sort();
 
     private PD_sort() {

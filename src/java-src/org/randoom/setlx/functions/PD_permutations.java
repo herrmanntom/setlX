@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// permutations(collectionValue) : computes all permutations of the element in `collectionValue'
-
+/**
+ * permutations(collectionValue) : Computes all permutations of the element in `collectionValue'.
+ */
 public class PD_permutations extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `permutations'. */
     public final static PreDefinedProcedure DEFINITION = new PD_permutations();
 
     private PD_permutations() {

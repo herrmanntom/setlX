@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isObject(Value)         : test if value-type is object
-
+/**
+ * isObject(Value) : Test if value-type is object.
+ */
 public class PD_isObject extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isObject'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isObject();
 
     private PD_isObject() {

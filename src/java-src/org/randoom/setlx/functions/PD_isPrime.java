@@ -8,12 +8,14 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isPrime(integer)              : Returns true if `integer' is a prime, false otherwise.
-//                                 Unlike isProbablePrime() this functions actually
-//                                 tests all possible factors, therefore has linear
-//                                 complexity.
-
+/**
+ * isPrime(integer) : Returns true if `integer' is a prime, false otherwise.
+ *                    Unlike isProbablePrime() this functions actually
+ *                    tests all possible factors, therefore has linear
+ *                    complexity.
+ */
 public class PD_isPrime extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isPrime'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isPrime();
 
     private PD_isPrime() {

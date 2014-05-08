@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// char(value)             : converts value into a single ascii character
-
+/**
+ * char(value) : Converts value into a single ASCII character.
+ */
 public class PD_char extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `char'. */
     public final static PreDefinedProcedure DEFINITION = new PD_char();
 
     private PD_char() {

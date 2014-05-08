@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// getScope()                    : get a term representing all variables set in current scope
-
+/**
+ * getScope() : Get a term representing all variables set in current scope.
+ */
 public class PD_getScope extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `getScope'. */
     public final static PreDefinedProcedure DEFINITION = new PD_getScope();
 
     private PD_getScope() {

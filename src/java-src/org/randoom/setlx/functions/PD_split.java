@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// split(string, pattern)        : splits string at pattern into a list of strings
-
+/**
+ * split(string, pattern) : Splits string at pattern into a list of strings.
+ */
 public class PD_split extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `split'. */
     public final static PreDefinedProcedure DEFINITION = new PD_split();
 
     private PD_split() {

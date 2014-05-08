@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// max(collectionValue) : select maximum member from collection value
-
+/**
+ * max(collectionValue) : Select maximum member from collection value.
+ */
 public class PD_max extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `max'. */
     public final static PreDefinedProcedure DEFINITION = new PD_max();
 
     private PD_max() {

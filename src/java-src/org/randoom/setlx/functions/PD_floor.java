@@ -6,11 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-/*
- * floor(numberValue)      : returns maximum integer which is lower or equal to numberValue
+/**
+ * floor(numberValue) : Returns maximum integer which is lower or equal to numberValue.
  */
-
 public class PD_floor extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `floor'. */
     public final static PreDefinedProcedure DEFINITION = new PD_floor();
 
     private PD_floor() {

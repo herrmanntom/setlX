@@ -7,10 +7,12 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// collect(list)                 : Collects multiple occurrences of the same value in
-//                                 `list' into a map of [value, nOccurences].
-
+/**
+ * collect(list) : Collects multiple occurrences of the same value
+ *                 in `list' into a map of [value, nOccurences].
+ */
 public class PD_collect extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `collect'. */
     public final static PreDefinedProcedure DEFINITION = new PD_collect();
 
     private PD_collect() {

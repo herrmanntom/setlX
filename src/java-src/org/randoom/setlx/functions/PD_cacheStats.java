@@ -11,9 +11,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// cacheStats(cachedProcedure)   : return a map containing statistics of the given cachedFunction
-
+/**
+ * cacheStats(cachedProcedure) : Return a map containing statistics of the given cachedProcedure.
+ */
 public class PD_cacheStats extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `cacheStats'. */
     public final static PreDefinedProcedure DEFINITION = new PD_cacheStats();
 
     private PD_cacheStats() {
@@ -26,7 +28,7 @@ public class PD_cacheStats extends PreDefinedProcedure {
         final Value function  = args.get(0);
         if ( ! (function instanceof CachedProcedure)) {
             throw new IncompatibleTypeException(
-                "Argument '" + function + "' is not a cached function."
+                "Argument '" + function + "' is not a cached procedure."
             );
         }
 

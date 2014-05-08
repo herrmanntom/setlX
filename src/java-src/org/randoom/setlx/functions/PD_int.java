@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// int(stringOrNumber)     : convert string or number into an integer, returns om on failure
-
+/**
+ * int(stringOrNumber) : Convert string or number into an integer, returns om on failure.
+ */
 public class PD_int extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `int'. */
     public final static PreDefinedProcedure DEFINITION = new PD_int();
 
     private PD_int() {

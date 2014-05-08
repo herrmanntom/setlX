@@ -8,14 +8,15 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isProbablePrime(integer)      : returns true if `integer' is probably prime, false if it's definitely not prime.
-//                                 If true, the probability that `integer' is prime exceeds 0.999 999 999.
-//                                 In other words less than 1 in 1 000 000 000 probable primes is not a prime.
-//                                 Unlike isPrime() this functions is not deterministic, but has only
-//                                 constant complexity.
-
-
+/**
+ * isProbablePrime(integer) : Returns true if `integer' is probably prime, false if it's definitely not prime.
+ *                            If true, the probability that `integer' is prime exceeds 0.999 999 999.
+ *                            In other words less than 1 in 1 000 000 000 probable primes is not a prime.
+ *                            Unlike isPrime() this functions is not deterministic, but has only
+ *                            constant complexity.
+ */
 public class PD_isProbablePrime extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isProbablePrime'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isProbablePrime();
 
     private PD_isProbablePrime() {

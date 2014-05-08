@@ -8,9 +8,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// clearCache(cachedProcedure)   : clears the cache of supplied function
-
+/**
+ * clearCache(cachedProcedure) : Clears the cache of supplied procedure.
+ */
 public class PD_clearCache extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `clearCache'. */
     public final static PreDefinedProcedure DEFINITION = new PD_clearCache();
 
     private PD_clearCache() {
@@ -23,7 +25,7 @@ public class PD_clearCache extends PreDefinedProcedure {
         final Value function  = args.get(0);
         if ( ! (function instanceof CachedProcedure)) {
             throw new IncompatibleTypeException(
-                "Argument '" + function + "' is not a cached function."
+                "Argument '" + function + "' is not a cached procedure."
             );
         }
 

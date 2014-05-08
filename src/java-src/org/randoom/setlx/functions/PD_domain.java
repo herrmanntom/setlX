@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// domain(map)             : get domain of map
-
+/**
+ * domain(map) : Get domain of map.
+ */
 public class PD_domain extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `domain'. */
     public final static PreDefinedProcedure DEFINITION = new PD_domain();
 
     private PD_domain() {

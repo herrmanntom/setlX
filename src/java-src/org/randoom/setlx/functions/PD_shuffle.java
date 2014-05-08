@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// shuffle(collectionValue)      : returns a randomly shuffled version of the collectionValue.
-
+/**
+ * shuffle(collectionValue) : returns a randomly shuffled version of the collectionValue.
+ */
 public class PD_shuffle extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `shuffle'. */
     public final static PreDefinedProcedure DEFINITION = new PD_shuffle();
 
     private PD_shuffle() {

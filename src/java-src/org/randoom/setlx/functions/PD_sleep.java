@@ -9,9 +9,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// sleep(time_in_ms)             : pause execution for a number of milliseconds
-
+/**
+ * sleep(time_in_ms) : Pause execution for a number of milliseconds.
+ */
 public class PD_sleep extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `sleep'. */
     public final static PreDefinedProcedure DEFINITION = new PD_sleep();
 
     private PD_sleep() {

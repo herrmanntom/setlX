@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isDouble tests whether argument is a double
-
+/**
+ * isDouble(value) : Tests whether argument is a double.
+ */
 public class PD_isDouble extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isDouble'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isDouble();
 
     private PD_isDouble() {

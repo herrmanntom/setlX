@@ -814,7 +814,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     /**
-     * Convert this value into a single character.
+     * Convert this value into a single ASCII character.
      *
      * @param state          Current state of the running setlX program.
      * @return               Character representation of this value.

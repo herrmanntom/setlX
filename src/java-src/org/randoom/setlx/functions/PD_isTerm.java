@@ -5,9 +5,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// isTerm(value)           : test if value-type is term
-
+/**
+ * isTerm(value) : Test if value-type is term.
+ */
 public class PD_isTerm extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `isTerm'. */
     public final static PreDefinedProcedure DEFINITION = new PD_isTerm();
 
     private PD_isTerm() {

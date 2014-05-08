@@ -6,9 +6,11 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
-// nCPUs()                       : get number of CPUs in current system
-
+/**
+ * nCPUs() : Get number of CPUs in current system.
+ */
 public class PD_nCPUs extends PreDefinedProcedure {
+    /** Definition of the PreDefinedProcedure `nCPUs'. */
     public final static PreDefinedProcedure DEFINITION = new PD_nCPUs();
 
     private PD_nCPUs() {

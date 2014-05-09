@@ -445,7 +445,7 @@ public class SetlClass extends Value {
             return 0;
         } else if (v instanceof SetlClass) {
             final SetlClass other = (SetlClass) v;
-            int cmp = Integer.compare(parameters.size(), other.parameters.size());
+            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
             if (cmp != 0) {
                 return cmp;
             }

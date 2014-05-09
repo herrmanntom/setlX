@@ -283,7 +283,7 @@ public class Block extends Statement implements Comparable<Block> {
             return 0;
         } else {
             final int size = statements.size();
-            final int cmp  = Integer.compare(size, other.statements.size());
+            final int cmp  = Integer.valueOf(size).compareTo(other.statements.size());
             if (cmp != 0 || size == 0) {
                 return cmp;
             }

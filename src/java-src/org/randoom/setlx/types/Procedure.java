@@ -395,7 +395,7 @@ public class Procedure extends Value {
             return 0;
         } else if (v instanceof Procedure) {
             final Procedure other = (Procedure) v;
-            int cmp = Integer.compare(parameters.size(), other.parameters.size());
+            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
             if (cmp != 0) {
                 return cmp;
             }

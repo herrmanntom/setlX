@@ -137,9 +137,7 @@
     <!-- clean up the mess we made by building -->
     <target name="clean">
         <delete dir="${build.dir}"/>
-        <delete>
-            <fileset dir="${src.dir}/org/randoom/setlx/grammar" includes="*"/>
-        </delete>
+        <delete dir="${src.dir}/org/randoom/setlx/grammar"/>
     </target>
 
     <target name="dist-clean" depends="clean">

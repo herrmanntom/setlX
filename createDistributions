@@ -12,7 +12,7 @@ ant dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
-ant buildAll-j1.6
+ant jar-j1.6
 if [[ -f "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" && "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" ]]; then
     mv "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX.jar"
     mv "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar"

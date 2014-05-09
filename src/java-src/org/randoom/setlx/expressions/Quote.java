@@ -30,6 +30,11 @@ public class Quote extends Expr {
 
     private final Expr expr;
 
+    /**
+     * Constructor.
+     *
+     * @param expr Expression to quote.
+     */
     public Quote(final Expr expr) {
         this.expr = expr;
     }

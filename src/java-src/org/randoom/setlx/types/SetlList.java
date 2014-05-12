@@ -848,8 +848,12 @@ public class SetlList extends IndexedCollectionValue {
         if (this == v) {
             return 0;
         } else if (v instanceof SetlList) {
+            final ArrayList<Value> other = ((SetlList) v).list;
+            if (list == other) {
+                return 0; // clone
+            }
             final Iterator<Value> iterFirst  = list.iterator();
-            final Iterator<Value> iterSecond = ((SetlList) v).list.iterator();
+            final Iterator<Value> iterSecond = other.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
                 final int cmp = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp != 0) {
@@ -879,7 +883,9 @@ public class SetlList extends IndexedCollectionValue {
             return true;
         } else if (v instanceof SetlList) {
             final ArrayList<Value> other = ((SetlList) v).list;
-            if (list.size() == other.size()) {
+            if (list == other) {
+                return true; // clone
+            } else if (list.size() == other.size()) {
                 final Iterator<Value> iterFirst  = list.iterator();
                 final Iterator<Value> iterSecond = other.iterator();
                 while (iterFirst.hasNext() && iterSecond.hasNext()) {

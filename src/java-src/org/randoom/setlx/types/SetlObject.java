@@ -87,10 +87,10 @@ public class SetlObject extends Value {
      * cloning, when the clone is only used read-only, which it is in most cases.
      */
 
-    private           SetlHashMap<Value> members;
-    private     final SetlClass          classDefinition;
+    private       SetlHashMap<Value> members;
+    private final SetlClass          classDefinition;
     // is this object a clone
-    private           boolean            isCloned;
+    private       boolean            isCloned;
 
     private SetlObject(final SetlHashMap<Value> members, final SetlClass classDefinition) {
         this.members         = members;

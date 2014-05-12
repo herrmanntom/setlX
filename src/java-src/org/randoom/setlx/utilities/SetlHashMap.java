@@ -1,6 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
@@ -21,13 +22,26 @@ import org.randoom.setlx.types.Value;
  */
 public class SetlHashMap<V extends Value> extends HashMap<String, V> implements Comparable<SetlHashMap<V>> {
 
-    private static final long serialVersionUID = 2189938618356906560L;
+    private static final long            serialVersionUID = 2189938618356906560L;
+
+    private        final TreeSet<String> keys;
 
     /**
      * Create a new SetlHashMap.
      */
     public SetlHashMap() {
         super();
+        keys = new TreeSet<String>();
+    }
+
+    /**
+     * Create a new SetlHashMap which contains all members from the given SetlHashMap.
+     *
+     * @param m Map to copy all members from.
+     */
+    public SetlHashMap(final SetlHashMap<? extends V> m) {
+        super(m);
+        keys = new TreeSet<String>(m.keys);
     }
 
     /**
@@ -37,6 +51,44 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public SetlHashMap(final Map<String, ? extends V> m) {
         super(m);
+        keys = new TreeSet<String>(m.keySet());
+    }
+
+    @Override
+    public V put(final String key, final V value) {
+        keys.add(key);
+        return super.put(key, value);
+    }
+
+    /**
+     * Copies all of the mappings from the specified map to this map.
+     * These mappings will replace any mappings that this map had for
+     * any of the keys currently in the specified map.
+     *
+     * @param m mappings to be stored in this map
+     * @throws NullPointerException if the specified map is null
+     */
+    public void putAll(final SetlHashMap<? extends V> m) {
+        keys.addAll(m.keys);
+        super.putAll(m);
+    }
+
+    @Override
+    public void putAll(final Map<? extends String, ? extends V> m) {
+        keys.addAll(m.keySet());
+        super.putAll(m);
+    }
+
+    @Override
+    public V remove(final Object key) {
+        keys.remove(key);
+        return super.remove(key);
+    }
+
+    @Override
+    public void clear() {
+        keys.clear();
+        super.clear();
     }
 
     /**
@@ -98,19 +150,15 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
             return cmp;
         }
 
-        final TreeSet<String> keys = new TreeSet<String>(keySet());
-        keys.addAll(other.keySet());
-
-        for (final String key : keys) {
-            final V thisValue = get(key);
-            if (thisValue == null) {
-                return -1;
+        final Iterator<String> iterFirst  = keys.iterator();
+        final Iterator<String> iterSecond = other.keys.iterator();
+        while (iterFirst.hasNext() && iterSecond.hasNext()) {
+            final String key = iterFirst.next();
+            cmp = key.compareTo(iterSecond.next());
+            if (cmp != 0) {
+                return cmp;
             }
-            final V otherValue = other.get(key);
-            if (otherValue == null) {
-                return 1;
-            }
-            cmp = thisValue.compareTo(otherValue);
+            cmp = get(key).compareTo(other.get(key));
             if (cmp != 0) {
                 return cmp;
             }

@@ -832,10 +832,14 @@ public class SetlSet extends CollectionValue {
         if (this == v) {
             return 0;
         } else if (v instanceof SetlSet) {
-            final Iterator<Value> iterFirst  = iterator();
-            final Iterator<Value> iterSecond = ((SetlSet) v).iterator();
+            final TreeSet<Value> other = ((SetlSet) v).set;
+            if (set == other) {
+                return 0; // clone
+            }
+            final Iterator<Value> iterFirst  = set.iterator();
+            final Iterator<Value> iterSecond = other.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
-                final int     cmp    = iterFirst.next().compareTo(iterSecond.next());
+                final int cmp = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp == 0) {
                     continue;
                 }
@@ -864,7 +868,9 @@ public class SetlSet extends CollectionValue {
             return true;
         } else if (v instanceof SetlSet) {
             final TreeSet<Value> other = ((SetlSet) v).set;
-            if (set.size() == other.size()) {
+            if (set == other) {
+                return true; // clone
+            } else if (set.size() == other.size()) {
                 final Iterator<Value> iterFirst  = set.iterator();
                 final Iterator<Value> iterSecond = other.iterator();
                 while (iterFirst.hasNext() && iterSecond.hasNext()) {

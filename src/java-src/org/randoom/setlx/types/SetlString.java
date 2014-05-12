@@ -907,7 +907,11 @@ public class SetlString extends IndexedCollectionValue {
         if (this == v) {
             return 0;
         } else if (v instanceof SetlString) {
-            return content.toString().compareTo(((SetlString) v).content.toString());
+            final StringBuilder other = ((SetlString) v).content;
+            if (content == other) {
+                return 0; // clone
+            }
+            return content.toString().compareTo(other.toString());
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -924,7 +928,9 @@ public class SetlString extends IndexedCollectionValue {
             return true;
         } else if (v instanceof SetlString) {
             final StringBuilder other = ((SetlString) v).content;
-            if (content.length() == other.length()) {
+            if (content == other) {
+                return true; // clone
+            } else if (content.length() == other.length()) {
                 return content.toString().equals(other.toString());
             } else {
                 return false;

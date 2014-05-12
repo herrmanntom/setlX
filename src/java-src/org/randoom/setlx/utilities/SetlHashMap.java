@@ -2,7 +2,7 @@ package org.randoom.setlx.utilities;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Om;
@@ -87,45 +87,32 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
         throw new TermConversionException("Malformed member of Term.");
     }
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final SetlHashMap<V> other) {
         if (this == other) {
             return 0;
         }
 
-        final Integer thisSize  = this.size();
-        final Integer otherSize = other.size();
-        int cmp = thisSize.compareTo(otherSize);
+        int cmp = Integer.valueOf(size()).compareTo(other.size());
         if (cmp != 0) {
             return cmp;
         }
 
-        for (final Entry<String, V> entry: this.entrySet()) {
-            final V otherValue = other.get(entry.getKey());
-            if (otherValue != null) {
-                cmp = entry.getValue().compareTo(otherValue);
-                if (cmp != 0) {
-                    return cmp;
-                }
-            } else {
+        final TreeSet<String> keys = new TreeSet<String>(keySet());
+        keys.addAll(other.keySet());
+
+        for (final String key : keys) {
+            final V thisValue = get(key);
+            if (thisValue == null) {
+                return -1;
+            }
+            final V otherValue = other.get(key);
+            if (otherValue == null) {
                 return 1;
             }
-        }
-
-        for (final Entry<String, V> entry: other.entrySet()) {
-            final V thisValue = this.get(entry.getKey());
-            if (thisValue != null) {
-                cmp = entry.getValue().compareTo(thisValue);
-                if (cmp != 0) {
-                    return cmp;
-                }
-            } else {
-                return -1;
+            cmp = thisValue.compareTo(otherValue);
+            if (cmp != 0) {
+                return cmp;
             }
         }
 

@@ -30,6 +30,11 @@ public class Minus extends Expr {
 
     private final Expr expr;
 
+    /**
+     * Constructor.
+     *
+     * @param expr Expression to evaluate to a number.
+     */
     public Minus(final Expr expr) {
         this.expr = expr;
     }

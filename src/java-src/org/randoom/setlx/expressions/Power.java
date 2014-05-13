@@ -30,6 +30,12 @@ public class Power extends Expr {
     private final Expr lhs;
     private final Expr exponent;
 
+    /**
+     * Constructor.
+     *
+     * @param lhs Left hand side of the operator.
+     * @param exponent Right hand side of the operator.
+     */
     public Power(final Expr lhs, final Expr exponent) {
         this.lhs      = lhs;
         this.exponent = exponent;

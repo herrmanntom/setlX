@@ -5,6 +5,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    that object
  + improve print() of predefined functions when they have optional parameters
  # fix some error messages when trying to perform operation on om
+ # fixed some internal issues with comparing objects and classes
 
 ---v2.2.3--- 2014-04-07
  + updated tutorial

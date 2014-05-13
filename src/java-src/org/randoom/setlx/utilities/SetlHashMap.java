@@ -1,8 +1,9 @@
 package org.randoom.setlx.utilities;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Om;
@@ -21,13 +22,26 @@ import org.randoom.setlx.types.Value;
  */
 public class SetlHashMap<V extends Value> extends HashMap<String, V> implements Comparable<SetlHashMap<V>> {
 
-    private static final long serialVersionUID = 2189938618356906560L;
+    private static final long            serialVersionUID = 2189938618356906560L;
+
+    private        final TreeSet<String> keys;
 
     /**
      * Create a new SetlHashMap.
      */
     public SetlHashMap() {
         super();
+        keys = new TreeSet<String>();
+    }
+
+    /**
+     * Create a new SetlHashMap which contains all members from the given SetlHashMap.
+     *
+     * @param m Map to copy all members from.
+     */
+    public SetlHashMap(final SetlHashMap<? extends V> m) {
+        super(m);
+        keys = new TreeSet<String>(m.keys);
     }
 
     /**
@@ -37,6 +51,44 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      */
     public SetlHashMap(final Map<String, ? extends V> m) {
         super(m);
+        keys = new TreeSet<String>(m.keySet());
+    }
+
+    @Override
+    public V put(final String key, final V value) {
+        keys.add(key);
+        return super.put(key, value);
+    }
+
+    /**
+     * Copies all of the mappings from the specified map to this map.
+     * These mappings will replace any mappings that this map had for
+     * any of the keys currently in the specified map.
+     *
+     * @param m mappings to be stored in this map
+     * @throws NullPointerException if the specified map is null
+     */
+    public void putAll(final SetlHashMap<? extends V> m) {
+        keys.addAll(m.keys);
+        super.putAll(m);
+    }
+
+    @Override
+    public void putAll(final Map<? extends String, ? extends V> m) {
+        keys.addAll(m.keySet());
+        super.putAll(m);
+    }
+
+    @Override
+    public V remove(final Object key) {
+        keys.remove(key);
+        return super.remove(key);
+    }
+
+    @Override
+    public void clear() {
+        keys.clear();
+        super.clear();
     }
 
     /**
@@ -87,45 +139,28 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
         throw new TermConversionException("Malformed member of Term.");
     }
 
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
     @Override
     public int compareTo(final SetlHashMap<V> other) {
         if (this == other) {
             return 0;
         }
 
-        final Integer thisSize  = this.size();
-        final Integer otherSize = other.size();
-        int cmp = thisSize.compareTo(otherSize);
+        int cmp = Integer.valueOf(size()).compareTo(other.size());
         if (cmp != 0) {
             return cmp;
         }
 
-        for (final Entry<String, V> entry: this.entrySet()) {
-            final V otherValue = other.get(entry.getKey());
-            if (otherValue != null) {
-                cmp = entry.getValue().compareTo(otherValue);
-                if (cmp != 0) {
-                    return cmp;
-                }
-            } else {
-                return 1;
+        final Iterator<String> iterFirst  = keys.iterator();
+        final Iterator<String> iterSecond = other.keys.iterator();
+        while (iterFirst.hasNext() && iterSecond.hasNext()) {
+            final String key = iterFirst.next();
+            cmp = key.compareTo(iterSecond.next());
+            if (cmp != 0) {
+                return cmp;
             }
-        }
-
-        for (final Entry<String, V> entry: other.entrySet()) {
-            final V thisValue = this.get(entry.getKey());
-            if (thisValue != null) {
-                cmp = entry.getValue().compareTo(thisValue);
-                if (cmp != 0) {
-                    return cmp;
-                }
-            } else {
-                return -1;
+            cmp = get(key).compareTo(other.get(key));
+            if (cmp != 0) {
+                return cmp;
             }
         }
 

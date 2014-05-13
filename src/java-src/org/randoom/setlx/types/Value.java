@@ -888,9 +888,9 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * In order to compare "incomparable" values, e.g. of different types, the
      * following (mostly arbitrary) order is established and used in compareTo():
      *
-     * SetlError.BOTTOM <= SetlError < Om < SetlBoolean < Rational & SetlDouble
+     * SetlError < Om < SetlBoolean < Rational & SetlDouble
      * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < ConstructorDefinition < Top
+     * < SetlObject < SetlClass < Top
      *
      * This ranking is necessary to allow sets and lists of different types.
      *

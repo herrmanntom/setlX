@@ -30,6 +30,11 @@ public class Factorial extends Expr {
 
     private final Expr expr;
 
+    /**
+     * Constructor.
+     *
+     * @param expr Expression to evaluate to a number.
+     */
     public Factorial(final Expr expr) {
         this.expr = expr;
     }

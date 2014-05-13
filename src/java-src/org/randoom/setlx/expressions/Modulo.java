@@ -19,7 +19,7 @@ import java.util.List;
  *
  * implemented here as:
  *       =====              =====
- *       mLhs               mRhs
+ *        lhs                rhs
  */
 public class Modulo extends Expr {
     // functional character used in terms

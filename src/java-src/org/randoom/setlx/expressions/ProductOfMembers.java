@@ -31,6 +31,11 @@ public class ProductOfMembers extends Expr {
 
     private final Expr expr;
 
+    /**
+     * Constructor.
+     *
+     * @param expr Expression to evaluate to a CollectionValue.
+     */
     public ProductOfMembers(final Expr expr) {
         this.expr = expr;
     }

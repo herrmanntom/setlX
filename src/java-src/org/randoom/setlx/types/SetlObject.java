@@ -7,6 +7,7 @@ import org.randoom.setlx.boolExpressions.Implication;
 import org.randoom.setlx.boolExpressions.In;
 import org.randoom.setlx.boolExpressions.LessThan;
 import org.randoom.setlx.boolExpressions.Not;
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -75,6 +76,8 @@ public class SetlObject extends Value {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlObject.class);
 
+    private final static String INSTANCE_OF_MEMBER   = "instanceOf";
+
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this object carries a isClone flag.
      *
@@ -96,7 +99,6 @@ public class SetlObject extends Value {
         this.members         = members;
         this.classDefinition = classDefinition;
         isCloned             = false; // new objects are not a clone
-        this.members.put("instanceOf", classDefinition);
     }
 
     /**
@@ -141,12 +143,7 @@ public class SetlObject extends Value {
         if (isCloned) {
             final SetlHashMap<Value> members = new SetlHashMap<Value>();
             for (final Entry<String, Value> entry: this.members.entrySet()) {
-                final String key = entry.getKey();
-                if (key.equals("instanceOf")) {
-                    members.put(key, entry.getValue());
-                } else {
-                    members.put(key, entry.getValue().clone());
-                }
+                members.put(entry.getKey(), entry.getValue().clone());
             }
             this.members  = members;
             this.isCloned = false;
@@ -548,6 +545,9 @@ public class SetlObject extends Value {
     }
 
     private Value getObjectMemberUnClonedUnSafe(final State state, final String variable) throws SetlException {
+        if (variable.equals(INSTANCE_OF_MEMBER)) {
+            return classDefinition;
+        }
         Value result = members.get(variable);
         if (result == null) {
             result = classDefinition.getObjectMemberUnCloned(state, variable);
@@ -562,7 +562,12 @@ public class SetlObject extends Value {
     }
 
     @Override
-    public void setObjectMember(final State state, final String variable, final Value value, final String context) {
+    public void setObjectMember(final State state, final String variable, final Value value, final String context) throws IllegalRedefinitionException {
+        if (variable.equals(INSTANCE_OF_MEMBER)) {
+            throw new IllegalRedefinitionException(
+                "Redefinition of member '" + INSTANCE_OF_MEMBER + "' is not allowed."
+            );
+        }
         separateFromOriginal();
         if (value instanceof Procedure) {
             ((Procedure) value).setClosure(null);
@@ -611,10 +616,11 @@ public class SetlObject extends Value {
             sb.append(entry.getKey());
             sb.append(" := ");
             entry.getValue().appendString(state, sb, tabs);
-            if (iter.hasNext()) {
-                sb.append("; ");
-            }
+            sb.append("; ");
         }
+        sb.append(INSTANCE_OF_MEMBER);
+        sb.append(" := ");
+        classDefinition.appendString(state, sb, tabs);
         sb.append("}>");
     }
 
@@ -645,6 +651,8 @@ public class SetlObject extends Value {
 
         members.addToTerm(state, result);
 
+        result.addMember(state, classDefinition.toTerm(state));
+
         return result;
     }
 
@@ -657,12 +665,10 @@ public class SetlObject extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SetlObject termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() == 1) {
+        if (term.size() == 1 && term.lastMember() instanceof Term) {
             final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(state, term.firstMember());
-            final Value              classDefinition = members.get("instanceOf");
-            if (classDefinition != null && classDefinition instanceof SetlClass) {
-                return createNew(members, (SetlClass) classDefinition);
-            }
+            final SetlClass          classDefinition = SetlClass.termToValue(state, (Term) term.lastMember());
+            return createNew(members, classDefinition);
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
@@ -675,11 +681,11 @@ public class SetlObject extends Value {
             return 0;
         } else if (v instanceof SetlObject) {
             final SetlObject other = (SetlObject) v;
-            final int cmp = classDefinition.compareTo(other.classDefinition);
+            final int cmp = members.compareTo(other.members);
             if (cmp != 0) {
                 return cmp;
             }
-            return members.compareTo(other.members);
+            return classDefinition.compareTo(other.classDefinition);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }

@@ -56,6 +56,7 @@ import org.randoom.setlx.functions.PD_sort;
 import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
 import org.randoom.setlx.functions.PreDefinedProcedure;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
@@ -76,7 +77,7 @@ public class SetlObject extends Value {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlObject.class);
 
-    private final static String INSTANCE_OF_MEMBER   = "instanceOf";
+    private final static String GET_CLASS_MEMBER     = "getClass";
 
     /* To allow initially `free' cloning, by only marking a clone without
      * actually doing any cloning, this object carries a isClone flag.
@@ -92,13 +93,15 @@ public class SetlObject extends Value {
 
     private       SetlHashMap<Value> members;
     private final SetlClass          classDefinition;
+    private       LambdaProcedure    getClassMember;
     // is this object a clone
     private       boolean            isCloned;
 
-    private SetlObject(final SetlHashMap<Value> members, final SetlClass classDefinition) {
+    private SetlObject(final SetlHashMap<Value> members, final SetlClass classDefinition, final LambdaProcedure getClassMember) {
         this.members         = members;
         this.classDefinition = classDefinition;
-        isCloned             = false; // new objects are not a clone
+        this.getClassMember  = getClassMember;
+        this.isCloned        = false; // new objects are not a clone
     }
 
     /**
@@ -109,13 +112,20 @@ public class SetlObject extends Value {
      * @return                New SetlObject.
      */
     public static SetlObject createNew(final SetlHashMap<Value> members, final SetlClass classDefinition) {
-        return new SetlObject(members, classDefinition);
+        return new SetlObject(members, classDefinition, null);
     }
 
-    private static SetlObject createClone(final SetlHashMap<Value> members, final SetlClass classDefinition) {
-        final SetlObject result = new SetlObject(members, classDefinition);
+    private static SetlObject createClone(final SetlHashMap<Value> members, final SetlClass classDefinition, final LambdaProcedure getClassMember) {
+        final SetlObject result = new SetlObject(members, classDefinition, getClassMember);
         result.isCloned         = true;
         return result;
+    }
+
+    private LambdaProcedure getClassMember(final State state) {
+        if (getClassMember == null) {
+            getClassMember = new LambdaProcedure(state, new ArrayList<ParameterDef>(), new ValueExpr(classDefinition));
+        }
+        return getClassMember;
     }
 
     @Override
@@ -128,7 +138,7 @@ public class SetlObject extends Value {
          * modifications of THIS original would bleed through to the clones.
          */
         isCloned = true;
-        return createClone(members, classDefinition);
+        return createClone(members, classDefinition, getClassMember);
     }
 
     /**
@@ -545,8 +555,8 @@ public class SetlObject extends Value {
     }
 
     private Value getObjectMemberUnClonedUnSafe(final State state, final String variable) throws SetlException {
-        if (variable.equals(INSTANCE_OF_MEMBER)) {
-            return classDefinition;
+        if (variable.equals(GET_CLASS_MEMBER)) {
+            return getClassMember(state);
         }
         Value result = members.get(variable);
         if (result == null) {
@@ -563,9 +573,9 @@ public class SetlObject extends Value {
 
     @Override
     public void setObjectMember(final State state, final String variable, final Value value, final String context) throws IllegalRedefinitionException {
-        if (variable.equals(INSTANCE_OF_MEMBER)) {
+        if (variable.equals(GET_CLASS_MEMBER)) {
             throw new IllegalRedefinitionException(
-                "Redefinition of member '" + INSTANCE_OF_MEMBER + "' is not allowed."
+                "Redefinition of member '" + GET_CLASS_MEMBER + "' is not allowed."
             );
         }
         separateFromOriginal();
@@ -618,9 +628,9 @@ public class SetlObject extends Value {
             entry.getValue().appendString(state, sb, tabs);
             sb.append("; ");
         }
-        sb.append(INSTANCE_OF_MEMBER);
+        sb.append(GET_CLASS_MEMBER);
         sb.append(" := ");
-        classDefinition.appendString(state, sb, tabs);
+        getClassMember(state).appendString(state, sb, tabs);
         sb.append("}>");
     }
 

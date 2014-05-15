@@ -1,7 +1,7 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
 ---v2.2.4--- 2014-xx-xx
- + added "instanceOf" member to objects, that refers to the class used to create
+ + added "getClass()" method to objects, that refers to the class used to create
    that object
  + improve print() of predefined functions when they have optional parameters
  # fix some error messages when trying to perform operation on om
@@ -12,7 +12,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
  + add --harshWelcome option, that reduces the welcome message
  + allow combination of short command line options
  + improve call and member access error messages
- # fix empty regular expression capture groups beeing returned as string "null",
+ # fix empty regular expression capture groups being returned as string "null",
    now they are returned as om
 
 ---v2.2.2--- 2014-02-19

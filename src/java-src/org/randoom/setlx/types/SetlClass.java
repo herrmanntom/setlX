@@ -144,15 +144,18 @@ public class SetlClass extends Value {
             def.collectVariablesAndOptimize(innerBoundVariables, innerBoundVariables, innerBoundVariables);
         }
 
-        initBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
-
         int preBound = innerBoundVariables.size();
+        initBlock.collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        final HashSet<String> initVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+
+        preBound = innerBoundVariables.size();
         if (getStaticBlock() != null) {
             getStaticBlock().collectVariablesAndOptimize(innerBoundVariables, innerUnboundVariables, innerUsedVariables);
         }
+        final HashSet<String> staticVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
 
-        this.initVars   = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
-        this.staticVars = new HashSet<String>(innerBoundVariables.subList(preBound, innerBoundVariables.size()));
+        this.initVars   = initVars;
+        this.staticVars = staticVars;
     }
 
     /* function call */

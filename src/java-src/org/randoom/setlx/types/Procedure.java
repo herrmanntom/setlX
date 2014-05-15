@@ -145,6 +145,7 @@ public class Procedure extends Value {
         // will be read to create the closure for this procedure
         for (final String var : innerUnboundVariables) {
             if (var == Variable.PREVENT_OPTIMIZATION_DUMMY) {
+                continue;
             } else if (boundVariables.contains(var)) {
                 usedVariables.add(var);
             } else {

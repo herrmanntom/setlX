@@ -12,17 +12,19 @@ import org.randoom.setlx.utilities.State;
  * @author Patrick Robinson
  */
 public class PD_singularValueDecomposition extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_singularValueDecomposition();
-    
-    private PD_singularValueDecomposition() {
-        super();
-        addParameter("Matrix", ParameterDef.READ_ONLY);
-    }    
 
-    @Override
-    protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if(!(args.get(0) instanceof SetlMatrix)) throw new MatrixException("The Parameter needs to be a Matrix.");
-        // TODO check condition
-        return ((SetlMatrix)args.get(0)).singularValueDecomposition(state);
-    }
+	public final static PreDefinedProcedure DEFINITION = new PD_singularValueDecomposition();
+
+	private PD_singularValueDecomposition() {
+		super();
+		addParameter("Matrix", ParameterDef.READ_ONLY);
+	}
+
+	@Override
+	protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+		if(!(args.get(0) instanceof SetlMatrix)) {
+			throw new MatrixException("The Parameter needs to be a Matrix.");
+		}
+		return ((SetlMatrix)args.get(0)).singularValueDecomposition(state);
+	}
 }

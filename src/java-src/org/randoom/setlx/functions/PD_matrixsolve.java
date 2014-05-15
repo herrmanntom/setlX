@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import java.util.List;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.MatrixException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.Value;
@@ -15,21 +14,25 @@ import org.randoom.setlx.utilities.State;
  * solves A*X = B
  */
 public class PD_matrixsolve extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_matrixsolve();
-    
-    private PD_matrixsolve() {
-        super();
-        addParameter("MatrixA", ParameterDef.READ_ONLY);
-        addParameter("MatrixB", ParameterDef.READ_ONLY);
-    }
 
-    @Override
-    protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if(!(args.get(0) instanceof SetlMatrix)) throw new IncompatibleTypeException("The first parameter needs to be a matrix.");
-        if(!(args.get(1) instanceof SetlMatrix)) throw new IncompatibleTypeException("The second parameter needs to be a matrix.");
-        // TODO check conditions
-        SetlMatrix A = (SetlMatrix)args.get(0);
-        SetlMatrix B = (SetlMatrix)args.get(1);
-        return A.solve(B);
-    }
+	public final static PreDefinedProcedure DEFINITION = new PD_matrixsolve();
+
+	private PD_matrixsolve() {
+		super();
+		addParameter("MatrixA", ParameterDef.READ_ONLY);
+		addParameter("MatrixB", ParameterDef.READ_ONLY);
+	}
+
+	@Override
+	protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+		if(!(args.get(0) instanceof SetlMatrix)) {
+			throw new IncompatibleTypeException("The first parameter needs to be a matrix.");
+		}
+		if(!(args.get(1) instanceof SetlMatrix)) {
+			throw new IncompatibleTypeException("The second parameter needs to be a matrix.");
+		}
+		SetlMatrix A = (SetlMatrix)args.get(0);
+		SetlMatrix B = (SetlMatrix)args.get(1);
+		return A.solve(B);
+	}
 }

@@ -286,9 +286,18 @@ public class Block extends Statement {
                     }
                 }
                 error  = null;
-            } catch (final SetlException | StackOverflowError | OutOfMemoryError | RuntimeException se) {
+            } catch (final SetlException se) {
                 result = null;
                 error  = se;
+            } catch (final StackOverflowError soe) {
+                result = null;
+                error  = soe;
+            } catch (final OutOfMemoryError oome) {
+                result = null;
+                error  = oome;
+            } catch (final RuntimeException e) {
+                result = null;
+                error  = e;
             }
         }
     }

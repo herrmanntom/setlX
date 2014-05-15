@@ -92,6 +92,27 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
     }
 
     /**
+     * Appends a string representation of the members of this SetlHashMap separated by
+     * semicolons to the given StringBuilder object.
+     *
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     * @param tabs  Number of tabs to use as indentation for statements.
+     */
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        final Iterator<String> iter = keys.iterator();
+        while (iter.hasNext()) {
+            final String key = iter.next();
+            sb.append(key);
+            sb.append(" := ");
+            get(key).appendString(state, sb, tabs);
+            if (iter.hasNext()) {
+                sb.append("; ");
+            }
+        }
+    }
+
+    /**
      * Add contents of this map as SetlX map to given Term.
      *
      * @param state  Current state of the running setlX program.

@@ -61,7 +61,6 @@ import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -620,14 +619,8 @@ public class SetlObject extends Value {
 
     private void canonical(final State state, final StringBuilder sb, final int tabs) {
         sb.append("object<{");
-        final Iterator<Entry<String, Value>> iter = members.entrySet().iterator();
-        while (iter.hasNext()) {
-            final Entry<String, Value> entry = iter.next();
-            sb.append(entry.getKey());
-            sb.append(" := ");
-            entry.getValue().appendString(state, sb, tabs);
-            sb.append("; ");
-        }
+        members.appendString(state, sb, tabs);
+        sb.append("; ");
         sb.append(GET_CLASS_MEMBER);
         sb.append(" := ");
         getClassMember(state).appendString(state, sb, tabs);

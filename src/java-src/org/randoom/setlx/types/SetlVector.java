@@ -17,6 +17,12 @@ public class SetlVector extends IndexedCollectionValue {
 
 	private NumberValue[] value;
 
+	/**
+	 * Create vector from raw array
+	 *
+	 * @param value initialization array
+	 * @throws IncompatibleTypeException
+	 */
 	private SetlVector(final NumberValue[] value) throws IncompatibleTypeException {
 		System.err.println("[DEBUG]: new SetlVector begin");
 		if(value.length > 0) {
@@ -27,6 +33,13 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Primary constructor, create vector from collection
+	 *
+	 * @param state
+	 * @param init initialization collection
+	 * @throws IncompatibleTypeException
+	 */
 	public SetlVector(final State state, final CollectionValue init) throws IncompatibleTypeException {
 		System.err.println("[DEBUG]: new SetlVector begin");
 		final int itemCount = init.size();
@@ -49,6 +62,13 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Convert matrix (if it has only one row or only one column) to vector
+	 *
+	 * @param state
+	 * @param matrix
+	 * @throws SetlException
+	 */
 	public SetlVector(final State state, final SetlMatrix matrix) throws SetlException {
 		System.err.println("[DEBUG]: new SetlVector begin");
 		Jama.Matrix base = matrix.getBase();
@@ -69,12 +89,24 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Get value of dimension `index`
+	 *
+	 * @param index
+	 * @return number
+	 * @throws SetlException
+	 */
 	@Override
 	public Value getMember(int index) throws SetlException {
 		System.err.println("[DEBUG]: getMember begin");
 		return getValue()[index];
 	}
 
+	/**
+	 * Create a copy of this vector
+	 *
+	 * @return vector
+	 */
 	@Override
 	public Value clone() {
 		System.err.println("[DEBUG]: clone begin");
@@ -95,6 +127,13 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 *
+	 *
+	 * @param state
+	 * @param sb
+	 * @param tabs
+	 */
 	@Override
 	public void appendString(State state, StringBuilder sb, int tabs) {
 		System.err.println("[DEBUG]: appendString begin");
@@ -102,6 +141,12 @@ public class SetlVector extends IndexedCollectionValue {
 		System.err.println("[DEBUG]: appendString end");
 	}
 
+	/**
+	 * Compare this to other vector
+	 *
+	 * @param other vector to compare to
+	 * @return 0: equal, 1: this bigger, -1: this smaller
+	 */
 	@Override
 	public int compareTo(Value other) {
 		System.err.println("[DEBUG]: compareTo begin");
@@ -126,6 +171,10 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	@Override
 	protected int compareToOrdering() {
 		System.err.println("[DEBUG]: compareToOrdering begin");
@@ -133,18 +182,34 @@ public class SetlVector extends IndexedCollectionValue {
 		return 0;
 	}
 
+	/**
+	 * Check equality
+	 *
+	 * @param other vector
+	 * @return boolean
+	 */
 	@Override
 	public boolean equalTo(Value other) {
 		System.err.println("[DEBUG]: equalTo begin");
 		return this.compareTo(other) == 0;
 	}
 
+	/**
+	 *
+	 * @return hash
+	 */
 	@Override
 	public int hashCode() {
 		System.err.println("[DEBUG]: hashCode begin");
 		return this.getValue().hashCode();
 	}
 
+	/**
+	 * Convert vector to list
+	 *
+	 * @param state
+	 * @return list
+	 */
 	private SetlList toSetlList(final State state) {
 		System.err.println("[DEBUG]: toSetlList begin");
 		SetlList container = new SetlList(this.getValue().length);
@@ -155,12 +220,22 @@ public class SetlVector extends IndexedCollectionValue {
 		return container;
 	}
 
+	/**
+	 * Iterator for loops
+	 *
+	 * @return
+	 */
 	@Override
 	public Iterator<Value> iterator() {
 		System.err.println("[DEBUG]: iterator begin");
 		return this.toSetlList(null).iterator();
 	}
 
+	/**
+	 * Reverse Iterator for loops
+	 *
+	 * @return
+	 */
 	@Override
 	public Iterator<Value> descendingIterator() {
 		System.err.println("[DEBUG]: descIterator begin");
@@ -196,6 +271,7 @@ public class SetlVector extends IndexedCollectionValue {
 	 *
 	 */
 	/**
+	 * Add a new dimension to the vector
 	 *
 	 * @param state
 	 * @param element
@@ -215,6 +291,14 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Search through dimensions for `element`
+	 *
+	 * @param state
+	 * @param element
+	 * @return
+	 * @throws IncompatibleTypeException
+	 */
 	@Override
 	public SetlBoolean containsMember(State state, Value element) throws IncompatibleTypeException {
 		System.err.println("[DEBUG]: containsMember begin");
@@ -228,12 +312,25 @@ public class SetlVector extends IndexedCollectionValue {
 		return SetlBoolean.FALSE;
 	}
 
+	/**
+	 * Value of first dimension
+	 *
+	 * @return
+	 */
 	@Override
 	public Value firstMember() {
 		System.err.println("[DEBUG]: firstMember begin");
 		return this.getValue()[0];
 	}
 
+	/**
+	 * Value of `index` dimension
+	 *
+	 * @param state
+	 * @param index
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
 	public Value getMember(State state, Value index) throws SetlException {
 		System.err.println("[DEBUG]: getMember begin");
@@ -245,12 +342,24 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Value of last dimension
+	 *
+	 * @return
+	 */
 	@Override
 	public Value lastMember() {
 		System.err.println("[DEBUG]: lastMember begin");
 		return this.getValue()[this.getValue().length];
 	}
 
+	/**
+	 * Biggest single dimension value
+	 *
+	 * @param state
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
 	public Value maximumMember(State state) throws SetlException {
 		System.err.println("[DEBUG]: maxMember begin");
@@ -264,6 +373,13 @@ public class SetlVector extends IndexedCollectionValue {
 		return result;
 	}
 
+	/**
+	 * Smallest single dimension value
+	 *
+	 * @param state
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
 	public Value minimumMember(State state) throws SetlException {
 		System.err.println("[DEBUG]: minMember begin");
@@ -277,6 +393,11 @@ public class SetlVector extends IndexedCollectionValue {
 		return result;
 	}
 
+	/**
+	 * Remove a dimension
+	 *
+	 * @param index
+	 */
 	public void removeMember(int index) {
 		System.err.println("[DEBUG]: remMemberIdx begin");
 		NumberValue[] newValue = new NumberValue[getValue().length - 1];
@@ -286,6 +407,12 @@ public class SetlVector extends IndexedCollectionValue {
 		System.err.println("[DEBUG]: remMemberIdx end");
 	}
 
+	/**
+	 * Remove dimension if it equals `element`
+	 *
+	 * @param element
+	 * @throws IncompatibleTypeException
+	 */
 	@Override
 	public void removeMember(Value element) throws IncompatibleTypeException {
 		System.err.println("[DEBUG]: remMemberElem begin");
@@ -305,6 +432,11 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Remove first dimension
+	 *
+	 * @return
+	 */
 	@Override
 	public Value removeFirstMember() {
 		System.err.println("[DEBUG]: remFirstMember begin");
@@ -315,6 +447,11 @@ public class SetlVector extends IndexedCollectionValue {
 		return this;
 	}
 
+	/**
+	 * Remove last dimension
+	 *
+	 * @return
+	 */
 	@Override
 	public Value removeLastMember() {
 		System.err.println("[DEBUG]: remLastMember begin");
@@ -325,12 +462,23 @@ public class SetlVector extends IndexedCollectionValue {
 		return this;
 	}
 
+	/**
+	 * Gets number of dimensions
+	 *
+	 * @return
+	 */
 	@Override
 	public int size() {
 		// System.err.println("[DEBUG]: size begin");
 		return this.getValue().length;
 	}
 
+	/**
+	 * Pretty print
+	 *
+	 * @param state
+	 * @param sb
+	 */
 	@Override
 	public void canonical(State state, StringBuilder sb) {
 		System.err.println("[DEBUG]: canonical begin");
@@ -345,12 +493,29 @@ public class SetlVector extends IndexedCollectionValue {
 		System.err.println("[DEBUG]: canonical end");
 	}
 
+	/**
+	 *
+	 *
+	 * @param state
+	 * @param other
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
 	public MatchResult matchesTerm(State state, Value other) throws SetlException {
 		System.err.println("[DEBUG]: matchesTerm begin exc");
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
+	/**
+	 * Scalar product
+	 *
+	 * @param state
+	 * @param multiplier other vector, matrix (will be implicitly converted) or
+	 * number
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
 	public Value product(final State state, final Value multiplier) throws SetlException {
 		System.err.println("[DEBUG]: product begin");
@@ -382,6 +547,15 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Sum
+	 *
+	 * @param state
+	 * @param summand other vector, matrix (will be implicitly converted) or
+	 * number
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
 	public Value sum(final State state, final Value summand) throws SetlException {
 		System.err.println("[DEBUG]: sum begin");
@@ -412,6 +586,14 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Cross product
+	 *
+	 * @param state
+	 * @param exponent other vector or matrix (will be implicitly converted)
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
 	public Value power(final State state, final Value exponent) throws SetlException {
 		System.err.println("[DEBUG]: power begin");
@@ -439,6 +621,14 @@ public class SetlVector extends IndexedCollectionValue {
 		 */
 	}
 
+	/**
+	 * Calculates scalar product of two vectors
+	 *
+	 * @param state
+	 * @param B second vector
+	 * @return number
+	 * @throws SetlException
+	 */
 	public NumberValue scalarProduct(final State state, final SetlVector B) throws SetlException {
 		System.err.println("[DEBUG]: scalar begin");
 		if(this.size() == B.size()) {
@@ -455,6 +645,7 @@ public class SetlVector extends IndexedCollectionValue {
 	}
 
 	/**
+	 * Calculates cross/vector product of two vectors
 	 *
 	 * A x B:
 	 * i	j	k	l
@@ -465,8 +656,8 @@ public class SetlVector extends IndexedCollectionValue {
 	 * (ax·by - az·by)·t
 	 *
 	 * @param state
-	 * @param B
-	 * @return
+	 * @param B second vector
+	 * @return vector
 	 * @throws SetlException
 	 */
 	public SetlVector vectorProduct(final State state, final SetlVector B) throws SetlException {
@@ -490,6 +681,15 @@ public class SetlVector extends IndexedCollectionValue {
 		}
 	}
 
+	/**
+	 * Convert linear index into ring index, to make sure it fits into its
+	 * bounds
+	 *
+	 * @param diff offset to currentIndex to calculate
+	 * @param currentIndex starting point
+	 * @param length 0 .. length - 1: allowed index range
+	 * @return linear index within bounds
+	 */
 	private int loopingIndex(int diff, int currentIndex, int length) {
 		// System.err.println("[DEBUG]: loopIdx begin");
 		/*
@@ -514,6 +714,8 @@ public class SetlVector extends IndexedCollectionValue {
 	}
 
 	/**
+	 * Get raw base array
+	 *
 	 * @return the value
 	 */
 	public NumberValue[] getValue() {
@@ -521,6 +723,14 @@ public class SetlVector extends IndexedCollectionValue {
 		return value;
 	}
 
+	/**
+	 * Difference of two vectors
+	 *
+	 * @param state
+	 * @param subtrahend second vector or matrix (will be implicitly converted)
+	 * @return vector
+	 * @throws SetlException
+	 */
 	@Override
 	public Value difference(final State state, final Value subtrahend) throws SetlException {
 		System.err.println("[DEBUG]: difference begin");

@@ -26,6 +26,15 @@ public class PD_matrix extends PreDefinedProcedure {
 		addParameter("collectionValue", ParameterDef.READ_ONLY);
 	}
 
+	/**
+	 * Construct a new SetlMatrix
+	 *
+	 * @param state
+	 * @param args vector or collection
+	 * @param writeBackVars
+	 * @return SetlMatrix
+	 * @throws SetlException
+	 */
 	@Override
 	public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
 		if(args.get(0) instanceof SetlVector) {

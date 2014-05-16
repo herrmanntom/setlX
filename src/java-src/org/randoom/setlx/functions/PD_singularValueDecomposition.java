@@ -20,8 +20,17 @@ public class PD_singularValueDecomposition extends PreDefinedProcedure {
 		addParameter("Matrix", ParameterDef.READ_ONLY);
 	}
 
+	/**
+	 *
+	 *
+	 * @param state
+	 * @param args SetlMatrix
+	 * @param writeBackVars
+	 * @return
+	 * @throws SetlException
+	 */
 	@Override
-	protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+	public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
 		if(!(args.get(0) instanceof SetlMatrix)) {
 			throw new MatrixException("The Parameter needs to be a Matrix.");
 		}

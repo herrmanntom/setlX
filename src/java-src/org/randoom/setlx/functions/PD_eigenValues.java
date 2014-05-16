@@ -12,19 +12,29 @@ import org.randoom.setlx.utilities.State;
  * @author Patrick Robinson
  */
 public class PD_eigenValues extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_eigenValues();
-    
-    private PD_eigenValues() {
-        super();
-        addParameter("Matrix", ParameterDef.READ_ONLY);
-    }    
 
-    @Override
-    protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if((args.get(0) instanceof SetlMatrix)) {
-            return ((SetlMatrix)args.get(0)).eigenValues(state);
-        } else {
-            throw new IncompatibleTypeException("The parameter needs to be a matrix.");
-        }
-    }
+	public final static PreDefinedProcedure DEFINITION = new PD_eigenValues();
+
+	private PD_eigenValues() {
+		super();
+		addParameter("Matrix", ParameterDef.READ_ONLY);
+	}
+
+	/**
+	 * Calculate eigen values
+	 *
+	 * @param state
+	 * @param args SetlMatrix
+	 * @param writeBackVars
+	 * @return list of numbers
+	 * @throws SetlException
+	 */
+	@Override
+	public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+		if((args.get(0) instanceof SetlMatrix)) {
+			return ((SetlMatrix)args.get(0)).eigenValues(state);
+		} else {
+			throw new IncompatibleTypeException("The parameter needs to be a matrix.");
+		}
+	}
 }

@@ -23,8 +23,17 @@ public class PD_matrixsolve extends PreDefinedProcedure {
 		addParameter("MatrixB", ParameterDef.READ_ONLY);
 	}
 
+	/**
+	 * Solve A * X = B
+	 *
+	 * @param state
+	 * @param args [SetlMatrix A, SetlMatrix B]
+	 * @param writeBackVars
+	 * @return X
+	 * @throws SetlException
+	 */
 	@Override
-	protected Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+	public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
 		if(!(args.get(0) instanceof SetlMatrix)) {
 			throw new IncompatibleTypeException("The first parameter needs to be a matrix.");
 		}

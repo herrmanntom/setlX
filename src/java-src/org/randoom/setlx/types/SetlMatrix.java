@@ -815,7 +815,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	}
 
 	/**
-	 * Solve X * this = B
+	 * Solve this * X = B
 	 *
 	 * @param B
 	 * @return X

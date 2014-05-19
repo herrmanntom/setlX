@@ -18,7 +18,9 @@ Base: Two dimensional array of doubles.
 - pow:
 	- matrix ** int = matrix
 - functions:
-	- solve( matrix, matrix) = matrix
+	- matrixdeterminate( matrix ) = number
+	- matrixsolve( matrix, matrix) = matrix
+		- solves A * X = B for X : X := matrixsolve(A,B)
 	- singularValueDecomposition( matrix ) = [ matrix, matrix, matrix ] // [ U, S, V ]
 	- eigenValue( matrix ) = [ number, number, ... ]
 	- eigenVectors( matrix ) = matrix

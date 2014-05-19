@@ -23,7 +23,7 @@ public class SetlVector extends IndexedCollectionValue {
 	 * @param value initialization array
 	 * @throws IncompatibleTypeException
 	 */
-	private SetlVector(final NumberValue[] value) throws IncompatibleTypeException {
+	public SetlVector(final NumberValue[] value) throws IncompatibleTypeException {
 		System.err.println("[DEBUG]: new SetlVector begin");
 		if(value.length > 0) {
 			this.value = value;

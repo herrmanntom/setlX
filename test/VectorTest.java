@@ -14,6 +14,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlDouble;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -80,7 +81,7 @@ public class VectorTest {
 		// Complex:
 		// - Kombinationen mit Termen
 
-		// Scalar * Vector
+		// Vector * Scalar
 		Value s;
 		for(int i = -10000; i <= 10000; i++) {
 			try {
@@ -94,6 +95,21 @@ public class VectorTest {
 			NumberValue[] sbase = ((SetlVector)s).getValue();
 			Value[] rbase = simple_sdi_results_mul.get(i);
 			assertTrue("Simple_sdi_mul error: " + i + " wrong result: " + sbase + " vs " + rbase, sbase[0].equalTo(rbase[0]) && sbase[1].equalTo(rbase[1]) && sbase[2].equalTo(rbase[2]));
+		}
+
+		// Scalar * Vector
+		for(int i = -10000; i <= 10000; i++) {
+			try {
+				s = sdi.get(i).product(null, simple);
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("Simple_sdi_mul_rev error: " + i + " SetlException on .product");
+				return;
+			}
+			assertTrue("Simple_sdi_mul_rev error: " + i + " not instanceof SetlVector", s instanceof SetlVector);
+			NumberValue[] sbase = ((SetlVector)s).getValue();
+			Value[] rbase = simple_sdi_results_mul.get(i);
+			assertTrue("Simple_sdi_mul_rev error: " + i + " wrong result: " + sbase + " vs " + rbase, sbase[0].equalTo(rbase[0]) && sbase[1].equalTo(rbase[1]) && sbase[2].equalTo(rbase[2]));
 		}
 
 		// Vector * Vector
@@ -113,6 +129,29 @@ public class VectorTest {
 		// vers. Constructors
 		// Matrixconversion
 		// PD_vector
+
+		SetlList base = new SetlList();
+		base.addMember(null, sdi.get(1));
+		base.addMember(null, sdi.get(2));
+		base.addMember(null, sdi.get(3));
+		SetlVector coltest;
+		try {
+			coltest = new SetlVector(null, base);
+		} catch(IncompatibleTypeException ex) {
+			System.err.println(ex.getMessage());
+			fail("Simple_construct error: IncompatibleTypeException");
+			return;
+		}
+		assertTrue("Simple_construct error: wrong result: " + coltest + " vs " + simple, coltest.equalTo(simple));
+
+		base.removeLastMember();
+		base.addMember(null, SetlBoolean.TRUE);
+		try {
+			coltest = new SetlVector(null, base);
+			fail("Simple_construct missing_error: IncompatibleTypeException not thrown");
+		} catch(IncompatibleTypeException ex) {
+
+		}
 	}
 
 	@Test

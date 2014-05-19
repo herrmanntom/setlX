@@ -2,8 +2,10 @@ package org.randoom.setlx.types;
 
 import Jama.EigenvalueDecomposition;
 import Jama.SingularValueDecomposition;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
@@ -856,5 +858,75 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	@Override
 	public Value factorial(final State state) throws SetlException {
 		return this.transpose();
+	}
+
+	/**
+	 * Handles indexed access
+	 *
+	 * @param state
+	 * @param args [ number ] : index to access
+	 * @return number at index args[0]
+	 * @throws SetlException
+	 */
+	@Override
+	public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
+		if(args.get(0).jIntConvertable()) {
+			return this.getMember(args.get(0).toJIntValue(state)).clone();
+		} else {
+			throw new IncompatibleTypeException("Matrix row access index must be an integer.");
+		}
+	}
+
+	/**
+	 * Handles indexed access
+	 *
+	 * @param state
+	 * @param args [ number ] : index to access
+	 * @return number at index args[0]
+	 * @throws SetlException
+	 */
+	@Override
+	public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
+		if(args.get(0).jIntConvertable()) {
+			return this.getMember(args.get(0).toJIntValue(state));
+		} else {
+			throw new IncompatibleTypeException("Matrix row access index must be an integer.");
+		}
+	}
+
+	/**
+	 * Set element at `index` to `v`
+	 *
+	 * @param state
+	 * @param index
+	 * @param v
+	 * @throws SetlException
+	 */
+	@Override
+	public void setMember(final State state, final Value index, final Value v) throws SetlException {
+		if(index.jIntConvertable()) {
+			int idx = index.jIntValue();
+			if(v instanceof CollectionValue) {
+				CollectionValue col = (CollectionValue)v;
+				if(col.size() != this.value.getColumnDimension()) {
+					throw new IncompatibleTypeException("The collection and a row of this matrix have different numbers of elements.");
+				}
+				List<Double> newRow = new ArrayList<Double>(col.size());
+				for(Value elem : col) {
+					if(elem.jDoubleConvertable()) {
+						newRow.add(elem.jDoubleValue());
+					} else {
+						throw new IncompatibleTypeException("Matrix row assign: Element " + elem + " of the collection is not a number.");
+					}
+				}
+				for(int i = 0; i < newRow.size(); i++) {
+					this.value.set(idx, i, newRow.get(i));
+				}
+			} else {
+				throw new IncompatibleTypeException("Argument " + v + " to replace matrix row " + idx + " is not a collection.");
+			}
+		} else {
+			throw new IncompatibleTypeException("Matrix row access index must be an integer.");
+		}
 	}
 }

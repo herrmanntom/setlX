@@ -99,7 +99,7 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public Value getMember(int index) throws SetlException {
 		System.err.println("[DEBUG]: getMember begin");
-		return getValue()[index];
+		return getValue()[index - 1];
 	}
 
 	/**
@@ -336,7 +336,7 @@ public class SetlVector extends IndexedCollectionValue {
 		System.err.println("[DEBUG]: getMember begin");
 		if(index.jIntConvertable()) {
 			System.err.println("[DEBUG]: getMember end");
-			return this.getValue()[index.toJIntValue(state)];
+			return this.getValue()[index.toJIntValue(state) - 1];
 		} else {
 			throw new IncompatibleTypeException("Index is not an integer.");
 		}
@@ -758,6 +758,54 @@ public class SetlVector extends IndexedCollectionValue {
 		} else {
 			System.err.println("[DEBUG]: difference exc");
 			throw new IncompatibleTypeException("A difference cannot have a vector parameter and a parameter of another type.");
+		}
+	}
+
+	/**
+	 * Handles indexed access
+	 *
+	 * @param state
+	 * @param args [ number ] : index to access
+	 * @return number at index args[0]
+	 * @throws SetlException
+	 */
+	@Override
+	public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
+		return this.getMember(state, args.get(0)).clone();
+	}
+
+	/**
+	 * Handles indexed access
+	 *
+	 * @param state
+	 * @param args [ number ] : index to access
+	 * @return number at index args[0]
+	 * @throws SetlException
+	 */
+	@Override
+	public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
+		return this.getMember(state, args.get(0));
+	}
+
+	/**
+	 * Set element at `index` to `v`
+	 *
+	 * @param state
+	 * @param index
+	 * @param v
+	 * @throws SetlException
+	 */
+	@Override
+	public void setMember(final State state, final Value index, final Value v) throws SetlException {
+		if(index.jIntConvertable()) {
+			int idx = index.jIntValue();
+			if(v.isNumber() == SetlBoolean.TRUE) {
+				this.value[idx - 1] = (NumberValue)v;
+			} else {
+				throw new IncompatibleTypeException("Argument " + v + " to replace vector dimension " + idx + " is not a number.");
+			}
+		} else {
+			throw new IncompatibleTypeException("Vector field access index must be an integer.");
 		}
 	}
 }

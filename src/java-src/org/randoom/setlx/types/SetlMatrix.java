@@ -300,6 +300,8 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			} else {
 				throw new IncompatibleTypeException("Summands have different number of columns.");
 			}
+		} else if(summand instanceof Term) {
+			return ((Term)summand).sumFlipped(state, this);
 		} else {
 			throw new IncompatibleTypeException("Summand is not of type Matrix.");
 		}
@@ -329,6 +331,15 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			} else {
 				throw new IncompatibleTypeException("Summands have different number of columns.");
 			}
+		} else if(summand instanceof Term) {
+			Value v = ((Term)summand).sumFlipped(state, this);
+			if(v instanceof SetlMatrix) {
+				SetlMatrix nv = (SetlMatrix)v;
+				this.value = nv.value;
+				return this;
+			} else {
+				throw new IncompatibleTypeException(("Could not assign non matrix value to matrix variable."));
+			}
 		} else {
 			throw new IncompatibleTypeException("Summand is not of type Matrix.");
 		}
@@ -357,6 +368,8 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			} else {
 				throw new IncompatibleTypeException("Subtrahend have different number of columns.");
 			}
+		} else if(subtrahend instanceof Term) {
+			return ((Term)subtrahend).differenceFlipped(state, this);
 		} else {
 			throw new IncompatibleTypeException("Subtrahend is not of type Matrix.");
 		}
@@ -384,6 +397,15 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 				}
 			} else {
 				throw new IncompatibleTypeException("Subtrahend have different number of columns.");
+			}
+		} else if(subtrahend instanceof Term) {
+			Value v = ((Term)subtrahend).differenceFlipped(state, this);
+			if(v instanceof SetlMatrix) {
+				SetlMatrix nv = (SetlMatrix)v;
+				this.value = nv.value;
+				return this;
+			} else {
+				throw new IncompatibleTypeException(("Could not assign non matrix value to matrix variable."));
 			}
 		} else {
 			throw new IncompatibleTypeException("Subtrahend is not of type Matrix.");

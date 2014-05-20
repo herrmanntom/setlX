@@ -1,7 +1,10 @@
 package org.randoom.setlx.tests;
 
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -15,6 +18,7 @@ import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
+import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -150,7 +154,88 @@ public class VectorTest {
 			coltest = new SetlVector(null, base);
 			fail("Simple_construct missing_error: IncompatibleTypeException not thrown");
 		} catch(IncompatibleTypeException ex) {
+		}
 
+		Random rng = new Random();
+		for(int n = 1; n <= 1000; n++) {
+			NumberValue[] rawSource = new NumberValue[n];
+			SetlList colSource = new SetlList(n);
+			for(int i = 0; i < n; n++) {
+				SetlDouble val = sdi.get(rng.nextInt(20001) - 10000);
+				rawSource[i] = val;
+				colSource.addMember(null, val);
+			}
+			SetlVector rawVector;
+			try {
+				rawVector = new SetlVector(rawSource);
+			} catch(IncompatibleTypeException ex) {
+				System.err.println(ex.getMessage());
+				fail("Rng_construct error " + n + " : IncompatibleTypeException on raw " + rawSource);
+				return;
+			}
+			try {
+				coltest = new SetlVector(null, colSource);
+			} catch(IncompatibleTypeException ex) {
+				System.err.println(ex.getMessage());
+				fail("Rng_construct error " + n + " : IncompatibleTypeException on col " + rawSource);
+				return;
+			}
+			assertTrue("Rng_construct error " + n + " : raw not equal col " + rawSource, rawVector.equalTo(coltest));
+		}
+
+		// Matrixconversion
+		for(int n = 1; n <= 1000; n++) {
+			NumberValue[] rawSource = new NumberValue[n];
+			SetlList rowBase = new SetlList();
+			SetlList row = new SetlList(n);
+			SetlList columnBase = new SetlList(n);
+			for(int i = 0; i < n; n++) {
+				SetlDouble val = sdi.get(rng.nextInt(20001) - 10000);
+				rawSource[i] = val;
+				row.addMember(null, val);
+				SetlList column = new SetlList();
+				column.addMember(null, val);
+				columnBase.addMember(null, column);
+			}
+			rowBase.addMember(null, row);
+			SetlVector rawVector;
+			try {
+				rawVector = new SetlVector(rawSource);
+			} catch(IncompatibleTypeException ex) {
+				System.err.println(ex.getMessage());
+				fail("Rng_convert error " + n + " : IncompatibleTypeException on raw " + rawSource);
+				return;
+			}
+			SetlVector rowMatrix;
+			try {
+				rowMatrix = new SetlVector(null, new SetlMatrix(null, rowBase));
+
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("Rng_convert error " + n + " : SetlException on row " + rawSource);
+				return;
+			}
+			SetlVector columnMatrix;
+			try {
+				columnMatrix = new SetlVector(null, new SetlMatrix(null, columnBase));
+
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("Rng_convert error " + n + " : SetlException on column " + rawSource);
+				return;
+			}
+			SetlVector convMatrix;
+			try {
+				convMatrix = new SetlVector(null, new SetlMatrix(null, rawVector));
+
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("Rng_convert error " + n + " : SetlException on conv " + rawSource);
+				return;
+			}
+			assertTrue("Rng_convert error " + n + " : raw not equal row " + rawSource, rawVector.equalTo(rowMatrix));
+			assertTrue("Rng_convert error " + n + " : raw not equal column " + rawSource, rawVector.equalTo(columnMatrix));
+			assertTrue("Rng_convert error " + n + " : raw not equal conv " + rawSource, rawVector.equalTo(convMatrix));
 		}
 	}
 

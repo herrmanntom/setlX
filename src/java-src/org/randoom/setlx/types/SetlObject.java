@@ -668,7 +668,7 @@ public class SetlObject extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SetlObject termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() == 1 && term.lastMember() instanceof Term) {
+        if (term.size() == 2 && term.lastMember() instanceof Term) {
             final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(state, term.firstMember());
             final SetlClass          classDefinition = SetlClass.termToValue(state, (Term) term.lastMember());
             return createNew(members, classDefinition);

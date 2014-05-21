@@ -1,10 +1,10 @@
 package org.randoom.setlx.tests;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -21,7 +21,6 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.State;
 
 /**
  * @author Patrick Robinson
@@ -35,7 +34,6 @@ public class VectorTest {
 
 	@BeforeClass
 	public static void testSetup() {
-		// Load cases from file (generated from octave)
 		simpleBase = new NumberValue[3];
 		try {
 			simpleBase[0] = SetlDouble.valueOf(1);
@@ -61,6 +59,7 @@ public class VectorTest {
 				a[0] = simpleBase[0].product(null, sdi.get(i));
 				a[1] = simpleBase[1].product(null, sdi.get(i));
 				a[2] = simpleBase[2].product(null, sdi.get(i));
+				simple_sdi_results_mul.put(i, a);
 			}
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
@@ -241,8 +240,41 @@ public class VectorTest {
 
 	@Test
 	public void testTools() {
-		// ==, <=, clone, compare, iterator, canonical, ...
+		// ==, clone, compare, iterator, canonical, ...
 		// wie kann ich automatisch zugriff mit [] aus setlx testen?
+		assertTrue("== error", simple.equalTo(simple));
+		assertTrue("clone error", simple.equalTo(simple.clone()));
+		assertTrue("compareTo equal error", simple.compareTo(simple) == 0);
+		Value b = sdi.get(0);
+		for(Value a : simple) {
+			try {
+				b = b.sum(null, a);
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("Iterator error: sum " + a);
+				return;
+			}
+		}
+		assertTrue("Iterator error: wrong result " + b + " vs 6", b.equalTo(sdi.get(6)));
+		StringBuilder simpleBuilder = new StringBuilder();
+		simple.canonical(null, simpleBuilder);
+		assertTrue("Canonical error: wrong result " + simpleBuilder.toString() + " vs < 1 2 3 >", simpleBuilder.toString().equals("< 1 2 3 >"));
+		List<Value> simpleIdx = new ArrayList<Value>();
+		simpleIdx.add(sdi.get(1));
+		try {
+			assertTrue("Simple[] error: wrong result", simple.collectionAccess(null, simpleIdx).equalTo(sdi.get(1)));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("Simple[] error: access exception");
+		}
+		SetlVector scl = (SetlVector)simple.clone();
+		try {
+			scl.setMember(null, sdi.get(1), sdi.get(4));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("Simple[] := error: access exception");
+		}
+		assertTrue("Simple[] := error: wrong result", scl.getValue()[0].equalTo(sdi.get(4)));
 	}
 
 	@Test
@@ -258,6 +290,16 @@ public class VectorTest {
 		assertTrue("Simple sum error: instanceof", s instanceof SetlVector);
 		NumberValue[] sbase = ((SetlVector)s).getValue();
 		assertTrue("Simple sum error: wrong result: " + sbase + " vs [2,4,6]", sbase[0].equalTo(sdi.get(2)) && sbase[1].equalTo(sdi.get(4)) && sbase[2].equalTo(sdi.get(6)));
+		try {
+			s = simple.sum(null, new SetlMatrix(null, simple));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("Simple sum matrix error: SetlException on .sum");
+			return;
+		}
+		assertTrue("Simple sum matrix error: instanceof", s instanceof SetlVector);
+		sbase = ((SetlVector)s).getValue();
+		assertTrue("Simple sum matrix error: wrong result: " + sbase + " vs [2,4,6]", sbase[0].equalTo(sdi.get(2)) && sbase[1].equalTo(sdi.get(4)) && sbase[2].equalTo(sdi.get(6)));
 	}
 
 	@Test
@@ -273,6 +315,16 @@ public class VectorTest {
 		assertTrue("Simple dif error: instanceof", s instanceof SetlVector);
 		NumberValue[] sbase = ((SetlVector)s).getValue();
 		assertTrue("Simple dif error: wrong result: " + sbase + " vs [0,0,0]", sbase[0].equalTo(sdi.get(0)) && sbase[1].equalTo(sdi.get(0)) && sbase[2].equalTo(sdi.get(0)));
+		try {
+			s = simple.difference(null, new SetlMatrix(null, simple));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("Simple dif matrix error: SetlException on .sum");
+			return;
+		}
+		assertTrue("Simple dif matrix error: instanceof", s instanceof SetlVector);
+		sbase = ((SetlVector)s).getValue();
+		assertTrue("Simple dif matrix error: wrong result: " + sbase + " vs [0,0,0]", sbase[0].equalTo(sdi.get(0)) && sbase[1].equalTo(sdi.get(0)) && sbase[2].equalTo(sdi.get(0)));
 	}
 
 	@Test
@@ -288,5 +340,15 @@ public class VectorTest {
 		assertTrue("Simple pow error: instanceof", s instanceof SetlVector);
 		NumberValue[] sbase = ((SetlVector)s).getValue();
 		assertTrue("Simple pow error: wrong result: " + sbase + " vs [0,0,0]", sbase[0].equalTo(sdi.get(0)) && sbase[1].equalTo(sdi.get(0)) && sbase[2].equalTo(sdi.get(0)));
+		try {
+			s = simple.power(null, new SetlMatrix(null, simple));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("Simple pow matrix error: SetlException on .power");
+			return;
+		}
+		assertTrue("Simple pow matrix error: instanceof", s instanceof SetlVector);
+		sbase = ((SetlVector)s).getValue();
+		assertTrue("Simple pow matrix error: wrong result: " + sbase + " vs [0,0,0]", sbase[0].equalTo(sdi.get(0)) && sbase[1].equalTo(sdi.get(0)) && sbase[2].equalTo(sdi.get(0)));
 	}
 }

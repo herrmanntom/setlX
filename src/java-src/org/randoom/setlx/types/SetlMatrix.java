@@ -32,7 +32,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 *
 	 * @param v Jama Matrix base
 	 */
-	private SetlMatrix(Jama.Matrix v) {
+	public SetlMatrix(Jama.Matrix v) {
 		super();
 		this.value = v;
 	}

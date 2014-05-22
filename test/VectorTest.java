@@ -241,7 +241,6 @@ public class VectorTest {
 	@Test
 	public void testTools() {
 		// ==, clone, compare, iterator, canonical, ...
-		// wie kann ich automatisch zugriff mit [] aus setlx testen?
 		assertTrue("== error", simple.equalTo(simple));
 		assertTrue("clone error", simple.equalTo(simple.clone()));
 		assertTrue("compareTo equal error", simple.compareTo(simple) == 0);

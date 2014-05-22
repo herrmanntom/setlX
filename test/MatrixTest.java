@@ -1,8 +1,12 @@
 package org.randoom.setlx.tests;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -12,8 +16,11 @@ import org.junit.Test;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlDouble;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlMatrix;
+import org.randoom.setlx.types.Value;
 
 /**
  * @author Patrick Robinson
@@ -96,11 +103,28 @@ public class MatrixTest {
 			System.err.println(ex.getMessage());
 			fail("sns_simple wrong_error: SetlException");
 		}
-		// - Scalar * Matrix
 		// - Matrix * Scalar
-		// (vers. Datentypen für Scalar)
-		// Randbedingungen ?
-		// - Kombinationen mit Termen
+		for(int i = -10000; i <= 10000; i++) {
+			try {
+				tmpResult = ((SetlMatrix)simple.product(null, sdi.get(i))).getBase().getArray();
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("simple_scalar_mul error: exception on .product");
+				return;
+			}
+			assertTrue("simple_scalar_mul error: wrong result " + i, tmpResult[0][0] == (simpleBase[0][0] * i) && tmpResult[0][1] == (simpleBase[0][1] * i) && tmpResult[1][0] == (simpleBase[1][0] * i) && tmpResult[1][1] == (simpleBase[1][1] * i));
+		}
+		// - Scalar * Matrix
+		for(int i = -10000; i <= 10000; i++) {
+			try {
+				tmpResult = ((SetlMatrix)sdi.get(i).product(null, simple)).getBase().getArray();
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("scalar_simple_mul error: exception on .product");
+				return;
+			}
+			assertTrue("scalar_simple_mul error: wrong result " + i, tmpResult[0][0] == (simpleBase[0][0] * i) && tmpResult[0][1] == (simpleBase[0][1] * i) && tmpResult[1][0] == (simpleBase[1][0] * i) && tmpResult[1][1] == (simpleBase[1][1] * i));
+		}
 	}
 
 	@Test
@@ -108,12 +132,65 @@ public class MatrixTest {
 		// vers. Constructors
 		// vectorconversion
 		// PD_matrix
+		SetlList colBase = new SetlList();
+		SetlList tmpList = new SetlList();
+		tmpList.addMember(null, sdi.get(1));
+		tmpList.addMember(null, sdi.get(2));
+		colBase.addMember(null, tmpList);
+		tmpList = new SetlList();
+		tmpList.addMember(null, sdi.get(3));
+		tmpList.addMember(null, sdi.get(4));
+		colBase.addMember(null, tmpList);
+		try {
+			assertTrue("col_construct error: wrong result", (new SetlMatrix(null, colBase)).equalTo(simple));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("col_construct error: exception");
+		}
 	}
 
 	@Test
 	public void testTools() {
-		// ==, <=, clone, compare, iterator, canonical, ...
-		// wie kann ich automatisch zugriff mit [] aus setlx testen?
+		// ==, clone, compare, iterator, canonical, ...
+		assertTrue("== simple error", simple.equalTo(simple));
+		assertTrue("== clone error", simple.equalTo(simple.clone()));
+		assertTrue("!= error: wrong result", sns.equalTo(simple));
+		assertTrue("compare to same error: wrong result", simple.compareTo(simple) == 0);
+		assertTrue("compare to different error: wrong result", sns.compareTo(simple) != 0);
+
+		StringBuilder stringBuilder = new StringBuilder();
+		simple.canonical(null, stringBuilder);
+		assertTrue("canonical error: wrong result " + stringBuilder.toString() + " vs < [ 1 2 ] [ 3 4 ] >", stringBuilder.toString().equals("< [ 1 2 ] [ 3 4 ] >"));
+
+		Value b = sdi.get(0);
+		for(Value row : simple) {
+			try {
+				for(Value cell : (CollectionValue)row) {
+					b = b.sum(null, cell);
+				}
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("Iterator error: sum " + row);
+				return;
+			}
+		}
+		assertTrue("Iterator error: wrong result " + b + " vs 10", b.equalTo(sdi.get(10)));
+
+		List<Value> idx = new ArrayList<Value>();
+		idx.add(sdi.get(1));
+		SetlList tmpList;
+		try {
+			tmpList = (SetlList)simple.collectionAccess(null, idx);
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("matrix[] access error: exception");
+			return;
+		}
+		int i = 1;
+		for(Value v : tmpList) {
+			assertTrue("matrix[" + i + "] error: wrong result: " + v, v.equalTo(sdi.get(i)));
+			i++;
+		}
 	}
 
 	@Test

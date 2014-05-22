@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
@@ -443,6 +444,9 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 */
 	@Override
 	public Value getMember(int index) throws SetlException {
+		if(index >= this.value.getRowDimension()) {
+			throw new ArrayIndexOutOfBoundsException(index);
+		}
 		SetlList container = new SetlList(this.value.getColumnDimension());
 		for(double d : this.value.getArray()[index - 1]) {
 			container.addMember(null, SetlDouble.valueOf(d));
@@ -906,6 +910,9 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	public void setMember(final State state, final Value index, final Value v) throws SetlException {
 		if(index.jIntConvertable()) {
 			int idx = index.jIntValue();
+			if(idx >= this.value.getRowDimension()) {
+				throw new ArrayIndexOutOfBoundsException(idx);
+			}
 			if(v instanceof CollectionValue) {
 				CollectionValue col = (CollectionValue)v;
 				if(col.size() != this.value.getColumnDimension()) {

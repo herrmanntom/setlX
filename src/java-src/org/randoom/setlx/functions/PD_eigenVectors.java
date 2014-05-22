@@ -1,7 +1,7 @@
 package org.randoom.setlx.functions;
 
 import java.util.List;
-import org.randoom.setlx.exceptions.MatrixException;
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.Value;
@@ -34,7 +34,7 @@ public class PD_eigenVectors extends PreDefinedProcedure {
 		if((args.get(0) instanceof SetlMatrix)) {
 			return ((SetlMatrix)args.get(0)).eigenVectors();
 		} else {
-			throw new MatrixException("The parameter needs to be a matrix.");
+			throw new IncompatibleTypeException("The parameter needs to be a matrix.");
 		}
 	}
 }

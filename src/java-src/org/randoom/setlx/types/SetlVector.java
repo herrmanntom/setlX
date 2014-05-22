@@ -99,7 +99,10 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public Value getMember(int index) throws SetlException {
 		// System.err.println("[DEBUG]: getMember begin");
-		return getValue()[index - 1];
+		if(index >= this.value.length) {
+			throw new ArrayIndexOutOfBoundsException(index);
+		}
+		return this.getValue()[index - 1];
 	}
 
 	/**
@@ -800,6 +803,9 @@ public class SetlVector extends IndexedCollectionValue {
 		if(index.jIntConvertable()) {
 			int idx = index.jIntValue();
 			if(v.isNumber() == SetlBoolean.TRUE) {
+				if(idx >= this.value.length) {
+					throw new ArrayIndexOutOfBoundsException(idx);
+				}
 				this.value[idx - 1] = (NumberValue)v;
 			} else {
 				throw new IncompatibleTypeException("Argument " + v + " to replace vector dimension " + idx + " is not a number.");

@@ -1,7 +1,7 @@
 package org.randoom.setlx.functions;
 
 import java.util.List;
-import org.randoom.setlx.exceptions.MatrixException;
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlMatrix;
 import org.randoom.setlx.types.Value;
@@ -32,7 +32,7 @@ public class PD_singularValueDecomposition extends PreDefinedProcedure {
 	@Override
 	public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
 		if(!(args.get(0) instanceof SetlMatrix)) {
-			throw new MatrixException("The Parameter needs to be a Matrix.");
+			throw new IncompatibleTypeException("The Parameter needs to be a Matrix.");
 		}
 		return ((SetlMatrix)args.get(0)).singularValueDecomposition(state);
 	}

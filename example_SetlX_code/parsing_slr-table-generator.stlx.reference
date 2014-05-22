@@ -30,8 +30,8 @@ Follow(factor) = {"$", "')'", "'*'", "'+'", "'-'", "'/'"}
 Follow(product) = {"$", "')'", "'*'", "'+'", "'-'", "'/'"}
 
 All SLR-states:
-s0 = {S -> (*) expr, expr -> (*) expr '+' product, expr -> (*) expr '-' product, expr -> (*) product, factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor}
-s1 = {expr -> (*) expr '+' product, expr -> (*) expr '-' product, expr -> (*) product, factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor, factor -> '(' (*) expr ')'}
+s0 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, S -> (*) expr, expr -> (*) expr '+' product, expr -> (*) expr '-' product, product -> (*) factor, expr -> (*) product, product -> (*) product '*' factor, product -> (*) product '/' factor}
+s1 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, expr -> (*) expr '+' product, expr -> (*) expr '-' product, product -> (*) factor, expr -> (*) product, product -> (*) product '*' factor, product -> (*) product '/' factor, factor -> '(' (*) expr ')'}
 s2 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor, expr -> expr '+' (*) product}
 s3 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> (*) factor, product -> (*) product '*' factor, product -> (*) product '/' factor, expr -> expr '-' (*) product}
 s4 = {factor -> (*) '(' expr ')', factor -> (*) NUMBER, product -> product '*' (*) factor}

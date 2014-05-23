@@ -32,6 +32,10 @@ public class MatrixTest {
 	static SetlMatrix simple;
 	static double[][] snsBase;
 	static SetlMatrix sns;
+	static Map<Integer, double[][]> simple_pow_results;
+	static Map<Character, double[][]> simple_svd;
+	static Map<Character, double[][]> sns_svd;
+	static Map<Character, double[][]> simple_eig;
 
 	@BeforeClass
 	public static void testSetup() {
@@ -58,6 +62,162 @@ public class MatrixTest {
 		snsBase[1][0] = 4;
 		snsBase[1][1] = 5;
 		snsBase[1][2] = 6;
+		simple_pow_results = new TreeMap<Integer, double[][]>();
+		/**
+		 * Octave results:
+		 * -5: [[-106.437 48.687] [73.031 -33.406]]
+		 * -4: [[39.625 -18.125] [-27.187 12.437]]
+		 * -3: [[-14.75 6.75] [10.125 -4.625]]
+		 * -2: [[5.5 -2.5] [-3.75 1.75]]
+		 * -1: [[-2 1] [1.5 -0.5]]
+		 * +0: [[1 0] [0 1]]
+		 * +1: [[1 2] [3 4]]
+		 * +2: [[7 10] [15 22]]
+		 * +3: [[37 54] [81 118]]
+		 * +4: [[199 290] [435 634]]
+		 * +5: [[1069 1558] [2337 3406]]
+		 */
+		double[][] tmpBase = new double[2][2];
+		tmpBase[0][0] = -106.437;
+		tmpBase[0][1] = 48.687;
+		tmpBase[1][0] = 73.031;
+		tmpBase[1][1] = -33.406;
+		simple_pow_results.put(-5, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 39.625;
+		tmpBase[0][1] = -18.125;
+		tmpBase[1][0] = -27.187;
+		tmpBase[1][1] = 12.437;
+		simple_pow_results.put(-4, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -14.75;
+		tmpBase[0][1] = 6.75;
+		tmpBase[1][0] = 10.125;
+		tmpBase[1][1] = -4.625;
+		simple_pow_results.put(-3, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 5.5;
+		tmpBase[0][1] = -2.5;
+		tmpBase[1][0] = -3.75;
+		tmpBase[1][1] = 1.75;
+		simple_pow_results.put(-2, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -2;
+		tmpBase[0][1] = 1;
+		tmpBase[1][0] = 1.5;
+		tmpBase[1][1] = -0.5;
+		simple_pow_results.put(-1, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 1;
+		tmpBase[0][1] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 1;
+		simple_pow_results.put(0, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 1;
+		tmpBase[0][1] = 2;
+		tmpBase[1][0] = 3;
+		tmpBase[1][1] = 4;
+		simple_pow_results.put(1, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 7;
+		tmpBase[0][1] = 10;
+		tmpBase[1][0] = 15;
+		tmpBase[1][1] = 22;
+		simple_pow_results.put(2, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 37;
+		tmpBase[0][1] = 54;
+		tmpBase[1][0] = 81;
+		tmpBase[1][1] = 118;
+		simple_pow_results.put(3, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 199;
+		tmpBase[0][1] = 290;
+		tmpBase[1][0] = 435;
+		tmpBase[1][1] = 634;
+		simple_pow_results.put(4, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 1069;
+		tmpBase[0][1] = 1558;
+		tmpBase[1][0] = 2337;
+		tmpBase[1][1] = 3406;
+		simple_pow_results.put(5, tmpBase);
+		/**
+		 * svd(simple)
+		 * u: [[-0.40455 -0.91451] [-0.91451 0.40455]]
+		 * s: [[5.46499 0] [0 0.36597]]
+		 * v: [[-0.57605 0.81742] [-0.81742 -0.57605]]
+		 */
+		simple_svd = new TreeMap<Character, double[][]>();
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.40455;
+		tmpBase[0][1] = -0.91451;
+		tmpBase[1][0] = -0.91451;
+		tmpBase[1][1] = 0.40455;
+		simple_svd.put('u', tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 5.46499;
+		tmpBase[0][1] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 0.36597;
+		simple_svd.put('s', tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.57605;
+		tmpBase[0][1] = 0.81742;
+		tmpBase[1][0] = -0.81742;
+		tmpBase[1][1] = -0.57605;
+		simple_svd.put('v', tmpBase);
+		/**
+		 * svd(sns)
+		 */
+		sns_svd = new TreeMap<Character, double[][]>();
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.38632;
+		tmpBase[0][1] = -0.92237;
+		tmpBase[1][0] = -0.92237;
+		tmpBase[1][1] = 0.38632;
+		sns_svd.put('u', tmpBase);
+		tmpBase = new double[2][3];
+		tmpBase[0][0] = 9.50803;
+		tmpBase[0][1] = 0;
+		tmpBase[0][2] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 0.77287;
+		tmpBase[1][2] = 0;
+		sns_svd.put('s', tmpBase);
+		tmpBase = new double[3][3];
+		tmpBase[0][0] = -0.42867;
+		tmpBase[0][1] = 0.80596;
+		tmpBase[0][2] = 0.40825;
+		tmpBase[1][0] = -0.56631;
+		tmpBase[1][1] = 0.11238;
+		tmpBase[1][2] = -0.81650;
+		tmpBase[2][0] = -0.70395;
+		tmpBase[2][1] = -0.58120;
+		tmpBase[2][2] = 0.40825;
+		sns_svd.put('v', tmpBase);
+		/**
+		 * eig(simple)
+		 */
+		simple_eig = new TreeMap<Character, double[][]>();
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.82456;
+		tmpBase[0][1] = -0.41597;
+		tmpBase[1][0] = 0.56577;
+		tmpBase[1][1] = -0.90938;
+		simple_eig.put('v', tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.37228;
+		tmpBase[0][1] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 5.37228;
+		simple_eig.put('l', tmpBase);
+		/**
+		 * eig(sns)
+		 * TODO fails, not square
+		 */
+		// TODO solve
 	}
 
 	@Test
@@ -195,27 +355,158 @@ public class MatrixTest {
 
 	@Test
 	public void testSum() {
-
+		double[][] tmpResult;
+		try {
+			tmpResult = ((SetlMatrix)simple.sum(null, simple)).getBase().getArray();
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("simple_sum error: exception");
+			return;
+		}
+		double[][] cmpr = new double[2][2];
+		cmpr[0][0] = 2;
+		cmpr[0][1] = 4;
+		cmpr[1][0] = 6;
+		cmpr[1][1] = 8;
+		assertTrue("simple_sum error: wrong result: " + tmpResult + " vs " + cmpr, Arrays.deepEquals(tmpResult, cmpr));
+		try {
+			tmpResult = ((SetlMatrix)sns.sum(null, sns)).getBase().getArray();
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("sns_sum error: exception");
+			return;
+		}
+		cmpr = new double[2][3];
+		cmpr[0][0] = 2;
+		cmpr[0][1] = 4;
+		cmpr[0][2] = 6;
+		cmpr[1][0] = 8;
+		cmpr[1][1] = 10;
+		cmpr[1][2] = 12;
+		assertTrue("sns_sum error: wrong result " + tmpResult + " vs " + cmpr, Arrays.deepEquals(tmpResult, cmpr));
+		try {
+			sns.sum(null, simple);
+			fail("sum missing_error");
+		} catch(IncompatibleTypeException ex) {
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("sum wrong_error");
+		}
 	}
 
 	@Test
 	public void testDif() {
-
+		double[][] tmpResult;
+		try {
+			tmpResult = ((SetlMatrix)simple.difference(null, simple)).getBase().getArray();
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("simple_sum error: exception");
+			return;
+		}
+		double[][] cmpr = new double[2][2];
+		cmpr[0][0] = 0;
+		cmpr[0][1] = 0;
+		cmpr[1][0] = 0;
+		cmpr[1][1] = 0;
+		assertTrue("simple_sum error: wrong result: " + tmpResult + " vs " + cmpr, Arrays.deepEquals(tmpResult, cmpr));
+		try {
+			tmpResult = ((SetlMatrix)sns.difference(null, sns)).getBase().getArray();
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("sns_sum error: exception");
+			return;
+		}
+		cmpr = new double[2][3];
+		cmpr[0][0] = 0;
+		cmpr[0][1] = 0;
+		cmpr[0][2] = 0;
+		cmpr[1][0] = 0;
+		cmpr[1][1] = 0;
+		cmpr[1][2] = 0;
+		assertTrue("sns_sum error: wrong result " + tmpResult + " vs " + cmpr, Arrays.deepEquals(tmpResult, cmpr));
+		try {
+			sns.difference(null, simple);
+			fail("sum missing_error");
+		} catch(IncompatibleTypeException ex) {
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("sum wrong_error");
+		}
 	}
 
 	@Test
 	public void testPow() {
-
+		for(int i = -5; i <= 5; i++) {
+			try {
+				assertTrue("", Arrays.deepEquals(simple_pow_results.get(i), ((SetlMatrix)simple.power(null, sdi.get(i))).getBase().getArray()));
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("simple_pow error: exception");
+			}
+		}
+		try {
+			sns.power(null, sdi.get(0));
+			fail("pow missing_error");
+		} catch(IncompatibleTypeException ex) {
+			assertTrue("pow wrong_error: " + ex.getMessage(), ex.getMessage().equals("Power is only defined on square matrices."));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("pow wrong_error: exception");
+		}
 	}
 
 	@Test
 	public void testCalls() {
 		// Calls, that basically just depend on the Jama lib (solve, svd, ...) + entsprechende PD_*
-		// eigen*
+		// svd
+		SetlList tmpbase = simple.singularValueDecomposition(null);
+		try {
+			assertTrue("simple_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(0)).getBase().getArray(), simple_svd.get('u')));
+			assertTrue("simple_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(1)).getBase().getArray(), simple_svd.get('s')));
+			assertTrue("simple_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(2)).getBase().getArray(), simple_svd.get('v')));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("simple_svd error: exception");
+		}
+		tmpbase = sns.singularValueDecomposition(null);
+		try {
+			assertTrue("sns_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(0)).getBase().getArray(), sns_svd.get('u')));
+			assertTrue("sns_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(1)).getBase().getArray(), sns_svd.get('s')));
+			assertTrue("sns_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(2)).getBase().getArray(), sns_svd.get('v')));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("sns_svd error: exception");
+		}
+		// eigen* TODO
+		// solve TODO
 	}
 
 	@Test
 	public void testFactorial() {
-
+		double[][] tbase = new double[2][2];
+		tbase[0][0] = 1;
+		tbase[0][1] = 3;
+		tbase[1][0] = 2;
+		tbase[1][1] = 4;
+		try {
+			assertTrue("simple_transpose error: wrong result", Arrays.deepEquals(tbase, ((SetlMatrix)simple.factorial(null)).getBase().getArray()));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("simple_transpose error: exception");
+		}
+		tbase = new double[3][2];
+		tbase[0][0] = 1;
+		tbase[0][1] = 4;
+		tbase[1][0] = 2;
+		tbase[1][1] = 5;
+		tbase[2][0] = 3;
+		tbase[2][1] = 6;
+		try {
+			assertTrue("sns_transpose error: wrong result", Arrays.deepEquals(tbase, ((SetlMatrix)sns.factorial(null)).getBase().getArray()));
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("sns_transpose error: exception");
+		}
 	}
 }

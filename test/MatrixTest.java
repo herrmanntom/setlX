@@ -17,9 +17,11 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
+import org.randoom.setlx.types.NumberValue;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlMatrix;
+import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
 
 /**
@@ -289,9 +291,6 @@ public class MatrixTest {
 
 	@Test
 	public void testConstruction() {
-		// vers. Constructors
-		// vectorconversion
-		// PD_matrix
 		SetlList colBase = new SetlList();
 		SetlList tmpList = new SetlList();
 		tmpList.addMember(null, sdi.get(1));
@@ -307,6 +306,30 @@ public class MatrixTest {
 			System.err.println(ex.getMessage());
 			fail("col_construct error: exception");
 		}
+		NumberValue[] vecbase = new NumberValue[2];
+		vecbase[0] = sdi.get(1);
+		vecbase[1] = sdi.get(2);
+		SetlVector cmprVector;
+		try {
+			cmprVector = new SetlVector(vecbase);
+		} catch(IncompatibleTypeException ex) {
+			System.err.println(ex.getMessage());
+			fail("convert error: exception on cmprVec init");
+			return;
+		}
+		SetlMatrix vecMatrix;
+		try {
+			vecMatrix = new SetlMatrix(null, cmprVector);
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("convert error: exception on vecMatrix init");
+			return;
+		}
+		double[][] tmpbase = new double[2][1];
+		tmpbase[0][0] = 1;
+		tmpbase[1][0] = 2;
+		SetlMatrix cmprMatrix = new SetlMatrix(new Jama.Matrix(tmpbase));
+		assertTrue("convert error: wrong result " + vecMatrix + " vs " + cmprMatrix, vecMatrix.equalTo(cmprMatrix));
 	}
 
 	@Test

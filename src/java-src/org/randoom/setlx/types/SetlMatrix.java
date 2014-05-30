@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
@@ -782,8 +781,10 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 * @return list of numbers
 	 * @throws UndefinedOperationException
 	 */
-	public SetlList eigenValues(State state) throws UndefinedOperationException {
-		// TODO check condition
+	public SetlList eigenValues(State state) throws SetlException {
+		if(!this.isSquare()) {
+			throw new IncompatibleTypeException("Not a square matrix.");
+		}
 		EigenvalueDecomposition result = this.value.eig();
 		double[][] values = result.getD().getArray();
 		SetlList composition = new SetlList(values.length);
@@ -814,8 +815,10 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 *
 	 * @return matrix
 	 */
-	public SetlMatrix eigenVectors() {
-		// TODO check conditions & TODO vectors
+	public SetlMatrix eigenVectors() throws IncompatibleTypeException {
+		if(!this.isSquare()) {
+			throw new IncompatibleTypeException("Not a square matrix.");
+		}
 		return new SetlMatrix(this.value.eig().getV());
 	}
 
@@ -848,7 +851,10 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 * @param B
 	 * @return X
 	 */
-	public SetlMatrix solve(SetlMatrix B) {
+	public SetlMatrix solve(SetlMatrix B) throws IncompatibleTypeException {
+		if(this.value.getRowDimension() != B.value.getRowDimension()) {
+			throw new IncompatibleTypeException("Row numbers must be equal to solve A * X = B.");
+		}
 		return new SetlMatrix(this.value.solve(B.value));
 	}
 

@@ -41,7 +41,6 @@ public class MatrixTest {
 
 	@BeforeClass
 	public static void testSetup() {
-		// Load cases from file (generated from octave)
 		sdi = new TreeMap<Integer, SetlDouble>();
 		try {
 			for(int i = -10000; i <= 10000; i++) {
@@ -215,16 +214,10 @@ public class MatrixTest {
 		tmpBase[1][0] = 0;
 		tmpBase[1][1] = 5.37228;
 		simple_eig.put('l', tmpBase);
-		/**
-		 * eig(sns)
-		 * TODO fails, not square
-		 */
-		// TODO solve
 	}
 
 	@Test
 	public void testMultiply() {
-		// Simple:
 		// - Matrix * Matrix
 		double[][] tmpResult;
 		try {
@@ -483,26 +476,82 @@ public class MatrixTest {
 	public void testCalls() {
 		// Calls, that basically just depend on the Jama lib (solve, svd, ...) + entsprechende PD_*
 		// svd
-		SetlList tmpbase = simple.singularValueDecomposition(null);
+		SetlList tmpBase = simple.singularValueDecomposition(null);
 		try {
-			assertTrue("simple_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(0)).getBase().getArray(), simple_svd.get('u')));
-			assertTrue("simple_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(1)).getBase().getArray(), simple_svd.get('s')));
-			assertTrue("simple_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(2)).getBase().getArray(), simple_svd.get('v')));
+			assertTrue("simple_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(0)).getBase().getArray(), simple_svd.get('u')));
+			assertTrue("simple_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), simple_svd.get('s')));
+			assertTrue("simple_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), simple_svd.get('v')));
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
 			fail("simple_svd error: exception");
 		}
-		tmpbase = sns.singularValueDecomposition(null);
+		tmpBase = sns.singularValueDecomposition(null);
 		try {
-			assertTrue("sns_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(0)).getBase().getArray(), sns_svd.get('u')));
-			assertTrue("sns_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(1)).getBase().getArray(), sns_svd.get('s')));
-			assertTrue("sns_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpbase.getMember(2)).getBase().getArray(), sns_svd.get('v')));
+			assertTrue("sns_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(0)).getBase().getArray(), sns_svd.get('u')));
+			assertTrue("sns_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), sns_svd.get('s')));
+			assertTrue("sns_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), sns_svd.get('v')));
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
 			fail("sns_svd error: exception");
 		}
-		// eigen* TODO
-		// solve TODO
+		// eigen*
+		// simple
+		try {
+			assertTrue("eig_vec error: wrong result", Arrays.deepEquals(simple.eigenVectors().getBase().getArray(), simple_eig.get('v')));
+		} catch(IncompatibleTypeException ex) {
+			System.err.println(ex.getMessage());
+			fail("eig_vec error: exception");
+		}
+		SetlList aList;
+		try {
+			aList = simple.eigenValues(null);
+		} catch(SetlException ex) {
+			System.err.println(ex.getMessage());
+			fail("eig_val error: exception");
+			return;
+		}
+		int idx = 0;
+		for(Value v : aList) {
+			try {
+				assertTrue("eig_val error: wrong result " + idx, Double.compare(v.toJDoubleValue(null), simple_eig.get('l')[idx][idx]) == 0);
+			} catch(SetlException ex) {
+				System.err.println(ex.getMessage());
+				fail("eig_val error: exception on toJDouble");
+			}
+			idx++;
+		}
+		try {
+			sns.eigenValues(null);
+			fail("eig_val missing_error");
+		} catch(IncompatibleTypeException ex) {
+			assertTrue("eig_val wrong_error " + ex.getMessage(), ex.getMessage().equals("Not a square matrix."));
+		} catch(SetlException ex) {
+			fail("eig_val wrong_error " + ex.getMessage());
+		}
+		// solve
+		double[][] toSolveWith = new double[2][3];
+		toSolveWith[0][0] = 9;
+		toSolveWith[0][1] = 12;
+		toSolveWith[0][2] = 15;
+		toSolveWith[1][0] = 19;
+		toSolveWith[1][1] = 26;
+		toSolveWith[1][2] = 33;
+		double[][] solveResult;
+		try {
+			solveResult = simple.solve(new SetlMatrix(new Jama.Matrix(toSolveWith))).getBase().getArray();
+		} catch(IncompatibleTypeException ex) {
+			System.err.println(ex.getMessage());
+			fail("simple_to_sns_solve error: exception");
+			return;
+		}
+		assertTrue("simple_to_sns_solve error: wrong result: " + solveResult + " vs " + sns.getBase().getArray(), Arrays.deepEquals(solveResult, sns.getBase().getArray()));
+
+		try {
+			simple.solve(sns.transpose());
+			fail("solve missing_error");
+		} catch(IncompatibleTypeException ex) {
+			assertTrue("solve wrong_error: probably transpose error: " + ex.getMessage(), ex.getMessage().equals("Row numbers must be equal to solve A * X = B."));
+		}
 	}
 
 	@Test

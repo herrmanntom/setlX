@@ -32,24 +32,55 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* Boolean operations */
 
+    /**
+     * Compute the conjunction between this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Expression to evaluate lazily.
+     * @return               Difference of this and subtrahend.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value conjunction(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " && " + other.toString(state) + "' is not a Boolean value."
         );
     }
 
+    /**
+     * Compute the disjunction between this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Expression to evaluate lazily.
+     * @return               Difference of this and subtrahend.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value disjunction(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " || " + other.toString(state) + "' is not a Boolean value."
         );
     }
 
+    /**
+     * Compute the implication between this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Expression to evaluate lazily.
+     * @return               Difference of this and subtrahend.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value implication(final State state, final Expr other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " => " + other.toString(state) + "' is not a Boolean value."
         );
     }
 
+    /**
+     * Compute the negation of this value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Difference of this and subtrahend.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value not(final State state) throws SetlException {
         throw new IncompatibleTypeException(
             "Operand of '!" + this.toString(state) + "' is not a Boolean value."
@@ -305,6 +336,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Compute the integer division between this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param divisor        Value to divide by.
+     * @return               Difference of this and subtrahend.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
         if (divisor instanceof Term) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
@@ -340,6 +379,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Compute the modulo between this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param modulo         Value to divide by.
+     * @return               Modulo of this and modulo.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value modulo(final State state, final Value modulo) throws SetlException {
         if (modulo instanceof Term) {
             return ((Term) modulo).moduloFlipped(state, this);
@@ -370,6 +417,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Product of this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param multiplier     Value to multiply by.
+     * @return               Product of this value and multiplier.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier instanceof Term) {
             return ((Term) multiplier).productFlipped(state, this);
@@ -422,6 +477,14 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
+    /**
+     * Add this value and another.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param summand        Value to add.
+     * @return               Sum of this and summand.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value sum(final State state, final Value summand) throws SetlException {
         if (summand instanceof Term) {
             return ((Term) summand).sumFlipped(state, this);
@@ -462,12 +525,12 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     /**
-     * Implementation of the >< operator. Computes the cartasionProduct of two sets
+     * Implementation of the >< operator. Computes the cartesianProduct of two sets
      * and combines two lists into one.
      *
      * @param state          Current state of the running setlX program.
      * @param other          Second value.
-     * @return               Division of this and divisor.
+     * @return               Cartesian product of this and other.
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value cartesianProduct(final State state, final Value other) throws SetlException {

@@ -23,14 +23,31 @@ public class Term extends IndexedCollectionValue {
     // arguments in inner body of the term; e.g. e1, e2, ..., en
     private final SetlList body;
 
+    /**
+     * Create a new term.
+     *
+     * @param functionalCharacter Functional character of the new term.
+     */
     public Term(final String functionalCharacter) {
         this(functionalCharacter, 4);
     }
 
+    /**
+     * Create a new term.
+     *
+     * @param functionalCharacter Functional character of the new term.
+     * @param initialCapacity     Number of elements to store without resizing.
+     */
     public Term(final String functionalCharacter, final int initialCapacity) {
         this(functionalCharacter, new SetlList(initialCapacity));
     }
 
+    /**
+     * Create a new term.
+     *
+     * @param functionalCharacter Functional character of the new term.
+     * @param body                Body of the new term.
+     */
     public Term(final String functionalCharacter, final SetlList body) {
         this.functionalCharacter = functionalCharacter;
         this.body                = body;
@@ -62,6 +79,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the conjunction between another value and this.
+     *
+     * @param state Current state of the running setlX program.
+     * @param other Expression to evaluate lazily.
+     * @return      Conjunction of value and this.
+     */
     public Term conjunctionFlipped(final State state, final Value other) {
         return (    new Conjunction(
                         TermConverter.valueToExpr(state, other),
@@ -79,6 +104,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the disjunction between another value and this.
+     *
+     * @param state Current state of the running setlX program.
+     * @param other Expression to evaluate lazily.
+     * @return      Disjunction of value and this.
+     */
     public Term disjunctionFlipped(final State state, final Value other) {
         return (    new Disjunction(
                         TermConverter.valueToExpr(state, other),
@@ -95,6 +128,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the implication between another value and this.
+     *
+     * @param state Current state of the running setlX program.
+     * @param other Expression to evaluate lazily.
+     * @return      Implication of value and this.
+     */
     public Term implicationFlipped(final State state, final Value other) {
         return (    new Implication(
                         TermConverter.valueToExpr(state, other),
@@ -130,6 +171,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the difference between another value and this.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param subtrahend Value to subtract.
+     * @return           Difference subtrahend and this.
+     */
     public Term differenceFlipped(final State state, final Value subtrahend) {
         return (    new Difference(
                         TermConverter.valueToExpr(state, subtrahend),
@@ -156,6 +205,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the integer division between another value and this.
+     *
+     * @param state   Current state of the running setlX program.
+     * @param divisor Value to divide by.
+     * @return        Integer division of divisor and this.
+     */
     public Term integerDivisionFlipped(final State state, final Value divisor) {
         return (    new IntegerDivision(
                         TermConverter.valueToExpr(state, divisor),
@@ -182,6 +239,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the modulo between another value and this.
+     *
+     * @param state   Current state of the running setlX program.
+     * @param modulo  Value to divide by.
+     * @return        Modulo of modulo and this.
+     */
     public Term moduloFlipped(final State state, final Value modulo) {
         return (    new Modulo(
                         TermConverter.valueToExpr(state, modulo),
@@ -199,6 +264,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the power between another value and this.
+     *
+     * @param state    Current state of the running setlX program.
+     * @param exponent Value to raise by.
+     * @return         Exponent raised by the power of this.
+     */
     public Term powerFlipped(final State state, final Value exponent) {
         return (    new Power(
                         TermConverter.valueToExpr(state, exponent),
@@ -216,6 +289,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Compute the product between another value and this.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param multiplier Value to multiply by.
+     * @return           Product of multiplier and this.
+     */
     public Term productFlipped(final State state, final Value multiplier) {
         return (    new Product(
                         TermConverter.valueToExpr(state, multiplier),
@@ -233,6 +314,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Divide another value by this.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param divisor    Value to divide by.
+     * @return           Division of divisor and this.
+     */
     public Term quotientFlipped(final State state, final Value divisor) {
         return (    new Quotient(
                         TermConverter.valueToExpr(state, divisor),
@@ -250,6 +339,14 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Add this value and another.
+     *
+     * @param state      Current state of the running setlX program.
+     * @param summand    Value to add.
+     * @return           Sum of this and summand.
+     */
     public Term sumFlipped(final State state, final Value summand) {
         return (    new Sum(
                         TermConverter.valueToExpr(state, summand),
@@ -288,6 +385,15 @@ public class Term extends IndexedCollectionValue {
                     )
                ).toTerm(state);
     }
+
+    /**
+     * Implementation of the >< operator. Computes the cartasionProduct of two sets
+     * and combines two lists into one.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param other          Second value.
+     * @return               Cartesian product of this and other.
+     */
     public Term cartesianProductFlipped(final State state, final Value other) {
         return (    new CartesianProduct(
                         TermConverter.valueToExpr(state, other),

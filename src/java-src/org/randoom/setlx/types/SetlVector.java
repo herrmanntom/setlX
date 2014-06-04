@@ -49,8 +49,6 @@ public class SetlVector extends IndexedCollectionValue {
 			for(Value item : init) {
 				if(item instanceof NumberValue) {
 					value[currentItem] = ((NumberValue)(item.clone()));
-				} else if(item instanceof Term) {
-					// TODO implement Term handling
 				} else {
 					throw new IncompatibleTypeException("Item " + (currentItem + 1) + " is not a Number.");
 				}
@@ -124,7 +122,7 @@ public class SetlVector extends IndexedCollectionValue {
 			// System.err.println("[DEBUG]: clone end");
 			return new SetlVector((NumberValue[])result);
 		} catch(IncompatibleTypeException ex) {
-			// TODO This cannot happen!
+			// This cannot happen!
 			// System.err.println("[DEBUG]: clone exc");
 			return Om.OM;
 		}
@@ -181,8 +179,7 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	protected int compareToOrdering() {
 		// System.err.println("[DEBUG]: compareToOrdering begin");
-		// TODO Auto-generated method stub
-		return 0;
+		return 1300;
 	}
 
 	/**
@@ -282,7 +279,7 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public void addMember(State state, Value element) {
 		// System.err.println("[DEBUG]: addMember begin");
-		if(element instanceof NumberValue) { // TODO Term
+		if(element instanceof NumberValue) {
 			int newLength = this.getValue().length + 1;
 			this.value = Arrays.copyOf(this.getValue(), newLength);
 			this.value[newLength - 1] = (NumberValue)element;
@@ -290,7 +287,7 @@ public class SetlVector extends IndexedCollectionValue {
 		} else {
 			// System.err.println("[DEBUG]: addMember exc");
 			// throw new IncompatibleTypeException("Element to be added to vector is not a number.");
-			// TODO cannot throw Exception, because base class doesn't throw exception
+			// cannot throw Exception, because base class doesn't throw exception
 		}
 	}
 
@@ -419,7 +416,7 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public void removeMember(Value element) throws IncompatibleTypeException {
 		// System.err.println("[DEBUG]: remMemberElem begin");
-		if(element instanceof NumberValue) { // TODO Term
+		if(element instanceof NumberValue) {
 			NumberValue elem = (NumberValue)element;
 			List<NumberValue> newValue = new ArrayList<NumberValue>(this.getValue().length - 1);
 			for(NumberValue i : this.getValue()) {
@@ -427,7 +424,6 @@ public class SetlVector extends IndexedCollectionValue {
 					newValue.add(i);
 				}
 			}
-			// TODO Should it be checked, whether something was removed?
 			this.value = (NumberValue[])newValue.toArray();
 			// System.err.println("[DEBUG]: remMember elem end");
 		} else {
@@ -507,8 +503,17 @@ public class SetlVector extends IndexedCollectionValue {
 	 */
 	@Override
 	public MatchResult matchesTerm(State state, Value other) throws SetlException {
-		// System.err.println("[DEBUG]: matchesTerm begin exc");
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if(other == IgnoreDummy.ID) {
+			return new MatchResult(true);
+		} else if(!(other instanceof SetlVector || other instanceof SetlString)) {
+			return new MatchResult(false);
+		} else {
+			if(other instanceof SetlVector) {
+				return new MatchResult(this.equalTo(other));
+			} else {
+				return new MatchResult(this.canonical().equals(other.toString()));
+			}
+		}
 	}
 
 	/**
@@ -532,14 +537,14 @@ public class SetlVector extends IndexedCollectionValue {
 		} else if(multiplier.isNumber() == SetlBoolean.TRUE) {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
-				result[i] = (NumberValue)this.getValue()[i].product(state, multiplier); // TODO CHECK Conversion Safety
+				result[i] = (NumberValue)this.getValue()[i].product(state, multiplier);
 			}
 			// System.err.println("[DEBUG]: product end Number");
 			return new SetlVector(result);
 		} else if(multiplier.jDoubleConvertable()) {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
-				result[i] = (NumberValue)this.getValue()[i].product(state, SetlDouble.valueOf(multiplier.toJDoubleValue(state))); // TODO CHECK Conversion Safety
+				result[i] = (NumberValue)this.getValue()[i].product(state, SetlDouble.valueOf(multiplier.toJDoubleValue(state)));
 			}
 			// System.err.println("[DEBUG]: product end double");
 			return new SetlVector(result);
@@ -547,7 +552,7 @@ public class SetlVector extends IndexedCollectionValue {
 			return ((Term)multiplier).productFlipped(state, this);
 		} else {
 			// System.err.println("[DEBUG]: product exc");
-			throw new IncompatibleTypeException("Given parameter is not of supported type."); // TODO better message
+			throw new IncompatibleTypeException("Given parameter is not of supported type.");
 		}
 	}
 
@@ -573,11 +578,11 @@ public class SetlVector extends IndexedCollectionValue {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
 				Value tmp = this.getValue()[i].sum(state, sumd.getValue()[i]);
-				if(tmp instanceof NumberValue) { // TODO do I need instanceof Term?
+				if(tmp instanceof NumberValue) {
 					result[i] = (NumberValue)tmp;
 				} else {
 					// System.err.println("[DEBUG]: sum exc vector contains nonnumber");
-					throw new AbortException("Sum doesn't return Number!"); // TODO DEBUG if this happens
+					throw new AbortException("Sum doesn't return Number!");
 				}
 			}
 			// System.err.println("[DEBUG]: sum end");
@@ -613,16 +618,6 @@ public class SetlVector extends IndexedCollectionValue {
 			// System.err.println("[DEBUG]: power exc");
 			throw new IncompatibleTypeException("Incompatible exponent type.");
 		}
-		// TODO Vector ^ Number ?
-		/*
-		 * else if(exponent.isNumber()) {
-		 *
-		 * } else if(exponent.jIntConvertable()) {
-		 *
-		 * } else if(exponent.jDoubleConvertable()) {
-		 *
-		 * }
-		 */
 	}
 
 	/**
@@ -724,7 +719,7 @@ public class SetlVector extends IndexedCollectionValue {
 	 */
 	public NumberValue[] getValue() {
 		// // System.err.println("[DEBUG]: getValue begin");
-		return value;
+		return this.value;
 	}
 
 	/**
@@ -748,11 +743,11 @@ public class SetlVector extends IndexedCollectionValue {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
 				Value tmp = this.getValue()[i].difference(state, subd.getValue()[i]);
-				if(tmp instanceof NumberValue) { // TODO do I need instanceof Term?
+				if(tmp instanceof NumberValue) {
 					result[i] = (NumberValue)tmp;
 				} else {
 					// System.err.println("[DEBUG]: difference exc vector contains nonnumber");
-					throw new AbortException("Difference doesn't return Number!"); // TODO DEBUG if this happens
+					throw new AbortException("Difference doesn't return Number!");
 				}
 			}
 			// System.err.println("[DEBUG]: difference end");

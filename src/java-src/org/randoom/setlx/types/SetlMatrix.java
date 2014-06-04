@@ -17,7 +17,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * @author Patrick Robinson
  */
-public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a CollectionValue Exception ?
+public class SetlMatrix extends IndexedCollectionValue {
 
 	private Jama.Matrix value;
 
@@ -61,7 +61,6 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 				throw new IncompatibleTypeException("Row " + (currentRow + 1) + "is empty.");
 			}
 			if(rowAsCollection.size() != columnCount) {
-				// TODO is this an IncompatibleTypeException?
 				throw new IncompatibleTypeException("Row " + (currentRow + 1) + " does not have the same length as the first row.");
 			}
 			int currentColumn = 0;
@@ -126,7 +125,6 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 */
 	@Override
 	public void appendString(State state, StringBuilder sb, int tabs) {
-		// TODO does this work as it should?
 		this.canonical(state, sb);
 	}
 
@@ -150,7 +148,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 */
 	@Override
 	protected int compareToOrdering() {
-		return 0;
+		return 1350;
 	}
 
 	/**
@@ -194,11 +192,11 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			} else {
 				throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
 			}
-		} else if(multiplier instanceof NumberValue) { // TODO .isNumber
+		} else if(multiplier instanceof NumberValue) {
 			NumberValue n = (NumberValue)multiplier;
 			return new SetlMatrix(this.value.times(n.toJDoubleValue(state)));
 		} else if(multiplier instanceof Term) {
-			return ((Term)multiplier).productFlipped(state, this); // TOCHECK
+			return ((Term)multiplier).productFlipped(state, this);
 		} else {
 			throw new IncompatibleTypeException("Multiplier is not a matrix.");
 		}
@@ -281,7 +279,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 			}
 			return new SetlMatrix(result);
 		} else {
-			throw new IncompatibleTypeException("Power is only defined for integer exponents on matrices."); // TODO Check English
+			throw new IncompatibleTypeException("Power on matrices is only defined for integer exponents.");
 		}
 	}
 
@@ -473,7 +471,6 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 				try {
 					row.addMember(state, SetlDouble.valueOf(b));
 				} catch(UndefinedOperationException ex) {
-					// TODO wtf?
 				}
 			}
 			container.addMember(state, row);
@@ -580,7 +577,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 				try {
 					v[i] = subelem.toJDoubleValue(state);
 				} catch(SetlException ex) {
-					return SetlBoolean.FALSE;
+					throw new IncompatibleTypeException(ex.getMessage());
 				}
 				i++;
 			}
@@ -601,8 +598,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 					}
 				}
 			} catch(SetlException ex) {
-				// TODO Do something more?
-				return SetlBoolean.FALSE;
+				throw new IncompatibleTypeException(ex.getMessage());
 			}
 		}
 		return SetlBoolean.FALSE;
@@ -618,8 +614,6 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		try {
 			return this.getMember(1);
 		} catch(SetlException ex) {
-			// TODO do something
-			// Logger.getLogger(SetlMatrix.class.getName()).log(Level.SEVERE, null, ex);
 			return Om.OM;
 		}
 	}
@@ -651,8 +645,6 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		try {
 			return this.getMember(this.value.getRowDimension());
 		} catch(SetlException ex) {
-			// TODO do something
-			// Logger.getLogger(SetlMatrix.class.getName()).log(Level.SEVERE, null, ex);
 			return Om.OM;
 		}
 	}
@@ -768,7 +760,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	}
 
 	/**
-	 * TODO
+	 *
 	 *
 	 * @param state
 	 * @param other
@@ -777,7 +769,17 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 */
 	@Override
 	public MatchResult matchesTerm(State state, Value other) throws SetlException {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if(other == IgnoreDummy.ID) {
+			return new MatchResult(true);
+		} else if(!(other instanceof SetlMatrix || other instanceof SetlString)) {
+			return new MatchResult(false);
+		} else {
+			if(other instanceof SetlMatrix) {
+				return new MatchResult(this.equalTo(other));
+			} else {
+				return new MatchResult(this.canonical().equals(other.toString()));
+			}
+		}
 	}
 
 	/**
@@ -806,7 +808,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 * @param state
 	 * @return 3-tupel of matrices [U, S, V]
 	 */
-	public SetlList singularValueDecomposition(State state) {		
+	public SetlList singularValueDecomposition(State state) {
 //		System.err.println("[DEBUG]: svd invoke");
 		SingularValueDecomposition result = this.value.svd();
 //		System.err.println("[DEBUG]: svd lib call done");

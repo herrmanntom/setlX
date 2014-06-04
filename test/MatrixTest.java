@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -18,6 +16,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.NumberValue;
+import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlMatrix;
@@ -238,7 +237,7 @@ public class MatrixTest {
 			tmpResult = ((SetlMatrix)simple.product(null, sns)).getBase().getArray();
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
-			fail("simple_sns_mul error: exception on .product");
+			fail("simple_sns_mul error: exception on .product " + ex.getMessage());
 			return;
 		}
 		shouldBeResult = new double[2][3];
@@ -330,13 +329,13 @@ public class MatrixTest {
 		// ==, clone, compare, iterator, canonical, ...
 		assertTrue("== simple error", simple.equalTo(simple));
 		assertTrue("== clone error", simple.equalTo(simple.clone()));
-		assertTrue("!= error: wrong result", sns.equalTo(simple));
+		assertTrue("!= error: wrong result", !sns.equalTo(simple));
 		assertTrue("compare to same error: wrong result", simple.compareTo(simple) == 0);
 		assertTrue("compare to different error: wrong result", sns.compareTo(simple) != 0);
 
 		StringBuilder stringBuilder = new StringBuilder();
 		simple.canonical(null, stringBuilder);
-		assertTrue("canonical error: wrong result " + stringBuilder.toString() + " vs < [ 1 2 ] [ 3 4 ] >", stringBuilder.toString().equals("< [ 1 2 ] [ 3 4 ] >"));
+		assertTrue("canonical error: wrong result " + stringBuilder.toString() + " vs < [ 1.0  2.0 ]  [ 3.0  4.0 ] >", stringBuilder.toString().equals("< [ 1.0  2.0 ]  [ 3.0  4.0 ] >"));
 
 		Value b = sdi.get(0);
 		for(Value row : simple) {
@@ -353,7 +352,7 @@ public class MatrixTest {
 		assertTrue("Iterator error: wrong result " + b + " vs 10", b.equalTo(sdi.get(10)));
 
 		List<Value> idx = new ArrayList<Value>();
-		idx.add(sdi.get(1));
+		idx.add(Rational.ONE);
 		SetlList tmpList;
 		try {
 			tmpList = (SetlList)simple.collectionAccess(null, idx);
@@ -455,7 +454,9 @@ public class MatrixTest {
 	public void testPow() {
 		for(int i = -5; i <= 5; i++) {
 			try {
-				assertTrue("", Arrays.deepEquals(simple_pow_results.get(i), ((SetlMatrix)simple.power(null, sdi.get(i))).getBase().getArray()));
+				// TODO Rundungsfehler
+				assertTrue("simple_pow error: wrong_result: " + i + " : " + Arrays.deepToString(simple_pow_results.get(i)) + " vs " + simple.power(null, Rational.valueOf(i)),
+						Arrays.deepEquals(simple_pow_results.get(i), ((SetlMatrix)simple.power(null, Rational.valueOf(i))).getBase().getArray()));
 			} catch(SetlException ex) {
 				System.err.println(ex.getMessage());
 				fail("simple_pow error: exception");
@@ -474,22 +475,27 @@ public class MatrixTest {
 
 	@Test
 	public void testCalls() {
-		// Calls, that basically just depend on the Jama lib (solve, svd, ...) + entsprechende PD_*
 		// svd
 		SetlList tmpBase = simple.singularValueDecomposition(null);
 		try {
-			assertTrue("simple_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(0)).getBase().getArray(), simple_svd.get('u')));
-			assertTrue("simple_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), simple_svd.get('s')));
-			assertTrue("simple_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), simple_svd.get('v')));
+			// TODO Vorzeichenfehler
+			assertTrue("simple_svd error: wrong result for u: " + tmpBase.getMember(1) + " vs " + Arrays.deepToString(simple_svd.get('u')),
+					Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), simple_svd.get('u')));
+			// TODO Rundungsfehler
+			assertTrue("simple_svd error: wrong result for s: " + tmpBase.getMember(2) + " vs " + Arrays.deepToString(simple_svd.get('s')),
+					Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), simple_svd.get('s')));
+			// TODO Vorzeichenfehler
+			assertTrue("simple_svd error: wrong result for v: " + tmpBase.getMember(3) + " vs " + Arrays.deepToString(simple_svd.get('v')),
+					Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(3)).getBase().getArray(), simple_svd.get('v')));
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
 			fail("simple_svd error: exception");
 		}
 		tmpBase = sns.singularValueDecomposition(null);
 		try {
-			assertTrue("sns_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(0)).getBase().getArray(), sns_svd.get('u')));
-			assertTrue("sns_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), sns_svd.get('s')));
-			assertTrue("sns_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), sns_svd.get('v')));
+			assertTrue("sns_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), sns_svd.get('u')));
+			assertTrue("sns_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), sns_svd.get('s')));
+			assertTrue("sns_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(3)).getBase().getArray(), sns_svd.get('v')));
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
 			fail("sns_svd error: exception");
@@ -497,7 +503,9 @@ public class MatrixTest {
 		// eigen*
 		// simple
 		try {
-			assertTrue("eig_vec error: wrong result", Arrays.deepEquals(simple.eigenVectors().getBase().getArray(), simple_eig.get('v')));
+			// TODO Rundungsfehler
+			assertTrue("eig_vec error: wrong result: " + simple.eigenVectors() + " vs " + Arrays.deepToString(simple_eig.get('v')),
+					Arrays.deepEquals(simple.eigenVectors().getBase().getArray(), simple_eig.get('v')));
 		} catch(IncompatibleTypeException ex) {
 			System.err.println(ex.getMessage());
 			fail("eig_vec error: exception");
@@ -544,7 +552,9 @@ public class MatrixTest {
 			fail("simple_to_sns_solve error: exception");
 			return;
 		}
-		assertTrue("simple_to_sns_solve error: wrong result: " + solveResult + " vs " + sns.getBase().getArray(), Arrays.deepEquals(solveResult, sns.getBase().getArray()));
+		// TODO Rundungsfehler
+		assertTrue("simple_to_sns_solve error: wrong result: " + Arrays.deepToString(solveResult) + " vs " + Arrays.deepToString(sns.getBase().getArray()),
+				Arrays.deepEquals(solveResult, sns.getBase().getArray()));
 
 		try {
 			simple.solve(sns.transpose());

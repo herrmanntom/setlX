@@ -99,8 +99,8 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public Value getMember(int index) throws SetlException {
 		// System.err.println("[DEBUG]: getMember begin");
-		if(index >= this.value.length) {
-			throw new ArrayIndexOutOfBoundsException(index);
+		if(index > this.value.length || index < 1) {
+			throw new IncompatibleTypeException("[getMember]: Index out of bounds: " + index);
 		}
 		return this.getValue()[index - 1];
 	}
@@ -339,7 +339,7 @@ public class SetlVector extends IndexedCollectionValue {
 		// System.err.println("[DEBUG]: getMember begin");
 		if(index.jIntConvertable()) {
 			// System.err.println("[DEBUG]: getMember end");
-			return this.getValue()[index.toJIntValue(state) - 1];
+			return this.getMember(index.toJIntValue(state));
 		} else {
 			throw new IncompatibleTypeException("Index is not an integer.");
 		}
@@ -493,6 +493,7 @@ public class SetlVector extends IndexedCollectionValue {
 				// System.err.println("[DEBUG]: canonical exc");
 			}
 		}
+		sb.append('>');
 		// System.err.println("[DEBUG]: canonical end");
 	}
 
@@ -803,8 +804,8 @@ public class SetlVector extends IndexedCollectionValue {
 		if(index.jIntConvertable()) {
 			int idx = index.jIntValue();
 			if(v.isNumber() == SetlBoolean.TRUE) {
-				if(idx >= this.value.length) {
-					throw new ArrayIndexOutOfBoundsException(idx);
+				if(idx > this.value.length || idx < 1) {
+					throw new IncompatibleTypeException("[setMember]: Index out of bounds: " + idx);
 				}
 				this.value[idx - 1] = (NumberValue)v;
 			} else {

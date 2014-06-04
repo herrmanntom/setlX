@@ -88,7 +88,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		super();
 		double[][] base = new double[vector.size()][1];
 		for(int i = 0; i < vector.size(); i++) {
-			Value elem = vector.getMember(i);
+			Value elem = vector.getMember(i + 1);
 			if(elem.jDoubleConvertable()) {
 				base[i][0] = elem.toJDoubleValue(state);
 			} else {
@@ -194,7 +194,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		} else if(multiplier instanceof Term) {
 			return ((Term)multiplier).productFlipped(state, this); // TOCHECK
 		} else {
-			throw new IncompatibleTypeException("Summand is not of type Matrix.");
+			throw new IncompatibleTypeException("Multiplier is not a matrix.");
 		}
 	}
 
@@ -225,7 +225,7 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 		} else if(multiplier instanceof Term) {
 			return ((Term)multiplier).productAssign(state, this); // TOCHECK
 		} else {
-			throw new IncompatibleTypeException("Summand is not of type Matrix.");
+			throw new IncompatibleTypeException("Multiplier is not a matrix.");
 		}
 	}
 
@@ -443,8 +443,8 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 */
 	@Override
 	public Value getMember(int index) throws SetlException {
-		if(index >= this.value.getRowDimension()) {
-			throw new ArrayIndexOutOfBoundsException(index);
+		if(index > this.value.getRowDimension() || index < 1) {
+			throw new IncompatibleTypeException("Index out of bounds: " + index);
 		}
 		SetlList container = new SetlList(this.value.getColumnDimension());
 		for(double d : this.value.getArray()[index - 1]) {
@@ -916,8 +916,8 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	public void setMember(final State state, final Value index, final Value v) throws SetlException {
 		if(index.jIntConvertable()) {
 			int idx = index.jIntValue();
-			if(idx >= this.value.getRowDimension()) {
-				throw new ArrayIndexOutOfBoundsException(idx);
+			if(idx > this.value.getRowDimension() || idx < 1) {
+				throw new IncompatibleTypeException("Index out of bounds: " + idx);
 			}
 			if(v instanceof CollectionValue) {
 				CollectionValue col = (CollectionValue)v;

@@ -15,6 +15,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.NumberValue;
+import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlList;
@@ -31,14 +32,17 @@ public class VectorTest {
 	static NumberValue[] simpleBase;
 	static SetlVector simple;
 	static Map<Integer, Value[]> simple_sdi_results_mul;
+	static Random rng;
 
 	@BeforeClass
 	public static void testSetup() {
+		// System.err.println("[DEBUG]: testSetup");
+		rng = new Random();
 		simpleBase = new NumberValue[3];
 		try {
 			simpleBase[0] = SetlDouble.valueOf(1);
 			simpleBase[1] = SetlDouble.valueOf(2);
-			simpleBase[3] = SetlDouble.valueOf(3);
+			simpleBase[2] = SetlDouble.valueOf(3);
 		} catch(UndefinedOperationException ex) {
 			System.err.println(ex.getMessage());
 			fail("Error in setting up simpleBase");
@@ -75,6 +79,7 @@ public class VectorTest {
 
 	@Test
 	public void testMultiply() {
+		// System.err.println("[DEBUG]: testMultiply");
 		// Simple:
 		// - Vector * Vector
 		// - Scalar * Vector
@@ -124,11 +129,12 @@ public class VectorTest {
 			return;
 		}
 		assertTrue("Simple_simple_mul error: " + s + " not a number", s.isNumber() == SetlBoolean.TRUE);
-		assertTrue("Simple_simple_mul error: wrong result: " + s + " vs 14", ((NumberValue)s).equalTo(sdi.get(14))); // TODO Check result
+		assertTrue("Simple_simple_mul error: wrong result: " + s + " vs 14", ((NumberValue)s).equalTo(sdi.get(14)));
 	}
 
 	@Test
 	public void testConstruction() {
+		// System.err.println("[DEBUG]: testConstruction");
 		// vers. Constructors
 		// Matrixconversion
 		// PD_vector
@@ -154,41 +160,14 @@ public class VectorTest {
 			fail("Simple_construct missing_error: IncompatibleTypeException not thrown");
 		} catch(IncompatibleTypeException ex) {
 		}
-
-		Random rng = new Random();
-		for(int n = 1; n <= 1000; n++) {
-			NumberValue[] rawSource = new NumberValue[n];
-			SetlList colSource = new SetlList(n);
-			for(int i = 0; i < n; n++) {
-				SetlDouble val = sdi.get(rng.nextInt(20001) - 10000);
-				rawSource[i] = val;
-				colSource.addMember(null, val);
-			}
-			SetlVector rawVector;
-			try {
-				rawVector = new SetlVector(rawSource);
-			} catch(IncompatibleTypeException ex) {
-				System.err.println(ex.getMessage());
-				fail("Rng_construct error " + n + " : IncompatibleTypeException on raw " + rawSource);
-				return;
-			}
-			try {
-				coltest = new SetlVector(null, colSource);
-			} catch(IncompatibleTypeException ex) {
-				System.err.println(ex.getMessage());
-				fail("Rng_construct error " + n + " : IncompatibleTypeException on col " + rawSource);
-				return;
-			}
-			assertTrue("Rng_construct error " + n + " : raw not equal col " + rawSource, rawVector.equalTo(coltest));
-		}
-
+		
 		// Matrixconversion
 		for(int n = 1; n <= 1000; n++) {
 			NumberValue[] rawSource = new NumberValue[n];
 			SetlList rowBase = new SetlList();
 			SetlList row = new SetlList(n);
 			SetlList columnBase = new SetlList(n);
-			for(int i = 0; i < n; n++) {
+			for(int i = 0; i < n; i++) {
 				SetlDouble val = sdi.get(rng.nextInt(20001) - 10000);
 				rawSource[i] = val;
 				row.addMember(null, val);
@@ -240,6 +219,7 @@ public class VectorTest {
 
 	@Test
 	public void testTools() {
+		// System.err.println("[DEBUG]: testTools");
 		// ==, clone, compare, iterator, canonical, ...
 		assertTrue("== error", simple.equalTo(simple));
 		assertTrue("clone error", simple.equalTo(simple.clone()));
@@ -257,9 +237,9 @@ public class VectorTest {
 		assertTrue("Iterator error: wrong result " + b + " vs 6", b.equalTo(sdi.get(6)));
 		StringBuilder simpleBuilder = new StringBuilder();
 		simple.canonical(null, simpleBuilder);
-		assertTrue("Canonical error: wrong result " + simpleBuilder.toString() + " vs < 1 2 3 >", simpleBuilder.toString().equals("< 1 2 3 >"));
+		assertTrue("Canonical error: wrong result " + simpleBuilder.toString() + " vs < 1.0  2.0  3.0 >", simpleBuilder.toString().equals("< 1.0  2.0  3.0 >"));
 		List<Value> simpleIdx = new ArrayList<Value>();
-		simpleIdx.add(sdi.get(1));
+		simpleIdx.add(Rational.ONE);
 		try {
 			assertTrue("Simple[] error: wrong result", simple.collectionAccess(null, simpleIdx).equalTo(sdi.get(1)));
 		} catch(SetlException ex) {
@@ -268,7 +248,7 @@ public class VectorTest {
 		}
 		SetlVector scl = (SetlVector)simple.clone();
 		try {
-			scl.setMember(null, sdi.get(1), sdi.get(4));
+			scl.setMember(null, Rational.ONE, sdi.get(4));
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
 			fail("Simple[] := error: access exception");
@@ -278,6 +258,7 @@ public class VectorTest {
 
 	@Test
 	public void testSum() {
+		// System.err.println("[DEBUG]: testSum");
 		Value s;
 		try {
 			s = simple.sum(null, simple);
@@ -303,6 +284,7 @@ public class VectorTest {
 
 	@Test
 	public void testDif() {
+		// System.err.println("[DEBUG]: testDif");
 		Value s;
 		try {
 			s = simple.difference(null, simple);
@@ -328,6 +310,7 @@ public class VectorTest {
 
 	@Test
 	public void testPow() {
+		// System.err.println("[DEBUG]: testPow");
 		Value s;
 		try {
 			s = simple.power(null, simple);

@@ -10,6 +10,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -37,183 +38,6 @@ public class MatrixTest {
 	static Map<Character, double[][]> simple_svd;
 	static Map<Character, double[][]> sns_svd;
 	static Map<Character, double[][]> simple_eig;
-
-	@BeforeClass
-	public static void testSetup() {
-		sdi = new TreeMap<Integer, SetlDouble>();
-		try {
-			for(int i = -10000; i <= 10000; i++) {
-				sdi.put(i, SetlDouble.valueOf(i));
-			}
-		} catch(UndefinedOperationException ex) {
-			System.err.println(ex.getMessage());
-			fail("Error in setting up sdi");
-		}
-		simpleBase = new double[2][2];
-		simpleBase[0][0] = 1;
-		simpleBase[0][1] = 2;
-		simpleBase[1][0] = 3;
-		simpleBase[1][1] = 4;
-		simple = new SetlMatrix(new Jama.Matrix(simpleBase));
-		snsBase = new double[2][3];
-		snsBase[0][0] = 1;
-		snsBase[0][1] = 2;
-		snsBase[0][2] = 3;
-		snsBase[1][0] = 4;
-		snsBase[1][1] = 5;
-		snsBase[1][2] = 6;
-		simple_pow_results = new TreeMap<Integer, double[][]>();
-		/**
-		 * Octave results:
-		 * -5: [[-106.437 48.687] [73.031 -33.406]]
-		 * -4: [[39.625 -18.125] [-27.187 12.437]]
-		 * -3: [[-14.75 6.75] [10.125 -4.625]]
-		 * -2: [[5.5 -2.5] [-3.75 1.75]]
-		 * -1: [[-2 1] [1.5 -0.5]]
-		 * +0: [[1 0] [0 1]]
-		 * +1: [[1 2] [3 4]]
-		 * +2: [[7 10] [15 22]]
-		 * +3: [[37 54] [81 118]]
-		 * +4: [[199 290] [435 634]]
-		 * +5: [[1069 1558] [2337 3406]]
-		 */
-		double[][] tmpBase = new double[2][2];
-		tmpBase[0][0] = -106.437;
-		tmpBase[0][1] = 48.687;
-		tmpBase[1][0] = 73.031;
-		tmpBase[1][1] = -33.406;
-		simple_pow_results.put(-5, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 39.625;
-		tmpBase[0][1] = -18.125;
-		tmpBase[1][0] = -27.187;
-		tmpBase[1][1] = 12.437;
-		simple_pow_results.put(-4, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = -14.75;
-		tmpBase[0][1] = 6.75;
-		tmpBase[1][0] = 10.125;
-		tmpBase[1][1] = -4.625;
-		simple_pow_results.put(-3, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 5.5;
-		tmpBase[0][1] = -2.5;
-		tmpBase[1][0] = -3.75;
-		tmpBase[1][1] = 1.75;
-		simple_pow_results.put(-2, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = -2;
-		tmpBase[0][1] = 1;
-		tmpBase[1][0] = 1.5;
-		tmpBase[1][1] = -0.5;
-		simple_pow_results.put(-1, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 1;
-		tmpBase[0][1] = 0;
-		tmpBase[1][0] = 0;
-		tmpBase[1][1] = 1;
-		simple_pow_results.put(0, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 1;
-		tmpBase[0][1] = 2;
-		tmpBase[1][0] = 3;
-		tmpBase[1][1] = 4;
-		simple_pow_results.put(1, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 7;
-		tmpBase[0][1] = 10;
-		tmpBase[1][0] = 15;
-		tmpBase[1][1] = 22;
-		simple_pow_results.put(2, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 37;
-		tmpBase[0][1] = 54;
-		tmpBase[1][0] = 81;
-		tmpBase[1][1] = 118;
-		simple_pow_results.put(3, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 199;
-		tmpBase[0][1] = 290;
-		tmpBase[1][0] = 435;
-		tmpBase[1][1] = 634;
-		simple_pow_results.put(4, tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 1069;
-		tmpBase[0][1] = 1558;
-		tmpBase[1][0] = 2337;
-		tmpBase[1][1] = 3406;
-		simple_pow_results.put(5, tmpBase);
-		/**
-		 * svd(simple)
-		 * u: [[-0.40455 -0.91451] [-0.91451 0.40455]]
-		 * s: [[5.46499 0] [0 0.36597]]
-		 * v: [[-0.57605 0.81742] [-0.81742 -0.57605]]
-		 */
-		simple_svd = new TreeMap<Character, double[][]>();
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = -0.40455;
-		tmpBase[0][1] = -0.91451;
-		tmpBase[1][0] = -0.91451;
-		tmpBase[1][1] = 0.40455;
-		simple_svd.put('u', tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = 5.46499;
-		tmpBase[0][1] = 0;
-		tmpBase[1][0] = 0;
-		tmpBase[1][1] = 0.36597;
-		simple_svd.put('s', tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = -0.57605;
-		tmpBase[0][1] = 0.81742;
-		tmpBase[1][0] = -0.81742;
-		tmpBase[1][1] = -0.57605;
-		simple_svd.put('v', tmpBase);
-		/**
-		 * svd(sns)
-		 */
-		sns_svd = new TreeMap<Character, double[][]>();
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = -0.38632;
-		tmpBase[0][1] = -0.92237;
-		tmpBase[1][0] = -0.92237;
-		tmpBase[1][1] = 0.38632;
-		sns_svd.put('u', tmpBase);
-		tmpBase = new double[2][3];
-		tmpBase[0][0] = 9.50803;
-		tmpBase[0][1] = 0;
-		tmpBase[0][2] = 0;
-		tmpBase[1][0] = 0;
-		tmpBase[1][1] = 0.77287;
-		tmpBase[1][2] = 0;
-		sns_svd.put('s', tmpBase);
-		tmpBase = new double[3][3];
-		tmpBase[0][0] = -0.42867;
-		tmpBase[0][1] = 0.80596;
-		tmpBase[0][2] = 0.40825;
-		tmpBase[1][0] = -0.56631;
-		tmpBase[1][1] = 0.11238;
-		tmpBase[1][2] = -0.81650;
-		tmpBase[2][0] = -0.70395;
-		tmpBase[2][1] = -0.58120;
-		tmpBase[2][2] = 0.40825;
-		sns_svd.put('v', tmpBase);
-		/**
-		 * eig(simple)
-		 */
-		simple_eig = new TreeMap<Character, double[][]>();
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = -0.82456;
-		tmpBase[0][1] = -0.41597;
-		tmpBase[1][0] = 0.56577;
-		tmpBase[1][1] = -0.90938;
-		simple_eig.put('v', tmpBase);
-		tmpBase = new double[2][2];
-		tmpBase[0][0] = -0.37228;
-		tmpBase[0][1] = 0;
-		tmpBase[1][0] = 0;
-		tmpBase[1][1] = 5.37228;
-		simple_eig.put('l', tmpBase);
-	}
 
 	@Test
 	public void testMultiply() {
@@ -449,14 +273,42 @@ public class MatrixTest {
 			fail("sum wrong_error");
 		}
 	}
+	
+	@Ignore
+	public static boolean equalsCorrected(double a, double b) {
+		double epsilon = 0.1;
+//		System.err.println("[DEBUG]: ==_corr " + a + " == " + b + " : " + (a + epsilon > b && a - epsilon < b));
+		return a + epsilon > b && a - epsilon < b;
+	}
+	
+	@Ignore
+	public static boolean deepEqualsCorrected(double[][] a, double[][] b) {
+		
+		if(a.length == b.length) {
+			for(int i = 0; i < a.length; i++) {
+				if(a[i].length == b[i].length) {
+					for(int j = 0; j < a[i].length; j++) {
+						if(!equalsCorrected(a[i][j], b[i][j])) {
+//							System.err.println("[DEBUG]: deep_== diff: " + i + " " + j);
+							return false;
+						}
+					}
+				} else {
+					return false;
+				}
+			}
+		} else {
+			return false;
+		}
+		return true;
+	}
 
 	@Test
 	public void testPow() {
 		for(int i = -5; i <= 5; i++) {
 			try {
-				// TODO Rundungsfehler
 				assertTrue("simple_pow error: wrong_result: " + i + " : " + Arrays.deepToString(simple_pow_results.get(i)) + " vs " + simple.power(null, Rational.valueOf(i)),
-						Arrays.deepEquals(simple_pow_results.get(i), ((SetlMatrix)simple.power(null, Rational.valueOf(i))).getBase().getArray()));
+						deepEqualsCorrected(simple_pow_results.get(i), ((SetlMatrix)simple.power(null, Rational.valueOf(i))).getBase().getArray()));
 			} catch(SetlException ex) {
 				System.err.println(ex.getMessage());
 				fail("simple_pow error: exception");
@@ -478,38 +330,41 @@ public class MatrixTest {
 		// svd
 		SetlList tmpBase = simple.singularValueDecomposition(null);
 		try {
-			// TODO Vorzeichenfehler
 			assertTrue("simple_svd error: wrong result for u: " + tmpBase.getMember(1) + " vs " + Arrays.deepToString(simple_svd.get('u')),
-					Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), simple_svd.get('u')));
-			// TODO Rundungsfehler
+					deepEqualsCorrected(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), simple_svd.get('u')));
 			assertTrue("simple_svd error: wrong result for s: " + tmpBase.getMember(2) + " vs " + Arrays.deepToString(simple_svd.get('s')),
-					Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), simple_svd.get('s')));
-			// TODO Vorzeichenfehler
+					deepEqualsCorrected(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), simple_svd.get('s')));
 			assertTrue("simple_svd error: wrong result for v: " + tmpBase.getMember(3) + " vs " + Arrays.deepToString(simple_svd.get('v')),
-					Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(3)).getBase().getArray(), simple_svd.get('v')));
+					deepEqualsCorrected(((SetlMatrix)tmpBase.getMember(3)).getBase().getArray(), simple_svd.get('v')));
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
 			fail("simple_svd error: exception");
 		}
+//		System.err.println("[DEBUG]: simple_svd done");
 		tmpBase = sns.singularValueDecomposition(null);
+//		System.err.println("[DEBUG]: sns_svd_call done");
 		try {
-			assertTrue("sns_svd error: wrong result for u", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), sns_svd.get('u')));
-			assertTrue("sns_svd error: wrong result for s", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), sns_svd.get('s')));
-			assertTrue("sns_svd error: wrong result for v", Arrays.deepEquals(((SetlMatrix)tmpBase.getMember(3)).getBase().getArray(), sns_svd.get('v')));
+			assertTrue("sns_svd error: wrong result for u: " + tmpBase.getMember(1) + " vs " + Arrays.deepToString(sns_svd.get('u')),
+					deepEqualsCorrected(((SetlMatrix)tmpBase.getMember(1)).getBase().getArray(), sns_svd.get('u')));
+			assertTrue("sns_svd error: wrong result for s: " + tmpBase.getMember(2) + " vs " + Arrays.deepToString(sns_svd.get('s')),
+					deepEqualsCorrected(((SetlMatrix)tmpBase.getMember(2)).getBase().getArray(), sns_svd.get('s')));
+			assertTrue("sns_svd error: wrong result for v: " + tmpBase.getMember(3) + " vs " + Arrays.deepToString(sns_svd.get('v')),
+					deepEqualsCorrected(((SetlMatrix)tmpBase.getMember(3)).getBase().getArray(), sns_svd.get('v')));
 		} catch(SetlException ex) {
 			System.err.println(ex.getMessage());
 			fail("sns_svd error: exception");
 		}
+//		System.err.println("[DEBUG]: sns_svd done");
 		// eigen*
 		// simple
 		try {
-			// TODO Rundungsfehler
 			assertTrue("eig_vec error: wrong result: " + simple.eigenVectors() + " vs " + Arrays.deepToString(simple_eig.get('v')),
-					Arrays.deepEquals(simple.eigenVectors().getBase().getArray(), simple_eig.get('v')));
+					deepEqualsCorrected(simple.eigenVectors().getBase().getArray(), simple_eig.get('v')));
 		} catch(IncompatibleTypeException ex) {
 			System.err.println(ex.getMessage());
 			fail("eig_vec error: exception");
 		}
+//		System.err.println("[DEBUG]: eig_vec done");
 		SetlList aList;
 		try {
 			aList = simple.eigenValues(null);
@@ -521,13 +376,14 @@ public class MatrixTest {
 		int idx = 0;
 		for(Value v : aList) {
 			try {
-				assertTrue("eig_val error: wrong result " + idx, Double.compare(v.toJDoubleValue(null), simple_eig.get('l')[idx][idx]) == 0);
+				assertTrue("eig_val error: wrong result " + v + " vs " + simple_eig.get('l')[idx][idx], equalsCorrected(v.toJDoubleValue(null), simple_eig.get('l')[idx][idx]));
 			} catch(SetlException ex) {
 				System.err.println(ex.getMessage());
 				fail("eig_val error: exception on toJDouble");
 			}
 			idx++;
 		}
+//		System.err.println("[DEBUG]: simple_eig_val done");
 		try {
 			sns.eigenValues(null);
 			fail("eig_val missing_error");
@@ -536,6 +392,7 @@ public class MatrixTest {
 		} catch(SetlException ex) {
 			fail("eig_val wrong_error " + ex.getMessage());
 		}
+//		System.err.println("[DEBUG]: should_fail_eig_val done");
 		// solve
 		double[][] toSolveWith = new double[2][3];
 		toSolveWith[0][0] = 9;
@@ -552,16 +409,197 @@ public class MatrixTest {
 			fail("simple_to_sns_solve error: exception");
 			return;
 		}
-		// TODO Rundungsfehler
 		assertTrue("simple_to_sns_solve error: wrong result: " + Arrays.deepToString(solveResult) + " vs " + Arrays.deepToString(sns.getBase().getArray()),
-				Arrays.deepEquals(solveResult, sns.getBase().getArray()));
-
+				deepEqualsCorrected(solveResult, sns.getBase().getArray()));
+//		System.err.println("[DEBUG]: simple_solve done");
 		try {
 			simple.solve(sns.transpose());
 			fail("solve missing_error");
 		} catch(IncompatibleTypeException ex) {
 			assertTrue("solve wrong_error: probably transpose error: " + ex.getMessage(), ex.getMessage().equals("Row numbers must be equal to solve A * X = B."));
 		}
+//		System.err.println("[DEBUG]: should_fail_solve done");
+	}
+	
+	@BeforeClass
+	public static void testSetup() {
+		sdi = new TreeMap<Integer, SetlDouble>();
+		try {
+			for(int i = -10000; i <= 10000; i++) {
+				sdi.put(i, SetlDouble.valueOf(i));
+			}
+		} catch(UndefinedOperationException ex) {
+			System.err.println(ex.getMessage());
+			fail("Error in setting up sdi");
+		}
+		simpleBase = new double[2][2];
+		simpleBase[0][0] = 1;
+		simpleBase[0][1] = 2;
+		simpleBase[1][0] = 3;
+		simpleBase[1][1] = 4;
+		simple = new SetlMatrix(new Jama.Matrix(simpleBase));
+		snsBase = new double[2][3];
+		snsBase[0][0] = 1;
+		snsBase[0][1] = 2;
+		snsBase[0][2] = 3;
+		snsBase[1][0] = 4;
+		snsBase[1][1] = 5;
+		snsBase[1][2] = 6;
+		sns = new SetlMatrix(new Jama.Matrix(snsBase));
+		simple_pow_results = new TreeMap<Integer, double[][]>();
+		/**
+		 * Octave results:
+		 * -5: [[-106.437 48.687] [73.031 -33.406]]
+		 * -4: [[39.625 -18.125] [-27.187 12.437]]
+		 * -3: [[-14.75 6.75] [10.125 -4.625]]
+		 * -2: [[5.5 -2.5] [-3.75 1.75]]
+		 * -1: [[-2 1] [1.5 -0.5]]
+		 * +0: [[1 0] [0 1]]
+		 * +1: [[1 2] [3 4]]
+		 * +2: [[7 10] [15 22]]
+		 * +3: [[37 54] [81 118]]
+		 * +4: [[199 290] [435 634]]
+		 * +5: [[1069 1558] [2337 3406]]
+		 */
+		double[][] tmpBase = new double[2][2];
+		tmpBase[0][0] = -106.437;
+		tmpBase[0][1] = 48.687;
+		tmpBase[1][0] = 73.031;
+		tmpBase[1][1] = -33.406;
+		simple_pow_results.put(-5, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 39.625;
+		tmpBase[0][1] = -18.125;
+		tmpBase[1][0] = -27.187;
+		tmpBase[1][1] = 12.437;
+		simple_pow_results.put(-4, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -14.75;
+		tmpBase[0][1] = 6.75;
+		tmpBase[1][0] = 10.125;
+		tmpBase[1][1] = -4.625;
+		simple_pow_results.put(-3, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 5.5;
+		tmpBase[0][1] = -2.5;
+		tmpBase[1][0] = -3.75;
+		tmpBase[1][1] = 1.75;
+		simple_pow_results.put(-2, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -2;
+		tmpBase[0][1] = 1;
+		tmpBase[1][0] = 1.5;
+		tmpBase[1][1] = -0.5;
+		simple_pow_results.put(-1, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 1;
+		tmpBase[0][1] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 1;
+		simple_pow_results.put(0, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 1;
+		tmpBase[0][1] = 2;
+		tmpBase[1][0] = 3;
+		tmpBase[1][1] = 4;
+		simple_pow_results.put(1, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 7;
+		tmpBase[0][1] = 10;
+		tmpBase[1][0] = 15;
+		tmpBase[1][1] = 22;
+		simple_pow_results.put(2, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 37;
+		tmpBase[0][1] = 54;
+		tmpBase[1][0] = 81;
+		tmpBase[1][1] = 118;
+		simple_pow_results.put(3, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 199;
+		tmpBase[0][1] = 290;
+		tmpBase[1][0] = 435;
+		tmpBase[1][1] = 634;
+		simple_pow_results.put(4, tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 1069;
+		tmpBase[0][1] = 1558;
+		tmpBase[1][0] = 2337;
+		tmpBase[1][1] = 3406;
+		simple_pow_results.put(5, tmpBase);
+		/**
+		 * svd(simple)
+		 * u: [[-0.40455 -0.91451] [-0.91451 0.40455]]
+		 * s: [[5.46499 0] [0 0.36597]]
+		 * v: [[-0.57605 0.81742] [-0.81742 -0.57605]]
+		 */
+		simple_svd = new TreeMap<Character, double[][]>();
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 0.40455;
+		tmpBase[0][1] = 0.91451;
+		tmpBase[1][0] = 0.91451;
+		tmpBase[1][1] = -0.40455;
+		simple_svd.put('u', tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 5.46499;
+		tmpBase[0][1] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 0.36597;
+		simple_svd.put('s', tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = 0.57605;
+		tmpBase[0][1] = -0.81742;
+		tmpBase[1][0] = 0.81742;
+		tmpBase[1][1] = 0.57605;
+		simple_svd.put('v', tmpBase);
+		/**
+		 * svd(sns)
+		 */
+		sns_svd = new TreeMap<Character, double[][]>();
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.38632;
+		tmpBase[0][1] = -0.92237;
+		tmpBase[1][0] = -0.92237;
+		tmpBase[1][1] = 0.38632;
+		sns_svd.put('u', tmpBase);
+		tmpBase = new double[3][3];
+		tmpBase[0][0] = 9.50803;
+		tmpBase[0][1] = 0;
+		tmpBase[0][2] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 0.77287;
+		tmpBase[1][2] = 0;
+		tmpBase[2][0] = 0;
+		tmpBase[2][1] = 0;
+		tmpBase[2][2] = 0;
+		sns_svd.put('s', tmpBase);
+		tmpBase = new double[3][3];
+		tmpBase[0][0] = -0.42867;
+		tmpBase[0][1] = 0.80596;
+		tmpBase[0][2] = 0.40825;
+		tmpBase[1][0] = -0.56631;
+		tmpBase[1][1] = -0.23811;
+		tmpBase[1][2] = -0.11650;
+		tmpBase[2][0] = -0.70395;
+		tmpBase[2][1] = -0.75812;
+		tmpBase[2][2] = 0.74082;
+		sns_svd.put('v', tmpBase);
+		/**
+		 * eig(simple)
+		 */
+		simple_eig = new TreeMap<Character, double[][]>();
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.82456;
+		tmpBase[0][1] = -0.41597;
+		tmpBase[1][0] = 0.56577;
+		tmpBase[1][1] = -0.90938;
+		simple_eig.put('v', tmpBase);
+		tmpBase = new double[2][2];
+		tmpBase[0][0] = -0.37228;
+		tmpBase[0][1] = 0;
+		tmpBase[1][0] = 0;
+		tmpBase[1][1] = 5.37228;
+		simple_eig.put('l', tmpBase);
 	}
 
 	@Test

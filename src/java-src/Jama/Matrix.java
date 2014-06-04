@@ -180,11 +180,16 @@ public class Matrix implements Cloneable, java.io.Serializable {
    */
 
    public Matrix copy () {
+//	  System.err.println("[DEBUG]: copy invoke " + m + " " + n + " " + Arrays.deepToString(A));
       Matrix X = new Matrix(m,n);
+//      System.err.println("[DEBUG]: copy m const " + X);
       double[][] C = X.getArray();
+//      System.err.println("[DEBUG]: copy arr const " + Arrays.deepToString(C));
       for (int i = 0; i < m; i++) {
+//    	  System.err.println("[DEBUG]: copy loop start " + i + " " + A[i].length + " " + C[i].length);
           System.arraycopy(A[i], 0, C[i], 0, n);
       }
+//      System.err.println("[DEBUG]: copy return " + X);
       return X;
    }
 

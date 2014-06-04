@@ -2,10 +2,12 @@ package org.randoom.setlx.types;
 
 import Jama.EigenvalueDecomposition;
 import Jama.SingularValueDecomposition;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
@@ -106,7 +108,11 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 */
 	@Override
 	public Value clone() {
-		return new SetlMatrix(value.copy());
+//		System.err.println("[DEBUG]: clone orig " + this.value);
+//		System.err.println("[DEBUG]: clone omat " + new SetlMatrix(this.value));
+//		System.err.println("[DEBUG]: clone copy " + this.value.copy());
+//		System.err.println("[DEBUG]: clone cmat " + new SetlMatrix(this.value.copy()));
+		return new SetlMatrix(this.value.copy());
 	}
 
 	/**
@@ -800,13 +806,24 @@ public class SetlMatrix extends IndexedCollectionValue { // TODO Is not a Collec
 	 * @param state
 	 * @return 3-tupel of matrices [U, S, V]
 	 */
-	public SetlList singularValueDecomposition(State state) {
-		// TODO check conditions
+	public SetlList singularValueDecomposition(State state) {		
+//		System.err.println("[DEBUG]: svd invoke");
 		SingularValueDecomposition result = this.value.svd();
-		SetlList container = new SetlList(3);
+//		System.err.println("[DEBUG]: svd lib call done");
+		SetlList container = new SetlList();
+//		System.err.println("[DEBUG]: svd list create done: " + container);
+//		System.err.println("[DEBUG]: svd u " + new SetlMatrix(result.getU()));
+//		System.err.println("[DEBUG]: svd u " + new SetlMatrix(result.getU()).clone());
+//		System.err.println("[DEBUG]: svd s " + new SetlMatrix(result.getS()).clone());
+//		System.err.println("[DEBUG]: svd v " + new SetlMatrix(result.getV()).clone());
+//		container.addMember(state, this);
+//		System.err.println("[DEBUG]: svd list add test done: " + container);
 		container.addMember(state, new SetlMatrix(result.getU()));
+//		System.err.println("[DEBUG]: svd u done: " + container);
 		container.addMember(state, new SetlMatrix(result.getS()));
+//		System.err.println("[DEBUG]: svd s done: " + container);
 		container.addMember(state, new SetlMatrix(result.getV()));
+//		System.err.println("[DEBUG]: svd v done: " + container);
 		return container;
 	}
 

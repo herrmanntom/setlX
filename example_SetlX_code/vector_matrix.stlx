@@ -27,24 +27,24 @@ print("a ^ 3: " + (a ** 3));
 
 print("transpose a: " + (a!));
 
-print("determinante a: " + matrixdeterminante(a));
+print("determinant a: " + matrixdeterminant(a));
 
 print("solve a * x = b for x: " + matrixsolve(a,b));
 
 print("singular value decomposition of a: " + singularValueDecomposition(a));
 
-print("eigen values of a: " + eigenValue(a));
+print("eigen values of a: " + eigenValues(a));
 print("eigen vectors of a: " + eigenVectors(a));
 
 print("a[1]: " + a[1]);
-a[1] := [5,6];
+a[1] := [5.0,6.0];
 print("a[1] := [5,6]; a: " + a);
 
 print("");
 // Vector
 // ------
 
-print("Vector: c: [1,2,3] & d := [5,6,7]");
+print("Vector: c: [1,2,3] & d : [5,6,7]");
 
 print("c * 2: " + (c * 2));
 print("Scalar product:");
@@ -78,7 +78,7 @@ print("matrix from vector: " + matrix(c));
 print("Implicit conversion");
 print("Matrix operations taking vectors as parameters:");
 
-print("e + c: " + (e + c));
+print("f + c: " + (f + c));
 print("f - d: " + (f - d));
 
 print("e * c: " + (e * c));

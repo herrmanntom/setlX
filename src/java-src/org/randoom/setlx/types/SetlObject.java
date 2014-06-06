@@ -259,7 +259,7 @@ public class SetlObject extends Value {
     @Override
     public Value toInteger(final State state) throws SetlException {
         final Value result = overload(state, TO_INTEGER);
-        if (result == Om.OM && result.isInteger() == SetlBoolean.FALSE) {
+        if (result != Om.OM && result.isInteger() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException(
                 "Result of '" + TO_INTEGER + "' is not an integer."
             );
@@ -272,7 +272,7 @@ public class SetlObject extends Value {
     @Override
     public Value toRational(final State state) throws SetlException {
         final Value result = overload(state, TO_RATIONAL);
-        if (result == Om.OM && ! (result instanceof Rational)) {
+        if (result != Om.OM && result.isRational() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException(
                 "Result of '" + TO_RATIONAL + "' is not a reational number."
             );
@@ -298,7 +298,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-        if (subtrahend instanceof Term) {
+        if (subtrahend.getClass() == Term.class) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         }
         return overload(state, DIFFERENCE, subtrahend);
@@ -319,7 +319,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof Term) {
+        if (divisor.getClass() == Term.class) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         }
         return overload(state, INTEGER_DIVISON, divisor);
@@ -334,7 +334,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo instanceof Term) {
+        if (modulo.getClass() == Term.class) {
             return ((Term) modulo).moduloFlipped(state, this);
         }
         return overload(state, MODULO, modulo);
@@ -343,7 +343,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value power(final State state, final Value exponent) throws SetlException {
-        if (exponent instanceof Term) {
+        if (exponent.getClass() == Term.class) {
             return ((Term) exponent).powerFlipped(state, this);
         }
         return overload(state, POWER, exponent);
@@ -352,7 +352,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
-        if (multiplier instanceof Term) {
+        if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         }
         return overload(state, PRODUCT, multiplier);
@@ -360,7 +360,7 @@ public class SetlObject extends Value {
     private final static String PRODUCT = createOverloadVariable(Product.functionalCharacter());
     @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof Term) {
+        if (divisor.getClass() == Term.class) {
             return ((Term) divisor).quotientFlipped(state, this);
         }
         return overload(state, QUOTIENT, divisor);
@@ -375,9 +375,9 @@ public class SetlObject extends Value {
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand instanceof Term) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand instanceof SetlString) {
+        } else if (summand.getClass() == SetlString.class) {
             return ((SetlString) summand).sumFlipped(state, this);
         }
         return overload(state, SUM, summand);
@@ -406,7 +406,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value cartesianProduct(final State state, final Value other) throws SetlException {
-        if (other instanceof Term) {
+        if (other.getClass() == Term.class) {
             return ((Term) other).cartesianProductFlipped(state, this);
         }
         return overload(state, CARTESIAN_PRODUCT, other);
@@ -416,7 +416,7 @@ public class SetlObject extends Value {
     @Override
     public SetlBoolean containsMember(final State state, final Value element) throws SetlException {
         final Value result = overload(state, CONTAINS_MEMBER, element);
-        if ( ! (result instanceof SetlBoolean)) {
+        if (result.isBoolean() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException(
                 "Result of '" + CONTAINS_MEMBER + "' is not a Boolean value."
             );
@@ -636,7 +636,7 @@ public class SetlObject extends Value {
     @Override
     public SetlString str(final State state) throws SetlException {
         final Value result = overload(state, STR);
-        if ( ! (result instanceof SetlString)) {
+        if (result.isString() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException(
                 "Result of '" + STR + "' is not a string."
             );
@@ -668,7 +668,7 @@ public class SetlObject extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SetlObject termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() == 2 && term.lastMember() instanceof Term) {
+        if (term.size() == 2 && term.lastMember().getClass() == Term.class) {
             final SetlHashMap<Value> members         = SetlHashMap.valueToSetlHashMap(state, term.firstMember());
             final SetlClass          classDefinition = SetlClass.termToValue(state, (Term) term.lastMember());
             return createNew(members, classDefinition);
@@ -682,7 +682,7 @@ public class SetlObject extends Value {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof SetlObject) {
+        } else if (v.getClass() == SetlObject.class) {
             final SetlObject other = (SetlObject) v;
             final int cmp = members.compareTo(other.members);
             if (cmp != 0) {
@@ -696,14 +696,14 @@ public class SetlObject extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 1100;
+        return 1500;
     }
 
     @Override
     public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
-        } else if (v instanceof SetlObject) {
+        } else if (v.getClass() == SetlObject.class) {
             final SetlObject other = (SetlObject) v;
             if (members.equalTo(other.members)) {
                 return classDefinition.equalTo(other.classDefinition);
@@ -728,7 +728,7 @@ public class SetlObject extends Value {
     public final SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
         if (getObjectMemberUnClonedUnSafe(state, IS_EQUAL_TO) != Om.OM) {
             final Value result = overload(state, IS_EQUAL_TO, other);
-            if ( ! (result instanceof SetlBoolean)) {
+            if (result.isBoolean() == SetlBoolean.FALSE) {
                 throw new IncompatibleTypeException(
                     "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
                 );
@@ -737,11 +737,11 @@ public class SetlObject extends Value {
             }
         }
 
-        if (! (other instanceof SetlObject)) {
+        if (other.isObject() == SetlBoolean.FALSE) {
             return SetlBoolean.FALSE;
         } else {
             throw new UndefinedOperationException(
-                "Member '" + IS_EQUAL_TO + "' is undefined in '" + this + "'."
+                "Member '" + IS_EQUAL_TO + "' is undefined in '" + this.toString(state) + "'."
             );
         }
     }
@@ -752,7 +752,7 @@ public class SetlObject extends Value {
     @Override
     public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
         final Value result = overload(state, IS_LESS_THAN, other);
-        if ( ! (result instanceof SetlBoolean)) {
+        if (result.isBoolean() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException(
                 "Result of '" + IS_LESS_THAN + "' is not a Boolean value."
             );
@@ -773,7 +773,7 @@ public class SetlObject extends Value {
 
         for (final Map.Entry<String, Value> entry : members.entrySet()) {
             final Value val = entry.getValue();
-            if ( ! restrictToFunctions || val instanceof Procedure) {
+            if ( ! restrictToFunctions || val.isProcedure() == SetlBoolean.TRUE) {
                 result.put(entry.getKey(), val);
             }
         }

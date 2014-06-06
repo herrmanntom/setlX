@@ -30,7 +30,7 @@ public class PD_nextProbablePrime extends PreDefinedProcedure {
             throw new IncompatibleTypeException("Argument '" + integer + "' is not an integer.");
         }
 
-        return ((Rational) integer).nextProbablePrime();
+        return ((Rational) integer).nextProbablePrime(state);
     }
 }
 

@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.JVMException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
-import org.randoom.setlx.types.NumberValue;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Value;
@@ -37,7 +37,7 @@ public class MathFunction extends PreDefinedProcedure {
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         final Value arg = args.get(0);
-        if (arg instanceof NumberValue) {
+        if (arg.isNumber() == SetlBoolean.TRUE) {
             try {
                 final double r = (Double) function.invoke(null, arg.toJDoubleValue(state));
                 return SetlDouble.valueOf(r);
@@ -55,7 +55,7 @@ public class MathFunction extends PreDefinedProcedure {
                     "Please report it including executed source example."
                 );
             }
-        } else if (arg instanceof SetlObject) {
+        } else if (arg.getClass() == SetlObject.class) {
             return ((SetlObject) arg).overloadMathFunction(state, getName());
         }
 

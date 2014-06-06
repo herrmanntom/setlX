@@ -16,14 +16,13 @@ import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedure;
 import org.randoom.setlx.types.Closure;
 import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaProcedure;
 import org.randoom.setlx.types.Procedure;
 import org.randoom.setlx.types.RangeDummy;
-import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlObject;
-import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -49,7 +48,7 @@ public class TermConverter {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static Value valueTermToValue(final State state, final Value value) throws TermConversionException {
-        if (value instanceof Term) {
+        if (value.getClass() == Term.class) {
             final Term   term = (Term) value;
             final String fc   = term.getFunctionalCharacter();
             if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
@@ -88,7 +87,7 @@ public class TermConverter {
      * @return               Resulting CodeFragment.
      */
     public static CodeFragment valueToCodeFragment(final State state, final Value value, final boolean restrictToExpr) {
-        if (value instanceof Term) {
+        if (value.getClass() == Term.class) {
             final Term   term = (Term) value;
             final String fc   = term.getFunctionalCharacter();
             try {
@@ -168,9 +167,9 @@ public class TermConverter {
                         return new ValueExpr(specialValue);
                     } else if (specialValue instanceof Procedure) {
                         return new ProcedureConstructor((Procedure) specialValue);
-                    } else if (specialValue instanceof SetlClass) {
+                    } else if (specialValue.isClass() == SetlBoolean.TRUE) {
                         return new ValueExpr(specialValue);
-                    } else if (specialValue instanceof SetlObject) {
+                    } else if (specialValue.isObject() == SetlBoolean.TRUE) {
                         return new ValueExpr(specialValue);
                     }
                 }
@@ -186,7 +185,7 @@ public class TermConverter {
                     return VariableIgnore.VI;
                 } else if (value == RangeDummy.RD) {
                     return CollectionAccessRangeDummy.CARD;
-                } else if (value instanceof SetlList || value instanceof SetlSet) {
+                } else if (value.isList() == SetlBoolean.TRUE || value.isSet() == SetlBoolean.TRUE) {
                     return SetListConstructor.valueToExpr(state, value);
                 } else {
                     // not a special value

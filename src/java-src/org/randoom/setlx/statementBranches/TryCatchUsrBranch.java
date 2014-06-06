@@ -105,7 +105,7 @@ public class TryCatchUsrBranch extends TryCatchAbstractBranch {
      * @throws TermConversionException Thrown in case of a malformed term.
      */
     public static TryCatchUsrBranch termToBranch(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember() instanceof Term)) {
+        if (term.size() != 2 || term.firstMember().getClass() != Term.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Variable var   = Variable.termToExpr(state, (Term) term.firstMember());

@@ -152,7 +152,7 @@ public class MemberAccess extends AssignableExpression {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static MemberAccess termToExpr(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.lastMember() instanceof Term)) {
+        if (term.size() != 2 || term.lastMember().getClass() != Term.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Expr     lhs    = TermConverter.valueToExpr(state, term.firstMember());

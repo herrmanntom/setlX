@@ -167,15 +167,15 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static ParameterDef valueToParameterDef(final State state, final Value value) throws TermConversionException {
-        if ( ! (value instanceof Term)) {
+        if (value.getClass() != Term.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
         final Term   term = (Term) value;
         final String fc   = term.getFunctionalCharacter();
-        if (fc.equals(FUNCTIONAL_CHARACTER) && term.size() == 1 && term.firstMember() instanceof Term) {
+        if (fc.equals(FUNCTIONAL_CHARACTER) && term.size() == 1 && term.firstMember().getClass() == Term.class) {
             final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
             return new ParameterDef(var, ParameterType.READ_ONLY);
-        } else if (fc.equals(FUNCTIONAL_CHARACTER_RW) && term.size() == 1 && term.firstMember() instanceof Term) {
+        } else if (fc.equals(FUNCTIONAL_CHARACTER_RW) && term.size() == 1 && term.firstMember().getClass() == Term.class) {
             final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
             return new ParameterDef(var, ParameterType.READ_WRITE);
         } else {
@@ -200,7 +200,7 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
     public final boolean equals(final Object o) {
         if (this == o) {
             return true;
-        } else if (o instanceof ParameterDef) {
+        } else if (o.getClass() == ParameterDef.class) {
             return equalTo((ParameterDef) o);
         }
         return false;

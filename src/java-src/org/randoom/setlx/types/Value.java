@@ -10,6 +10,7 @@ import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -306,7 +307,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-        if (subtrahend instanceof Term) {
+        if (subtrahend.getClass() == Term.class) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -345,7 +346,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof Term) {
+        if (divisor.getClass() == Term.class) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -388,7 +389,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo instanceof Term) {
+        if (modulo.getClass() == Term.class) {
             return ((Term) modulo).moduloFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -409,7 +410,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value power(final State state, final Value exponent) throws SetlException {
-        if (exponent instanceof Term) {
+        if (exponent.getClass() == Term.class) {
             return ((Term) exponent).powerFlipped(state, this);
         }
         throw new IncompatibleTypeException(
@@ -426,7 +427,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value product(final State state, final Value multiplier) throws SetlException {
-        if (multiplier instanceof Term) {
+        if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -447,7 +448,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value quotient(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof Term) {
+        if (divisor.getClass() == Term.class) {
             return ((Term) divisor).quotientFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -486,9 +487,9 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand instanceof Term) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand instanceof SetlString && this != Om.OM) {
+        } else if (this != Om.OM && summand.getClass() == SetlString.class) {
             return ((SetlString) summand).sumFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -534,7 +535,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value cartesianProduct(final State state, final Value other) throws SetlException {
-        if (other instanceof Term) {
+        if (other.getClass() == Term.class) {
             return ((Term) other).cartesianProductFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -840,12 +841,28 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     /* function call */
 
+    /**
+     * Implementation of the function call.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param args           Arguments of the function call.
+     * @return               Return value of the call.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value call(final State state, final List<Expr> args) throws SetlException {
-        String param = args.toString();
-        param = param.substring(1, param.length() - 1);
-        throw new IncompatibleTypeException(
-            "Can not perform call with arguments '" + param + "' on this operand-type; '" + this.toString(state) + "' is not a procedure."
-        );
+        final StringBuilder error = new StringBuilder();
+        error.append("Can not perform call with arguments '");
+        final Iterator<Expr> argIter = args.iterator();
+        while (argIter.hasNext()) {
+            argIter.next().appendString(state, error, 0);
+            if (argIter.hasNext()) {
+                error.append(", ");
+            }
+        }
+        error.append("' on this operand-type; '");
+        this.appendString(state, error, 0);
+        error.append("' is not a procedure.");
+        throw new IncompatibleTypeException(error.toString());
     }
 
     /* string and char operations */
@@ -952,8 +969,8 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * following (mostly arbitrary) order is established and used in compareTo():
      *
      * SetlError < Om < SetlBoolean < Rational & SetlDouble
-     * < SetlString < SetlSet < SetlList < Term < ProcedureDefinition
-     * < SetlObject < SetlClass < Top
+     * < SetlString < SetlSet < SetlList < Term < LambdaProcedure < Procedure
+     * < Closure < CachedProcedure < PreDefinedProcedure < SetlObject < SetlClass < Top
      *
      * This ranking is necessary to allow sets and lists of different types.
      *
@@ -972,9 +989,6 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
 
     @Override
     public final boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
         return this.equalTo(o);
     }
 

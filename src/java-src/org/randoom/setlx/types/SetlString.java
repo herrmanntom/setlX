@@ -101,7 +101,7 @@ public class SetlString extends IndexedCollectionValue {
     public static SetlString parseLiteral(final String s) {
         final SetlString result = new SetlString();
         // parse escape sequences (only '' as escaped ' is parsed in literals)
-        final int           length    = s.length();
+        final int        length = s.length();
         for (int i = 1; i < length - 1; ) {
             final char c = s.charAt(i);                          // current char
             final char n = (i+1 < length)? s.charAt(i+1) : '\0'; // next char
@@ -134,9 +134,9 @@ public class SetlString extends IndexedCollectionValue {
      * @param c Character to store.
      */
     public SetlString(final char c){
-        this.content    = new StringBuilder();
+        this.content  = new StringBuilder();
         this.content.append(c);
-        this.isCloned   = false; // new strings are not a clone
+        this.isCloned = false; // new strings are not a clone
     }
 
     /**
@@ -145,9 +145,9 @@ public class SetlString extends IndexedCollectionValue {
      * @param string String to store.
      */
     public SetlString(final String string){
-        this.content    = new StringBuilder();
+        this.content  = new StringBuilder();
         this.content.append(string);
-        this.isCloned   = false; // new strings are not a clone
+        this.isCloned = false; // new strings are not a clone
     }
 
     /**
@@ -319,7 +319,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
-        if (multiplier instanceof Rational) {
+        if (multiplier.isRational() == SetlBoolean.TRUE) {
             final int m = multiplier.jIntValue();
             if (m < 0) {
                 throw new IncompatibleTypeException(
@@ -331,7 +331,7 @@ public class SetlString extends IndexedCollectionValue {
                 sb.append(content);
             }
             return newSetlStringFromSB(sb);
-        } else if (multiplier instanceof Term) {
+        } else if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
@@ -342,7 +342,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value productAssign(final State state, final Value multiplier) throws SetlException {
-        if (multiplier instanceof Rational) {
+        if (multiplier.isRational() == SetlBoolean.TRUE) {
             separateFromOriginal();
             final int m = multiplier.jIntValue();
             if (m < 0) {
@@ -358,7 +358,7 @@ public class SetlString extends IndexedCollectionValue {
                 content.append(current);
             }
             return this;
-        } else if (multiplier instanceof Term) {
+        } else if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
@@ -369,7 +369,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
-        if (summand instanceof Term) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand == Om.OM) {
             throw new IncompatibleTypeException(
@@ -385,7 +385,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value sumAssign(final State state, final Value summand) throws IncompatibleTypeException {
-        if (summand instanceof Term) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand == Om.OM) {
             throw new IncompatibleTypeException(
@@ -729,16 +729,16 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public SetlList split(final State state, final Value pattern) throws IncompatibleTypeException, SyntaxErrorException {
-        if ( ! (pattern instanceof SetlString)) {
+        if (pattern.isString() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException(
-                "Pattern '" + pattern  + "' is not a string."
+                "Pattern '" + pattern.toString(state)  + "' is not a string."
             );
         }
-        final String p = ((SetlString) pattern).getUnquotedString(state);
+        final String p = pattern.getUnquotedString(state);
 
         try {
             // parse pattern
-            final Pattern pttrn = Pattern.compile(p);
+            final Pattern      pttrn   = Pattern.compile(p);
 
             final List<String> strings = Arrays.asList(pttrn.split(content, -1));
 
@@ -789,8 +789,8 @@ public class SetlString extends IndexedCollectionValue {
      */
     public String getEscapedString() {
         // parse escape sequences
-        final int           length  = content.length();
-        final StringBuilder sb      = new StringBuilder(length + 8);
+        final int           length = content.length();
+        final StringBuilder sb     = new StringBuilder(length + 8);
         for (int i = 0; i < length; ++i) {
             final char c = content.charAt(i);  // current char
             if (c == '\\') {
@@ -823,8 +823,8 @@ public class SetlString extends IndexedCollectionValue {
      */
     public String getEscapedLiteral() {
         // parse escape sequences
-        final int           length  = content.length();
-        final StringBuilder sb      = new StringBuilder(length + 8);
+        final int           length = content.length();
+        final StringBuilder sb     = new StringBuilder(length + 8);
         for (int i = 0; i < length; ++i) {
             final char c = content.charAt(i);  // current char
             if (c == '\'') {
@@ -885,7 +885,7 @@ public class SetlString extends IndexedCollectionValue {
     public MatchResult matchesTerm(final State state, final Value other) {
         if (other == IgnoreDummy.ID || this.equals(other)) {
             return new MatchResult(true);
-        } else if (other instanceof Term ) {
+        } else if (other.getClass() == Term.class) {
             final Term o = (Term) other;
             try {
                 if (o.functionalCharacter(state).getUnquotedString(state).equals(StringConstructor.getFunctionalCharacter())
@@ -906,7 +906,7 @@ public class SetlString extends IndexedCollectionValue {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof SetlString) {
+        } else if (v.getClass() == SetlString.class) {
             final StringBuilder other = ((SetlString) v).content;
             if (content == other) {
                 return 0; // clone
@@ -926,7 +926,7 @@ public class SetlString extends IndexedCollectionValue {
     public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
-        } else if (v instanceof SetlString) {
+        } else if (v.getClass() == SetlString.class) {
             final StringBuilder other = ((SetlString) v).content;
             if (content == other) {
                 return true; // clone

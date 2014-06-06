@@ -213,7 +213,7 @@ public class SetlIterator extends CodeFragment {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SetlIterator valueToIterator(final State state, final Value value) throws TermConversionException {
-        if ( ! (value instanceof Term)) {
+        if (value.getClass() != Term.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {

@@ -41,7 +41,7 @@ public class Top extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 1300;
+        return 1700;
     }
 
     @Override

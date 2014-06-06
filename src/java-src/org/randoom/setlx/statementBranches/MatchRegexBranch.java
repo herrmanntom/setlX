@@ -102,7 +102,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     @Override
     public MatchResult matches(final State state, final Value term) throws SetlException {
-        if (term instanceof SetlString) {
+        if (term.getClass() == SetlString.class) {
             final ScanResult result = scannes(state, (SetlString) term);
             if (result.isMatch() && ((SetlString) term).size() == result.getEndOffset()) {
                 return result;
@@ -128,7 +128,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
             pttrn = runtimePattern;
         } else {
             final Value patternStr = pattern.eval(state);
-            if ( ! (patternStr instanceof SetlString)) {
+            if (patternStr.getClass() != SetlString.class) {
                 throw new IncompatibleTypeException(
                     "Pattern argument '" + patternStr.toString(state) + "' is not a string."
                 );
@@ -230,7 +230,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     @Override
     public Term toTerm(final State state) {
-        final Term     result   = new Term(FUNCTIONAL_CHARACTER, 4);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 4);
 
         result.addMember(state, pattern.toTerm(state));
 

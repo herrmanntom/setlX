@@ -96,8 +96,8 @@ public class IfThenBranch extends IfThenAbstractBranch {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition   = TermConverter.valueToCondition(state, term.firstMember());
-            final Block     block       = TermConverter.valueToBlock(state, term.lastMember());
+            final Condition condition = TermConverter.valueToCondition(state, term.firstMember());
+            final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
             return new IfThenBranch(condition, block);
         }
     }

@@ -101,7 +101,7 @@ public class SetlClass extends Value {
     public void collectBindings(final SetlHashMap<Value> result, final boolean restrictToFunctions) {
         for (final Map.Entry<String, Value> entry : staticDefs.entrySet()) {
             final Value val = entry.getValue();
-            if ( ! restrictToFunctions || val instanceof Procedure) {
+            if ( ! restrictToFunctions || val.isProcedure() == SetlBoolean.TRUE) {
                 result.put(entry.getKey(), val);
             }
         }
@@ -190,9 +190,9 @@ public class SetlClass extends Value {
         }
 
         // save old scope
-        final VariableScope oldScope    = state.getScope();
+        final VariableScope oldScope = state.getScope();
         // create new scope used for the member definitions
-        final VariableScope newScope    = oldScope.createFunctionsOnlyLinkedScope().createLinkedScope();
+        final VariableScope newScope = oldScope.createFunctionsOnlyLinkedScope().createLinkedScope();
         state.setScope(newScope);
 
         // put arguments into inner scope
@@ -206,12 +206,12 @@ public class SetlClass extends Value {
             }
         }
 
-        final SetlHashMap<Value> members     = new SetlHashMap<Value>();
-        final SetlObject         newObject   = SetlObject.createNew(members, this);
+        final SetlHashMap<Value> members   = new SetlHashMap<Value>();
+        final SetlObject         newObject = SetlObject.createNew(members, this);
 
         newScope.linkToThisObject(newObject);
 
-        final WriteBackAgent     wba         = new WriteBackAgent(parameters.size());
+        final WriteBackAgent     wba       = new WriteBackAgent(parameters.size());
 
         try {
 
@@ -416,19 +416,19 @@ public class SetlClass extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SetlClass termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
+        if (term.size() != 3 || term.firstMember().getClass() != SetlList.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final SetlList            paramList   = (SetlList) term.firstMember();
-                final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+                final SetlList           paramList  = (SetlList) term.firstMember();
+                final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
                 for (final Value v : paramList) {
                     parameters.add(ParameterDef.valueToParameterDef(state, v));
                 }
-                final Block               init        = TermConverter.valueToBlock(state, term.getMember(2));
-                      Block               staticBlock = null;
+                final Block init        = TermConverter.valueToBlock(state, term.getMember(2));
+                      Block staticBlock = null;
                 if (! term.lastMember().equals(SetlString.NIL)) {
-                    staticBlock    = TermConverter.valueToBlock(state, term.lastMember());
+                    staticBlock = TermConverter.valueToBlock(state, term.lastMember());
                 }
                 return new SetlClass(parameters, init, staticBlock);
             } catch (final SetlException se) {
@@ -443,7 +443,7 @@ public class SetlClass extends Value {
     public int compareTo(final Value v){
         if (this == v) {
             return 0;
-        } else if (v instanceof SetlClass) {
+        } else if (v.getClass() == SetlClass.class) {
             final SetlClass other = (SetlClass) v;
             int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
             if (cmp != 0) {
@@ -479,14 +479,14 @@ public class SetlClass extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 1200;
+        return 1600;
     }
 
     @Override
     public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
-        } else if (v instanceof SetlClass) {
+        } else if (v.getClass() == SetlClass.class) {
             final SetlClass other = (SetlClass) v;
             if (parameters.size() == other.parameters.size()) {
                 for (int index = 0; index < parameters.size(); ++index) {

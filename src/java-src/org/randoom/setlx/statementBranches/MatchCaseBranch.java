@@ -174,7 +174,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static MatchCaseBranch termToBranch(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 3 || ! (term.firstMember() instanceof SetlList)) {
+        if (term.size() != 3 || term.firstMember().getClass() != SetlList.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {

@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
@@ -238,7 +237,7 @@ public class Procedure extends Value {
             for (final Map.Entry<String, Value> entry : closure.entrySet()) {
                 final Value   value        = entry.getValue();
                 VariableScope scopeToCheck = oldScope;
-                if (value instanceof Procedure) {
+                if (value.isProcedure() == SetlBoolean.TRUE) {
                     scopeToCheck = null; // procedures may be located beyond oldScope
                 }
                 new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, value, scopeToCheck, true, FUNCTIONAL_CHARACTER);
@@ -373,7 +372,7 @@ public class Procedure extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static Procedure termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
+        if (term.size() != 2 || term.firstMember().getClass() != SetlList.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList           paramList  = (SetlList) term.firstMember();
@@ -393,7 +392,7 @@ public class Procedure extends Value {
         object = null;
         if (this == v) {
             return 0;
-        } else if (v instanceof Procedure) {
+        } else if (v.getClass() == Procedure.class) {
             final Procedure other = (Procedure) v;
             int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
             if (cmp != 0) {
@@ -414,7 +413,7 @@ public class Procedure extends Value {
     @Override
     public int compareToOrdering() {
         object = null;
-        return 1000;
+        return 1100;
     }
 
     @Override
@@ -422,7 +421,7 @@ public class Procedure extends Value {
         object = null;
         if (this == v) {
             return true;
-        } else if (v instanceof Procedure && ! (v instanceof PreDefinedProcedure)) {
+        } else if (v.getClass() == Procedure.class) {
             final Procedure other = (Procedure) v;
             if (parameters.size() == other.parameters.size()) {
                 for (int index = 0; index < parameters.size(); ++index) {

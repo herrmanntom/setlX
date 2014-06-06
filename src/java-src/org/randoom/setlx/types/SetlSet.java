@@ -113,12 +113,12 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
-        if (other instanceof SetlSet) {
+        if (other.getClass()== SetlSet.class) {
             final SetlSet otr = (SetlSet) other;
             return SetlBoolean.valueOf((otr.set.containsAll(set)) && this.isEqualTo(state, otr) == SetlBoolean.FALSE);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " < " + other + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " < " + other.toString(state) + "' is not a set."
             );
         }
     }
@@ -129,13 +129,13 @@ public class SetlSet extends CollectionValue {
     public SetlBoolean isMap() {
         final TreeSet<Value> temp = new TreeSet<Value>();
         for (final Value v: set) {
-            if (v instanceof SetlList && ((SetlList) v).size() == 2) {
-                if ( ! temp.add(((SetlList) v).firstMember())) {
-                    return SetlBoolean.FALSE;
+            if (v.getClass() == SetlList.class) {
+                final SetlList list = (SetlList) v;
+                if (list.size() == 2 && temp.add(list.firstMember())) {
+                    continue;
                 }
-            } else {
-                return SetlBoolean.FALSE;
             }
+            return SetlBoolean.FALSE;
         }
         return SetlBoolean.TRUE;
     }
@@ -160,31 +160,31 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws IncompatibleTypeException {
-        if (subtrahend instanceof SetlSet) {
+        if (subtrahend.getClass() == SetlSet.class) {
             final SetlSet result = clone();
             result.separateFromOriginal();
             result.set.removeAll(((SetlSet) subtrahend).set);
             return result;
-        } else if (subtrahend instanceof Term) {
+        } else if (subtrahend.getClass() == Term.class) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " - " + subtrahend + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " - " + subtrahend.toString(state) + "' is not a set."
             );
         }
     }
 
     @Override
     public Value differenceAssign(final State state, final Value subtrahend) throws IncompatibleTypeException {
-        if (subtrahend instanceof SetlSet) {
+        if (subtrahend.getClass() == SetlSet.class) {
             separateFromOriginal();
             set.removeAll(((SetlSet) subtrahend).set);
             return this;
-        } else if (subtrahend instanceof Term) {
+        } else if (subtrahend.getClass() == Term.class) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " -= " + subtrahend + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " -= " + subtrahend.toString(state) + "' is not a set."
             );
         }
     }
@@ -196,23 +196,24 @@ public class SetlSet extends CollectionValue {
     //  c   = tmp + (a - b)
     @Override
     public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo instanceof SetlSet) {
+        if (modulo.getClass() == SetlSet.class) {
+            final SetlSet mSet = (SetlSet) modulo;
 
-            final SetlSet mClone = (SetlSet) modulo.clone();
+            final SetlSet mClone = mSet.clone();
             mClone.separateFromOriginal();
             mClone.set.removeAll(this.set);
 
             final SetlSet result = clone();
             result.separateFromOriginal();
-            result.set.removeAll(((SetlSet) modulo).set);
+            result.set.removeAll(mSet.set);
 
             result.set.addAll(mClone.set);
             return result;
-        } else if (modulo instanceof Term) {
+        } else if (modulo.getClass() == Term.class) {
             return ((Term) modulo).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a set."
             );
         }
     }
@@ -225,80 +226,81 @@ public class SetlSet extends CollectionValue {
     //  a  += tmp
     @Override
     public Value moduloAssign(final State state, final Value modulo) throws SetlException {
-        if (modulo instanceof SetlSet) {
+        if (modulo.getClass() == SetlSet.class) {
+            final SetlSet mSet = (SetlSet) modulo;
             separateFromOriginal();
 
-            final SetlSet mClone = (SetlSet) modulo.clone();
+            final SetlSet mClone = mSet.clone();
             mClone.separateFromOriginal();
             mClone.set.removeAll(this.set);
 
-            this.set.removeAll(((SetlSet) modulo).set);
+            this.set.removeAll(mSet.set);
 
             this.set.addAll(mClone.set);
 
             return this;
-        } else if (modulo instanceof Term) {
+        } else if (modulo.getClass() == Term.class) {
             return ((Term) modulo).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " % " + modulo + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a set."
             );
         }
     }
 
     @Override
     public Value power(final State state, final Value exponent) throws SetlException {
-        if (exponent instanceof NumberValue && exponent.equalTo(Rational.TWO)) {
+        if (exponent.isNumber() == SetlBoolean.TRUE && exponent.equalTo(Rational.TWO)) {
             try {
                 return this.cartesianProduct(state, this);
             } catch (final SetlException se) {
-                se.addToTrace("Error in substitute operation \"" + this + " >< " + this +  "\":");
+                se.addToTrace("Error in substitute operation \"" + this.toString(state) + " >< " + this.toString(state) +  "\":");
                 throw se;
             }
-        } else if (exponent instanceof Term) {
+        } else if (exponent.getClass() == Term.class) {
             return ((Term) exponent).powerFlipped(state, this);
         }
         throw new IncompatibleTypeException(
-            "Left-hand-side of '" + this + " ** " + exponent + "' is not a number."
+            "Left-hand-side of '" + this.toString(state) + " ** " + exponent.toString(state) + "' is not a number."
         );
     }
 
     @Override
     public Value product(final State state, final Value multiplier) throws IncompatibleTypeException {
-        if (multiplier instanceof SetlSet) {
+        if (multiplier.getClass() == SetlSet.class) {
             final SetlSet result = clone();
             result.separateFromOriginal();
             result.set.retainAll(((SetlSet) multiplier).set);
             return result;
-        } else if (multiplier instanceof Term) {
+        } else if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a set."
             );
         }
     }
 
     @Override
     public Value productAssign(final State state, final Value multiplier) throws IncompatibleTypeException {
-        if (multiplier instanceof SetlSet) {
+        if (multiplier.getClass() == SetlSet.class) {
             separateFromOriginal();
             set.retainAll(((SetlSet) multiplier).set);
             return this;
-        } else if (multiplier instanceof Term) {
+        } else if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a set."
             );
         }
     }
 
     @Override
     public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
-        if (summand instanceof Term) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand instanceof SetlString) {
+        } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else if(summand instanceof CollectionValue) {
             final SetlSet result = this.clone();
@@ -308,16 +310,16 @@ public class SetlSet extends CollectionValue {
             return result;
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " + " + summand + "' is not a set or string."
+                "Right-hand-side of '" + this.toString(state) + " + " + summand.toString(state) + "' is not a set or string."
             );
         }
     }
 
     @Override
     public Value sumAssign(final State state, final Value summand) throws IncompatibleTypeException {
-        if (summand instanceof Term) {
+        if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand instanceof SetlString) {
+        } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else if(summand instanceof CollectionValue) {
             separateFromOriginal();
@@ -327,7 +329,7 @@ public class SetlSet extends CollectionValue {
             return this;
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " += " + summand + "' is not a set or string."
+                "Right-hand-side of '" + this.toString(state) + " += " + summand.toString(state) + "' is not a set or string."
             );
         }
     }
@@ -344,7 +346,7 @@ public class SetlSet extends CollectionValue {
 
     @Override
     public Value cartesianProduct(final State state, final Value other) throws SetlException {
-        if (other instanceof SetlSet) {
+        if (other.getClass() == SetlSet.class) {
 
             final SetlSet result = new SetlSet();
 
@@ -358,11 +360,11 @@ public class SetlSet extends CollectionValue {
             }
 
             return result;
-        } else if (other instanceof Term) {
+        } else if (other.getClass() == Term.class) {
             return ((Term) other).cartesianProductFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " >< " + other + "' is not a set."
+                "Right-hand-side of '" + this.toString(state) + " >< " + other.toString(state) + "' is not a set."
             );
         }
     }
@@ -371,11 +373,11 @@ public class SetlSet extends CollectionValue {
     public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException(
-                "Range operations are unsupported on '" + this + "'."
+                "Range operations are unsupported on '" + this.toString(state) + "'."
             );
         } else if (args.size() != 1) {
             throw new UndefinedOperationException(
-                "Can not access elements using arguments '" + args + "' on '" + this + "';" +
+                "Can not access elements using arguments '" + args + "' on '" + this.toString(state) + "';" +
                 " Exactly one argument is required."
             );
         }
@@ -386,11 +388,11 @@ public class SetlSet extends CollectionValue {
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             throw new UndefinedOperationException(
-                "Range operations are unsupported on '" + this + "'."
+                "Range operations are unsupported on '" + this.toString(state) + "'."
             );
         } else if (args.size() != 1) {
             throw new UndefinedOperationException(
-                "Can not access elements using arguments '" + args + "' on '" + this + "';" +
+                "Can not access elements using arguments '" + args + "' on '" + this.toString(state) + "';" +
                 " Exactly one argument is required."
             );
         }
@@ -441,11 +443,11 @@ public class SetlSet extends CollectionValue {
 
         final SetlSet result = new SetlSet();
         for (final Value v: subSet) {
-            if (v instanceof SetlList && v.size() == 2) {
+            if (v.getClass() == SetlList.class && v.size() == 2) {
                 result.addMember(state, v.lastMember(state));
             } else {
                 throw new IncompatibleTypeException(
-                    "'" + this + "' is not a map."
+                    "'" + this.toString(state) + "' is not a map."
                 );
             }
         }
@@ -461,11 +463,11 @@ public class SetlSet extends CollectionValue {
     public SetlSet domain(final State state) throws SetlException {
         final TreeSet<Value> result = new TreeSet<Value>();
         for (final Value v: set) {
-            if (v instanceof SetlList && v.size() == 2) {
+            if (v.getClass() == SetlList.class && v.size() == 2) {
                 result.add(v.firstMember(state));
             } else {
                 throw new IncompatibleTypeException(
-                    "'" + this + "' is not a map."
+                    "'" + this.toString(state) + "' is not a map."
                 );
             }
         }
@@ -534,7 +536,7 @@ public class SetlSet extends CollectionValue {
          */
         Value result = Om.OM;
         for (final Value v: subSet) {
-            if (v instanceof SetlList && v.size() == 2) {
+            if (v.getClass() == SetlList.class && v.size() == 2) {
                 if (result == Om.OM) {
                     result = ((SetlList) v).getMemberUnCloned(2);
                 } else {
@@ -544,7 +546,7 @@ public class SetlSet extends CollectionValue {
                 }
             } else {
                 throw new IncompatibleTypeException(
-                    "'" + this + "' is not a map."
+                    "'" + this.toString(state) + "' is not a map."
                 );
             }
         }
@@ -565,28 +567,28 @@ public class SetlSet extends CollectionValue {
             // Neutral element of max() is smallest number available
             return SetlDouble.NEGATIVE_INFINITY;
         }
-	final Value a = firstMember(state);
-	final Value b = lastMember(state);
-	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
-	    final String errMsg = "The set " + this + " is not a set of numbers.";
+        final Value a = firstMember(state);
+        final Value b = lastMember(state);
+        if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
+            final String errMsg = "The set " + this.toString(state) + " is not a set of numbers.";
             throw new IncompatibleTypeException(errMsg);
-	}
+        }
         return b;
     }
 
     @Override
     public Value minimumMember(final State state) throws IncompatibleTypeException {
-	// The minimum is only defined for sets of numbers.
+        // The minimum is only defined for sets of numbers.
         if (size() < 1) {
             // Neutral element of min() is the largest number available.
             return SetlDouble.POSITIVE_INFINITY;
         }
-	final Value a = firstMember(state);
-	final Value b = lastMember(state);
-	if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
-	    final String errMsg = "The set " + this + " is not a set of numbers.";
+        final Value a = firstMember(state);
+        final Value b = lastMember(state);
+        if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
+            final String errMsg = "The set " + this.toString(state) + " is not a set of numbers.";
             throw new IncompatibleTypeException(errMsg);
-	}
+        }
         return a;
     }
 
@@ -629,11 +631,11 @@ public class SetlSet extends CollectionValue {
     public SetlSet range(final State state) throws SetlException {
         final SetlSet result = new SetlSet();
         for (final Value v: set) {
-            if (v instanceof SetlList && v.size() == 2) {
+            if (v.getClass() == SetlList.class && v.size() == 2) {
                 result.addMember(state, v.lastMember(state));
             } else {
                 throw new IncompatibleTypeException(
-                    "'" + this + "' is not a map."
+                    "'" + this.toString(state) + "' is not a map."
                 );
             }
         }
@@ -736,7 +738,7 @@ public class SetlSet extends CollectionValue {
     @Override
     public void canonical(final State state, final StringBuilder sb) {
         sb.append("{");
-        final Iterator<Value> iter  = iterator(); // also calls sort()
+        final Iterator<Value> iter = iterator();
         while (iter.hasNext()) {
             iter.next().canonical(state, sb);
             if (iter.hasNext()) {
@@ -752,22 +754,22 @@ public class SetlSet extends CollectionValue {
     public MatchResult matchesTerm(final State state, final Value otr) throws SetlException {
         if (otr == IgnoreDummy.ID) {
             return new MatchResult(true);
-        } else if ( ! (otr instanceof SetlSet)) {
+        } else if (otr.getClass() != SetlSet.class) {
             return new MatchResult(false);
-        } else if (set.size() == 1 && set.first() instanceof Term) {
+        } else if (set.size() == 1 && set.first().getClass() == Term.class) {
             final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) set.first(), (SetlSet) otr);
             if (result.isMatch()) {
                 return result;
             }
         }
 
-        if ( this.size() != otr.size()) {
+        if (this.size() != otr.size()) {
             return new MatchResult(false);
         }
 
         // first match all atomic values
-        final TreeSet<Value> thisCopy   = new TreeSet<Value>(set);
-        final TreeSet<Value> otherCopy  = new TreeSet<Value>(((SetlSet) otr).set);
+        final TreeSet<Value> thisCopy  = new TreeSet<Value>(set);
+        final TreeSet<Value> otherCopy = new TreeSet<Value>(((SetlSet) otr).set);
 
         for (final Value v : set) {
             // remove value from both sets, if
@@ -793,9 +795,9 @@ public class SetlSet extends CollectionValue {
         }
 
         // copy remaining members into a new list
-        final SetlList  thisList            = new SetlList(new ArrayList<Value>(thisCopy));
+        final SetlList  thisList         = new SetlList(new ArrayList<Value>(thisCopy));
         // permute remaining members from `other'
-              Value     otherPermutation    = new SetlList(new ArrayList<Value>(otherCopy));
+              Value     otherPermutation = new SetlList(new ArrayList<Value>(otherCopy));
 
         // both set match, when (at least) one permutation matches
         MatchResult match = null;
@@ -831,7 +833,7 @@ public class SetlSet extends CollectionValue {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof SetlSet) {
+        } else if (v.getClass() == SetlSet.class) {
             final TreeSet<Value> other = ((SetlSet) v).set;
             if (set == other) {
                 return 0; // clone
@@ -866,7 +868,7 @@ public class SetlSet extends CollectionValue {
     public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
-        } else if (v instanceof SetlSet) {
+        } else if (v.getClass() == SetlSet.class) {
             final TreeSet<Value> other = ((SetlSet) v).set;
             if (set == other) {
                 return true; // clone

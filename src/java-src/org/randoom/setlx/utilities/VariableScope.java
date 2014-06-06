@@ -2,9 +2,9 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.Procedure;
 import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.SetlString;
@@ -338,7 +338,7 @@ public class VariableScope {
                     } else {
                         final Value member = object.value.getObjectMemberUnCloned(state, variable);
                         if (member != Om.OM) {
-                            if (object.scopeDepth >= restrictedToFunctionsBeneath || object.value instanceof Procedure) {
+                            if (object.scopeDepth >= restrictedToFunctionsBeneath || object.value.isProcedure() == SetlBoolean.TRUE) {
                                 return new ScopeBinding(object.scopeDepth, object.scopeGeneration, member);
                             } else {
                                 return ACCESS_DENIED_BINDING;
@@ -361,7 +361,7 @@ public class VariableScope {
             }
         }
         if (binding != null) {
-            if (binding.scopeDepth >= restrictedToFunctionsBeneath || binding.value instanceof Procedure) {
+            if (binding.scopeDepth >= restrictedToFunctionsBeneath || binding.value.isProcedure() == SetlBoolean.TRUE) {
                 return binding;
             } else {
                 return ACCESS_DENIED_BINDING;

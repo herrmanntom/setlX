@@ -56,7 +56,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
             }
             // this should never be reached
             throw new NumberToLargeException(
-                "Collection index '" + needle + "' into '" + this + "' is out of bounds."
+                "Collection index '" + needle + "' into '" + this.toString(state) + "' is out of bounds."
             );
         }
     }
@@ -90,7 +90,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         for (final Value v : this) {
             if (v.equalTo(element)) {
                 return SetlBoolean.TRUE;
-            } else if (v instanceof CollectionValue && !(v instanceof SetlString)) {
+            } else if (v instanceof CollectionValue && v.getClass() != SetlString.class) {
                 final CollectionValue innerValue = (CollectionValue) v;
                 if (innerValue.containsMemberRecursive(element) == SetlBoolean.TRUE) {
                     return SetlBoolean.TRUE;

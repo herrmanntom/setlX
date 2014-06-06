@@ -116,7 +116,7 @@ public class LambdaProcedure extends Procedure {
      * @throws TermConversionException Thrown in case of a malformed term.
      */
     public static LambdaProcedure termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
+        if (term.size() != 2 || term.firstMember().getClass() != SetlList.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList           paramList  = (SetlList) term.firstMember();
@@ -127,6 +127,64 @@ public class LambdaProcedure extends Procedure {
             final Expr               expr       = TermConverter.valueToExpr(state, term.lastMember());
             return new LambdaProcedure(state, parameters, expr);
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Value v) {
+        object = null;
+        if (this == v) {
+            return 0;
+        } else if (v.getClass() == LambdaProcedure.class) {
+            final LambdaProcedure other = (LambdaProcedure) v;
+            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
+            if (cmp != 0) {
+                return cmp;
+            }
+            for (int index = 0; index < parameters.size(); ++index) {
+                cmp = parameters.get(index).compareTo(other.parameters.get(index));
+                if (cmp != 0) {
+                    return cmp;
+                }
+            }
+            if (expr == other.expr) {
+                return 0;
+            }
+            // TODO do without toString
+            return expr.toString().compareTo(other.expr.toString());
+        } else {
+            return this.compareToOrdering() - v.compareToOrdering();
+        }
+    }
+
+    @Override
+    public int compareToOrdering() {
+        object = null;
+        return 1000;
+    }
+
+    @Override
+    public boolean equalTo(final Object v) {
+        object = null;
+        if (this == v) {
+            return true;
+        } else if (v.getClass() == LambdaProcedure.class) {
+            final LambdaProcedure other = (LambdaProcedure) v;
+            if (parameters.size() == other.parameters.size()) {
+                for (int index = 0; index < parameters.size(); ++index) {
+                    if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
+                        return false;
+                    }
+                }
+                if (expr == other.expr) {
+                    return true;
+                }
+                // TODO do without toString
+                return expr.toString().equals(other.expr.toString());
+            }
+        }
+        return false;
     }
 
     private final static int initHashCode = LambdaProcedure.class.hashCode();

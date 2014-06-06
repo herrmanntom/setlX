@@ -48,19 +48,19 @@ public class SetlDouble extends NumberValue {
     /**
      * Double value of positive infinity.
      */
-    public  final static SetlDouble    POSITIVE_INFINITY      = SetlDouble.valueOfNoEx(Double.POSITIVE_INFINITY);
+    public  final static SetlDouble POSITIVE_INFINITY = SetlDouble.valueOfNoEx(Double.POSITIVE_INFINITY);
     /**
      * Double value of negative infinity.
      */
-    public  final static SetlDouble    NEGATIVE_INFINITY      = SetlDouble.valueOfNoEx(Double.NEGATIVE_INFINITY);
+    public  final static SetlDouble NEGATIVE_INFINITY = SetlDouble.valueOfNoEx(Double.NEGATIVE_INFINITY);
     /**
      * Double value of Euler's number, i.e. lim_n->oo (1+1/n)^n
      */
-    public  final static SetlDouble    E                      = SetlDouble.valueOfNoEx(Math.E);
+    public  final static SetlDouble E                 = SetlDouble.valueOfNoEx(Math.E);
     /**
      * Double value of pi, i.e. the ratio of the circumference of a circle to its diameter.
      */
-    public  final static SetlDouble    PI                     = SetlDouble.valueOfNoEx(Math.PI);
+    public  final static SetlDouble PI                = SetlDouble.valueOfNoEx(Math.PI);
 
     private SetlDouble(final Double d) {
         this.doubleValue = d;
@@ -146,11 +146,9 @@ public class SetlDouble extends NumberValue {
     @Override
     public Rational toInteger(final State state) throws UndefinedOperationException {
         if (this.doubleValue >= 0.0) {
-            final SetlDouble result = new SetlDouble(Math.floor(this.doubleValue));
-            return result.toRational(state);
+            return floor(state);
         } else {
-            final SetlDouble result = new SetlDouble(Math.ceil(this.doubleValue));
-            return result.toRational(state);
+            return ceil(state);
         }
     }
 
@@ -269,18 +267,18 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-        if (subtrahend instanceof SetlDouble) {
+        if (subtrahend.getClass() == SetlDouble.class) {
             final SetlDouble rhs = (SetlDouble) subtrahend;
             return SetlDouble.valueOf(this.doubleValue - rhs.jDoubleValue());
         }
-        if (subtrahend instanceof Rational) {
+        if (subtrahend.getClass() == Rational.class) {
             final Rational rhs = (Rational) subtrahend;
             return SetlDouble.valueOf(this.doubleValue - rhs.toDouble().doubleValue);
-         } else if (subtrahend instanceof Term) {
+         } else if (subtrahend.getClass() == Term.class) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " - " + subtrahend + "' is not a number."
+                "Right-hand-side of '" + this.toString(state) + " - " + subtrahend.toString(state) + "' is not a number."
             );
         }
     }
@@ -309,19 +307,19 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof SetlDouble) {
+        if (divisor.getClass() == SetlDouble.class) {
             final SetlDouble rhs = (SetlDouble) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.jDoubleValue()).floor(state);
         }
-        if (divisor instanceof Rational) {
+        if (divisor.getClass() ==  Rational.class) {
             final Rational rhs = (Rational) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.toDouble().doubleValue).floor(state);
         }
-        if (divisor instanceof Term) {
+        if (divisor.getClass() == Term.class) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " \\ " + divisor + "' is not a number."
+                "Right-hand-side of '" + this.toString(state) + " \\ " + divisor.toString(state) + "' is not a number."
             );
         }
     }
@@ -349,36 +347,36 @@ public class SetlDouble extends NumberValue {
     public Value product(final State state, final Value multiplier)
         throws IncompatibleTypeException, UndefinedOperationException, NumberToLargeException
     {
-        if (multiplier instanceof SetlDouble) {
+        if (multiplier.getClass() == SetlDouble.class) {
             final SetlDouble rhs = (SetlDouble) multiplier;
             return SetlDouble.valueOf(this.doubleValue * rhs.jDoubleValue());
         }
-        if (multiplier instanceof Rational) {
+        if (multiplier.getClass() == Rational.class) {
             final Rational rhs = (Rational) multiplier;
             return SetlDouble.valueOf(this.doubleValue * rhs.toDouble().doubleValue);
-        } else if (multiplier instanceof Term) {
+        } else if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number."
+                "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a number."
             );
         }
     }
 
     @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof SetlDouble) {
+        if (divisor.getClass() == SetlDouble.class) {
             final SetlDouble rhs = (SetlDouble) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.jDoubleValue());
         }
-        if (divisor instanceof Rational) {
+        if (divisor.getClass() ==  Rational.class) {
             final Rational rhs = (Rational) divisor;
             return SetlDouble.valueOf(this.doubleValue / rhs.toDouble().doubleValue);
-        } else if (divisor instanceof Term) {
+        } else if (divisor.getClass() == Term.class) {
             return ((Term) divisor).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " / " + divisor + "' is not a number."
+                "Right-hand-side of '" + this.toString(state) + " / " + divisor.toString(state) + "' is not a number."
             );
         }
     }
@@ -400,26 +398,25 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Rational round(final State state) throws UndefinedOperationException {
-        final SetlDouble result = SetlDouble.valueOf(Math.floor(this.doubleValue + 0.5));
-        return result.toRational(state);
+        return SetlDouble.valueOf(Math.floor(this.doubleValue + 0.5)).toRational(state);
     }
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand instanceof SetlDouble) {
+        if (summand.getClass() == SetlDouble.class) {
             final SetlDouble rhs = (SetlDouble) summand;
             return SetlDouble.valueOf(this.doubleValue + rhs.jDoubleValue());
         }
-        if (summand instanceof Rational) {
+        if (summand.getClass() == Rational.class) {
             final Rational rhs = (Rational) summand;
             return SetlDouble.valueOf(this.doubleValue + rhs.toDouble().doubleValue);
-        } else if (summand instanceof Term) {
+        } else if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand instanceof SetlString) {
+        } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " + " + summand + "' is not a number or string."
+                "Right-hand-side of '" + this.toString(state) + " + " + summand.toString(state) + "' is not a number or string."
             );
         }
     }
@@ -486,11 +483,11 @@ public class SetlDouble extends NumberValue {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof SetlDouble) {
+        } else if (v.getClass() == SetlDouble.class) {
             final SetlDouble rhs = (SetlDouble) v;
             final Double d = this.doubleValue;
             return d.compareTo(rhs.doubleValue);
-        } else if (v instanceof Rational) {
+        } else if (v.getClass() == Rational.class) {
             try {
                 final Double d = this.doubleValue;
                 return d.compareTo(((Rational)v).toDouble().doubleValue);
@@ -510,7 +507,10 @@ public class SetlDouble extends NumberValue {
     @Override
     public boolean equalTo(final Object o) {
         if (o instanceof Value) {
-            return this.compareTo((Value) o) == 0;
+            final Value v = (Value) o;
+            if (v.isNumber() == SetlBoolean.TRUE) {
+                return this.compareTo(v) == 0;
+            }
         }
         return false;
     }

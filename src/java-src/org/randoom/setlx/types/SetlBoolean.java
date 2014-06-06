@@ -53,11 +53,11 @@ public class SetlBoolean extends Value {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
-            } else if (otr instanceof Term) {
+            } else if (otr.getClass() == Term.class) {
                 return ((Term) otr).conjunctionFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
-                    "Right-hand-side of '" + this + " && " + otr + "' is not a Boolean value."
+                    "Right-hand-side of '" + this.toString(state) + " && " + otr.toString(state) + "' is not a Boolean value."
                 );
             }
         }
@@ -73,11 +73,11 @@ public class SetlBoolean extends Value {
                 return TRUE;
             } else if (otr == FALSE) {
                 return FALSE;
-            } else if (otr instanceof Term) {
+            } else if (otr.getClass() == Term.class) {
                 return ((Term) otr).disjunctionFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
-                    "Right-hand-side of '" + this + " || " + otr + "' is not a Boolean value."
+                    "Right-hand-side of '" + this.toString(state) + " || " + otr.toString(state) + "' is not a Boolean value."
                 );
             }
         }
@@ -93,11 +93,11 @@ public class SetlBoolean extends Value {
                 return TRUE;
             } else if (otr == FALSE) {
                return FALSE;
-            } else if (otr instanceof Term) {
+            } else if (otr.getClass() == Term.class) {
                 return ((Term) otr).implicationFlipped(state, this);
             } else {
                 throw new IncompatibleTypeException(
-                    "Right-hand-side of '" + this + " => " + otr + "' is not a Boolean value."
+                    "Right-hand-side of '" + this.toString(state) + " => " + otr.toString(state) + "' is not a Boolean value."
                 );
             }
         }

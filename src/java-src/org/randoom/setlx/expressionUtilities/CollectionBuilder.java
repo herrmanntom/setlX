@@ -7,6 +7,7 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
+
 import java.util.List;
 
 /**
@@ -77,7 +78,7 @@ public abstract class CollectionBuilder extends CodeFragment {
      * @throws TermConversionException Thrown in case the term is malformed.
      */
     public static CollectionBuilder collectionValueToBuilder(final State state, final CollectionValue value) throws TermConversionException {
-        if (value.size() == 1 && value.firstMember() instanceof Term) {
+        if (value.size() == 1 && value.firstMember().getClass() == Term.class) {
             final Term    term = (Term) value.firstMember();
             final String  fc   = term.getFunctionalCharacter();
             if (fc.equals(SetlIteration.getFunctionalCharacter())) {

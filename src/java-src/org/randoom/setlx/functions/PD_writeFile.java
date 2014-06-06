@@ -5,8 +5,6 @@ import org.randoom.setlx.exceptions.FileNotWriteableException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.State;
@@ -47,7 +45,7 @@ public class PD_writeFile extends PreDefinedProcedure {
      */
     protected Value exec(final State state, final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
         final Value  fileArg = args.get(0);
-        if ( ! (fileArg instanceof SetlString)) {
+        if (fileArg.isString() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException("FileName-argument '" + fileArg.toString(state) + "' is not a string.");
         }
         final Value contentArg = args.get(1);
@@ -56,7 +54,7 @@ public class PD_writeFile extends PreDefinedProcedure {
         final String    fileName = fileArg.getUnquotedString(state);
         // get content to be written into the file
         CollectionValue content  = null;
-        if (contentArg instanceof CollectionValue && ! (contentArg instanceof Term || contentArg instanceof SetlString)) {
+        if (contentArg instanceof CollectionValue && ! (contentArg.isTerm() == SetlBoolean.TRUE || contentArg.isString() == SetlBoolean.TRUE)) {
             content = (CollectionValue) contentArg;
         } else {
             content = new SetlList(1);

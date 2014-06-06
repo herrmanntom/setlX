@@ -42,7 +42,7 @@ public abstract class TryCatchAbstractBranch extends CodeFragment {
      * @throws TermConversionException Thrown in case of a malformed term.
      */
     public static   TryCatchAbstractBranch valueToTryCatchAbstractBranch(final State state, final Value value) throws TermConversionException {
-        if ( ! (value instanceof Term)) {
+        if (value.getClass() != Term.class) {
             throw new TermConversionException("malformed TryCatchAbstractBranch");
         } else {
             final Term   term = (Term) value;

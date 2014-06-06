@@ -524,10 +524,10 @@ public class Term extends IndexedCollectionValue {
                    ).toTerm(state);
         } else {
             return (    new ProductOfMembersBinary(
-                    TermConverter.valueToExpr(state, neutral),
-                    TermConverter.valueToExpr(state, this)
-                )
-           ).toTerm(state);
+                            TermConverter.valueToExpr(state, neutral),
+                            TermConverter.valueToExpr(state, this)
+                        )
+                   ).toTerm(state);
         }
     }
 
@@ -618,7 +618,7 @@ public class Term extends IndexedCollectionValue {
     @Override
     public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
         if ( functionalCharacter.equals(VariableIgnore.getFunctionalCharacter()) ||
-                ( other instanceof Term &&
+                ( other.getClass() == Term.class &&
                   ((Term) other).functionalCharacter.equals(VariableIgnore.getFunctionalCharacter())
                 )
            ) {
@@ -628,7 +628,7 @@ public class Term extends IndexedCollectionValue {
             final MatchResult result  = new MatchResult(true);
             // get name of variable
             final Value       idStr   = body.firstMember(state);
-            if ( ! (idStr instanceof SetlString)) { // this is a wrong ^variable term
+            if (idStr.isString() == SetlBoolean.FALSE) { // this is a wrong ^variable term
                 return new MatchResult(false);
             }
             final String id = idStr.getUnquotedString(state);
@@ -643,11 +643,11 @@ public class Term extends IndexedCollectionValue {
                 return result;
             }
         } else if (functionalCharacter.equals(StringConstructor.getFunctionalCharacter()) && body.size() == 2 &&
-                   other instanceof SetlString) {
+                   other.isString() == SetlBoolean.TRUE) {
             // 'this' is a StringConstructor, which may match a simple string
             return other.matchesTerm(state, this);
 
-        } else if ( ! (other instanceof Term)) {
+        } else if (other.getClass() != Term.class) {
             return new MatchResult(false);
         }
         // 'other' is a term
@@ -688,7 +688,7 @@ public class Term extends IndexedCollectionValue {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof Term) {
+        } else if (v.getClass() == Term.class) {
             final Term other = (Term) v;
                   int  cmp   = functionalCharacter.compareTo(other.functionalCharacter);
             if (cmp != 0 && (
@@ -722,7 +722,7 @@ public class Term extends IndexedCollectionValue {
     public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
-        } else if (v instanceof Term) {
+        } else if (v.getClass() == Term.class) {
             final Term other = (Term) v;
             if (functionalCharacter.equals(other.functionalCharacter)
                   || (

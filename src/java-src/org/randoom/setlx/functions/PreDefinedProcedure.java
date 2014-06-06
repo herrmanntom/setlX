@@ -277,6 +277,12 @@ public abstract class PreDefinedProcedure extends Procedure {
     }
 
     @Override
+    public int compareToOrdering() {
+        object = null;
+        return 1400;
+    }
+
+    @Override
     public boolean equalTo(final Object v) {
         if (this == v) {
             return true;

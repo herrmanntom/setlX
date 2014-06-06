@@ -19,7 +19,7 @@ public abstract class SwitchAbstractBranch extends AbstractBranch {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SwitchAbstractBranch valueToSwitchAbstractBranch(final State state, final Value value) throws TermConversionException {
-        if ( ! (value instanceof Term)) {
+        if (value.getClass() != Term.class) {
             throw new TermConversionException("malformed SwitchAbstractBranch");
         } else {
             final Term   term = (Term) value;

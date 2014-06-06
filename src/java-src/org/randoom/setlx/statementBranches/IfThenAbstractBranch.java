@@ -19,7 +19,7 @@ public abstract class IfThenAbstractBranch extends AbstractBranch {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static   IfThenAbstractBranch valueToIfThenAbstractBranch(final State state, final Value value) throws TermConversionException {
-        if ( ! (value instanceof Term)) {
+        if (value.getClass() != Term.class) {
             throw new TermConversionException("malformed IfThenAbstractBranch");
         } else {
             final Term   term = (Term) value;

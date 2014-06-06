@@ -146,7 +146,7 @@ public class CachedProcedure extends Procedure {
 
         if (parameters.size() != size) {
             throw new IncorrectNumberOfParametersException(
-                "'" + this + "' is defined with "+ parameters.size()+" instead of " +
+                "'" + this.toString(state) + "' is defined with "+ parameters.size()+" instead of " +
                 size + " parameters."
             );
         }
@@ -243,17 +243,67 @@ public class CachedProcedure extends Procedure {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static CachedProcedure termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList)) {
+        if (term.size() != 2 || term.firstMember().getClass() != SetlList.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList            paramList   = (SetlList) term.firstMember();
-            final List<ParameterDef>  parameters  = new ArrayList<ParameterDef>(paramList.size());
+            final SetlList           paramList  = (SetlList) term.firstMember();
+            final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
             for (final Value v : paramList) {
                 parameters.add(ParameterDef.valueToParameterDef(state, v));
             }
-            final Block               block       = TermConverter.valueToBlock(state, term.lastMember());
+            final Block              block      = TermConverter.valueToBlock(state, term.lastMember());
             return new CachedProcedure(parameters, block);
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Value v) {
+        object = null;
+        if (this == v) {
+            return 0;
+        } else if (v.getClass() == CachedProcedure.class) {
+            final CachedProcedure other = (CachedProcedure) v;
+            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
+            if (cmp != 0) {
+                return cmp;
+            }
+            for (int index = 0; index < parameters.size(); ++index) {
+                cmp = parameters.get(index).compareTo(other.parameters.get(index));
+                if (cmp != 0) {
+                    return cmp;
+                }
+            }
+            return statements.compareTo(other.statements);
+        } else {
+            return this.compareToOrdering() - v.compareToOrdering();
+        }
+    }
+
+    @Override
+    public int compareToOrdering() {
+        object = null;
+        return 1300;
+    }
+
+    @Override
+    public boolean equalTo(final Object v) {
+        object = null;
+        if (this == v) {
+            return true;
+        } else if (v.getClass() == CachedProcedure.class) {
+            final CachedProcedure other = (CachedProcedure) v;
+            if (parameters.size() == other.parameters.size()) {
+                for (int index = 0; index < parameters.size(); ++index) {
+                    if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
+                        return false;
+                    }
+                }
+                return statements.equalTo(other.statements);
+            }
+        }
+        return false;
     }
 
     private final static int initHashCode = CachedProcedure.class.hashCode();

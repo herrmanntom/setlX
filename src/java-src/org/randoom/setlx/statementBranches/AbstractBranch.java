@@ -18,13 +18,13 @@ public abstract class AbstractBranch extends CodeFragment {
      * @return               Result of the evaluation.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract boolean              evalConditionToBool(final State state) throws SetlException;
+    public abstract boolean evalConditionToBool(final State state) throws SetlException;
 
     /**
      * Get the statement block to execute when the condition evaluates to true.
      *
      * @return Block of setlX statements.
      */
-    public abstract Block                getStatements();
+    public abstract Block   getStatements();
 }
 

@@ -54,9 +54,8 @@ public class SetlError extends Value {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof SetlError) {
-            final SetlError error = (SetlError) v;
-            return message.compareTo(error.message);
+        } else if (v.getClass() == SetlError.class) {
+            return message.compareTo(((SetlError) v).message);
         } else {
             return this.compareToOrdering() - v.compareToOrdering();
         }
@@ -71,7 +70,7 @@ public class SetlError extends Value {
     public boolean equalTo(final Object v) {
         if (this == v) {
             return true;
-        } else if (v instanceof SetlError) {
+        } else if (v.getClass() == SetlError.class) {
             return message.equals(((SetlError) v).message);
         } else {
             return false;

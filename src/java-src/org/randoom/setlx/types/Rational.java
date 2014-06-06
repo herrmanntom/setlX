@@ -97,9 +97,9 @@ public class Rational extends NumberValue {
             d = d.negate();
         }
         final BigInteger ggt = n.gcd(d);
-        this.nominator           = n.divide(ggt);
-        this.denominator         = d.divide(ggt);
-        this.isInteger           = this.denominator.equals(BigInteger.ONE);
+        this.nominator       = n.divide(ggt);
+        this.denominator     = d.divide(ggt);
+        this.isInteger       = this.denominator.equals(BigInteger.ONE);
         if (this.denominator.equals(BigInteger.ZERO)) {
             throw new NumberFormatException("new Rational: Division by zero!");
         }
@@ -265,13 +265,14 @@ public class Rational extends NumberValue {
      * not exceed 2<sup>-100</sup>.. This method will never skip over a prime when
      * searching: if it returns p, there is no prime q such that this < q < p.
      *
+     * @param  state                 Current state of the running setlX program.
      * @return                       The first Rational greater than this number that is probably prime.
      * @throws NotAnIntegerException Thrown when this number is not an integer.
      */
-    public Rational nextProbablePrime() throws NotAnIntegerException {
+    public Rational nextProbablePrime(final State state) throws NotAnIntegerException {
         if ( ! isInteger || nominator.compareTo(BigInteger.ZERO) <= 0) {
             throw new NotAnIntegerException(
-                "'" + this + "' is not an integer >= 1."
+                "'" + this.toString(state) + "' is not an integer >= 1."
             );
         }
         return new Rational(nominator.nextProbablePrime());
@@ -404,7 +405,7 @@ public class Rational extends NumberValue {
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-        if (subtrahend instanceof Rational) {
+        if (subtrahend.getClass() == Rational.class) {
             final Rational s = (Rational) subtrahend;
             if (isInteger && s.isInteger) {
                 // mNominator/1 - s.mNominator/1  <==>  mNominator - s.mNominator
@@ -415,13 +416,13 @@ public class Rational extends NumberValue {
                 final BigInteger d = denominator.multiply(s.denominator);
                 return new Rational(n, d);
             }
-        } else if (subtrahend instanceof SetlDouble) {
+        } else if (subtrahend.getClass() == SetlDouble.class) {
             return ((SetlDouble) subtrahend).differenceFlipped(state, this);
-        } else if (subtrahend instanceof Term) {
+        } else if (subtrahend.getClass() == Term.class) {
             return ((Term) subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " - " + subtrahend + "' is not a number."
+                "Right-hand-side of '" + this.toString(state) + " - " + subtrahend.toString(state) + "' is not a number."
             );
         }
     }
@@ -452,7 +453,7 @@ public class Rational extends NumberValue {
                nominator.compareTo(BigInteger.ZERO) < 0
         ) {
             throw new UndefinedOperationException(
-                "'(" + this + ")!' is undefined."
+                "'(" + this.toString(state) + ")!' is undefined."
             );
         }
         // The next line will throw an exception if mNominator > 2^31,
@@ -504,18 +505,18 @@ public class Rational extends NumberValue {
         Rational stop = null;
 
         // check if types make sense (essentially only numbers make sense here)
-        if (step_ instanceof Rational) {
+        if (step_.getClass() == Rational.class) {
             step = (Rational) step_;
         } else {
             throw new IncompatibleTypeException(
-                "Step size '" + step_ + "' is not a rational number."
+                "Step size '" + step_.toString(state) + "' is not a rational number."
             );
         }
-        if (stop_ instanceof Rational) {
+        if (stop_.getClass() == Rational.class) {
             stop = (Rational) stop_;
         } else {
             throw new IncompatibleTypeException(
-                "Stop argument '" + stop_ + "' is not a rational number."
+                "Stop argument '" + stop_.toString(state) + "' is not a rational number."
             );
         }
         // collect all elements in range
@@ -536,7 +537,7 @@ public class Rational extends NumberValue {
             }
         } else { // step == 0!
             throw new UndefinedOperationException(
-                "Step size '" + step + "' is illogical."
+                "Step size '" + step.toString(state) + "' is illogical."
             );
         }
     }
@@ -559,13 +560,13 @@ public class Rational extends NumberValue {
 
     @Override
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof NumberValue) {
+        if (divisor.isNumber() == SetlBoolean.TRUE) {
             return this.quotient(state, divisor).floor(state);
-        } else if (divisor instanceof Term) {
+        } else if (divisor.getClass() == Term.class) {
             return ((Term) divisor).integerDivisionFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " \\ " + divisor + "' is not a number."
+                "Right-hand-side of '" + this.toString(state) + " \\ " + divisor.toString(state) + "' is not a number."
             );
         }
     }
@@ -579,11 +580,11 @@ public class Rational extends NumberValue {
     //     a % b = a - floor(a/b) * b
     @Override
     public Value modulo(final State state, final Value modulo) throws IncompatibleTypeException, SetlException {
-        if (modulo instanceof Rational) {
+        if (modulo.getClass() == Rational.class) {
             final Rational b = (Rational) modulo;
             if (isInteger && b.isInteger) {
                 if (b.nominator.equals(BigInteger.ZERO)) {
-                    throw new UndefinedOperationException("'" + this + " % 0' is undefined.");
+                    throw new UndefinedOperationException("'" + this.toString(state) + " % 0' is undefined.");
                 } else {
                     return new Rational(nominator.mod(b.nominator));
                 }
@@ -591,11 +592,11 @@ public class Rational extends NumberValue {
                 final Rational ab = (Rational) this.quotient(state, b);
                 return this.difference(state, ab.floor(state).product(state, b));
             }
-        } else if (modulo instanceof Term) {
+        } else if (modulo.getClass() == Term.class) {
             return ((Term) modulo).moduloFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " % " + modulo + "' is not a rational number."
+                "Right-hand-side of '" + this.toString(state) + " % " + modulo.toString(state) + "' is not a rational number."
             );
         }
     }
@@ -616,7 +617,7 @@ public class Rational extends NumberValue {
 
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
-        if (multiplier instanceof Rational) {
+        if (multiplier.getClass() == Rational.class) {
             final Rational r = (Rational) multiplier;
             if (isInteger && r.isInteger) {
                 // mNominator/1 * r.mNominator/1  <==>  mNominator * r.mNominator
@@ -625,44 +626,44 @@ public class Rational extends NumberValue {
                 // mNominator/mDenominator * r.mNominator/r.mDenominator = (mNominator * r.mNominator) / (mDenominator * r.mDenominator)
                 return new Rational(nominator.multiply(r.nominator), denominator.multiply(r.denominator));
             }
-        } else if (multiplier instanceof SetlDouble ||
-                   multiplier instanceof SetlList   ||
-                   multiplier instanceof SetlString
+        } else if (multiplier.isDouble() == SetlBoolean.TRUE ||
+                   multiplier.isList()   == SetlBoolean.TRUE ||
+                   multiplier.isString() == SetlBoolean.TRUE
         ) {
             return multiplier.product(state, this);
-        } else if (multiplier instanceof Term) {
+        } else if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " * " + multiplier + "' is not a number, list or string."
+                "Right-hand-side of '" + this.toString(state) + " * " + multiplier.toString(state) + "' is not a number, list or string."
             );
         }
     }
 
     @Override
     public Value quotient(final State state, final Value divisor) throws SetlException {
-        if (divisor instanceof Rational) {
+        if (divisor.getClass() == Rational.class) {
             final Rational d = (Rational) divisor;
             if (isInteger && d.isInteger) {
                 // (mNominator/1) / (d.mNominator/1)  <==>  mNominator / d.mNominator
                 if (d.nominator.equals(BigInteger.ZERO)) {
-                    throw new UndefinedOperationException("'" + this + " / 0' is undefined.");
+                    throw new UndefinedOperationException("'" + this.toString(state) + " / 0' is undefined.");
                 }
                 return new Rational(nominator, d.nominator);
             } else {
                 // (mNominator/mDenominator) / (d.mNominator/d.mDenominator) = (mNominator * d.mDenominator) / (mDenominator * d.mNominator)
                 if (d.nominator.equals(BigInteger.ZERO)) {
-                    throw new UndefinedOperationException("'(" + this + ") / 0' is undefined.");
+                    throw new UndefinedOperationException("'(" + this.toString(state) + ") / 0' is undefined.");
                 }
                 return new Rational(nominator.multiply(d.denominator), denominator.multiply(d.nominator));
             }
-        } else if (divisor instanceof SetlDouble) {
+        } else if (divisor.getClass() == SetlDouble.class) {
             return ((SetlDouble) divisor).quotientFlipped(state, this);
-        } else if (divisor instanceof Term) {
+        } else if (divisor.getClass() == Term.class) {
             return ((Term) divisor).quotientFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '(" + this + ") / (" + divisor + ")' is not a number."
+                "Right-hand-side of '(" + this.toString(state) + ") / (" + divisor.toString(state) + ")' is not a number."
             );
         }
     }
@@ -734,7 +735,7 @@ public class Rational extends NumberValue {
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand instanceof Rational) {
+        if (summand.getClass() == Rational.class) {
             final Rational r = (Rational) summand;
             if (isInteger && r.isInteger) {
                 // mNominator/1 + r.mNominator/1  <==>  mNominator + r.mNominator
@@ -745,15 +746,15 @@ public class Rational extends NumberValue {
                 final BigInteger d = denominator.multiply(r.denominator);
                 return new Rational(n, d);
             }
-        } else if (summand instanceof SetlDouble) {
+        } else if (summand.isDouble() == SetlBoolean.TRUE) {
             return summand.sum(state, this);
-        } else if (summand instanceof Term) {
+        } else if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand instanceof SetlString) {
+        } else if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " + " + summand +
+                "Right-hand-side of '" + this.toString(state) + " + " + summand.toString(state) +
                 "' is not a number or string."
             );
         }
@@ -780,7 +781,7 @@ public class Rational extends NumberValue {
             return new SetlString((char) nominator.intValue());
         } else {
             throw new NumberToLargeException(
-                "'" + this + "' is not usable for ASCII conversation" +
+                "'" + this.toString(state) + "' is not usable for ASCII conversation" +
                 " (it is > 127 or negative or has a denominator != 1)."
             );
         }
@@ -792,7 +793,7 @@ public class Rational extends NumberValue {
     public int compareTo(final Value v) {
         if (this == v) {
             return 0;
-        } else if (v instanceof Rational) {
+        } else if (v.getClass() == Rational.class) {
             final Rational r = (Rational) v;
             if (isInteger && r.isInteger) {
                 // a/1 == p/1  <==>  a == p
@@ -803,7 +804,7 @@ public class Rational extends NumberValue {
                 final BigInteger bp = denominator.multiply(r.nominator);
                 return aq.compareTo(bp);
             }
-        } else if (v instanceof SetlDouble) {
+        } else if (v.getClass() == SetlDouble.class) {
             try {
                 return toDouble().compareTo(v);
             } catch (final NumberToLargeException e) {
@@ -822,7 +823,10 @@ public class Rational extends NumberValue {
     @Override
     public boolean equalTo(final Object o) {
         if (o instanceof Value) {
-            return this.compareTo((Value) o) == 0;
+            final Value v = (Value) o;
+            if (v.isNumber() == SetlBoolean.TRUE) {
+                return this.compareTo(v) == 0;
+            }
         }
         return false;
     }

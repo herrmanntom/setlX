@@ -35,13 +35,13 @@ public abstract class NumberValue extends Value {
             return this.power(state, exponent.jDoubleValue());
         } else if (exponent.isDouble() == SetlBoolean.TRUE) {
             return this.power(state, exponent.jDoubleValue());
-        } else if (exponent instanceof SetlSet && this.equalTo(Rational.TWO)) {
+        } else if (exponent.getClass() == SetlSet.class && this.equalTo(Rational.TWO)) {
             return ((SetlSet) exponent).powerSet(state);
-        } else if (exponent instanceof Term) {
+        } else if (exponent.getClass() == Term.class) {
             return ((Term) exponent).powerFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Exponent of '" + this + " ** " + exponent + "' is not a number."
+                "Exponent of '" + this.toString(state) + " ** " + exponent.toString(state) + "' is not a number."
             );
         }
     }
@@ -83,11 +83,11 @@ public abstract class NumberValue extends Value {
     public final    SetlBoolean isLessThan(final State state, final Value other) throws IncompatibleTypeException {
         if (this == other) {
             return SetlBoolean.FALSE;
-        } else if (other instanceof NumberValue) {
+        } else if (other.isNumber() == SetlBoolean.TRUE) {
             return SetlBoolean.valueOf(this.compareTo(other) < 0);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this + " < " + other + "' is not a number."
+                "Right-hand-side of '" + this.toString(state) + " < " + other.toString(state) + "' is not a number."
             );
         }
     }

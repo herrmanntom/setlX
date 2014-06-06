@@ -32,7 +32,7 @@ public abstract class MatchAbstractBranch extends AbstractBranch {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static MatchAbstractBranch valueToMatchAbstractBranch(final State state, final Value value) throws TermConversionException {
-        if ( ! (value instanceof Term)) {
+        if (value.getClass() != Term.class) {
             throw new TermConversionException("malformed MatchAbstractBranch");
         } else {
             final Term   term = (Term) value;

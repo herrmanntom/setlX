@@ -2,9 +2,9 @@
 These days, everything is
 \href{http://en.wikipedia.org/wiki/Object-oriented_programming}{\emph{object-oriented}}.  
 After having spotted
-\href{http://www.danielsen.com/jokes/objecttoaster.txt}{object oriented toasters}  
+\href{http://www.danielsen.com/jokes/objecttoaster.txt}{object-oriented toasters}  
 on the loose, we have decided that \textsc{SetlX} should not be an exception.  Therefore,
-\textsc{SetlX} supports some basic means for object oriented programming.  Most importantly,
+\textsc{SetlX} supports some basic means for object-oriented programming.  Most importantly,
 \textsc{SetlX} supports classes.  In \textsc{SetlX} a  
 \href{http://en.wikipedia.org/wiki/Class_(computer_programming)}{\emph{class}}
 is an agglomeration of variables and functions.  These variables are referred to as 
@@ -12,13 +12,13 @@ is an agglomeration of variables and functions.  These variables are referred to
 In this chapter we demonstrate how classes can be defined and used in \textsc{SetlX}.  
 However, this chapter is \underline{not} intended to be an introduction into object-oriented
 programming.  Therefore,  we assume that the reader 
-has had some previous exposition to object oriented programming in a language like \textsl{Java} or
+has had some previous exposition to object-oriented programming in a language like \textsl{Java} or
 \texttt{C++}.   In the first section of this chapter, we give some simple examples of class definitions.
 The programs presented in that section are not intended to compute anything useful.  Their
 purpose is just to demonstrate the basic features of object-oriented programming that are available
 in \textsc{SetlX}.  The second  and third subsection will then discuss more interesting examples:
 The second subsection shows how to implement weighted directed graphs via classes and the final
-subsection discusses the implementation of complex numbers.  The final subsection will also discuss
+subsection discusses the implementation of complex numbers.  That subsection will also discuss
 some of the more advanced features of object-oriented programming that are available in
 \textsc{SetlX}.  In particular, we will discuss operator overloading.
 
@@ -90,13 +90,13 @@ definition next.
       member variables store the $x$ and $y$-coordinates of the point that is constructed.
 
       It is our convention to start member variables with a lower case letter ``\texttt{m}''.  This
-      letter is intended as abbreviation of \underline{m}ember.  The letter following the letter
+      letter is intended as an abbreviation of \underline{m}ember.  The letter following the letter
       ``\texttt{m}'' will always be capitalized.  However, this convention is only our
       recommendation for naming member variables and you are free to choose any valid variable name
       to designate a member variable.
 \item Line 5 to 8 define getter and setter methods to access and write the member variables
-      \texttt{mX} and \texttt{mY}.  Note that, in order to change a member variable, it is necessary
-      to prefix this member variable with ``\texttt{this.}''.  However, this prefixing is not
+      \texttt{mX} and \texttt{mY}.  Note that, in order to change the value of a member variable, it
+      is necessary to prefix this member variable with ``\texttt{this.}''.  However, this prefixing is not
       necessary in order to read a member variable, as can be seen in the implementation of the
       methods \texttt{getX} and \texttt{getY}.
 \item Line 9 defines the method \texttt{toStr} that transforms a given object of class
@@ -115,7 +115,7 @@ interpreter.   Then we can define an object of class \texttt{point} by writing
 and the statement
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{print(toStr(origin));}
+\texttt{print(origin.toStr());}
 \\[0.2cm] 
 would result in the following output:
 \\[0.2cm]
@@ -132,8 +132,28 @@ Note that we have formatted this output in order to render it readable.  Closer 
 output reveals that an object is just a set of all its members.  As \textsc{SetlX} is a functional
 language, there is really no distinction between a member variable and a method.  For example, in
 line 5 the variable \texttt{toStr} is just a member variable which happens to be bound to a
-procedure.  Note that the constructor of the class \texttt{point} is also part of the object
-origin.  
+procedure.  Note that the object \texttt{origin} also has a method \texttt{getClass}.
+The definition of this method is shown in line 12 -- 23.  This
+method is generated automatically for every class that is defined.  Technically,
+this method returns the class definition.  Practically , this method can used
+to check whether two objects have the same class.  For example, after defining 
+\\[0.2cm]
+\hspace*{1.3cm} \texttt{p1 := point(1, 2);} \\
+\hspace*{1.3cm} \texttt{p2 := point(2, 1);} 
+\\[0.2cm]
+\texttt{p1} and \texttt{p2} are different objects but the test
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{p1.getClass() == p2.getClass()}
+\\[0.2cm]
+will return \texttt{true}.  If we only are interested whether the object \texttt{p1} is of class
+\texttt{point} we can write the test as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{p1.getClass() == point}.
+\\[0.2cm]
+This works, since after defining the class \texttt{point}, the variable \texttt{point} is bound to
+the class object shown in Figure \ref{fig:point-class} on page \pageref{fig:point-class}.
 
 \begin{figure}[!ht]
 \centering
@@ -148,27 +168,27 @@ origin.
                 ]
     object<
         { distance := procedure(p) { 
-                          return sqrt((mX-p.getX()) ** 2 + (mY-p.getY()) ** 2); 
+                          return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
                       }; 
-          toStr := procedure() { return "<$mX$, $mY$>"; }; 
-          setX  := procedure(x) { this.mX := x; }; 
-          getY  := procedure() { return mY; }; 
-          mX    := 0; 
-          setY  := procedure(y) { this.mY := y; }; 
-          getX  := procedure()  { return mX; }; 
-          mY    := 0; 
-          class (x, y) { 
-              mX := x; 
-              mY := y; 
-              distance := procedure(p) { 
-                  return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
-              }; 
-              getX := procedure() { return mX; };
-              getY := procedure() { return mY; }; 
-              setX := procedure(x) { this.mX := x; }; 
-              setY := procedure(y) { this.mY := y; }; 
-              toStr := procedure() { return "<$mX$, $mY$>"; }; 
-          } 
+                      getX := procedure() { return mX; }; 
+                      getY := procedure() { return mY; }; 
+                      mX := 0; 
+                      mY := 0; 
+                      setX := procedure(x) { this.mX := x; }; 
+                      setY := procedure(y) { this.mY := y; }; 
+                      toStr := procedure() { return "<$mX$, $mY$>"; }; 
+                      getClass := [] |-> class (x, y) { 
+                          mX := x; 
+                          mY := y; 
+                          distance := procedure(p) { 
+                              return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
+                          }; 
+                          getX := procedure() { return mX; }; 
+                          getY := procedure() { return mY; }; 
+                          setX := procedure(x) { this.mX := x; }; 
+                          setY := procedure(y) { this.mY := y; }; 
+                          toStr := procedure() { return "<$mX$, $mY$>"; }; 
+                      }
         }
     >
 \end{Verbatim}
@@ -177,10 +197,39 @@ origin.
 \label{fig:print_origin}
 \end{figure}
 
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.0cm,
+                  xrightmargin  = 0.0cm,
+                ]
+    class (x, y) { 
+        mX := x; 
+        mY := y; 
+        distance := procedure(p) { 
+            return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
+        }; 
+        getX := procedure() { return mX; }; 
+        getY := procedure() { return mY; }; 
+        setX := procedure(x) { this.mX := x; }; 
+        setY := procedure(y) { this.mY := y; }; 
+        toStr := procedure() { return "<$mX$, $mY$>"; }; 
+    }
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{The class object corresponding to the class \texttt{point}.}
+\label{fig:point-class}
+\end{figure}
+
 At first, the fact that all methods are stored as part of the object \texttt{origin} might seem quite
 wasteful.  However, this fact enables us to change these methods dynamically.  For example, we can
-realize that the $x$ and $y$-coordinates of the object \texttt{origin} really are fixed.  Therefore,
-the getter methods can be 
+realize that the $x$ and $y$-coordinates of the particular object \texttt{origin} really are fixed.
+Therefore, the getter methods can be 
 simplified and the setter methods can even be eliminated.  Assuming \texttt{origin} is defined as
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -265,14 +314,14 @@ basis, i.e.~the assignments
     origin.setX := om;
     origin.setY := om;
 \end{verbatim}
-will now make create member variables \texttt{getX}, \texttt{getY}, \texttt{setX}, and \texttt{setY}
-that are attributes of the object \texttt{origin}.  The static variables of the same name would be
+will create member variables \texttt{getX}, \texttt{getY}, \texttt{setX}, and \texttt{setY}
+that are attributes of the object \texttt{origin}.  The static variables of the same name are
 unchanged but an expression of the form
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{origin.getX()}
 \\[0.2cm]
-would now invoke the function bound to the member variable \texttt{getX} and would no longer invoke
+invokes the function bound to the member variable \texttt{getX} and does no longer invoke
 the function bound to the static variable \texttt{getX}.
 
 Going back to the code in Figure \ref{fig:point-static.stlx}, note that in order to invoke one of these
@@ -293,20 +342,20 @@ variables \texttt{mX} and \texttt{mY}, which are used in these methods, would be
     object<
         { mX := 0; 
           mY := 0; 
-          class (x, y) { 
+          getClass := [] |-> class (x, y) { 
               mX := x; 
               mY := y; 
             static { 
               distance := procedure(p) { 
-                              return sqrt((mX-p.getX()) ** 2 + (mY-p.getY()) ** 2); 
-                          }; 
-              getX  := procedure()  { return mX;             }; 
-              getY  := procedure()  { return mY;             }; 
-              setX  := procedure(x) { this.mX := x;          }; 
-              setY  := procedure(y) { this.mY := y;          }; 
-              toStr := procedure()  { return "<$mX$, $mY$>"; }; 
+                  return sqrt((mX - p.getX()) ** 2 + (mY - p.getY()) ** 2); 
+              }; 
+              getX := procedure() { return mX; }; 
+              getY := procedure() { return mY; }; 
+              setX := procedure(x) { this.mX := x; }; 
+              setY := procedure(y) { this.mY := y; }; 
+              toStr := procedure() { return "<$mX$, $mY$>"; }; 
             } 
-          } 
+          }
         }
     >
 \end{Verbatim}
@@ -545,10 +594,12 @@ $\pair(y,w) \in \mathtt{edges[}x\mathtt{]}$.
 For example, the relation \texttt{edges} for the graph shown in Figure \ref{fig:graph.eps} can be
 defined in \textsc{SetlX} as follows:
 \\[0.2cm]
-\hspace*{1.3cm}
-\texttt{edges := \{ [1, \{[5,3]], [3,5]\}], [5, \{[2,1]\}], \\
-\hspace*{3.25cm} 
-[3, \{[2,2], [4,7]\}], [2, \{[4,4]\}], [4, \{\}] \};}
+\hspace*{1.3cm}  \texttt{edges := \{ [1, \{[5,3]], [3,5]\}], \\
+\hspace*{3.25cm}                     [5, \{[2,1]\}],         \\
+\hspace*{3.25cm}                     [3, \{[2,2], [4,7]\}],  \\
+\hspace*{3.25cm}                     [2, \{[4,4]\}],         \\
+\hspace*{3.25cm}                     [4, \{\}]               \\
+\hspace*{2.9cm}                  \};}
 
 
 \begin{figure}[!ht]
@@ -648,7 +699,7 @@ $\texttt{graph.shortestPath}(s)$
 \\[0.2cm]
 wouldn't make any sense as then the variables \texttt{mNumberNodes} and \texttt{mEdges} would both
 be undefined.  In order to call this function, we need to have an object $g$ of class \texttt{graph}.
-Then it will make sense to write
+Then it is possible to write
 \\[0.2cm]
 \hspace*{1.3cm}
 $g\mathtt{.shortestPath}(s)$
@@ -769,7 +820,9 @@ $z = x + y \cdot i$, \quad where $x,y \in \mathbb{R}$ and $i \cdot i = -1$.
 Assume that we have to perform a number of intricate calculations using complex numbers.  One way
 we could do this is by representing a complex number $x + y \cdot i$ as a pair $[x,y]$.  Then we
 would have to implement functions to add, subtract, multiply,  and divide complex numbers.  For
-example, methods to add and multiply two complex numbers would have the following form: 
+example, methods to add and multiply two complex numbers would have the form shown in Figure
+\ref{fig:add-complex.stlx} on page \pageref{fig:add-complex.stlx}.
+ 
 
 \begin{figure}[!ht]
 \centering
@@ -916,7 +969,7 @@ them next.
       \\[0.2cm]
       in order to compute the sum of \texttt{z1} and \texttt{z2}.  
 
-      \textbf{Note}:  For operator overloading to work out we have to use the same method
+      \textbf{Note}:  For operator overloading to work, we have to use the same method
       name that is used when \textsc{SetlX} evaluates the corresponding operator.  
       For the operator ``\texttt{+}'' performing addition, the corresponding name
       is \texttt{sum}.  Table \ref{tab:operator-names} lists the names corresponding to the operators
@@ -1060,7 +1113,7 @@ them next.
       \href{http://en.wikipedia.org/wiki/Euler%27s_formula}{Euler's formula} as
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\exp(x + y \cdot i) = exp(x) \cdot \bigl(\cos(y) + \sin(y) \cdot i\bigr)$.
+      $\exp(x + y \cdot i) = \exp(x) \cdot \bigl(\cos(y) + \sin(y) \cdot i\bigr)$.
 \item Line 22 defines a function to compute the natural logarithm of a complex number $z$.
       In order to compute the natural logarithm of the complex number $z = x + y \cdot i$ we rewrite $z$
       in polar coordinates so that $z = r \cdot e^{\varphi \cdot i}$.   Here, $r$ and

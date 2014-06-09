@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.2.4--- 2014-xx-xx
+---v2.2.4--- 2014-06-09
  + added "getClass()" method to objects, that refers to the class used to create
    that object
  + improve print() of predefined functions when they have optional parameters

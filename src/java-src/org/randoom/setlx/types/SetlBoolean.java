@@ -154,7 +154,8 @@ public class SetlBoolean extends Value {
 
     @Override
     public boolean equalTo(final Value v){
-        if(this == v) {
+        if (this == v) {
+            // as only exactly one FALSE and TRUE object exist, we can compare by reference
             return true;
         } else {
             return false;

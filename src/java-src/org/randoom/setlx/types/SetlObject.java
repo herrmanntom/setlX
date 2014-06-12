@@ -48,6 +48,7 @@ import org.randoom.setlx.functions.PD_permutations;
 import org.randoom.setlx.functions.PD_pow;
 import org.randoom.setlx.functions.PD_range;
 import org.randoom.setlx.functions.PD_rational;
+import org.randoom.setlx.functions.PD_double;
 import org.randoom.setlx.functions.PD_reverse;
 import org.randoom.setlx.functions.PD_round;
 import org.randoom.setlx.functions.PD_shuffle;
@@ -519,7 +520,11 @@ public class SetlObject extends Value {
 
     public boolean isObjectMemberDefinied(final String variable) {
         final Value val = members.get(variable);
-        return val != null && val != Om.OM;
+        if (val != null && val != Om.OM) {
+            return true;
+        } {
+            return false;
+        }
     }
 
     private Value getObjectMemberUnClonedUnSafe(final State state, final String variable) throws SetlException {
@@ -567,7 +572,7 @@ public class SetlObject extends Value {
                 return;
             }
         } catch (final SetlException e) {
-            sb.append("Error during execution of member '").append(STR).append("': ").append(e.getMessage());
+            sb.append("Error during execution of member '" + STR + "': " + e.getMessage());
         }
 
         canonical(state, sb, tabs);

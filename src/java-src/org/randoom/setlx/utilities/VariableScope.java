@@ -349,7 +349,13 @@ public class VariableScope {
         // also check in scopes of surrounding objects
         if (thisObject != null) {
             final Value now = thisObject.getObjectMemberUnCloned(state, var);
-            if (now != Om.OM) return now.equalTo(value);
+            if (now != Om.OM) { // already saved there
+                if (now.equalTo(value)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
         // to get here, `var' is not stored in any upper scope up to outerScope
         bindings.put(var, value);
@@ -449,6 +455,7 @@ public class VariableScope {
                 for (final Map.Entry<String, Value> entry : bindings.entrySet()) {
                     try {
                         newScope.storeValue(entry.getKey(), entry.getValue());
+                        continue;
                     } catch (final IllegalRedefinitionException e) {
                         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER_SCOPE);
                     }

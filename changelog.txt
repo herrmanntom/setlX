@@ -1,0 +1,304 @@
+Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
+
+---v2.2.1--- 2014-02-02
+ + added getOsID() function that returns an identifier for the operating system
+   that setlX runs on
+ + added ask(question, answers) function that prompts the user with `question',
+   then forces him to select one from answers, which is returned
+ + allow negative indexes to strings and lists, which count from the end
+
+---v2.2.0--- 2013-08-14
+ + added a do-while statement
+ + added 64 bit floating point values that behave according to IEEE
+   754
+ + added the function double() that converts a string or number into a
+   floating point number
+ + added the function isDouble() that checks whether the value is a
+   floating point number
+ - removed the function real and isReal
+ # min and max can now only be applied to lists or sets of numbers.
+ * build for Java 1.6 by default
+
+---v2.1.1--- 2013-07-27
+ + the single straight quote is now used as escape character in literals and the
+   only valid escape sequence is two quotes ('') as sequence for a single one (')
+ - the quote operator (@) looses its special meaning for double-quoted strings;
+   it will now only force a term creation; to get the old behavior on strings,
+   replace the quotes with single straight ones: @"tax: 3$"  ->  'tax: 3$'
+ # fix string escape level and error handling in split() function
+ * term representation of strings changed
+ * build for Java 1.6 by default
+ 
+---v2.1.0--- 2013-07-01
+ + added short versions for some command line options
+ + provide better fallback when comparing objects without 'equals' member to other
+   types
+ - remove "short-iterate" syntax to resolve some issues in the grammar
+   (i.e {x in set | x%2 == 0} needs to be replaced with {x : x in set | x%2 == 0})
+ * lots of internal changes to the build system and error handling
+
+---v2.0.2--- 2013-05-18
+ - removed partly defunct debug functions (but not trace)
+ + add ability to trace object and class members
+ + add very simple debugging function stop(id)
+
+---v2.0.1--- 2013-04-28
+ # removed redundant quotes in objects
+ # refactor and improve trace functionality
+
+---v2.0.0--- 2013-04-11
+ + updated the tutorial to reflect the major new features
+   (basic object orientation and graphics support)
+ + all Boolean operators are overloadable
+
+---v1.6.1--- 2013-04-07 (unreleased)
+ + added resetRandom() function, which reseeds the random number generator
+ + improve automated tests to include term conversion
+
+---v1.6.0--- 2013-03-24 (unreleased)
+ + integrated graphics library by Markus Jagiella
+ * Note: setlX launcher scripts need to be updated
+ + some performance improvements
+ * refactored Boolean expressions and some other bits and pieces
+
+---v1.5.1--- 2013-03-10 (unreleased)
+ + add syntax highlighting definition for gedit
+ + moved SETLX_LIBRARY_PATH definition into launcher script
+ + updated antlr to v4.0, which should improve parser error messages
+ + simplified PreDefinedFunction API a little bit
+ # fixed some PDF layout issues
+
+---v1.5.0--- 2013-02-23 (unreleased)
+ + added hypot(numberValue, numberValue) and atan2(numberValue, numberValue) functions
+ + make predefined math-functions (e.g. exp(x), sin(x)) overloadable in objects
+ + eliminated explicit "this" parameter for object-methods
+ + add engineering and plain mode for printing reals
+ # fix some bugs when accessing methods of objects
+ # fix crash of optimizer when code contains syntax errors
+
+---v1.4.99999--- 2013-02-12 (unreleased)
+ + removed global definitions ('var')
+ + changed class definition syntax
+
+---v1.4.9999--- 2013-02-10 (unreleased)
+ + added nCPUs() functions, returning the number of CPUs (/cores) in the system
+ + allow overloading of more functions for objects
+
+---v1.4.999--- 2013-02-05 (unreleased)
+ + implementation of object orientation extension almost feature complete
+   (missing a number of overloadable operators)
+
+---v1.4.99--- 2013-02-03 (unreleased)
+ + first iteration of object orientation extension
+ + use multithreaded test script
+ + add latex source for tutorial
+ + print results of --ev and --ex options without sugar coating
+ # fix infinity when used as parameter for predefined math functions
+ # fix some issues in the grammar
+
+---v1.4.5--- 2013-01-13
+ + more robust internal handling of reals
+ + improved stack management
+ # fix conversion from infinity to double
+ # fix range selection of lists, when range is out of bounds
+ # fix and update various scripts
+
+---v1.4.4--- 2012-12-25
+ + switched to BSD license
+ # fixed associativity of => operator during term-conversion/print
+ # fix some error messages
+
+---v1.4.3--- 2012-12-13
+ + updated the development documentation
+ + allow powerSet computation by using the set as exponent, e.g. 2 ** {1,2,3}
+ + added mathConst("Infinity")
+ + m ** 2 computes the cartesianProduct of m, if m is a set
+ # fixed multiple "internal errors"
+ # fix error message for calls
+
+---v1.4.2--- 2012-11-13
+ + updated the tutorial
+ # fixed --help option
+
+---v1.4.1--- 2012-11-10
+ + allow assignment of indexable collection values (e.g. lists, strings, terms) to
+   lists of IDs (e.g.  [a,b,c] := Term("foobar",99,sin);  )
+ + improved closure detection
+ + added --ev and --ex options to directly execute an expression or statement
+ # fix char position variable in default branch of scan statement
+
+---v1.4.0--- 2012-10-06
+ + added closures
+
+---v1.3.3--- 2012-09-30
+ + added matches(string, pattern [, captureGroups]), replace(string, pattern, replacement),
+   replaceFirst(string, pattern, replacement) functions
+ # better explanation of errors in comparisons
+
+---v1.3.2--- 2012-09-05
+ # fixed escaped single straight quote in literal strings (only handled escape sequence)
+ + allow pattern in regex-branch to be an expression
+ + added variable to scan statement, which stores a map of positions
+   where first matched character is located inside the input-string
+ * replaced '->' with 'as' in regex branches
+
+---v1.3.1--- 2012-09-01
+ # fixed error handling in nested parsing runs (e.g. $-expressions in strings, parse())
+ + added regex-branch to match
+ + added scan statement
+ + added literal strings enclosed in single straight quotes, which are transferred
+   from source into memory without parsing escape sequences or interpreting the content
+   in any way. While "\n" describes a string of one linebreak character, '\n' describes
+   a string of the two separate characters: backslash and n.
+ + allow explicit lists/sets with rest as normal expression, not only in match
+ + more powerful matching using explicit lists/sets with rest
+ + added >< operator to compute the Cartesian-Product of two sets
+
+---v1.3.0--- 2012-08-22
+ # fixed product of a number and a list
+ + added tutorial.pdf
+ + updated documentation
+
+---v1.2.9--- unreleased
+ + get() and read() will not add anything extra when supplying a user defined prompt
+ # fixed errors during certain operations on reals
+
+---v1.2.8--- unreleased
+ # fixed from(string)
+ # fix isMap()
+
+---v1.2.7--- unreleased
+ + added clearCache(cachedProcedure) function
+ + added check and backtrack statements
+ # fixed ceil and floor for integer reals (e.g. 2.0, -2.0)
+ + iterations like:
+      for ([x,y] in s, [y,z] in t) {}
+   now work like
+      for ([x,y1] in s, [y2,z] in t | y1 == y2) {}
+   i.e. same variables must contain same values to execute the iteration block
+
+---v1.2.6--- unreleased
+ + added cached procedures (Keyword: cachedProcedure instead of just procedure)
+ + added cacheStats(cachedProcedure) function
+ + fixed issues with matching negative numbers
+ + allow conditions in for-loops
+
+---v1.2.5--- unreleased
+ + added isNumber() function, which is equal to (isRational() || isReal())
+ + brackets are transparent in terms
+
+---v1.2.4--- unreleased
+ + added optional Boolean conditions to match branches
+ # match correctly when using the same variable multiple times in a single match branch
+ + lots of refactoring
+
+---v1.2.3--- unreleased
+ # fixed matching strings using lists of variables
+ + improved performance of collect
+
+---v1.2.2--- 2012-08-01
+ + changed rnd() to require second `numberOfChoices' parameter when used with rationals
+ + added optional parameter to random()
+ + added collect() function
+
+---v1.2.1--- 2012-07-23
+ + improved performance of forall/exist when used in loops
+ + somewhat improved performance of variable look-ups
+ + added run(command) function
+ + added isPrime(integer) function
+ + rnd() now also takes number as argument, returning a random number between
+   0 and the argument (inclusive) -- works for negative numbers as well
+
+---v1.2.0--- 2012-07-17
+ # fixed minor bugs in string-representation of some statements
+ # forall and exist can be used in combinations with other Boolean expressions
+ # renamed --args option to --params, to avoid conflicts with args() function
+ * params variable will now be present, but empty if --params option is not used
+ + added nPrint() and nPrintErr() functions, which do not add a new line
+ + support % operator for sets, computing the symmetric difference, e.g. {1,2} % {1,3} = {2,3}
+ + support * for lists, multiplying their contents
+ + added toUpperCase(string), toLowerCase(string), startsWith(string, prefix),
+   endsWith(string, suffix), trim(string) and join(collection, separator) functions
+ * renamed strSplit() to split()
+ + split() now also works for lists
+ + added isProbablePrime(int) and nextProbablePrime(int) functions
+ + added nextPermutation(list), sort(listOrString), shuffle(listOrString) functions
+ # fixed handling of Boolean expressions by the parser
+ + match conditions respect preset variables
+ + added perfomance test
+ + added UNSUPPORTED profiling script to development distribution
+
+---v1.1.1--- 2012-07-10
+ # fixed bug with indirect assignments not working in all cases
+
+---v1.1.0--- 2012-07-09
+ + fixed performance issue with break and continue statements
+ + fixed performance issue with indirect assignment types (`+=', `-=', `*=')
+ + added integer division assignment ( '\=' )
+ - removed assignment chaining for everything but the direct assignment (i.e. `a := b := "foo"')
+ + strings are collections now ( try `for(c in "foo") {..}' or `first("foo")')
+ + "prolog-style" list match works with strings
+ # faster 2nd+ time look-up of undefined variables
+ # fixed precedence of power operator ( ** )
+ + add --args option, which passes all following options to the SetlX program (using variable `args')
+
+---v1.0.2--- 2012-07-03
+ + fixed performance issue with return statements
+
+---v1.0.1--- 2012-07-01
+ * adding om to a string (e.g. "" + om) will now result in an error
+ * +/[] and */[] return om, not 0 or 1 respectively
+ + added binary forms of +/ and */ operators to specify neutral element
+ # fixed parsing rules for reals and ranges
+ + added compare(valueA, valueB) function
+ + added strSplit(string, pattern) function
+ + added reverse(collectionValue) function
+ + improved performance of lists (in most cases)
+ * input in interactive mode is now accepted WITHOUT entering an empty line
+ + newline can be escaped by adding a backslash before pressing [Enter]
+ + added --multiLineMode option and multiLineMode() function to restore previous behavior
+ + added loadLibrary() function, loading files from SETLX_LIBRARY_PATH environment variable
+ + added --libraryPath option to override SETLX_LIBRARY_PATH
+
+---v1.0.0--- 2012-06-10
+ * updated documentation
+
+---v0.7.8--- 2012-06-06
+ * output of results in interactive mode will only be displayed for last statement
+ * output added by the interpreter is enclosed in ~< >~
+ + added trace() function to print assignments
+
+---v0.7.7--- 2012-06-01
+ + added optional parameter `msg' to read(msg) and get(msg)
+   `msg' will be displayed in front of the prompt
+ + added fileAPI (i.e. readFile(), writeFile(), appendFile(), deleteFile())
+ + added function mathConst(name) to retrieve "e" and "pi"
+ - e and pi are not defined as global variables anymore
+
+---v0.7.6--- 2012-05-26
+ # suppressed duplicate parser error messages
+ + new random() function returning a random real:    0.0 <= random() <= 1.0
+ + updated aStar examples
+ + introduced some more platform independence (in preparation for Android version)
+ + code cleanup
+
+---v0.7.5--- 2012-05-16
+ + added \ operator for integer division, e.g. a \ b == floor(a/b)
+ + round() works for unlimited precision values
+
+---v0.7.4--- 2012-05-12
+ + implemented matching for sets
+ + implemented splitting lists and sets in match
+ + added permutations() function
+ + added sleep() function
+ + updated development manual
+ # fixed bug when reading from stdin
+ * renamed examples folder
+
+---v0.7.3--- 2012-04-26
+ + added assert function and option to disable assertions
+ + updated aStar hanoi examples
+
+---v0.7.2--- 2012-04-22
+ * initial change log entry
+

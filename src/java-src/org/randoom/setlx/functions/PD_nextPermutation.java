@@ -18,7 +18,9 @@ public class PD_nextPermutation extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+
         return args.get(0).nextPermutation(state);
+
     }
 
 }

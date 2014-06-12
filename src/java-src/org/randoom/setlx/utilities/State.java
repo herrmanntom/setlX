@@ -748,7 +748,11 @@ public class State {
     public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final String context) throws SetlException {
         final Value now = classDefinitions.get(var);
         if (now != null) {
-            return now.equalTo(value);
+            if (now.equalTo(value)) {
+                return true;
+            } else {
+                return false;
+            }
         }
         if (traceAssignments) {
             final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope);

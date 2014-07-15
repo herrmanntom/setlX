@@ -38,3 +38,8 @@
 /manual.pdf
 /tutorial.pdf
 /setlX_*.zip
+
+# IntelliJ Files
+/.idea
+*.iml
+

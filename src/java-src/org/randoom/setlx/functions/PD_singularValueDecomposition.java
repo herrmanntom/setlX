@@ -17,7 +17,7 @@ public class PD_singularValueDecomposition extends PreDefinedProcedure {
 
 	private PD_singularValueDecomposition() {
 		super();
-		addParameter("Matrix", ParameterDef.READ_ONLY);
+		addParameter("Matrix", ParameterDef.ParameterType.READ_ONLY);
 	}
 
 	/**

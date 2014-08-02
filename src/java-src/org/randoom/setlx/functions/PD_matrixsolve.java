@@ -19,8 +19,8 @@ public class PD_matrixsolve extends PreDefinedProcedure {
 
 	private PD_matrixsolve() {
 		super();
-		addParameter("MatrixA", ParameterDef.READ_ONLY);
-		addParameter("MatrixB", ParameterDef.READ_ONLY);
+		addParameter("MatrixA", ParameterDef.ParameterType.READ_ONLY);
+		addParameter("MatrixB", ParameterDef.ParameterType.READ_ONLY);
 	}
 
 	/**

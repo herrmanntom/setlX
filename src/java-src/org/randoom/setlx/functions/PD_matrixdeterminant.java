@@ -17,7 +17,7 @@ public class PD_matrixdeterminant extends PreDefinedProcedure {
 
 	private PD_matrixdeterminant() {
 		super();
-		addParameter("Matrix", ParameterDef.READ_ONLY);
+		addParameter("Matrix", ParameterDef.ParameterType.READ_ONLY);
 	}
 
 	/**

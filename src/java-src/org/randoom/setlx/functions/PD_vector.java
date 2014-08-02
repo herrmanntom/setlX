@@ -21,7 +21,7 @@ public class PD_vector extends PreDefinedProcedure {
 
 	private PD_vector() {
 		super();
-		addParameter("collectionValue", ParameterDef.READ_ONLY);
+		addParameter("collectionValue", ParameterDef.ParameterType.READ_ONLY);
 	}
 
 	/**

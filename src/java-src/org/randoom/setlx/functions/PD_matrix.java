@@ -23,7 +23,7 @@ public class PD_matrix extends PreDefinedProcedure {
 
 	private PD_matrix() {
 		super();
-		addParameter("collectionValue", ParameterDef.READ_ONLY);
+		addParameter("collectionValue", ParameterDef.ParameterType.READ_ONLY);
 	}
 
 	/**

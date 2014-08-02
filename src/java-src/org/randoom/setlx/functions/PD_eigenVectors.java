@@ -17,7 +17,7 @@ public class PD_eigenVectors extends PreDefinedProcedure {
 
 	private PD_eigenVectors() {
 		super();
-		addParameter("Matrix", ParameterDef.READ_ONLY);
+		addParameter("Matrix", ParameterDef.ParameterType.READ_ONLY);
 	}
 
 	/**

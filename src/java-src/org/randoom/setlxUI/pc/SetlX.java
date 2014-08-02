@@ -192,7 +192,7 @@ public class SetlX {
         }
 
         // interactive == no files and no code supplied as parameters
-        interactive = (files.size() == 0 && expression == null && statement == null);
+        interactive = (files.isEmpty() && expression == null && statement == null);
         // display help if options specify to execute both files and a single expression/statement
         help        = help || (! interactive && files.size() > 0 && (expression != null || statement != null));
 

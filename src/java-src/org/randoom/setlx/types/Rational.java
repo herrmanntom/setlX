@@ -223,11 +223,7 @@ public class Rational extends NumberValue {
         }
         for (int i = 0; i < SOME_PRIMES.length; ++i) {
             if (nominator.mod(SOME_PRIMES[i]).equals(BigInteger.ZERO)) {
-                if (nominator.equals(SOME_PRIMES[i])) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return nominator.equals(SOME_PRIMES[i]);
             } else if (SOME_PRIMES_SQUARED[i].compareTo(nominator) >= 0) {
                 return true;
             }
@@ -395,8 +391,7 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
     public Rational ceil(final State state) {
-        if (nominator.compareTo(BigInteger.ZERO) > 0 && ! isInteger)
-        {
+        if (nominator.compareTo(BigInteger.ZERO) > 0 && ! isInteger) {
             final BigInteger q = nominator.divide(denominator).add(BigInteger.ONE);
             return new Rational(q);
         }
@@ -456,11 +451,12 @@ public class Rational extends NumberValue {
                 "'(" + this.toString(state) + ")!' is undefined."
             );
         }
+
         // The next line will throw an exception if mNominator > 2^31,
-        // but wanting that is crazy talk
-        final int        n      = jIntValue();
-              BigInteger result = BigInteger.ONE;
-        final int        CORES  = state.getNumberOfCores();
+		// but wanting that is crazy talk
+		final int n = jIntValue();
+		BigInteger result = BigInteger.ONE;
+		final int CORES = state.getNumberOfCores();
         // use simple implementation when computing a small factorial or having
         // only one CPU (less overhead)
         if (n <= 512 || CORES <= 1) {
@@ -548,12 +544,8 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
     public Rational floor(final State state) {
-        if (nominator.compareTo(BigInteger.ZERO) < 0 &&
-             ! isInteger
-           )
-        {
-            final BigInteger q = nominator.divide(denominator).subtract(BigInteger.ONE);
-            return new Rational(q);
+        if (nominator.compareTo(BigInteger.ZERO) < 0 && ! isInteger) {
+            return new Rational(nominator.divide(denominator).subtract(BigInteger.ONE));
         }
         return new Rational(nominator.divide(denominator));
     }
@@ -628,7 +620,9 @@ public class Rational extends NumberValue {
             }
         } else if (multiplier.isDouble() == SetlBoolean.TRUE ||
                    multiplier.isList()   == SetlBoolean.TRUE ||
-                   multiplier.isString() == SetlBoolean.TRUE
+                   multiplier.isString() == SetlBoolean.TRUE ||
+                   multiplier.isMatrix() == SetlBoolean.TRUE ||
+                   multiplier.isVector() == SetlBoolean.TRUE
         ) {
             return multiplier.product(state, this);
         } else if (multiplier.getClass() == Term.class) {
@@ -838,4 +832,3 @@ public class Rational extends NumberValue {
         return (initHashCode + nominator.hashCode()) * 31 + denominator.hashCode();
     }
 }
-

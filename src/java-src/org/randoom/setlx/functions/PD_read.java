@@ -30,7 +30,7 @@ public class PD_read extends PreDefinedProcedure {
         Value               inputValue = Om.OM;
         String              input      = null;
         final StringBuilder prompt     = new StringBuilder();
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             prompt.append(": ");
         } else {
             for (final Value arg : args) {

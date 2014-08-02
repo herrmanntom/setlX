@@ -2,8 +2,6 @@ package org.randoom.setlx.expressionUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.SetlIterator;
-import org.randoom.setlx.expressionUtilities.SetlIteratorExecutionContainer;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlBoolean;

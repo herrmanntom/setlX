@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
@@ -345,15 +344,18 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public Value product(final State state, final Value multiplier)
-        throws IncompatibleTypeException, UndefinedOperationException, NumberToLargeException
+        throws SetlException
     {
         if (multiplier.getClass() == SetlDouble.class) {
             final SetlDouble rhs = (SetlDouble) multiplier;
             return SetlDouble.valueOf(this.doubleValue * rhs.jDoubleValue());
-        }
-        if (multiplier.getClass() == Rational.class) {
+        } else if (multiplier.getClass() == Rational.class) {
             final Rational rhs = (Rational) multiplier;
             return SetlDouble.valueOf(this.doubleValue * rhs.toDouble().doubleValue);
+        } else if (multiplier.getClass() == SetlMatrix.class ||
+                   multiplier.getClass() == SetlVector.class
+        ) {
+            return multiplier.product(state, this);
         } else if (multiplier.getClass() == Term.class) {
             return ((Term) multiplier).productFlipped(state, this);
         } else {
@@ -523,4 +525,3 @@ public class SetlDouble extends NumberValue {
         return initHashCode + d.hashCode();
     }
 }
-

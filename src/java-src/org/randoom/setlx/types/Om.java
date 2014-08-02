@@ -54,11 +54,7 @@ public class Om extends Value {
 
     @Override
     public boolean equalTo(final Object v) {
-        if (v == OM) {
-            return true;
-        } else {
-            return false;
-        }
+        return v == OM;
     }
 
     private final static int initHashCode = Om.class.hashCode();

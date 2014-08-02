@@ -53,11 +53,7 @@ public class IgnoreDummy extends Value {
 
     @Override
     public boolean equalTo(final Object v) {
-        if (v == ID) {
-            return true;
-        } else {
-            return false;
-        }
+        return v == ID;
     }
 
     private final static int initHashCode = IgnoreDummy.class.hashCode();

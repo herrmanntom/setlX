@@ -127,6 +127,10 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         return SetlBoolean.FALSE;
     }
 
+    public SetlBoolean isMatrix() {
+        return SetlBoolean.FALSE;
+    }
+
     public SetlBoolean isObject() {
         return SetlBoolean.FALSE;
     }
@@ -152,6 +156,10 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     public SetlBoolean isTerm() {
+        return SetlBoolean.FALSE;
+    }
+
+    public SetlBoolean isVector() {
         return SetlBoolean.FALSE;
     }
 

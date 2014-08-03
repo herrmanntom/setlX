@@ -65,7 +65,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 			}
 			int currentColumn = 0;
 			for(Value cell : rowAsCollection) {
-				if(cell.jDoubleConvertable()) {
+				if(cell.jDoubleConvertible()) {
 					base[currentRow][currentColumn] = cell.toJDoubleValue(state);
 					currentColumn++;
 				} else {
@@ -90,7 +90,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 		double[][] base = new double[vector.size()][1];
 		for(int i = 0; i < vector.size(); i++) {
 			Value elem = vector.getMember(i + 1);
-			if(elem.jDoubleConvertable()) {
+			if(elem.jDoubleConvertible()) {
 				base[i][0] = elem.toJDoubleValue(state);
 			} else {
 				throw new IncompatibleTypeException("Vector could not be converted to a matrix, because its dimension " + i + " value could not be converted to a double.");
@@ -260,7 +260,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 		if(!this.isSquare()) {
 			throw new IncompatibleTypeException("Power is only defined on square matrices."); // Same in Octave
 		}
-		if(exponent.jIntConvertable()) {
+		if(exponent.jIntConvertible()) {
 			int ex = exponent.toJIntValue(state);
 			Jama.Matrix base;
 			if(ex < 0) {
@@ -516,7 +516,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 			NumberValue[] elems = ((SetlVector)element).getValue();
 			dElems = new double[elems.length];
 			for(int i = 0; i < elems.length; i++) {
-				if(elems[i].jDoubleConvertable()) {
+				if(elems[i].jDoubleConvertible()) {
 					try {
 						dElems[i] = elems[i].toJDoubleValue(state);
 					} catch(SetlException ex) {
@@ -531,7 +531,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 			dElems = new double[col.size()];
 			int idx = 0;
 			for(Value v : col) {
-				if(v.jDoubleConvertable()) {
+				if(v.jDoubleConvertible()) {
 					try {
 						dElems[idx] = v.toJDoubleValue(state);
 					} catch(SetlException ex) {
@@ -633,7 +633,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 	 */
 	@Override
 	public Value getMember(State state, Value index) throws SetlException {
-		if(index.jIntConvertable()) {
+		if(index.jIntConvertible()) {
 			return this.getMember(index.toJIntValue(state));
 		} else {
 			throw new IncompatibleTypeException("Given index is not a number.");
@@ -904,7 +904,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 	 */
 	@Override
 	public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
-		if(args.get(0).jIntConvertable()) {
+		if(args.get(0).jIntConvertible()) {
 			return this.getMember(args.get(0).toJIntValue(state)).clone();
 		} else {
 			throw new IncompatibleTypeException("Matrix row access index must be an integer.");
@@ -921,7 +921,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 	 */
 	@Override
 	public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
-		if(args.get(0).jIntConvertable()) {
+		if(args.get(0).jIntConvertible()) {
 			return this.getMember(args.get(0).toJIntValue(state));
 		} else {
 			throw new IncompatibleTypeException("Matrix row access index must be an integer.");
@@ -938,7 +938,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 	 */
 	@Override
 	public void setMember(final State state, final Value index, final Value v) throws SetlException {
-		if(index.jIntConvertable()) {
+		if(index.jIntConvertible()) {
 			int idx = index.jIntValue();
 			if(idx > this.value.getRowDimension() || idx < 1) {
 				throw new IncompatibleTypeException("Index out of bounds: " + idx);
@@ -950,7 +950,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 				}
 				List<Double> newRow = new ArrayList<Double>(col.size());
 				for(Value elem : col) {
-					if(elem.jDoubleConvertable()) {
+					if(elem.jDoubleConvertible()) {
 						newRow.add(elem.jDoubleValue());
 					} else {
 						throw new IncompatibleTypeException("Matrix row assign: Element " + elem + " of the collection is not a number.");

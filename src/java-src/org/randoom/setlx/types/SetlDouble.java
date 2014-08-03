@@ -239,7 +239,7 @@ public class SetlDouble extends NumberValue {
 
     /* native type checks */
     @Override
-    public boolean jDoubleConvertable() {
+    public boolean jDoubleConvertible() {
         return true;
     }
 

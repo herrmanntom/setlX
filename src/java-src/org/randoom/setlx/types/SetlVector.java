@@ -343,7 +343,7 @@ public class SetlVector extends IndexedCollectionValue {
 	@Override
 	public Value getMember(State state, Value index) throws SetlException {
 		// System.err.println("[DEBUG]: getMember begin");
-		if(index.jIntConvertable()) {
+		if(index.jIntConvertible()) {
 			// System.err.println("[DEBUG]: getMember end");
 			return this.getMember(index.toJIntValue(state));
 		} else {
@@ -550,7 +550,7 @@ public class SetlVector extends IndexedCollectionValue {
 			}
 			// System.err.println("[DEBUG]: product end Number");
 			return new SetlVector(result);
-		} else if(multiplier.jDoubleConvertable()) {
+		} else if(multiplier.jDoubleConvertible()) {
 			NumberValue[] result = new NumberValue[this.size()];
 			for(int i = 0; i < this.size(); i++) {
 				result[i] = (NumberValue)this.getValue()[i].product(state, SetlDouble.valueOf(multiplier.toJDoubleValue(state)));
@@ -805,7 +805,7 @@ public class SetlVector extends IndexedCollectionValue {
 	 */
 	@Override
 	public void setMember(final State state, final Value index, final Value v) throws SetlException {
-		if(index.jIntConvertable()) {
+		if(index.jIntConvertible()) {
 			int idx = index.jIntValue();
 			if(v.isNumber() == SetlBoolean.TRUE) {
 				if(idx > this.value.length || idx < 1) {

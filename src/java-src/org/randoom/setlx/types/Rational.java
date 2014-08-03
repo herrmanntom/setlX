@@ -324,7 +324,7 @@ public class Rational extends NumberValue {
     /* native type checks */
 
     @Override
-    public boolean jIntConvertable() {
+    public boolean jIntConvertible() {
         return (isInteger &&
                 nominator.compareTo(INTEGER_MAX_VALUE) < 0 &&
                 nominator.compareTo(INTEGER_MIN_VALUE) > 0
@@ -332,7 +332,7 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public boolean jDoubleConvertable() {
+    public boolean jDoubleConvertible() {
         if (this.compareTo(ZERO) == 0) {
             return true;
         }
@@ -350,7 +350,7 @@ public class Rational extends NumberValue {
 
     @Override
     public double toJDoubleValue(final State state) throws NumberToLargeException {
-        if (!jDoubleConvertable()) {
+        if (!jDoubleConvertible()) {
             final String msg = "The fraction " + nominator + "/" + denominator
                        + "is too big or too small";
             throw new NumberToLargeException(msg);

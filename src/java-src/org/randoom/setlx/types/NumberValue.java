@@ -29,7 +29,7 @@ public abstract class NumberValue extends Value {
 
     @Override
     public          Value       power(final State state, final Value exponent) throws SetlException {
-        if (exponent.isInteger() == SetlBoolean.TRUE && exponent.jIntConvertable()) {
+        if (exponent.isInteger() == SetlBoolean.TRUE && exponent.jIntConvertible()) {
             return this.power(state, exponent.jIntValue());
         } else if (exponent.isRational() == SetlBoolean.TRUE) {
             return this.power(state, exponent.jDoubleValue());

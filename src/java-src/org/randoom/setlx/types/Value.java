@@ -206,7 +206,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      *
      * @return True if this type is can be converted.
      */
-    public boolean jDoubleConvertable() {
+    public boolean jDoubleConvertible() {
         return false;
     }
     /**
@@ -215,7 +215,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      *
      * @return True if this type is can be converted.
      */
-    public boolean jIntConvertable() {
+    public boolean jIntConvertible() {
         return false;
     }
 
@@ -225,7 +225,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * Get the native Java double equivalent of this value.
      * This method does NOT convert non-double equivalent types into double!
      *
-     * If jDoubleConvertable() equals true for this value, then it must be
+     * If jDoubleConvertible() equals true for this value, then it must be
      * impossible for this method to fail or throw an exception of any kind.
      *
      * @return                           Equivalent double of this value.
@@ -242,7 +242,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * Get the native Java integer equivalent of this value.
      * This method does NOT convert non-integer equivalent types into integer!
      *
-     * If jIntConvertable() equals true for this value, then it must be
+     * If jIntConvertible() equals true for this value, then it must be
      * impossible for this method to fail or throw an exception of any kind.
      *
      * @return                           Equivalent int of this value.

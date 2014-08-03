@@ -134,16 +134,16 @@ public class SetlBoolean extends Value {
 
     // FALSE < TRUE
     @Override
-    public int compareTo(final Value v){
-        if (this == v) {
+    public int compareTo(final Value other){
+        if (this == other) {
             // as only exacly one FALSE and TRUE object exist, we can compare by reference
             return 0;
-        } else if (this == TRUE  && v == FALSE) {
+        } else if (this == TRUE  && other == FALSE) {
             return 1;
-        } else if (this == FALSE && v == TRUE ) {
+        } else if (this == FALSE && other == TRUE ) {
             return -1;
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -153,13 +153,9 @@ public class SetlBoolean extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object o){
-        if (this == o) {
-            // as only exactly one FALSE and TRUE object exist, we can compare by reference
-            return true;
-        } else {
-            return false;
-        }
+    public boolean equalTo(final Object other){
+        // as only exactly one FALSE and TRUE object exist, we can compare by reference
+        return this == other;
     }
 
     @Override

@@ -60,6 +60,7 @@ public class ProcedureConstructor extends Expr {
                        var.equals(((PreDefinedProcedure)val).getName())
                     ) {
                         // skip predefined Functions bound to their name
+                        continue;
                     } else {
                         closure.put(var, val);
                     }

@@ -38,11 +38,11 @@ public class IgnoreDummy extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (v == ID) {
+    public int compareTo(final Value other) {
+        if (other == ID) {
             return 0;
         } else {
-            return -1; // dummy is uncomparable to anything else
+            return -1; // dummy is incomparable to anything else
         }
     }
 
@@ -52,8 +52,8 @@ public class IgnoreDummy extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        return v == ID;
+    public boolean equalTo(final Object other) {
+        return other == ID;
     }
 
     private final static int initHashCode = IgnoreDummy.class.hashCode();

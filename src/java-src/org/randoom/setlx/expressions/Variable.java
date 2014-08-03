@@ -143,7 +143,7 @@ public class Variable extends AssignableExpression {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final String id = ((SetlString) term.firstMember()).getUnquotedString(state);
+            final String id = term.firstMember().getUnquotedString(state);
             return new Variable(id);
         }
     }
@@ -175,11 +175,7 @@ public class Variable extends AssignableExpression {
      * @return   True, if both Variables are equal.
      */
     public final boolean equals(final Variable v) {
-        if (this == v) {
-            return true;
-        } else {
-            return id.equals(v.id);
-        }
+        return this == v || id.equals(v.id);
     }
 
     private final static int initHashCode = Variable.class.hashCode();

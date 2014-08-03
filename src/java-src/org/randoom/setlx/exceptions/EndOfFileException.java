@@ -11,7 +11,7 @@ public class EndOfFileException extends ParserException {
      * Create new EndOfFileException exception.
      */
     public EndOfFileException() {
-        super("EndOfFile");
+        this("EndOfFile");
     }
 
     /**

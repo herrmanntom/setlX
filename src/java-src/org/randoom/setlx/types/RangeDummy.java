@@ -26,8 +26,8 @@ public class RangeDummy extends Value {
     }
 
     @Override
-    public int compareTo(final Value v) {
-        if (v == RD) {
+    public int compareTo(final Value other) {
+        if (other == RD) {
             return 0;
         } else {
             return -1; // dummy is incomparable to anything else
@@ -40,8 +40,8 @@ public class RangeDummy extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        return v == RD;
+    public boolean equalTo(final Object other) {
+        return other == RD;
     }
 
     private final static int initHashCode = RangeDummy.class.hashCode();

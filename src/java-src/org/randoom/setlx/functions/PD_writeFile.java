@@ -1,7 +1,7 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.FileNotWriteableException;
+import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
@@ -29,7 +29,7 @@ public class PD_writeFile extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWriteableException {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, FileNotWritableException {
         return exec(state, args, false);
     }
 
@@ -41,9 +41,9 @@ public class PD_writeFile extends PreDefinedProcedure {
      * @param append         Defines if file should be appended, instead of newly created.
      * @return               SetlBoolean.TRUE if writing was successful.
      * @throws IncompatibleTypeException Thrown in case the wrong parameters are supplied.
-     * @throws FileNotWriteableException File to be written cannot be written.
+     * @throws FileNotWritableException File to be written cannot be written.
      */
-    protected Value exec(final State state, final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWriteableException {
+    protected Value exec(final State state, final List<Value> args, final boolean append) throws IncompatibleTypeException, FileNotWritableException {
         final Value  fileArg = args.get(0);
         if (fileArg.isString() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException("FileName-argument '" + fileArg.toString(state) + "' is not a string.");

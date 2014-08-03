@@ -12,6 +12,7 @@ import org.randoom.setlx.utilities.State;
  */
 public abstract class Statement extends CodeFragment {
 
+    //TODO: use enum
     /**
      * Code returned by executeWithErrorHandling() when the execution stopped
      * without any error occurring or the user explicitly exiting.

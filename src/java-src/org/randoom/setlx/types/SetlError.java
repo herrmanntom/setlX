@@ -51,13 +51,13 @@ public class SetlError extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == SetlError.class) {
-            return message.compareTo(((SetlError) v).message);
+        } else if (other.getClass() == SetlError.class) {
+            return message.compareTo(((SetlError) other).message);
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -67,11 +67,11 @@ public class SetlError extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        if (this == v) {
+    public boolean equalTo(final Object other) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == SetlError.class) {
-            return message.equals(((SetlError) v).message);
+        } else if (other.getClass() == SetlError.class) {
+            return message.equals(((SetlError) other).message);
         } else {
             return false;
         }

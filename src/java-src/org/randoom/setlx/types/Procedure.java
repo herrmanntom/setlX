@@ -145,6 +145,7 @@ public class Procedure extends Value {
         // upon defining this procedure, all variables which are unbound inside
         // will be read to create the closure for this procedure
         for (final String var : innerUnboundVariables) {
+            //noinspection StringEquality
             if (var == Variable.getPreventOptimizationDummy()) {
                 continue;
             } else if (boundVariables.contains(var)) {
@@ -193,9 +194,7 @@ public class Procedure extends Value {
                 values.add(arg.eval(state));
             }
 
-            final Value result = callAfterEval(state, args, values, object);
-
-            return result;
+            return callAfterEval(state, args, values, object);
 
         } catch (final StackOverflowError soe) {
             state.storeStackDepthOfFirstCall(state.callStackDepth);
@@ -417,19 +416,19 @@ public class Procedure extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
+    public boolean equalTo(final Object other) {
         object = null;
-        if (this == v) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == Procedure.class) {
-            final Procedure other = (Procedure) v;
-            if (parameters.size() == other.parameters.size()) {
+        } else if (other.getClass() == Procedure.class) {
+            final Procedure procedure = (Procedure) other;
+            if (parameters.size() == procedure.parameters.size()) {
                 for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
+                    if ( ! parameters.get(index).equalTo(procedure.parameters.get(index))) {
                         return false;
                     }
                 }
-                return statements.equalTo(other.statements);
+                return statements.equalTo(procedure.statements);
             }
         }
         return false;

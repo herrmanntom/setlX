@@ -1,5 +1,6 @@
 package org.randoom.setlx.statements;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -293,11 +294,11 @@ public class Block extends Statement implements Comparable<Block> {
     }
 
     @Override
-    public final boolean equals(final Object o) {
-        if (this == o) {
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        } else if (o instanceof Block) {
-            return this.equalTo((Block) o);
+        } else if (obj instanceof Block) {
+            return this.equalTo((Block) obj);
         }
         return false;
     }

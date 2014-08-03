@@ -440,40 +440,40 @@ public class SetlClass extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v){
-        if (this == v) {
+    public int compareTo(final Value other){
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == SetlClass.class) {
-            final SetlClass other = (SetlClass) v;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
+        } else if (other.getClass() == SetlClass.class) {
+            final SetlClass setlClass = (SetlClass) other;
+            int cmp = Integer.valueOf(parameters.size()).compareTo(setlClass.parameters.size());
             if (cmp != 0) {
                 return cmp;
             }
             for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(other.parameters.get(index));
+                cmp = parameters.get(index).compareTo(setlClass.parameters.get(index));
                 if (cmp != 0) {
                     return cmp;
                 }
             }
-            cmp = initBlock.compareTo(other.initBlock);
+            cmp = initBlock.compareTo(setlClass.initBlock);
             if (cmp != 0) {
                 return cmp;
             }
             if (getStaticBlock() != null) {
-                if (other.getStaticBlock() != null) {
-                    return getStaticBlock().compareTo(other.getStaticBlock());
+                if (setlClass.getStaticBlock() != null) {
+                    return getStaticBlock().compareTo(setlClass.getStaticBlock());
                 } else {
                     return 1;
                 }
             } else {
-                if (other.getStaticBlock() != null) {
+                if (setlClass.getStaticBlock() != null) {
                     return -1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -483,23 +483,23 @@ public class SetlClass extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        if (this == v) {
+    public boolean equalTo(final Object other) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == SetlClass.class) {
-            final SetlClass other = (SetlClass) v;
-            if (parameters.size() == other.parameters.size()) {
+        } else if (other.getClass() == SetlClass.class) {
+            final SetlClass setlClass = (SetlClass) other;
+            if (parameters.size() == setlClass.parameters.size()) {
                 for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
+                    if ( ! parameters.get(index).equalTo(setlClass.parameters.get(index))) {
                         return false;
                     }
                 }
-                if (initBlock.equalTo(other.initBlock)) {
+                if (initBlock.equalTo(setlClass.initBlock)) {
                     if (getStaticBlock() != null) {
-                        if (other.getStaticBlock() != null) {
-                            return getStaticBlock().equalTo(other.getStaticBlock());
+                        if (setlClass.getStaticBlock() != null) {
+                            return getStaticBlock().equalTo(setlClass.getStaticBlock());
                         }
-                    } if (other.getStaticBlock() == null) {
+                    } if (setlClass.getStaticBlock() == null) {
                         return true;
                     }
                 }

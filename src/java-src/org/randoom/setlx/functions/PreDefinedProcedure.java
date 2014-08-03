@@ -223,7 +223,7 @@ public abstract class PreDefinedProcedure extends Procedure {
         sb.append("}");
     }
 
-    private final void appendParameters(final State state, final StringBuilder sb) {
+    private void appendParameters(final State state, final StringBuilder sb) {
         sb.append("(");
         final int     numberOfParameters = parameters.size();
         final boolean optionalParameters = minimumNumberOfParameters < numberOfParameters;

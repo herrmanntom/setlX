@@ -1,6 +1,6 @@
 package org.randoom.setlx.utilities;
 
-import org.randoom.setlx.exceptions.FileNotWriteableException;
+import org.randoom.setlx.exceptions.FileNotWritableException;
 
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
@@ -19,9 +19,9 @@ public class WriteFile {
      * @param content                    Content to write into the file.
      * @param fileName                   Name of file to write.
      * @param append                     Set to true to append instead of creating/overwriting.
-     * @throws FileNotWriteableException Thrown in case the file cannot be created/appended.
+     * @throws org.randoom.setlx.exceptions.FileNotWritableException Thrown in case the file cannot be created/appended.
      */
-    public static void writeToFile(final State state, final String content, String fileName, final boolean append) throws FileNotWriteableException {
+    public static void writeToFile(final State state, final String content, String fileName, final boolean append) throws FileNotWritableException {
         FileWriter     fWr = null;
         BufferedWriter out = null;
         try {
@@ -32,9 +32,9 @@ public class WriteFile {
             out = new BufferedWriter(fWr);
             out.write(content);
         } catch (final FileNotFoundException fnfe) {
-            throw new FileNotWriteableException("File '" + fileName + "' could not be opened for writing.");
+            throw new FileNotWritableException("File '" + fileName + "' could not be opened for writing.");
         } catch (final IOException ioe) {
-            throw new FileNotWriteableException(ioe.getMessage());
+            throw new FileNotWritableException(ioe.getMessage());
         } finally {
             try {
                 if (out != null) {

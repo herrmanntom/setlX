@@ -482,22 +482,22 @@ public class SetlDouble extends NumberValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == SetlDouble.class) {
-            final SetlDouble rhs = (SetlDouble) v;
+        } else if (other.getClass() == SetlDouble.class) {
+            final SetlDouble rhs = (SetlDouble) other;
             final Double d = this.doubleValue;
             return d.compareTo(rhs.doubleValue);
-        } else if (v.getClass() == Rational.class) {
+        } else if (other.getClass() == Rational.class) {
             try {
                 final Double d = this.doubleValue;
-                return d.compareTo(((Rational)v).toDouble().doubleValue);
+                return d.compareTo(((Rational) other).toDouble().doubleValue);
             } catch (final NumberToLargeException e) {
-                return toRational().compareTo(v);
+                return toRational().compareTo(other);
             }
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -507,9 +507,9 @@ public class SetlDouble extends NumberValue {
     }
 
     @Override
-    public boolean equalTo(final Object o) {
-        if (o instanceof Value) {
-            final Value v = (Value) o;
+    public boolean equalTo(final Object other) {
+        if (other instanceof Value) {
+            final Value v = (Value) other;
             if (v.isNumber() == SetlBoolean.TRUE) {
                 return this.compareTo(v) == 0;
             }

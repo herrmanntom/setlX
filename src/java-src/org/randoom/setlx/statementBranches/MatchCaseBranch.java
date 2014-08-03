@@ -74,11 +74,7 @@ public class MatchCaseBranch extends MatchAbstractBranch {
 
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
-        if (condition != null) {
-            return condition.eval(state) == SetlBoolean.TRUE;
-        } else {
-            return true;
-        }
+        return condition == null || condition.eval(state) == SetlBoolean.TRUE;
     }
 
     @Override

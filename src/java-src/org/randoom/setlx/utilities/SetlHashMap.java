@@ -81,7 +81,9 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
 
     @Override
     public V remove(final Object key) {
-        keys.remove(key);
+        if (key.getClass() == String.class) {
+            keys.remove(key);
+        }
         return super.remove(key);
     }
 

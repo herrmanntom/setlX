@@ -1,7 +1,7 @@
 package org.randoom.setlxUI.pc;
 
 import org.randoom.setlx.exceptions.EndOfFileException;
-import org.randoom.setlx.exceptions.FileNotWriteableException;
+import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.TermConversionException;
@@ -385,7 +385,7 @@ public class SetlX {
                 if (dumpFile != null) {
                     try {
                         WriteFile.writeToFile(state, program, dumpFile, /* append = */ (i > 0) );
-                    } catch (final FileNotWriteableException fnwe) {
+                    } catch (final FileNotWritableException fnwe) {
                         state.errWriteLn(fnwe.getMessage());
 
                         System.exit(EXIT_ERROR);
@@ -397,7 +397,7 @@ public class SetlX {
                 if (dumpTermFile != null) {
                     try {
                         WriteFile.writeToFile(state, programTerm, dumpTermFile, /* append = */ (i > 0) );
-                    } catch (final FileNotWriteableException fnwe) {
+                    } catch (final FileNotWritableException fnwe) {
                         state.errWriteLn(fnwe.getMessage());
 
                         System.exit(EXIT_ERROR);

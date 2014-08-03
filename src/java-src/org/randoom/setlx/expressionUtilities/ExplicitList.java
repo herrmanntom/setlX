@@ -199,9 +199,8 @@ public class ExplicitList extends CollectionBuilder {
      * @param state                    Current state of the running setlX program.
      * @param value                    CollectionValue containing the term representation.
      * @return                         Regenerated ExplicitList.
-     * @throws TermConversionException Thrown in case the term is malformed.
      */
-    public static ExplicitList collectionValueToExplicitList(final State state, final CollectionValue value) throws TermConversionException {
+    public static ExplicitList collectionValueToExplicitList(final State state, final CollectionValue value) {
         final List<Expr> exprList = new ArrayList<Expr>(value.size());
         for (final Value v : value) {
             exprList.add(TermConverter.valueToExpr(state, v));

@@ -265,8 +265,7 @@ public class StringConstructor extends Expr {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
             originalStr.append("\"");
-            final Expr result = new StringConstructor(originalStr.toString(), fragments, exprs);
-            return result;
+            return new StringConstructor(originalStr.toString(), fragments, exprs);
         }
     }
 

@@ -704,7 +704,7 @@ public class SetlMatrix extends IndexedCollectionValue {
 	public void removeMember(State state, Value element) throws IncompatibleTypeException {
 		int index = -1;
 		int tmp = 0;
-		for(Value row : this.toSetlList(null)) {
+		for(Value row : this.toSetlList(state)) {
 			if(row instanceof SetlList && ((SetlList)row).equalTo(element)) {
 				index = tmp;
 				break;

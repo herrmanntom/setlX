@@ -33,7 +33,7 @@ public class VariableScope {
     /**
      * Marker binding to signal that value is indeed set, but not allowed to be accessed.
      */
-    /*package*/ final static ScopeBinding ACCESS_DENIED_BINDING      = new ScopeBinding(Integer.MAX_VALUE, 0l, ACCESS_DENIED_VALUE);
+    private     final static ScopeBinding ACCESS_DENIED_BINDING      = new ScopeBinding(Integer.MAX_VALUE, 0l, ACCESS_DENIED_VALUE);
 
     private static class ScopeBindings {
         private final Timer                                     timer;
@@ -115,7 +115,7 @@ public class VariableScope {
         this.scopeBindings = scopeBindings;
         if (scopeBindings.validScopeGenerations.size() > scopeStackDepth) {
             this.scopeGeneration = scopeBindings.validScopeGenerations.get(scopeStackDepth) + 1l;
-            scopeBindings.validScopeGenerations.set(scopeStackDepth, Long.valueOf(this.scopeGeneration));
+            scopeBindings.validScopeGenerations.set(scopeStackDepth, this.scopeGeneration);
         } else {
             this.scopeGeneration = 0l;
             scopeBindings.validScopeGenerations.add(this.scopeGeneration);

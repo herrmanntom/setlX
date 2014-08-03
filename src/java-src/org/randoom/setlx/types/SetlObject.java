@@ -606,7 +606,10 @@ public class SetlObject extends Value {
                 return;
             }
         } catch (final SetlException e) {
-            sb.append("Error during execution of member '" + STR + "': " + e.getMessage());
+            sb.append("Error during execution of member '");
+            sb.append(STR);
+            sb.append("': ");
+            sb.append(e.getMessage());
         }
 
         canonical(state, sb, tabs);

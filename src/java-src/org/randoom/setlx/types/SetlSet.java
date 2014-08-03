@@ -90,7 +90,7 @@ public class SetlSet extends CollectionValue {
      * While clone() is called upon all members of this set, this does not perform
      * a `deep' cloning, as the members themselves are only marked for cloning.
      */
-    private final void separateFromOriginal() {
+    private void separateFromOriginal() {
         if (isCloned) {
             final TreeSet<Value> original = set;
             set = new TreeSet<Value>();

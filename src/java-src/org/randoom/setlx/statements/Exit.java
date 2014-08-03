@@ -53,8 +53,7 @@ public class Exit extends Statement {
 
     @Override
     public Term toTerm(final State state) {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 0);
-        return result;
+        return new Term(FUNCTIONAL_CHARACTER, 0);
     }
 
     /**

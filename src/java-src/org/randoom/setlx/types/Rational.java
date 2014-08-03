@@ -571,7 +571,7 @@ public class Rational extends NumberValue {
     // The mathematical specification of the modulo function is:
     //     a % b = a - floor(a/b) * b
     @Override
-    public Value modulo(final State state, final Value modulo) throws IncompatibleTypeException, SetlException {
+    public Value modulo(final State state, final Value modulo) throws SetlException {
         if (modulo.getClass() == Rational.class) {
             final Rational b = (Rational) modulo;
             if (isInteger && b.isInteger) {
@@ -784,11 +784,11 @@ public class Rational extends NumberValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == Rational.class) {
-            final Rational r = (Rational) v;
+        } else if (other.getClass() == Rational.class) {
+            final Rational r = (Rational) other;
             if (isInteger && r.isInteger) {
                 // a/1 == p/1  <==>  a == p
                 return nominator.compareTo(r.nominator);
@@ -798,14 +798,14 @@ public class Rational extends NumberValue {
                 final BigInteger bp = denominator.multiply(r.nominator);
                 return aq.compareTo(bp);
             }
-        } else if (v.getClass() == SetlDouble.class) {
+        } else if (other.getClass() == SetlDouble.class) {
             try {
-                return toDouble().compareTo(v);
+                return toDouble().compareTo(other);
             } catch (final NumberToLargeException e) {
-                return this.compareTo(((SetlDouble)v).toRational());
+                return this.compareTo(((SetlDouble) other).toRational());
             }
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -815,9 +815,9 @@ public class Rational extends NumberValue {
     }
 
     @Override
-    public boolean equalTo(final Object o) {
-        if (o instanceof Value) {
-            final Value v = (Value) o;
+    public boolean equalTo(final Object other) {
+        if (other instanceof Value) {
+            final Value v = (Value) other;
             if (v.isNumber() == SetlBoolean.TRUE) {
                 return this.compareTo(v) == 0;
             }

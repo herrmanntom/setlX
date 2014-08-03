@@ -101,7 +101,7 @@ public abstract class CodeFragment {
     ) {
         final String className = _class.getSimpleName();
         return "^" + Character.toLowerCase(className.charAt(0)) + className.substring(1);
-    };
+    }
 
 }
 

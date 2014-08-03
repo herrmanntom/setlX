@@ -113,13 +113,13 @@ public class MemberAccess extends AssignableExpression {
 
     // sets this expression to the given value
     @Override
-    public void assignUncloned(final State state, final Value v, final String context) throws SetlException {
+    public void assignUncloned(final State state, final Value value, final String context) throws SetlException {
         if (this.lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
-            lhs.setObjectMember(state, memberID, v, context);
+            lhs.setObjectMember(state, memberID, value, context);
         } else {
             throw new IncompatibleTypeException(
-                "Left-hand-side of \"" + this.toString(state) + " := " + v.toString(state) + "\" is unusable for member assignment."
+                "Left-hand-side of \"" + this.toString(state) + " := " + value.toString(state) + "\" is unusable for member assignment."
             );
         }
     }

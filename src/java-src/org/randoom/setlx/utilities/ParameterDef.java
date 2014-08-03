@@ -197,11 +197,11 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
     }
 
     @Override
-    public final boolean equals(final Object o) {
-        if (this == o) {
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        } else if (o.getClass() == ParameterDef.class) {
-            return equalTo((ParameterDef) o);
+        } else if (obj.getClass() == ParameterDef.class) {
+            return equalTo((ParameterDef) obj);
         }
         return false;
     }
@@ -214,10 +214,7 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
      * @return      True if `this' equals `other', false otherwise.
      */
     public boolean equalTo(final ParameterDef other) {
-        if (this == other) {
-            return true;
-        }
-        return this.type == other.type && this.var.equals(other.var);
+        return this == other || this.type == other.type && this.var.equals(other.var);
     }
 }
 

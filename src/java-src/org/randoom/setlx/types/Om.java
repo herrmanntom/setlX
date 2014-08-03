@@ -39,11 +39,11 @@ public class Om extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v){
-        if (v == OM) {
+    public int compareTo(final Value other){
+        if (other == OM) {
             return 0;
         }  else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -53,8 +53,8 @@ public class Om extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        return v == OM;
+    public boolean equalTo(final Object other) {
+        return other == OM;
     }
 
     private final static int initHashCode = Om.class.hashCode();

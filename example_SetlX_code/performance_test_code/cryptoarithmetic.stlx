@@ -62,7 +62,5 @@ test := procedure(f) {
     print(solve(f));
 };
 
-test("A**2 + BC**2 == BD**2");
-test("I + I == ME");
 test("ODD + ODD == EVEN");
 test("SEND + MORE == MONEY");

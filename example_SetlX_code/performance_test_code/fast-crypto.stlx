@@ -1,7 +1,7 @@
 // This program is inspired by a Python program written by Peter Norvig.
 // It is a little bit more complictated than the Python program since SetlX 
 // does not have the *args notation for calling functions.
-
+ 
 // This function gets a formula like "send + more == money" and tries to find
 // unique digits that can be substituted for the letters to turn the resulting
 // string into a valid formula.
@@ -10,12 +10,15 @@ solve := procedure(formula) {
     return { genDict(args, p) : p in shortPerms({0..9}, #args) | f(p) };
 };
 
-alphabet := { char(n) : n in [65 .. 90] };  // letters "a" to "z"
+alphabet := { char(n) : n in [65 .. 90] };  // letters "A" to "Z"
 
 // This procedure returns a pair.  The first component is a function that is derived 
 // from the given formula.  The second component is the string of variables of the 
-// function. For example, the string 'you == me**2' returns the pair
-// [e, m, o, u, y] |-> (u+10*o+100*y)==(e+10*m)**2) && y!=0 && e!=0, "emouy"]
+// function. For example, the string 'YOU == ME ** 2' returns the pair
+// [args |-> args[5] * 100 + args[3] * 10 + args[4] * 1 == (args[2] * 10 + args[1] * 1) ** 2 && args[2] != 0 && args[5] != 0, 
+//  ["E", "M", "O", "U", "Y"]
+// ]
+
 compileFormula := procedure(formula) {
     parameters := { c : c in formula | c in alphabet }; // letters in formula
     paramList  := [ p : p in parameters ];              // turn it into list
@@ -30,10 +33,7 @@ compileFormula := procedure(formula) {
 };
 
 // Compile a word of lowercase letters into a term interpreting the letters
-// as decimal digits.  This term is returned as a string.  For example, the 
-// string "send" is compiled into the string "d*1+n*10+e*100+s*1000".
-// Strings that contain characters that are not lowercase characters are 
-// returned unchanged.
+// as decimal digits.  dictionary assigns the index in the argument array.
 compileWord := procedure(word, dictionary) {
     n := #word;  
     if (forall (c in word | c in alphabet)) {

@@ -543,11 +543,6 @@ public class SetlObject extends Value {
     /* features of objects */
 
     @Override
-    public Value getObjectMember(final State state, final String variable) throws SetlException {
-        return getObjectMemberUnClonedUnSafe(state, variable).clone();
-    }
-
-    @Override
     public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {
         separateFromOriginal();
         return getObjectMemberUnClonedUnSafe(state, variable);

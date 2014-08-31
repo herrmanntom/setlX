@@ -634,28 +634,6 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
         );
     }
 
-    /**
-     * Get a specified member of this value, but return it without cloning.
-     *
-     * @param state          Current state of the running setlX program.
-     * @param index          Index of the member to get.
-     * @return               Member of this value at the specified index.
-     * @throws SetlException Thrown in case of some (user-) error.
-     */
-    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
-        throw new IncompatibleTypeException(
-            "Can not get member with index '" + index.toString(state) + "' from operand;" +
-            " '" + this.toString(state) + "' is not a collection value or direct access is unsupported for this type."
-        );
-    }
-
-    public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
-        throw new IncompatibleTypeException(
-            "Can not get member between index '" + low.toString(state) + "' and '" + high.toString(state) + "' from operand;" +
-            " '" + this.toString(state) + "' is not a collection value or ranges are unsupported for this type."
-        );
-    }
-
     public Value join(final State state, final Value separator) throws SetlException {
         throw new IncompatibleTypeException(
             "Argument '" + this.toString(state) + "' not a collection value."
@@ -746,19 +724,6 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     /**
-     * Remove the specified member of this value.
-     *
-     * @param state                      Current state of the running setlX program.
-     * @param element                    Element to remove.
-     * @throws IncompatibleTypeException Thrown in case of some (user-) error.
-     */
-    public void removeMember(final State state, final Value element) throws IncompatibleTypeException {
-        throw new IncompatibleTypeException(
-            "Can not remove '" + element.toString(state) + "' from operand; '" + this.toString(state) + "' is not a collection value."
-        );
-    }
-
-    /**
      * Remove the first member of this value.
      *
      * @param state          Current state of the running setlX program.
@@ -828,12 +793,6 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     /* features of objects */
-
-    public Value getObjectMember(final State state, final String variable) throws SetlException {
-        throw new IncompatibleTypeException(
-            "Can not get member '" + variable + "' from operand; '" + this.toString(state) + "' is not an object."
-        );
-    }
 
     public Value getObjectMemberUnCloned(final State state, final String variable) throws SetlException {
         throw new IncompatibleTypeException(

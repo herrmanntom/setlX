@@ -115,6 +115,28 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     @Override
     public abstract Value           getMember(final State state, final Value index) throws SetlException;
 
+    /**
+     * Get a specified member of this value, but return it without cloning.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          Index of the member to get.
+     * @return               Member of this value at the specified index.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
+        throw new IncompatibleTypeException(
+                "Can not get member with index '" + index.toString(state) + "' from operand;" +
+                        " '" + this.toString(state) + "' is not a collection value or direct access is unsupported for this type."
+        );
+    }
+
+    public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
+        throw new IncompatibleTypeException(
+                "Can not get member between index '" + low.toString(state) + "' and '" + high.toString(state) + "' from operand;" +
+                        " '" + this.toString(state) + "' is not a collection value or ranges are unsupported for this type."
+        );
+    }
+
     @Override
     public          SetlString      join(final State state, final Value separator) throws SetlException {
         final SetlString      sep    = separator.str(state);
@@ -161,7 +183,13 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
         return (product != null)? product : neutral;
     }
 
-    @Override
+    /**
+     * Remove the specified member of this value.
+     *
+     * @param state                      Current state of the running setlX program.
+     * @param element                    Element to remove.
+     * @throws IncompatibleTypeException Thrown in case of some (user-) error.
+     */
     public abstract void            removeMember(final State state, final Value element) throws IncompatibleTypeException;
 
     @Override

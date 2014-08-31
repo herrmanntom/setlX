@@ -485,14 +485,10 @@ public class SetlVector extends IndexedCollectionValue {
         }
     }
 
-    /**
+    /*
      * Sum
      *
-     * @param state
-     * @param summand other vector, matrix (will be implicitly converted) or
-     * number
-     * @return
-     * @throws SetlException
+     * other vector, matrix (will be implicitly converted) or number
      */
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
@@ -524,27 +520,24 @@ public class SetlVector extends IndexedCollectionValue {
         }
     }
 
-    /**
+    /*
      * Cross product
      *
-     * @param state
-     * @param exponent other vector or matrix (will be implicitly converted)
-     * @return
-     * @throws SetlException
+     * other vector or matrix (will be implicitly converted)
      */
     @Override
-    public Value power(final State state, final Value exponent) throws SetlException {
-        // System.err.println("[DEBUG]: power begin");
-        if(exponent instanceof SetlVector) {
-            // System.err.println("[DEBUG]: power end vector");
-            return this.vectorProduct(state, (SetlVector)exponent);
-        } else if(exponent instanceof SetlMatrix) {
-            // System.err.println("[DEBUG]: power end matrix");
-            return this.vectorProduct(state, new SetlVector(state, (SetlMatrix)exponent));
-        } else if(exponent instanceof Term) {
-            return ((Term)exponent).powerFlipped(state, this);
+    public Value cartesianProduct(State state, Value other) throws SetlException {
+        SetlVector otherVector = null;
+        if(other instanceof SetlMatrix) {
+            otherVector = new SetlVector(state, (SetlMatrix) other);
+        } else if (other instanceof SetlVector) {
+            otherVector = (SetlVector) other;
+        } else if(other instanceof Term) {
+            return ((Term)other).powerFlipped(state, this);
+        }
+        if (otherVector != null) {
+            return this.vectorProduct(state, otherVector);
         } else {
-            // System.err.println("[DEBUG]: power exc");
             throw new IncompatibleTypeException("Incompatible exponent type.");
         }
     }

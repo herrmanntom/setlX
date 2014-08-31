@@ -25,6 +25,8 @@ print("a - b: " + (a - b));
 
 print("a ^ 3: " + (a ** 3));
 
+print("inverse a: " + (a ** -1));
+
 print("transpose a: " + (a!));
 
 print("determinant a: " + la_det(a));
@@ -51,7 +53,7 @@ print("Scalar product:");
 print("c * d: " + (c * d));
 
 print("Cross product:");
-print("c x d: " + (c ** d));
+print("c x d: " + (c >< d));
 
 print("c + d: " + (c + d));
 print("c - d: " + (c - d));

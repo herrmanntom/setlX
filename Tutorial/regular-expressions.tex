@@ -15,7 +15,7 @@ contains a concise description of the syntax and semantics of regular expression
 For a more general discussion of the use of regular expression, the book of Friedl
 \cite{friedl:2006} is an excellent choice.
 Here, we will confine ourselves to show how regular expressions can be used in
-\setlx programs.  \setlx provides two control structures that make use of regular expressions.
+\setlx\ programs.  \setlx\ provides two control structures that make use of regular expressions.
 The first is the \texttt{match} statement and the second is the \texttt{scan} statement.
 
 \section{Using Regular Expressions in a \texttt{match} Statement}
@@ -134,7 +134,7 @@ $[s, p_1, \cdots, p_n]$.
 The first element $s$ of this list is the string that matched the regular expression.  The
 remaining elements $p_i$ correspond to the different parts of the regular expression: $p_1$
 corresponds to the first group of parentheses, $p_2$ corresponds to the second group, and
-in general $p_i$ corresponds to the $i$-th group.  In line 3 this list is the matched
+in general $p_i$ corresponds to the $i$-th group.  In line 3 this list is then matched
 against the pattern
 \\[0.2cm]
 \hspace*{1.3cm}

@@ -1664,6 +1664,86 @@ to represent the term
 The present discussion of terms is not complete and will be continued in the next chapter when we
 discuss matching.
 
+\section{Vectors and Matrices}
+\setlx\ has some support for both vectors and matrices.  Suppose we have to solve the following system
+of linear equations:
+\\[0.2cm]
+\hspace*{1.3cm}
+$\begin{array}[c]{lcl}
+    1 \cdot x + 2 \cdot y + 3 \cdot z & = & 1, \\[0.2cm]
+    2 \cdot x + 3 \cdot y + 1 \cdot z & = & 2, \\[0.2cm]
+    3 \cdot x + 1 \cdot y + 2 \cdot z & = & 3.          
+  \end{array}
+$
+\\[0.2cm]
+In order to solve this system of equations we define the matrix
+\\[0.2cm]
+\hspace*{1.3cm}
+$A := \left(
+  \begin{array}[c]{lll}
+    1 & 2 & 3     \\
+    2 & 3 & 1     \\
+    3 & 1 & 2            
+  \end{array}\right)
+$ \qquad and the vectors \qquad
+$\vec{b} := \left(
+  \begin{array}[c]{l}
+    1 \\
+    2 \\
+    3        
+  \end{array}\right)
+$
+\quad and \quad
+$\vec{s} := \left(
+  \begin{array}[c]{l}
+    x \\
+    y \\
+    z        
+  \end{array}\right).
+$ 
+\\[0.2cm]
+Then, the solution $\vec{s}$ can be calculated via the formula
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{s} = A^{-1} \cdot \vec{b}$,
+\\[0.2cm]
+where $A^{-1}$ denotes the inverse of the matrix $A$.  In order to carry out this calculation in
+\setlx, we run the commands shown in Figure \ref{fig:solve-linear.stlx} on page
+\pageref{fig:solve-linear.stlx}.  Printing the variable \texttt{s} yields the following result:
+\\[0.2cm]
+\hspace*{0.3cm}
+\texttt{< [ 0.9999999999999998 ]  [ 1.1102230246251565E-16 ]  [ 5.551115123125783E-17 ] >}
+\\[0.2cm]
+This shows that the solution to the system of equations that was given initially is
+\\[0.2cm]
+\hspace*{1.3cm}
+$x \approx 1$, \quad $y \approx 0$, \quad and \quad $z \approx 0$.  
+\\[0.2cm]
+Chapter \ref{chapter:linear-algebra.tex}
+will discuss the data types of vectors and matrices in more detail.
+
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    a := matrix([[1, 2, 3], [2, 3, 1], [3, 1, 2]]);
+    b := vector([1, 2, 3]);
+    s := a**-1 * b;
+    print(s);
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Solving a system of linear equations using matrix inversion.}
+\label{fig:solve-linear.stlx}
+\end{figure}
+
 
 %%% local Variables: 
 %%% mode: latex

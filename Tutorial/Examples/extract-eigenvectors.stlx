@@ -1,0 +1,11 @@
+extractEigenVectors := procedure(a) {
+    eigV := eigenVectors(a);
+    rng  := [1 .. #eigV];
+    return [ vector([eigV[row][col] : row in rng]): col in rng ];
+};
+
+a := matrix([[1, -1], [-1, 1]]);
+
+print(a);
+print( extractEigenVectors(a) );
+print( eigenValues(a) );

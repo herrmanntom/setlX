@@ -1,0 +1,66 @@
+// This function gets a formula like "SEND + MORE == MONEY" and tries to find
+// unique digits that can be substituted for the letters to turn the resulting
+// string into a valid formula.
+solve := procedure(formula) {
+    return { g : g in substitute(formula) | valid(g) };
+};
+
+// Generate all formulas that can be derived from the given formula by substituting
+// different digits for different letters
+substitute := procedure(f) {
+    digits    := { "" + d : d in [0..9] };
+    operators := { "+", "-", "*", "/", "%", "=", " " };    
+    letters   := { c : c in f | !(c in digits + operators) };
+    letters   := [ c : c in letters ]; // turn it into a list
+    return { apply(f, translationTable(letters, p)) : 
+             p in shortPermutations(digits, #letters) 
+           };
+};
+
+// Check whether the given formula is valid.  We also check that the formula does not
+// contain numbers with leading zeros.  Further, there must not be any arithmetic
+// exceprtions when evaluation the formula like, e.g. division by zero.
+valid := procedure(f) {
+    try {
+        return !matches(f, "\b0[0-9]") && eval(f);
+    } catch (e) {
+        return false;
+    }
+};
+
+// Generate all permutations of the set s that have a length of n.
+// The number n has to be less or equal than the number of elements
+// of s.
+shortPermutations := procedure(s, n) {
+    assert(n <= #s, "error in shortPermutations");
+    if (n == 0) {
+        return { [] };
+    }
+    return { [x] + p: x in s, p in shortPermutations(s - { x }, n - 1) };
+};
+
+// Turn two lists of equal length into a relation.
+translationTable := procedure(letters, digits) {
+    assert(#letters == #digits, "error in translationTable");
+    return { [letters[i], digits[i]] : i in [1..#digits] };
+};
+
+translate := procedure(table, c) {
+    result := table[c];
+    if (result!= om) {
+        return result;
+    }
+    return c;
+};
+
+apply := procedure(f, table) {
+    return +/ [ translate(table, c) : c in f ];
+};
+    
+test := procedure(f) {
+    print("The set of all possible solutions of the equation $f$ is:");
+    print(solve(f));
+};
+
+test("ODD + ODD == EVEN");
+test("SEND + MORE == MONEY");

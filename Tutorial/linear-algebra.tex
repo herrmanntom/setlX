@@ -1,0 +1,358 @@
+\chapter{Vectors and Matrices \label{chapter:linear-algebra.tex}}
+Certain applications, e.g.~data mining and machine learning, require an efficient support of both
+vectors and matrices. 
+Although both vectors and matrices could easily be implemented in \setlx, this would not be
+efficient because of the overhead of the interpreter loop.  Therefore, \setlx\ supports both vectors and
+matrices natively.  This support is based on the \textsl{Java} library 
+\href{http://math.nist.gov/javanumerics/jama/}{\textsl{Jama}}, which has been integrated into
+\setlx\ by Patrick Robinson.  This library provides the basic means for computations involving
+matrices and vectors.  In the following exposition we assume that the reader is acquainted with the
+basic concepts of linear algebra.
+
+\section{Vectors}
+\setlx\ supports real valued vectors of arbitrary dimensions.  Conceptually, a vector can be viewed as
+a list of floating point numbers.  A vector can be constructed from a list of numbers via the
+function \texttt{vector} as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{v := vector([1/2,1/4,1/5]);}
+\\[0.2cm]
+When executed, this statement yields the following result:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{~< Result: < 0.5  0.25  0.2 > >~}
+\\[0.2cm]
+This result shows that the fractions in the argument list have been converted to floating point
+values.  Conceptually, the vector \texttt{v} is a column vector.  Therefore, mathematically
+\texttt{v} would be represented as
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\left(\begin{array}[c]{l}
+  0.5  \\
+  0.25 \\
+  0.2
+\end{array}\right)
+$.
+\\[0.2cm]
+\setlx\ support the basic arithmetic operations that are defined for vectors.  If \texttt{a} and
+\texttt{b} are two vectors, then 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a + b}
+\\[0.2cm]
+computes the sum of \texttt{a} and \texttt{b}, while 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a - b}
+\\[0.2cm]
+computes their difference.  For example, if we define
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := vector([1,2,3]);   b := vector([4,5,6]);}
+\\[0.2cm]
+then the expressions ``\texttt{a + b}'' and ``\texttt{a - b}'' yield the results
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< 5.0  7.0  9.0 >} \quad and \quad \texttt{< -3.0  -3.0  -3.0 >}.
+\\[0.2cm]
+Additionally, the shortcut assignment operators ``\texttt{+=}'' and ``\texttt{-=}'' are available
+for vectors.  They work as expected.
+
+Vectors support 
+\href{http://en.wikipedia.org/wiki/Scalar_multiplication}{\emph{scalar multiplication}}.  For
+example, if \texttt{a} is defined as above, then the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{1/2 * a}
+\\[0.2cm]
+yields the vector
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< 0.5  1.0  1.5 >}.
+\\[0.2cm]
+It does not matter whether we multiply the scalar from the left or from the right, so the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a * (1/2)}
+\\[0.2cm]
+yields the same result.  Note that we had to put the fraction \texttt{1/2} in parenthesis.  The
+reason is that the expression ``\texttt{a * 1/2}'' is parsed as ``\texttt{(a * 1) / 2}'' and
+division of a vector by a scalar is not defined.  If \texttt{v} is a vector and \texttt{n} is a
+number, then the assignment statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{v *= n;}
+\\[0.2cm]
+is equivalent to the statement
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{v = v * n;}
+\\[0.2cm]
+Students often confuse scalar multiplication and the 
+\href{http://en.wikipedia.org/wiki/Dot_product}{\emph{dot product}}, which is also known as the
+\emph{scalar product}.  Therefore, we have decided to use the same operator for both products:
+If \texttt{a} and \texttt{b} are two vectors of the same dimension, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a * b}
+\\[0.2cm]
+yields their scalar product.  For example,
+given the definition of \texttt{a} and \texttt{b} shown above, the expression
+``\texttt{a * b}''
+yields the result $32$.
+
+Finally, \setlx\ supports the 
+\href{http://en.wikipedia.org/wiki/Cross_product}{\emph{cross product}}.  If \texttt{a} and
+\texttt{b} are both 3-dimensional vectors, then the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a >< b}
+\\[0.2cm]
+computes the cross product of \texttt{a} and \texttt{b}.
+
+Vectors provide the same access operations as list.  Therefore, to extract the $i$-th component of a
+vector \texttt{v} we can use the expression ``\texttt{a[$i$]}''.  Furthermore, the operator
+``\texttt{\#}'' returns the dimension of a given matrix.
+
+
+\section{Matrices}
+\setlx\ supports real valued matrices.  The function \texttt{matrix} can be used to construct a
+matrix from a list of list of numbers.  For example, the assignment
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := matrix([[1,2],[3,4]]);}
+\\[0.2cm]
+constructs a matrix that can be written as
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\left(
+\begin{array}[c]{ll}
+  1 & 2 \\
+  3 & 4
+\end{array}
+\right)
+$.
+\\[0.2cm]
+We can see that the inner lists used as argument to matrix correspond to the rows of the resulting
+matrix.   In \setlx, the matrix is printed as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< [ 1.0  2.0 ]  [ 3.0  4.0 ] >}.
+\\[0.2cm]
+Similar to vectors, matrices can be added and subtracted using the operators ``\texttt{+}'' and
+``\texttt{-}''.   If we define
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := matrix([[1,2],[3,4]]);   b := matrix([[5,6],[7,8]]);}   
+\\[0.2cm]
+then the expressions ``\texttt{a + b}'' and ``\texttt{a - b}'' yield the results
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< [ 6.0  8.0 ]  [ 10.0  12.0 ] >} \quad and \quad \texttt{< [ -4.0  -4.0 ]  [ -4.0  -4.0 ] >}.
+\\[0.2cm]
+In addition to ``\texttt{+}'' and ``\texttt{-}'', the assignment operators ``\texttt{+=}'' and
+``\texttt{-=}'' are supported for matrices and work as expected.
+
+Matrices support scalar multiplication in the same way as vectors.  For example, the expression
+``\texttt{2 * a}'' yields
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< [ 2.0  4.0 ]  [ 6.0  8.0 ] >}.
+\vspace*{0.2cm} 
+
+Next,
+\setlx\ supports \href{http://en.wikipedia.org/wiki/Matrix_multiplication}{matrix multiplication}.
+If \texttt{a} is an $m$ times $n$ matrix and \texttt{b} is an $n$ times $k$ matrix, then
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a * b}
+\\[0.2cm]
+computes the matrix product of \texttt{a} and \texttt{b}.  For example, given the definitions of
+\texttt{a} and \texttt{b} shown above,  the expression ``\texttt{a * b}'' yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< [ 19.0  22.0 ]  [ 43.0  50.0 ] >}.
+\\[0.2cm]
+Furthermore, if \texttt{a}  an $m$ times
+$n$ matrix and $v$ is an $n$ dimensional vector, then the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a * v}
+\\[0.2cm]
+is computed as a matrix multiplication, where $v$ is interpreted as an $n$ times $1$ matrix.  In
+this case, the resulting $m$ times $1$ matrix is automatically converted into an $m$ dimensional vector.
+
+In addition to matrix multiplication, \setlx\ also support exponentiation of a square matrix by a
+integer numbers.  For example, 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a ** 2;}
+\\[0.2cm]
+returns the square  of \texttt{a}, while 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a ** -1}
+\\[0.2cm]
+return the \href{http://en.wikipedia.org/wiki/Invertible_matrix}{\emph{inverse}} of a matrix,
+provided the matrix is not \emph{singular}.  If the matrix \texttt{a} is singular, evaluation of the
+expression raises an exception if the exponent is negative.
+
+Matrices can be \href{http://en.wikipedia.org/wiki/Transpose}{\emph{transposed}} via the postfix
+operator ``\texttt{!}''.  For example, using the definition of the matrix \texttt{a} shown above,
+the expression ``\texttt{a!}'' yields 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< [ 1.0  3.0 ]  [ 2.0  4.0 ] >}.
+\\[0.2cm]
+If \texttt{a} is an $m$ times $n$ matrix, the expression ``\texttt{\#a}'' yields the dimension $m$.  
+In order to compute the dimension $n$, we can use the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\#a[1]}.
+\\[0.2cm]
+The reason is that \texttt{a[1]} returns the first row of the matrix \texttt{a} as a list and the
+length of this list is the dimension $n$.  In order to access the element in row $i$ and column $j$
+of matrix \texttt{a} we can use the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a[$i$][$j$]}.
+
+\section{Numerical Methods for Matrices and Vectors}
+In this section we will discuss the numerical methods that are provided.  These methods are inherited
+from \href{http://math.nist.gov/javanumerics/jama/}{\textsl{Jama}}, which is a \textsl{Java} matrix
+package.  The names of all methods inherited from \textsl{Jama} start with ``\texttt{la\_}''.
+
+\subsection{Computing the Determinant}
+If \texttt{a} is a square matrix, the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_det(a)}
+\\[0.2cm]
+computes the \href{http://en.wikipedia.org/wiki/Determinant}{\emph{determinant}} of \texttt{a}.
+For example, if we define 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := matrix([[1,2],[3,4]]);}
+\\[0.2cm]
+then the expression ``\texttt{la\_det(a)}'' yields the result $-2$.  The determinant can be used to
+check whether a matrix is invertible because a matrix is invertible if and only if the determinant
+is different from $0$.  However, note that due to rounding errors the result of the expression 
+``\texttt{la\_det(a)}''  might be a small non-zero number even if the matrix \texttt{a} is really
+singular. 
+
+\subsection{Solving a System of Linear Equations}
+A system of linear equations of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$\texttt{a} \cdot \texttt{x} = \texttt{b}$
+\\[0.2cm]
+where \texttt{a} is a square matrix $n$ times $n$  matrix and  \texttt{b} is an $n$-dimensional
+vector can be solved using the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_solve(a, b)}.
+\\[0.2cm]
+For example, to solve the system of equations
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[c]{lcl}
+  1 \cdot x + 2 \cdot y & = & 5 \\[0.1cm]
+  3 \cdot x + 4 \cdot y & = & 6 
+\end{array}
+$
+\\[0.2cm]
+we define
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := matrix([[1,2],[3,4]]);} \quad and \quad \texttt{b := vector([5,6]);}
+\\[0.2cm]
+Then, the solution is computed via the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_solve(a, b)}.
+\\[0.2cm]
+Note that this expression throws an exception if the given system of equations is not solvable.
+
+\subsection{The Singular Value Decomposition}
+The function \texttt{la\_svd} can be used to compute the 
+\href{http://en.wikipedia.org/wiki/Singular_value_decomposition}{\emph{singular value decomposition}} 
+of a given matrix \texttt{a}.  For a given $m$ times $n$ matrix \texttt{a}, the expression 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_svd(a)}
+\\[0.2cm]
+returns a list of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{[u, s, v]}
+\\[0.2cm]
+where \texttt{u} is an 
+\href{http://en.wikipedia.org/wiki/Orthogonal_matrix}{orthogonal} $m \times m$ matrix, \texttt{s}
+is an $m \times n$ 
+\href{http://en.wikipedia.org/wiki/Diagonal_matrix}{diagonal matrix}, and \texttt{v} is an $n \times n$
+orthogonal matrix.  In practice, the singular value decomposition is used to compute the
+\href{http://en.wikipedia.org/wiki/Moore-Penrose_pseudoinverse}{\emph{pseudo-inverse}}
+ of a singular matrix. 
+
+\subsection{Eigenvalues and Eigenvectors}
+In order to compute the 
+\href{http://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors}{eigenvalues and eigenvectors} of a
+square matrix, \setlx\ provides the functions
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_eigenValues} \quad and \quad \texttt{la\_eigenVectors}.
+\\[0.2cm]
+Both of these function take a single argument \texttt{a}, where \texttt{a} must be a square matrix.
+The function \texttt{la\_eigenValues} returns a list of the eigenvalues of \texttt{a}.  The
+function \texttt{la\_eigenVectors} returns a matrix.  The columns of this matrix represent the
+eigenvectors.  As a matrix is represented as a list of its rows (and not as a list of its columns),
+there is actually some work left to do if we want to convert this matrix into a list of vectors.
+The function shown in Figure \ref{fig:extract-eigenvectors.stlx} demonstrates a way to get the list of
+eigenvectors. 
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    extractEigenVectors := procedure(a) {
+        eigV := la_eigenVectors(a);
+        rng  := [1 .. #eigV];
+        return [ vector([eigV[row][col] : row in rng]): col in rng ];
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A function to extract the eigenvectors from a matrix.}
+\label{fig:extract-eigenvectors.stlx}
+\end{figure}
+
+Observe that not every square $n \times n$ matrix is 
+\href{http://en.wikipedia.org/wiki/Diagonalizable_matrix}{\emph{diagonalizable}}
+and hence has $n$ different eigenvectors.  In case the matrix is not diagonalizable in the real
+numbers, the functions \texttt{la\_eigenValues} and \texttt{la\_eigenVectors} both throw an
+exception.  Note, however, that every 
+\href{http://en.wikipedia.org/wiki/Symmetric_matrix}{\emph{symmetric}} matrix is diagonalizable.
+Therefore, if the matrix \texttt{a} is symmetric, neither of the two calls
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_eigenValues(a)} \quad or \quad \texttt{la\_eigenVectors(a)}
+\\[0.2cm]
+can throw an exception.
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "tutorial.tex"
+%%% End: 
+
+
+

@@ -1,0 +1,88 @@
+// This program solves the zebra puzzle, which is stated below.
+//
+// 01. There are five houses. Each house is painted a different color, 
+//     and their inhabitants are of different nationalities, own different 
+//     pets, drink different beverages and smoke different brands of 
+//     cigarettes.
+// 
+// 02. The Englishman lives in the red house.
+// 
+// 03. The Spaniard owns the dog.
+// 
+// 04. Coffee is drunk in the green house.
+// 
+// 05. The Ukrainian drinks tea.
+// 
+// 06. The green house is immediately to the right of the ivory house.
+// 
+// 07. The Gold smoker owns snails.
+// 
+// 08. Kools are smoked in the yellow house.
+// 
+// 09. Milk is drunk in the middle house.
+// 
+// 10. The Norwegian lives in the first house.
+// 
+// 11. The man who smokes West lives in the house next to the man with the fox.
+// 
+// 12. Kools are smoked in a house next to the house where the horse is kept.
+// 
+// 13. The man who smokes Luckies drinks orange juice.
+// 
+// 14. The Japanese smokes Camel.
+// 
+// 15. The Norwegian lives next to the blue house.
+// 
+// Who drinks water? Who owns the zebra?
+
+// Is house h1 right of house h2?
+isRightOf := procedure(h1, h2) {
+    return h1 == h2 + 1;
+};
+
+// Is house h1 next to house h2?
+nextTo := procedure(h1, h2) {
+    return abs(h1 - h2) == 1;
+};
+
+// Compute the set of all solutions to the zebraPuzzle. 
+zebraPuzzle := procedure() {
+    first     := 1;
+    middle    := 3;
+    result    := {};
+    orderings := permutations([1 .. 5]);    
+    for ([red, green, ivory, yellow, blue] in orderings) {
+        if (isRightOf(green, ivory)) {
+            for ([english, spaniard, ukrainian, japanese, norwegian] in orderings) {
+                if (english == red && norwegian == first && nextTo(norwegian, blue)) {
+                    for ([coffee, tea, milk, orange, water] in orderings) {
+                        if (coffee == green && ukrainian == tea && milk == middle) {
+                            for ([gold, kools, west, luckies, camel] in orderings) {
+                                if (kools == yellow && luckies == orange && japanese == camel) {
+                                    for ([dog, snails, fox, horse, zebra] in orderings) {
+                                        if (    spaniard == dog 
+                                             && gold == snails 
+                                             && nextTo(west, fox) 
+                                             && nextTo(kools, horse)
+                                           ) 
+                                        {
+                                            print("colors:        $[red, green, ivory, yellow, blue]                  $");                                            
+                                            print("nationalities: $[english, spaniard, ukrainian, japanese, norwegian]$");
+                                            print("drinks:        $[coffee, tea, milk, orange, water]                 $");
+                                            print("pet:           $[dog, snails, fox, horse, zebra]                   $");
+                                            print("cigarettes:    $[gold, kools, west, luckies, camel]                $");
+                                            result += { [water, zebra] };
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return result;
+};
+
+print(zebraPuzzle());

@@ -27,6 +27,8 @@
 /Tutorial/*.out
 /Tutorial/*.pdf
 /Tutorial/*.toc
+/Tutorial/_region_.prv/
+/Tutorial/tutorial.prv/
 /Tutorial/tutorial.bbl
 /Tutorial/tutorial.blg
 /Tutorial/tutorial.synctex.gz

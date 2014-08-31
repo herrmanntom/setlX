@@ -1,0 +1,80 @@
+// This program is inspired by a Python program written by Peter Norvig.
+// It is a little bit more complictated than the Python program since SetlX 
+// does not have the *args notation for calling functions.
+ 
+// This function gets a formula like "send + more == money" and tries to find
+// unique digits that can be substituted for the letters to turn the resulting
+// string into a valid formula.
+solve := procedure(formula) {
+    [f, args] := compileFormula(formula);
+    return { genDict(args, p) : p in shortPerms({0..9}, #args) | f(p) };
+};
+
+alphabet := { char(n) : n in [65 .. 90] };  // letters "A" to "Z"
+
+// This procedure returns a pair.  The first component is a function that is derived 
+// from the given formula.  The second component is the string of variables of the 
+// function. For example, the string 'YOU == ME ** 2' returns the pair
+// [args |-> args[5] * 100 + args[3] * 10 + args[4] * 1 == (args[2] * 10 + args[1] * 1) ** 2 && args[2] != 0 && args[5] != 0, 
+//  ["E", "M", "O", "U", "Y"]
+// ]
+
+compileFormula := procedure(formula) {
+    parameters := { c : c in formula | c in alphabet }; // letters in formula
+    paramList  := [ p : p in parameters ];              // turn it into list
+    dictionary := { [paramList[i], i] : i in [1 .. #parameters] };
+    // split formula into token separated by white space
+    tokens   := split(formula, " +"); 
+    function := "args |-> "; 
+    function += +/ [ compileWord(t, dictionary) : t in tokens | t != "" ];   // equations
+    function += +/ { " && args[$dictionary[t[1]]$]!=0" : t in tokens | t[1] in alphabet && #t > 1 };
+    // print(function);
+    return [eval(function), paramList];
+};
+
+// Compile a word of lowercase letters into a term interpreting the letters
+// as decimal digits.  dictionary assigns the index in the argument array.
+compileWord := procedure(word, dictionary) {
+    n := #word;  
+    if (forall (c in word | c in alphabet)) {
+        return "(" + join([ "args[" + dictionary[word[i]] + "]*$10**(n-i)$" : i in [1 .. #word] ],"+") + ")";
+    }
+    return word;
+};
+
+// Generate all permutations of the set s that have a length of n.
+// The number n has to be less or equal than the number of elements
+// of s.
+shortPerms := procedure(s, n) {
+    assert(n <= #s, "error in shortPerms");
+    if (n == 0) {
+        return { [] };
+    }
+    return { [x] + p: x in s, p in shortPerms(s - { x }, n - 1) };
+};
+
+// Turn two lists of equal length into a relation.
+genDict := procedure(letters, digits) {
+    assert(#letters == #digits, "error in genDict");
+    return { [letters[i], digits[i]] : i in [1..#digits] };
+};
+
+// Take a translation table, apply it to the letter c, and, if table[c] is 
+// defined, return this value as a result.  Otherwise, return c unchanged.
+translate := procedure(table, c) {
+    result := table[c];
+    if (result != om) {
+        return result + "";
+    }
+    return c;
+};
+
+test := procedure(f) {
+    print("All solutions of the equation $f$:");
+    for (dict in solve(f)) {
+        print(+/ [ translate(dict, c) : c in f ]);
+    }
+};
+
+test(" ODD +  ODD == EVEN");
+test("SEND + MORE == MONEY");

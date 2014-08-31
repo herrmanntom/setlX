@@ -5,12 +5,12 @@
 // Definition
 // ----------
 
-a := matrix([[1,2],[3,4]]);
-b := matrix([[5,6],[7,8]]);
-c := vector([1,2,3]);
-d := vector([5,6,7]);
-e := matrix([[1,2,3]]);
-f := matrix([[1],[2],[3]]);
+a := la_matrix([[1,2],[3,4]]);
+b := la_matrix([[5,6],[7,8]]);
+c := la_vector([1,2,3]);
+d := la_vector([5,6,7]);
+e := la_matrix([[1,2,3]]);
+f := la_matrix([[1],[2],[3]]);
 
 // Matrix
 // ------
@@ -27,14 +27,14 @@ print("a ^ 3: " + (a ** 3));
 
 print("transpose a: " + (a!));
 
-print("determinant a: " + matrixdeterminant(a));
+print("determinant a: " + la_det(a));
 
-print("solve a * x = b for x: " + matrixsolve(a,b));
+print("solve a * x = b for x: " + la_solve(a,b));
 
-print("singular value decomposition of a: " + singularValueDecomposition(a));
+print("singular value decomposition of a: " + la_svd(a));
 
-print("eigen values of a: " + eigenValues(a));
-print("eigen vectors of a: " + eigenVectors(a));
+print("eigen values of a: " + la_eigenValues(a));
+print("eigen vectors of a: " + la_eigenVectors(a));
 
 print("a[1]: " + a[1]);
 a[1] := [5.0,6.0];
@@ -70,10 +70,10 @@ print("Single column matrix: f: [[1],[2],[3]]");
 
 print("Explicit conversion");
 
-print("vector from matrix (one row only): " + vector(e));
-print("vector from matrix (one column only): " + vector(f));
+print("vector from matrix (one row only): " + la_vector(e));
+print("vector from matrix (one column only): " + la_vector(f));
 
-print("matrix from vector: " + matrix(c));
+print("matrix from vector: " + la_matrix(c));
 
 print("Implicit conversion");
 print("Matrix operations taking vectors as parameters:");
@@ -90,3 +90,4 @@ print("c + e: " + (c + e));
 print("d - f: " + (d - f));
 
 print("c * e: " + (c * e));
+

@@ -5,6 +5,7 @@ import java.util.List;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlMatrix;
+import org.randoom.setlx.types.SetlVector;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
@@ -25,14 +26,20 @@ public class PD_la_solve extends PreDefinedProcedure {
 
     @Override
     public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if (!(args.get(0) instanceof SetlMatrix)) {
+        SetlMatrix a;
+        SetlMatrix b;
+        if (args.get(0) instanceof SetlMatrix) {
+            a = (SetlMatrix) args.get(0);
+        } else {
             throw new IncompatibleTypeException("The first parameter needs to be a matrix.");
         }
-        if (!(args.get(1) instanceof SetlMatrix)) {
+        if (args.get(1) instanceof SetlMatrix) {
+            b = (SetlMatrix) args.get(1);
+        } else if (args.get(1) instanceof SetlVector) {
+            b = new SetlMatrix(state, (SetlVector) args.get(1));
+        } else {
             throw new IncompatibleTypeException("The second parameter needs to be a matrix.");
         }
-        SetlMatrix A = (SetlMatrix) args.get(0);
-        SetlMatrix B = (SetlMatrix) args.get(1);
-        return A.solve(B);
+        return a.solve(b);
     }
 }

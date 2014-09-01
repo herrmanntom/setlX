@@ -12,10 +12,10 @@ basic concepts of linear algebra.
 \section{Vectors}
 \setlx\ supports real valued vectors of arbitrary dimensions.  Conceptually, a vector can be viewed as
 a list of floating point numbers.  A vector can be constructed from a list of numbers via the
-function \texttt{vector} as follows:
+function \texttt{la\_vector} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{v := vector([1/2,1/4,1/5]);}
+\texttt{v := la\_vector([1/2,1/4,1/5]);}
 \\[0.2cm]
 When executed, this statement yields the following result:
 \\[0.2cm]
@@ -49,7 +49,7 @@ computes the sum of \texttt{a} and \texttt{b}, while
 computes their difference.  For example, if we define
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{a := vector([1,2,3]);   b := vector([4,5,6]);}
+\texttt{a := la\_vector([1,2,3]);   b := la\_vector([4,5,6]);}
 \\[0.2cm]
 then the expressions ``\texttt{a + b}'' and ``\texttt{a - b}'' yield the results
 \\[0.2cm]
@@ -117,11 +117,11 @@ vector \texttt{v} we can use the expression ``\texttt{a[$i$]}''.  Furthermore, t
 
 
 \section{Matrices}
-\setlx\ supports real valued matrices.  The function \texttt{matrix} can be used to construct a
+\setlx\ supports real valued matrices.  The function \texttt{la\_matrix} can be used to construct a
 matrix from a list of list of numbers.  For example, the assignment
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{a := matrix([[1,2],[3,4]]);}
+\texttt{a := la\_matrix([[1,2],[3,4]]);}
 \\[0.2cm]
 constructs a matrix that can be written as
 \\[0.2cm]
@@ -145,7 +145,7 @@ Similar to vectors, matrices can be added and subtracted using the operators ``\
 ``\texttt{-}''.   If we define
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{a := matrix([[1,2],[3,4]]);   b := matrix([[5,6],[7,8]]);}   
+\texttt{a := la\_matrix([[1,2],[3,4]]);   b := la\_matrix([[5,6],[7,8]]);}   
 \\[0.2cm]
 then the expressions ``\texttt{a + b}'' and ``\texttt{a - b}'' yield the results
 \\[0.2cm]
@@ -234,7 +234,7 @@ computes the \href{http://en.wikipedia.org/wiki/Determinant}{\emph{determinant}}
 For example, if we define 
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{a := matrix([[1,2],[3,4]]);}
+\texttt{a := la\_matrix([[1,2],[3,4]]);}
 \\[0.2cm]
 then the expression ``\texttt{la\_det(a)}'' yields the result $-2$.  The determinant can be used to
 check whether a matrix is invertible because a matrix is invertible if and only if the determinant
@@ -267,7 +267,7 @@ $
 we define
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{a := matrix([[1,2],[3,4]]);} \quad and \quad \texttt{b := vector([5,6]);}
+\texttt{a := la\_matrix([[1,2],[3,4]]);} \quad and \quad \texttt{b := la\_vector([5,6]);}
 \\[0.2cm]
 Then, the solution is computed via the expression
 \\[0.2cm]
@@ -293,7 +293,13 @@ where \texttt{u} is an
 \href{http://en.wikipedia.org/wiki/Orthogonal_matrix}{orthogonal} $m \times m$ matrix, \texttt{s}
 is an $m \times n$ 
 \href{http://en.wikipedia.org/wiki/Diagonal_matrix}{diagonal matrix}, and \texttt{v} is an $n \times n$
-orthogonal matrix.  In practice, the singular value decomposition is used to compute the
+orthogonal matrix such that
+\\[0.2cm]
+\hspace*{1.3cm}
+$a = u \cdot s \cdot v^{\mathtt{T}}$,
+\\[0.2cm]
+where $v^{\mathtt{T}}$ denotes the transpose of the matrix $v$.
+  In practice, the singular value decomposition is used to compute the
 \href{http://en.wikipedia.org/wiki/Moore-Penrose_pseudoinverse}{\emph{pseudo-inverse}}
  of a singular matrix. 
 
@@ -327,7 +333,7 @@ eigenvectors.
     extractEigenVectors := procedure(a) {
         eigV := la_eigenVectors(a);
         rng  := [1 .. #eigV];
-        return [ vector([eigV[row][col] : row in rng]): col in rng ];
+        return [ la_vector([eigV[row][col] : row in rng]): col in rng ];
     };
 \end{Verbatim}
 \vspace*{-0.3cm}

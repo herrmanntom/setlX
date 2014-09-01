@@ -1,0 +1,45 @@
+v := la_vector([1/2,1/4,1/5]);
+print("v = $v$");
+
+a := la_vector([1,2,3]);   
+b := la_vector([4,5,6]);
+print("$a$ + $b$ = $a + b$");
+print("$a$ - $b$ = $a - b$");
+print("1/2 * $a$ = $1/2 * a$");
+print("$a$ * (1/2) = $a * (1/2)$");
+
+v *= 2.5;
+print("v = $v$");
+
+print("$a$ * $b$ = $a * b$");
+print("$a$ >< $b$ = $a >< b$");
+
+
+a := la_matrix([[1,2],[3,4]]);
+b := la_matrix([[5,6],[7,8]]);
+v := la_vector([5,6]);
+
+print("$a$ + $b$ = $a + b$");
+print("$a$ - $b$ = $a - b$");
+print("2 * $a$ = $2 * a$");
+print("$a$ * $b$ = $a * b$");
+print("$a$ * $v$ = $a * v$");
+print("$a$ ** 2 = $a ** 2$");
+print("$a$ ** -1 = $a ** -1$");
+print("#$a$ = $#a$");
+print("#$a$[1] = $#a[1]$");
+print("la_det($a$) = $la_det(a)$");
+
+a := la_matrix([[1,2],[3,4]]);
+
+print("la_solve($a$, $v$) = $la_solve(a, v)$");
+
+[u, s, v] := la_svd(a);
+print("svd($a$) = [u, v, d], where");
+print("u = $u$");
+print("s = $s$");
+print("v = $v$");
+print("u * s * v! = $u * s * v!$");
+
+print("la_eigenValues($a$) = $la_eigenValues(a)$");
+print("la_eigenVectors($a$) = $la_eigenVectors(a)$");

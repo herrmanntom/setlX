@@ -294,7 +294,6 @@ public class SetlClass extends Value {
 
     /* features of objects */
 
-    @Override
     public Value getObjectMember(final State state, final String variable) throws SetlException {
         return getObjectMemberUnCloned(state, variable).clone();
     }

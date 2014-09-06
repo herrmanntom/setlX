@@ -1,0 +1,210 @@
+// This auxiliary function computes the smallest set s such 
+//   s0 <= s                   and
+//   s = +/ { f(x) : x in s }  
+// holds.  s is computed via a fixpoint iteration.
+
+fixpoint := procedure(s0, f) {
+    result := newElements := s0;
+    while (true) {
+        newElements := {} +/ { f(q) : q in newElements };
+        if (newElements <= result) {
+            return result;  // no new elements, fixpoint reached
+        }
+        result += newElements;
+    }
+};
+
+// Given a transition function delta and a set s of states, this function
+// computes all the set of those states that can be reached from the states 
+// in s via epsilon transitions.
+epsClosure := procedure(s, delta) {
+    result := fixpoint({s}, q |-> delta(q, ""));
+    return result;
+};
+
+// Given a transition function delta, a state q, and a character c,
+// this function computes the set of all those states that can be reached 
+// from q when we first have a transition from q to some other state  p 
+// on reading the character c followed by any number of epsilon transitions
+// starting in p.
+deltaStar := procedure(q, c, delta) {
+    return {} +/ { epsClosure(p, delta) : p in delta(q, c) };
+};
+
+// This function extends the function deltaStar from a single state
+// q to a set of states m.
+capitalDelta := procedure(m, c, delta) {
+    return {} +/ { deltaStar(q, c, delta) : q in m };
+};
+
+// This function takes a non-deterministic finite state machine and converts it 
+// into an equivalent deterministic finite state machine.
+nfa2dfa := procedure(nfa) {
+    [states, sigma, delta, q0, final] := nfa;
+    newStart   := epsClosure(q0, delta);
+    nextStates := m |-> { capitalDelta(m, c, delta) : c in sigma };
+    newStates  := fixpoint({newStart}, nextStates);
+    newDelta   := [m, c] |-> capitalDelta(m, c, delta);
+    newFinal   := { m : m in newStates | m * final != {} };
+    return [newStates, sigma, newDelta, newStart, newFinal];
+};
+
+// convert an NFA into a string
+nfa2string := procedure(nfa) {
+    [states, sigma, delta, q0, final] := nfa;
+    result := "";
+    n := 0;
+    result += "states: $states$\n\n";   
+    result += "start state: $q0$\n\n";
+    result += "transitions:\n";
+    for (q in states) {
+        for (c in sigma, p in delta(q, c)) {
+            result += "[$q$, $c$] |-> $p$\n";
+        }
+        for (p in delta(q, "")) {
+            result += "[$q$, \"\"] |-> $p$\n";
+        }
+    }
+    result += "\nset of accepting states: $final$\n";
+    return result;
+};
+
+// convert an NFA into a string that can be processed by the dot
+// command of graphviz (http://www.graphviz.org).
+nfa2dot := procedure(nfa, file) {
+    [states, sigma, delta, q0, final] := nfa;
+    result := "";
+    n := 0;
+    statesToNames := {}; // assigns a name to every state
+    for (q in states) {
+        statesToNames += { [q, "q" + n] };
+        n += 1;
+    }
+    startName := statesToNames[q0];
+    result += "digraph G {\n";
+    result += "    rankdir = LR;\n";
+    result += "    size = \"5,7\";\n";
+    result += "    1 -> $startName$;\n";
+    result += "    1 [label=\"\",width=0.00001,height=0.00001];\n";
+    for (q in states) {
+        result += "    " + statesToNames[q];
+        if (q in final) {
+            result += " [peripheries=2]";
+        }
+        result += ";\n";
+    }
+    for (q in states) {
+        for (p in delta(q, "")) {
+            result += "    $statesToNames[q]$ -> $statesToNames[p]$";
+            result += " [weight = 0.1];\n";
+        }
+    }
+    for (q in states) {
+        for (c in sigma, p in delta(q, c)) {
+            result += "    $statesToNames[q]$ -> $statesToNames[p]$ ";
+            result += "[label = \" $c$\", weight = 10];\n";
+        }
+    }
+    result += "}\n";
+    writeFile("$file$.dot", [ result ]);
+    run("dot -Tps $file$.dot -o $file$.eps");
+    run("open $file$.eps");
+};
+
+// convert a DFA into a string
+dfa2string := procedure(dfa) {
+    [states, sigma, deltaNew, q0, final] := dfa;
+    result := "";
+    n := 0;
+    statesToNames := {};
+    for (q in states) {
+        statesToNames += { [q, "S" + n] };
+        n += 1;
+    }
+    result += "states: { S0, ..., S$n-1$ }\n\n";   
+    result += "start state: $statesToNames[q0]$\n\n";
+    result += "state encoding:\n";
+    for (q in states) {
+        result += "$statesToNames[q]$ = $q$\n";
+    }
+    result += "\ntransitions:\n";
+    for (q in states, c in sigma) {
+        if (deltaNew(q, c) != om) {
+            result += "delta($statesToNames[q]$, $c$) = $statesToNames[deltaNew(q, c)]$\n";
+        }
+    }
+    result += "\nset of accepting states: {";
+    result += join({ statesToNames[q] : q in final }, ", ");
+    result += "}\n";
+    return result;
+};
+
+// convert an DFA into a string that can be processed by the dot
+// command of graphviz (http://www.graphviz.org).
+dfa2dot := procedure(dfa, file) {
+    [states, sigma, deltaNew, q0, final] := dfa;
+    result := "";
+    n := 0;              // used to assign names to states
+    statesToNames := {}; // assigns a name to every state
+    for (q in states) {
+        statesToNames += { [q, "S" + n] };
+        n += 1;
+    }
+    startName := statesToNames[q0];
+    result += "digraph G {\n";
+    result += "    rankdir = LR;\n";
+    result += "    size = \"5,7\";\n";
+    result += "    1 -> $startName$;\n";
+    result += "    1 [label=\"\",width=0.00001,height=0.00001];\n";
+    for (q in states) {
+        result += "    " + statesToNames[q];
+        if (q in final) {
+            result += " [peripheries=2]";
+        }
+        result += ";\n";
+    }
+    for (q in states, c in sigma) {
+        p := deltaNew(q, c);
+        if (p != om) {
+            result += "    $statesToNames[q]$ -> $statesToNames[p]$ ";
+            result += "[label = \"$c$\"];\n";
+        }
+    }
+    result += "}\n";
+    writeFile("$file$.dot", [ result ]);
+    run("dot -Tps $file$.dot -o $file$.eps");
+    run("open $file$.eps");
+};  
+
+// This is the transition function of an example finite state machine that
+// accepts the language generated by the regular expression (ab|ba)*.
+delta45 := procedure(q, c) {
+    match ([q, c]) {
+        case [0, "" ]: return {1, 2};
+        case [1, "b"]: return {3};
+        case [2, "a"]: return {4};
+        case [2, "b"]: return {};
+        case [3, "a"]: return {5};
+        case [3, "b"]: return {};
+        case [4, "a"]: return {};
+        case [4, "b"]: return {6};
+        case [5, "" ]: return {7};
+        case [6, "" ]: return {7};
+        case [7, "" ]: return {0};
+        default:       return {};
+     }
+};
+
+nfa45 := [{0 .. 7}, {"a", "b"}, delta45, 0, {7}];
+
+test := procedure(nfa) {
+    print("\nnon-deterministic finite state machine:");
+    print(nfa2string(nfa));
+    // nfa2dot(nfa, "nfa"); // uncomment this for a visual representation of the nfa
+    dfa := nfa2dfa(nfa);
+    print("\ndeterministic finite state machine:");
+    print(dfa2string(dfa));
+    // dfa2dot(dfa, "dfa"); // uncomment this for a visual representation of the dfa
+};
+
+test(nfa45);

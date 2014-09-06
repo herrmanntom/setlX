@@ -1,0 +1,49 @@
+
+non-deterministic finite state machine:
+states: {0, 1, 2, 3, 4, 5, 6, 7}
+
+start state: 0
+
+transitions:
+[0, ""] |-> 1
+[0, ""] |-> 2
+[1, b] |-> 3
+[2, a] |-> 4
+[3, a] |-> 5
+[4, b] |-> 6
+[5, ""] |-> 7
+[6, ""] |-> 7
+[7, ""] |-> 0
+
+set of accepting states: {7}
+
+
+deterministic finite state machine:
+states: { S0, ..., S5 }
+
+start state: S1
+
+state encoding:
+S0 = {}
+S1 = {0, 1, 2}
+S2 = {0, 1, 2, 5, 7}
+S3 = {0, 1, 2, 6, 7}
+S4 = {3}
+S5 = {4}
+
+transitions:
+delta(S0, a) = S0
+delta(S0, b) = S0
+delta(S1, a) = S5
+delta(S1, b) = S4
+delta(S2, a) = S5
+delta(S2, b) = S4
+delta(S3, a) = S5
+delta(S3, b) = S4
+delta(S4, a) = S2
+delta(S4, b) = S0
+delta(S5, a) = S0
+delta(S5, b) = S3
+
+set of accepting states: {S2, S3}
+

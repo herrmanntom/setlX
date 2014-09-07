@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.3.0--- 2014-09-xx
+ + implemented matrix functionality
+
 ---v2.2.4--- 2014-06-09
  + added "getClass()" method to objects, that refers to the class used to create
    that object

@@ -96,10 +96,12 @@ testRegexp2NFA := procedure(s, sigma) {
    re  := myParse(s);
    ctr := -1;
    nfa := regexp2NFA(re, ctr);
+   print(nfa);
    print("The regular expression $s$ is recognized by the following NFA:");
    print(nfa2string(nfa, sigma));
 };
 
-testRegexp2NFA("(a+b)", {"a", "b"});
-testRegexp2NFA("a*", {"a", "b"});
-testRegexp2NFA("(a+b)*", {"a", "b"});
+// testRegexp2NFA("(a+b)", {"a", "b"});
+// testRegexp2NFA("a*", {"a", "b"});
+// testRegexp2NFA("(a+b)*", {"a", "b"});
+testRegexp2NFA("(a+b)a", {"a", "b"});  // does not work

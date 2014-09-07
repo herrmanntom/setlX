@@ -1,14 +1,22 @@
 // convert an NFA into a string
 nfa2string := procedure(nfa, sigma) {
     [states, delta, q0, final] := nfa;
+    print(delta);
     result := "";
     result += "states: $states$\n\n";   
     result += "start state: $q0$\n\n";
     result += "transitions:\n";
     for (q in states) {
-        for (c in sigma, p in delta(q, c)) {
-            result += "[$q$, $c$] |-> $p$\n";
+        print("q = $q$");
+        for (c in sigma) {
+            print("trying to compute delta($q$, $c$)");  // something is wrong here!
+            print(delta(q, c));
+            for (p in delta(q, c)) {
+                result += "[$q$, $c$] |-> $p$\n";
+            }
         }
+        print("trying to compute delta($p$, \"\")");
+        print(delta(q, ""));
         for (p in delta(q, "")) {
             result += "[$q$, \"\"] |-> $p$\n";
         }

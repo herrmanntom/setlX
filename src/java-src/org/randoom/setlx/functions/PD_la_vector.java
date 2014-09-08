@@ -29,7 +29,7 @@ public class PD_la_vector extends PreDefinedProcedure {
     @Override
     public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
         if (args.get(0) instanceof SetlMatrix) {
-            return new SetlVector(state, (SetlMatrix) args.get(0));
+            return ((SetlMatrix) args.get(0)).toVector();
         } else if ((args.get(0) instanceof CollectionValue)) {
             return new SetlVector(state, (CollectionValue) args.get(0));
         } else {

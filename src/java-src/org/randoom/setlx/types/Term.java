@@ -87,7 +87,7 @@ public class Term extends IndexedCollectionValue {
      * @param other Expression to evaluate lazily.
      * @return      Conjunction of value and this.
      */
-    public Term conjunctionFlipped(final State state, final Value other) {
+    public Term conjunctionFlipped(final State state, final Value other) throws SetlException {
         return (    new Conjunction(
                         TermConverter.valueToExpr(state, other),
                         TermConverter.valueToExpr(state, this)
@@ -112,7 +112,7 @@ public class Term extends IndexedCollectionValue {
      * @param other Expression to evaluate lazily.
      * @return      Disjunction of value and this.
      */
-    public Term disjunctionFlipped(final State state, final Value other) {
+    public Term disjunctionFlipped(final State state, final Value other) throws SetlException {
         return (    new Disjunction(
                         TermConverter.valueToExpr(state, other),
                         TermConverter.valueToExpr(state, this))
@@ -136,7 +136,7 @@ public class Term extends IndexedCollectionValue {
      * @param other Expression to evaluate lazily.
      * @return      Implication of value and this.
      */
-    public Term implicationFlipped(final State state, final Value other) {
+    public Term implicationFlipped(final State state, final Value other) throws SetlException {
         return (    new Implication(
                         TermConverter.valueToExpr(state, other),
                         TermConverter.valueToExpr(state, this)
@@ -146,7 +146,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term not(final State state) {
+    public Term not(final State state) throws SetlException {
         return (    new Not(
                         TermConverter.valueToExpr(state, this)
                     )
@@ -164,7 +164,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term difference(final State state, final Value subtrahend) {
+    public Term difference(final State state, final Value subtrahend) throws SetlException {
         return (    new Difference(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, subtrahend)
@@ -179,7 +179,7 @@ public class Term extends IndexedCollectionValue {
      * @param subtrahend Value to subtract.
      * @return           Difference subtrahend and this.
      */
-    public Term differenceFlipped(final State state, final Value subtrahend) {
+    public Term differenceFlipped(final State state, final Value subtrahend) throws SetlException {
         return (    new Difference(
                         TermConverter.valueToExpr(state, subtrahend),
                         TermConverter.valueToExpr(state, this)
@@ -189,7 +189,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Value factorial(final State state) {
+    public Value factorial(final State state) throws SetlException {
         return (    new Factorial(
                         TermConverter.valueToExpr(state, this)
                     )
@@ -198,7 +198,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term integerDivision(final State state, final Value divisor) {
+    public Term integerDivision(final State state, final Value divisor) throws SetlException {
         return (    new IntegerDivision(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, divisor)
@@ -213,7 +213,7 @@ public class Term extends IndexedCollectionValue {
      * @param divisor Value to divide by.
      * @return        Integer division of divisor and this.
      */
-    public Term integerDivisionFlipped(final State state, final Value divisor) {
+    public Term integerDivisionFlipped(final State state, final Value divisor) throws SetlException {
         return (    new IntegerDivision(
                         TermConverter.valueToExpr(state, divisor),
                         TermConverter.valueToExpr(state, this)
@@ -223,7 +223,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term minus(final State state) {
+    public Term minus(final State state) throws SetlException {
         return (    new Minus(
                         TermConverter.valueToExpr(state, this)
                     )
@@ -232,7 +232,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term modulo(final State state, final Value modulo) {
+    public Term modulo(final State state, final Value modulo) throws SetlException {
         return (    new Modulo(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, modulo)
@@ -247,7 +247,7 @@ public class Term extends IndexedCollectionValue {
      * @param modulo  Value to divide by.
      * @return        Modulo of modulo and this.
      */
-    public Term moduloFlipped(final State state, final Value modulo) {
+    public Term moduloFlipped(final State state, final Value modulo) throws SetlException {
         return (    new Modulo(
                         TermConverter.valueToExpr(state, modulo),
                         TermConverter.valueToExpr(state, this)
@@ -257,7 +257,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term power(final State state, final Value exponent) {
+    public Term power(final State state, final Value exponent) throws SetlException {
         return (    new Power(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, exponent)
@@ -272,7 +272,7 @@ public class Term extends IndexedCollectionValue {
      * @param exponent Value to raise by.
      * @return         Exponent raised by the power of this.
      */
-    public Term powerFlipped(final State state, final Value exponent) {
+    public Term powerFlipped(final State state, final Value exponent) throws SetlException {
         return (    new Power(
                         TermConverter.valueToExpr(state, exponent),
                         TermConverter.valueToExpr(state, this)
@@ -282,7 +282,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term product(final State state, final Value multiplier) {
+    public Term product(final State state, final Value multiplier) throws SetlException {
         return (    new Product(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, multiplier)
@@ -297,7 +297,7 @@ public class Term extends IndexedCollectionValue {
      * @param multiplier Value to multiply by.
      * @return           Product of multiplier and this.
      */
-    public Term productFlipped(final State state, final Value multiplier) {
+    public Term productFlipped(final State state, final Value multiplier) throws SetlException {
         return (    new Product(
                         TermConverter.valueToExpr(state, multiplier),
                         TermConverter.valueToExpr(state, this)
@@ -307,7 +307,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term quotient(final State state, final Value divisor) {
+    public Term quotient(final State state, final Value divisor) throws SetlException {
         return (    new Quotient(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, divisor)
@@ -322,7 +322,7 @@ public class Term extends IndexedCollectionValue {
      * @param divisor    Value to divide by.
      * @return           Division of divisor and this.
      */
-    public Term quotientFlipped(final State state, final Value divisor) {
+    public Term quotientFlipped(final State state, final Value divisor) throws SetlException {
         return (    new Quotient(
                         TermConverter.valueToExpr(state, divisor),
                         TermConverter.valueToExpr(state, this)
@@ -332,7 +332,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term sum(final State state, final Value summand) {
+    public Term sum(final State state, final Value summand) throws SetlException {
         return (    new Sum(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, summand)
@@ -347,7 +347,7 @@ public class Term extends IndexedCollectionValue {
      * @param summand    Value to add.
      * @return           Sum of this and summand.
      */
-    public Term sumFlipped(final State state, final Value summand) {
+    public Term sumFlipped(final State state, final Value summand) throws SetlException {
         return (    new Sum(
                         TermConverter.valueToExpr(state, summand),
                         TermConverter.valueToExpr(state, this)
@@ -369,7 +369,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term cardinality(final State state) {
+    public Term cardinality(final State state) throws SetlException {
         return (    new Cardinality(
                         TermConverter.valueToExpr(state, this)
                     )
@@ -378,7 +378,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term cartesianProduct(final State state, final Value other) {
+    public Term cartesianProduct(final State state, final Value other) throws SetlException {
         return (    new CartesianProduct(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, other)
@@ -394,7 +394,7 @@ public class Term extends IndexedCollectionValue {
      * @param other          Second value.
      * @return               Cartesian product of this and other.
      */
-    public Term cartesianProductFlipped(final State state, final Value other) {
+    public Term cartesianProductFlipped(final State state, final Value other) throws SetlException {
         return (    new CartesianProduct(
                         TermConverter.valueToExpr(state, other),
                         TermConverter.valueToExpr(state, this)
@@ -404,7 +404,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term collectionAccess(final State state, final List<Value> args) {
+    public Term collectionAccess(final State state, final List<Value> args) throws SetlException {
         final List<Expr> argExprs = new ArrayList<Expr>(args.size());
         for (final Value v : args) {
             argExprs.add(TermConverter.valueToExpr(state, v));
@@ -422,7 +422,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term collectMap(final State state, final Value arg) {
+    public Term collectMap(final State state, final Value arg) throws SetlException {
         return (    new CollectMap(
                         TermConverter.valueToExpr(state, this),
                         TermConverter.valueToExpr(state, arg))
@@ -477,26 +477,9 @@ public class Term extends IndexedCollectionValue {
         return body.getMember(state, index);
     }
 
-    /**
-     * Get a specified member of this value, but return it without cloning.
-     *
-     * @param state          Current state of the running setlX program.
-     * @param index          Index of the member to get.
-     * @return               Member of this value at the specified index.
-     * @throws SetlException Thrown in case of some (user-) error.
-     */
-    public Value getMemberUnCloned(final State state, final int index) throws SetlException {
-        return body.getMemberUnCloned(index);
-    }
-
     @Override
-    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
-        return body.getMemberUnCloned(state, index);
-    }
-
-    @Override
-    public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
-        return body.getMembers(state, low, high);
+    protected Value getMembers(final State state, final int expectedNumberOfMembers, final int lowFromStart, final int highFromStart) throws SetlException {
+        return body.getMembers(state, expectedNumberOfMembers, lowFromStart, highFromStart);
     }
 
     @Override
@@ -558,7 +541,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term sumOfMembers(final State state, final Value neutral) {
+    public Term sumOfMembers(final State state, final Value neutral) throws SetlException {
         if (neutral == Om.OM) {
             return (    new SumOfMembers(
                     TermConverter.valueToExpr(state, this)
@@ -577,7 +560,7 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term call(final State state, final List<Expr> args) throws IncompatibleTypeException {
+    public Term call(final State state, final List<Expr> args) throws SetlException {
         if (functionalCharacter.equalsIgnoreCase(VariableIgnore.getFunctionalCharacter())) {
             return (    new Call(
                             new Variable(
@@ -685,19 +668,19 @@ public class Term extends IndexedCollectionValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == Term.class) {
-            final Term other = (Term) v;
-                  int  cmp   = functionalCharacter.compareTo(other.functionalCharacter);
+        } else if (other.getClass() == Term.class) {
+            final Term otherTerm = (Term) other;
+                  int  cmp   = functionalCharacter.compareTo(otherTerm.functionalCharacter);
             if (cmp != 0 && (
                     (
                         functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
-                        other.functionalCharacter.equals(Variable.getFunctionalCharacter())
+                        otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacter())
                     ) || (
                         functionalCharacter.equals(Variable.getFunctionalCharacter()) &&
-                        other.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
+                        otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
                     )
                 )
             ) {
@@ -707,33 +690,33 @@ public class Term extends IndexedCollectionValue {
             if (cmp != 0) {
                 return cmp;
             }
-            return body.compareTo(other.body);
+            return body.compareTo(otherTerm.body);
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
     @Override
     public int compareToOrdering() {
-        return 900;
+        return COMPARE_TO_ORDERING_TERM;
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        if (this == v) {
+    public boolean equalTo(final Object other) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == Term.class) {
-            final Term other = (Term) v;
-            if (functionalCharacter.equals(other.functionalCharacter)
+        } else if (other.getClass() == Term.class) {
+            final Term otherTerm = (Term) other;
+            if (functionalCharacter.equals(otherTerm.functionalCharacter)
                   || (
                     functionalCharacter.equals(Variable.getFunctionalCharacterExternal()) &&
-                    other.functionalCharacter.equals(Variable.getFunctionalCharacter())
+                    otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacter())
                 ) || (
                     functionalCharacter.equals(Variable.getFunctionalCharacter()) &&
-                    other.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
+                    otherTerm.functionalCharacter.equals(Variable.getFunctionalCharacterExternal())
                 )
             ) {
-                return body.equalTo(other.body);
+                return body.equalTo(otherTerm.body);
             } else {
                 return false;
             }

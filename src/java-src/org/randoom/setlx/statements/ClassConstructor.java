@@ -71,7 +71,7 @@ public class ClassConstructor extends Statement {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         result.addMember(state, new SetlString(name));

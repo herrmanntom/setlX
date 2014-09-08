@@ -102,7 +102,7 @@ public class ProcedureConstructor extends Expr {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         return definition.toTerm(state);
     }
 

@@ -159,7 +159,7 @@ public class SetlSet extends CollectionValue {
     /* arithmetic operations */
 
     @Override
-    public Value difference(final State state, final Value subtrahend) throws IncompatibleTypeException {
+    public Value difference(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend.getClass() == SetlSet.class) {
             final SetlSet result = clone();
             result.separateFromOriginal();
@@ -175,7 +175,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value differenceAssign(final State state, final Value subtrahend) throws IncompatibleTypeException {
+    public Value differenceAssign(final State state, final Value subtrahend) throws SetlException {
         if (subtrahend.getClass() == SetlSet.class) {
             separateFromOriginal();
             set.removeAll(((SetlSet) subtrahend).set);
@@ -266,7 +266,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value product(final State state, final Value multiplier) throws IncompatibleTypeException {
+    public Value product(final State state, final Value multiplier) throws SetlException {
         if (multiplier.getClass() == SetlSet.class) {
             final SetlSet result = clone();
             result.separateFromOriginal();
@@ -282,7 +282,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value productAssign(final State state, final Value multiplier) throws IncompatibleTypeException {
+    public Value productAssign(final State state, final Value multiplier) throws SetlException {
         if (multiplier.getClass() == SetlSet.class) {
             separateFromOriginal();
             set.retainAll(((SetlSet) multiplier).set);
@@ -297,7 +297,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
+    public Value sum(final State state, final Value summand) throws SetlException {
         if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand.getClass() == SetlString.class) {
@@ -316,7 +316,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value sumAssign(final State state, final Value summand) throws IncompatibleTypeException {
+    public Value sumAssign(final State state, final Value summand) throws SetlException {
         if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand.getClass() == SetlString.class) {
@@ -483,14 +483,21 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value getMember(final State state, final Value element) throws SetlException {
-        return getMemberZZZInternal(state, element).clone();
+    public Value getMember(final State state, final Value index) throws SetlException {
+        return getMemberZZZInternal(state, index).clone();
     }
 
-    @Override
-    public Value getMemberUnCloned(final State state, final Value element) throws SetlException {
+    /**
+     * Get a specified member of this list, but return it without cloning.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          Index of the member to get. Note: Index starts with 1, not 0.
+     * @return               Member of this list at the specified index.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
         separateFromOriginal();
-        return getMemberZZZInternal(state, element);
+        return getMemberZZZInternal(state, index);
     }
 
     private Value getMemberZZZInternal(final State state, final Value element) throws SetlException {
@@ -562,7 +569,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value maximumMember(final State state) throws IncompatibleTypeException {
+    public Value maximumMember(final State state) throws UndefinedOperationException {
         if (size() < 1) {
             // Neutral element of max() is smallest number available
             return SetlDouble.NEGATIVE_INFINITY;
@@ -570,14 +577,15 @@ public class SetlSet extends CollectionValue {
         final Value a = firstMember(state);
         final Value b = lastMember(state);
         if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
-            final String errMsg = "The set " + this.toString(state) + " is not a set of numbers.";
-            throw new IncompatibleTypeException(errMsg);
+            throw new UndefinedOperationException(
+                    "The set " + this.toString(state) + " is not a set of numbers."
+            );
         }
         return b;
     }
 
     @Override
-    public Value minimumMember(final State state) throws IncompatibleTypeException {
+    public Value minimumMember(final State state) throws UndefinedOperationException {
         // The minimum is only defined for sets of numbers.
         if (size() < 1) {
             // Neutral element of min() is the largest number available.
@@ -586,8 +594,9 @@ public class SetlSet extends CollectionValue {
         final Value a = firstMember(state);
         final Value b = lastMember(state);
         if (a.isNumber().equalTo(SetlBoolean.FALSE) || b.isNumber().equalTo(SetlBoolean.FALSE)) {
-            final String errMsg = "The set " + this.toString(state) + " is not a set of numbers.";
-            throw new IncompatibleTypeException(errMsg);
+            throw new UndefinedOperationException(
+                    "The set " + this.toString(state) + " is not a set of numbers."
+            );
         }
         return a;
     }
@@ -751,25 +760,25 @@ public class SetlSet extends CollectionValue {
     /* term operations */
 
     @Override
-    public MatchResult matchesTerm(final State state, final Value otr) throws SetlException {
-        if (otr == IgnoreDummy.ID) {
+    public MatchResult matchesTerm(final State state, final Value other) throws SetlException {
+        if (other == IgnoreDummy.ID) {
             return new MatchResult(true);
-        } else if (otr.getClass() != SetlSet.class) {
+        } else if (other.getClass() != SetlSet.class) {
             return new MatchResult(false);
         } else if (set.size() == 1 && set.first().getClass() == Term.class) {
-            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) set.first(), (SetlSet) otr);
+            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) set.first(), (SetlSet) other);
             if (result.isMatch()) {
                 return result;
             }
         }
 
-        if (this.size() != otr.size()) {
+        if (this.size() != other.size()) {
             return new MatchResult(false);
         }
 
         // first match all atomic values
         final TreeSet<Value> thisCopy  = new TreeSet<Value>(set);
-        final TreeSet<Value> otherCopy = new TreeSet<Value>(((SetlSet) otr).set);
+        final TreeSet<Value> otherCopy = new TreeSet<Value>(((SetlSet) other).set);
 
         for (final Value v : set) {
             // remove value from both sets, if
@@ -800,9 +809,8 @@ public class SetlSet extends CollectionValue {
               Value     otherPermutation = new SetlList(new ArrayList<Value>(otherCopy));
 
         // both set match, when (at least) one permutation matches
-        MatchResult match = null;
         while (otherPermutation != Om.OM) {
-            match = thisList.matchesTerm(state, otherPermutation);
+            MatchResult match = thisList.matchesTerm(state, otherPermutation);
             if (match.isMatch()) {
                 return match;
             }
@@ -819,7 +827,7 @@ public class SetlSet extends CollectionValue {
     }
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         final SetlSet termSet = new SetlSet();
         for (final Value v: set) {
             termSet.addMember(state, v.toTerm(state));
@@ -830,16 +838,16 @@ public class SetlSet extends CollectionValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == SetlSet.class) {
-            final TreeSet<Value> other = ((SetlSet) v).set;
-            if (set == other) {
+        } else if (other.getClass() == SetlSet.class) {
+            final TreeSet<Value> otherSet = ((SetlSet) other).set;
+            if (set == otherSet) {
                 return 0; // clone
             }
             final Iterator<Value> iterFirst  = set.iterator();
-            final Iterator<Value> iterSecond = other.iterator();
+            final Iterator<Value> iterSecond = otherSet.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
                 final int cmp = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp == 0) {
@@ -855,26 +863,26 @@ public class SetlSet extends CollectionValue {
             }
             return 0;
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
     @Override
     public int compareToOrdering() {
-        return 700;
+        return COMPARE_TO_ORDERING_SET;
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        if (this == v) {
+    public boolean equalTo(final Object other) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == SetlSet.class) {
-            final TreeSet<Value> other = ((SetlSet) v).set;
-            if (set == other) {
+        } else if (other.getClass() == SetlSet.class) {
+            final TreeSet<Value> otherSet = ((SetlSet) other).set;
+            if (set == otherSet) {
                 return true; // clone
-            } else if (set.size() == other.size()) {
+            } else if (set.size() == otherSet.size()) {
                 final Iterator<Value> iterFirst  = set.iterator();
-                final Iterator<Value> iterSecond = other.iterator();
+                final Iterator<Value> iterSecond = otherSet.iterator();
                 while (iterFirst.hasNext() && iterSecond.hasNext()) {
                     if ( ! iterFirst.next().equalTo(iterSecond.next())) {
                         return false;

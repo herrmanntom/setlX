@@ -368,7 +368,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
+    public Value sum(final State state, final Value summand) throws SetlException {
         if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand == Om.OM) {
@@ -384,7 +384,7 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value sumAssign(final State state, final Value summand) throws IncompatibleTypeException {
+    public Value sumAssign(final State state, final Value summand) throws SetlException {
         if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand == Om.OM) {
@@ -425,37 +425,6 @@ public class SetlString extends IndexedCollectionValue {
     public void addMember(final State state, final Value element) {
         separateFromOriginal();
         element.appendUnquotedString(state, content, 0);
-    }
-
-    @Override
-    public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
-        final int   aSize   = args.size();
-        final Value vFirst  = (aSize >= 1)? args.get(0) : null;
-        if (args.contains(RangeDummy.RD)) {
-            if (aSize == 2 && vFirst == RangeDummy.RD) {
-                // everything up to high boundary: this(  .. y);
-                return getMembers(state, Rational.ONE, args.get(1));
-
-            } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
-                // everything from low boundary:   this(x ..  );
-                return getMembers(state, vFirst, Rational.valueOf(size()));
-
-            } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
-                // full range spec:                this(x .. y);
-                return getMembers(state, vFirst, args.get(2));
-            }
-            throw new UndefinedOperationException(
-                "Can not access elements using arguments '" + args + "' on '" + this + "';" +
-                " arguments are malformed."
-            );
-        } else if (aSize == 1) {
-            return getMember(state, vFirst);
-        } else {
-            throw new UndefinedOperationException(
-                "Can not access elements using arguments '" + args + "' on '" + this + "';" +
-                " arguments are malformed."
-            );
-        }
     }
 
     @Override
@@ -511,23 +480,23 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value getMembers(final State state, final Value vLow, final Value vHigh) throws SetlException {
-        int low = 0, high = 0;
-        if (vLow.isInteger() == SetlBoolean.TRUE) {
-            low = vLow.jIntValue();
+    public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
+        int lowInt = 0, highInt = 0;
+        if (low.isInteger() == SetlBoolean.TRUE) {
+            lowInt = low.jIntValue();
         } else {
             throw new IncompatibleTypeException(
-                "Lower bound '" + vLow + "' is not an integer."
+                "Lower bound '" + low + "' is not an integer."
             );
         }
-        if (vHigh.isInteger() == SetlBoolean.TRUE) {
-            high = vHigh.jIntValue();
+        if (high.isInteger() == SetlBoolean.TRUE) {
+            highInt = high.jIntValue();
         } else {
             throw new IncompatibleTypeException(
-                "Upper bound '" + vHigh + "' is not an integer."
+                "Upper bound '" + high + "' is not an integer."
             );
         }
-        return getMembers(low, high);
+        return getMembers(lowInt, highInt);
     }
 
     /**
@@ -919,7 +888,7 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public int compareToOrdering() {
-        return 600;
+        return COMPARE_TO_ORDERING_STRING;
     }
 
     @Override

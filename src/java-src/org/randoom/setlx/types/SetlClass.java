@@ -387,7 +387,7 @@ public class SetlClass extends Value {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
         final SetlList paramList = new SetlList(parameters.size());
@@ -478,7 +478,7 @@ public class SetlClass extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 1600;
+        return COMPARE_TO_ORDERING_CLASS;
     }
 
     @Override

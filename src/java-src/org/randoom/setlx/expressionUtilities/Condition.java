@@ -70,7 +70,7 @@ public class Condition extends CodeFragment {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         return expr.toTerm(state);
     }
 }

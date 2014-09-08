@@ -1,5 +1,6 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
@@ -92,7 +93,7 @@ public class LambdaProcedure extends Procedure {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
@@ -161,7 +162,7 @@ public class LambdaProcedure extends Procedure {
     @Override
     public int compareToOrdering() {
         object = null;
-        return 1000;
+        return COMPARE_TO_ORDERING_PROCEDURE_LAMBDA;
     }
 
     @Override

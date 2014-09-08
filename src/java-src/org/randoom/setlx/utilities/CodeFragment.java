@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
@@ -85,7 +86,7 @@ public abstract class CodeFragment {
      * @param state Current state of the running setlX program.
      * @return      Generated term.
      */
-    public abstract Value toTerm(final State state);
+    public abstract Value toTerm(final State state) throws SetlException;
 
     /**
      * Generate the functional character used in toTerm() based upon the

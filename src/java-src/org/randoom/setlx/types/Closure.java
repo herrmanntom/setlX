@@ -1,5 +1,6 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
@@ -90,7 +91,7 @@ public class Closure extends Procedure {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
@@ -155,7 +156,7 @@ public class Closure extends Procedure {
     @Override
     public int compareToOrdering() {
         object = null;
-        return 1200;
+        return COMPARE_TO_ORDERING_PROCEDURE_CLOSURE;
     }
 
     @Override

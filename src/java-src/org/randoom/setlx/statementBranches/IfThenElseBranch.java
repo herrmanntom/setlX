@@ -1,5 +1,6 @@
 package org.randoom.setlx.statementBranches;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
@@ -67,7 +68,7 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(state, statements.toTerm(state));
         return result;

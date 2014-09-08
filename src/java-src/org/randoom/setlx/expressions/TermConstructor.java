@@ -84,7 +84,7 @@ public class TermConstructor extends Expr {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result = new Term(fChar, args.size());
 
         for (final Expr arg: args) {

@@ -92,7 +92,7 @@ public class IfThen extends Statement {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term     result     = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList branchList = new SetlList(this.branchList.size());

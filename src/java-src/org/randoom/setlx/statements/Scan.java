@@ -265,7 +265,7 @@ public class Scan extends Statement {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
         if (posVar != null) {

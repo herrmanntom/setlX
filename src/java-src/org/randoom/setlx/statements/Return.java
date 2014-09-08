@@ -79,7 +79,7 @@ public class Return extends Statement {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         if (this.result != null) {
             result.addMember(state, this.result.toTerm(state));

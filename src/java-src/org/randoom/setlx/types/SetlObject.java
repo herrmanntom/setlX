@@ -647,7 +647,7 @@ public class SetlObject extends Value {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
         members.addToTerm(state, result);
@@ -694,7 +694,7 @@ public class SetlObject extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 1500;
+        return COMPARE_TO_ORDERING_OBJECT;
     }
 
     @Override

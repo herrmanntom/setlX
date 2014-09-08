@@ -193,7 +193,7 @@ public abstract class Expr extends CodeFragment {
     /* term operations */
 
     @Override
-    public abstract Value toTerm(final State state);
+    public abstract Value toTerm(final State state) throws SetlException;
 
     /**
      * Generate term representing the code this expression represents, when

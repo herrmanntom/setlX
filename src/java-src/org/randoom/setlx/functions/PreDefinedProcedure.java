@@ -279,7 +279,7 @@ public abstract class PreDefinedProcedure extends Procedure {
     @Override
     public int compareToOrdering() {
         object = null;
-        return 1400;
+        return COMPARE_TO_ORDERING_PROCEDURE_PRE;
     }
 
     @Override

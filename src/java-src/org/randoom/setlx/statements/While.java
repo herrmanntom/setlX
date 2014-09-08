@@ -84,7 +84,7 @@ public class While extends Statement {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(state, condition.toTerm(state));
         result.addMember(state, statements.toTerm(state));

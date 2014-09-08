@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
@@ -120,7 +121,7 @@ public class SetlHashMap<V extends Value> extends HashMap<String, V> implements 
      * @param state  Current state of the running setlX program.
      * @param result Term to be added to.
      */
-    public void addToTerm(final State state, final Term result) {
+    public void addToTerm(final State state, final Term result) throws SetlException {
         // list of bindings in this object
         final SetlSet bindings = new SetlSet();
         for (final Map.Entry<String, V> entry : entrySet()) {

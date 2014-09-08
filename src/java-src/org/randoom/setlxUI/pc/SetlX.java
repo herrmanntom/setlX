@@ -1,10 +1,6 @@
 package org.randoom.setlxUI.pc;
 
-import org.randoom.setlx.exceptions.EndOfFileException;
-import org.randoom.setlx.exceptions.FileNotWritableException;
-import org.randoom.setlx.exceptions.IllegalRedefinitionException;
-import org.randoom.setlx.exceptions.ParserException;
-import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.types.SetlList;
@@ -351,11 +347,11 @@ public class SetlX {
             for (int i = 0; i < programs.size(); ++i) {
                 try {
                     programs.set(i, (Block) TermConverter.valueToStatement(state, programs.get(i).toTerm(state)));
-                } catch (final TermConversionException tce) {
+                } catch (final SetlException se) {
                     state.errWriteLn("Error during termLoop!");
                     if (state.isRuntimeDebuggingEnabled()) {
                         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        tce.printStackTrace(new PrintStream(out));
+                        se.printStackTrace(new PrintStream(out));
                         state.errWrite(out.toString());
                     }
                 }
@@ -372,7 +368,16 @@ public class SetlX {
 
                 if (dumpTermFile != null) {
                     final StringBuilder sb = new StringBuilder();
-                    programs.get(i).toTerm(state).canonical(state, sb);
+                    try {
+                        programs.get(i).toTerm(state).canonical(state, sb);
+                    } catch (SetlException se) {
+                        state.errWriteLn("Error during termDump!");
+                        if (state.isRuntimeDebuggingEnabled()) {
+                            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                            se.printStackTrace(new PrintStream(out));
+                            state.errWrite(out.toString());
+                        }
+                    }
                     programTerm = sb.toString();
                 }
 

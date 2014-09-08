@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -62,10 +63,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
 
     @Override
-    public abstract void            addMember(final State state, final Value element);
+    public abstract void            addMember(final State state, final Value element) throws SetlException;
 
     @Override
-    public final    Value           arbitraryMember(final State state) {
+    public final    Value           arbitraryMember(final State state) throws UndefinedOperationException {
         if (this.size() < 1) {
             return Om.OM;
         } else if (this.size() % 2 == 0) {
@@ -77,7 +78,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
 
     @Override
-    public abstract SetlBoolean     containsMember(final State state, final Value element) throws IncompatibleTypeException;
+    public abstract SetlBoolean     containsMember(final State state, final Value element) throws SetlException;
 
     /**
      * Test if this value contains the specified element.
@@ -101,7 +102,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     }
 
     @Override
-    public final    Value           firstMember(final State state) {
+    public final    Value           firstMember(final State state) throws UndefinedOperationException {
         return firstMember();
     }
 
@@ -114,28 +115,6 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
 
     @Override
     public abstract Value           getMember(final State state, final Value index) throws SetlException;
-
-    /**
-     * Get a specified member of this value, but return it without cloning.
-     *
-     * @param state          Current state of the running setlX program.
-     * @param index          Index of the member to get.
-     * @return               Member of this value at the specified index.
-     * @throws SetlException Thrown in case of some (user-) error.
-     */
-    public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
-        throw new IncompatibleTypeException(
-                "Can not get member with index '" + index.toString(state) + "' from operand;" +
-                        " '" + this.toString(state) + "' is not a collection value or direct access is unsupported for this type."
-        );
-    }
-
-    public Value getMembers(final State state, final Value low, final Value high) throws SetlException {
-        throw new IncompatibleTypeException(
-                "Can not get member between index '" + low.toString(state) + "' and '" + high.toString(state) + "' from operand;" +
-                        " '" + this.toString(state) + "' is not a collection value or ranges are unsupported for this type."
-        );
-    }
 
     @Override
     public          SetlString      join(final State state, final Value separator) throws SetlException {
@@ -193,7 +172,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
     public abstract void            removeMember(final State state, final Value element) throws IncompatibleTypeException;
 
     @Override
-    public final    Value           removeFirstMember(final State state) {
+    public final    Value           removeFirstMember(final State state) throws UndefinedOperationException {
         return removeFirstMember();
     }
 
@@ -202,10 +181,10 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
      *
      * @return First member of this collection value.
      */
-    public abstract Value           removeFirstMember();
+    public abstract Value           removeFirstMember() throws UndefinedOperationException;
 
     @Override
-    public final    Value           removeLastMember(final State state) {
+    public final    Value           removeLastMember(final State state) throws UndefinedOperationException {
         return removeLastMember();
     }
 
@@ -214,7 +193,7 @@ public abstract class CollectionValue extends Value implements Iterable<Value> {
      *
      * @return Last member of this collection value.
      */
-    public abstract Value           removeLastMember();
+    public abstract Value           removeLastMember() throws UndefinedOperationException;
 
     @Override
     public abstract int             size();

@@ -93,7 +93,7 @@ public class ExplicitListWithRest extends CollectionBuilder {
     /* term operations */
 
     @Override
-    public void addToTerm(final State state, final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) throws SetlException {
         final Term     result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList members = new SetlList(list.size());

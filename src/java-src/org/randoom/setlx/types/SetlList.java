@@ -115,14 +115,12 @@ public class SetlList extends IndexedCollectionValue {
     private class SetlListDecendingIterator implements Iterator<Value> {
         private final SetlList         listShell;
         private final ArrayList<Value> content;
-        private       int              size;
         private       int              position;
 
         private SetlListDecendingIterator(final SetlList listShell) {
             this.listShell = listShell;
             this.content   = listShell.list;
-            this.size      = this.content.size();
-            this.position  = this.size - 1;
+            this.position  = content.size() - 1;
         }
 
         @Override
@@ -139,7 +137,6 @@ public class SetlList extends IndexedCollectionValue {
         public void remove() {
             listShell.separateFromOriginal();
             content.remove(position--);
-            size = content.size();
         }
     }
 
@@ -228,7 +225,7 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public Value sum(final State state, final Value summand) throws IncompatibleTypeException {
+    public Value sum(final State state, final Value summand) throws SetlException {
         if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
         } else if (summand.getClass() == SetlString.class) {
@@ -342,37 +339,6 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
-        final int   aSize  = args.size();
-        final Value vFirst = (aSize >= 1)? args.get(0) : null;
-        if (args.contains(RangeDummy.RD)) {
-            if (aSize == 2 && vFirst == RangeDummy.RD) {
-                // everything up to high boundary: this(  .. y);
-                return getMembers(state, Rational.ONE, args.get(1));
-
-            } else if (aSize == 2 && args.get(1) == RangeDummy.RD) {
-                // everything from low boundary:   this(x ..  );
-                return getMembers(state, vFirst, Rational.valueOf(size()));
-
-            } else if (aSize == 3 && args.get(1) == RangeDummy.RD) {
-                // full range specification:                this(x .. y);
-                return getMembers(state, vFirst, args.get(2));
-            }
-            throw new UndefinedOperationException(
-                "Can not access elements using the arguments '" + args + "' on '" + this.toString(state) + "';" +
-                " arguments are malformed."
-            );
-        } else if (aSize == 1) {
-            return getMember(state, vFirst);
-        } else {
-            throw new UndefinedOperationException(
-                "Can not access elements using the arguments '" + args + "' on '" + this.toString(state) + "';" +
-                " arguments are malformed."
-            );
-        }
-    }
-
-    @Override
     public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
         if (args.contains(RangeDummy.RD)) {
             // uncloned access is only used in assignments, so we should never get here
@@ -426,7 +392,14 @@ public class SetlList extends IndexedCollectionValue {
         return getMemberZZZInternal(index);
     }
 
-    @Override
+    /**
+     * Get a specified member of this list, but return it without cloning.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          Index of the member to get. Note: Index starts with 1, not 0.
+     * @return               Member of this list at the specified index.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
     public Value getMemberUnCloned(final State state, final Value index) throws SetlException {
         separateFromOriginal();
         return getMemberZZZInternal(state, index);
@@ -465,48 +438,10 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public Value getMembers(final State state, final Value vLow, final Value vHigh) throws SetlException {
-        final int listSize = list.size();
-        final int lowFromStart;
-        final int highFromStart;
-        if (vLow.isInteger() == SetlBoolean.TRUE) {
-            final int low = vLow.jIntValue();
-            if (low == 0) {
-                throw new NumberToLargeException(
-                    "Lower bound '" + vLow.toString(state) + "' is invalid."
-                );
-            } else if (low > 0) {
-                lowFromStart = low;
-            } else /* if (low < 0) */ {
-                // negative index counts from end of the string - convert it to actual index
-                lowFromStart = listSize + low + 1;
-            }
-        } else {
-            throw new IncompatibleTypeException(
-                "Lower bound '" + vLow.toString(state) + "' is not a integer."
-            );
-        }
-        if (vHigh.isInteger() == SetlBoolean.TRUE) {
-            final int high = vHigh.jIntValue();
-            if (high >= 0) {
-                highFromStart = high;
-            } else /* if (high < 0) */ {
-                // negative index counts from end of the string - convert it to actual index
-                highFromStart = listSize + high + 1;
-            }
-        } else {
-            throw new IncompatibleTypeException(
-                "Upper bound '" + vHigh.toString(state) + "' is not a integer."
-            );
-        }
-
-        int size = highFromStart - (lowFromStart - 1);
-        if (size < 0 || lowFromStart < 1 || highFromStart < 1 || lowFromStart > listSize) {
-            size = 0;
-        }
-        final SetlList result = new SetlList(size);
+    public Value getMembers(final State state, final int expectedNumberOfMembers, final int lowFromStart, final int highFromStart) throws SetlException {
+        final SetlList result = new SetlList(expectedNumberOfMembers);
                      // in java the index is one lower
-        for (int i = lowFromStart - 1; size > 0 && i < highFromStart && i < listSize; ++i) {
+        for (int i = lowFromStart - 1; expectedNumberOfMembers > 0 && i < highFromStart && i < size(); ++i) {
             result.addMember(state, list.get(i).clone());
         }
         return result;
@@ -835,7 +770,7 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         final SetlList termList = new SetlList(list.size());
         for (final Value v: list) {
             termList.addMember(state, v.toTerm(state));
@@ -846,16 +781,16 @@ public class SetlList extends IndexedCollectionValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == SetlList.class) {
-            final ArrayList<Value> other = ((SetlList) v).list;
-            if (list == other) {
+        } else if (other.getClass() == SetlList.class) {
+            final ArrayList<Value> otherList = ((SetlList) other).list;
+            if (list == otherList) {
                 return 0; // clone
             }
             final Iterator<Value> iterFirst  = list.iterator();
-            final Iterator<Value> iterSecond = other.iterator();
+            final Iterator<Value> iterSecond = otherList.iterator();
             while (iterFirst.hasNext() && iterSecond.hasNext()) {
                 final int cmp = iterFirst.next().compareTo(iterSecond.next());
                 if (cmp != 0) {
@@ -870,26 +805,26 @@ public class SetlList extends IndexedCollectionValue {
             }
             return 0;
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
     @Override
     public int compareToOrdering() {
-        return 800;
+        return COMPARE_TO_ORDERING_LIST;
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        if (this == v) {
+    public boolean equalTo(final Object other) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == SetlList.class) {
-            final ArrayList<Value> other = ((SetlList) v).list;
-            if (list == other) {
+        } else if (other.getClass() == SetlList.class) {
+            final ArrayList<Value> otherList = ((SetlList) other).list;
+            if (list == otherList) {
                 return true; // clone
-            } else if (list.size() == other.size()) {
+            } else if (list.size() == otherList.size()) {
                 final Iterator<Value> iterFirst  = list.iterator();
-                final Iterator<Value> iterSecond = other.iterator();
+                final Iterator<Value> iterSecond = otherList.iterator();
                 while (iterFirst.hasNext() && iterSecond.hasNext()) {
                     if ( ! iterFirst.next().equalTo(iterSecond.next())) {
                         return false;

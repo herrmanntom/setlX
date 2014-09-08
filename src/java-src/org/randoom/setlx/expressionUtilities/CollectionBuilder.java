@@ -66,7 +66,7 @@ public abstract class CollectionBuilder extends CodeFragment {
      * @param state      Current state of the running setlX program.
      * @param collection CollectionValue to expand.
      */
-    public abstract void addToTerm(final State state, final CollectionValue collection);
+    public abstract void addToTerm(final State state, final CollectionValue collection) throws SetlException;
 
     /**
      * Regenerate CollectionBuilder from a CollectionValue containing a term

@@ -187,7 +187,7 @@ public class ExplicitList extends CollectionBuilder {
     /* term operations */
 
     @Override
-    public void addToTerm(final State state, final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) throws SetlException {
         for (final Expr member: list) {
             collection.addMember(state, member.toTerm(state));
         }

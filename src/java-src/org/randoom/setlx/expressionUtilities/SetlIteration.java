@@ -111,7 +111,7 @@ public class SetlIteration extends CollectionBuilder {
     /* term operations */
 
     @Override
-    public void addToTerm(final State state, final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER);
         result.addMember(state, expr.toTerm(state));
         result.addMember(state, iterator.toTerm(state));

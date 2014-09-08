@@ -141,7 +141,7 @@ public class Exists extends Expr {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(state, iterator.toTerm(state));
         result.addMember(state, condition.toTerm(state));

@@ -841,9 +841,9 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * Appends a string representation of this value to the given StringBuilder
      * object, but suppresses quotes when appending strings.
      *
-     * @param state     Current state of the running setlX program.
-     * @param sb        StringBuilder to append to.
-     * @param tabs      Number of tabs to use as indentation for statements.
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     * @param tabs  Number of tabs to use as indentation for statements.
      */
     public void appendUnquotedString(final State state, final StringBuilder sb, final int tabs) {
         appendString(state, sb, tabs);
@@ -917,7 +917,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
     }
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         return this.clone();
     }
 
@@ -935,7 +935,7 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * In order to compare "incomparable" values, e.g. of different types, the
      * following (mostly arbitrary) order is established and used in compareTo():
      *
-     * SetlError < Om < SetlBoolean < Rational & SetlDouble
+     * SetlError < Om < SetlBoolean < Rational & SetlDouble < SetlVector < SetlMatrix
      * < SetlString < SetlSet < SetlList < Term < LambdaProcedure < Procedure
      * < Closure < CachedProcedure < PreDefinedProcedure < SetlObject < SetlClass < Top
      *
@@ -944,6 +944,26 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      * @return Number representing the order of this type in compareTo().
      */
     public abstract int compareToOrdering();
+
+    // constants for compareToOrdering, that make changes easier
+    protected final static int COMPARE_TO_ORDERING_ERROR             =  100;
+    protected final static int COMPARE_TO_ORDERING_OM                =  200;
+    protected final static int COMPARE_TO_ORDERING_BOOLEAN           =  300;
+    protected final static int COMPARE_TO_ORDERING_RATIONAL_DOUBLE   =  400;
+    protected final static int COMPARE_TO_ORDERING_VECTOR            =  500;
+    protected final static int COMPARE_TO_ORDERING_MATRIX            =  600;
+    protected final static int COMPARE_TO_ORDERING_STRING            =  700;
+    protected final static int COMPARE_TO_ORDERING_SET               =  800;
+    protected final static int COMPARE_TO_ORDERING_LIST              =  900;
+    protected final static int COMPARE_TO_ORDERING_TERM              = 1000;
+    protected final static int COMPARE_TO_ORDERING_PROCEDURE_LAMBDA  = 1100;
+    protected final static int COMPARE_TO_ORDERING_PROCEDURE         = 1200;
+    protected final static int COMPARE_TO_ORDERING_PROCEDURE_CLOSURE = 1300;
+    protected final static int COMPARE_TO_ORDERING_PROCEDURE_CACHED  = 1400;
+    protected final static int COMPARE_TO_ORDERING_PROCEDURE_PRE     = 1500;
+    protected final static int COMPARE_TO_ORDERING_OBJECT            = 1600;
+    protected final static int COMPARE_TO_ORDERING_CLASS             = 1700;
+    protected final static int COMPARE_TO_ORDERING_TOP               = 1800;
 
     /**
      * Test if two Values are equal.

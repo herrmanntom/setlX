@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;
@@ -19,32 +20,24 @@ import org.randoom.setlx.utilities.State;
  */
 public class SetlMatrix extends IndexedCollectionValue {
 
-    private Jama.Matrix value;
-
-    /**
-     *
-     * @return internal matrix library base
-     */
-    public Jama.Matrix getBase() {
-        return this.value;
-    }
+    private Jama.Matrix matrix;
 
     /**
      * Creates a new SetlMatrix from a raw Jama Matrix
      *
      * @param v Jama Matrix base
      */
-    public SetlMatrix(Jama.Matrix v) {
+    /*package*/ SetlMatrix(Jama.Matrix v) {
         super();
-        this.value = v;
+        this.matrix = v;
     }
 
     /**
      * Primary constructor
      *
-     * @param state
-     * @param init Collection of Numbers to fill the matrix with
-     * @throws SetlException
+     * @param state          Current state of the running setlX program.
+     * @param init           Collection of Numbers to fill the matrix with
+     * @throws SetlException Thrown in case of some (user-) error.
      */
     public SetlMatrix(final State state, final CollectionValue init) throws SetlException {
         super();
@@ -75,15 +68,15 @@ public class SetlMatrix extends IndexedCollectionValue {
             }
             currentRow++;
         }
-        value = new Jama.Matrix(base);
+        matrix = new Jama.Matrix(base);
     }
 
     /**
      * Converts a SetlVector to a SetlMatrix
      *
-     * @param state
-     * @param vector SetlVector to convert
-     * @throws SetlException
+     * @param state          Current state of the running setlX program.
+     * @param vector         SetlVector to convert
+     * @throws SetlException Thrown in case of some (user-) error.
      */
     public SetlMatrix(final State state, final SetlVector vector) throws SetlException {
         super();
@@ -93,227 +86,89 @@ public class SetlMatrix extends IndexedCollectionValue {
             if(elem.jDoubleConvertible()) {
                 base[i][0] = elem.toJDoubleValue(state);
             } else {
-                throw new IncompatibleTypeException("Vector could not be converted to a matrix, because its dimension " + i + " value could not be converted to a double.");
+                throw new IncompatibleTypeException("Vector could not be converted to a matrix, because its dimension " + i + " matrix could not be converted to a double.");
             }
         }
-        value = new Jama.Matrix(base);
+        matrix = new Jama.Matrix(base);
     }
+
+    @Override
+    public Value clone() {
+        return new SetlMatrix(this.matrix.copy());
+    }
+
+    @Override
+    public Iterator<Value> iterator() {
+        return this.toVectorList().iterator();
+    }
+
+    @Override
+    public Iterator<Value> descendingIterator() {
+        return this.toVectorList().descendingIterator();
+    }
+
+    /* type checks (sort of Boolean operation) */
 
     @Override
     public SetlBoolean isMatrix() {
         return SetlBoolean.TRUE;
     }
 
-    /**
-     * Clones the matrix
-     *
-     * @return Copy of this matrix
-     * @see org.randoom.setlx.types.Value#clone()
-     */
-    @Override
-    public Value clone() {
-//      System.err.println("[DEBUG]: clone orig " + this.value);
-//      System.err.println("[DEBUG]: clone omat " + new SetlMatrix(this.value));
-//      System.err.println("[DEBUG]: clone copy " + this.value.copy());
-//      System.err.println("[DEBUG]: clone cmat " + new SetlMatrix(this.value.copy()));
-        return new SetlMatrix(this.value.copy());
-    }
+    /* type conversions */
 
     /**
-     * Calculate the matrix product or the scalar product
+     * Convert matrix (if it has only one row or only one column) to vector
      *
-     * @param state
-     * @param multiplier matrix, vector (will be implicitly converted to a
-     * matrix) or number
-     * @return result of product
-     * @throws SetlException
-     */
-    @Override
-    public Value product(final State state, final Value multiplier) throws SetlException {
-        boolean isMatrix = multiplier instanceof SetlMatrix;
-        if(isMatrix || multiplier instanceof SetlVector) {
-            SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
-            if(this.value.getColumnDimension() == b.value.getRowDimension()) {
-                return new SetlMatrix(this.value.times(b.value));
-            } else {
-                throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
-            }
-        } else if(multiplier instanceof NumberValue) {
-            NumberValue n = (NumberValue)multiplier;
-            return new SetlMatrix(this.value.times(n.toJDoubleValue(state)));
-        } else if(multiplier instanceof Term) {
-            return ((Term)multiplier).productFlipped(state, this);
-        } else {
-            throw new IncompatibleTypeException("Multiplier is not a matrix.");
-        }
-    }
-
-    /**
-     * Calculate the matrix product or the scalar product and assign it to this
+     * @throws IncompatibleTypeException if matrix is malformed.
+     * @throws UndefinedOperationException if matrix contains NaN doubles.
      *
-     * @param state
-     * @param multiplier matrix, vector (will be implicitly converted to a
-     * matrix) or number
-     * @return result of product
-     * @throws SetlException
+     * @return Vector equivalent of this matrix
      */
-    @Override
-    public Value productAssign(final State state, final Value multiplier) throws SetlException {
-        boolean isMatrix = multiplier instanceof SetlMatrix;
-        if(isMatrix || multiplier instanceof SetlVector) {
-            SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
-            if(this.value.getColumnDimension() == b.value.getRowDimension()) {
-                this.value = this.value.times(b.value);
-                return this;
-            } else {
-                throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
+    public SetlVector toVector() throws IncompatibleTypeException, UndefinedOperationException {
+        ArrayList<Double> values;
+        if(matrix.getColumnDimension() == 1) {
+            values = new ArrayList<Double>(matrix.getRowDimension());
+            for(int i = 0; i < matrix.getRowDimension(); i++) {
+                values.add(matrix.getArray()[i][0]);
             }
-        } else if(multiplier instanceof NumberValue) {
-            NumberValue n = (NumberValue)multiplier;
-            this.value.timesEquals(n.toJDoubleValue(state));
-            return this;
-        } else if(multiplier instanceof Term) {
-            return ((Term)multiplier).productAssign(state, this); // TOCHECK
-        } else {
-            throw new IncompatibleTypeException("Multiplier is not a matrix.");
-        }
-    }
-
-    /**
-     * Transpose this matrix
-     *
-     * @return transposed matrix
-     */
-    public SetlMatrix transpose() {
-        return new SetlMatrix(this.value.transpose());
-    }
-
-    /**
-     * Power
-     *
-     * @param state
-     * @param exponent integer
-     * @return
-     * @throws SetlException
-     */
-    @Override
-    public Value power(final State state, final Value exponent) throws SetlException {
-        if(!this.isSquare()) {
-            throw new IncompatibleTypeException("Power is only defined on square matrices."); // Same in Octave
-        }
-        if(exponent.jIntConvertible()) {
-            int ex = exponent.toJIntValue(state);
-            Jama.Matrix base;
-            if(ex < 0) {
-                base = this.value.inverse();
-                ex = -ex;
-            } else {
-                if(ex == 0) {
-                    base = new Jama.Matrix(this.value.getRowDimension(), this.value.getRowDimension());
-                    for(int i = 0; i < this.value.getRowDimension(); i++) {
-                        base.set(i, i, 0);
-                    }
-                    return new SetlMatrix(base);
-                } else {
-                    base = this.value;
-                }
-            }
-            Jama.Matrix result = base;
-            // No mistake, should be one
-            for(int i = 1; i < ex; i++) {
-                result = result.times(base);
-            }
-            return new SetlMatrix(result);
-        } else {
-            throw new IncompatibleTypeException("Power on matrices is only defined for integer exponents.");
-        }
-    }
-
-    /**
-     * Adds two matrices together
-     *
-     * @param state
-     * @param summand matrix or vector (will be implicitly converted to a
-     * matrix) to add to this
-     * @return
-     * @throws SetlException
-     */
-    @Override
-    public Value sum(final State state, final Value summand) throws SetlException {
-        boolean isMatrix = summand instanceof SetlMatrix;
-        if(isMatrix || summand instanceof SetlVector) {
-            SetlMatrix b = isMatrix ? (SetlMatrix)summand : new SetlMatrix(state, (SetlVector)summand);
-            if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
-                if(this.value.getRowDimension() == b.value.getRowDimension()) {
-                    return new SetlMatrix(this.value.plus(b.value));
-                } else {
-                    throw new IncompatibleTypeException("Summands have different number of rows.");
-                }
-            } else {
-                throw new IncompatibleTypeException("Summands have different number of columns.");
-            }
-        } else if(summand instanceof Term) {
-            return ((Term)summand).sumFlipped(state, this);
-        } else {
-            throw new IncompatibleTypeException("Summand is not of type Matrix.");
-        }
-    }
-
-    /**
-     * Adds two matrices together and assigns them to this
-     *
-     * @param state
-     * @param summand matrix or vector (will be implicitly converted to a
-     * matrix) to add to this
-     * @return
-     * @throws SetlException
-     */
-    @Override
-    public Value sumAssign(final State state, final Value summand) throws SetlException {
-        boolean isMatrix = summand instanceof SetlMatrix;
-        if(isMatrix || summand instanceof SetlVector) {
-            SetlMatrix b = isMatrix ? (SetlMatrix)summand : new SetlMatrix(state, (SetlVector)summand);
-            if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
-                if(this.value.getRowDimension() == b.value.getRowDimension()) {
-                    this.value.plusEquals(b.value);
-                    return this;
-                } else {
-                    throw new IncompatibleTypeException("Summands have different number of rows.");
-                }
-            } else {
-                throw new IncompatibleTypeException("Summands have different number of columns.");
-            }
-        } else if(summand instanceof Term) {
-            Value v = ((Term)summand).sumFlipped(state, this);
-            if(v instanceof SetlMatrix) {
-                SetlMatrix nv = (SetlMatrix)v;
-                this.value = nv.value;
-                return this;
-            } else {
-                throw new IncompatibleTypeException(("Could not assign non matrix value to matrix variable."));
+        } else if(matrix.getRowDimension() == 1) {
+            values = new ArrayList<Double>(matrix.getColumnDimension());
+            for(int i = 0; i < matrix.getColumnDimension(); i++) {
+                values.add(matrix.getArray()[0][i]);
             }
         } else {
-            throw new IncompatibleTypeException("Summand is not of type Matrix.");
+            throw new IncompatibleTypeException("Matrix could not be converted to a vector, because it doesn't have just one column or just one row.");
         }
+        return new SetlVector(values);
     }
 
     /**
-     * Difference
+     * Convert this matrix into a SetlList of SetlVectors
      *
-     * @param state
-     * @param subtrahend matrix or vector (will be implicitly converted to a
-     * matrix)
-     * @return
-     * @throws SetlException
+     * @return SetlList of SetlVectors representing this matrix
      */
+    private SetlList toVectorList() {
+        SetlList container = new SetlList(this.matrix.getRowDimension());
+        for(double[] row : this.matrix.getArray()) {
+            ArrayList<Double> vector = new ArrayList<Double>();
+            for (double v : row) {
+                vector.add(v);
+            }
+            container.addMember(null, new SetlVector(vector));
+        }
+        return container;
+    }
+
+    /* arithmetic operations */
+
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
         boolean isMatrix = subtrahend instanceof SetlMatrix;
         if(isMatrix || subtrahend instanceof SetlVector) {
             SetlMatrix b = isMatrix ? (SetlMatrix)subtrahend : new SetlMatrix(state, (SetlVector)subtrahend);
-            if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
-                if(this.value.getRowDimension() == b.value.getRowDimension()) {
-                    return new SetlMatrix(this.value.minus(b.value));
+            if(this.matrix.getColumnDimension() == b.matrix.getColumnDimension()) {
+                if(this.matrix.getRowDimension() == b.matrix.getRowDimension()) {
+                    return new SetlMatrix(this.matrix.minus(b.matrix));
                 } else {
                     throw new IncompatibleTypeException("Subtrahend have different number of rows.");
                 }
@@ -327,22 +182,14 @@ public class SetlMatrix extends IndexedCollectionValue {
         }
     }
 
-    /**
-     *
-     * @param state
-     * @param subtrahend matrix or vector (will be implicitly converted to a
-     * matrix)
-     * @return
-     * @throws SetlException
-     */
     @Override
     public Value differenceAssign(final State state, final Value subtrahend) throws SetlException {
         boolean isMatrix = subtrahend instanceof SetlMatrix;
         if(isMatrix || subtrahend instanceof SetlVector) {
             SetlMatrix b = isMatrix ? (SetlMatrix)subtrahend : new SetlMatrix(state, (SetlVector)subtrahend);
-            if(this.value.getColumnDimension() == b.value.getColumnDimension()) {
-                if(this.value.getRowDimension() == b.value.getRowDimension()) {
-                    this.value.minusEquals(b.value);
+            if(this.matrix.getColumnDimension() == b.matrix.getColumnDimension()) {
+                if(this.matrix.getRowDimension() == b.matrix.getRowDimension()) {
+                    this.matrix.minusEquals(b.matrix);
                     return this;
                 } else {
                     throw new IncompatibleTypeException("Subtrahend have different number of rows.");
@@ -351,121 +198,153 @@ public class SetlMatrix extends IndexedCollectionValue {
                 throw new IncompatibleTypeException("Subtrahend have different number of columns.");
             }
         } else if(subtrahend instanceof Term) {
-            Value v = ((Term)subtrahend).differenceFlipped(state, this);
-            if(v instanceof SetlMatrix) {
-                SetlMatrix nv = (SetlMatrix)v;
-                this.value = nv.value;
-                return this;
-            } else {
-                throw new IncompatibleTypeException(("Could not assign non matrix value to matrix variable."));
-            }
+            return ((Term)subtrahend).differenceFlipped(state, this);
         } else {
             throw new IncompatibleTypeException("Subtrahend is not of type Matrix.");
         }
     }
 
-    /**
-     * Pretty print
-     *
-     * @param state
-     * @param sb
-     */
     @Override
-    public void canonical(final State state, final StringBuilder sb) {
-        double[][] a = value.getArray();
-        sb.append("<");
-        for(double[] a1 : a) {
-            sb.append(" [");
-            for(double a2 : a1) {
-                sb.append(" ").append(a2).append(" ");
-            }
-            sb.append("] ");
-        }
-        sb.append(">");
+    public Value factorial(final State state) throws SetlException {
+        return this.transpose();
     }
 
-    /**
-     * Returns row at index
-     *
-     * @param index which row to return
-     * @return row
-     * @throws SetlException
-     */
     @Override
-    public Value getMember(int index) throws SetlException {
-        if(index > this.value.getRowDimension() || index < 1) {
-            throw new IncompatibleTypeException("Index out of bounds: " + index);
+    public Value power(final State state, final Value exponent) throws SetlException {
+        if(!this.isSquare()) {
+            throw new IncompatibleTypeException("Power is only defined on square matrices."); // Same in Octave
         }
-        SetlList container = new SetlList(this.value.getColumnDimension());
-        for(double d : this.value.getArray()[index - 1]) {
-            container.addMember(null, SetlDouble.valueOf(d));
-        }
-        return container;
-    }
+        if(exponent.jIntConvertible()) {
+            int ex = exponent.toJIntValue(state);
 
-    /**
-     * Convert this matrix into a pure SetlList
-     *
-     * @param state
-     * @return SetlList
-     */
-    private SetlList toSetlList(final State state) {
-        SetlList container = new SetlList(this.value.getRowDimension());
-        for(double[] a : this.value.getArray()) {
-            SetlList row = new SetlList(this.value.getColumnDimension());
-            for(double b : a) {
-                try {
-                    row.addMember(state, SetlDouble.valueOf(b));
-                } catch(UndefinedOperationException ex) {
+            if(ex == 0) {
+                Jama.Matrix base = new Jama.Matrix(this.matrix.getRowDimension(), this.matrix.getRowDimension());
+                for(int i = 0; i < this.matrix.getRowDimension(); i++) {
+                    base.set(i, i, 0);
                 }
+                return new SetlMatrix(base);
             }
-            container.addMember(state, row);
+
+            try {
+                Jama.Matrix base;
+                if (ex < 0) {
+                    base = this.matrix.inverse();
+                    ex = -ex;
+                } else {
+                    base = this.matrix;
+                }
+                Jama.Matrix result = base;
+                for (int i = 1; i < ex; i++) {
+                    result = result.times(base);
+                }
+                return new SetlMatrix(result);
+            } catch (RuntimeException re) {
+                throw new UndefinedOperationException(re.getMessage());
+            }
+        } else {
+            throw new IncompatibleTypeException("Power on matrices is only defined for integer exponents.");
         }
-        return container;
     }
 
-    /**
-     * Iterator for loops
-     *
-     * @return Iterator
+    /*
+     * Calculate the matrix product or the scalar product
      */
     @Override
-    public Iterator<Value> iterator() {
-        return this.toSetlList(null).iterator();
+    public Value product(final State state, final Value multiplier) throws SetlException {
+        boolean isMatrix = multiplier instanceof SetlMatrix;
+        if(isMatrix || multiplier instanceof SetlVector) {
+            SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
+            if(this.matrix.getColumnDimension() == b.matrix.getRowDimension()) {
+                return new SetlMatrix(this.matrix.times(b.matrix));
+            } else {
+                throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
+            }
+        } else if(multiplier instanceof NumberValue) {
+            return new SetlMatrix(this.matrix.times(multiplier.toJDoubleValue(state)));
+        } else if(multiplier instanceof Term) {
+            return ((Term)multiplier).productFlipped(state, this);
+        } else {
+            throw new IncompatibleTypeException("Multiplier is not a matrix.");
+        }
     }
 
-    /**
-     * Reverse Iterator for loops
-     *
-     * @return Iterator
+    /*
+     * Calculate the matrix product or the scalar product and assign it to this
      */
     @Override
-    public Iterator<Value> descendingIterator() {
-        return this.toSetlList(null).descendingIterator();
+    public Value productAssign(final State state, final Value multiplier) throws SetlException {
+        boolean isMatrix = multiplier instanceof SetlMatrix;
+        if(isMatrix || multiplier instanceof SetlVector) {
+            SetlMatrix b = isMatrix ? (SetlMatrix)multiplier : new SetlMatrix(state, (SetlVector)multiplier);
+            if(this.matrix.getColumnDimension() == b.matrix.getRowDimension()) {
+                this.matrix = this.matrix.times(b.matrix);
+                return this;
+            } else {
+                throw new IncompatibleTypeException("Matrix multiplication is only defined if the number of columns of the first matrix equals the number of rows of the second matrix.");
+            }
+        } else if(multiplier instanceof NumberValue) {
+            this.matrix.timesEquals(multiplier.toJDoubleValue(state));
+            return this;
+        } else if(multiplier instanceof Term) {
+            return ((Term)multiplier).productFlipped(state, this);
+        } else {
+            throw new IncompatibleTypeException("Multiplier is not a matrix.");
+        }
     }
 
-    /**
-     * Add a new row or column
-     *
-     * @param state
-     * @param element vector or collection representing new items
-     */
     @Override
-    public void addMember(State state, Value element) {
+    public Value sum(final State state, final Value summand) throws SetlException {
+        boolean isMatrix = summand instanceof SetlMatrix;
+        if(isMatrix || summand instanceof SetlVector) {
+            SetlMatrix b = isMatrix ? (SetlMatrix)summand : new SetlMatrix(state, (SetlVector)summand);
+            if(this.matrix.getColumnDimension() == b.matrix.getColumnDimension()) {
+                if(this.matrix.getRowDimension() == b.matrix.getRowDimension()) {
+                    return new SetlMatrix(this.matrix.plus(b.matrix));
+                } else {
+                    throw new IncompatibleTypeException("Summands have different number of rows.");
+                }
+            } else {
+                throw new IncompatibleTypeException("Summands have different number of columns.");
+            }
+        } else if(summand instanceof Term) {
+            return ((Term)summand).sumFlipped(state, this);
+        } else {
+            throw new IncompatibleTypeException("Summand is not of type Matrix.");
+        }
+    }
+
+    @Override
+    public Value sumAssign(final State state, final Value summand) throws SetlException {
+        boolean isMatrix = summand instanceof SetlMatrix;
+        if(isMatrix || summand instanceof SetlVector) {
+            SetlMatrix b = isMatrix ? (SetlMatrix)summand : new SetlMatrix(state, (SetlVector)summand);
+            if(this.matrix.getColumnDimension() == b.matrix.getColumnDimension()) {
+                if(this.matrix.getRowDimension() == b.matrix.getRowDimension()) {
+                    this.matrix.plusEquals(b.matrix);
+                    return this;
+                } else {
+                    throw new IncompatibleTypeException("Summands have different number of rows.");
+                }
+            } else {
+                throw new IncompatibleTypeException("Summands have different number of columns.");
+            }
+        } else if(summand instanceof Term) {
+            return ((Term)summand).sumFlipped(state, this);
+        } else {
+            throw new IncompatibleTypeException("Summand is not of type Matrix.");
+        }
+    }
+
+    /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
+
+    @Override
+    public void addMember(State state, Value element) throws SetlException {
         double[] dElems;
         if(element instanceof SetlVector) {
-            NumberValue[] elems = ((SetlVector)element).getValue();
-            dElems = new double[elems.length];
-            for(int i = 0; i < elems.length; i++) {
-                if(elems[i].jDoubleConvertible()) {
-                    try {
-                        dElems[i] = elems[i].toJDoubleValue(state);
-                    } catch(SetlException ex) {
-                        return;
-                    }
-                } else {
-                    return;
-                }
+            ArrayList<Double> elems = ((SetlVector)element).getVectorCopy();
+            dElems = new double[elems.size()];
+            for(int i = 0; i < dElems.length; i++) {
+                dElems[i] = elems.get(i);
             }
         } else if(element instanceof CollectionValue) {
             CollectionValue col = (CollectionValue)element;
@@ -473,11 +352,7 @@ public class SetlMatrix extends IndexedCollectionValue {
             int idx = 0;
             for(Value v : col) {
                 if(v.jDoubleConvertible()) {
-                    try {
-                        dElems[idx] = v.toJDoubleValue(state);
-                    } catch(SetlException ex) {
-                        return;
-                    }
+                    dElems[idx] = v.toJDoubleValue(state);
                 } else {
                     return;
                 }
@@ -486,75 +361,52 @@ public class SetlMatrix extends IndexedCollectionValue {
         } else {
             return;
         }
-        if(dElems.length == this.value.getColumnDimension()) {
+        if(dElems.length == this.matrix.getColumnDimension()) {
             // Vector will be added as a row
-            double[][] result = new double[this.value.getRowDimension() + 1][this.value.getColumnDimension()];
-            System.arraycopy(this.value.getArray(), 0, result, 0, this.value.getRowDimension());
-            result[this.value.getRowDimension()] = dElems;
-            this.value = new Jama.Matrix(result);
-        } else if(dElems.length == this.value.getRowDimension()) {
+            double[][] result = new double[this.matrix.getRowDimension() + 1][this.matrix.getColumnDimension()];
+            System.arraycopy(this.matrix.getArray(), 0, result, 0, this.matrix.getRowDimension());
+            result[this.matrix.getRowDimension()] = dElems;
+            this.matrix = new Jama.Matrix(result);
+        } else if(dElems.length == this.matrix.getRowDimension()) {
             // Vector will be added as a column
-            double[][] result = new double[this.value.getRowDimension()][this.value.getColumnDimension() + 1];
+            double[][] result = new double[this.matrix.getRowDimension()][this.matrix.getColumnDimension() + 1];
             for(int i = 0; i < result.length; i++) {
-                System.arraycopy(this.value.getArray()[i], 0, result[i], 0, this.value.getColumnDimension());
-                result[i][this.value.getColumnDimension()] = dElems[i];
+                System.arraycopy(this.matrix.getArray()[i], 0, result[i], 0, this.matrix.getColumnDimension());
+                result[i][this.matrix.getColumnDimension()] = dElems[i];
             }
-            this.value = new Jama.Matrix(result);
+            this.matrix = new Jama.Matrix(result);
         }
     }
 
-    private static double epsilon = 1E-5;
-
-    /**
-     * Searches for element
-     *
-     * @param state
-     * @param element
-     * @return Does this matrix contain element?
-     * @throws IncompatibleTypeException
-     */
     @Override
-    public SetlBoolean containsMember(State state, Value element) throws IncompatibleTypeException {
+    public SetlBoolean containsMember(State state, Value element) throws SetlException {
         if(element instanceof CollectionValue) {
             CollectionValue c = (CollectionValue)element;
             double[] v = new double[c.size()];
             int i = 0;
             for(Value subelem : c) {
-                try {
-                    v[i] = subelem.toJDoubleValue(state);
-                } catch(SetlException ex) {
-                    throw new IncompatibleTypeException(ex.getMessage());
-                }
+                v[i] = subelem.toJDoubleValue(state);
                 i++;
             }
-            for(double[] a : this.value.getArray()) {
+            for(double[] a : this.matrix.getArray()) {
                 if(Arrays.equals(a, v)) {
                     return SetlBoolean.TRUE;
                 }
             }
             return SetlBoolean.FALSE;
         } else if(element instanceof NumberValue) {
-            try {
-                double v = ((NumberValue)element).toJDoubleValue(state);
-                for(double[] a : this.value.getArray()) {
+                double v = element.toJDoubleValue(state);
+                for(double[] a : this.matrix.getArray()) {
                     for(double b : a) {
-                        if(Math.abs(b - v) < epsilon) {
+                        if(Double.compare(b, v) == 0) {
                             return SetlBoolean.TRUE;
                         }
                     }
                 }
-            } catch(SetlException ex) {
-                throw new IncompatibleTypeException(ex.getMessage());
-            }
         }
         return SetlBoolean.FALSE;
     }
 
-    /**
-     * Get first row
-     *
-     * @return
-     */
     @Override
     public Value firstMember() {
         try {
@@ -564,14 +416,18 @@ public class SetlMatrix extends IndexedCollectionValue {
         }
     }
 
-    /**
-     * Get row with index
-     *
-     * @param state
-     * @param index
-     * @return list of numbers in row
-     * @throws SetlException
-     */
+    @Override
+    public Value getMember(int index) throws SetlException {
+        if(index > this.matrix.getRowDimension() || index < 1) {
+            throw new IncompatibleTypeException("Index out of bounds: " + index);
+        }
+        SetlList container = new SetlList(this.matrix.getColumnDimension());
+        for(double d : this.matrix.getArray()[index - 1]) {
+            container.addMember(null, SetlDouble.valueOf(d));
+        }
+        return container;
+    }
+
     @Override
     public Value getMember(State state, Value index) throws SetlException {
         if(index.jIntConvertible()) {
@@ -581,31 +437,32 @@ public class SetlMatrix extends IndexedCollectionValue {
         }
     }
 
-    /**
-     * Get last row
-     *
-     * @return list of numbers in last row
-     */
+    @Override
+    public Value getMembers(final State state, final int expectedNumberOfMembers, final int lowFromStart, final int highFromStart) throws SetlException {
+        double[][] base = new double[expectedNumberOfMembers][1];
+        // in java the index is one lower
+        for (int pos = 0, i = lowFromStart - 1; expectedNumberOfMembers > 0 && i < highFromStart && i < matrix.getRowDimension(); ++pos, ++i) {
+            for (int j = 0; j < matrix.getColumnDimension(); j++) {
+                base[pos][j] = matrix.get(i, j);
+            }
+        }
+        return new SetlMatrix(new Jama.Matrix(base));
+    }
+
+
     @Override
     public Value lastMember() {
         try {
-            return this.getMember(this.value.getRowDimension());
+            return this.getMember(this.matrix.getRowDimension());
         } catch(SetlException ex) {
             return Om.OM;
         }
     }
 
-    /**
-     * Finds biggest number in any cell
-     *
-     * @param state
-     * @return number
-     * @throws SetlException
-     */
     @Override
     public Value maximumMember(State state) throws SetlException {
         double momentaryMax = Double.NEGATIVE_INFINITY;
-        for(double[] a : this.value.getArray()) {
+        for(double[] a : this.matrix.getArray()) {
             for(double b : a) {
                 if(b > momentaryMax) {
                     momentaryMax = b;
@@ -615,17 +472,10 @@ public class SetlMatrix extends IndexedCollectionValue {
         return SetlDouble.valueOf(momentaryMax);
     }
 
-    /**
-     * Finds smallest number in any cell
-     *
-     * @param state
-     * @return number
-     * @throws SetlException
-     */
     @Override
     public Value minimumMember(State state) throws SetlException {
         double momentaryMin = Double.POSITIVE_INFINITY;
-        for(double[] a : this.value.getArray()) {
+        for(double[] a : this.matrix.getArray()) {
             for(double b : a) {
                 if(b < momentaryMin) {
                     momentaryMin = b;
@@ -635,258 +485,63 @@ public class SetlMatrix extends IndexedCollectionValue {
         return SetlDouble.valueOf(momentaryMin);
     }
 
-    /**
-     *
-     *
-     * @param element
-     * @throws IncompatibleTypeException
-     */
+    @Override
+    public Value removeFirstMember() {
+        double[][] result = new double[this.matrix.getRowDimension() - 1][this.matrix.getColumnDimension()];
+        System.arraycopy(this.matrix.getArray(), 1, result, 0, this.matrix.getColumnDimension() - 1);
+        return new SetlMatrix(new Jama.Matrix(result));
+    }
+
+    @Override
+    public Value removeLastMember() {
+        double[][] result = new double[this.matrix.getRowDimension() - 1][this.matrix.getColumnDimension()];
+        System.arraycopy(this.matrix.getArray(), 0, result, 0, this.matrix.getRowDimension() - 1);
+        return new SetlMatrix(new Jama.Matrix(result));
+    }
+
     @Override
     public void removeMember(State state, Value element) throws IncompatibleTypeException {
+        if (! (element instanceof SetlVector)) {
+            throw new IncompatibleTypeException("Element " + element + " that should be removed isn't part of this matrix: " + this);
+        }
         int index = -1;
         int tmp = 0;
-        for(Value row : this.toSetlList(state)) {
-            if(row instanceof SetlList && ((SetlList)row).equalTo(element)) {
+        for(Value row : this.toVectorList()) {
+            if(row.equalTo(element)) {
                 index = tmp;
                 break;
             }
             tmp++;
         }
         if(index > -1) {
-            double[][] newArr = new double[this.value.getRowDimension() - 1][this.value.getColumnDimension()];
-            double[][] oldArr = this.value.getArray();
+            double[][] newArr = new double[this.matrix.getRowDimension() - 1][this.matrix.getColumnDimension()];
+            double[][] oldArr = this.matrix.getArray();
             if(index == 0) {
                 System.arraycopy(oldArr, 1, newArr, 0, newArr.length);
             } else if(index == oldArr.length - 1) {
                 System.arraycopy(oldArr, 0, newArr, 0, newArr.length);
             } else if(index >= oldArr.length) {
-                throw new IncompatibleTypeException("Internal Error in SetlMatrix.removeMemeber");
+                throw new IncompatibleTypeException("Internal Error in SetlMatrix.removeMember");
             } else {
                 System.arraycopy(oldArr, 0, newArr, 0, index);
                 System.arraycopy(oldArr, index + 1, newArr, index, newArr.length - index);
             }
-            this.value = new Jama.Matrix(newArr);
+            this.matrix = new Jama.Matrix(newArr);
         } else {
             throw new IncompatibleTypeException("Element " + element + " that should be removed isn't part of this matrix: " + this);
         }
     }
 
-    /**
-     * Create copy of this matrix excluding first row
-     *
-     * @return new SetlMatrix
-     */
-    @Override
-    public Value removeFirstMember() {
-        double[][] result = new double[this.value.getRowDimension() - 1][this.value.getColumnDimension()];
-        System.arraycopy(this.value.getArray(), 1, result, 0, this.value.getColumnDimension() - 1);
-        return new SetlMatrix(new Jama.Matrix(result));
-    }
-
-    /**
-     * Create copy of this matrix excluding last row
-     *
-     * @return new SetlMatrix
-     */
-    @Override
-    public Value removeLastMember() {
-        double[][] result = new double[this.value.getRowDimension() - 1][this.value.getColumnDimension()];
-        System.arraycopy(this.value.getArray(), 0, result, 0, this.value.getRowDimension() - 1);
-        return new SetlMatrix(new Jama.Matrix(result));
-    }
-
-    /**
-     * Returns the number of rows
-     *
-     * @return Integer
-     */
-    @Override
-    public int size() {
-        return this.value.getRowDimension();
-    }
-
-    /**
-     *
-     *
-     * @param state
-     * @param other
-     * @return
-     * @throws SetlException
-     */
-    @Override
-    public MatchResult matchesTerm(State state, Value other) throws SetlException {
-        if(other == IgnoreDummy.ID) {
-            return new MatchResult(true);
-        } else if(!(other instanceof SetlMatrix || other instanceof SetlString)) {
-            return new MatchResult(false);
-        } else {
-            if(other instanceof SetlMatrix) {
-                return new MatchResult(this.equalTo(other));
-            } else {
-                return new MatchResult(this.toString().equals(other.toString()));
-            }
-        }
-    }
-
-    /**
-     * Calculates all eigen values
-     *
-     * @param state
-     * @return list of numbers
-     * @throws UndefinedOperationException
-     */
-    public SetlList eigenValues(State state) throws SetlException {
-        if(!this.isSquare()) {
-            throw new IncompatibleTypeException("Not a square matrix.");
-        }
-        EigenvalueDecomposition result = this.value.eig();
-        double[][] values = result.getD().getArray();
-        SetlList composition = new SetlList(values.length);
-        for(int i = 0; i < values.length; i++) {
-            composition.addMember(state, SetlDouble.valueOf(values[i][i]));
-        }
-        return composition;
-    }
-
-    /**
-     * Calculates singular value decomposition
-     *
-     * @param state
-     * @return 3-tupel of matrices [U, S, V]
-     */
-    public SetlList singularValueDecomposition(State state) {
-//      System.err.println("[DEBUG]: svd invoke");
-        SingularValueDecomposition result = this.value.svd();
-//      System.err.println("[DEBUG]: svd lib call done");
-        SetlList container = new SetlList();
-//      System.err.println("[DEBUG]: svd list create done: " + container);
-//      System.err.println("[DEBUG]: svd u " + new SetlMatrix(result.getU()));
-//      System.err.println("[DEBUG]: svd u " + new SetlMatrix(result.getU()).clone());
-//      System.err.println("[DEBUG]: svd s " + new SetlMatrix(result.getS()).clone());
-//      System.err.println("[DEBUG]: svd v " + new SetlMatrix(result.getV()).clone());
-//      container.addMember(state, this);
-//      System.err.println("[DEBUG]: svd list add test done: " + container);
-        container.addMember(state, new SetlMatrix(result.getU()));
-//      System.err.println("[DEBUG]: svd u done: " + container);
-        container.addMember(state, new SetlMatrix(result.getS()));
-//      System.err.println("[DEBUG]: svd s done: " + container);
-        container.addMember(state, new SetlMatrix(result.getV()));
-//      System.err.println("[DEBUG]: svd v done: " + container);
-        return container;
-    }
-
-    /**
-     * Calculate eigen vector matrix
-     *
-     * @return matrix
-     */
-    public SetlMatrix eigenVectors() throws IncompatibleTypeException {
-        if(!this.isSquare()) {
-            throw new IncompatibleTypeException("Not a square matrix.");
-        }
-        return new SetlMatrix(this.value.eig().getV());
-    }
-
-    /**
-     * Is the number of rows equal to the number of columns
-     *
-     * @return boolean
-     */
-    public boolean isSquare() {
-        return this.value.getColumnDimension() == this.value.getRowDimension();
-    }
-
-    /**
-     * Calculate the determinant of this matrix
-     *
-     * @return number
-     * @throws SetlException
-     */
-    public SetlDouble determinant() throws SetlException {
-        if(this.isSquare()) {
-            return SetlDouble.valueOf(this.value.det());
-        } else {
-            throw new IncompatibleTypeException("Matrix needs to be square.");
-        }
-    }
-
-    /**
-     * Solve this * X = B
-     *
-     * @param B
-     * @return X
-     */
-    public SetlMatrix solve(SetlMatrix B) throws IncompatibleTypeException {
-        if(this.value.getRowDimension() != B.value.getRowDimension()) {
-            throw new IncompatibleTypeException("Row numbers must be equal to solve A * X = B.");
-        }
-        return new SetlMatrix(this.value.solve(B.value));
-    }
-
-    /**
-     * Maps transpose to the x! operator
-     *
-     * @param state
-     * @return transposed matrix
-     * @throws SetlException
-     */
-    @Override
-    public Value factorial(final State state) throws SetlException {
-        return this.transpose();
-    }
-
-    /**
-     * Handles indexed access
-     *
-     * @param state
-     * @param args [ number ] : index to access
-     * @return number at index args[0]
-     * @throws SetlException
-     */
-    @Override
-    public Value collectionAccess(final State state, final List<Value> args) throws SetlException {
-        if(args.get(0).jIntConvertible()) {
-            return this.getMember(args.get(0).toJIntValue(state)).clone();
-        } else {
-            throw new IncompatibleTypeException("Matrix row access index must be an integer.");
-        }
-    }
-
-    /**
-     * Handles indexed access
-     *
-     * @param state
-     * @param args [ number ] : index to access
-     * @return number at index args[0]
-     * @throws SetlException
-     */
-    @Override
-    public Value collectionAccessUnCloned(final State state, final List<Value> args) throws SetlException {
-        if(args.get(0).jIntConvertible()) {
-            return this.getMember(args.get(0).toJIntValue(state));
-        } else {
-            throw new IncompatibleTypeException("Matrix row access index must be an integer.");
-        }
-    }
-
-    /**
-     * Set element at `index` to `v`
-     *
-     * @param state
-     * @param index
-     * @param v
-     * @throws SetlException
-     */
     @Override
     public void setMember(final State state, final Value index, final Value v) throws SetlException {
         if(index.jIntConvertible()) {
             int idx = index.jIntValue();
-            if(idx > this.value.getRowDimension() || idx < 1) {
+            if(idx > this.matrix.getRowDimension() || idx < 1) {
                 throw new IncompatibleTypeException("Index out of bounds: " + idx);
             }
             if(v instanceof CollectionValue) {
                 CollectionValue col = (CollectionValue)v;
-                if(col.size() != this.value.getColumnDimension()) {
+                if(col.size() != this.matrix.getColumnDimension()) {
                     throw new IncompatibleTypeException("The collection and a row of this matrix have different numbers of elements.");
                 }
                 List<Double> newRow = new ArrayList<Double>(col.size());
@@ -898,7 +553,7 @@ public class SetlMatrix extends IndexedCollectionValue {
                     }
                 }
                 for(int i = 0; i < newRow.size(); i++) {
-                    this.value.set(idx, i, newRow.get(i));
+                    this.matrix.set(idx, i, newRow.get(i));
                 }
             } else {
                 throw new IncompatibleTypeException("Argument " + v + " to replace matrix row " + idx + " is not a collection.");
@@ -909,33 +564,185 @@ public class SetlMatrix extends IndexedCollectionValue {
     }
 
     @Override
-    public void appendString(State state, StringBuilder sb, int tabs) {
-        this.canonical(state, sb);
+    public int size() {
+        return this.matrix.getRowDimension();
+    }
+
+    /* special matrix functions */
+
+    /**
+     * Transpose this matrix
+     *
+     * @return transposed matrix
+     */
+    public SetlMatrix transpose() {
+        return new SetlMatrix(this.matrix.transpose());
+    }
+
+    /**
+     * Calculates all eigen values
+     *
+     * @param state Current state of the running setlX program.
+     * @return list of numbers
+     * @throws UndefinedOperationException thrown if not square.
+     */
+    public SetlList eigenValues(State state) throws UndefinedOperationException {
+        if(!this.isSquare()) {
+            throw new UndefinedOperationException("Not a square matrix.");
+        }
+        EigenvalueDecomposition result = this.matrix.eig();
+        double[][] values = result.getD().getArray();
+        SetlList composition = new SetlList(values.length);
+        for(int i = 0; i < values.length; i++) {
+            composition.addMember(state, SetlDouble.valueOf(values[i][i]));
+        }
+        return composition;
+    }
+
+    /**
+     * Calculates singular matrix decomposition
+     *
+     * @param state Current state of the running setlX program.
+     * @return 3-tupel of matrices [U, S, V]
+     */
+    public SetlList singularValueDecomposition(State state) {
+        SingularValueDecomposition result = this.matrix.svd();
+        SetlList container = new SetlList();
+        container.addMember(state, new SetlMatrix(result.getU()));
+        container.addMember(state, new SetlMatrix(result.getS()));
+        container.addMember(state, new SetlMatrix(result.getV()));
+        return container;
+    }
+
+    /**
+     * Calculate eigen vector matrix
+     *
+     * @return matrix
+     * @throws UndefinedOperationException thrown if not square.
+     */
+    public SetlMatrix eigenVectors() throws UndefinedOperationException {
+        if(!this.isSquare()) {
+            throw new UndefinedOperationException("Not a square matrix.");
+        }
+        return new SetlMatrix(this.matrix.eig().getV());
+    }
+
+    /**
+     * Is the number of rows equal to the number of columns
+     *
+     * @return boolean
+     */
+    public boolean isSquare() {
+        return this.matrix.getColumnDimension() == this.matrix.getRowDimension();
+    }
+
+    /**
+     * Calculate the determinant of this matrix
+     *
+     * @return number
+     * @throws UndefinedOperationException thrown if not square.
+     */
+    public SetlDouble determinant() throws UndefinedOperationException {
+        if(this.isSquare()) {
+            return SetlDouble.valueOf(this.matrix.det());
+        } else {
+            throw new UndefinedOperationException("Matrix needs to be square.");
+        }
+    }
+
+    /**
+     * Solve this * x = other
+     *
+     * @param other other matrix
+     * @return x
+     * @throws UndefinedOperationException thrown if number of rows differs.
+     */
+    public SetlMatrix solve(SetlMatrix other) throws UndefinedOperationException {
+        if(this.matrix.getRowDimension() != other.matrix.getRowDimension()) {
+            throw new UndefinedOperationException("Row numbers must be equal to solve A * X = other.");
+        }
+        return new SetlMatrix(this.matrix.solve(other.matrix));
+    }
+
+    /* string and char operations */
+
+    @Override
+    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        canonical(state, sb);
     }
 
     @Override
+    public void canonical(final State state, final StringBuilder sb) {
+        double[][] a = matrix.getArray();
+        sb.append("{");
+        for(double[] a1 : a) {
+            sb.append(" <");
+            for(double a2 : a1) {
+                sb.append(" ");
+                SetlDouble.printDouble(state, sb, a2);
+                sb.append(" ");
+            }
+            sb.append("> ");
+        }
+        sb.append("}");
+    }
+
+    /* term operations */
+
+    @Override
+    public MatchResult matchesTerm(State state, Value other) throws SetlException {
+        if (other == IgnoreDummy.ID || this.equalTo(other)) {
+            return new MatchResult(true);
+        } else {
+            return new MatchResult(false);
+        }
+    }
+
+    /* comparisons */
+
+    @Override
     public int compareTo(Value other) {
-        return this.equalTo(other) ? 0 : 1;
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == SetlMatrix.class) {
+            final Jama.Matrix otherMatrix = ((SetlMatrix) other).matrix;
+            if (matrix == otherMatrix) {
+                return 0; // clone
+            }
+            if (matrix.getRowDimension() < otherMatrix.getRowDimension() || matrix.getColumnDimension() < otherMatrix.getColumnDimension()) {
+                return -1;
+            } else if (matrix.getRowDimension() > otherMatrix.getRowDimension() || matrix.getColumnDimension() > otherMatrix.getColumnDimension()) {
+                return 1;
+            }
+            for (int i = 0; i < matrix.getRowDimension(); i++) {
+                for (int j = 0; j < matrix.getColumnDimension(); j++) {
+                    final int cmp = Double.compare(matrix.get(i, j), otherMatrix.get(i, j));
+                    if (cmp != 0) {
+                        return cmp;
+                    }
+                }
+            }
+            return 0;
+        } else {
+            return this.compareToOrdering() - other.compareToOrdering();
+        }
     }
 
     @Override
     public int compareToOrdering() {
-        return 1350;
+        return COMPARE_TO_ORDERING_MATRIX;
     }
 
     @Override
     public boolean equalTo(Object other) {
-        return other instanceof SetlMatrix && Arrays.deepEquals(this.value.getArray(), ((SetlMatrix)other).value.getArray());
+        return other instanceof SetlMatrix && Arrays.deepEquals(this.matrix.getArray(), ((SetlMatrix) other).matrix.getArray());
     }
 
-    /**
-     *
-     * @return hash
-     * @see org.randoom.setlx.types.Value#hashCode()
-     */
+    private final static int initHashCode = SetlMatrix.class.hashCode();
+
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return initHashCode * 31 + matrix.hashCode();
     }
 }
 

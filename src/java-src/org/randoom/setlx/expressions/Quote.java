@@ -65,12 +65,12 @@ public class Quote extends Expr {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         return this.toTermQuoted(state);
     }
 
     @Override
-    public Term toTermQuoted(final State state) {
+    public Term toTermQuoted(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
         result.addMember(state, expr.toTerm(state));
         return result;

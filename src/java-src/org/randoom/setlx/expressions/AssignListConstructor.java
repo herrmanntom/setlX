@@ -114,7 +114,7 @@ public class AssignListConstructor extends AssignableExpression {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
 
         final SetlList list = new SetlList();

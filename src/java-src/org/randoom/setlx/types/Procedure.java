@@ -347,7 +347,7 @@ public class Procedure extends Value {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
@@ -412,7 +412,7 @@ public class Procedure extends Value {
     @Override
     public int compareToOrdering() {
         object = null;
-        return 1100;
+        return COMPARE_TO_ORDERING_PROCEDURE;
     }
 
     @Override

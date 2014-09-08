@@ -340,10 +340,7 @@ public class Rational extends NumberValue {
         if (a.compareTo(RAT_BIG) > 0) {
             return false; // too big
         }
-        if (a.compareTo(RAT_SMALL) < 0) {
-            return false; // too small
-        }
-        return true;
+        return a.compareTo(RAT_SMALL) >= 0;
     }
 
     /* native type conversions */
@@ -811,7 +808,7 @@ public class Rational extends NumberValue {
 
     @Override
     public int compareToOrdering() {
-        return 500;
+        return COMPARE_TO_ORDERING_RATIONAL_DOUBLE;
     }
 
     @Override

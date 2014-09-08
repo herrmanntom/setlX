@@ -1,5 +1,6 @@
 package org.randoom.setlx.expressions;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
@@ -52,7 +53,7 @@ public class ValueExpr extends Expr {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         return value.toTerm(state);
     }
 

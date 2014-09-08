@@ -49,7 +49,7 @@ public class Om extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 200;
+        return COMPARE_TO_ORDERING_OM;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.randoom.setlx.functions;
 
+import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
@@ -18,7 +19,7 @@ public class PD_getTerm extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
+    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
         return args.get(0).toTerm(state);
     }
 }

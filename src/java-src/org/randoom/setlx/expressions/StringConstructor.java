@@ -205,7 +205,7 @@ public class StringConstructor extends Expr {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         final Term result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
         final SetlList strList = new SetlList(fragments.size());

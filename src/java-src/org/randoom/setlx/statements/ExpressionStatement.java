@@ -71,7 +71,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         return expr.toTerm(state);
     }
 }

@@ -86,8 +86,9 @@ public class SetlDouble extends NumberValue {
      */
     public static SetlDouble valueOf(final double real) throws UndefinedOperationException {
         if (Double.isNaN(real)) {
-            final String msg = "Result of this operation is undefined/not a number.";
-            throw new UndefinedOperationException(msg);
+            throw new UndefinedOperationException(
+                    "Result of this operation is undefined/not a number."
+            );
         }
         return new SetlDouble(real);
     }
@@ -178,8 +179,8 @@ public class SetlDouble extends NumberValue {
         final long valueMask    = 0x000fffffffffffffL;
         final long biasedExp    = ((bits & exponentMask) >>> 52);
         final boolean sign      = ((bits & signMask) == signMask);
-        BigInteger nominator   = null;
-        BigInteger denominator = null;
+        BigInteger nominator;
+        BigInteger denominator;
         if (biasedExp == 0) {  // denormalized number
             final long exponent = - 1022 - 52;
             final long mantissa = bits & valueMask;
@@ -437,18 +438,30 @@ public class SetlDouble extends NumberValue {
     /* string and char operations */
 
     @Override
-    @SuppressWarnings("fallthrough")
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
+        printDouble(state, sb, this.doubleValue);
+    }
+
+    /**
+     * Appends a string representation of this double to the given
+     * StringBuilder object.
+     *     *
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     * @param value Double value to append.
+     */
+    @SuppressWarnings("fallthrough")
+    /*package*/ static void printDouble(final State state, final StringBuilder sb, double value) {
         switch (state.doublePrintMode) {
             case SCIENTIFIC:
-                if ( ! Double.isInfinite(doubleValue)) {
-                    sb.append(String.format("%e", this.doubleValue));
+                if ( ! Double.isInfinite(value)) {
+                    sb.append(String.format("%e", value));
                     break;
                 } // else: fall-through
 
             case ENGINEERING:
-                if ( ! Double.isInfinite(doubleValue)) {
-                    double val = this.doubleValue;
+                if ( ! Double.isInfinite(value)) {
+                    double val = value;
 
                     // If the value is negative, make it positive so the log10 works
                     final double posVal = (val<0) ? -val : val;
@@ -467,14 +480,14 @@ public class SetlDouble extends NumberValue {
                 } // else: fall-through
 
             case PLAIN:
-                if ( ! Double.isInfinite(doubleValue)) {
-                    sb.append(PLAIN_FORMAT.format(this.doubleValue));
+                if ( ! Double.isInfinite(value)) {
+                    sb.append(PLAIN_FORMAT.format(value));
                     break;
                 } // else: fall-through
 
             case DEFAULT:
             default:
-                sb.append(String.valueOf(this.doubleValue));
+                sb.append(String.valueOf(value));
                 break;
         }
     }
@@ -503,7 +516,7 @@ public class SetlDouble extends NumberValue {
 
     @Override
     public int compareToOrdering() {
-        return 500;
+        return COMPARE_TO_ORDERING_RATIONAL_DOUBLE;
     }
 
     @Override

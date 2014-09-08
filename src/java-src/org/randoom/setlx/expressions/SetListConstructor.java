@@ -109,7 +109,7 @@ public class SetListConstructor extends Expr {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) {
+    public Value toTerm(final State state) throws SetlException {
         final CollectionValue result;
         if (type == CollectionType.SET) {
             result = new SetlSet();

@@ -88,7 +88,7 @@ public class Range extends CollectionBuilder {
     /* term operations */
 
     @Override
-    public void addToTerm(final State state, final CollectionValue collection) {
+    public void addToTerm(final State state, final CollectionValue collection) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
         result.addMember(state, start.toTerm(state));
         if (second != null) {

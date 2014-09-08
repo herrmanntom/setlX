@@ -149,7 +149,7 @@ public class SetlBoolean extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 400;
+        return COMPARE_TO_ORDERING_BOOLEAN;
     }
 
     @Override

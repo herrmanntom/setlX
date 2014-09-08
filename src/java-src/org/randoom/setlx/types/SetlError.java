@@ -63,7 +63,7 @@ public class SetlError extends Value {
 
     @Override
     public int compareToOrdering() {
-        return 100;
+        return COMPARE_TO_ORDERING_ERROR;
     }
 
     @Override

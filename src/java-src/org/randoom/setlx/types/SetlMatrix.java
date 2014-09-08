@@ -1,7 +1,6 @@
 package org.randoom.setlx.types;
 
-import Jama.EigenvalueDecomposition;
-import Jama.SingularValueDecomposition;
+import Jama.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.MatchResult;
@@ -225,22 +223,18 @@ public class SetlMatrix extends IndexedCollectionValue {
                 return new SetlMatrix(base);
             }
 
-            try {
-                Jama.Matrix base;
-                if (ex < 0) {
-                    base = this.matrix.inverse();
-                    ex = -ex;
-                } else {
-                    base = this.matrix;
-                }
-                Jama.Matrix result = base;
-                for (int i = 1; i < ex; i++) {
-                    result = result.times(base);
-                }
-                return new SetlMatrix(result);
-            } catch (RuntimeException re) {
-                throw new UndefinedOperationException(re.getMessage());
+            Jama.Matrix base;
+            if (ex < 0) {
+                base = this.inverse().matrix;
+                ex = -ex;
+            } else {
+                base = this.matrix;
             }
+            Jama.Matrix result = base;
+            for (int i = 1; i < ex; i++) {
+                result = result.times(base);
+            }
+            return new SetlMatrix(result);
         } else {
             throw new IncompatibleTypeException("Power on matrices is only defined for integer exponents.");
         }
@@ -571,12 +565,40 @@ public class SetlMatrix extends IndexedCollectionValue {
     /* special matrix functions */
 
     /**
-     * Transpose this matrix
+     * Calculate the condition of the matrix.
      *
-     * @return transposed matrix
+     * @return Ratio of largest to smallest singular value.
+     * @throws UndefinedOperationException thrown condition is NaN.
      */
-    public SetlMatrix transpose() {
-        return new SetlMatrix(this.matrix.transpose());
+    public SetlDouble condition() throws UndefinedOperationException {
+        return SetlDouble.valueOf(matrix.cond());
+    }
+
+    /**
+     * Calculate the determinant of this matrix
+     *
+     * @return number
+     * @throws UndefinedOperationException thrown if not square.
+     */
+    public SetlDouble determinant() throws UndefinedOperationException {
+        if(this.isSquare()) {
+            return SetlDouble.valueOf(this.matrix.det());
+        } else {
+            throw new UndefinedOperationException("Matrix needs to be square.");
+        }
+    }
+
+    /**
+     * Calculate eigen vector matrix
+     *
+     * @return matrix
+     * @throws UndefinedOperationException thrown if not square.
+     */
+    public SetlMatrix eigenVectors() throws UndefinedOperationException {
+        if(!this.isSquare()) {
+            throw new UndefinedOperationException("Not a square matrix.");
+        }
+        return new SetlMatrix(this.matrix.eig().getV());
     }
 
     /**
@@ -600,6 +622,47 @@ public class SetlMatrix extends IndexedCollectionValue {
     }
 
     /**
+     * Compute inverse of this matrix
+     *
+     * @return Inverse of this matrix
+     * @throws UndefinedOperationException in case the matrix is not square
+     */
+    public SetlMatrix inverse() throws UndefinedOperationException {
+        if (! isSquare()) {
+            throw new UndefinedOperationException(
+                    "Matrix must be square to compute inverse."
+            );
+        }
+        LUDecomposition luDecomposition = new LUDecomposition(this.matrix);
+        if (luDecomposition.isNonsingular()) {
+            throw new UndefinedOperationException(
+                    "Matrix must be singular to compute inverse."
+            );
+        }
+        Matrix identity = Matrix.identity(this.matrix.getRowDimension(), this.matrix.getRowDimension());
+        return new SetlMatrix(luDecomposition.solve(identity));
+    }
+
+    /**
+     * Compute pseudo inverse of this matrix.
+     *
+     * @return Pseudo inverse of this matrix.
+     */
+    public SetlMatrix pseudoInverse()  {
+        Matrix identity = Matrix.identity(this.matrix.getRowDimension(), this.matrix.getRowDimension());
+        return new SetlMatrix((new QRDecomposition(this.matrix)).solve(identity));
+    }
+
+    /**
+     * Is the number of rows equal to the number of columns
+     *
+     * @return boolean
+     */
+    public boolean isSquare() {
+        return this.matrix.getColumnDimension() == this.matrix.getRowDimension();
+    }
+
+    /**
      * Calculates singular matrix decomposition
      *
      * @param state Current state of the running setlX program.
@@ -615,42 +678,6 @@ public class SetlMatrix extends IndexedCollectionValue {
     }
 
     /**
-     * Calculate eigen vector matrix
-     *
-     * @return matrix
-     * @throws UndefinedOperationException thrown if not square.
-     */
-    public SetlMatrix eigenVectors() throws UndefinedOperationException {
-        if(!this.isSquare()) {
-            throw new UndefinedOperationException("Not a square matrix.");
-        }
-        return new SetlMatrix(this.matrix.eig().getV());
-    }
-
-    /**
-     * Is the number of rows equal to the number of columns
-     *
-     * @return boolean
-     */
-    public boolean isSquare() {
-        return this.matrix.getColumnDimension() == this.matrix.getRowDimension();
-    }
-
-    /**
-     * Calculate the determinant of this matrix
-     *
-     * @return number
-     * @throws UndefinedOperationException thrown if not square.
-     */
-    public SetlDouble determinant() throws UndefinedOperationException {
-        if(this.isSquare()) {
-            return SetlDouble.valueOf(this.matrix.det());
-        } else {
-            throw new UndefinedOperationException("Matrix needs to be square.");
-        }
-    }
-
-    /**
      * Solve this * x = other
      *
      * @param other other matrix
@@ -662,6 +689,15 @@ public class SetlMatrix extends IndexedCollectionValue {
             throw new UndefinedOperationException("Row numbers must be equal to solve A * X = other.");
         }
         return new SetlMatrix(this.matrix.solve(other.matrix));
+    }
+
+    /**
+     * Transpose this matrix
+     *
+     * @return transposed matrix
+     */
+    public SetlMatrix transpose() {
+        return new SetlMatrix(this.matrix.transpose());
     }
 
     /* string and char operations */

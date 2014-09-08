@@ -625,7 +625,7 @@ public class SetlMatrix extends IndexedCollectionValue {
      * Compute inverse of this matrix
      *
      * @return Inverse of this matrix
-     * @throws UndefinedOperationException in case the matrix is not square
+     * @throws UndefinedOperationException in case the matrix is not square.
      */
     public SetlMatrix inverse() throws UndefinedOperationException {
         if (! isSquare()) {
@@ -651,6 +651,7 @@ public class SetlMatrix extends IndexedCollectionValue {
      * Compute pseudo inverse of this matrix.
      *
      * @return Pseudo inverse of this matrix.
+     * @throws UndefinedOperationException in case pseudo inverse cannot be computed.
      */
     public SetlMatrix pseudoInverse() throws UndefinedOperationException {
         Matrix identity = Matrix.identity(this.matrix.getRowDimension(), this.matrix.getRowDimension());
@@ -674,7 +675,7 @@ public class SetlMatrix extends IndexedCollectionValue {
      * Calculates singular matrix decomposition
      *
      * @param state Current state of the running setlX program.
-     * @return 3-tupel of matrices [U, S, V]
+     * @return 3-tuple of matrices [U, S, V]
      */
     public SetlList singularValueDecomposition(State state) {
         SingularValueDecomposition result = this.matrix.svd();

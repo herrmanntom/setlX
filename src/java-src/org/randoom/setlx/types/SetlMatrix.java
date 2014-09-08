@@ -634,13 +634,17 @@ public class SetlMatrix extends IndexedCollectionValue {
             );
         }
         LUDecomposition luDecomposition = new LUDecomposition(this.matrix);
-        if (luDecomposition.isNonsingular()) {
+        if (! luDecomposition.isNonsingular()) {
             throw new UndefinedOperationException(
-                    "Matrix must be singular to compute inverse."
+                    "Matrix must not be singular to compute inverse."
             );
         }
         Matrix identity = Matrix.identity(this.matrix.getRowDimension(), this.matrix.getRowDimension());
-        return new SetlMatrix(luDecomposition.solve(identity));
+        try {
+            return new SetlMatrix(luDecomposition.solve(identity));
+        } catch (RuntimeException re) {
+            throw new UndefinedOperationException(re.getMessage());
+        }
     }
 
     /**
@@ -648,9 +652,13 @@ public class SetlMatrix extends IndexedCollectionValue {
      *
      * @return Pseudo inverse of this matrix.
      */
-    public SetlMatrix pseudoInverse()  {
+    public SetlMatrix pseudoInverse() throws UndefinedOperationException {
         Matrix identity = Matrix.identity(this.matrix.getRowDimension(), this.matrix.getRowDimension());
-        return new SetlMatrix((new QRDecomposition(this.matrix)).solve(identity));
+        try {
+            return new SetlMatrix((new QRDecomposition(this.matrix)).solve(identity));
+        } catch (RuntimeException re) {
+            throw new UndefinedOperationException(re.getMessage());
+        }
     }
 
     /**

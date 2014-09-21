@@ -15,7 +15,7 @@ nfa2string := procedure(nfa, sigma) {
                 result += "[$q$, $c$] |-> $p$\n";
             }
         }
-        print("trying to compute delta($p$, \"\")");
+        print("trying to compute delta($q$, \"\")");
         print(delta(q, ""));
         for (p in delta(q, "")) {
             result += "[$q$, \"\"] |-> $p$\n";

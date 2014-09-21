@@ -80,6 +80,7 @@ public class SetlX {
             final String s = arguments.get(i);
             if (s.equals("--version")) {
                 state.outWriteLn(VERSION);
+                state.outWriteLn("(Source version: " + State.getSetlXSourceVersion() + ")");
 
                 System.exit(EXIT_OK);
 

@@ -43,7 +43,20 @@
 
     <!-- create jar after compiling -->
     <target name="jar" depends="compile">
-        <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${classes.dir}" index="true"/>
+        <exec executable="git" failifexecutionfails="yes" outputproperty="git.version">
+            <arg value="describe"/>
+        </exec>
+        <tstamp>
+            <format property="timeAndDate.str" pattern="YYYY-MM-dd HH:mm:ss"/>
+        </tstamp>
+        <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${classes.dir}" index="true">
+            <manifest>
+                <attribute name="Built-By"                value="${user.name} on ${timeAndDate.str}" />
+                <attribute name="Implementation-Version"  value="${git.version}" />
+                <attribute name="Implementation-Java"     value="${java.vendor} ${java.version}" />
+                <attribute name="Implementation-Build-OS" value="${os.name} ${os.arch} ${os.version}" />
+            </manifest>
+        </jar>
     </target>
 
     <target name="compile">
@@ -78,8 +91,20 @@
     <target name="jar-j1.6">
         <antcall target="clean"/>
         <antcall target="compile-j1.6"/>
-        <jar destfile="${main_setlX.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
-             index="true" />
+        <exec executable="git" failifexecutionfails="yes" outputproperty="git.version">
+            <arg value="describe"/>
+        </exec>
+        <tstamp>
+            <format property="timeAndDate.str" pattern="YYYY-MM-dd HH:mm:ss"/>
+        </tstamp>
+        <jar destfile="${main_setlX.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}" index="true">
+            <manifest>
+                <attribute name="Built-By"                value="${user.name} on ${timeAndDate.str}" />
+                <attribute name="Implementation-Version"  value="${git.version}" />
+                <attribute name="Implementation-Java"     value="${java.vendor} ${java.version}" />
+                <attribute name="Implementation-Build-OS" value="${os.name} ${os.arch} ${os.version}" />
+            </manifest>
+        </jar>
         <antcall target="clean"/>
     </target>
 

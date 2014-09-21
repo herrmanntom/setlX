@@ -24,6 +24,15 @@ import java.util.Random;
  * This class represents the current state of the interpreter.
  */
 public class State {
+
+    public static String getSetlXSourceVersion() {
+        String implementationVersion = State.class.getPackage().getImplementationVersion();
+        if (implementationVersion.startsWith("v")) {
+            implementationVersion = implementationVersion.substring(1);
+        }
+        return implementationVersion;
+    }
+
     // public variables, available to allow slightly faster access...
 
     /**

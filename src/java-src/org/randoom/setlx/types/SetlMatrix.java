@@ -595,10 +595,7 @@ public class SetlMatrix extends IndexedCollectionValue {
      * @throws UndefinedOperationException thrown if not square.
      */
     public SetlMatrix eigenVectors() throws UndefinedOperationException {
-        if(!this.isSquare()) {
-            throw new UndefinedOperationException("Not a square matrix.");
-        }
-        return new SetlMatrix(this.matrix.eig().getV());
+        return new SetlMatrix(getEigenvalueDecomposition().getV());
     }
 
     /**
@@ -609,16 +606,32 @@ public class SetlMatrix extends IndexedCollectionValue {
      * @throws UndefinedOperationException thrown if not square.
      */
     public SetlList eigenValues(State state) throws UndefinedOperationException {
-        if(!this.isSquare()) {
-            throw new UndefinedOperationException("Not a square matrix.");
-        }
-        EigenvalueDecomposition result = this.matrix.eig();
+        EigenvalueDecomposition result = getEigenvalueDecomposition();
         double[][] values = result.getD().getArray();
+
         SetlList composition = new SetlList(values.length);
         for(int i = 0; i < values.length; i++) {
             composition.addMember(state, SetlDouble.valueOf(values[i][i]));
         }
         return composition;
+    }
+
+    private EigenvalueDecomposition getEigenvalueDecomposition() throws UndefinedOperationException {
+        if ( ! this.isSquare()) {
+            throw new UndefinedOperationException("Not a square matrix.");
+        }
+
+        EigenvalueDecomposition result = this.matrix.eig();
+        double[][] values = result.getD().getArray();
+
+        // test if result is usable
+        double epsilon = getEpsilon(values);
+        for (int i = 0; i < values.length - 1; i++) {
+            if (Math.abs(values[i][i+1]) > epsilon) {
+                throw new UndefinedOperationException("Matrix is not diagonalizable.");
+            }
+        }
+        return result;
     }
 
     /**
@@ -707,6 +720,20 @@ public class SetlMatrix extends IndexedCollectionValue {
      */
     public SetlMatrix transpose() {
         return new SetlMatrix(this.matrix.transpose());
+    }
+
+    private double getEpsilon(double[][] values) {
+        double max = 0.0;
+        for (int i = 0; i < values.length; i++) {
+            double value = Math.abs(values[i][i]);
+            if (value > max) {
+                max = value;
+            }
+        }
+        if (max != 0.0) {
+            return Math.pow(2,-53) * values.length * max;
+        }
+        return Math.pow(2,-53) * values.length;
     }
 
     /* string and char operations */

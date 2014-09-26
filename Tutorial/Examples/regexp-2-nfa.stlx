@@ -4,7 +4,7 @@ load("nfa-2-string.stlx");
 genCharNFA := procedure(c, rw ctr) {
     q0 := getNewState(ctr);
     q1 := getNewState(ctr);
-    delta := procedure(q, d) { 
+    delta := closure(q, d) { 
                  if (q == q0 && d == c) { 
                      return { q1 };
                  } else { 
@@ -17,7 +17,7 @@ genCharNFA := procedure(c, rw ctr) {
 catenate := procedure(f1, f2) {
     [m1, delta1, q1, q2] := f1;
     [m2, delta2, q3, q4] := f2;
-    delta := procedure(q, c) {
+    delta := closure(q, c) {
                  if (q == q2 && c == "") {
                      return { q3 };
                  } else if (q in m1) {
@@ -36,7 +36,7 @@ disjunction := procedure(f1, f2, rw ctr) {
     [m2, delta2, q2, q4] := f2;
     q0 := getNewState(ctr); 
     q5 := getNewState(ctr); 
-    delta := procedure(q, c) {
+    delta := closure(q, c) {
                  if (q == q0 && c == "") {
                      return { q1, q2 };
                  } else if (q in { q3, q4 } && c == "") {
@@ -56,7 +56,7 @@ kleene := procedure(f, rw ctr) {
     [m, delta0, q1, q2] := f;
     q0 := getNewState(ctr); 
     q3 := getNewState(ctr); 
-    delta := procedure(q, c) {
+    delta := closure(q, c) {
                  if (q == q0 && c == "") {
                      return { q1, q3 };
                  } else if (q == q2 && c == "") {
@@ -101,7 +101,7 @@ testRegexp2NFA := procedure(s, sigma) {
    print(nfa2string(nfa, sigma));
 };
 
-// testRegexp2NFA("(a+b)", {"a", "b"});
-// testRegexp2NFA("a*", {"a", "b"});
-// testRegexp2NFA("(a+b)*", {"a", "b"});
-testRegexp2NFA("(a+b)a", {"a", "b"});  // does not work
+testRegexp2NFA("(a+b)", {"a", "b"});
+testRegexp2NFA("a*", {"a", "b"});
+testRegexp2NFA("(a+b)*", {"a", "b"});
+testRegexp2NFA("(a+b)a", {"a", "b"});

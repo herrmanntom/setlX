@@ -4,12 +4,10 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -18,7 +16,6 @@ import org.randoom.setlx.utilities.WriteBackAgent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This class represents a function definition.
@@ -45,10 +42,6 @@ public class Procedure extends Value {
      */
     protected final Block              statements;
     /**
-     * Variables and values used in closure.
-     */
-    protected       SetlHashMap<Value> closure;
-    /**
      * Surrounding object for next call.
      */
     protected       SetlObject         object;
@@ -56,59 +49,22 @@ public class Procedure extends Value {
     /**
      * Create new procedure definition.
      *
-     * @param parameters List of parameters.
-     * @param statements Statements in the body of the procedure.
-     */
-    public Procedure(final List<ParameterDef> parameters, final Block statements) {
-        this(parameters, statements, null);
-    }
-
-    /**
-     * Create new procedure definition, which replicates the complete internal
-     * state of another procedure.
-     *
      * @param parameters procedure parameters
      * @param statements statements in the body of the procedure
-     * @param closure    Attached closure variables.
      */
-    protected Procedure(final List<ParameterDef> parameters, final Block statements, final SetlHashMap<Value> closure) {
+    public Procedure(final List<ParameterDef> parameters, final Block statements) {
         this.parameters = parameters;
         this.statements = statements;
-        if (closure != null) {
-            this.closure = new SetlHashMap<Value>(closure);
-        } else {
-            this.closure = null;
-        }
         this.object = null;
-    }
-
-    /**
-     * Create a separate instance of this procedure.
-     *
-     * Note: Only to be used by ProcedureConstructor.
-     *
-     * @return Copy of this procedure definition.
-     */
-    public Procedure createCopy() {
-        return new Procedure(parameters, statements);
     }
 
     @Override
     public Procedure clone() {
-        if (closure != null || object != null) {
-            return new Procedure(parameters, statements, closure);
+        if (object != null) {
+            return new Procedure(parameters, statements);
         } else {
             return this;
         }
-    }
-
-    /**
-     * Attach closure variables and their values.
-     *
-     * @param closure Closure variables to attach.
-     */
-    public void setClosure(final SetlHashMap<Value> closure) {
-        this.closure = closure;
     }
 
     /**
@@ -128,7 +84,7 @@ public class Procedure extends Value {
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        /* first collect and optimize the inside */
+        /* collect and optimize the inside */
         final List<String> innerBoundVariables   = new ArrayList<String>();
         final List<String> innerUnboundVariables = new ArrayList<String>();
         final List<String> innerUsedVariables    = new ArrayList<String>();
@@ -139,21 +95,6 @@ public class Procedure extends Value {
         }
 
         statements.collectVariablesAndOptimize(state, innerBoundVariables, innerUnboundVariables, innerUsedVariables);
-
-        /* compute variables as seen by the outside */
-
-        // upon defining this procedure, all variables which are unbound inside
-        // will be read to create the closure for this procedure
-        for (final String var : innerUnboundVariables) {
-            //noinspection StringEquality
-            if (var == Variable.getPreventOptimizationDummy()) {
-                continue;
-            } else if (boundVariables.contains(var)) {
-                usedVariables.add(var);
-            } else {
-                unboundVariables.add(var);
-            }
-        }
     }
 
     /* type checks (sort of Boolean operation) */
@@ -216,7 +157,7 @@ public class Procedure extends Value {
      * @return               Return value of this function call.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    protected final Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
+    protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
         // increase callStackDepth
         ++(state.callStackDepth);
 
@@ -231,25 +172,15 @@ public class Procedure extends Value {
             newScope.linkToThisObject(object);
         }
 
-        // assign closure contents
-        if (closure != null) {
-            for (final Map.Entry<String, Value> entry : closure.entrySet()) {
-                final Value   value        = entry.getValue();
-                VariableScope scopeToCheck = oldScope;
-                if (value.isProcedure() == SetlBoolean.TRUE) {
-                    scopeToCheck = null; // procedures may be located beyond oldScope
-                }
-                new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, value, scopeToCheck, true, FUNCTIONAL_CHARACTER);
-            }
-        }
-
         // put arguments into inner scope
         final int parametersSize = parameters.size();
+              int rwParameters   = 0;
         for (int i = 0; i < parametersSize; ++i) {
             final ParameterDef param = parameters.get(i);
             final Value        value = values.get(i);
             if (param.getType() == ParameterType.READ_WRITE) {
                 param.assign(state, value, FUNCTIONAL_CHARACTER);
+                ++rwParameters;
             } else {
                 param.assign(state, value.clone(), FUNCTIONAL_CHARACTER);
             }
@@ -259,8 +190,8 @@ public class Procedure extends Value {
         values.clear();
 
         // results of call to procedure
-              ReturnMessage   result = null;
-        final WriteBackAgent  wba    = new WriteBackAgent(parameters.size());
+        ReturnMessage   result = null;
+        WriteBackAgent  wba    = null;
 
         try {
 
@@ -268,27 +199,19 @@ public class Procedure extends Value {
             result = statements.execute(state);
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
-            for (int i = 0; i < parametersSize; ++i) {
-                // skip first parameter of object-bound call (i.e. `this')
-                if (object != null && i == 0) {
-                    continue;
-                }
-                final ParameterDef param = parameters.get(i);
-                if (param.getType() == ParameterType.READ_WRITE) {
-                    // value of parameter after execution
-                    final Value postValue = param.getValue(state);
-                    // expression used to fill parameter before execution
-                    final Expr  preExpr   = args.get(i);
-                    /* if possible the WriteBackAgent will set the variable used in this
-                       expression to its postExecution state in the outer environment    */
-                    wba.add(preExpr, postValue);
-                }
-            }
-
-            // read closure variables and update their current state
-            if (closure != null) {
-                for (final Map.Entry<String, Value> entry : closure.entrySet()) {
-                    entry.setValue(state.findValue(entry.getKey()));
+            if (rwParameters > 0) {
+                wba = new WriteBackAgent(rwParameters);
+                for (int i = 0; i < parametersSize; ++i) {
+                    final ParameterDef param = parameters.get(i);
+                    if (param.getType() == ParameterType.READ_WRITE) {
+                        // value of parameter after execution
+                        final Value postValue = param.getValue(state);
+                        // expression used to fill parameter before execution
+                        final Expr  preExpr   = args.get(i);
+                        /* if possible the WriteBackAgent will set the variable used in this
+                           expression to its postExecution state in the outer environment    */
+                        wba.add(preExpr, postValue);
+                    }
                 }
             }
 
@@ -300,7 +223,9 @@ public class Procedure extends Value {
             state.setScope(oldScope);
 
             // write values in WriteBackAgent into restored scope
-            wba.writeBack(state, FUNCTIONAL_CHARACTER);
+            if (wba != null) {
+                wba.writeBack(state, FUNCTIONAL_CHARACTER);
+            }
 
             // decrease callStackDepth
             --(state.callStackDepth);
@@ -387,25 +312,25 @@ public class Procedure extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
+    public int compareTo(final Value other) {
         object = null;
-        if (this == v) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == Procedure.class) {
-            final Procedure other = (Procedure) v;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
+        } else if (other.getClass() == Procedure.class) {
+            final Procedure otherProcedure = (Procedure) other;
+            int cmp = Integer.valueOf(parameters.size()).compareTo(otherProcedure.parameters.size());
             if (cmp != 0) {
                 return cmp;
             }
             for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(other.parameters.get(index));
+                cmp = parameters.get(index).compareTo(otherProcedure.parameters.get(index));
                 if (cmp != 0) {
                     return cmp;
                 }
             }
-            return statements.compareTo(other.statements);
+            return statements.compareTo(otherProcedure.statements);
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 

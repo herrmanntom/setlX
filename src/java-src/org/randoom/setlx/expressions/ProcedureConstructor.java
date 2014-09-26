@@ -1,11 +1,9 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
-import org.randoom.setlx.types.LambdaProcedure;
-import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.Value;
-import org.randoom.setlx.types.Procedure;
+import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
@@ -31,6 +29,7 @@ public class ProcedureConstructor extends Expr {
     private final static int      PRECEDENCE        = 9999;
 
     private final Procedure       definition;
+    private final boolean         isClosure;
     private       HashSet<String> closureVariables;
 
     /**
@@ -40,39 +39,41 @@ public class ProcedureConstructor extends Expr {
      */
     public ProcedureConstructor(final Procedure definition) {
         this.definition       = definition;
+        this.isClosure        = definition.getClass() == Closure.class;
         this.closureVariables = null;
     }
 
     @Override
     protected Procedure evaluate(final State state) throws SetlException {
-        if (closureVariables == null) {
-            this.optimize(state);
-        }
-        if (! closureVariables.isEmpty()) {
-            final SetlHashMap<Value> closure = new SetlHashMap<Value>();
-            for (final String var : closureVariables) {
-                if (var.equals("this")) {
-                    continue;
-                }
-                final Value val = state.findValue(var);
-                if (val != Om.OM) {
-                    if (val instanceof PreDefinedProcedure &&
-                       var.equals(((PreDefinedProcedure)val).getName())
-                    ) {
-                        // skip predefined Functions bound to their name
-                        continue;
-                    } else {
-                        closure.put(var, val);
+        if (isClosure) {
+            if (closureVariables == null) {
+                this.optimize(state);
+            }
+            if ( ! closureVariables.isEmpty()) {
+                final SetlHashMap<Value> closure = new SetlHashMap<Value>();
+                for (final String var : closureVariables) {
+                    final Value val = state.findValue(var);
+                    if (val != Om.OM) {
+                        if (val instanceof PreDefinedProcedure &&
+                                var.equals(((PreDefinedProcedure) val).getName())
+                                ) {
+                            // skip predefined Functions bound to their name
+                            continue;
+                        } else {
+                            closure.put(var, val);
+                        }
                     }
                 }
+                if ( ! closure.isEmpty()) {
+                    final Closure result = ((Closure) definition).createCopy();
+                    result.setClosure(closure);
+                    return result;
+                }
             }
-            if (! closure.isEmpty()) {
-                final Procedure result = definition.createCopy();
-                result.setClosure(closure);
-                return result;
-            }
+            throw new UndefinedOperationException("No valid closure variables detected - closure is empty!");
+        } else {
+            return definition;
         }
-        return definition;
     }
 
     @Override
@@ -86,10 +87,15 @@ public class ProcedureConstructor extends Expr {
         final int preUsed    = usedVariables.size();
         definition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
-        final HashSet<String> closureVariables = new HashSet<String>();
-        closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
-        closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size())); // TODO check why we need used here
-        this.closureVariables = closureVariables;
+        if (isClosure) {
+            final HashSet<String> closureVariables = new HashSet<String>();
+            closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
+            closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size())); // TODO check why we need used here
+
+            closureVariables.remove("this");
+
+            this.closureVariables = closureVariables;
+        }
     }
 
     /* string operations */

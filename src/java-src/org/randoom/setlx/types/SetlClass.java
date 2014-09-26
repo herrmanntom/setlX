@@ -196,22 +196,23 @@ public class SetlClass extends Value {
         state.setScope(newScope);
 
         // put arguments into inner scope
-        final int size = values.size();
+        final int size         = values.size();
+              int rwParameters = 0;
         for (int i = 0; i < size; ++i) {
             final ParameterDef param = parameters.get(i);
             if (param.getType() == ParameterType.READ_WRITE) {
                 param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
+                ++rwParameters;
             } else {
                 param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
             }
         }
 
+              WriteBackAgent     wba       = null;
         final SetlHashMap<Value> members   = new SetlHashMap<Value>();
         final SetlObject         newObject = SetlObject.createNew(members, this);
 
         newScope.linkToThisObject(newObject);
-
-        final WriteBackAgent     wba       = new WriteBackAgent(parameters.size());
 
         try {
 
@@ -219,16 +220,20 @@ public class SetlClass extends Value {
             initBlock.execute(state);
 
             // extract 'rw' arguments from scope, store them into WriteBackAgent
-            for (int i = 0; i < parameters.size(); ++i) {
-                final ParameterDef param = parameters.get(i);
-                if (param.getType() == ParameterType.READ_WRITE) {
-                    // value of parameter after execution
-                    final Value postValue = param.getValue(state);
-                    // expression used to fill parameter before execution
-                    final Expr  preExpr   = args.get(i);
-                    /* if possible the WriteBackAgent will set the variable used in this
-                       expression to its postExecution state in the outer environment    */
-                    wba.add(preExpr, postValue);
+            if (rwParameters > 0) {
+                wba = new WriteBackAgent(rwParameters);
+
+                for (int i = 0; i < parameters.size(); ++i) {
+                    final ParameterDef param = parameters.get(i);
+                    if (param.getType() == ParameterType.READ_WRITE) {
+                        // value of parameter after execution
+                        final Value postValue = param.getValue(state);
+                        // expression used to fill parameter before execution
+                        final Expr  preExpr   = args.get(i);
+                        /* if possible the WriteBackAgent will set the variable used in this
+                           expression to its postExecution state in the outer environment    */
+                        wba.add(preExpr, postValue);
+                    }
                 }
             }
 
@@ -241,7 +246,9 @@ public class SetlClass extends Value {
             state.setScope(oldScope);
 
             // write values in WriteBackAgent into restored scope
-            wba.writeBack(state, FUNCTIONAL_CHARACTER);
+            if (wba != null) {
+                wba.writeBack(state, FUNCTIONAL_CHARACTER);
+            }
         }
     }
 
@@ -275,8 +282,8 @@ public class SetlClass extends Value {
 
         for (final String var : vars) {
             final Value value = state.findValue(var);
-            if (value instanceof Procedure) {
-                ((Procedure) value).setClosure(null);
+            if (value.getClass() == Closure.class) {
+                ((Closure) value).setClosure(null);
             }
             if (value != Om.OM) {
                 bindings.put(var, value.clone());
@@ -317,8 +324,8 @@ public class SetlClass extends Value {
             optimize(state);
         }
 
-        if (value instanceof Procedure) {
-            ((Procedure) value).setClosure(null);
+        if (value.getClass() == Closure.class) {
+            ((Closure) value).setClosure(null);
         }
 
         if (staticDefs == null) {

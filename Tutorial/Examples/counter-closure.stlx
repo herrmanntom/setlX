@@ -1,6 +1,6 @@
 createCounter := procedure(i) {
     count   := i;
-    counter := procedure() {
+    counter := closure() {
                    count += 1;
                    return count;
                };

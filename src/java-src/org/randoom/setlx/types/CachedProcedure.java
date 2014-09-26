@@ -8,7 +8,6 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
-import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -61,31 +60,24 @@ public class CachedProcedure extends Procedure {
      *
      * @param parameters Procedure parameters.
      * @param statements Statements in the body of the procedure.
-     * @param closure    Attached closure variables.
      * @param cache      Cache of result values.
      * @param cacheHits  Number of cache hits so far.
      */
     private CachedProcedure(
         final List<ParameterDef>                      parameters,
         final Block                                   statements,
-        final SetlHashMap<Value>                      closure,
         final HashMap<SetlList, SoftReference<Value>> cache,
         final int                                     cacheHits
     ) {
-        super(parameters, statements, closure);
+        super(parameters, statements);
         this.cache     = cache;
         this.cacheHits = cacheHits;
     }
 
     @Override
-    public CachedProcedure createCopy() {
-        return new CachedProcedure(parameters, statements);
-    }
-
-    @Override
     public CachedProcedure clone() {
-        if (closure != null || object != null) {
-            return new CachedProcedure(parameters, statements, closure, cache, cacheHits);
+        if (object != null) {
+            return new CachedProcedure(parameters, statements, cache, cacheHits);
         } else {
             return this;
         }
@@ -259,25 +251,25 @@ public class CachedProcedure extends Procedure {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
+    public int compareTo(final Value other) {
         object = null;
-        if (this == v) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == CachedProcedure.class) {
-            final CachedProcedure other = (CachedProcedure) v;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
+        } else if (other.getClass() == CachedProcedure.class) {
+            final CachedProcedure cachedProcedure = (CachedProcedure) other;
+            int cmp = Integer.valueOf(parameters.size()).compareTo(cachedProcedure.parameters.size());
             if (cmp != 0) {
                 return cmp;
             }
             for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(other.parameters.get(index));
+                cmp = parameters.get(index).compareTo(cachedProcedure.parameters.get(index));
                 if (cmp != 0) {
                     return cmp;
                 }
             }
-            return statements.compareTo(other.statements);
+            return statements.compareTo(cachedProcedure.statements);
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -288,19 +280,19 @@ public class CachedProcedure extends Procedure {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
+    public boolean equalTo(final Object other) {
         object = null;
-        if (this == v) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == CachedProcedure.class) {
-            final CachedProcedure other = (CachedProcedure) v;
-            if (parameters.size() == other.parameters.size()) {
+        } else if (other.getClass() == CachedProcedure.class) {
+            final CachedProcedure cachedProcedure = (CachedProcedure) other;
+            if (parameters.size() == cachedProcedure.parameters.size()) {
                 for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
+                    if ( ! parameters.get(index).equalTo(cachedProcedure.parameters.get(index))) {
                         return false;
                     }
                 }
-                return statements.equalTo(other.statements);
+                return statements.equalTo(cachedProcedure.statements);
             }
         }
         return false;

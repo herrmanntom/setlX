@@ -573,8 +573,8 @@ public class SetlObject extends Value {
             );
         }
         separateFromOriginal();
-        if (value instanceof Procedure) {
-            ((Procedure) value).setClosure(null);
+        if (value.getClass() == Closure.class) {
+            ((Closure) value).setClosure(null);
         }
 
         members.put(variable, value);
@@ -677,18 +677,18 @@ public class SetlObject extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == SetlObject.class) {
-            final SetlObject other = (SetlObject) v;
-            final int cmp = members.compareTo(other.members);
+        } else if (other.getClass() == SetlObject.class) {
+            final SetlObject setlObject = (SetlObject) other;
+            final int cmp = members.compareTo(setlObject.members);
             if (cmp != 0) {
                 return cmp;
             }
-            return classDefinition.compareTo(other.classDefinition);
+            return classDefinition.compareTo(setlObject.classDefinition);
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -698,13 +698,13 @@ public class SetlObject extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        if (this == v) {
+    public boolean equalTo(final Object other) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == SetlObject.class) {
-            final SetlObject other = (SetlObject) v;
-            if (members.equalTo(other.members)) {
-                return classDefinition.equalTo(other.classDefinition);
+        } else if (other.getClass() == SetlObject.class) {
+            final SetlObject setlObject = (SetlObject) other;
+            if (members.equalTo(setlObject.members)) {
+                return classDefinition.equalTo(setlObject.classDefinition);
             }
         }
         return false;

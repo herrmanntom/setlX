@@ -19,7 +19,7 @@ alphabet := { char(n) : n in [65 .. 90] };  // letters "A" to "Z"
 //  ["E", "M", "O", "U", "Y"]
 // ]
 
-compileFormula := procedure(formula) {
+compileFormula := closure(formula) {
     parameters := { c : c in formula | c in alphabet }; // letters in formula
     paramList  := [ p : p in parameters ];              // turn it into list
     dictionary := { [paramList[i], i] : i in [1 .. #parameters] };
@@ -34,7 +34,7 @@ compileFormula := procedure(formula) {
 
 // Compile a word of lowercase letters into a term interpreting the letters
 // as decimal digits.  dictionary assigns the index in the argument array.
-compileWord := procedure(word, dictionary) {
+compileWord := closure(word, dictionary) {
     n := #word;  
     if (forall (c in word | c in alphabet)) {
         return "(" + join([ "args[" + dictionary[word[i]] + "]*$10**(n-i)$" : i in [1 .. #word] ],"+") + ")";

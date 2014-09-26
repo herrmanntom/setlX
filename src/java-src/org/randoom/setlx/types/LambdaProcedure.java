@@ -6,7 +6,6 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
 import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -47,22 +46,16 @@ public class LambdaProcedure extends Procedure {
     private LambdaProcedure(
         final List<ParameterDef> parameters,
         final Block              statements,
-        final SetlHashMap<Value> closure,
         final Expr               expr
     ) {
-        super(parameters, statements, closure);
+        super(parameters, statements);
         this.expr = expr;
     }
 
     @Override
-    public LambdaProcedure createCopy() {
-        return new LambdaProcedure(parameters, statements, null, expr);
-    }
-
-    @Override
     public LambdaProcedure clone() {
-        if (closure != null || object != null) {
-            return new LambdaProcedure(parameters, statements, closure, expr);
+        if (object != null) {
+            return new LambdaProcedure(parameters, statements, expr);
         } else {
             return this;
         }
@@ -133,29 +126,29 @@ public class LambdaProcedure extends Procedure {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
+    public int compareTo(final Value other) {
         object = null;
-        if (this == v) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == LambdaProcedure.class) {
-            final LambdaProcedure other = (LambdaProcedure) v;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(other.parameters.size());
+        } else if (other.getClass() == LambdaProcedure.class) {
+            final LambdaProcedure lambdaProcedure = (LambdaProcedure) other;
+            int cmp = Integer.valueOf(parameters.size()).compareTo(lambdaProcedure.parameters.size());
             if (cmp != 0) {
                 return cmp;
             }
             for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(other.parameters.get(index));
+                cmp = parameters.get(index).compareTo(lambdaProcedure.parameters.get(index));
                 if (cmp != 0) {
                     return cmp;
                 }
             }
-            if (expr == other.expr) {
+            if (expr == lambdaProcedure.expr) {
                 return 0;
             }
             // TODO do without toString
-            return expr.toString().compareTo(other.expr.toString());
+            return expr.toString().compareTo(lambdaProcedure.expr.toString());
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -166,23 +159,23 @@ public class LambdaProcedure extends Procedure {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
+    public boolean equalTo(final Object other) {
         object = null;
-        if (this == v) {
+        if (this == other) {
             return true;
-        } else if (v.getClass() == LambdaProcedure.class) {
-            final LambdaProcedure other = (LambdaProcedure) v;
-            if (parameters.size() == other.parameters.size()) {
+        } else if (other.getClass() == LambdaProcedure.class) {
+            final LambdaProcedure lambdaProcedure = (LambdaProcedure) other;
+            if (parameters.size() == lambdaProcedure.parameters.size()) {
                 for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
+                    if ( ! parameters.get(index).equalTo(lambdaProcedure.parameters.get(index))) {
                         return false;
                     }
                 }
-                if (expr == other.expr) {
+                if (expr == lambdaProcedure.expr) {
                     return true;
                 }
                 // TODO do without toString
-                return expr.toString().equals(other.expr.toString());
+                return expr.toString().equals(lambdaProcedure.expr.toString());
             }
         }
         return false;

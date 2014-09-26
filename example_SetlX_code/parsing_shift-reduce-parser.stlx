@@ -217,7 +217,7 @@ stateTable["s15"] := { "E -> E '+' P *", "P -> P * '*' F", "P -> P * '/' F" };
 
 ////////////////////////////////////////////////////////////////////////
 
-myParse := procedure(s) {
+myParse := closure(s) {
     parser := srParser(actionTable, gotoTable, stateTable);
     tl := tokenizeString(s);
     print("tokenlist: $tl$\n");

@@ -1,17 +1,18 @@
 \chapter{Functional Programming and Closures \label{chapter:closures}}
-We have already stated earlier that \setlx\ is a full-fledged functional language:
+We have already mentioned that \setlx\ is a full-fledged functional language:
 Functions can be used both as arguments to other functions and as return values.  There is
 no fundamental difference between the type of a function and, say, the type of a rational
 number, as both can be assigned to variables, converted to strings, parsed, etc.
-This works because functions are actually implemented as 
+
+Additionaly, \setlx\ supports
 \href{http://en.wikipedia.org/wiki/Closure_(computer_science)}{\emph{closures}}
-similar to the way this is done in languages like \textsl{Scheme} \cite{sussman:75}. 
-In order to present closures, we present some simple examples first.  After that, we show
+in a way similar to languages like \textsl{Scheme} \cite{sussman:75}. 
+In order to introduce closures, we will first present some simple examples.  After that, we show
 a more complex case study: We discuss a program that transforms a regular expression into a
 non-deterministic finite state machine.
 
 \section{Introductory Examples}
-In this section we will first introduce the basic idea of functional programming.
+In this section we will first introduce the basic ideas of functional programming.
 After that, we discuss the notion of a closure.
 
 \subsection{Introducing Functional Programming}
@@ -20,7 +21,7 @@ conventional programming languages.  Figure \ref{fig:reduce.stlx} shows the impl
 the function \texttt{reduce} that takes two arguments:
 \begin{enumerate}
 \item The first argument is a list $l$.
-\item The second argument is a function $f$ mapping two arguments of $l$ into a value.
+\item The second argument is a binary function $f$ combining two elements of $l$ into a single value.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -118,7 +119,7 @@ implementation of the merge sort algorithm.  Here, the function \texttt{sort} ta
 arguments:
 \begin{enumerate}
 \item The first argument $l$ is the list to be sorted.
-\item The second argument \texttt{cmp} is a binary function that compares two list elements
+\item The second argument \texttt{cmp} is a binary function that compares two  elements
       and returns either \texttt{true} or \texttt{false}.  If we call the function
       \texttt{sort} with second argument \texttt{less}, where the function \texttt{less} is
       defined in line 20, then the resulting list will be sorted ascendingly.
@@ -184,15 +185,31 @@ that takes a function $f$ as input and then returns the discrete derivative of $
 and 7, this function is applied to the identity function and to the function $n \mapsto 2^n$,
 respectively.  The resulting functions \texttt{deltaG} and \texttt{deltaH} are then applied to
 the sequence of natural numbers from 1 to 10.  In the first case, the result is a list
-containing the number $1$ for ten times, while in the second case the the result is a list of the
-first ten powers of $2$.
+containing the number one ten times, while in the second case the the result is a list of the
+first ten powers of two.
 
 
 \subsection{Implementing Counters via Closures}
 The concept of a closure is non-trivial, therefore we introduce the idea using some simple
 examples.  Figure \ref{fig:counter-closure.stlx} shows the function
 \texttt{createCounter}.  This function initializes the variable \texttt{count} to a given
-value and then returns a procedure that increments this value.  
+value and then returns a procedure that increments this value.  Note that is procedure is not
+defined via the keyword \texttt{procedure} but rather via the keyword \texttt{closure}.  The reason
+is that this function needs access to the variable \texttt{count} that is defined outside of the
+closure \texttt{counter}.  By defining the function \texttt{counter} as a \texttt{closure} rather
+than a \texttt{procedure},  the function \texttt{counter} has access to th variable \texttt{count}:
+It can both read its value and can even change the value.  When the function \texttt{counter} is
+defined, the variable \texttt{count} is safely tucked away together with the function
+\texttt{counter}.  Therefore, although the variable \texttt{count} goes out of scope once the
+function \texttt{createCounter} terminates, the function \texttt{counter} still has access
+to a 
+copy of this variable.  Therefore, when we call the function \texttt{createCounter} in line 9, 
+the variable \texttt{ctr0} is assigned a version of the function counter where the variable
+\texttt{count} initially has the value 0.  Later, when we call the function \texttt{ctr0},
+in line 12, this counter is incremented 3 times.  Therefore, after line 12 is executed,
+the variables \texttt{u}, \texttt{v}, and \texttt{w} have the values $1$, $2$, and $3$,
+respectively. 
+
 
 \begin{figure}[!ht]
 \centering
@@ -207,7 +224,7 @@ value and then returns a procedure that increments this value.
                 ]
     createCounter := procedure(i) {
         count   := i;
-        counter := procedure() {
+        counter := closure() {
                        count += 1;
                        return count;
                    };
@@ -225,18 +242,7 @@ value and then returns a procedure that increments this value.
 \end{figure}
 
 Notice that the variable \texttt{count} is defined outside the procedure
-\texttt{counter}.  Still, the function \texttt{counter} has access to this variable:
-It can both read its value and can even change the value.  When the function \texttt{counter} is
-defined, the variable \texttt{count} is safely tucked away together with the function
-\texttt{counter}.  Therefore, although the variable \texttt{count} goes out of scope once the
-function \texttt{createCounter} terminates, the function \texttt{counter} still has access
-to a 
-copy of this variable.  Therefore, when we call the function \texttt{createCounter} in line 9, 
-the variable \texttt{ctr0} is assigned a version of the function counter where the variable
-\texttt{count} initially has the value 0.  Later, when we call the function \texttt{ctr0},
-in line 12, this counter is incremented 3 times.  Therefore, after line 12 is executed,
-the variables \texttt{u}, \texttt{v}, and \texttt{w} have the values $1$, $2$, and $3$,
-respectively. 
+\texttt{counter}.  Still, 
 
 You should also notice that the function \texttt{ctr9} created in line 10 gets its
 \underline{own} copy of the variable \texttt{count}.  In the case of the function
@@ -246,7 +252,7 @@ we have called the function \texttt{ctr9} in line 13, the variables \texttt{x}, 
 
 \section[Closures in Action]{Closures in Action: Generating Finite State Machines from Regular Expressions}
 In this section we demonstrate a non-trivial application of closures.  We present a program that
-takes a regular expression $r$ as input and that converts this regular expression into a
+takes a regular expression $r$ as input and  converts this regular expression into a
 \href{http://en.wikipedia.org/wiki/Nondeterministic_finite_automaton}{\emph{non-deterministic finite state machine}} 
 using the 
 \href{http://en.wikipedia.org/wiki/Thompson's_construction_algorithm}{\emph{Thompson construction}}
@@ -330,7 +336,8 @@ abbreviate the notion of a
       The set of states is given as $\{ q_0, q_1 \}$, on reading the character $c$ the
       transition function maps the state $q_0$ to $q_1$, the start state is $q_0$ and the
       accepting state is $q_1$.  This fsm is shown in Figure
-      \ref{fig:aChar.eps}.
+      \ref{fig:aChar.eps}.  The start state $q_0$ is marked by an incoming arrow, while the
+      accepting state $q_1$ is marked by a doubled boundary. 
 
       \begin{figure}[!ht]
         \centering
@@ -353,7 +360,7 @@ abbreviate the notion of a
     genCharNFA := procedure(c, rw ctr) {
         q0 := getNewState(ctr);
         q1 := getNewState(ctr);
-        delta := procedure(q, d) { 
+        delta := closure(q, d) { 
                      if (q == q0 && d == c) { 
                          return { q1 };
                      } else { 
@@ -447,7 +454,7 @@ abbreviate the notion of a
     catenate := procedure(f1, f2) {
         [m1, delta1, q1, q2] := f1;
         [m2, delta2, q3, q4] := f2;
-        delta := procedure(q, c) {
+        delta := closure(q, c) {
                      if (q == q2 && c == "") {
                          return { q3 };
                      } else if (q in m1) {
@@ -517,7 +524,7 @@ abbreviate the notion of a
         [m2, delta2, q2, q4] := f2;
         q0 := getNewState(ctr); 
         q5 := getNewState(ctr); 
-        delta := procedure(q, c) {
+        delta := closure(q, c) {
                      if (q == q0 && c == "") {
                          return { q1, q2 };
                      } else if (q in { q3, q4 } && c == "") {
@@ -603,7 +610,7 @@ abbreviate the notion of a
         [m, delta0, q1, q2] := f;
         q0 := getNewState(ctr); 
         q3 := getNewState(ctr); 
-        delta := procedure(q, c) {
+        delta := closure(q, c) {
                      if (q == q0 && c == "") {
                          return { q1, q3 };
                      } else if (q == q2 && c == "") {

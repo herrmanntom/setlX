@@ -1679,7 +1679,7 @@ $
 In order to solve this system of equations we define the matrix
 \\[0.2cm]
 \hspace*{1.3cm}
-$A := \left(
+$\mathrm{a} := \left(
   \begin{array}[c]{lll}
     1 & 2 & 3     \\
     2 & 3 & 1     \\
@@ -1705,23 +1705,12 @@ $
 Then, the solution $\vec{s}$ can be calculated via the formula
 \\[0.2cm]
 \hspace*{1.3cm}
-$\vec{s} = A^{-1} \cdot \vec{b}$,
+$\vec{s} = \mathrm{a}^{-1} \cdot \vec{b}$,
 \\[0.2cm]
-where $A^{-1}$ denotes the inverse of the matrix $A$.  In order to carry out this calculation in
+where $\mathrm{a}^{-1}$ denotes the \href{http://en.wikipedia.org/wiki/Invertible_matrix}{\emph{inverse}} of
+the matrix $\mathrm{a}$.  In order to carry out this calculation in 
 \setlx, we run the commands shown in Figure \ref{fig:solve-linear.stlx} on page
-\pageref{fig:solve-linear.stlx}.  Printing the variable \texttt{s} yields the following result:
-\\[0.2cm]
-\hspace*{0.3cm}
-\texttt{< [ 0.9999999999999998 ]  [ 1.1102230246251565E-16 ]  [ 5.551115123125783E-17 ] >}
-\\[0.2cm]
-This shows that the solution to the system of equations that was given initially is
-\\[0.2cm]
-\hspace*{1.3cm}
-$x \approx 1$, \quad $y \approx 0$, \quad and \quad $z \approx 0$.  
-\\[0.2cm]
-Chapter \ref{chapter:linear-algebra.tex}
-will discuss the data types of vectors and matrices in more detail.
-
+\pageref{fig:solve-linear.stlx}.  We discuss these statements line by line.
 
 \begin{figure}[!ht]
 \centering
@@ -1743,6 +1732,48 @@ will discuss the data types of vectors and matrices in more detail.
 \caption{Solving a system of linear equations using matrix inversion.}
 \label{fig:solve-linear.stlx}
 \end{figure}
+
+
+\begin{enumerate}
+\item Line 1 defines the matrix $\mathrm{a}$ using the predefined function \texttt{la\_matrix}.
+      Note that the matrix $\mathrm{a}$ is defined as a list of its rows, where each row is
+      represented as a list of numbers.
+\item Line 2 defines the vector $\vec{b}$ using the predefined function \texttt{la\_vector}.
+\item In line 3, the expression \texttt{a**-1} computes the inverse $\mathrm{a}^{-1}$ which is then
+      multiplied with the vector $\vec{b}$ to yield the solution $\vec{s}$.
+\item In line 4, printing the variable \texttt{s} yields the following result:
+      \\[0.2cm]
+      \hspace*{-0.8cm}
+      \texttt{< 0.9999999999999998 >  < 1.1102230246251565E-16 >  < 5.551115123125783E-17 >}
+      \\[0.2cm]
+      This shows that the solution to the system of equations that was given initially is approximately
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      $x \approx 1$, \quad $y \approx 0$, \quad and \quad $z \approx 0$.  
+\end{enumerate}
+Instead of computing the inverse of the matrix $a$ we could have solved the system of equations
+using the command \texttt{la\_solve} as follows:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{s := la\_solve(a, b);}
+\\[0.2cm]
+In that case, \setlx\ computes the solution
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< 1.0 >  < 0.0 >  < 0.0 >}.
+\\[0.2cm]
+The solution computed by \texttt{la\_solve} is more precise than the solution computed using the
+inverse matrix.  Presumable the method
+\href{http://math.nist.gov/javanumerics/jama/doc/Jama/Matrix.html#solve(Jama.Matrix)}{\texttt{solve}}
+from the \href{http://math.nist.gov/javanumerics/jama}{\textsc{Jama}} library that is working behind the
+scenes of the function \texttt{la\_solve} is using a final iteration step to increase the precision
+of the result.
+\vspace*{0.2cm}
+
+\noindent
+Chapter \ref{chapter:linear-algebra.tex} discusses the data types of vectors and matrices in more
+detail. 
+
 
 
 %%% local Variables: 

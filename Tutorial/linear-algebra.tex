@@ -1,13 +1,15 @@
 \chapter{Vectors and Matrices \label{chapter:linear-algebra.tex}}
-Certain applications, e.g.~data mining and machine learning, require an efficient support of both
+Certain applications, for example data mining and machine learning, require an efficient support of both
 vectors and matrices. 
-Although both vectors and matrices could easily be implemented in \setlx, this would not be
+Although vectors and matrices could easily be implemented in \setlx, this would not be very
 efficient because of the overhead of the interpreter loop.  Therefore, \setlx\ supports both vectors and
 matrices natively.  This support is based on the \textsl{Java} library 
 \href{http://math.nist.gov/javanumerics/jama/}{\textsl{Jama}}, which has been integrated into
 \setlx\ by Patrick Robinson.  This library provides the basic means for computations involving
 matrices and vectors.  In the following exposition we assume that the reader is acquainted with the
-basic concepts of linear algebra.
+basic concepts of both 
+\href{http://en.wikipedia.org/wiki/Linear_algebra}{linear algebra} and
+\href{http://en.wikipedia.org/wiki/Numerical_linear_algebra}{numerical linear algebra}.
 
 \section{Vectors}
 \setlx\ supports real valued vectors of arbitrary dimensions.  Conceptually, a vector can be viewed as
@@ -15,20 +17,20 @@ a list of floating point numbers.  A vector can be constructed from a list of nu
 function \texttt{la\_vector} as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{v := la\_vector([1/2,1/4,1/5]);}
+\texttt{v := la\_vector([1/2, 1/4, 1/5]);}
 \\[0.2cm]
-When executed, this statement yields the following result:
+When executed, this statement yields the result
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{~< Result: < 0.5  0.25  0.2 > >~}
+\texttt{< 0.5  0.25  0.2 >}.
 \\[0.2cm]
 This result shows that the fractions in the argument list have been converted to floating point
-values.  Conceptually, the vector \texttt{v} is a column vector.  Therefore, mathematically
-\texttt{v} would be represented as
+numbers.  Conceptually, the vector \texttt{v} is a column vector.  Therefore, mathematically
+\texttt{v} would be written as
 \\[0.2cm]
 \hspace*{1.3cm}
 $
-\left(\begin{array}[c]{l}
+\left(\begin{array}{l}
   0.5  \\
   0.25 \\
   0.2
@@ -89,31 +91,149 @@ is equivalent to the statement
 \hspace*{1.3cm}
 \texttt{v = v * n;}
 \\[0.2cm]
-Students often confuse scalar multiplication and the 
-\href{http://en.wikipedia.org/wiki/Dot_product}{\emph{dot product}}, which is also known as the
-\emph{scalar product}.  Therefore, we have decided to use the same operator for both products:
+For two $n$-dimensional vectors
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{x} = \left(
+  \begin{array}[c]{c}
+  x_1 \\
+  \vdots \\
+  x_n    
+  \end{array}
+\right)
+$ 
+\quad and \quad
+$\vec{y} = \left(
+  \begin{array}[c]{c}
+  y_1 \\
+  \vdots \\
+  y_n    
+  \end{array}
+\right),
+$ 
+\\[0.2cm]
+the \href{http://en.wikipedia.org/wiki/Dot_product}{\emph{dot product}}, which is also known as the  
+\emph{scalar product}, is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{x} \cdot \vec{y} := \sum\limits_{i=1}^n x_i \cdot y_i$.
+\\[0.2cm]
+Students often confuse scalar multiplication and the scalar product.
+Therefore, we have decided to use the same operator for both products:
 If \texttt{a} and \texttt{b} are two vectors of the same dimension, the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{a * b}
 \\[0.2cm]
 yields their scalar product.  For example,
-given the definition of \texttt{a} and \texttt{b} shown above, the expression
+using the definition of \texttt{a} and \texttt{b} given above, the expression
 ``\texttt{a * b}''
-yields the result $32$.
-
+yields the result $32$ since
+\\[0.2cm]
+\hspace*{1.3cm}
+$1 \cdot 4 + 2 \cdot 5 + 3 \cdot 6 = 32$.
+\\[0.2cm]
 Finally, \setlx\ supports the 
-\href{http://en.wikipedia.org/wiki/Cross_product}{\emph{cross product}}.  If \texttt{a} and
+\href{http://en.wikipedia.org/wiki/Cross_product}{\emph{cross product}}.  For two three-dimensional
+vectors 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{x} = \left(
+  \begin{array}[c]{c}
+  x_1 \\
+  x_2 \\
+  x_3    
+  \end{array}
+\right)
+$ 
+\quad and \quad
+$\vec{y} = \left(
+  \begin{array}[c]{c}
+  y_1 \\
+  y_2 \\
+  y_3    
+  \end{array}
+\right),
+$ 
+\\[0.2cm]
+the cross product $\vec{x} \times \vec{y}$ is defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{x} = \left(
+  \begin{array}[c]{c}
+  x_1 \\
+  x_2 \\
+  x_3    
+  \end{array}
+\right) \times \left(
+  \begin{array}[c]{c}
+  y_1 \\
+  y_2 \\
+  y_3    
+  \end{array}
+\right) = \left(
+  \begin{array}[c]{c}
+  x_2 \cdot y_3 - x_3 \cdot y_2 \\
+  x_3 \cdot y_1 - x_1 \cdot y_3 \\
+  x_1 \cdot y_2 - x_2 \cdot y_1    
+  \end{array}
+\right)
+$. 
+\\[0.2cm]
+If \texttt{a} and
 \texttt{b} are both 3-dimensional vectors, then the expression
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{a >< b}
 \\[0.2cm]
-computes the cross product of \texttt{a} and \texttt{b}.
+computes the cross product of \texttt{a} and \texttt{b}.  For example, if \texttt{a} and \texttt{b}
+are the vectors defined at the beginning of this section, then the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a >< b}
+\\[0.2cm]
+yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< -3.0  6.0  -3.0 >}
+\\[0.2cm]
+since we have
+\\[0.2cm]
+\hspace*{1.3cm}
+$\left(
+ \begin{array}[c]{l}
+   1 \\ 2 \\ 3
+ \end{array}
+ \right)
+   \times
+ \left(
+ \begin{array}[c]{l}
+    4 \\ 5 \\ 6
+ \end{array}
+ \right)
+    =
+ \left(
+  \begin{array}[c]{l}
+    2 \cdot 6 - 3 \cdot 5 \\ 3 \cdot 4 - 6 \cdot 1 \\ 1 \cdot 5 - 2 \cdot 4
+  \end{array}
+ \right)
+    =
+ \left(
+  \begin{array}[c]{r}
+    -3 \\ 6 \\ -3
+  \end{array}
+ \right)
+$.
+\\[0.2cm]
+Note that the cross product of two vectors is only defined iff both \texttt{a} and \texttt{b} are 
+three-dimensional.  There are generalisations of the cross product for $n$-dimensional vectors.
+However, in that case the cross product is no longer a binary operator but rather takes $n-1$ arguments.
+These generalisations are not supported in \setlx.
 
 Vectors provide the same access operations as list.  Therefore, to extract the $i$-th component of a
-vector \texttt{v} we can use the expression ``\texttt{a[$i$]}''.  Furthermore, the operator
-``\texttt{\#}'' returns the dimension of a given matrix.
+vector \texttt{v} we can use the expression ``\texttt{v[$i$]}''.  Furthermore, the operator
+``\texttt{\#}'' returns the dimension of a given vector.  Therefore, given the vector \texttt{a}
+defined above, the expression \texttt{\#a} returns the value 3.
 
 
 \section{Matrices}
@@ -135,12 +255,46 @@ $
 \right)
 $.
 \\[0.2cm]
-We can see that the inner lists used as argument to matrix correspond to the rows of the resulting
-matrix.   In \setlx, the matrix is printed as
+We can see that the inner lists used as an argument to the function \texttt{la\_matrix} correspond
+to the rows of the resulting matrix.   In \setlx, the matrix is printed as
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{< [ 1.0  2.0 ]  [ 3.0  4.0 ] >}.
+\texttt{\{ < 1.0  2.0 > \ < 3.0  4.0 > \}}.
 \\[0.2cm]
+Note that matrices are enclosed in curly braces like sets.  However, whereas the elements of a set a
+separated by commas, the row vectors making up a matrix are separated by two blank spaces.  However,
+this format cannot be used when defining a matrix, i.e~it is not possible to write
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := \{ < 1.0  2.0 > \ < 3.0  4.0 > \}}
+\\[0.2cm]  
+to define the matrix \texttt{a}.  
+
+The function \texttt{la\_matrix} can also be called with a vector as its argument.  If $v$ is an
+$n$-dimensional vector, then 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_matrix($v$)}
+\\[0.2cm]
+interprets this vector as a column vector and turns it into an $n \times 1$ matrix.  For example, after
+defining
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{v := la\_vector([1..3]);}
+\\[0.2cm]
+the statement 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := la\_matrix(v);}
+\\[0.2cm]
+yields the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{\{ < 1.0 > \ < 2.0 > \ < 3.0 > \}}.
+\\[0.2cm]
+The curly braces show that \texttt{a} is a matrix that consists of three rows that are themselves
+vectors of length 1.
+
 Similar to vectors, matrices can be added and subtracted using the operators ``\texttt{+}'' and
 ``\texttt{-}''.   If we define
 \\[0.2cm]
@@ -150,21 +304,22 @@ Similar to vectors, matrices can be added and subtracted using the operators ``\
 then the expressions ``\texttt{a + b}'' and ``\texttt{a - b}'' yield the results
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{< [ 6.0  8.0 ]  [ 10.0  12.0 ] >} \quad and \quad \texttt{< [ -4.0  -4.0 ]  [ -4.0  -4.0 ] >}.
+\texttt{\{ < 6.0  8.0 > \ < 10.0  12.0 > \}} \quad and \quad \texttt{\{ < -4.0  -4.0 > \ < -4.0  -4.0 > \}}.
 \\[0.2cm]
 In addition to ``\texttt{+}'' and ``\texttt{-}'', the assignment operators ``\texttt{+=}'' and
 ``\texttt{-=}'' are supported for matrices and work as expected.
 
-Matrices support scalar multiplication in the same way as vectors.  For example, the expression
-``\texttt{2 * a}'' yields
+Furthermore, matrices support scalar multiplication in the same way as vectors.  For example, the
+expressions 
+``\texttt{2 * a}'' and ``\texttt{a * 2}'' both yield the result
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{< [ 2.0  4.0 ]  [ 6.0  8.0 ] >}.
+\texttt{\{ < 2.0  4.0 > \ < 6.0  8.0 > \}}.
 \vspace*{0.2cm} 
 
 Next,
 \setlx\ supports \href{http://en.wikipedia.org/wiki/Matrix_multiplication}{matrix multiplication}.
-If \texttt{a} is an $m$ times $n$ matrix and \texttt{b} is an $n$ times $k$ matrix, then
+If \texttt{a} is an $m \times n$ matrix and \texttt{b} is an $n \times k$ matrix, then
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{a * b}
@@ -173,18 +328,18 @@ computes the matrix product of \texttt{a} and \texttt{b}.  For example, given th
 \texttt{a} and \texttt{b} shown above,  the expression ``\texttt{a * b}'' yields the result
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{< [ 19.0  22.0 ]  [ 43.0  50.0 ] >}.
+\texttt{\{ < 19.0  22.0 >  < 43.0  50.0 > \}}.
 \\[0.2cm]
-Furthermore, if \texttt{a}  an $m$ times
-$n$ matrix and $v$ is an $n$ dimensional vector, then the expression
+Furthermore, if \texttt{a} is an $m \times n$ matrix and \texttt{v} is an $n$ dimensional vector,
+then the expression 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{a * v}
 \\[0.2cm]
-is computed as a matrix multiplication, where $v$ is interpreted as an $n$ times $1$ matrix.  In
-this case, the resulting $m$ times $1$ matrix is automatically converted into an $m$ dimensional vector.
+is computed as a matrix multiplication, where $v$ is interpreted as an $n \times 1$ matrix.  In
+this case, the resulting $m \times 1$ matrix is automatically converted into an $m$ dimensional vector.
 
-In addition to matrix multiplication, \setlx\ also support exponentiation of a square matrix by a
+In addition to matrix multiplication, \setlx\ also support exponentiation of a square matrix by an
 integer numbers.  For example, 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -197,16 +352,16 @@ returns the square  of \texttt{a}, while
 \\[0.2cm]
 return the \href{http://en.wikipedia.org/wiki/Invertible_matrix}{\emph{inverse}} of a matrix,
 provided the matrix is not \emph{singular}.  If the matrix \texttt{a} is singular, evaluation of the
-expression raises an exception if the exponent is negative.
+expression \texttt{a ** $n$} raises an exception if the exponent $n$ is negative.
 
 Matrices can be \href{http://en.wikipedia.org/wiki/Transpose}{\emph{transposed}} via the postfix
 operator ``\texttt{!}''.  For example, using the definition of the matrix \texttt{a} shown above,
 the expression ``\texttt{a!}'' yields 
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{< [ 1.0  3.0 ]  [ 2.0  4.0 ] >}.
+\texttt{\{ < 1.0  3.0 > \ < 2.0  4.0 > \}}.
 \\[0.2cm]
-If \texttt{a} is an $m$ times $n$ matrix, the expression ``\texttt{\#a}'' yields the dimension $m$.  
+If \texttt{a} is an $m \times n$ matrix, the expression ``\texttt{\#a}'' yields the dimension $m$.  
 In order to compute the dimension $n$, we can use the expression 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -248,7 +403,7 @@ A system of linear equations of the form
 \hspace*{1.3cm}
 $\texttt{a} \cdot \texttt{x} = \texttt{b}$
 \\[0.2cm]
-where \texttt{a} is a square matrix $n$ times $n$  matrix and  \texttt{b} is an $n$-dimensional
+where \texttt{a} is a square matrix $n \times n$  matrix and  \texttt{b} is an $n$-dimensional
 vector can be solved using the expression
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -276,10 +431,135 @@ Then, the solution is computed via the expression
 \\[0.2cm]
 Note that this expression throws an exception if the given system of equations is not solvable.
 
-\subsection{The Singular Value Decomposition}
+Note that it is also posible to solve a system of equations that is 
+\href{http://en.wikipedia.org/wiki/Overdetermined_system}{\emph{overdetermined}}.  For example,
+assume that the system of equations is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$
+\begin{array}[c]{lcl}
+  1 \cdot x + 2 \cdot y & = & 1 \\[0.1cm]
+  2 \cdot x + 3 \cdot y & = & 2 \\[0.1cm]
+  3 \cdot x + 4 \cdot y & = & 3 
+\end{array}
+$
+\\[0.2cm]
+In order to compute the solution $\vec{x}$ that minimizes the error
+ $\|a \cdot \vec{x} - \vec{b}\|_2$ we can 
+define \texttt{a} and \texttt{b} via
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{a := la\_matrix([[1, 2], [2, 3], [3, 4]]); \ b := la\_vector([1,2,3]);}
+\\[0.2cm]
+and then call  the function \texttt{la\_solve} as 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_solve(a, b);}
+\\[0.2cm]
+In this case, \texttt{la\_solve} computes the result
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{< 0.9999999999999982 >  < 1.4430967688835178E-15 >}
+\\[0.2cm]
+which is pretty close to the exact result $\left(\begin{array}[c]{l} 1 \\ 0 \end{array}\right)$.
+\vspace*{0.3cm}
+
+\noindent
+When solving a system of linear equations, care has to be taken that the solution is well defined.
+To this end, \setlx\ provides the function \texttt{la\_cond} that computes the 
+\href{http://en.wikipedia.org/wiki/Condition_number}{condition number} of a given matrix.
+Let us describe the problem via an example borrowed from
+\\[0.2cm]
+\hspace*{1.3cm}
+\href{http://nm.mathforcollege.com/mws/gen/04sle/mws_gen_sle_spe_adequacy.pdf}{\texttt{http://nm.mathforcollege.com/mws/gen/04sle/mws\_gen\_sle\_spe\_adequacy.pdf}}.
+\\[0.2cm]
+Assume the matrix $a$ and the vector $\vec{b}$ are defined as
+\\[0.2cm]
+\hspace*{1.3cm}
+$a := \left(
+  \begin{array}[c]{ll}
+    1.000 &  2.000 \\
+    2.000 &  3.999
+  \end{array}
+  \right)
+$  \quad and \quad
+$\vec{b} := \left(
+  \begin{array}[c]{l}
+    4.000 \\ 7.999
+  \end{array}
+  \right).
+$
+\\[0.2cm]
+It can easily be verified that the solution $\vec{x}$ to the system of equations 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{b} = a \cdot \vec{x}$
+\\[0.2cm]
+is given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{x}  = 
+ \left(
+   \begin{array}[c]{l}
+     2 \\ 1
+   \end{array}
+  \right)
+$.
+\\[0.2cm]
+However, let us assume that the vector $\vec{b}$ is distorted into the vector $\vec{c}$ that is
+given as
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{c} := \left(
+  \begin{array}[c]{l}
+    4.001 \\ 7.998
+  \end{array}
+  \right).
+$
+\\[0.2cm]
+If we solve the system
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{c} = a \cdot \vec{x}$,
+\\[0.2cm]
+the solution for $\vec{x}$ becomes
+\\[0.2cm]
+\hspace*{1.3cm}
+$\vec{x}  = 
+ \left(
+   \begin{array}[c]{r}
+     -3.999 \\ 4.000
+   \end{array}
+  \right)
+$.
+\\[0.2cm]
+We see that a tiny change in the right hand side of the system of equations has caused a big change
+in the solution $\vec{x}$.  The reason is that the matrix \texttt{a} is \emph{ill-conditioned}.
+we can verify this using the function \texttt{la\_cond}:  The expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_cond(la\_matrix([[1, 2], [2, 3.999]]));}
+\\[0.2cm]
+yields the result 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{24992.000959995028}.
+\\[0.2cm]
+This shows that small errors in the right hand side of a system of linear equations involving the
+matrix \texttt{a} are multiplied by a factor of nearly $25\,000$.  Our recommendation is that if you
+ever have to solve a system of equations, you should first check whether the system is
+well-conditioned by computing the condition number of the matrix associated with the system.  This 
+condition number tells us by how much an error in the right hand side of the system of equations is
+magnified when we compute the solution.  In particular, if the condition number is so big that it
+will magnify known uncertainties in  the right hand side of the equations to an extend that the
+result is meaningless, then it is not possible to solve the given system of equations in a
+meaningful way. 
+
+
+\subsection{The Singular Value Decomposition and the Pseudo-Inverse}
 The function \texttt{la\_svd} can be used to compute the 
 \href{http://en.wikipedia.org/wiki/Singular_value_decomposition}{\emph{singular value decomposition}} 
-of a given matrix \texttt{a}.  For a given $m$ times $n$ matrix \texttt{a}, the expression 
+of a given matrix \texttt{a}.  For a given $m \times n$ matrix \texttt{a}, the expression 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{la\_svd(a)}
@@ -301,7 +581,12 @@ $a = u \cdot s \cdot v^{\mathtt{T}}$,
 where $v^{\mathtt{T}}$ denotes the transpose of the matrix $v$.
   In practice, the singular value decomposition is used to compute the
 \href{http://en.wikipedia.org/wiki/Moore-Penrose_pseudoinverse}{\emph{pseudo-inverse}}
- of a singular matrix. 
+ of a singular matrix.   However, this can be done directly as for a matrix \texttt{a} the call
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{la\_pseudoInverse(a);}
+\\[0.2cm]
+computes the pseudo-inverse of \texttt{a}.
 
 \subsection{Eigenvalues and Eigenvectors}
 In order to compute the 

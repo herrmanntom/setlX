@@ -148,9 +148,6 @@
         <unjar src="${toString:antlr-jar}" dest="${classes.dir}">
             <patternset>
                 <include name="org/antlr/v4/runtime/**/*"/>
-                <exclude name="org/antlr/v4/runtime/misc/GraphicsSupport*"/>
-                <exclude name="org/antlr/v4/runtime/misc/TestRig*"/>
-                <exclude name="org/antlr/v4/runtime/misc/Utils*"/>
                 <exclude name="org/antlr/v4/runtime/tree/gui/**/*"/>
             </patternset>
         </unjar>

@@ -3,6 +3,11 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
 ---v2.3.0--- 2014-09-xx
  + implemented matrix functionality
  + separated closures and procedures; normal procedures do not have closure functionality
+ + allow to access relations with multiple parameters without explicitly wrapping those
+   parameters into a list, e.g.
+   r[[a,b]] := 1; print(r[[a,b]]);
+   may now be written as
+   r[a,b] := 1; print(r[a,b]);
 
 ---v2.2.4--- 2014-06-09
  + added "getClass()" method to objects, that refers to the class used to create

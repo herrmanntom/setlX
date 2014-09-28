@@ -33,19 +33,9 @@ public class CollectionAccess extends AssignableExpression {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
 
-    private final Expr       lhs;       // left hand side (Variable, CollectMap, other CollectionAccess, etc)
-    private final List<Expr> args;      // list of arguments
-
-    /**
-     * Constructor.
-     *
-     * @param lhs Left hand side (Variable, CollectMap, other CollectionAccess, etc).
-     * @param arg Parameter.
-     */
-    public CollectionAccess(final Expr lhs, final Expr arg) {
-        this(lhs, new ArrayList<Expr>(1));
-        args.add(arg);
-    }
+    private final Expr       lhs;              // left hand side (Variable, CollectMap, other CollectionAccess, etc)
+    private final List<Expr> args;             // list of arguments
+    private final boolean    argsContainRange; // does args contain RangeDummy?
 
     /**
      * Constructor.
@@ -54,8 +44,9 @@ public class CollectionAccess extends AssignableExpression {
      * @param args List of parameters.
      */
     public CollectionAccess(final Expr lhs, final List<Expr> args) {
-        this.lhs  = lhs;
-        this.args = args;
+        this.lhs              = lhs;
+        this.args             = args;
+        this.argsContainRange = args.contains(CollectionAccessRangeDummy.CARD);
     }
 
     @Override
@@ -67,11 +58,17 @@ public class CollectionAccess extends AssignableExpression {
             );
         }
         // evaluate all arguments
-        final List<Value> args = new ArrayList<Value>(this.args.size());
+        List<Value> args = new ArrayList<Value>(this.args.size());
         for (final Expr arg: this.args) {
-            if (arg != null) {
-                args.add(arg.eval(state).clone());
+            args.add(arg.eval(state).clone());
+        }
+        if ( ! argsContainRange && args.size() > 1) {
+            SetlList argumentList = new SetlList(args.size());
+            for (Value arg : args) {
+                argumentList.addMember(state, arg);
             }
+            args = new ArrayList<Value>(1);
+            args.add(argumentList);
         }
         // execute
         return lhs.collectionAccess(state, args);
@@ -88,11 +85,17 @@ public class CollectionAccess extends AssignableExpression {
             }
 
             // evaluate all arguments
-            final List<Value> args = new ArrayList<Value>(this.args.size());
+            List<Value> args = new ArrayList<Value>(this.args.size());
             for (final Expr arg: this.args) {
-                if (arg != null) {
-                    args.add(arg.eval(state).clone());
+                args.add(arg.eval(state).clone());
+            }
+            if ( ! argsContainRange && args.size() > 1) {
+                SetlList argumentList = new SetlList(args.size());
+                for (Value arg : args) {
+                    argumentList.addMember(state, arg);
                 }
+                args = new ArrayList<Value>(1);
+                args.add(argumentList);
             }
 
             // execute
@@ -137,14 +140,28 @@ public class CollectionAccess extends AssignableExpression {
     // sets this expression to the given value
     @Override
     public void assignUncloned(final State state, final Value value, final String context) throws SetlException {
-        if (args.size() == 1 && lhs instanceof AssignableExpression) {
+        if ( ! argsContainRange && args.size() >= 1 && lhs instanceof AssignableExpression) {
             final Value lhs = ((AssignableExpression) this.lhs).evaluateUnCloned(state);
             if (lhs == Om.OM) {
                 throw new UnknownFunctionException(
                     "Left hand side \"" + this.lhs.toString(state) + "\" is undefined."
                 );
             }
-            lhs.setMember(state, args.get(0).eval(state), value);
+
+            if (args.size() > 1) {
+                // evaluate all arguments
+                List<Value> arguments = new ArrayList<Value>(this.args.size());
+                for (final Expr arg: this.args) {
+                    arguments.add(arg.eval(state).clone());
+                }
+                SetlList argumentList = new SetlList(arguments.size());
+                for (Value arg : arguments) {
+                    argumentList.addMember(state, arg);
+                }
+                lhs.setMember(state, argumentList, value);
+            } else {
+                lhs.setMember(state, args.get(0).eval(state), value);
+            }
         } else {
             throw new IncompatibleTypeException(
                 "Left-hand-side of \"" + this.toString(state) + " := " + value.toString(state) + "\" is unusable for list assignment."
@@ -163,6 +180,9 @@ public class CollectionAccess extends AssignableExpression {
         while (iter.hasNext()) {
             iter.next().appendString(state, sb, 0);
             if (iter.hasNext()) {
+                if ( ! argsContainRange) {
+                    sb.append(",");
+                }
                 sb.append(" ");
             }
         }

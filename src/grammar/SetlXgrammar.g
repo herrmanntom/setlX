@@ -224,10 +224,18 @@ assignmentDirect returns [Expr assign]
     ;
 
 assignable [boolean enableIgnore] returns [AssignableExpression a]
+    @init {
+        List<Expr> exprs = null;
+    }
     : variable                   { $a = $variable.v;                                        }
       (
          '.' variable            { $a = new MemberAccess($a, $variable.v);                  }
-       | '[' expr[false] ']'     { $a = new CollectionAccess($a, $expr.ex);                 }
+       | '['                     { exprs = new ArrayList<Expr>();                           }
+         e1 = expr[false]        { exprs.add($e1.ex);                                       }
+         (
+           ',' e2 = expr[false]  { exprs.add($e2.ex);                                       }
+         )+
+         ']'                     { $a = new CollectionAccess($a, exprs);                    }
       )*
     | '[' explicitAssignList ']' { $a = new AssignListConstructor($explicitAssignList.eil); }
     | {$enableIgnore}? '_'       { $a = VariableIgnore.VI;                                  }
@@ -422,15 +430,18 @@ collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
     @init {
         $params = new ArrayList<Expr>();
     }
-    : e1 = expr[$enableIgnore]     { $params.add($e1.ex);                          }
+    : e1 = expr[$enableIgnore]      { $params.add($e1.ex);                          }
       (
-        RANGE_SIGN                 { $params.add(CollectionAccessRangeDummy.CARD); }
-        (
-          e2 = expr[$enableIgnore] { $params.add($e2.ex);                          }
-        )?
+         RANGE_SIGN                 { $params.add(CollectionAccessRangeDummy.CARD); }
+         (
+           e2 = expr[$enableIgnore] { $params.add($e2.ex);                          }
+         )?
+       | (
+           ',' e3 = expr[false]     { $params.add($e3.ex);                          }
+         )+
       )?
-    | RANGE_SIGN                   { $params.add(CollectionAccessRangeDummy.CARD); }
-      expr[$enableIgnore]          { $params.add($expr.ex);                        }
+    | RANGE_SIGN                    { $params.add(CollectionAccessRangeDummy.CARD); }
+      expr[$enableIgnore]           { $params.add($expr.ex);                        }
     ;
 
 value [boolean enableIgnore, boolean quoted] returns [Expr v]

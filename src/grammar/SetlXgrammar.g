@@ -234,7 +234,7 @@ assignable [boolean enableIgnore] returns [AssignableExpression a]
          e1 = expr[false]        { exprs.add($e1.ex);                                       }
          (
            ',' e2 = expr[false]  { exprs.add($e2.ex);                                       }
-         )+
+         )*
          ']'                     { $a = new CollectionAccess($a, exprs);                    }
       )*
     | '[' explicitAssignList ']' { $a = new AssignListConstructor($explicitAssignList.eil); }

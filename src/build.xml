@@ -39,6 +39,9 @@
     <target name="jar" depends="compile">
         <exec executable="git" failifexecutionfails="yes" outputproperty="git.version">
             <arg value="describe"/>
+            <arg value="--abbrev=40"/>
+            <arg value="--always"/>
+            <arg value="--dirty"/>
         </exec>
         <tstamp>
             <format property="timeAndDate.str" pattern="YYYY-MM-dd HH:mm:ss"/>
@@ -86,6 +89,9 @@
         <antcall target="compile-j1.6"/>
         <exec executable="git" failifexecutionfails="yes" outputproperty="git.version">
             <arg value="describe"/>
+            <arg value="--abbrev=40"/>
+            <arg value="--always"/>
+            <arg value="--dirty"/>
         </exec>
         <tstamp>
             <format property="timeAndDate.str" pattern="YYYY-MM-dd HH:mm:ss"/>

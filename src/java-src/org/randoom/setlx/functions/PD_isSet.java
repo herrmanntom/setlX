@@ -1,25 +1,29 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * isSet(value) : Test if value-type is set.
  */
 public class PD_isSet extends PreDefinedProcedure {
+
+    private final static ParameterDef        VALUE      = createParameter("value");
+
     /** Definition of the PreDefinedProcedure `isSet'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_isSet();
+    public  final static PreDefinedProcedure DEFINITION = new PD_isSet();
 
     private PD_isSet() {
         super();
-        addParameter("value");
+        addParameter(VALUE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
-        return args.get(0).isSet();
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+        return args.get(VALUE).isSet();
     }
 }
 

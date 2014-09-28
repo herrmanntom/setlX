@@ -4,27 +4,32 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * startsWith(string, prefix) : Return true if string starts with prefix.
  */
 public class PD_startsWith extends PreDefinedProcedure {
+
+    private final static ParameterDef        STRING     = createParameter("string");
+    private final static ParameterDef        PREFIX     = createParameter("prefix");
+
     /** Definition of the PreDefinedProcedure `startsWith'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_startsWith();
+    public  final static PreDefinedProcedure DEFINITION = new PD_startsWith();
 
     private PD_startsWith() {
         super();
-        addParameter("string");
-        addParameter("prefix");
+        addParameter(STRING);
+        addParameter(PREFIX);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        final Value string = args.get(0);
-        final Value prefix = args.get(1);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+        final Value string = args.get(STRING);
+        final Value prefix = args.get(PREFIX);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "String-argument '" + string.toString(state) + "' is not a string."

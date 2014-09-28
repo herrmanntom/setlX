@@ -2,9 +2,10 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * getOsID()               : get identifier for the operating system that setlX runs on
@@ -19,8 +20,7 @@ public class PD_getOsID extends PreDefinedProcedure {
 
     @Override
     public Value execute(final State state,
-                         final List<Value> args,
-                         final List<Value> writeBackVars
+                         final HashMap<ParameterDef, Value> args
     ) {
         return new SetlString(state.getOsID());
     }

@@ -8,7 +8,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    r[[a,b]] := 1; print(r[[a,b]]);
    may now be written as
    r[a,b] := 1; print(r[a,b]);
- + added specification of unlimited parameters for procedures, closures and classes
+ + added specification of optional and unlimited parameters for procedures, closures and classes
 
 ---v2.2.4--- 2014-06-09
  + added "getClass()" method to objects, that refers to the class used to create

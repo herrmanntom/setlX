@@ -1,8 +1,10 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
@@ -10,26 +12,26 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_setPenColor extends GfxFunction {
+    private final static ParameterDef        COLOR      = createOptionalParameter("color", Om.OM);
 
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_setPenColor();
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_setPenColor();
 
     public PD_gfx_setPenColor(){
         super();
-        addParameter("color");
-        setMinimumNumberOfParameters(0);
+        addParameter(COLOR);
     }
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        if ( args.size() == 0 ) {
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException{
+        if ( args.get(COLOR) != Om.OM ) {
         	StdDraw.setPenColor();
         } else {
 	    	Color c = StdDraw.BLACK;
 	        try {
-	            final Field f = StdDraw.class.getField(args.get(0).getUnquotedString(state).toUpperCase());
+	            final Field f = StdDraw.class.getField(args.get(COLOR).getUnquotedString(state).toUpperCase());
 	            c = (Color) f.get(null);
 	            StdDraw.setPenColor(c);
 	        } catch (final Exception e) {

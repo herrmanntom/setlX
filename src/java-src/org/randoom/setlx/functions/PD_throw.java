@@ -2,25 +2,29 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * throw(value) : stops execution and throws value to be catched by try-catch block
  */
 public class PD_throw extends PreDefinedProcedure {
+
+    private final static ParameterDef        VALUE      = createParameter("value");
+
     /** Definition of the PreDefinedProcedure `throw'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_throw();
+    public  final static PreDefinedProcedure DEFINITION = new PD_throw();
 
     private PD_throw() {
         super();
-        addParameter("value");
+        addParameter(VALUE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws ThrownInSetlXException {
-        throw new ThrownInSetlXException(state, args.get(0));
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws ThrownInSetlXException {
+        throw new ThrownInSetlXException(state, args.get(VALUE));
     }
 }
 

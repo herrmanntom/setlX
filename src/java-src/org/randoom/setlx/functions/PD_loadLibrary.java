@@ -6,26 +6,30 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.statements.Block;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * loadLibrary(name) : Loads SetlX library code file and executes it.
  */
 public class PD_loadLibrary extends PreDefinedProcedure {
+
+    private final static ParameterDef        NAME       = createParameter("name");
+
     /** Definition of the PreDefinedProcedure `loadLibrary'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_loadLibrary();
+    public  final static PreDefinedProcedure DEFINITION = new PD_loadLibrary();
 
     private PD_loadLibrary() {
         super();
-        addParameter("name");
+        addParameter(NAME);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value nameArg = args.get(0);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final Value nameArg = args.get(NAME);
         if ( ! (nameArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Name-argument '" + nameArg.toString(state) + "' is not a string."

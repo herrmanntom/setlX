@@ -4,32 +4,36 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.CachedProcedure;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * clearCache(cachedProcedure) : Clears the cache of supplied procedure.
  */
 public class PD_clearCache extends PreDefinedProcedure {
+
+    private final static ParameterDef        CACHED_PROCEDURE = createParameter("cachedProcedure");
+
     /** Definition of the PreDefinedProcedure `clearCache'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_clearCache();
+    public  final static PreDefinedProcedure DEFINITION       = new PD_clearCache();
 
     private PD_clearCache() {
         super();
-        addParameter("cachedProcedure");
+        addParameter(CACHED_PROCEDURE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        final Value function  = args.get(0);
-        if ( ! (function instanceof CachedProcedure)) {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+        final Value cachedProcedure = args.get(CACHED_PROCEDURE);
+        if ( ! (cachedProcedure instanceof CachedProcedure)) {
             throw new IncompatibleTypeException(
-                "Argument '" + function + "' is not a cached procedure."
+                "Argument '" + cachedProcedure + "' is not a cached procedure."
             );
         }
 
-        ((CachedProcedure) function).clearCache();
+        ((CachedProcedure) cachedProcedure).clearCache();
 
         return Om.OM;
     }

@@ -1,10 +1,12 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  *  rnd(numberOrCollection [, numberOfChoices]) :
@@ -20,22 +22,25 @@ import java.util.List;
  *                                 a randomly selected member will be returned.
  */
 public class PD_rnd extends PreDefinedProcedure {
+
+    private final static ParameterDef        NUMBER_OR_COLLECTION = createParameter("numberOrCollection");
+    private final static ParameterDef        NUMBER_OF_CHOICES    = createOptionalParameter("numberOfChoices", Om.OM);
+
     /** Definition of the PreDefinedProcedure `rnd'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_rnd();
+    public  final static PreDefinedProcedure DEFINITION           = new PD_rnd();
 
     private PD_rnd() {
         super();
-        addParameter("numberOrCollection");
-        addParameter("numberOfChoices");
-        setMinimumNumberOfParameters(1);
+        addParameter(NUMBER_OR_COLLECTION);
+        addParameter(NUMBER_OF_CHOICES);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        if (args.size() == 1) {
-            return args.get(0).rnd(state);
-        } else /* if (args.size() == 2) */ {
-            return args.get(0).rnd(state, args.get(1));
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        if (args.get(NUMBER_OF_CHOICES) == Om.OM) {
+            return args.get(NUMBER_OR_COLLECTION).rnd(state);
+        } else /* if (args.get(NUMBER_OF_CHOICES) != Om.OM) */ {
+            return args.get(NUMBER_OR_COLLECTION).rnd(state, args.get(NUMBER_OF_CHOICES));
         }
     }
 }

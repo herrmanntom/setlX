@@ -1,7 +1,5 @@
 package org.randoom.setlx.functions;
 
-import java.util.List;
-
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlMatrix;
@@ -10,33 +8,39 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
+import java.util.HashMap;
+
 /**
  * @author Patrick Robinson
  *         X := solve(A,B)
  *         solves A*X = B
  */
 public class PD_la_solve extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_la_solve();
+
+    private final static ParameterDef        MATRIX_A   = createParameter("matrixA");
+    private final static ParameterDef        MATRIX_B   = createParameter("matrixB");
+
+    public  final static PreDefinedProcedure DEFINITION = new PD_la_solve();
 
     private PD_la_solve() {
         super();
-        addParameter("MatrixA", ParameterDef.ParameterType.READ_ONLY);
-        addParameter("MatrixB", ParameterDef.ParameterType.READ_ONLY);
+        addParameter(MATRIX_A);
+        addParameter(MATRIX_B);
     }
 
     @Override
-    public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
+    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         SetlMatrix a;
         SetlMatrix b;
-        if (args.get(0) instanceof SetlMatrix) {
-            a = (SetlMatrix) args.get(0);
+        if (args.get(MATRIX_A) instanceof SetlMatrix) {
+            a = (SetlMatrix) args.get(MATRIX_A);
         } else {
             throw new IncompatibleTypeException("The first parameter needs to be a matrix.");
         }
-        if (args.get(1) instanceof SetlMatrix) {
-            b = (SetlMatrix) args.get(1);
-        } else if (args.get(1) instanceof SetlVector) {
-            b = new SetlMatrix(state, (SetlVector) args.get(1));
+        if (args.get(MATRIX_B) instanceof SetlMatrix) {
+            b = (SetlMatrix) args.get(MATRIX_B);
+        } else if (args.get(MATRIX_B) instanceof SetlVector) {
+            b = new SetlMatrix(state, (SetlVector) args.get(MATRIX_B));
         } else {
             throw new IncompatibleTypeException("The second parameter needs to be a matrix.");
         }

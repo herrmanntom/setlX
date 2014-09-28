@@ -2,25 +2,29 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * first(collectionValue) : Selects the first member from `collectionValue'.
  */
 public class PD_first extends PreDefinedProcedure {
-    /** Definition of the PreDefinedProcedure `first'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_first();
 
+    private final static ParameterDef        COLLECTION_VALUE = createParameter("collectionValue");
+
+    /** Definition of the PreDefinedProcedure `first'. */
+    public  final static PreDefinedProcedure DEFINITION       = new PD_first();
+    
     private PD_first() {
         super();
-        addParameter("collectionValue");
+        addParameter(COLLECTION_VALUE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).firstMember(state);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        return args.get(COLLECTION_VALUE).firstMember(state);
     }
 }
 

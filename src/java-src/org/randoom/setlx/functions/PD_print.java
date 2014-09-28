@@ -1,32 +1,35 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  *  print([value], ...) : Prints string representation of provided value into stdout.
  */
 public class PD_print extends PreDefinedProcedure {
+
+    private final static ParameterDef        VALUE      = createListParameter("value");
+
     /** Definition of the PreDefinedProcedure `print'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_print();
+    public  final static PreDefinedProcedure DEFINITION = new PD_print();
 
     /**
      * Create a new print function.
      */
     protected PD_print() {
         super();
-        addParameter("value");
-        enableUnlimitedParameters();
-        setMinimumNumberOfParameters(0);
+        addParameter(VALUE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
         final StringBuilder out = new StringBuilder();
-        for (final Value arg : args) {
+        for (final Value arg : (SetlList) args.get(VALUE)) {
             arg.appendUnquotedString(state, out, 0);
             print(state, out.toString());
             out.setLength( 0 );

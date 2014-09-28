@@ -3,23 +3,27 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_point extends GfxFunction {
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_point();
+    private final static ParameterDef        X          = createParameter("x");
+    private final static ParameterDef        Y          = createParameter("y");
+
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_point();
 
     public PD_gfx_point(){
         super();
-        addParameter("x0");
-        addParameter("y0");
+        addParameter(X);
+        addParameter(Y);
     }
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        StdDraw.point(doubleFromValue(state, args.get(0)),doubleFromValue( state, args.get(1)));
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException{
+        StdDraw.point(doubleFromValue(state, args.get(X)),doubleFromValue( state, args.get(Y)));
         return SetlBoolean.TRUE;
     }
 }

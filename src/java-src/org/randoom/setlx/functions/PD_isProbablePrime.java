@@ -4,9 +4,10 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * isProbablePrime(integer) : Returns true if `integer' is probably prime, false if it's definitely not prime.
@@ -16,17 +17,20 @@ import java.util.List;
  *                            constant complexity.
  */
 public class PD_isProbablePrime extends PreDefinedProcedure {
+
+    private final static ParameterDef        INTEGER    = createParameter("integer");
+
     /** Definition of the PreDefinedProcedure `isProbablePrime'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_isProbablePrime();
+    public  final static PreDefinedProcedure DEFINITION = new PD_isProbablePrime();
 
     private PD_isProbablePrime() {
         super();
-        addParameter("integer");
+        addParameter(INTEGER);
     }
 
     @Override
-    public SetlBoolean execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        final Value integer  = args.get(0);
+    public SetlBoolean execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+        final Value integer  = args.get(INTEGER);
         if (integer.isInteger() != SetlBoolean.TRUE) {
             throw new IncompatibleTypeException("Argument '" + integer + "' is not an integer.");
         }

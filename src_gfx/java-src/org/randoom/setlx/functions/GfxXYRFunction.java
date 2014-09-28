@@ -1,24 +1,30 @@
 package org.randoom.setlx.functions;
 
-import java.util.List;
 import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.types.*;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
+
+import java.util.HashMap;
 
 public abstract class GfxXYRFunction extends GfxFunction{
 
+    private final static ParameterDef X = createParameter("x");
+    private final static ParameterDef Y = createParameter("y");
+    private final static ParameterDef R = createParameter("r");
+
     protected GfxXYRFunction(){
         super();
-        addParameter("x");
-        addParameter("y");
-        addParameter("r");
+        addParameter(X);
+        addParameter(Y);
+        addParameter(R);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Double x = doubleFromValue(state, args.get(0));
-        final Double y = doubleFromValue(state, args.get(1));
-        final Double r = doubleFromValue(state, args.get(2));
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final Double x = doubleFromValue(state, args.get(X));
+        final Double y = doubleFromValue(state, args.get(Y));
+        final Double r = doubleFromValue(state, args.get(R));
         executeStdDrawFunction(x, y, r);
         return SetlBoolean.TRUE;
     }

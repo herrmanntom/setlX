@@ -3,25 +3,29 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * trace(toggle) : Configures output of all assignments.
  */
 public class PD_trace extends PreDefinedProcedure {
+
+    private final static ParameterDef        TOGGLE     = createParameter("toggle");
+
     /** Definition of the PreDefinedProcedure `trace'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_trace();
+    public  final static PreDefinedProcedure DEFINITION = new PD_trace();
 
     private PD_trace() {
         super();
-        addParameter("toggle");
+        addParameter(TOGGLE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        final Value   toggle  = args.get(0);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+        final Value toggle = args.get(TOGGLE);
         if ( ! (toggle instanceof SetlBoolean)) {
             throw new IncompatibleTypeException(
                 "Toggle-argument '" + toggle.toString(state) + "' is not a Boolean value."

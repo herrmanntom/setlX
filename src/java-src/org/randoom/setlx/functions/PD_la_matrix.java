@@ -1,9 +1,4 @@
-/**
- *
- */
 package org.randoom.setlx.functions;
-
-import java.util.List;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -14,25 +9,30 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
+import java.util.HashMap;
+
 /**
  * @author Patrick Robinson
  *         <p/>
  *         Construct a new SetlMatrix
  */
 public class PD_la_matrix extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_la_matrix();
+
+    private final static ParameterDef        COLLECTION_VALUE = createParameter("collectionValue");
+
+    public  final static PreDefinedProcedure DEFINITION       = new PD_la_matrix();
 
     private PD_la_matrix() {
         super();
-        addParameter("collectionValue", ParameterDef.ParameterType.READ_ONLY);
+        addParameter(COLLECTION_VALUE);
     }
 
     @Override
-    public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if (args.get(0) instanceof SetlVector) {
-            return new SetlMatrix(state, (SetlVector) args.get(0));
-        } else if (args.get(0) instanceof CollectionValue) {
-            return new SetlMatrix(state, (CollectionValue) args.get(0));
+    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+        if (args.get(COLLECTION_VALUE) instanceof SetlVector) {
+            return new SetlMatrix(state, (SetlVector) args.get(COLLECTION_VALUE));
+        } else if (args.get(COLLECTION_VALUE) instanceof CollectionValue) {
+            return new SetlMatrix(state, (CollectionValue) args.get(COLLECTION_VALUE));
         } else {
             // System.err.println("[DEBUG]: matrix param notcollection");
             throw new IncompatibleTypeException("Matrices can only be created from collections or vectors.");

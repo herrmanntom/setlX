@@ -2,7 +2,9 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
@@ -48,6 +50,20 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
 
     private final Variable      var;
     private final ParameterType type;
+    private final Expr          defaultExpr;
+
+    /**
+     * Create a new parameter definition.
+     *
+     * @param var         Variable to bind to.
+     * @param type        Type of parameter.
+     * @param defaultExpr Expression to compute default value.
+     */
+    public ParameterDef(final Variable var, final ParameterType type, final Expr defaultExpr) {
+        this.var         = var;
+        this.type        = type;
+        this.defaultExpr = defaultExpr;
+    }
 
     /**
      * Create a new parameter definition.
@@ -56,18 +72,7 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
      * @param type Type of parameter.
      */
     public ParameterDef(final Variable var, final ParameterType type) {
-        this.var  = var;
-        this.type = type;
-    }
-
-    /**
-     * Create a new parameter definition.
-     *
-     * @param id   Variable-name to bind to.
-     * @param type Type of parameter.
-     */
-    public ParameterDef(final String id, final ParameterType type) {
-        this(new Variable(id), type);
+        this(var, type, null);
     }
 
     /**
@@ -79,15 +84,6 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
         this(var, ParameterType.READ_ONLY);
     }
 
-    /**
-     * Create a new parameter definition.
-     *
-     * @param id   Variable-name to bind to.
-     */
-    public ParameterDef(final String id) {
-        this(id, ParameterType.READ_ONLY);
-    }
-
     @Override
     public void collectVariablesAndOptimize (
         final State        state,
@@ -96,6 +92,9 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
         final List<String> usedVariables
     ) {
         var.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        if (defaultExpr != null) {
+            defaultExpr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        }
     }
 
     /**
@@ -119,6 +118,30 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
      */
     public Value getValue(final State state) throws SetlException {
         return var.eval(state);
+    }
+
+    /**
+     * Get default value defined for this parameter.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Default value of this parameter.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public Value getDefaultValue(final State state) throws SetlException {
+        if (defaultExpr != null) {
+            return defaultExpr.eval(state);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Check if a default value is defined for this parameter.
+     *
+     * @return True, if a default value is defined for this parameter.
+     */
+    public boolean hasDefaultValue() {
+        return defaultExpr != null;
     }
 
     /**
@@ -149,21 +172,30 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
             sb.append("*");
         }
         var.appendString(state, sb, 0);
+        if (defaultExpr != null) {
+            sb.append(" := ");
+            defaultExpr.appendString(state, sb, 0);
+        }
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
+    public Term toTerm(final State state) throws SetlException {
         final Term result;
         if (type == ParameterType.READ_WRITE) {
-            result = new Term(FUNCTIONAL_CHARACTER_RW);
+            result = new Term(FUNCTIONAL_CHARACTER_RW, 2);
         } else if (type == ParameterType.LIST) {
-            result = new Term(FUNCTIONAL_CHARACTER_LIST);
+            result = new Term(FUNCTIONAL_CHARACTER_LIST, 2);
         } else {
-            result = new Term(FUNCTIONAL_CHARACTER);
+            result = new Term(FUNCTIONAL_CHARACTER, 2);
         }
         result.addMember(state, var.toTerm(state));
+        if (defaultExpr != null) {
+            result.addMember(state, defaultExpr.toTerm(state));
+        } else {
+            result.addMember(state, SetlString.NIL);
+        }
         return result;
     }
 
@@ -181,18 +213,21 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
         }
         final Term   term = (Term) value;
         final String fc   = term.getFunctionalCharacter();
-        if (fc.equals(FUNCTIONAL_CHARACTER) && term.size() == 1 && term.firstMember().getClass() == Term.class) {
+        if (term.size() == 2 && term.firstMember().getClass() == Term.class) {
             final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
-            return new ParameterDef(var, ParameterType.READ_ONLY);
-        } else if (fc.equals(FUNCTIONAL_CHARACTER_RW) && term.size() == 1 && term.firstMember().getClass() == Term.class) {
-            final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
-            return new ParameterDef(var, ParameterType.READ_WRITE);
-        } else if (fc.equals(FUNCTIONAL_CHARACTER_LIST) && term.size() == 1 && term.firstMember().getClass() == Term.class) {
-            final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
-            return new ParameterDef(var, ParameterType.LIST);
-        } else {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                  Expr     defaultExpr = null;
+            if (! term.lastMember().equals(SetlString.NIL)) {
+                defaultExpr = TermConverter.valueToExpr(state, term.lastMember());
+            }
+            if (fc.equals(FUNCTIONAL_CHARACTER)) {
+                return new ParameterDef(var, ParameterType.READ_ONLY, defaultExpr);
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_RW)) {
+                return new ParameterDef(var, ParameterType.READ_WRITE, defaultExpr);
+            } else if (fc.equals(FUNCTIONAL_CHARACTER_LIST)) {
+                return new ParameterDef(var, ParameterType.LIST, defaultExpr);
+            }
         }
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
     @Override
@@ -227,6 +262,11 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
      */
     public boolean equalTo(final ParameterDef other) {
         return this == other || this.type == other.type && this.var.equals(other.var);
+    }
+
+    @Override
+    public int hashCode() {
+        return var.hashCode();
     }
 }
 

@@ -2,27 +2,32 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * join(collection, separator) : Returns a string with all the members in `collection' separated by `separator'.
  */
 public class PD_join extends PreDefinedProcedure {
+
+    private final static ParameterDef        COLLECTION_VALUE = createParameter("collectionValue");
+    private final static ParameterDef        SEPARATOR        = createParameter("separator");
+
     /** Definition of the PreDefinedProcedure `join'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_join();
+    public  final static PreDefinedProcedure DEFINITION       = new PD_join();
 
     private PD_join() {
         super();
-        addParameter("collection");
-        addParameter("separator");
+        addParameter(COLLECTION_VALUE);
+        addParameter(SEPARATOR);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
 
-        return args.get(0).join(state, args.get(1));
+        return args.get(COLLECTION_VALUE).join(state, args.get(SEPARATOR));
 
     }
 

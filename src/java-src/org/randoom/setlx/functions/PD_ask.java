@@ -8,28 +8,33 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * ask(question, listOfAnswers) : prompts the user with `question', then forces him to select one from listOfAnswers, which is returned
  */
 public class PD_ask extends PreDefinedProcedure {
+
+    private final static ParameterDef        QUESTION        = createParameter("question");
+    private final static ParameterDef        LIST_OF_ANSWERS = createParameter("listOfAnswers");
+
     /** Definition of the PreDefinedProcedure `ask'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_ask();
+    public  final static PreDefinedProcedure DEFINITION      = new PD_ask();
 
     private PD_ask() {
         super();
-        addParameter("question");
-        addParameter("listOfAnswers");
+        addParameter(QUESTION);
+        addParameter(LIST_OF_ANSWERS);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final String            question          = args.get(0).getUnquotedString(state);
-        final Value             answersCollection = args.get(1);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final String            question          = args.get(QUESTION).getUnquotedString(state);
+        final Value             answersCollection = args.get(LIST_OF_ANSWERS);
         final ArrayList<String> answers           = new ArrayList<String>();
         if (answersCollection instanceof CollectionValue && ! (answersCollection instanceof SetlString)) {
             for (final Value answer : (CollectionValue) answersCollection) {

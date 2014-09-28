@@ -3,6 +3,8 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.ValueExpr;
+import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Procedure;
 import org.randoom.setlx.types.SetlString;
@@ -10,11 +12,12 @@ import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
+import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.WriteBackAgent;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -22,12 +25,10 @@ import java.util.List;
  */
 public abstract class PreDefinedProcedure extends Procedure {
     // functional characters used in terms
-    private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
+    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
 
-    private String  name;
-    private int     nameHashCode;
-    private boolean unlimitedParameters;
-    private int     minimumNumberOfParameters;
+    private String name;
+    private int    nameHashCode;
 
     /**
      * Initialize a new predefined procedure.
@@ -36,11 +37,9 @@ public abstract class PreDefinedProcedure extends Procedure {
      *       constructor directly.
      */
     protected PreDefinedProcedure() {
-        super(new ArrayList<ParameterDef>(), new Block(null));
-        this.name                      = null;
-        this.nameHashCode              = -1;
-        this.unlimitedParameters       = false;
-        this.minimumNumberOfParameters = 0;
+        super(new ParameterList(), new Block(null));
+        this.name         = null;
+        this.nameHashCode = -1;
     }
 
     /**
@@ -69,57 +68,64 @@ public abstract class PreDefinedProcedure extends Procedure {
     }
 
     /**
-     * Add parameters to this definition.
+     * Create a parameter for this definition.
      *
-     * @param param Parameter name to add.
+     * @param param Parameter name.
+     * @return new ParameterDef
      */
-    protected final void addParameter(final String param) {
-        addParameter(param, ParameterType.READ_ONLY);
+    protected static ParameterDef createParameter(final String param) {
+        return new ParameterDef(new Variable(param), ParameterType.READ_ONLY);
+    }
+
+    /**
+     * Create a read-write parameter for this definition.
+     *
+     * @param param Parameter name.
+     * @return new ParameterDef
+     */
+    protected static ParameterDef createRwParameter(final String param) {
+        return new ParameterDef(new Variable(param), ParameterType.READ_WRITE);
+    }
+
+    /**
+     * Create an optional parameter for this definition.
+     *
+     * @param param        Parameter name.
+     * @param defaultValue Value to use as default.
+     * @return new ParameterDef
+     */
+    protected static ParameterDef createOptionalParameter(final String param, final Value defaultValue) {
+        return new ParameterDef(new Variable(param), ParameterType.READ_ONLY, new ValueExpr(defaultValue));
+    }
+
+    /**
+     * Create a list-parameter for this definition.
+     *
+     * @param param Parameter name.
+     * @return new ParameterDef
+     */
+    protected static ParameterDef createListParameter(final String param) {
+        return new ParameterDef(new Variable(param), ParameterType.LIST);
     }
 
     /**
      * Add parameters to this definition.
-     * See ParameterDef for type constants.
      *
-     * @see org.randoom.setlx.utilities.ParameterDef
-     *
-     * @param param Parameter name to add.
-     * @param type  Type of the parameter (RW, RO).
+     * @param parameter Parameter to add.
      */
-    protected final void addParameter(final String param, final ParameterType type) {
-        parameters.add(new ParameterDef(param, type));
-        ++minimumNumberOfParameters;
-    }
-
-    /**
-     * Allow call with unlimited number of parameters.
-     */
-    protected final void enableUnlimitedParameters() {
-        unlimitedParameters = true;
-    }
-
-    /**
-     * Allow call with more than this number of parameters, up to a maximum of the number of parameters.
-     *
-     * @param minimumNumberOfParameters Minimum parameters that must be supplied to the call.
-     */
-    protected final void setMinimumNumberOfParameters(final int minimumNumberOfParameters) {
-        if (minimumNumberOfParameters > parameters.size() || minimumNumberOfParameters < 0) {
-            throw new InvalidParameterException("minimumNumberOfParameters in invalid");
-        }
-        this.minimumNumberOfParameters = minimumNumberOfParameters;
+    protected final void addParameter(final ParameterDef parameter) {
+        parameters.add(parameter);
     }
 
     /**
      * Function to be implemented by specific predefined procedures.
      *
      * @param state          Current state of the running setlX program.
-     * @param args           Values of the call-parameters in the same order as defined.
-     * @param writeBackVars  List to append Values for RW parameters in the same order as defined to.
+     * @param args           Values of the call-parameters.
      * @return               Resulting value of the call.
      * @throws SetlException Can be thrown in case of some (user-) error.
      */
-    protected abstract Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException;
+    protected abstract Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException;
 
     // this function is called from within SetlX
     @Override
@@ -129,67 +135,33 @@ public abstract class PreDefinedProcedure extends Procedure {
             state.callStackDepth += 2; // this method + the overloaded execute()
                                        // after that all bets are off
 
-            final int paramSize = parameters.size();
-            final int argsSize  = args.size();
-            if (argsSize > paramSize && ! unlimitedParameters) {
+            final int nArguments = args.size();
+            if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
                 final StringBuilder error = new StringBuilder();
                 error.append("'");
                 error.append(getName());
-                appendParameters(state, error);
-                error.append("' is defined with ");
-                if (minimumNumberOfParameters != paramSize) {
-                    error.append("between ");
-                    error.append(minimumNumberOfParameters);
-                    error.append(" and ");
-                }
-                error.append(paramSize);
-                error.append(" instead of ");
-                error.append(argsSize);
-                error.append(" parameters.");
-                throw new IncorrectNumberOfParametersException(error.toString());
-            } else if (argsSize < minimumNumberOfParameters) {
-                final StringBuilder error = new StringBuilder();
-                error.append("'");
-                error.append(getName());
-                appendParameters(state, error);
-                error.append("' is defined with ");
-                if (minimumNumberOfParameters != paramSize) {
-                    error.append("at least ");
-                }
-                error.append(minimumNumberOfParameters);
-                error.append(" instead of ");
-                error.append(argsSize);
-                error.append(" parameters.");
+                error.append("(");
+                parameters.appendString(state, error, 0);
+                error.append(")'");
+                parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
                 throw new IncorrectNumberOfParametersException(error.toString());
             }
 
             // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<Value>(argsSize);
+            final ArrayList<Value> values = new ArrayList<Value>(nArguments);
             for (final Expr arg : args) {
                 values.add(arg.eval(state).clone());
             }
 
-            // List of writeBack-values, which should be stored into the outer scope
-            final ArrayList<Value> writeBackVars = new ArrayList<Value>(paramSize);
+            // assign parameters
+            HashMap<ParameterDef, Value> assignments = parameters.putParameterValuesIntoMap(state, values);
 
             // call predefined function (which may add writeBack-values to List)
-            final Value result  = this.execute(state, values, writeBackVars);
+            final Value result  = this.execute(state, assignments);
 
             // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
-            if (writeBackVars.size() > 0) {
-                final WriteBackAgent wba = new WriteBackAgent(writeBackVars.size());
-                for (int i = 0; i < paramSize; ++i) {
-                    final ParameterDef param = parameters.get(i);
-                    if (param.getType() == ParameterType.READ_WRITE && writeBackVars.size() > 0) {
-                        // value of parameter after execution
-                        final Value postValue = writeBackVars.remove(0);
-                        // expression used to fill parameter before execution
-                        final Expr  preExpr   = args.get(i);
-                        /* if possible the WriteBackAgent will set the variable used in
-                           this expression to its postExecution state in the outer scope */
-                        wba.add(preExpr, postValue);
-                    }
-                }
+            final WriteBackAgent wba = parameters.extractRwParametersFromMap(assignments, args);
+            if (wba != null) {
                 // assign variables
                 wba.writeBack(state, FUNCTIONAL_CHARACTER);
             }
@@ -210,9 +182,9 @@ public abstract class PreDefinedProcedure extends Procedure {
     @Override
     public final void appendString(final State state, final StringBuilder sb, final int tabs) {
         final String endl = state.getEndl();
-        sb.append("procedure");
-        appendParameters(state, sb);
-        sb.append(" {");
+        sb.append("procedure(");
+        parameters.appendString(state, sb, 0);
+        sb.append(") {");
         sb.append(endl);
         state.appendLineStart(sb, tabs + 1);
         sb.append("/* predefined procedure `");
@@ -221,34 +193,6 @@ public abstract class PreDefinedProcedure extends Procedure {
         sb.append(endl);
         state.appendLineStart(sb, tabs);
         sb.append("}");
-    }
-
-    private void appendParameters(final State state, final StringBuilder sb) {
-        sb.append("(");
-        final int     numberOfParameters = parameters.size();
-        final boolean optionalParameters = minimumNumberOfParameters < numberOfParameters;
-        for (int index = 0; index < numberOfParameters; ++index) {
-            if (optionalParameters && minimumNumberOfParameters == 0) {
-                sb.append("[");
-            }
-            parameters.get(index).appendString(state, sb, 0);
-            if (optionalParameters && index == (minimumNumberOfParameters - 1)) {
-                sb.append(" [");
-            }
-            if (index < (numberOfParameters - 1)) {
-                sb.append(", ");
-            }
-        }
-        if (optionalParameters) {
-            sb.append("]");
-        }
-        if (unlimitedParameters) {
-            if (parameters.size() > 0) {
-                sb.append(", ");
-            }
-            sb.append("...");
-        }
-        sb.append(")");
     }
 
     /* term operations */
@@ -265,14 +209,14 @@ public abstract class PreDefinedProcedure extends Procedure {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
+    public int compareTo(final Value other) {
         object = null;
-        if (this == v) {
+        if (this == other) {
             return 0;
-        } else if (v instanceof PreDefinedProcedure) {
-            return getName().compareTo(((PreDefinedProcedure) v).getName());
+        } else if (other instanceof PreDefinedProcedure) {
+            return getName().compareTo(((PreDefinedProcedure) other).getName());
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return this.compareToOrdering() - other.compareToOrdering();
         }
     }
 
@@ -283,11 +227,11 @@ public abstract class PreDefinedProcedure extends Procedure {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
-        if (this == v) {
+    public boolean equalTo(final Object other) {
+        if (this == other) {
             return true;
-        } else if (v instanceof PreDefinedProcedure) {
-            return getName().equals(((PreDefinedProcedure) v).getName());
+        } else if (other instanceof PreDefinedProcedure) {
+            return getName().equals(((PreDefinedProcedure) other).getName());
         }
         return false;
     }
@@ -297,7 +241,7 @@ public abstract class PreDefinedProcedure extends Procedure {
     @Override
     public int hashCode() {
         if (nameHashCode == -1) {
-            nameHashCode = getName().hashCode();
+            getName();
         }
         return initHashCode + nameHashCode;
     }

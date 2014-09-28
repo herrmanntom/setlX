@@ -7,25 +7,28 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * la_pseudoInverse(matrix) : Calculate pseudo-inverse of the matrix.
  */
 public class PD_la_pseudoInverse extends PreDefinedProcedure {
+
+    private final static ParameterDef        MATRIX     = createParameter("matrix");
+
     /** Definition of the PreDefinedProcedure `la_pseudoInverse'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_la_pseudoInverse();
+    public  final static PreDefinedProcedure DEFINITION = new PD_la_pseudoInverse();
 
     private PD_la_pseudoInverse() {
         super();
-        addParameter("Matrix", ParameterDef.ParameterType.READ_ONLY);
+        addParameter(MATRIX);
     }
 
     @Override
-    public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if (!(args.get(0) instanceof SetlMatrix)) {
+    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+        if (!(args.get(MATRIX) instanceof SetlMatrix)) {
             throw new IncompatibleTypeException("The Parameter needs to be a Matrix.");
         }
-        return ((SetlMatrix) args.get(0)).pseudoInverse();
+        return ((SetlMatrix) args.get(MATRIX)).pseudoInverse();
     }
 }

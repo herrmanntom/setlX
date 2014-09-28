@@ -8,11 +8,12 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ScanResult;
 import org.randoom.setlx.utilities.State;
 
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -22,26 +23,30 @@ import java.util.regex.PatternSyntaxException;
  *              if `captureGroups' is true, the captured groups are returned instead
  */
 public class PD_matches extends PreDefinedProcedure {
-    /** Definition of the PreDefinedProcedure `matches'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_matches();
 
-    private Value assignTerm;
+    private final static ParameterDef        STRING         = createParameter("string");
+    private final static ParameterDef        PATTERN        = createParameter("pattern");
+    private final static ParameterDef        CAPTURE_GROUPS = createOptionalParameter("captureGroups", SetlBoolean.FALSE);
+
+    /** Definition of the PreDefinedProcedure `matches'. */
+    public  final static PreDefinedProcedure DEFINITION     = new PD_matches();
+
+    private              Value               assignTerm;
 
     private PD_matches() {
         super();
-        addParameter("string");
-        addParameter("pattern");
-        addParameter("captureGroups");
-        setMinimumNumberOfParameters(2);
+        addParameter(STRING);
+        addParameter(PATTERN);
+        addParameter(CAPTURE_GROUPS);
 
         assignTerm = null;
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value string     = args.get(0);
-        final Value patternStr = args.get(1);
-        final Value capture    = (args.size() == 3)? args.get(2) : null;
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final Value string     = args.get(STRING);
+        final Value patternStr = args.get(PATTERN);
+        final Value capture    = args.get(CAPTURE_GROUPS);
 
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
@@ -56,9 +61,9 @@ public class PD_matches extends PreDefinedProcedure {
         }
 
         boolean captureGroups = false;
-        if (capture != null && capture instanceof SetlBoolean) {
+        if (capture instanceof SetlBoolean) {
             captureGroups = (capture == SetlBoolean.TRUE);
-        } else if (capture != null) {
+        } else {
             throw new IncompatibleTypeException(
                 "CaptureGroups-argument '" + capture.toString(state) + "' is not a Boolean value."
             );

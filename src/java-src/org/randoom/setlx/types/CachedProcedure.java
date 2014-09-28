@@ -1,20 +1,17 @@
 package org.randoom.setlx.types;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.ParameterDef.ParameterType;
+import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,7 +45,7 @@ public class CachedProcedure extends Procedure {
      * @param parameters Procedure parameters.
      * @param statements Statements in the body of the procedure.
      */
-    public CachedProcedure(final List<ParameterDef> parameters, final Block statements) {
+    public CachedProcedure(final ParameterList parameters, final Block statements) {
         super(parameters, statements);
         cache     = new HashMap<SetlList, SoftReference<Value>>();
         cacheHits = 0;
@@ -64,7 +61,7 @@ public class CachedProcedure extends Procedure {
      * @param cacheHits  Number of cache hits so far.
      */
     private CachedProcedure(
-        final List<ParameterDef>                      parameters,
+        final ParameterList                           parameters,
         final Block                                   statements,
         final HashMap<SetlList, SoftReference<Value>> cache,
         final int                                     cacheHits
@@ -136,27 +133,12 @@ public class CachedProcedure extends Procedure {
         final SetlObject object     = this.object;
         this.object = null;
 
-        if (isLastParameterList) {
-            if (nArguments < parameters.size() - 1) {
-                final StringBuilder error = new StringBuilder();
-                error.append("'");
-                appendStringWithoutStatements(state, error);
-                error.append("' is defined with at least ");
-                error.append(parameters.size() - 1);
-                error.append(" instead of ");
-                error.append(nArguments);
-                error.append(" parameters.");
-                throw new IncorrectNumberOfParametersException(error.toString());
-            }
-        } else if (nArguments != parameters.size()) {
+        if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
             final StringBuilder error = new StringBuilder();
             error.append("'");
             appendStringWithoutStatements(state, error);
-            error.append("' is defined with ");
-            error.append(parameters.size());
-            error.append(" instead of ");
-            error.append(nArguments);
-            error.append(" parameters.");
+            error.append("'");
+            parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
             throw new IncorrectNumberOfParametersException(error.toString());
         }
 
@@ -208,13 +190,7 @@ public class CachedProcedure extends Procedure {
     protected void appendStringWithoutStatements(final State state, final StringBuilder sb) {
         object = null;
         sb.append("cachedProcedure(");
-        final Iterator<ParameterDef> iter = parameters.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        parameters.appendString(state, sb, 0);
         sb.append(")");
     }
 
@@ -225,11 +201,7 @@ public class CachedProcedure extends Procedure {
         object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        final SetlList paramList = new SetlList(parameters.size());
-        for (final ParameterDef param: parameters) {
-            paramList.addMember(state, param.toTerm(state));
-        }
-        result.addMember(state, paramList);
+        result.addMember(state, parameters.toTerm(state));
 
         result.addMember(state, statements.toTerm(state));
 
@@ -245,14 +217,10 @@ public class CachedProcedure extends Procedure {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static CachedProcedure termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || term.firstMember().getClass() != SetlList.class) {
+        if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList           paramList  = (SetlList) term.firstMember();
-            final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
-            for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(state, v));
-            }
+            final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
             final Block              block      = TermConverter.valueToBlock(state, term.lastMember());
             return new CachedProcedure(parameters, block);
         }
@@ -267,15 +235,9 @@ public class CachedProcedure extends Procedure {
             return 0;
         } else if (other.getClass() == CachedProcedure.class) {
             final CachedProcedure cachedProcedure = (CachedProcedure) other;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(cachedProcedure.parameters.size());
+            int cmp = parameters.compareTo(cachedProcedure.parameters);
             if (cmp != 0) {
                 return cmp;
-            }
-            for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(cachedProcedure.parameters.get(index));
-                if (cmp != 0) {
-                    return cmp;
-                }
             }
             return statements.compareTo(cachedProcedure.statements);
         } else {
@@ -296,12 +258,7 @@ public class CachedProcedure extends Procedure {
             return true;
         } else if (other.getClass() == CachedProcedure.class) {
             final CachedProcedure cachedProcedure = (CachedProcedure) other;
-            if (parameters.size() == cachedProcedure.parameters.size()) {
-                for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(cachedProcedure.parameters.get(index))) {
-                        return false;
-                    }
-                }
+            if (parameters.equals(cachedProcedure.parameters)) {
                 return statements.equalTo(cachedProcedure.statements);
             }
         }
@@ -313,7 +270,7 @@ public class CachedProcedure extends Procedure {
     @Override
     public int hashCode() {
         object = null;
-        return (initHashCode + parameters.size()) * 31 + statements.size();
+        return (initHashCode + parameters.hashCode()) * 31 + statements.size();
     }
 
     /**

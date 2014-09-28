@@ -60,6 +60,14 @@ public class SetlDouble extends NumberValue {
      * Double value of pi, i.e. the ratio of the circumference of a circle to its diameter.
      */
     public  final static SetlDouble PI                = SetlDouble.valueOfNoEx(Math.PI);
+    /**
+     * Double value of zero.
+     */
+    public  final static SetlDouble ZERO              = SetlDouble.valueOfNoEx(0.0);
+    /**
+     * Double value of one.
+     */
+    public  final static SetlDouble ONE               = SetlDouble.valueOfNoEx(1.0);
 
     private SetlDouble(final Double d) {
         this.doubleValue = d;

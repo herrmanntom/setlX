@@ -4,10 +4,11 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
 /**
@@ -16,21 +17,26 @@ import java.util.regex.PatternSyntaxException;
  *                               matching `pattern' is replaced with `replacement'.
  */
 public class PD_replaceFirst extends PreDefinedProcedure {
+
+    private final static ParameterDef        STRING      = createParameter("string");
+    private final static ParameterDef        PATTERN     = createParameter("pattern");
+    private final static ParameterDef        REPLACEMENT = createParameter("replacement");
+
     /** Definition of the PreDefinedProcedure `replaceFirst'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_replaceFirst();
+    public  final static PreDefinedProcedure DEFINITION  = new PD_replaceFirst();
 
     private PD_replaceFirst() {
         super();
-        addParameter("string");
-        addParameter("pattern");
-        addParameter("replacement");
+        addParameter(STRING);
+        addParameter(PATTERN);
+        addParameter(REPLACEMENT);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException, SyntaxErrorException {
-        final Value string      = args.get(0);
-        final Value pattern     = args.get(1);
-        final Value replacement = args.get(2);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException, SyntaxErrorException {
+        final Value string      = args.get(STRING);
+        final Value pattern     = args.get(PATTERN);
+        final Value replacement = args.get(REPLACEMENT);
         if ( ! (string instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Input-argument '" + string.toString(state) + "' is not a string."

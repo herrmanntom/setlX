@@ -9,17 +9,10 @@ import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.ParameterDef.ParameterType;
-import org.randoom.setlx.utilities.SetlHashMap;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
-import org.randoom.setlx.utilities.WriteBackAgent;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -42,8 +35,7 @@ public class SetlClass extends Value {
 
     private final static Block  REBUILD_MARKER       = new Block(null, 0);
 
-    private final List<ParameterDef> parameters;          // parameter list
-    private final boolean            isLastParameterList; // is the last parameter of type LIST?
+    private final ParameterList      parameters;          // parameter list
     private final Block              initBlock;           // statements in the body of the definition
     private       HashSet<String>    initVars;            // member variables defined in the body
     private       Block              staticBlock;         // statements in the static block
@@ -59,22 +51,21 @@ public class SetlClass extends Value {
      * @param init        Statements to execute when creating objects.
      * @param staticBlock Statements to execute once.
      */
-    public SetlClass(final List<ParameterDef> parameters,
-                     final Block              init,
-                     final Block              staticBlock
+    public SetlClass(final ParameterList parameters,
+                     final Block         init,
+                     final Block         staticBlock
     ) {
         this(parameters, init, null, staticBlock, null, null);
     }
 
-    private SetlClass(final List<ParameterDef> parameters,
-                            final Block              init,
-                            final HashSet<String>    initVars,
-                            final Block              staticBlock,
-                            final HashSet<String>    staticVars,
-                            final SetlHashMap<Value> staticDefs
+    private SetlClass(final ParameterList      parameters,
+                      final Block              init,
+                      final HashSet<String>    initVars,
+                      final Block              staticBlock,
+                      final HashSet<String>    staticVars,
+                      final SetlHashMap<Value> staticDefs
     ) {
         this.parameters          = parameters;
-        this.isLastParameterList = (! parameters.isEmpty()) && parameters.get(parameters.size()-1).getType() == ParameterType.LIST;
         this.initBlock           = init;
         this.initVars            = initVars;
         this.staticBlock         = staticBlock;
@@ -146,9 +137,7 @@ public class SetlClass extends Value {
         final List<String> innerUsedVariables    = new ArrayList<String>();
 
         // add all parameters to bound
-        for (final ParameterDef def : parameters) {
-            def.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
-        }
+        parameters.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
 
         int preBound = innerBoundVariables.size();
         initBlock.collectVariablesAndOptimize(state, innerBoundVariables, innerUnboundVariables, innerUsedVariables);
@@ -178,27 +167,12 @@ public class SetlClass extends Value {
         }
 
         final int nArguments = args.size();
-        if (isLastParameterList) {
-            if (nArguments < parameters.size() - 1) {
-                final StringBuilder error = new StringBuilder();
-                error.append("'");
-                appendString(state, error, 0);
-                error.append("' is defined with at least ");
-                error.append(parameters.size() - 1);
-                error.append(" instead of ");
-                error.append(nArguments);
-                error.append(" parameters.");
-                throw new IncorrectNumberOfParametersException(error.toString());
-            }
-        } else if (nArguments != parameters.size()) {
+        if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
             final StringBuilder error = new StringBuilder();
             error.append("'");
             appendString(state, error, 0);
-            error.append("' is defined with ");
-            error.append(parameters.size());
-            error.append(" instead of ");
-            error.append(nArguments);
-            error.append(" parameters.");
+            error.append("'");
+            parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
             throw new IncorrectNumberOfParametersException(error.toString());
         }
 
@@ -215,28 +189,11 @@ public class SetlClass extends Value {
         state.setScope(newScope);
 
         // put arguments into inner scope
-        final int size         = parameters.size();
-              int rwParameters = 0;
-        for (int i = 0; i < size; ++i) {
-            final ParameterDef param = parameters.get(i);
-            if (param.getType() == ParameterType.READ_WRITE) {
-                param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
-                ++rwParameters;
-            } else if (param.getType() == ParameterType.LIST) {
-                SetlList parameters = new SetlList();
-                for (int valueIndex = i; valueIndex < values.size(); ++valueIndex) {
-                    parameters.addMember(state, values.get(valueIndex));
-                }
-                param.assign(state, parameters, FUNCTIONAL_CHARACTER);
-                break;
-            } else {
-                param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
-            }
-        }
+        final boolean            rwParameters = parameters.putParameterValuesIntoScope(state, values, FUNCTIONAL_CHARACTER);
 
-              WriteBackAgent     wba       = null;
-        final SetlHashMap<Value> members   = new SetlHashMap<Value>();
-        final SetlObject         newObject = SetlObject.createNew(members, this);
+              WriteBackAgent     wba          = null;
+        final SetlHashMap<Value> members      = new SetlHashMap<Value>();
+        final SetlObject         newObject    = SetlObject.createNew(members, this);
 
         newScope.linkToThisObject(newObject);
 
@@ -246,21 +203,8 @@ public class SetlClass extends Value {
             initBlock.execute(state);
 
             // extract 'rw' arguments from scope, store them into WriteBackAgent
-            if (rwParameters > 0) {
-                wba = new WriteBackAgent(rwParameters);
-
-                for (int i = 0; i < parameters.size(); ++i) {
-                    final ParameterDef param = parameters.get(i);
-                    if (param.getType() == ParameterType.READ_WRITE) {
-                        // value of parameter after execution
-                        final Value postValue = param.getValue(state);
-                        // expression used to fill parameter before execution
-                        final Expr  preExpr   = args.get(i);
-                        /* if possible the WriteBackAgent will set the variable used in this
-                           expression to its postExecution state in the outer environment    */
-                        wba.add(preExpr, postValue);
-                    }
-                }
+            if (rwParameters) {
+                wba = parameters.extractRwParametersFromScope(state, args);
             }
 
             members.putAll(extractBindings(state, initVars));
@@ -396,13 +340,7 @@ public class SetlClass extends Value {
             sb.append(className);
         }
         sb.append(" (");
-        final Iterator<ParameterDef> iter = parameters.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        parameters.appendString(state, sb, 0);
         sb.append(") {");
         sb.append(endl);
         initBlock.appendString(state, sb, tabs + 1, /* brackets = */ false);
@@ -423,11 +361,7 @@ public class SetlClass extends Value {
     public Value toTerm(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
-        final SetlList paramList = new SetlList(parameters.size());
-        for (final ParameterDef param: parameters) {
-            paramList.addMember(state, param.toTerm(state));
-        }
-        result.addMember(state, paramList);
+        result.addMember(state, parameters.toTerm(state));
 
         result.addMember(state, initBlock.toTerm(state));
         if (getStaticBlock() != null) {
@@ -448,17 +382,13 @@ public class SetlClass extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static SetlClass termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 3 || term.firstMember().getClass() != SetlList.class) {
+        if (term.size() != 3) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final SetlList           paramList  = (SetlList) term.firstMember();
-                final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
-                for (final Value v : paramList) {
-                    parameters.add(ParameterDef.valueToParameterDef(state, v));
-                }
-                final Block init        = TermConverter.valueToBlock(state, term.getMember(2));
-                      Block staticBlock = null;
+                final ParameterList parameters  = ParameterList.termFragmentToParameterList(state, term.firstMember());
+                final Block         init        = TermConverter.valueToBlock(state, term.getMember(2));
+                      Block         staticBlock = null;
                 if (! term.lastMember().equals(SetlString.NIL)) {
                     staticBlock = TermConverter.valueToBlock(state, term.lastMember());
                 }
@@ -477,15 +407,9 @@ public class SetlClass extends Value {
             return 0;
         } else if (other.getClass() == SetlClass.class) {
             final SetlClass setlClass = (SetlClass) other;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(setlClass.parameters.size());
+            int cmp = parameters.compareTo(setlClass.parameters);
             if (cmp != 0) {
                 return cmp;
-            }
-            for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(setlClass.parameters.get(index));
-                if (cmp != 0) {
-                    return cmp;
-                }
             }
             cmp = initBlock.compareTo(setlClass.initBlock);
             if (cmp != 0) {
@@ -519,19 +443,14 @@ public class SetlClass extends Value {
         if (this == other) {
             return true;
         } else if (other.getClass() == SetlClass.class) {
-            final SetlClass setlClass = (SetlClass) other;
-            if (parameters.size() == setlClass.parameters.size()) {
-                for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(setlClass.parameters.get(index))) {
-                        return false;
-                    }
-                }
-                if (initBlock.equalTo(setlClass.initBlock)) {
+            final SetlClass otherClass = (SetlClass) other;
+            if (parameters.equals(otherClass.parameters)) {
+                if (initBlock.equalTo(otherClass.initBlock)) {
                     if (getStaticBlock() != null) {
-                        if (setlClass.getStaticBlock() != null) {
-                            return getStaticBlock().equalTo(setlClass.getStaticBlock());
+                        if (otherClass.getStaticBlock() != null) {
+                            return getStaticBlock().equalTo(otherClass.getStaticBlock());
                         }
-                    } if (setlClass.getStaticBlock() == null) {
+                    } if (otherClass.getStaticBlock() == null) {
                         return true;
                     }
                 }
@@ -544,7 +463,7 @@ public class SetlClass extends Value {
 
     @Override
     public int hashCode() {
-        int hash = initHashCode + parameters.size();
+        int hash = initHashCode + parameters.hashCode();
         if (initVars != null) {
             hash = hash * 31 + initVars.hashCode();
         }

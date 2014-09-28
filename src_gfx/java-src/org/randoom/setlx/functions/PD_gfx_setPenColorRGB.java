@@ -3,21 +3,25 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
 import java.awt.Color;
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_setPenColorRGB extends GfxFunction {
+    private final static ParameterDef        R          = createParameter("r");
+    private final static ParameterDef        G          = createParameter("g");
+    private final static ParameterDef        B          = createParameter("b");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_setPenColorRGB();
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_setPenColorRGB();
 
     public PD_gfx_setPenColorRGB(){
         super();
-        addParameter("r");
-        addParameter("g");
-        addParameter("b");
+        addParameter(R);
+        addParameter(G);
+        addParameter(B);
     }
 
     private boolean checkParameter( final double rgb ){
@@ -25,10 +29,10 @@ public class PD_gfx_setPenColorRGB extends GfxFunction {
     }
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        final double r = doubleFromValue( state, args.get(0) );
-        final double g = doubleFromValue( state, args.get(1) );
-        final double b = doubleFromValue( state, args.get(2) );
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException{
+        final double r = doubleFromValue( state, args.get(R) );
+        final double g = doubleFromValue( state, args.get(G) );
+        final double b = doubleFromValue( state, args.get(B) );
         if ( checkParameter(r) && checkParameter(g) && checkParameter(b) ){
             StdDraw.setPenColor(new Color(new Float(r),new Float(g),new Float(b)));
             return SetlBoolean.TRUE;

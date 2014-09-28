@@ -264,9 +264,9 @@ lambdaProcedure returns [LambdaProcedure lp]
     : lambdaParameters '|->' expr[false] { $lp = new LambdaProcedure(setlXstate, $lambdaParameters.paramList, $expr.ex); }
     ;
 
-lambdaParameters returns [List<ParameterDef> paramList]
+lambdaParameters returns [ParameterList paramList]
     @init {
-        $paramList = new ArrayList<ParameterDef>();
+        $paramList = new ParameterList();
     }
     : variable             { $paramList.add(new ParameterDef($variable.v, ParameterType.READ_ONLY)); }
     | '['
@@ -393,9 +393,9 @@ procedure returns [Procedure pd]
       { $pd = new Closure($procedureParameters.paramList, $block.blk);         }
     ;
 
-procedureParameters [boolean enableRw] returns [List<ParameterDef> paramList]
+procedureParameters [boolean enableRw] returns [ParameterList paramList]
     @init {
-        $paramList = new ArrayList<ParameterDef>();
+        $paramList = new ParameterList();
     }
     : dp1 = procedureParameter[$enableRw]       { $paramList.add($dp1.param);                                  }
       (

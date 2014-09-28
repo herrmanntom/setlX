@@ -2,9 +2,10 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * compare(valueA, valueB) : Compares two arbitrary values, returns an integer.
@@ -15,18 +16,22 @@ import java.util.List;
  *                           arbitrarily and implies no special meaning.
  */
 public class PD_compare extends PreDefinedProcedure {
+
+    private final static ParameterDef        VALUE_A      = createParameter("valueA");
+    private final static ParameterDef        VALUE_B      = createParameter("valueB");
+
     /** Definition of the PreDefinedProcedure `compare'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_compare();
+    public  final static PreDefinedProcedure DEFINITION   = new PD_compare();
 
     private PD_compare() {
         super();
-        addParameter("valueA");
-        addParameter("valueB");
+        addParameter(VALUE_A);
+        addParameter(VALUE_B);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
-        return Rational.valueOf(args.get(0).compareTo(args.get(1)));
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+        return Rational.valueOf(args.get(VALUE_A).compareTo(args.get(VALUE_B)));
     }
 }
 

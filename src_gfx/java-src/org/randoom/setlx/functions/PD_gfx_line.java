@@ -3,28 +3,34 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_line extends GfxFunction {
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_line();
+    private final static ParameterDef        X0         = createParameter("x0");
+    private final static ParameterDef        Y0         = createParameter("y0");
+    private final static ParameterDef        X1         = createParameter("x1");
+    private final static ParameterDef        Y1         = createParameter("y1");
+
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_line();
 
     public PD_gfx_line(){
         super();
-        addParameter("x0");
-        addParameter("y0");
-        addParameter("x1");
-        addParameter("y1");
+        addParameter(X0);
+        addParameter(Y0);
+        addParameter(X1);
+        addParameter(Y1);
     }
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        StdDraw.line( doubleFromValue( state, args.get(0) ),
-                      doubleFromValue( state, args.get(1) ),
-                      doubleFromValue( state, args.get(2) ),
-                      doubleFromValue( state, args.get(3) )
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException{
+        StdDraw.line( doubleFromValue( state, args.get(X0) ),
+                      doubleFromValue( state, args.get(Y0) ),
+                      doubleFromValue( state, args.get(X1) ),
+                      doubleFromValue( state, args.get(Y1) )
                     );
         return SetlBoolean.TRUE;
     }

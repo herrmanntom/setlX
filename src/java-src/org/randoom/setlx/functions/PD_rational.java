@@ -2,25 +2,29 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * rational(stringOrNumber) : Convert string or number into a rational, returns om on failure.
  */
 public class PD_rational extends PreDefinedProcedure {
+
+    private final static ParameterDef        VALUE      = createParameter("value");
+
     /** Definition of the PreDefinedProcedure `rational'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_rational();
+    public  final static PreDefinedProcedure DEFINITION = new PD_rational();
 
     private PD_rational() {
         super();
-        addParameter("value");
+        addParameter(VALUE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).toRational(state);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        return args.get(VALUE).toRational(state);
     }
 }
 

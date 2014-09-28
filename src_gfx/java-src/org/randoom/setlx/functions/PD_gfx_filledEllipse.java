@@ -3,29 +3,35 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_filledEllipse extends GfxFunction {
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_filledEllipse();
+    private final static ParameterDef        X          = createParameter("x");
+    private final static ParameterDef        Y          = createParameter("y");
+    private final static ParameterDef        SEMI_1     = createParameter("semiMajorAxis");
+    private final static ParameterDef        SEMI_2     = createParameter("semiMinorAxis");
+
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_filledEllipse();
 
     public PD_gfx_filledEllipse(){
         super();
-        addParameter("x");
-        addParameter("y");
-        addParameter("semiMajorAxis");
-        addParameter("semiMinorAxis");
+        addParameter(X);
+        addParameter(Y);
+        addParameter(SEMI_1);
+        addParameter(SEMI_2);
     }
 
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        StdDraw.filledEllipse(   doubleFromValue( state, args.get(0) ),
-                                 doubleFromValue( state, args.get(1) ),
-                                 doubleFromValue( state, args.get(2) ),
-                                 doubleFromValue( state, args.get(3) )
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException{
+        StdDraw.filledEllipse(   doubleFromValue( state, args.get(X) ),
+                                 doubleFromValue( state, args.get(Y) ),
+                                 doubleFromValue( state, args.get(SEMI_1) ),
+                                 doubleFromValue( state, args.get(SEMI_2) )
                              );
         return SetlBoolean.TRUE;
     }

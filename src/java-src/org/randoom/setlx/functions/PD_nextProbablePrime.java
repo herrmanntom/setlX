@@ -5,9 +5,10 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * nextProbablePrime(integer) : Returns the next probable prime greater as `integer'.
@@ -15,17 +16,20 @@ import java.util.List;
  *                              does not exceed 2**-100.
  */
 public class PD_nextProbablePrime extends PreDefinedProcedure {
+
+    private final static ParameterDef        INTEGER    = createParameter("integer");
+
     /** Definition of the PreDefinedProcedure `nextProbablePrime'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_nextProbablePrime();
+    public  final static PreDefinedProcedure DEFINITION = new PD_nextProbablePrime();
 
     private PD_nextProbablePrime() {
         super();
-        addParameter("integer");
+        addParameter(INTEGER);
     }
 
     @Override
-    public Rational execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value integer  = args.get(0);
+    public Rational execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final Value integer = args.get(INTEGER);
         if (integer.isInteger() != SetlBoolean.TRUE) {
             throw new IncompatibleTypeException("Argument '" + integer + "' is not an integer.");
         }

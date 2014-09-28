@@ -1,29 +1,33 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.AbortException;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  *  abort(message) : stops execution and displays given error message(s)
  */
 public class PD_abort extends PreDefinedProcedure {
+
+    private final static ParameterDef        MESSAGE    = createListParameter("message");
+
     /** Definition of the PreDefinedProcedure `abort'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_abort();
+    public  final static PreDefinedProcedure DEFINITION = new PD_abort();
 
     private PD_abort() {
         super();
-        addParameter("message");
-        enableUnlimitedParameters();
+        addParameter(MESSAGE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws AbortException {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws AbortException {
         final StringBuilder message = new StringBuilder();
         message.append("abort: ");
-        for (final Value arg : args) {
+        for (final Value arg : (SetlList) args.get(MESSAGE)) {
             arg.appendUnquotedString(state, message, 0);
         }
         throw new AbortException(message.toString());

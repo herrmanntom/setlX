@@ -1,8 +1,4 @@
-/*
- */
 package org.randoom.setlx.functions;
-
-import java.util.List;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
@@ -13,25 +9,30 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
+import java.util.HashMap;
+
 /**
  * @author Patrick Robinson
  *         <p/>
  *         Creates a new Vector
  */
 public class PD_la_vector extends PreDefinedProcedure {
-    public final static PreDefinedProcedure DEFINITION = new PD_la_vector();
+
+    private final static ParameterDef        COLLECTION_VALUE = createParameter("collectionValue");
+
+    public  final static PreDefinedProcedure DEFINITION       = new PD_la_vector();
 
     private PD_la_vector() {
         super();
-        addParameter("collectionValue", ParameterDef.ParameterType.READ_ONLY);
+        addParameter(COLLECTION_VALUE);
     }
 
     @Override
-    public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if (args.get(0) instanceof SetlMatrix) {
-            return ((SetlMatrix) args.get(0)).toVector();
-        } else if ((args.get(0) instanceof CollectionValue)) {
-            return new SetlVector(state, (CollectionValue) args.get(0));
+    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+        if (args.get(COLLECTION_VALUE) instanceof SetlMatrix) {
+            return ((SetlMatrix) args.get(COLLECTION_VALUE)).toVector();
+        } else if ((args.get(COLLECTION_VALUE) instanceof CollectionValue)) {
+            return new SetlVector(state, (CollectionValue) args.get(COLLECTION_VALUE));
         } else {
             throw new IncompatibleTypeException("Vectors can only be created from collections or matrices.");
         }

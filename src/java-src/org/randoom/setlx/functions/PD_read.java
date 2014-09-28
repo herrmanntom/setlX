@@ -3,11 +3,13 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * read(message, ...) : Prompts the user with `message', then reads from
@@ -15,25 +17,26 @@ import java.util.List;
  *                      Converts input into integer or double if possible.
  */
 public class PD_read extends PreDefinedProcedure {
+
+    private final static ParameterDef        MESSAGE    = createListParameter("message");
+
     /** Definition of the PreDefinedProcedure `read'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_read();
+    public  final static PreDefinedProcedure DEFINITION = new PD_read();
 
     private PD_read() {
         super();
-        addParameter("message");
-        enableUnlimitedParameters();
-        setMinimumNumberOfParameters(0);
+        addParameter(MESSAGE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
         Value               inputValue = Om.OM;
         String              input      = null;
         final StringBuilder prompt     = new StringBuilder();
         if (args.isEmpty()) {
             prompt.append(": ");
         } else {
-            for (final Value arg : args) {
+            for (final Value arg : (SetlList) args.get(MESSAGE)) {
                 arg.appendUnquotedString(state, prompt, 0);
             }
         }
@@ -56,8 +59,6 @@ public class PD_read extends PreDefinedProcedure {
             } else if (inputValue.toDouble(state) != Om.OM) {
                 inputValue = inputValue.toDouble(state);
             }
-        } else {
-            inputValue = Om.OM;
         }
 
         return inputValue;

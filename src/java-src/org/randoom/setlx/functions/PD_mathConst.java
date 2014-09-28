@@ -4,27 +4,31 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  *  mathConst(name_of_constant) : get the value of a mathematical constant (currently pi, e and infinity)
  */
 public class PD_mathConst extends PreDefinedProcedure {
+
+    private final static ParameterDef        NAME_OF_CONSTANT = createParameter("nameOfConstant");
+
     /** Definition of the PreDefinedProcedure `mathConst'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_mathConst();
+    public  final static PreDefinedProcedure DEFINITION       = new PD_mathConst();
 
     private PD_mathConst() {
         super();
-        addParameter("name_of_constant");
+        addParameter(NAME_OF_CONSTANT);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars)
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args)
         throws UndefinedOperationException, IncompatibleTypeException
     {
-        final Value name = args.get(0);
+        final Value name = args.get(NAME_OF_CONSTANT);
         if (       name.getUnquotedString(state).equalsIgnoreCase( "e"        )) {
             return SetlDouble.E;
         } else if (name.getUnquotedString(state).equalsIgnoreCase( "pi"       )) {

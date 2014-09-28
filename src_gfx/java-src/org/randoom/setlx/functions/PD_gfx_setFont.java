@@ -1,28 +1,31 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
 import java.awt.Font;
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_setFont extends GfxFunction {
 
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_setFont();
+    private final static ParameterDef        FONT       = createOptionalParameter("fontName", Om.OM);
+
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_setFont();
 
     public PD_gfx_setFont(){
         super();
-        addParameter("fontName");
-        setMinimumNumberOfParameters(0);
+        addParameter(FONT);
     }
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        if ( args.size() == 1 ){
-            final Font f = new Font( stringFromValue( state, args.get(0) ), StdDraw.getFont().getStyle(), StdDraw.getFont().getSize()  );
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException{
+        if ( args.get(FONT) != Om.OM ){
+            final Font f = new Font( stringFromValue( state, args.get(FONT) ), StdDraw.getFont().getStyle(), StdDraw.getFont().getSize()  );
             StdDraw.setFont(f);
         }else {
             StdDraw.setFont();

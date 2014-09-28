@@ -57,6 +57,7 @@ import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
@@ -122,7 +123,7 @@ public class SetlObject extends Value {
 
     private LambdaProcedure getClassMember(final State state) {
         if (getClassMember == null) {
-            getClassMember = new LambdaProcedure(state, new ArrayList<ParameterDef>(), new ValueExpr(classDefinition));
+            getClassMember = new LambdaProcedure(state, new ParameterList(0), new ValueExpr(classDefinition));
         }
         return getClassMember;
     }

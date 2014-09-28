@@ -2,11 +2,13 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map.Entry;
 
 /**
@@ -14,24 +16,23 @@ import java.util.Map.Entry;
  *               limited debugging functionality.
  */
 public class PD_stop extends PreDefinedProcedure {
-    /** Definition of the PreDefinedProcedure `stop'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_stop();
+    private final static ParameterDef        ID           = createOptionalParameter("id", Om.OM);
 
-    private static boolean firstTimeUse = true;
+    /** Definition of the PreDefinedProcedure `stop'. */
+    public  final static PreDefinedProcedure DEFINITION   = new PD_stop();
+
+    private       static boolean             firstTimeUse = true;
 
     private PD_stop() {
         super();
-        addParameter("id");
-        setMinimumNumberOfParameters(0);
+        addParameter(ID);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        String input   = null;
-
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
         String message = this.getName() + "(";
-        if (args.size() == 1) {
-            message += args.get(0).toString(state);
+        if (args.get(ID) != Om.OM) {
+            message += args.get(ID).toString(state);
         }
         message += ")";
 
@@ -47,6 +48,7 @@ public class PD_stop extends PreDefinedProcedure {
             }
             prompt += ": ";
 
+            String input;
             try {
                 state.prompt(prompt);
                 input = state.inReadLine();
@@ -57,14 +59,15 @@ public class PD_stop extends PreDefinedProcedure {
                 }
             } catch (final JVMIOException ioe) {
                 state.errWriteLn("IO error trying to read from stdin!");
+                input = "";
             }
 
             if (input.equals("")) {
                 break;
             } else {
-                final String[] cmds = input.split(",");
-                if (cmds.length > 0) {
-                    for (String cmd : cmds) {
+                final String[] commands = input.split(",");
+                if (commands.length > 0) {
+                    for (String cmd : commands) {
                         cmd = cmd.trim();
                         if (cmd.equals("All")) {
                             for (final Entry<String, Value> binding : state.getAllVariablesInScope().entrySet()) {

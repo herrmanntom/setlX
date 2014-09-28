@@ -1,25 +1,29 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * isBoolean(value) : Test if value-type is boolean.
  */
 public class PD_isBoolean extends PreDefinedProcedure {
+
+    private final static ParameterDef        VALUE      = createParameter("value");
+
     /** Definition of the PreDefinedProcedure `isBoolean'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_isBoolean();
+    public  final static PreDefinedProcedure DEFINITION = new PD_isBoolean();
 
     private PD_isBoolean() {
         super();
-        addParameter("value");
+        addParameter(VALUE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
-        return args.get(0).isBoolean();
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
+        return args.get(VALUE).isBoolean();
     }
 }
 

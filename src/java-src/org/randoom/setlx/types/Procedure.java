@@ -5,16 +5,10 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.*;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
-import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
-import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -36,19 +30,15 @@ public class Procedure extends Value {
     /**
      * List of parameters.
      */
-    protected final List<ParameterDef> parameters;
-    /**
-     * Is the last parameter of type LIST?.
-     */
-    protected final boolean            isLastParameterList;
+    protected final ParameterList parameters;
     /**
      * Statements in the body of the procedure.
      */
-    protected final Block              statements;
+    protected final Block         statements;
     /**
      * Surrounding object for next call.
      */
-    protected       SetlObject         object;
+    protected       SetlObject    object;
 
     /**
      * Create new procedure definition.
@@ -56,9 +46,8 @@ public class Procedure extends Value {
      * @param parameters procedure parameters
      * @param statements statements in the body of the procedure
      */
-    public Procedure(final List<ParameterDef> parameters, final Block statements) {
+    public Procedure(final ParameterList parameters, final Block statements) {
         this.parameters          = parameters;
-        this.isLastParameterList = (! parameters.isEmpty()) && parameters.get(parameters.size()-1).getType() == ParameterType.LIST;
         this.statements          = statements;
         this.object              = null;
     }
@@ -95,9 +84,7 @@ public class Procedure extends Value {
         final List<String> innerUsedVariables    = new ArrayList<String>();
 
         // add all parameters to bound
-        for (final ParameterDef def : parameters) {
-            def.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
-        }
+        parameters.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
 
         statements.collectVariablesAndOptimize(state, innerBoundVariables, innerUnboundVariables, innerUsedVariables);
     }
@@ -122,27 +109,12 @@ public class Procedure extends Value {
             final SetlObject object     = this.object;
             this.object = null;
 
-            if (isLastParameterList) {
-                if (nArguments < parameters.size() - 1) {
-                    final StringBuilder error = new StringBuilder();
-                    error.append("'");
-                    appendStringWithoutStatements(state, error);
-                    error.append("' is defined with at least ");
-                    error.append(parameters.size() - 1);
-                    error.append(" instead of ");
-                    error.append(nArguments);
-                    error.append(" parameters.");
-                    throw new IncorrectNumberOfParametersException(error.toString());
-                }
-            } else if (nArguments != parameters.size()) {
+            if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
                 final StringBuilder error = new StringBuilder();
                 error.append("'");
                 appendStringWithoutStatements(state, error);
-                error.append("' is defined with ");
-                error.append(parameters.size());
-                error.append(" instead of ");
-                error.append(nArguments);
-                error.append(" parameters.");
+                error.append("'");
+                parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
                 throw new IncorrectNumberOfParametersException(error.toString());
             }
 
@@ -190,24 +162,7 @@ public class Procedure extends Value {
         }
 
         // put arguments into inner scope
-        final int parametersSize = parameters.size();
-              int rwParameters   = 0;
-        for (int i = 0; i < parametersSize; ++i) {
-            final ParameterDef param = parameters.get(i);
-            if (param.getType() == ParameterType.READ_WRITE) {
-                param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
-                ++rwParameters;
-            } else if (param.getType() == ParameterType.LIST) {
-                SetlList parameters = new SetlList();
-                for (int valueIndex = i; valueIndex < values.size(); ++valueIndex) {
-                    parameters.addMember(state, values.get(valueIndex));
-                }
-                param.assign(state, parameters, FUNCTIONAL_CHARACTER);
-                break;
-            } else {
-                param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
-            }
-        }
+        final boolean rwParameters = parameters.putParameterValuesIntoScope(state, values, FUNCTIONAL_CHARACTER);
 
         // get rid of value-list to potentially free some memory
         values.clear();
@@ -222,20 +177,8 @@ public class Procedure extends Value {
             result = statements.execute(state);
 
             // extract 'rw' arguments from environment and store them into WriteBackAgent
-            if (rwParameters > 0) {
-                wba = new WriteBackAgent(rwParameters);
-                for (int i = 0; i < parametersSize; ++i) {
-                    final ParameterDef param = parameters.get(i);
-                    if (param.getType() == ParameterType.READ_WRITE) {
-                        // value of parameter after execution
-                        final Value postValue = param.getValue(state);
-                        // expression used to fill parameter before execution
-                        final Expr  preExpr   = args.get(i);
-                        /* if possible the WriteBackAgent will set the variable used in this
-                           expression to its postExecution state in the outer environment    */
-                        wba.add(preExpr, postValue);
-                    }
-                }
+            if (rwParameters) {
+                wba = parameters.extractRwParametersFromScope(state, args);
             }
 
         } catch (final StackOverflowError soe) {
@@ -282,13 +225,7 @@ public class Procedure extends Value {
     protected void appendStringWithoutStatements(final State state, final StringBuilder sb) {
         object = null;
         sb.append("procedure(");
-        final Iterator<ParameterDef> iter = parameters.iterator();
-        while (iter.hasNext()) {
-            iter.next().appendString(state, sb, 0);
-            if (iter.hasNext()) {
-                sb.append(", ");
-            }
-        }
+        parameters.appendString(state, sb, 0);
         sb.append(")");
     }
 
@@ -299,11 +236,7 @@ public class Procedure extends Value {
         object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        final SetlList paramList = new SetlList(parameters.size());
-        for (final ParameterDef param: parameters) {
-            paramList.addMember(state, param.toTerm(state));
-        }
-        result.addMember(state, paramList);
+        result.addMember(state, parameters.toTerm(state));
 
         result.addMember(state, statements.toTerm(state));
 
@@ -319,15 +252,11 @@ public class Procedure extends Value {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static Procedure termToValue(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || term.firstMember().getClass() != SetlList.class) {
+        if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList           paramList  = (SetlList) term.firstMember();
-            final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
-            for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(state, v));
-            }
-            final Block              block      = TermConverter.valueToBlock(state, term.lastMember());
+            final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
+            final Block         block      = TermConverter.valueToBlock(state, term.lastMember());
             return new Procedure(parameters, block);
         }
     }
@@ -341,15 +270,9 @@ public class Procedure extends Value {
             return 0;
         } else if (other.getClass() == Procedure.class) {
             final Procedure otherProcedure = (Procedure) other;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(otherProcedure.parameters.size());
+            int cmp = parameters.compareTo(otherProcedure.parameters);
             if (cmp != 0) {
                 return cmp;
-            }
-            for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(otherProcedure.parameters.get(index));
-                if (cmp != 0) {
-                    return cmp;
-                }
             }
             return statements.compareTo(otherProcedure.statements);
         } else {
@@ -370,12 +293,7 @@ public class Procedure extends Value {
             return true;
         } else if (other.getClass() == Procedure.class) {
             final Procedure procedure = (Procedure) other;
-            if (parameters.size() == procedure.parameters.size()) {
-                for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(procedure.parameters.get(index))) {
-                        return false;
-                    }
-                }
+            if (parameters.equals(procedure.parameters)) {
                 return statements.equalTo(procedure.statements);
             }
         }
@@ -387,7 +305,7 @@ public class Procedure extends Value {
     @Override
     public int hashCode() {
         object = null;
-        return (initHashCode + parameters.size()) * 31 + statements.size();
+        return (initHashCode + parameters.hashCode()) * 31 + statements.size();
     }
 
     /**

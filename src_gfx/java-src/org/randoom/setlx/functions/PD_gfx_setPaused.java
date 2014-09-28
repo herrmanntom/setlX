@@ -3,28 +3,30 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_setPaused extends PreDefinedProcedure {
+    private final static ParameterDef        PAUSED     = createParameter("paused");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_setPaused();
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_setPaused();
 
     protected PD_gfx_setPaused() {
         super();
-        addParameter("paused");
+        addParameter(PAUSED);
     }
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
         SetlBoolean bool;
-        if ( args.get(0) instanceof SetlBoolean ){
-            bool = (SetlBoolean) args.get(0);
+        if ( args.get(PAUSED) instanceof SetlBoolean ){
+            bool = (SetlBoolean) args.get(PAUSED);
             if ( bool.equalTo(SetlBoolean.TRUE) ){
                 StdDraw.setPaused(true);
-            }else{
+            } else {
                 StdDraw.setPaused(false);
             }
         }else{

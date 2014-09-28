@@ -7,25 +7,28 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * la_cond(matrix) : Calculate the condition of the matrix, i.e. ratio of largest to smallest singular value.
  */
 public class PD_la_cond extends PreDefinedProcedure {
+
+    private final static ParameterDef        MATRIX     = createParameter("matrix");
+
     /** Definition of the PreDefinedProcedure `la_cond'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_la_cond();
+    public  final static PreDefinedProcedure DEFINITION = new PD_la_cond();
 
     private PD_la_cond() {
         super();
-        addParameter("Matrix", ParameterDef.ParameterType.READ_ONLY);
+        addParameter(MATRIX);
     }
 
     @Override
-    public Value execute(State state, List<Value> args, List<Value> writeBackVars) throws SetlException {
-        if (!(args.get(0) instanceof SetlMatrix)) {
-            throw new IncompatibleTypeException("The Parameter needs to be a Matrix.");
+    public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+        if (!(args.get(MATRIX) instanceof SetlMatrix)) {
+            throw new IncompatibleTypeException("The parameter needs to be a matrix.");
         }
-        return ((SetlMatrix) args.get(0)).condition();
+        return ((SetlMatrix) args.get(MATRIX)).condition();
     }
 }

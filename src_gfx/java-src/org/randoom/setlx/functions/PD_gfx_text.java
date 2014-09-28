@@ -1,37 +1,38 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
+import org.randoom.setlx.types.SetlDouble;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_text extends GfxFunction {
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_text();
+    private final static ParameterDef        X          = createParameter("x");
+    private final static ParameterDef        Y          = createParameter("y");
+    private final static ParameterDef        STRING     = createParameter("string");
+    private final static ParameterDef        DEGREES    = createOptionalParameter("degrees", SetlDouble.ZERO);
+
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_text();
 
     protected PD_gfx_text() {
         super();
-        addParameter("x");
-        addParameter("y");
-        addParameter("string");
-        addParameter("degrees");
-        setMinimumNumberOfParameters(3);
+        addParameter(X);
+        addParameter(Y);
+        addParameter(STRING);
+        addParameter(DEGREES);
     }
 
     @Override
-    protected Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final double x = doubleFromValue(state, args.get(0));
-        final double y = doubleFromValue(state, args.get(1));
-        final String s = stringFromValue(state, args.get(2));
-        if ( args.size() == 3 ){
-            StdDraw.text(x, y, s);
-        }else if ( args.size()  == 4 ){
-            StdDraw.text(x, y, s, doubleFromValue(state, args.get(3)));
-        }else{
-            return SetlBoolean.FALSE;
-        }
+    protected Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final double x = doubleFromValue(state, args.get(X));
+        final double y = doubleFromValue(state, args.get(Y));
+        final String s = stringFromValue(state, args.get(STRING));
+        StdDraw.text(x, y, s, doubleFromValue(state, args.get(DEGREES)));
         return SetlBoolean.TRUE;
     }
 

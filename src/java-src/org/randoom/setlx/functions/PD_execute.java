@@ -6,26 +6,30 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * execute(setlX_statements) : Execute a String of SetlX statements.
  */
 public class PD_execute extends PreDefinedProcedure {
+
+    private final static ParameterDef        SETLX_STATEMENTS = createParameter("setlX_statements");
+
     /** Definition of the PreDefinedProcedure `execute'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_execute();
+    public  final static PreDefinedProcedure DEFINITION       = new PD_execute();
 
     private PD_execute() {
         super();
-        addParameter("setlX_statements");
+        addParameter(SETLX_STATEMENTS);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value   stmntArg = args.get(0);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final Value stmntArg = args.get(SETLX_STATEMENTS);
         if ( ! (stmntArg instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "Statement-argument '" + stmntArg.toString(state) + "' is not a string."

@@ -5,32 +5,37 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * sleep(time_in_ms) : Pause execution for a number of milliseconds.
  */
 public class PD_sleep extends PreDefinedProcedure {
+
+    private final static ParameterDef        TIME_IN_MS = createParameter("timeInMs");
+
     /** Definition of the PreDefinedProcedure `sleep'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_sleep();
+    public  final static PreDefinedProcedure DEFINITION = new PD_sleep();
 
     private PD_sleep() {
         super();
-        addParameter("time_in_ms");
+        addParameter(TIME_IN_MS);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        if (args.get(0).isInteger() == SetlBoolean.FALSE || args.get(0).compareTo(Rational.ONE) < 0 ) {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+        Value value = args.get(TIME_IN_MS);
+        if (value.isInteger() == SetlBoolean.FALSE || value.compareTo(Rational.ONE) < 0 ) {
             throw new IncompatibleTypeException(
-                "Time_in_ms-argument '" + args.get(0) + "' is not an integer >= 1."
+                "Time_in_ms-argument '" + value + "' is not an integer >= 1."
             );
         }
 
         try {
-            final int n = args.get(0).jIntValue();
+            final int n = value.jIntValue();
             Thread.sleep(n);
         } catch (final Exception e) {
             // don't care if anything happens here...

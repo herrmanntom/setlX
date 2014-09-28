@@ -6,27 +6,32 @@ import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
- * nDecimalPlaces(rational, n) : Get string of rational number with max of n digits after decimal point.
+ * nDecimalPlaces(rational, n := 2) : Get string of rational number with max of n digits after decimal point.
  */
 public class PD_nDecimalPlaces extends PreDefinedProcedure {
+
+    private final static ParameterDef        RATIONAL   = createParameter("rational");
+    private final static ParameterDef        N_DIGITS   = createOptionalParameter("nDigits", Rational.TWO);
+
     /** Definition of the PreDefinedProcedure `nDecimalPlaces'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_nDecimalPlaces();
+    public  final static PreDefinedProcedure DEFINITION = new PD_nDecimalPlaces();
 
     private PD_nDecimalPlaces() {
         super();
-        addParameter("rational");
-        addParameter("n");
+        addParameter(RATIONAL);
+        addParameter(N_DIGITS);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value number  = args.get(0);
-        final Value nValue  = args.get(1);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final Value number  = args.get(RATIONAL);
+        final Value nValue  = args.get(N_DIGITS);
         if ( ! (number instanceof Rational)) {
             throw new IncompatibleTypeException(
                 "Rational-argument '" + number + "' is not a rational number."

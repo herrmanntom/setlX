@@ -2,26 +2,30 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * arb(collectionValue) : Selects an arbitrary member from `collectionValue'.
  *                        Note that 'arb' is deterministic, while rnd is not.
  */
 public class PD_arb extends PreDefinedProcedure {
+
+    private final static ParameterDef        COLLECTION_VALUE = createParameter("collectionValue");
+
     /** Definition of the PreDefinedProcedure `arb'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_arb();
+    public  final static PreDefinedProcedure DEFINITION       = new PD_arb();
 
     private PD_arb() {
         super();
-        addParameter("collectionValue");
+        addParameter(COLLECTION_VALUE);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        return args.get(0).arbitraryMember(state);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        return args.get(COLLECTION_VALUE).arbitraryMember(state);
     }
 }
 

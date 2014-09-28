@@ -6,27 +6,32 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * makeTerm(functionalCharacter, body) : Create a term with the form: functionalCharacter(body)
  */
 public class PD_makeTerm extends PreDefinedProcedure {
+
+    private final static ParameterDef        FUNCTIONAL_CHARACTER = createParameter("functionalCharacter");
+    private final static ParameterDef        BODY                 = createParameter("body");
+
     /** Definition of the PreDefinedProcedure `makeTerm'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_makeTerm();
+    public  final static PreDefinedProcedure DEFINITION           = new PD_makeTerm();
 
     private PD_makeTerm() {
         super();
-        addParameter("functionalCharacter");
-        addParameter("body");
+        addParameter(FUNCTIONAL_CHARACTER);
+        addParameter(BODY);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        final Value arg0 = args.get(0);
-        final Value arg1 = args.get(1);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+        final Value arg0 = args.get(FUNCTIONAL_CHARACTER);
+        final Value arg1 = args.get(BODY);
         if ( ! (arg0 instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "FunctionalCharacter '" + arg0.toString(state) + "' is not a string."

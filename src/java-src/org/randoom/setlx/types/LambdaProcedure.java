@@ -5,13 +5,9 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * This class represents a lambda procedure.
@@ -38,15 +34,15 @@ public class LambdaProcedure extends Procedure {
      * @param parameters List of parameters.
      * @param expr       lambda-expression.
      */
-    public LambdaProcedure(final State state, final List<ParameterDef> parameters, final Expr expr) {
+    public LambdaProcedure(final State state, final ParameterList parameters, final Expr expr) {
         super(parameters, new Block(state, 1));
         this.expr = expr;
         statements.add(new Return(expr));
     }
     private LambdaProcedure(
-        final List<ParameterDef> parameters,
-        final Block              statements,
-        final Expr               expr
+        final ParameterList parameters,
+        final Block         statements,
+        final Expr          expr
     ) {
         super(parameters, statements);
         this.expr = expr;
@@ -66,17 +62,11 @@ public class LambdaProcedure extends Procedure {
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         object = null;
-        if (parameters.size() == 1) {
-            parameters.get(0).appendString(state, sb, 0);
+        if (parameters.hasSizeOfOne()) {
+            parameters.appendString(state, sb, 0);
         } else {
             sb.append("[");
-            final Iterator<ParameterDef> iter = parameters.iterator();
-            while (iter.hasNext()) {
-                iter.next().appendString(state, sb, 0);
-                if (iter.hasNext()) {
-                    sb.append(", ");
-                }
-            }
+            parameters.appendString(state, sb, 0);
             sb.append("]");
         }
         sb.append(" |-> ");
@@ -90,11 +80,7 @@ public class LambdaProcedure extends Procedure {
         object = null;
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
 
-        final SetlList paramList = new SetlList(parameters.size());
-        for (final ParameterDef param: parameters) {
-            paramList.addMember(state, param.toTerm(state));
-        }
-        result.addMember(state, paramList);
+        result.addMember(state, parameters.toTerm(state));
 
         result.addMember(state, expr.toTerm(state));
 
@@ -113,12 +99,8 @@ public class LambdaProcedure extends Procedure {
         if (term.size() != 2 || term.firstMember().getClass() != SetlList.class) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList           paramList  = (SetlList) term.firstMember();
-            final List<ParameterDef> parameters = new ArrayList<ParameterDef>(paramList.size());
-            for (final Value v : paramList) {
-                parameters.add(ParameterDef.valueToParameterDef(state, v));
-            }
-            final Expr               expr       = TermConverter.valueToExpr(state, term.lastMember());
+            final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
+            final Expr          expr       = TermConverter.valueToExpr(state, term.lastMember());
             return new LambdaProcedure(state, parameters, expr);
         }
     }
@@ -132,15 +114,9 @@ public class LambdaProcedure extends Procedure {
             return 0;
         } else if (other.getClass() == LambdaProcedure.class) {
             final LambdaProcedure lambdaProcedure = (LambdaProcedure) other;
-            int cmp = Integer.valueOf(parameters.size()).compareTo(lambdaProcedure.parameters.size());
+            int cmp = parameters.compareTo(lambdaProcedure.parameters);
             if (cmp != 0) {
                 return cmp;
-            }
-            for (int index = 0; index < parameters.size(); ++index) {
-                cmp = parameters.get(index).compareTo(lambdaProcedure.parameters.get(index));
-                if (cmp != 0) {
-                    return cmp;
-                }
             }
             if (expr == lambdaProcedure.expr) {
                 return 0;
@@ -165,12 +141,7 @@ public class LambdaProcedure extends Procedure {
             return true;
         } else if (other.getClass() == LambdaProcedure.class) {
             final LambdaProcedure lambdaProcedure = (LambdaProcedure) other;
-            if (parameters.size() == lambdaProcedure.parameters.size()) {
-                for (int index = 0; index < parameters.size(); ++index) {
-                    if ( ! parameters.get(index).equalTo(lambdaProcedure.parameters.get(index))) {
-                        return false;
-                    }
-                }
+            if (parameters.equals(lambdaProcedure.parameters)) {
                 if (expr == lambdaProcedure.expr) {
                     return true;
                 }
@@ -186,7 +157,7 @@ public class LambdaProcedure extends Procedure {
     @Override
     public int hashCode() {
         object = null;
-        return initHashCode + parameters.size();
+        return initHashCode + parameters.hashCode();
     }
 
     /**

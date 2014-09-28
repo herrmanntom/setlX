@@ -1,27 +1,30 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.StdDraw;
 
-import java.util.List;
+import java.util.HashMap;
 
 public class PD_gfx_setPenRadius extends GfxFunction {
-    public final static PreDefinedProcedure DEFINITION = new PD_gfx_setPenRadius();
+    private final static ParameterDef        R          = createOptionalParameter("r", Om.OM);
+
+    public  final static PreDefinedProcedure DEFINITION = new PD_gfx_setPenRadius();
 
     private PD_gfx_setPenRadius(){
         super();
-        addParameter("r");
-        setMinimumNumberOfParameters(0);
+        addParameter(R);
     }
 
 
     @Override
-    protected Value execute( final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException{
-        if (!args.isEmpty()){
-            StdDraw.setPenRadius(doubleFromValue(state, args.get(0)));
+    protected Value execute( final State state, final HashMap<ParameterDef, Value> args) throws SetlException{
+        if (args.get(R) != Om.OM){
+            StdDraw.setPenRadius(doubleFromValue(state, args.get(R)));
         }else{
             StdDraw.setPenRadius();
         }

@@ -5,36 +5,38 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Om;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
-
-// run(command)                  :
 
 /**
  * run(command) : Executes a system command and returns the result as a list of output and error messages.
  */
 public class PD_run extends PreDefinedProcedure {
+
+    private final static ParameterDef        COMMAND    = createParameter("command");
+
     /** Definition of the PreDefinedProcedure `run'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_run();
+    public  final static PreDefinedProcedure DEFINITION = new PD_run();
 
     private PD_run() {
         super();
-        addParameter("command");
+        addParameter(COMMAND);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws IncompatibleTypeException {
-        if ( ! (args.get(0) instanceof SetlString)) {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws IncompatibleTypeException {
+        if ( ! (args.get(COMMAND) instanceof SetlString)) {
             throw new IncompatibleTypeException(
-                "Argument '" + args.get(0).toString(state) + "' is not a string."
+                "Argument '" + args.get(COMMAND).toString(state) + "' is not a string."
             );
         }
 
-        final String command = args.get(0).getUnquotedString(state);
+        final String command = args.get(COMMAND).getUnquotedString(state);
 
         try {
             final String   os      = System.getProperty("os.name").toLowerCase(Locale.US);

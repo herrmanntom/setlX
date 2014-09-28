@@ -2,9 +2,10 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * resetRandom() : Reseeds the random number generator with 0.
@@ -18,7 +19,7 @@ public class PD_resetRandom extends PreDefinedProcedure {
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) {
         state.setRandoomPredictable(true);
         return Om.OM;
     }

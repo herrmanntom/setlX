@@ -7,30 +7,35 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.State;
 
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * writeFile(fileName, content)  : Writes a list of strings into a file, each
  *                                 string representing a single line.
  */
 public class PD_writeFile extends PreDefinedProcedure {
+
+    private final static ParameterDef        FILE_NAME  = createParameter("fileName");
+    private final static ParameterDef        CONTENTS   = createParameter("contents");
+
     /** Definition of the PreDefinedProcedure `writeFile'. */
-    public final static PreDefinedProcedure DEFINITION = new PD_writeFile();
+    public  final static PreDefinedProcedure DEFINITION = new PD_writeFile();
 
     /**
      * Create a new writeFile function.
      */
     protected PD_writeFile() {
         super();
-        addParameter("fileName");
-        addParameter("contents");
+        addParameter(FILE_NAME);
+        addParameter(CONTENTS);
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
         return exec(state, args, false);
     }
 
@@ -38,18 +43,18 @@ public class PD_writeFile extends PreDefinedProcedure {
      * Execute writeFile() functionality.
      *
      * @param state          Current state of the running setlX program.
-     * @param args           Values of the call-parameters in the same order as defined.
+     * @param args           Values of the call-parameters.
      * @param append         Defines if file should be appended, instead of newly created.
      * @return               SetlBoolean.TRUE if writing was successful.
      * @throws IncompatibleTypeException Thrown in case the wrong parameters are supplied.
      * @throws FileNotWritableException File to be written cannot be written.
      */
-    protected Value exec(final State state, final List<Value> args, final boolean append) throws SetlException {
-        final Value  fileArg = args.get(0);
+    protected Value exec(final State state, final HashMap<ParameterDef, Value> args, final boolean append) throws SetlException {
+        final Value  fileArg = args.get(FILE_NAME);
         if (fileArg.isString() == SetlBoolean.FALSE) {
             throw new IncompatibleTypeException("FileName-argument '" + fileArg.toString(state) + "' is not a string.");
         }
-        final Value contentArg = args.get(1);
+        final Value contentArg = args.get(CONTENTS);
 
         // get name of file to be written
         final String    fileName = fileArg.getUnquotedString(state);

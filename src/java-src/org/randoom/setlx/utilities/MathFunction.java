@@ -12,14 +12,16 @@ import org.randoom.setlx.types.Value;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * Objects of this class encapsulate functions from java.Math using a single
  * double as argument.
  */
 public class MathFunction extends PreDefinedProcedure {
-    private final Method function;
+    private final        Method       function;
+
+    private final static ParameterDef X        = createParameter("x");
 
     /**
      * Encapsulate a java.Math function.
@@ -30,13 +32,13 @@ public class MathFunction extends PreDefinedProcedure {
     public MathFunction(final String name, final Method function) {
         super();
         setName(name);
-        addParameter("x");
+        addParameter(X);
         this.function = function;
     }
 
     @Override
-    public Value execute(final State state, final List<Value> args, final List<Value> writeBackVars) throws SetlException {
-        final Value arg = args.get(0);
+    public Value execute(final State state, final HashMap<ParameterDef, Value> args) throws SetlException {
+        final Value arg = args.get(X);
         if (arg.isNumber() == SetlBoolean.TRUE) {
             try {
                 final double r = (Double) function.invoke(null, arg.toJDoubleValue(state));

@@ -27,7 +27,9 @@ public class State {
 
     public static String getSetlXSourceVersion() {
         String implementationVersion = State.class.getPackage().getImplementationVersion();
-        if (implementationVersion.startsWith("v")) {
+        if (implementationVersion == null) {
+            implementationVersion = "unknown";
+        } else if (implementationVersion.startsWith("v")) {
             implementationVersion = implementationVersion.substring(1);
         }
         return implementationVersion;

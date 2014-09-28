@@ -656,7 +656,7 @@ public class SetlMatrix extends IndexedCollectionValue {
         try {
             return new SetlMatrix(luDecomposition.solve(identity));
         } catch (RuntimeException re) {
-            throw new UndefinedOperationException(re.getMessage());
+            throw new UndefinedOperationException("Error during computation of inverse matrix: " + re.getMessage(), re);
         }
     }
 
@@ -671,7 +671,7 @@ public class SetlMatrix extends IndexedCollectionValue {
         try {
             return new SetlMatrix((new QRDecomposition(this.matrix)).solve(identity));
         } catch (RuntimeException re) {
-            throw new UndefinedOperationException(re.getMessage());
+            throw new UndefinedOperationException("Error during computation of pseudo inverse matrix: " + re.getMessage(), re);
         }
     }
 
@@ -710,7 +710,11 @@ public class SetlMatrix extends IndexedCollectionValue {
         if(this.matrix.getRowDimension() != other.matrix.getRowDimension()) {
             throw new UndefinedOperationException("Row numbers must be equal to solve A * X = other.");
         }
-        return new SetlMatrix(this.matrix.solve(other.matrix));
+        try {
+            return new SetlMatrix(this.matrix.solve(other.matrix));
+        } catch (RuntimeException re) {
+            throw new UndefinedOperationException("Error during solve: " + re.getMessage(), re);
+        }
     }
 
     /**

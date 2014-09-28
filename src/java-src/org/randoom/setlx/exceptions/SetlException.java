@@ -19,8 +19,18 @@ public abstract class SetlException extends Exception {
      *
      * @param msg Message describing the exception that occurred.
      */
-    public SetlException(final String msg) {
-        super(msg);
+    protected SetlException(final String msg) {
+        this(msg, null);
+    }
+
+    /**
+     * Create a new SetlException.
+     *
+     * @param msg   Message describing the exception that occurred.
+     * @param cause The cause (which is saved for later retrieval by the getCause() method).
+     */
+    protected SetlException(final String msg, Throwable cause) {
+        super(msg, cause);
         trace = new ArrayList<String>();
         trace.add(msg);
     }

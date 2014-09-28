@@ -42,14 +42,15 @@ public class SetlClass extends Value {
 
     private final static Block  REBUILD_MARKER       = new Block(null, 0);
 
-    private final List<ParameterDef> parameters;  // parameter list
-    private final Block              initBlock;   // statements in the body of the definition
-    private       HashSet<String>    initVars;    // member variables defined in the body
-    private       Block              staticBlock; // statements in the static block
-    private       HashSet<String>    staticVars;  // variables defined in the static block
-    private       SetlHashMap<Value> staticDefs;  // definitions from static block
+    private final List<ParameterDef> parameters;          // parameter list
+    private final boolean            isLastParameterList; // is the last parameter of type LIST?
+    private final Block              initBlock;           // statements in the body of the definition
+    private       HashSet<String>    initVars;            // member variables defined in the body
+    private       Block              staticBlock;         // statements in the static block
+    private       HashSet<String>    staticVars;          // variables defined in the static block
+    private       SetlHashMap<Value> staticDefs;          // definitions from static block
 
-    private       State              state;       // state used during rebuild of staticBlock;
+    private       State              state;               // state used during rebuild of staticBlock;
 
     /**
      * Create a new instance of this data type.
@@ -72,12 +73,13 @@ public class SetlClass extends Value {
                             final HashSet<String>    staticVars,
                             final SetlHashMap<Value> staticDefs
     ) {
-        this.parameters  = parameters;
-        this.initBlock   = init;
-        this.initVars    = initVars;
-        this.staticBlock = staticBlock;
-        this.staticVars  = staticVars;
-        this.staticDefs  = staticDefs;
+        this.parameters          = parameters;
+        this.isLastParameterList = (! parameters.isEmpty()) && parameters.get(parameters.size()-1).getType() == ParameterType.LIST;
+        this.initBlock           = init;
+        this.initVars            = initVars;
+        this.staticBlock         = staticBlock;
+        this.staticVars          = staticVars;
+        this.staticDefs          = staticDefs;
     }
 
     private Block getStaticBlock() {
@@ -176,11 +178,28 @@ public class SetlClass extends Value {
         }
 
         final int nArguments = args.size();
-        if (parameters.size() != nArguments) {
-            throw new IncorrectNumberOfParametersException(
-                "'" + this.toString(state) + "' is defined with "+ parameters.size()+" instead of " +
-                nArguments + " parameters."
-            );
+        if (isLastParameterList) {
+            if (nArguments < parameters.size() - 1) {
+                final StringBuilder error = new StringBuilder();
+                error.append("'");
+                appendString(state, error, 0);
+                error.append("' is defined with at least ");
+                error.append(parameters.size() - 1);
+                error.append(" instead of ");
+                error.append(nArguments);
+                error.append(" parameters.");
+                throw new IncorrectNumberOfParametersException(error.toString());
+            }
+        } else if (nArguments != parameters.size()) {
+            final StringBuilder error = new StringBuilder();
+            error.append("'");
+            appendString(state, error, 0);
+            error.append("' is defined with ");
+            error.append(parameters.size());
+            error.append(" instead of ");
+            error.append(nArguments);
+            error.append(" parameters.");
+            throw new IncorrectNumberOfParametersException(error.toString());
         }
 
         // evaluate arguments
@@ -196,13 +215,20 @@ public class SetlClass extends Value {
         state.setScope(newScope);
 
         // put arguments into inner scope
-        final int size         = values.size();
+        final int size         = parameters.size();
               int rwParameters = 0;
         for (int i = 0; i < size; ++i) {
             final ParameterDef param = parameters.get(i);
             if (param.getType() == ParameterType.READ_WRITE) {
                 param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
                 ++rwParameters;
+            } else if (param.getType() == ParameterType.LIST) {
+                SetlList parameters = new SetlList();
+                for (int valueIndex = i; valueIndex < values.size(); ++valueIndex) {
+                    parameters.addMember(state, values.get(valueIndex));
+                }
+                param.assign(state, parameters, FUNCTIONAL_CHARACTER);
+                break;
             } else {
                 param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
             }

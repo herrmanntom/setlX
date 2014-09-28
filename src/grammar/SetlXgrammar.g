@@ -67,7 +67,7 @@ statement returns [Statement stmnt]
         Block                           block      = null;
         Expr                            expression = null;
     }
-    : 'class' ID '(' procedureParameters ')' '{' b1 = block ('static' '{' b2 = block '}' {block = $b2.blk;})? '}'
+    : 'class' ID '(' procedureParameters[true] ')' '{' b1 = block ('static' '{' b2 = block '}' {block = $b2.blk;})? '}'
                          { $stmnt = new ClassConstructor($ID.text, new SetlClass($procedureParameters.paramList, $b1.blk, block)); }
       (
         ';' { customErrorHandling(SEMICOLON_FOLLOWING_CLASS); }
@@ -385,28 +385,32 @@ termArguments returns [List<Expr> args]
     ;
 
 procedure returns [Procedure pd]
-    : 'procedure'       '(' procedureParameters ')' '{' block '}'
+    : 'procedure'       '(' procedureParameters[true] ')' '{' block '}'
       { $pd = new Procedure($procedureParameters.paramList, $block.blk);       }
-    | 'cachedProcedure' '(' procedureParameters ')' '{' block '}'
+    | 'cachedProcedure' '(' procedureParameters[false] ')' '{' block '}'
       { $pd = new CachedProcedure($procedureParameters.paramList, $block.blk); }
-    | 'closure'         '(' procedureParameters ')' '{' block '}'
+    | 'closure'         '(' procedureParameters[true] ')' '{' block '}'
       { $pd = new Closure($procedureParameters.paramList, $block.blk);         }
     ;
 
-procedureParameters returns [List<ParameterDef> paramList]
+procedureParameters [boolean enableRw] returns [List<ParameterDef> paramList]
     @init {
         $paramList = new ArrayList<ParameterDef>();
     }
-    : dp1 = procedureParameter       { $paramList.add($dp1.param); }
+    : dp1 = procedureParameter[$enableRw]       { $paramList.add($dp1.param);                                  }
       (
-        ',' dp2 = procedureParameter { $paramList.add($dp2.param); }
+        ',' dp2 = procedureParameter[$enableRw] { $paramList.add($dp2.param);                                  }
       )*
+      (
+        ',' '*' v1 = variable                   { $paramList.add(new ParameterDef($v1.v, ParameterType.LIST)); }
+      )?
+    | '*' v2 = variable                         { $paramList.add(new ParameterDef($v2.v, ParameterType.LIST)); }
     | /* epsilon */
     ;
 
-procedureParameter returns [ParameterDef param]
-    : 'rw' variable { $param = new ParameterDef($variable.v, ParameterType.READ_WRITE); }
-    | variable      { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY);  }
+procedureParameter [boolean enableRw] returns [ParameterDef param]
+    : {$enableRw}? 'rw' variable { $param = new ParameterDef($variable.v, ParameterType.READ_WRITE); }
+    | variable                   { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY);  }
     ;
 
 call [boolean enableIgnore, Expr lhs] returns [Expr c]

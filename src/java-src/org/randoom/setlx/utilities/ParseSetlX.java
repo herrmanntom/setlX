@@ -241,9 +241,8 @@ public class ParseSetlX {
             }
 
             // start optimizing the fragment
-            Thread optimizer = null;
             if (fragment != null) {
-                optimizer = new OptimizerThread(fragment, state);
+                Thread optimizer = new OptimizerThread(fragment, state);
                 optimizer.setName(Thread.currentThread().getName() + "::optimizer");
                 optimizer.start();
             }

@@ -153,12 +153,18 @@ public class Closure extends Procedure {
               int rwParameters   = 0;
         for (int i = 0; i < parametersSize; ++i) {
             final ParameterDef param = parameters.get(i);
-            final Value        value = values.get(i);
             if (param.getType() == ParameterDef.ParameterType.READ_WRITE) {
-                param.assign(state, value, FUNCTIONAL_CHARACTER);
+                param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
                 ++rwParameters;
+            } else if (param.getType() == ParameterDef.ParameterType.LIST) {
+                SetlList parameters = new SetlList();
+                for (int valueIndex = i; valueIndex < values.size(); ++valueIndex) {
+                    parameters.addMember(state, values.get(valueIndex));
+                }
+                param.assign(state, parameters, FUNCTIONAL_CHARACTER);
+                break;
             } else {
-                param.assign(state, value.clone(), FUNCTIONAL_CHARACTER);
+                param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
             }
         }
 

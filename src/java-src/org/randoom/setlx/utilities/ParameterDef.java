@@ -23,8 +23,9 @@ import java.util.List;
  */
 public class ParameterDef extends CodeFragment implements Comparable<ParameterDef> {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER    = "^parameter";
-    private final static String FUNCTIONAL_CHARACTER_RW = "^rwParameter";
+    private final static String FUNCTIONAL_CHARACTER      = "^parameter";
+    private final static String FUNCTIONAL_CHARACTER_RW   = "^rwParameter";
+    private final static String FUNCTIONAL_CHARACTER_LIST = "^listParameter";
 
     /**
      * Type of parameter.
@@ -38,7 +39,11 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
          * Binding used as parameter will be changed in outer scope, if modified
          * in inner scope.
          */
-        READ_WRITE
+        READ_WRITE,
+        /**
+         * Binding of multiple parameters. Can be empty or of 'unlimited' size at runtime.
+         */
+        LIST
     }
 
     private final Variable      var;
@@ -140,6 +145,8 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         if (type == ParameterType.READ_WRITE) {
             sb.append("rw ");
+        } else if (type == ParameterType.LIST) {
+            sb.append("*");
         }
         var.appendString(state, sb, 0);
     }
@@ -151,6 +158,8 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
         final Term result;
         if (type == ParameterType.READ_WRITE) {
             result = new Term(FUNCTIONAL_CHARACTER_RW);
+        } else if (type == ParameterType.LIST) {
+            result = new Term(FUNCTIONAL_CHARACTER_LIST);
         } else {
             result = new Term(FUNCTIONAL_CHARACTER);
         }
@@ -178,21 +187,24 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
         } else if (fc.equals(FUNCTIONAL_CHARACTER_RW) && term.size() == 1 && term.firstMember().getClass() == Term.class) {
             final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
             return new ParameterDef(var, ParameterType.READ_WRITE);
+        } else if (fc.equals(FUNCTIONAL_CHARACTER_LIST) && term.size() == 1 && term.firstMember().getClass() == Term.class) {
+            final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
+            return new ParameterDef(var, ParameterType.LIST);
         } else {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
     }
 
     @Override
-    public int compareTo(final ParameterDef other) {
-        if (this == other) {
+    public int compareTo(final ParameterDef o) {
+        if (this == o) {
             return 0;
         } else {
-            final int cmp = type.compareTo(other.type);
+            final int cmp = type.compareTo(o.type);
             if (cmp != 0) {
                 return cmp;
             }
-            return var.getID().compareTo(other.var.getID());
+            return var.getID().compareTo(o.var.getID());
         }
     }
 

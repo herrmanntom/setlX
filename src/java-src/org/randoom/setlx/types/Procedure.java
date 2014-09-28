@@ -38,6 +38,10 @@ public class Procedure extends Value {
      */
     protected final List<ParameterDef> parameters;
     /**
+     * Is the last parameter of type LIST?.
+     */
+    protected final boolean            isLastParameterList;
+    /**
      * Statements in the body of the procedure.
      */
     protected final Block              statements;
@@ -53,9 +57,10 @@ public class Procedure extends Value {
      * @param statements statements in the body of the procedure
      */
     public Procedure(final List<ParameterDef> parameters, final Block statements) {
-        this.parameters = parameters;
-        this.statements = statements;
-        this.object = null;
+        this.parameters          = parameters;
+        this.isLastParameterList = (! parameters.isEmpty()) && parameters.get(parameters.size()-1).getType() == ParameterType.LIST;
+        this.statements          = statements;
+        this.object              = null;
     }
 
     @Override
@@ -113,24 +118,36 @@ public class Procedure extends Value {
             // increase callStackDepth
             ++(state.callStackDepth);
 
-            final int        size   = args.size();
-            final SetlObject object = this.object;
+            final int        nArguments = args.size();
+            final SetlObject object     = this.object;
             this.object = null;
 
-            if (parameters.size() != size) {
+            if (isLastParameterList) {
+                if (nArguments < parameters.size() - 1) {
+                    final StringBuilder error = new StringBuilder();
+                    error.append("'");
+                    appendStringWithoutStatements(state, error);
+                    error.append("' is defined with at least ");
+                    error.append(parameters.size() - 1);
+                    error.append(" instead of ");
+                    error.append(nArguments);
+                    error.append(" parameters.");
+                    throw new IncorrectNumberOfParametersException(error.toString());
+                }
+            } else if (nArguments != parameters.size()) {
                 final StringBuilder error = new StringBuilder();
                 error.append("'");
                 appendStringWithoutStatements(state, error);
                 error.append("' is defined with ");
                 error.append(parameters.size());
                 error.append(" instead of ");
-                error.append(size);
+                error.append(nArguments);
                 error.append(" parameters.");
                 throw new IncorrectNumberOfParametersException(error.toString());
             }
 
             // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<Value>(size);
+            final ArrayList<Value> values = new ArrayList<Value>(nArguments);
             for (final Expr arg : args) {
                 values.add(arg.eval(state));
             }
@@ -177,12 +194,18 @@ public class Procedure extends Value {
               int rwParameters   = 0;
         for (int i = 0; i < parametersSize; ++i) {
             final ParameterDef param = parameters.get(i);
-            final Value        value = values.get(i);
             if (param.getType() == ParameterType.READ_WRITE) {
-                param.assign(state, value, FUNCTIONAL_CHARACTER);
+                param.assign(state, values.get(i), FUNCTIONAL_CHARACTER);
                 ++rwParameters;
+            } else if (param.getType() == ParameterType.LIST) {
+                SetlList parameters = new SetlList();
+                for (int valueIndex = i; valueIndex < values.size(); ++valueIndex) {
+                    parameters.addMember(state, values.get(valueIndex));
+                }
+                param.assign(state, parameters, FUNCTIONAL_CHARACTER);
+                break;
             } else {
-                param.assign(state, value.clone(), FUNCTIONAL_CHARACTER);
+                param.assign(state, values.get(i).clone(), FUNCTIONAL_CHARACTER);
             }
         }
 

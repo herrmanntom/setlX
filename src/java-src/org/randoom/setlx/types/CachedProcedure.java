@@ -132,30 +132,41 @@ public class CachedProcedure extends Procedure {
 
     @Override
     public Value call(final State state, final List<Expr> args) throws SetlException {
-        final int size = args.size();
-        final SetlObject object = this.object;
+        final int        nArguments = args.size();
+        final SetlObject object     = this.object;
         this.object = null;
 
-        if (parameters.size() != size) {
-            throw new IncorrectNumberOfParametersException(
-                "'" + this.toString(state) + "' is defined with "+ parameters.size()+" instead of " +
-                size + " parameters."
-            );
+        if (isLastParameterList) {
+            if (nArguments < parameters.size() - 1) {
+                final StringBuilder error = new StringBuilder();
+                error.append("'");
+                appendStringWithoutStatements(state, error);
+                error.append("' is defined with at least ");
+                error.append(parameters.size() - 1);
+                error.append(" instead of ");
+                error.append(nArguments);
+                error.append(" parameters.");
+                throw new IncorrectNumberOfParametersException(error.toString());
+            }
+        } else if (nArguments != parameters.size()) {
+            final StringBuilder error = new StringBuilder();
+            error.append("'");
+            appendStringWithoutStatements(state, error);
+            error.append("' is defined with ");
+            error.append(parameters.size());
+            error.append(" instead of ");
+            error.append(nArguments);
+            error.append(" parameters.");
+            throw new IncorrectNumberOfParametersException(error.toString());
         }
 
         // evaluate arguments
-        final ArrayList<Value> values = new ArrayList<Value>(size);
-        final SetlList         key    = new SetlList(size);
-        for (int i = 0; i < size; ++i) {
-            if (parameters.get(i).getType() == ParameterType.READ_WRITE) {
-                throw new IncompatibleTypeException(
-                    "Procedures using read-write ('rw') parameters can not be cached."
-                );
-            } else {
-                final Value v = args.get(i).eval(state);
-                values.add(v);
-                key.addMember(state, v);
-            }
+        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        final SetlList         key    = new SetlList(nArguments);
+        for (Expr arg : args) {
+            final Value v = arg.eval(state);
+            values.add(v);
+            key.addMember(state, v);
         }
 
         Value                      cachedResult = null;
@@ -194,7 +205,7 @@ public class CachedProcedure extends Procedure {
     /* string and char operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+    protected void appendStringWithoutStatements(final State state, final StringBuilder sb) {
         object = null;
         sb.append("cachedProcedure(");
         final Iterator<ParameterDef> iter = parameters.iterator();
@@ -204,8 +215,7 @@ public class CachedProcedure extends Procedure {
                 sb.append(", ");
             }
         }
-        sb.append(") ");
-        statements.appendString(state, sb, tabs, /* brackets = */ true);
+        sb.append(")");
     }
 
     /* term operations */

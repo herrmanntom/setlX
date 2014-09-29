@@ -397,9 +397,19 @@ procedureParameters [boolean enableRw] returns [ParameterList paramList]
     @init {
         $paramList = new ParameterList();
     }
-    : dp1 = procedureParameter[$enableRw]       { $paramList.add($dp1.param);                                  }
+    : pp1 = procedureParameter[$enableRw]       { $paramList.add($pp1.param);                                  }
       (
-        ',' dp2 = procedureParameter[$enableRw] { $paramList.add($dp2.param);                                  }
+        ',' pp2 = procedureParameter[$enableRw] { $paramList.add($pp2.param);                                  }
+      )*
+      (
+        ',' dp  = procedureParameterWithDefault { $paramList.add($dp.param);                                   }
+      )*
+      (
+        ',' '*' v1 = variable                   { $paramList.add(new ParameterDef($v1.v, ParameterType.LIST)); }
+      )?
+    | dp1 = procedureParameterWithDefault       { $paramList.add($dp1.param);                                  }
+      (
+        ',' dp2 = procedureParameterWithDefault { $paramList.add($dp2.param);                                  }
       )*
       (
         ',' '*' v1 = variable                   { $paramList.add(new ParameterDef($v1.v, ParameterType.LIST)); }
@@ -411,6 +421,10 @@ procedureParameters [boolean enableRw] returns [ParameterList paramList]
 procedureParameter [boolean enableRw] returns [ParameterDef param]
     : {$enableRw}? 'rw' variable { $param = new ParameterDef($variable.v, ParameterType.READ_WRITE); }
     | variable                   { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY);  }
+    ;
+
+procedureParameterWithDefault  returns [ParameterDef param]
+    : variable ':=' expr[false] { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY, $expr.ex); }
     ;
 
 call [boolean enableIgnore, Expr lhs] returns [Expr c]

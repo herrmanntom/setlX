@@ -429,13 +429,15 @@ public class SetlClass extends Value {
                 }
             }
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlClass.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_CLASS;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -459,11 +461,9 @@ public class SetlClass extends Value {
         return false;
     }
 
-    private final static int initHashCode = SetlClass.class.hashCode();
-
     @Override
     public int hashCode() {
-        int hash = initHashCode + parameters.hashCode();
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + parameters.hashCode();
         if (initVars != null) {
             hash = hash * 31 + initVars.hashCode();
         }

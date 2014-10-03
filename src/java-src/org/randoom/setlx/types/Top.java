@@ -31,17 +31,17 @@ public class Top extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
         } else {
-            return 1;
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_TOP;
+    public long compareToOrdering() {
+        return Long.MAX_VALUE;
     }
 
     @Override

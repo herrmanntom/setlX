@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.*;
-import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -276,14 +275,16 @@ public class Procedure extends Value {
             }
             return statements.compareTo(otherProcedure.statements);
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Procedure.class);
+
     @Override
-    public int compareToOrdering() {
+    public long compareToOrdering() {
         object = null;
-        return COMPARE_TO_ORDERING_PROCEDURE;
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -300,12 +301,10 @@ public class Procedure extends Value {
         return false;
     }
 
-    private final static int initHashCode = Procedure.class.hashCode();
-
     @Override
     public int hashCode() {
         object = null;
-        return (initHashCode + parameters.hashCode()) * 31 + statements.size();
+        return (((int) COMPARE_TO_ORDER_CONSTANT) + parameters.hashCode()) * 31 + statements.size();
     }
 
     /**

@@ -692,13 +692,15 @@ public class Term extends IndexedCollectionValue {
             }
             return body.compareTo(otherTerm.body);
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Term.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_TERM;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -725,11 +727,9 @@ public class Term extends IndexedCollectionValue {
         }
     }
 
-    private final static int initHashCode = Term.class.hashCode();
-
     @Override
     public int hashCode() {
-        return initHashCode + functionalCharacter.hashCode() * 31 + body.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + functionalCharacter.hashCode() * 31 + body.hashCode();
     }
 }
 

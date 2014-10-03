@@ -2,7 +2,6 @@ package org.randoom.setlx.types;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.utilities.MatchResult;
@@ -519,13 +518,15 @@ public class SetlVector extends IndexedCollectionValue {
             }
             return 0;
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlVector.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_VECTOR;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -553,12 +554,10 @@ public class SetlVector extends IndexedCollectionValue {
         }
     }
 
-    private final static int initHashCode = SetlVector.class.hashCode();
-
     @Override
     public int hashCode() {
         final int size = size();
-        int hash = initHashCode + size;
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + size;
         if (size >= 1) {
             hash = hash * 31 + vector.get(0).hashCode();
             if (size >= 2) {

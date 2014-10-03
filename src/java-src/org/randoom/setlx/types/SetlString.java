@@ -872,23 +872,25 @@ public class SetlString extends IndexedCollectionValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value v) {
-        if (this == v) {
+    public int compareTo(final Value other) {
+        if (this == other) {
             return 0;
-        } else if (v.getClass() == SetlString.class) {
-            final StringBuilder other = ((SetlString) v).content;
-            if (content == other) {
+        } else if (other.getClass() == SetlString.class) {
+            final StringBuilder stringBuilder = ((SetlString) other).content;
+            if (content == stringBuilder) {
                 return 0; // clone
             }
-            return content.toString().compareTo(other.toString());
+            return content.toString().compareTo(stringBuilder.toString());
         } else {
-            return this.compareToOrdering() - v.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlString.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_STRING;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -909,11 +911,9 @@ public class SetlString extends IndexedCollectionValue {
         }
     }
 
-    private final static int initHashCode = SetlString.class.hashCode();
-
     @Override
     public int hashCode() {
-        return initHashCode + content.toString().hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + content.toString().hashCode();
     }
 }
 

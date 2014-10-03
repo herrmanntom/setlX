@@ -43,13 +43,15 @@ public class Om extends Value {
         if (other == OM) {
             return 0;
         }  else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Om.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_OM;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -57,11 +59,9 @@ public class Om extends Value {
         return other == OM;
     }
 
-    private final static int initHashCode = Om.class.hashCode();
-
     @Override
     public int hashCode() {
-        return initHashCode;
+        return ((int) COMPARE_TO_ORDER_CONSTANT);
     }
 
     /**

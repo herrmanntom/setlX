@@ -802,13 +802,8 @@ public class Rational extends NumberValue {
                 return this.compareTo(((SetlDouble) other).toRational());
             }
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
-    }
-
-    @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_RATIONAL_DOUBLE;
     }
 
     @Override

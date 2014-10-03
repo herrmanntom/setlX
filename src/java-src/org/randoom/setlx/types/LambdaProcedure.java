@@ -124,14 +124,16 @@ public class LambdaProcedure extends Procedure {
             // TODO do without toString
             return expr.toString().compareTo(lambdaProcedure.expr.toString());
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(LambdaProcedure.class);
+
     @Override
-    public int compareToOrdering() {
+    public long compareToOrdering() {
         object = null;
-        return COMPARE_TO_ORDERING_PROCEDURE_LAMBDA;
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -152,12 +154,10 @@ public class LambdaProcedure extends Procedure {
         return false;
     }
 
-    private final static int initHashCode = LambdaProcedure.class.hashCode();
-
     @Override
     public int hashCode() {
         object = null;
-        return initHashCode + parameters.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + parameters.hashCode();
     }
 
     /**

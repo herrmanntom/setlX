@@ -5,5 +5,5 @@ empty list/string
 strings only two: a, b
 strings first: f, o, o rest: bar
 empty set
-sets only two: a, [1, 2, 3, 4, 5]
+sets only two: [1, 2, 3, 4, 5], a
 sets first: a rest: {}

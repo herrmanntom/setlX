@@ -941,29 +941,11 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      *
      * This ranking is necessary to allow sets and lists of different types.
      *
+     * @see org.randoom.setlx.utilities.CodeFragment#compareToOrdering()
+     *
      * @return Number representing the order of this type in compareTo().
      */
-    public abstract int compareToOrdering();
-
-    // constants for compareToOrdering, that make changes easier
-    protected final static int COMPARE_TO_ORDERING_ERROR             =  100;
-    protected final static int COMPARE_TO_ORDERING_OM                =  200;
-    protected final static int COMPARE_TO_ORDERING_BOOLEAN           =  300;
-    protected final static int COMPARE_TO_ORDERING_RATIONAL_DOUBLE   =  400;
-    protected final static int COMPARE_TO_ORDERING_VECTOR            =  500;
-    protected final static int COMPARE_TO_ORDERING_MATRIX            =  600;
-    protected final static int COMPARE_TO_ORDERING_STRING            =  700;
-    protected final static int COMPARE_TO_ORDERING_SET               =  800;
-    protected final static int COMPARE_TO_ORDERING_LIST              =  900;
-    protected final static int COMPARE_TO_ORDERING_TERM              = 1000;
-    protected final static int COMPARE_TO_ORDERING_PROCEDURE_LAMBDA  = 1100;
-    protected final static int COMPARE_TO_ORDERING_PROCEDURE         = 1200;
-    protected final static int COMPARE_TO_ORDERING_PROCEDURE_CLOSURE = 1300;
-    protected final static int COMPARE_TO_ORDERING_PROCEDURE_CACHED  = 1400;
-    protected final static int COMPARE_TO_ORDERING_PROCEDURE_PRE     = 1500;
-    protected final static int COMPARE_TO_ORDERING_OBJECT            = 1600;
-    protected final static int COMPARE_TO_ORDERING_CLASS             = 1700;
-    protected final static int COMPARE_TO_ORDERING_TOP               = 1800;
+    public abstract long compareToOrdering();
 
     /**
      * Test if two Values are equal.

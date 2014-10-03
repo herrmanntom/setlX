@@ -143,13 +143,15 @@ public class SetlBoolean extends Value {
         } else if (this == FALSE && other == TRUE ) {
             return -1;
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlBoolean.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_BOOLEAN;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -161,9 +163,9 @@ public class SetlBoolean extends Value {
     @Override
     public int hashCode() {
         if (this == TRUE) {
-            return 2015404846;
+            return ((int) COMPARE_TO_ORDER_CONSTANT);
         } else {
-            return -117843451;
+            return ((int) COMPARE_TO_ORDER_CONSTANT) - 1;
         }
     }
 }

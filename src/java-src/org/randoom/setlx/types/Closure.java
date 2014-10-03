@@ -8,7 +8,6 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -257,14 +256,16 @@ public class Closure extends Procedure {
             }
             return statements.compareTo(otherClosure.statements);
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Closure.class);
+
     @Override
-    public int compareToOrdering() {
+    public long compareToOrdering() {
         object = null;
-        return COMPARE_TO_ORDERING_PROCEDURE_CLOSURE;
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -281,12 +282,10 @@ public class Closure extends Procedure {
         return false;
     }
 
-    private final static int initHashCode = Closure.class.hashCode();
-
     @Override
     public int hashCode() {
         object = null;
-        return (initHashCode + parameters.hashCode()) * 31 + statements.size();
+        return (((int) COMPARE_TO_ORDER_CONSTANT) + parameters.hashCode()) * 31 + statements.size();
     }
 
     /**

@@ -97,5 +97,12 @@ public abstract class NumberValue extends Value {
         return SetlBoolean.TRUE;
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(NumberValue.class);
+
+    @Override
+    public final long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
 }
 

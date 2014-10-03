@@ -805,13 +805,15 @@ public class SetlList extends IndexedCollectionValue {
             }
             return 0;
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlList.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_LIST;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -839,12 +841,10 @@ public class SetlList extends IndexedCollectionValue {
         }
     }
 
-    private final static int initHashCode = SetlList.class.hashCode();
-
     @Override
     public int hashCode() {
         final int size = list.size();
-        int hash = initHashCode + size;
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + size;
         if (size >= 1) {
             hash = hash * 31 + list.get(0).hashCode();
             if (size >= 2) {

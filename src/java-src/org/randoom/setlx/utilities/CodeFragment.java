@@ -5,6 +5,7 @@ import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Base class, which most other classes representing some SetlX-code element
@@ -89,6 +90,25 @@ public abstract class CodeFragment {
     public abstract Value toTerm(final State state) throws SetlException;
 
     /**
+     * In order to compare "incomparable" values, e.g. of different subtypes of
+     * CodeFragments, the return value of this function is used to establish some
+     * semi arbitrary order to be used in compareTo():
+     *
+     * This ranking is necessary to allow sets and lists of different types.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#generateCompareToOrderConstant(Class)
+     *
+     * @return Number representing the order of this type in compareTo().
+     */
+    //public abstract int compareToOrdering();
+
+    //@Override
+    //public abstract boolean equals(Object obj);
+
+    //@Override
+    //public abstract int hashCode();
+
+    /**
      * Generate the functional character used in toTerm() based upon the
      * simple name of the given class.
      *
@@ -98,11 +118,35 @@ public abstract class CodeFragment {
      * @return       Generated functional character.
      */
     protected final static String generateFunctionalCharacter(
-        final Class<? extends CodeFragment> _class
+            final Class<? extends CodeFragment> _class
     ) {
         final String className = _class.getSimpleName();
         return "^" + Character.toLowerCase(className.charAt(0)) + className.substring(1);
     }
 
+    /**
+     * Generate the number representing the order of this type in compareTo().
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#compareToOrdering()
+     *
+     * @param _class Class for which to generate the number.
+     * @return       Generated number.
+     */
+    protected final static long generateCompareToOrderConstant(
+            final Class<? extends CodeFragment> _class
+    ) {
+        final int    multiplicand = (int) 'z' - (int) '^';
+        final String className    = _class.getCanonicalName().replace("org.randoom.setlx.","").replace('.','^').toLowerCase(Locale.ENGLISH);
+        final int    length       = className.length();
+
+              long   result       = 0;
+        for (int i = 0; i < length; ++i) {
+            char c = className.charAt(i);
+            if (c >= '^' && c <= 'z') {
+                result = (result * multiplicand) + ((int) c - (int) '^');
+            }
+        }
+        return result;
+    }
 }
 

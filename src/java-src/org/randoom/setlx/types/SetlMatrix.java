@@ -800,13 +800,15 @@ public class SetlMatrix extends IndexedCollectionValue {
             }
             return 0;
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlMatrix.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_MATRIX;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -814,11 +816,9 @@ public class SetlMatrix extends IndexedCollectionValue {
         return other instanceof SetlMatrix && Arrays.deepEquals(this.matrix.getArray(), ((SetlMatrix) other).matrix.getArray());
     }
 
-    private final static int initHashCode = SetlMatrix.class.hashCode();
-
     @Override
     public int hashCode() {
-        return initHashCode * 31 + matrix.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) * 31 + matrix.hashCode();
     }
 }
 

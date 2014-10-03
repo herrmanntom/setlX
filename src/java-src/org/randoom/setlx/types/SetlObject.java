@@ -56,7 +56,6 @@ import org.randoom.setlx.functions.PD_sort;
 import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
 import org.randoom.setlx.functions.PreDefinedProcedure;
-import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
@@ -689,13 +688,15 @@ public class SetlObject extends Value {
             }
             return classDefinition.compareTo(setlObject.classDefinition);
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlObject.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_OBJECT;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -711,12 +712,10 @@ public class SetlObject extends Value {
         return false;
     }
 
-    private final static int initHashCode = SetlObject.class.hashCode();
-
     @Override
     public int hashCode() {
         final int size = members.size();
-        int hash = initHashCode + size;
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + size;
         if (size >= 1) {
             hash = hash * 31 + members.hashCode();
         }

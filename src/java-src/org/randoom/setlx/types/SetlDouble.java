@@ -518,13 +518,8 @@ public class SetlDouble extends NumberValue {
                 return toRational().compareTo(other);
             }
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
-    }
-
-    @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_RATIONAL_DOUBLE;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.expressionUtilities.Range;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -30,13 +31,15 @@ public class RangeDummy extends Value {
         if (other == RD) {
             return 0;
         } else {
-            return -1; // dummy is incomparable to anything else
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Range.class);
+
     @Override
-    public int compareToOrdering() {
-        return 0;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -44,10 +47,8 @@ public class RangeDummy extends Value {
         return other == RD;
     }
 
-    private final static int initHashCode = RangeDummy.class.hashCode();
-
     @Override
     public int hashCode() {
-        return initHashCode;
+        return ((int) COMPARE_TO_ORDER_CONSTANT);
     }
 }

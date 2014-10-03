@@ -863,13 +863,15 @@ public class SetlSet extends CollectionValue {
             }
             return 0;
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlSet.class);
+
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_SET;
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -897,12 +899,10 @@ public class SetlSet extends CollectionValue {
         }
     }
 
-    private final static int initHashCode = SetlSet.class.hashCode();
-
     @Override
     public int hashCode() {
         final int size = set.size();
-        int hash = initHashCode + size;
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + size;
         if (size >= 1) {
             hash = hash * 31 + set.first().hashCode();
             if (size >= 2) {

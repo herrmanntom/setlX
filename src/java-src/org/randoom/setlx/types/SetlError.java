@@ -57,13 +57,13 @@ public class SetlError extends Value {
         } else if (other.getClass() == SetlError.class) {
             return message.compareTo(((SetlError) other).message);
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
     @Override
-    public int compareToOrdering() {
-        return COMPARE_TO_ORDERING_ERROR;
+    public long compareToOrdering() {
+        return Long.MIN_VALUE;
     }
 
     @Override

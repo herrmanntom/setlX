@@ -216,14 +216,16 @@ public abstract class PreDefinedProcedure extends Procedure {
         } else if (other instanceof PreDefinedProcedure) {
             return getName().compareTo(((PreDefinedProcedure) other).getName());
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(PreDefinedProcedure.class);
+
     @Override
-    public int compareToOrdering() {
+    public long compareToOrdering() {
         object = null;
-        return COMPARE_TO_ORDERING_PROCEDURE_PRE;
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -236,14 +238,12 @@ public abstract class PreDefinedProcedure extends Procedure {
         return false;
     }
 
-    private final static int initHashCode = PreDefinedProcedure.class.hashCode();
-
     @Override
     public int hashCode() {
         if (nameHashCode == -1) {
             getName();
         }
-        return initHashCode + nameHashCode;
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + nameHashCode;
     }
 }
 

@@ -241,14 +241,16 @@ public class CachedProcedure extends Procedure {
             }
             return statements.compareTo(cachedProcedure.statements);
         } else {
-            return this.compareToOrdering() - other.compareToOrdering();
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(CachedProcedure.class);
+
     @Override
-    public int compareToOrdering() {
+    public long compareToOrdering() {
         object = null;
-        return COMPARE_TO_ORDERING_PROCEDURE_CACHED;
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -265,12 +267,10 @@ public class CachedProcedure extends Procedure {
         return false;
     }
 
-    private final static int initHashCode = CachedProcedure.class.hashCode();
-
     @Override
     public int hashCode() {
         object = null;
-        return (initHashCode + parameters.hashCode()) * 31 + statements.size();
+        return (((int) COMPARE_TO_ORDER_CONSTANT) + parameters.hashCode()) * 31 + statements.size();
     }
 
     /**

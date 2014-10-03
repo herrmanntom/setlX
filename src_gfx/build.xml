@@ -50,7 +50,7 @@
             <arg value="--dirty"/>
         </exec>
         <tstamp>
-            <format property="timeAndDate.str" pattern="YYYY-MM-dd HH:mm:ss"/>
+            <format property="timeAndDate.str" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
         <jar destfile="${main_setlX.dir}/${ant.project.name}.jar" basedir="${classes.dir}" index="true">
             <manifest>
@@ -101,7 +101,7 @@
             <arg value="--dirty"/>
         </exec>
         <tstamp>
-            <format property="timeAndDate.str" pattern="YYYY-MM-dd HH:mm:ss"/>
+            <format property="timeAndDate.str" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
         <jar destfile="${main_setlX.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}" index="true">
             <manifest>

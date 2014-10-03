@@ -2,14 +2,13 @@ package org.randoom.setlx.boolExpressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.expressions.BinaryExpression;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
-
-import java.util.List;
 
 /**
  * Implementation of the greater-or-equal operator.
@@ -23,14 +22,11 @@ import java.util.List;
  *       ====      ====
  *       lhs        rhs
  */
-public class GreaterOrEqual extends Expr {
+public class GreaterOrEqual extends BinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(GreaterOrEqual.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1500;
-
-    private final Expr lhs;
-    private final Expr rhs;
 
     /**
      * Create new GreaterOrEqual.
@@ -39,8 +35,7 @@ public class GreaterOrEqual extends Expr {
      * @param rhs Expression to evaluate and compare.
      */
     public GreaterOrEqual(final Expr lhs, final Expr rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+        super(lhs, rhs);
     }
 
     /*
@@ -83,34 +78,18 @@ public class GreaterOrEqual extends Expr {
         }
     }
 
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-    }
-
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
+    public void appendOperator(final StringBuilder sb) {
         sb.append(" >= ");
-        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, rhs.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -129,6 +108,15 @@ public class GreaterOrEqual extends Expr {
             final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new GreaterOrEqual(lhs, rhs);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(GreaterOrEqual.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

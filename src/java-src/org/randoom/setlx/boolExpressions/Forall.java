@@ -166,6 +166,49 @@ public class Forall extends Expr {
         }
     }
 
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == Forall.class) {
+            final Forall otr = (Forall) other;
+            int cmp = iterator.compareTo(otr.iterator);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return condition.compareTo(otr.condition);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Forall.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == Forall.class) {
+            final Forall other = (Forall) obj;
+            return iterator.equals(other.iterator) && condition.equals(other.condition);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + iterator.hashCode();
+        hash = hash * 31 + condition.hashCode();
+        return hash;
+    }
+
     @Override
     public int precedence() {
         return PRECEDENCE;

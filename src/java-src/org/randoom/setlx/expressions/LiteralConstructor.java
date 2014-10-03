@@ -87,6 +87,41 @@ public class LiteralConstructor extends Expr {
         }
     }
 
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == LiteralConstructor.class) {
+            return originalLiteral.compareTo(((LiteralConstructor) other).originalLiteral);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(LiteralConstructor.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == LiteralConstructor.class) {
+            return originalLiteral.equals(((LiteralConstructor) obj).originalLiteral);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + originalLiteral.hashCode();
+    }
+
     @Override
     public int precedence() {
         return PRECEDENCE;

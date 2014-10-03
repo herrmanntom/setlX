@@ -48,7 +48,7 @@ public class Range extends CollectionBuilder {
     @Override
     public void fillCollection(final State state, final CollectionValue collection) throws SetlException {
         final Value start = this.start.eval(state);
-              Value step  = null;
+              Value step;
         // compute step
         if (second != null) {
             step = second.eval(state).difference(state, start);
@@ -136,6 +136,72 @@ public class Range extends CollectionBuilder {
      */
     /*package*/ static String getFunctionalCharacter() {
         return FUNCTIONAL_CHARACTER;
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CollectionBuilder other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == Range.class) {
+            Range range = (Range) other;
+            int cmp = start.compareTo(range.start);
+            if (cmp != 0) {
+                return cmp;
+            }
+            cmp = stop.compareTo(range.stop);
+            if (cmp != 0) {
+                return cmp;
+            }
+            if (second != null) {
+                if (range.second != null) {
+                    return second.compareTo(range.second);
+                } else {
+                    return -1;
+                }
+            } if (range.second != null) {
+                return 1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Range.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == Range.class) {
+            Range range = (Range) obj;
+            if (start.equals(range.start) && stop.equals(range.stop)) {
+                if (second != null && range.second != null) {
+                    return second.equals(range.second);
+                } else if (second == null && range.second == null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + start.hashCode();
+        hash = hash * 31 + stop.hashCode();
+        if (second != null) {
+            hash = hash * 31 + second.hashCode();
+        }
+        return hash;
     }
 }
 

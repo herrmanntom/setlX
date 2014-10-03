@@ -112,6 +112,41 @@ public class ProcedureConstructor extends Expr {
         return definition.toTerm(state);
     }
 
+    /* comparisons */
+
+    @Override
+    public final int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == ProcedureConstructor.class) {
+            return definition.compareTo(((ProcedureConstructor) other).definition);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ProcedureConstructor.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == ProcedureConstructor.class) {
+            return definition.equals(((ProcedureConstructor) obj).definition);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        return  ((int) compareToOrdering()) + definition.hashCode();
+    }
+
     @Override
     public int precedence() {
         if (definition instanceof LambdaProcedure) {

@@ -7,8 +7,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.List;
-
 /**
  * Implementation of the minus operator.
  *
@@ -22,13 +20,11 @@ import java.util.List;
  *           ======
  *            expr
  */
-public class Minus extends Expr {
+public class Minus extends UnaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Minus.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
-
-    private final Expr expr;
 
     /**
      * Constructor.
@@ -36,22 +32,12 @@ public class Minus extends Expr {
      * @param expr Expression to evaluate to a number.
      */
     public Minus(final Expr expr) {
-        this.expr = expr;
+        super(expr);
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
         return expr.eval(state).minus(state);
-    }
-
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -65,10 +51,8 @@ public class Minus extends Expr {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, expr.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -86,6 +70,15 @@ public class Minus extends Expr {
             final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
             return new Minus(expr);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Minus.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

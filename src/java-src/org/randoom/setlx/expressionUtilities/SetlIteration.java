@@ -159,5 +159,71 @@ public class SetlIteration extends CollectionBuilder {
     /*package*/ static String getFunctionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CollectionBuilder other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == SetlIteration.class) {
+            SetlIteration setlIteration = (SetlIteration) other;
+            int cmp = expr.compareTo(setlIteration.expr);
+            if (cmp != 0) {
+                return cmp;
+            }
+            cmp = iterator.compareTo(setlIteration.iterator);
+            if (cmp != 0) {
+                return cmp;
+            }
+            if (condition != null) {
+                if (setlIteration.condition != null) {
+                    return condition.compareTo(setlIteration.condition);
+                } else {
+                    return -1;
+                }
+            } if (setlIteration.condition != null) {
+                return 1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlIteration.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == SetlIteration.class) {
+            SetlIteration setlIteration = (SetlIteration) obj;
+            if (expr.equals(setlIteration.expr) && iterator.equals(setlIteration.iterator)) {
+                if (condition != null && setlIteration.condition != null) {
+                    return condition.equals(setlIteration.condition);
+                } else if (condition == null && setlIteration.condition == null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
+        hash = hash * 31 + iterator.hashCode();
+        if (condition != null) {
+            hash = hash * 31 + condition.hashCode();
+        }
+        return hash;
+    }
 }
 

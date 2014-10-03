@@ -35,7 +35,7 @@ import java.util.List;
  *       ==========      ====        ||      ========
  *       assignable   collection     ||        next
  */
-public class SetlIterator extends CodeFragment {
+public class SetlIterator extends CodeFragment implements Comparable<SetlIterator> {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIterator.class);
 
@@ -241,6 +241,63 @@ public class SetlIterator extends CodeFragment {
         }
     }
 
+    /* comparisons */
+
+    @Override
+    public int compareTo(final SetlIterator other) {
+        if (this == other) {
+            return 0;
+        }
+        int cmp = assignable.compareTo(other.assignable);
+        if (cmp != 0) {
+            return cmp;
+        }
+        cmp = collection.compareTo(other.collection);
+        if (cmp != 0) {
+            return cmp;
+        }
+        if (next != null) {
+            if (other.next != null) {
+                return next.compareTo(other.next);
+            } else {
+                return -1;
+            }
+        } if (other.next != null) {
+            return 1;
+        }
+        return 0;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == SetlIterator.class) {
+            SetlIterator setlIterator = (SetlIterator) obj;
+            if (assignable.equals(setlIterator.assignable) && collection.equals(setlIterator.collection)) {
+                if (next != null && setlIterator.next != null) {
+                    return next.equals(setlIterator.next);
+                } else if (next == null && setlIterator.next == null) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    private final static int INIT_HASH_CODE = Condition.class.hashCode();
+
+    @Override
+    public int hashCode() {
+        int hash = INIT_HASH_CODE + assignable.hashCode();
+        hash = hash * 31 + collection.hashCode();
+        if (next != null) {
+            hash = hash * 31 + next.hashCode();
+        }
+        return hash;
+    }
+
     /* private functions */
 
     private ReturnMessage evaluate(final State state, final SetlIteratorExecutionContainer exec, final VariableScope outerScope) throws SetlException {
@@ -285,7 +342,7 @@ public class SetlIterator extends CodeFragment {
                     /* Starts iteration of next iterator or execution if this is the
                        last iterator.
                        Stops iteration if requested by execution.                 */
-                    ReturnMessage result = null;
+                    ReturnMessage result;
                     if (next != null) {
                         result = next.evaluate(state, exec, outerScope);
                     } else {

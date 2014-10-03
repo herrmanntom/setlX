@@ -206,5 +206,80 @@ public class ExplicitList extends CollectionBuilder {
         }
         return new ExplicitList(exprList);
     }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CollectionBuilder other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == ExplicitList.class) {
+            final List<Expr> otherList = ((ExplicitList) other).list;
+            if (list == otherList) {
+                return 0; // clone
+            }
+            final Iterator<Expr> iterFirst  = list.iterator();
+            final Iterator<Expr> iterSecond = otherList.iterator();
+            while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                final int cmp = iterFirst.next().compareTo(iterSecond.next());
+                if (cmp != 0) {
+                    return cmp;
+                }
+            }
+            if (iterFirst.hasNext()) {
+                return 1;
+            }
+            if (iterSecond.hasNext()) {
+                return -1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ExplicitList.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == ExplicitList.class) {
+            final List<Expr> otherList = ((ExplicitList) obj).list;
+            if (list == otherList) {
+                return true; // clone
+            } else if (list.size() == otherList.size()) {
+                final Iterator<Expr> iterFirst  = list.iterator();
+                final Iterator<Expr> iterSecond = otherList.iterator();
+                while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                    if ( ! iterFirst.next().equals(iterSecond.next())) {
+                        return false;
+                    }
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        final int size = list.size();
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + size;
+        if (size >= 1) {
+            hash = hash * 31 + list.get(0).hashCode();
+            if (size >= 2) {
+                hash = hash * 31 + list.get(size-1).hashCode();
+            }
+        }
+        return hash;
+    }
 }
 

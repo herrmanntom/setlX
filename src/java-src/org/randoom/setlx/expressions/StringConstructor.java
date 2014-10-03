@@ -269,6 +269,41 @@ public class StringConstructor extends Expr {
         }
     }
 
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == StringConstructor.class) {
+            return originalStr.compareTo(((StringConstructor) other).originalStr);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(StringConstructor.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == StringConstructor.class) {
+            return originalStr.equals(((StringConstructor) obj).originalStr);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + originalStr.hashCode();
+    }
+
     @Override
     public int precedence() {
         return PRECEDENCE;

@@ -41,9 +41,8 @@ public class IgnoreDummy extends Value {
     public int compareTo(final Value other) {
         if (other == ID) {
             return 0;
-        } else {
-            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
+        return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(IgnoreDummy.class);

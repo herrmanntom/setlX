@@ -152,7 +152,67 @@ public class SetListConstructor extends Expr {
         }
     }
 
-    // precedence level in SetlX-grammar
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == SetListConstructor.class) {
+            SetListConstructor otr = (SetListConstructor) other;
+            int cmp = type.compareTo(otr.type);
+            if (cmp != 0) {
+                return cmp;
+            }
+
+            if (builder != null) {
+                if (otr.builder != null) {
+                    return builder.compareTo(otr.builder);
+                } else {
+                    return 1;
+                }
+            } else if (otr.builder != null) {
+                return -1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetListConstructor.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == SetListConstructor.class) {
+            SetListConstructor other = (SetListConstructor) obj;
+            if (type == other.type) {
+                if (builder != null && other.builder != null) {
+                    return builder.equals(other.builder);
+                } else if (builder == null && other.builder == null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + type.hashCode();
+        if (builder != null) {
+            hash = hash * 31 + builder.hashCode();
+        }
+        return hash;
+    }
+
     @Override
     public int precedence() {
         return PRECEDENCE;

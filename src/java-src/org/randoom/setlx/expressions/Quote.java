@@ -7,8 +7,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.List;
-
 /**
  * The quotation expression.
  *
@@ -22,13 +20,11 @@ import java.util.List;
  *           ======
  *           expr
  */
-public class Quote extends Expr {
+public class Quote extends UnaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Quote.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
-
-    private final Expr expr;
 
     /**
      * Constructor.
@@ -36,22 +32,12 @@ public class Quote extends Expr {
      * @param expr Expression to quote.
      */
     public Quote(final Expr expr) {
-        this.expr = expr;
+        super(expr);
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
         return expr.toTermQuoted(state);
-    }
-
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -65,15 +51,8 @@ public class Quote extends Expr {
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) throws SetlException {
-        return this.toTermQuoted(state);
-    }
-
-    @Override
-    public Term toTermQuoted(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, expr.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -91,6 +70,15 @@ public class Quote extends Expr {
             final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
             return new Quote(expr);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Quote.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

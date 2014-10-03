@@ -118,11 +118,7 @@ public class LambdaProcedure extends Procedure {
             if (cmp != 0) {
                 return cmp;
             }
-            if (expr == lambdaProcedure.expr) {
-                return 0;
-            }
-            // TODO do without toString
-            return expr.toString().compareTo(lambdaProcedure.expr.toString());
+            return expr.compareTo(lambdaProcedure.expr);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -144,11 +140,7 @@ public class LambdaProcedure extends Procedure {
         } else if (other.getClass() == LambdaProcedure.class) {
             final LambdaProcedure lambdaProcedure = (LambdaProcedure) other;
             if (parameters.equals(lambdaProcedure.parameters)) {
-                if (expr == lambdaProcedure.expr) {
-                    return true;
-                }
-                // TODO do without toString
-                return expr.toString().equals(lambdaProcedure.expr.toString());
+                return expr.equals(lambdaProcedure.expr);
             }
         }
         return false;

@@ -7,8 +7,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.List;
-
 /**
  * Implementation of the Cartesian Product operator.
  *
@@ -21,14 +19,11 @@ import java.util.List;
  *       =====               =====
  *       mLhs                mRhs
  */
-public class CartesianProduct extends Expr {
+public class CartesianProduct extends BinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CartesianProduct.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
-
-    private final Expr lhs;
-    private final Expr rhs;
 
     /**
      * Constructor.
@@ -37,8 +32,7 @@ public class CartesianProduct extends Expr {
      * @param rhs Right hand side of the operator.
      */
     public CartesianProduct(final Expr lhs, final Expr rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+        super(lhs, rhs);
     }
 
     @Override
@@ -46,34 +40,18 @@ public class CartesianProduct extends Expr {
         return lhs.eval(state).cartesianProduct(state, rhs.eval(state));
     }
 
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-    }
-
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
+    public void appendOperator(final StringBuilder sb) {
         sb.append(" >< ");
-        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, rhs.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -92,6 +70,15 @@ public class CartesianProduct extends Expr {
             final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new CartesianProduct(lhs, rhs);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(CartesianProduct.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     // precedence level in SetlX-grammar

@@ -22,13 +22,11 @@ import java.util.List;
  *       ============================================================
  *                                 expr
  */
-public class Factorial extends Expr {
+public class Factorial extends UnaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Factorial.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 2100;
-
-    private final Expr expr;
 
     /**
      * Constructor.
@@ -36,22 +34,12 @@ public class Factorial extends Expr {
      * @param expr Expression to evaluate to a number.
      */
     public Factorial(final Expr expr) {
-        this.expr = expr;
+        super(expr);
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
         return expr.eval(state).factorial(state);
-    }
-
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -65,10 +53,8 @@ public class Factorial extends Expr {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, expr.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -86,6 +72,15 @@ public class Factorial extends Expr {
             final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
             return new Factorial(expr);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Factorial.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

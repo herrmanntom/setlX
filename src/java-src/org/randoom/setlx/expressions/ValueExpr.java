@@ -15,7 +15,6 @@ public class ValueExpr extends Expr {
 
     private final Value value;
 
-
     /**
      * Constructor.
      *
@@ -32,7 +31,7 @@ public class ValueExpr extends Expr {
 
     @Override
     protected Value evaluate(final State state) {
-        return eval(state);
+        return value;
     }
 
     @Override
@@ -55,6 +54,41 @@ public class ValueExpr extends Expr {
     @Override
     public Value toTerm(final State state) throws SetlException {
         return value.toTerm(state);
+    }
+
+    /* comparisons */
+
+    @Override
+    public final int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == ValueExpr.class) {
+            return value.compareTo(((ValueExpr) other).value);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ValueExpr.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == ValueExpr.class) {
+            return value.equals(((ValueExpr) obj).value);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        return  ((int) compareToOrdering()) + value.hashCode();
     }
 
     @Override

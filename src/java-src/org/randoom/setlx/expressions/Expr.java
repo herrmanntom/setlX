@@ -13,10 +13,10 @@ import java.util.List;
 /**
  * Base class for all SetlX expressions.
  */
-public abstract class Expr extends CodeFragment {
+public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
     // collection of reusable replacement values
-    private final static HashMap<String, SoftReference<Value>> REPLACEMENTS = new HashMap<String, SoftReference<Value>>();
+    private final static HashMap<Expr, SoftReference<Value>> REPLACEMENTS = new HashMap<Expr, SoftReference<Value>>();
 
     // false if expression is `static' (does not contain variables) and can be replaced by a static result
     private Boolean isNotReplaceable = true;
@@ -40,17 +40,14 @@ public abstract class Expr extends CodeFragment {
             } else if (replacement != null) {
                 return replacement.clone();
             } else /* if ( ! isNotReplaceable && replacement == null) */ {
-                // string representation of this expression
-                final String _this = this.toString(state);
-
                 synchronized (REPLACEMENTS) {
                     // look up if same expression was already evaluated
-                    final SoftReference<Value> result = REPLACEMENTS.get(_this);
+                    final SoftReference<Value> result = REPLACEMENTS.get(this);
                     if (result != null) {
                         replacement = result.get();
 
                         if (replacement == null) { // reference was cleared up
-                            REPLACEMENTS.remove(_this);
+                            REPLACEMENTS.remove(this);
                         }
                     }
                 }
@@ -58,7 +55,7 @@ public abstract class Expr extends CodeFragment {
                 if (replacement == null) { // not found
                     replacement = evaluate(state);
                     synchronized (REPLACEMENTS) {
-                        REPLACEMENTS.put(_this, new SoftReference<Value>(replacement));
+                        REPLACEMENTS.put(this, new SoftReference<Value>(replacement));
                     }
                 }
 
@@ -73,7 +70,6 @@ public abstract class Expr extends CodeFragment {
         } finally {
             // decrease callStackDepth
             state.callStackDepth -= 2;
-
         }
     }
 
@@ -209,6 +205,35 @@ public abstract class Expr extends CodeFragment {
         return toTerm(state);
     }
 
+    /* comparisons */
+
+    /* Compare two Values.  Return value is < 0 if this value is less than the
+     * value given as argument, > 0 if its greater and == 0 if both values
+     * contain the same elements.
+     * Useful output is only possible if both values are of the same type.
+     */
+    @Override
+    public abstract int compareTo(final Expr other);
+
+    /**
+     * In order to compare "incomparable" expressions, e.g. of different subtypes of
+     * Expr, the return value of this function is used to establish some
+     * semi arbitrary order to be used in compareTo():
+     *
+     * This ranking is necessary to allow sets and lists of different types.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#generateCompareToOrderConstant(Class)
+     *
+     * @return Number representing the order of this type in compareTo().
+     */
+    public abstract long compareToOrdering();
+
+    @Override
+    public abstract boolean equals(Object obj);
+
+    @Override
+    public abstract int hashCode();
+
     /**
      * Precedence level in SetlX-grammar. Manly used for automatic bracket insertion
      * when converting terms to expressions.
@@ -217,7 +242,6 @@ public abstract class Expr extends CodeFragment {
      *
      * @return Precedence level.
      */
-    public abstract int   precedence();
-
+    public abstract int precedence();
 }
 

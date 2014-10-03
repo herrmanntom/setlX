@@ -161,6 +161,49 @@ public class MemberAccess extends AssignableExpression {
         }
     }
 
+    /* comparisons */
+
+    @Override
+    public int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == MemberAccess.class) {
+            MemberAccess otr = (MemberAccess) other;
+            int cmp = memberID.compareTo(otr.memberID);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return lhs.compareTo(otr.lhs);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(MemberAccess.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == MemberAccess.class) {
+            MemberAccess other = (MemberAccess) obj;
+            return memberID.equals(other.memberID) && lhs.equals(other.lhs);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + lhs.hashCode();
+        hash = hash * 31 + memberID.hashCode();
+        return hash;
+    }
+
     @Override
     public int precedence() {
         return PRECEDENCE;

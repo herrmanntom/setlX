@@ -100,7 +100,7 @@ public abstract class CodeFragment {
      *
      * @return Number representing the order of this type in compareTo().
      */
-    //public abstract int compareToOrdering();
+    //public abstract long compareToOrdering();
 
     //@Override
     //public abstract boolean equals(Object obj);

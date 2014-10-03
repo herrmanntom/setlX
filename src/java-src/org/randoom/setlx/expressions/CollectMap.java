@@ -9,8 +9,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.List;
-
 /**
  * Expression that collects specific members of a collection value.
  *
@@ -23,14 +21,11 @@ import java.util.List;
  *       ==================================                                       =======
  *                    lhs                                                           arg
  */
-public class CollectMap extends Expr {
+public class CollectMap extends BinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CollectMap.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
-
-    private final Expr lhs;      // left hand side (Variable, other CollectMap, CollectionAccess, etc)
-    private final Expr arg;      // argument
 
     /**
      * Create a new CollectMap expression.
@@ -39,8 +34,7 @@ public class CollectMap extends Expr {
      * @param arg Expression to evaluate as argument to collect.
      */
     public CollectMap(final Expr lhs, final Expr arg) {
-        this.lhs = lhs;
-        this.arg = arg;
+        super(lhs, arg);
     }
 
     @Override
@@ -51,45 +45,36 @@ public class CollectMap extends Expr {
                 "Left hand side \"" + this.lhs + "\" is undefined."
             );
         }
-        return lhs.collectMap(state, arg.eval(state).clone());
-    }
-
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        arg.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return lhs.collectMap(state, rhs.eval(state).clone());
     }
 
     /* string operations */
 
     @Override
+    public void appendOperator(final StringBuilder sb) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         lhs.appendString(state, sb, tabs);
         sb.append("{");
-        arg.appendString(state, sb, tabs);
+        rhs.appendString(state, sb, tabs);
         sb.append("}");
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, arg.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     @Override
     public Term toTermQuoted(final State state) throws SetlException {
         final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
         result.addMember(state, lhs.toTermQuoted(state));
-        result.addMember(state, arg.eval(state).toTerm(state));
+        result.addMember(state, rhs.eval(state).toTerm(state));
         return result;
     }
 
@@ -109,6 +94,15 @@ public class CollectMap extends Expr {
             final Expr arg = TermConverter.valueToExpr(state, term.lastMember());
             return new CollectMap(lhs, arg);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(CollectMap.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

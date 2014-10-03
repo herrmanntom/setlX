@@ -7,8 +7,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.List;
-
 /**
  * Implementation of the power operator (**).
  *
@@ -21,14 +19,11 @@ import java.util.List;
  *       ======       ===============
  *        lhs            exponent
  */
-public class Power extends Expr {
+public class Power extends BinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Power.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 2000;
-
-    private final Expr lhs;
-    private final Expr exponent;
 
     /**
      * Constructor.
@@ -37,43 +32,26 @@ public class Power extends Expr {
      * @param exponent Right hand side of the operator.
      */
     public Power(final Expr lhs, final Expr exponent) {
-        this.lhs      = lhs;
-        this.exponent = exponent;
+        super(lhs, exponent);
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
-        return lhs.eval(state).power(state, exponent.eval(state));
-    }
-
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        exponent.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return lhs.eval(state).power(state, rhs.eval(state));
     }
 
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
+    public void appendOperator(final StringBuilder sb) {
         sb.append(" ** ");
-        exponent.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, exponent.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -92,6 +70,15 @@ public class Power extends Expr {
             final Expr exponent   = TermConverter.valueToExpr(state, term.lastMember());
             return new Power(lhs, exponent);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Power.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

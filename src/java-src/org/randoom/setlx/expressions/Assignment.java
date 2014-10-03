@@ -21,7 +21,7 @@ import java.util.List;
  *       ==========       =======================
  *           lhs                   rhs
  */
-public class Assignment extends Expr {
+public class Assignment extends BinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assignment.class);
 
@@ -29,7 +29,6 @@ public class Assignment extends Expr {
     private final static int    PRECEDENCE           = 1000;
 
     private final AssignableExpression lhs;
-    private final Expr                 rhs;
 
     /**
      * Constructor.
@@ -38,8 +37,8 @@ public class Assignment extends Expr {
      * @param rhs Right hand side of the assignment.
      */
     public Assignment(final AssignableExpression lhs, final Expr rhs) {
+        super(lhs, rhs);
         this.lhs = lhs;
-        this.rhs = rhs;
     }
 
     @Override
@@ -62,20 +61,15 @@ public class Assignment extends Expr {
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendString(state, sb, tabs);
+    public void appendOperator(final StringBuilder sb) {
         sb.append(" := ");
-        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, rhs.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -95,6 +89,15 @@ public class Assignment extends Expr {
             }
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Assignment.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

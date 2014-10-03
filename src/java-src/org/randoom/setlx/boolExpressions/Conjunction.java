@@ -9,7 +9,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.List;
 
 /**
  * Class representing a Boolean conjunction expression (e.g. 'and').
@@ -23,14 +22,11 @@ import java.util.List;
  *       ==========       ==========
  *           lhs             rhs
  */
-public class Conjunction extends Expr {
+public class Conjunction extends LazyEvaluatingBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Conjunction.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1400;
-
-    private final Expr lhs;
-    private final Expr rhs;
 
     /**
      * Create new Conjunction.
@@ -39,8 +35,7 @@ public class Conjunction extends Expr {
      * @param rhs Expression to evaluate and combine.
      */
     public Conjunction(final Expr lhs, final Expr rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+        super(lhs, rhs);
     }
 
     @Override
@@ -49,43 +44,22 @@ public class Conjunction extends Expr {
     }
 
     @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        Value value = null;
-        if (lhs.isReplaceable()) {
-            try {
-                value = lhs.eval(state);
-            } catch (final Throwable t) {
-                value = null;
-            }
-        }
-        if (value == null || value != SetlBoolean.FALSE) {
-            rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        }
+    protected SetlBoolean lhsResultCausingLaziness() {
+        return SetlBoolean.FALSE;
     }
 
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
+    public void appendOperator(final StringBuilder sb) {
         sb.append(" && ");
-        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, rhs.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -104,6 +78,15 @@ public class Conjunction extends Expr {
             final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new Conjunction(lhs, rhs);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Conjunction.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

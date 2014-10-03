@@ -21,14 +21,11 @@ import java.util.List;
  *       ======      ======
  *        lhs         rhs
  */
-public class Product extends Expr {
+public class Product extends BinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Product.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1700;
-
-    private final Expr lhs;
-    private final Expr rhs;
 
     /**
      * Constructor.
@@ -37,8 +34,7 @@ public class Product extends Expr {
      * @param rhs Right hand side of the operator.
      */
     public Product(final Expr lhs, final Expr rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+        super(lhs, rhs);
     }
 
     @Override
@@ -46,34 +42,18 @@ public class Product extends Expr {
         return lhs.eval(state).product(state, rhs.eval(state));
     }
 
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-    }
-
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, false);
+    public void appendOperator(final StringBuilder sb) {
         sb.append(" * ");
-        rhs.appendBracketedExpr(state, sb, tabs, PRECEDENCE, true);
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, rhs.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -92,6 +72,15 @@ public class Product extends Expr {
             final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new Product(lhs, rhs);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Product.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

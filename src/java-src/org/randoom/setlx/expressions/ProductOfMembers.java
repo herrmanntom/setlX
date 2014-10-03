@@ -23,13 +23,11 @@ import java.util.List;
 ///             ======
 ///             mExpr
 ///
-public class ProductOfMembers extends Expr {
+public class ProductOfMembers extends UnaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ProductOfMembers.class);
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 1900;
-
-    private final Expr expr;
 
     /**
      * Constructor.
@@ -37,22 +35,12 @@ public class ProductOfMembers extends Expr {
      * @param expr Expression to evaluate to a CollectionValue.
      */
     public ProductOfMembers(final Expr expr) {
-        this.expr = expr;
+        super(expr);
     }
 
     @Override
     protected Value evaluate(final State state) throws SetlException {
         return expr.eval(state).productOfMembers(state, Om.OM);
-    }
-
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -66,10 +54,8 @@ public class ProductOfMembers extends Expr {
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 1);
-        result.addMember(state, expr.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -87,6 +73,15 @@ public class ProductOfMembers extends Expr {
             final Expr expr = TermConverter.valueToExpr(state, term.firstMember());
             return new ProductOfMembers(expr);
         }
+    }
+
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ProductOfMembers.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

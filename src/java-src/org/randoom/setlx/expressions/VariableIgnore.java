@@ -98,6 +98,33 @@ public class VariableIgnore extends AssignableExpression {
         return VI;
     }
 
+    /* comparisons */
+
+    @Override
+    public final int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        }
+        return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(VariableIgnore.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return this == obj;
+    }
+
+    @Override
+    public final int hashCode() {
+        return (int) COMPARE_TO_ORDER_CONSTANT;
+    }
+
     @Override
     public int precedence() {
         return PRECEDENCE;

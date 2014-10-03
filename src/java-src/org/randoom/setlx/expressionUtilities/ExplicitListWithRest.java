@@ -173,5 +173,84 @@ public class ExplicitListWithRest extends CollectionBuilder {
     /*package*/ static String getFunctionalCharacter() {
         return FUNCTIONAL_CHARACTER;
     }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CollectionBuilder other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == ExplicitListWithRest.class) {
+            ExplicitListWithRest otherExplicitListWithRest = (ExplicitListWithRest) other;
+            if (rest == otherExplicitListWithRest.rest && list == otherExplicitListWithRest.list) {
+                return 0; // clone
+            }
+            int cmp = rest.compareTo(otherExplicitListWithRest.rest);
+            if (cmp != 0) {
+                return cmp;
+            }
+            final Iterator<Expr> iterFirst  = list.iterator();
+            final Iterator<Expr> iterSecond = otherExplicitListWithRest.list.iterator();
+            while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                cmp = iterFirst.next().compareTo(iterSecond.next());
+                if (cmp != 0) {
+                    return cmp;
+                }
+            }
+            if (iterFirst.hasNext()) {
+                return 1;
+            }
+            if (iterSecond.hasNext()) {
+                return -1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ExplicitListWithRest.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == ExplicitListWithRest.class) {
+            ExplicitListWithRest otherExplicitListWithRest = (ExplicitListWithRest) obj;
+            if (rest == otherExplicitListWithRest.rest && list == otherExplicitListWithRest.list) {
+                return true; // clone
+            } else if (list.size() == otherExplicitListWithRest.list.size() && rest.equals(otherExplicitListWithRest.rest)) {
+                final Iterator<Expr> iterFirst  = list.iterator();
+                final Iterator<Expr> iterSecond = otherExplicitListWithRest.list.iterator();
+                while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                    if ( ! iterFirst.next().equals(iterSecond.next())) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+              int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + rest.hashCode();
+        final int size = list.size();
+        hash = hash * 31 + size;
+        if (size >= 1) {
+            hash = hash * 31 + list.get(0).hashCode();
+            if (size >= 2) {
+                hash = hash * 31 + list.get(size-1).hashCode();
+            }
+        }
+        return hash;
+    }
 }
 

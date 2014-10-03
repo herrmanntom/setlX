@@ -90,13 +90,13 @@ public class Variable extends AssignableExpression {
     }
 
     @Override
-    public void assignUncloned(final State state, final Value v, final String context) throws IllegalRedefinitionException {
-        state.putValue(id, v, context);
+    public void assignUncloned(final State state, final Value value, final String context) throws IllegalRedefinitionException {
+        state.putValue(id, value, context);
     }
 
     @Override
-    public boolean assignUnclonedCheckUpTo(final State state, final Value v, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
-        return state.putValueCheckUpTo(id, v, outerScope, checkObjects, context);
+    public boolean assignUnclonedCheckUpTo(final State state, final Value value, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
+        return state.putValueCheckUpTo(id, value, outerScope, checkObjects, context);
     }
 
     /* string operations */
@@ -148,22 +148,30 @@ public class Variable extends AssignableExpression {
         }
     }
 
+    /* comparisons */
+
     @Override
-    public int precedence() {
-        return PRECEDENCE;
+    public int compareTo(final Expr other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == Variable.class) {
+            final Variable otr = (Variable) other;
+            return id.compareTo(otr.id);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
     }
 
-    /* methods used when inserted into HashSets etc */
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Variable.class);
 
     @Override
-    public final boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        } else if (o instanceof Variable) {
-            return id.equals(((Variable) o).id);
-        } else {
-            return false;
-        }
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return this == obj || obj.getClass() == Variable.class && id.equals(((Variable) obj).id);
     }
 
     /**
@@ -178,11 +186,14 @@ public class Variable extends AssignableExpression {
         return this == v || id.equals(v.id);
     }
 
-    private final static int initHashCode = Variable.class.hashCode();
-
     @Override
     public int hashCode() {
-        return initHashCode + id.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + id.hashCode();
+    }
+
+    @Override
+    public int precedence() {
+        return PRECEDENCE;
     }
 
     /**

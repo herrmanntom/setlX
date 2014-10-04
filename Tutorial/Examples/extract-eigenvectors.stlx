@@ -4,7 +4,7 @@ extractEigenVectors := procedure(a) {
     return [ la_vector([eigV[row][col] : row in rng]): col in rng ];
 };
 
-a := la_matrix([[1, -1], [-1, 1]]);
+a := << <<1 -1>> <<-1 1>> >>;
 
 print(a);
 print( extractEigenVectors(a) );

@@ -471,13 +471,15 @@ public class SetlVector extends IndexedCollectionValue {
 
     @Override
     public void canonical(State state, StringBuilder sb) {
-        sb.append("<");
-        for(Double v : vector) {
-            sb.append(" ");
-            SetlDouble.printDouble(state, sb, v);
-            sb.append(" ");
+        sb.append("<<");
+        Iterator<Double> iter = vector.iterator();
+        while (iter.hasNext()) {
+            SetlDouble.printDouble(state, sb, iter.next());
+            if (iter.hasNext()) {
+                sb.append(" ");
+            }
         }
-        sb.append(">");
+        sb.append(">>");
     }
 
     /* term operations */

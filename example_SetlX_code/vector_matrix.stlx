@@ -5,17 +5,17 @@
 // Definition
 // ----------
 
-a := la_matrix([[1,2],[3,4]]);
-b := la_matrix([[5,6],[7,8]]);
-c := la_vector([1,2,3]);
-d := la_vector([5,6,7]);
-e := la_matrix([[1,2,3]]);
-f := la_matrix([[1],[2],[3]]);
+a := << <<1 2>> <<3 4>> >>;
+b := << <<5 6>> <<7 8>> >>;
+c := <<1 2 3>>;
+d := <<5 6 7>>;
+e := << <<1 2 3>> >>;
+f := << <<1>> <<2>> <<3>> >>;
 
 // Matrix
 // ------
 
-print("Matrix: a: [[1,2],[3,4]] & b: [[5,6],[7,8]]");
+print("Matrix: a: << <<1 2>> <<3 4>> >> & b: << <<5 6>> <<7 8>> >>");
 
 print("a * b: " + (a * b));
 print("a * 2: " + (a * 2));
@@ -46,7 +46,7 @@ print("");
 // Vector
 // ------
 
-print("Vector: c: [1,2,3] & d : [5,6,7]");
+print("Vector: c: <<1 2 3>> & d : <<5 6 7>>");
 
 print("c * 2: " + (c * 2));
 print("Scalar product:");
@@ -67,8 +67,8 @@ print("");
 // ----------
 
 print("Conversion between matrix & vector:");
-print("Single row matrix: e: [[1,2,3]]");
-print("Single column matrix: f: [[1],[2],[3]]");
+print("Single row matrix: e: << <<1 2 3>> >>");
+print("Single column matrix: f: << <<1>> <<2>> <<3>> >>");
 
 print("Explicit conversion");
 

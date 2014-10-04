@@ -31,14 +31,56 @@ public class SetlMatrix extends IndexedCollectionValue {
     }
 
     /**
-     * Primary constructor
+     * Create a new matrix.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param vectors        List of vectors to fill the matrix with.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public SetlMatrix(final State state, final List<SetlVector> vectors) {
+              String error = null;
+        final int    rowCount = vectors.size();
+        final int    columnCount = vectors.get(0).size();
+        double[][] base = new double[rowCount][columnCount];
+        for (int currentRow = 0; currentRow < rowCount; currentRow++) {
+            ArrayList<Double> row = vectors.get(currentRow).getVectorCopy();
+            if(row.size() < 1) {
+                error = "Row " + (currentRow + 1) + "is empty.";
+                break;
+            }
+            if(row.size() != columnCount) {
+                error = "Row " + (currentRow + 1) + " does not have the same length as the first row.";
+                break;
+            }
+            for (int currentColumn = 0; currentColumn < columnCount; currentColumn++) {
+                base[currentRow][currentColumn] = row.get(currentColumn);
+            }
+        }
+
+        if (error != null) {
+            /* Doing error handling here is futile
+             * Instead make outer parsing run, which called this constructor,
+             * notice this error and (later) halt.
+             */
+            state.addToParserErrorCount(1);
+            // However we can at least provide the user with some feedback.
+            state.writeParserErrLn(
+                    "Error(s) while creating matrix from vectors " + vectors + " {\n"
+                            + "\t" + error + "\n"
+                            + "}"
+            );
+        }
+        matrix = new Jama.Matrix(base);
+    }
+
+    /**
+     * Create a new matrix.
      *
      * @param state          Current state of the running setlX program.
      * @param init           Collection of Numbers to fill the matrix with
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public SetlMatrix(final State state, final CollectionValue init) throws SetlException {
-        super();
         final int rowCount = init.size();
         final int columnCount = init.firstMember().size();
         double[][] base = new double[rowCount][columnCount];
@@ -749,18 +791,20 @@ public class SetlMatrix extends IndexedCollectionValue {
 
     @Override
     public void canonical(final State state, final StringBuilder sb) {
-        double[][] a = matrix.getArray();
-        sb.append("{");
-        for(double[] a1 : a) {
-            sb.append(" <");
-            for(double a2 : a1) {
-                sb.append(" ");
-                SetlDouble.printDouble(state, sb, a2);
-                sb.append(" ");
+        double[][] matrixArray = matrix.getArray();
+        sb.append("<< ");
+        for (double[] row : matrixArray) {
+            sb.append("<<");
+            for (int j = 0; j < row.length; j++) {
+                double d = row[j];
+                SetlDouble.printDouble(state, sb, d);
+                if (j < row.length - 1) {
+                    sb.append(" ");
+                }
             }
-            sb.append("> ");
+            sb.append(">> ");
         }
-        sb.append("}");
+        sb.append(">>");
     }
 
     /* term operations */

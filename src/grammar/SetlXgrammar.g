@@ -477,13 +477,15 @@ value [boolean enableIgnore, boolean quoted] returns [Expr v]
                            { $v = new SetListConstructor(CollectionType.SET, cb);           }
     | STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
     | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
+    | matrix               { $v = new ValueExpr($matrix.m);                                 }
+    | vector               { $v = new ValueExpr($vector.v);                                 }
     | atomicValue          { $v = new ValueExpr($atomicValue.av);                           }
     | {$enableIgnore}? '_' { $v = VariableIgnore.VI;                                        }
     ;
 
 collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]
     @init {
-        List<Expr> exprs        = new ArrayList<Expr>();
+        List<Expr> exprs = new ArrayList<Expr>();
     }
     : /*iterator[$enableIgnore] '|' c2 = condition
       { $cb = new SetlIteration(null, $iterator.iter, $c2.cnd); }
@@ -534,6 +536,41 @@ iteratorChain [boolean enableIgnore] returns [SetlIterator ic]
 iterator [boolean enableIgnore] returns [SetlIterator iter]
     :
       assignable[true] 'in' expr[$enableIgnore] { $iter = new SetlIterator($assignable.a, $expr.ex); }
+    ;
+
+matrix returns [SetlMatrix m]
+    @init {
+        List<SetlVector> vectors = new ArrayList<SetlVector>();
+    }
+    : '<<'
+      (
+        vector { vectors.add($vector.v);       }
+      )+
+      '>>'     { $m = new SetlMatrix(setlXstate, vectors); }
+    ;
+
+vector returns [SetlVector v]
+    @init {
+        ArrayList<Double> doubles  = new ArrayList<Double>();
+        String            negative = "";
+        double            dbl      = 0.0;
+    }
+    : '<<'
+      (
+       (
+         '-'             { negative = "-"; }
+       | /* epsilon */   { negative = "";  }
+       )
+       (
+         n1 = NUMBER     { dbl = Double.valueOf(negative + $n1.text);     }
+       | DOUBLE          { dbl = Double.valueOf(negative + $DOUBLE.text); }
+       )
+       (
+         '/' n2 = NUMBER { dbl /= Double.valueOf(negative + $n2.text); }
+       )?
+                         { doubles.add(dbl); }
+      )+
+      '>>'               { $v = new SetlVector(doubles); }
     ;
 
 atomicValue returns [Value av]

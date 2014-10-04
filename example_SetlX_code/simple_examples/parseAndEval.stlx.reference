@@ -1,5 +1,5 @@
 rule stack: [initExpr, expr]
-line 1:1 at [@0,0:0='%',<20>,1:0]: no viable alternative at input '%'
+line 1:1 at [@0,0:0='%',<21>,1:0]: no viable alternative at input '%'
 1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!
@@ -7,7 +7,7 @@ Oh... you did that wrong... try again!
 value	:= om
 
 rule stack: [initExpr, expr]
-line 1:1 at [@0,0:0='%',<20>,1:0]: no viable alternative at input '%'
+line 1:1 at [@0,0:0='%',<21>,1:0]: no viable alternative at input '%'
 1 syntax error(s) encountered.
 
 Oh... you did that wrong... try again!

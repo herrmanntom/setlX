@@ -6,7 +6,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

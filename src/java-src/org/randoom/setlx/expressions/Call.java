@@ -26,12 +26,12 @@ import java.util.List;
  *     ;
  *
  * call
- *     :                                           ('(' callParameters ')' | [..])*
+ *     :                                           ('(' callParameters (',' '*' expr)? ')' | [..])*
  *     ;
  *
  * implemented here as:
- *        ===================================           ==============
- *                     lhs                                   args
+ *        ===================================           ==============  ============
+ *                     lhs                                   args         listArg
  */
 public class Call extends Expr {
     // functional character used in terms
@@ -39,18 +39,21 @@ public class Call extends Expr {
     // precedence level in SetlX-grammar
     private final static int    PRECEDENCE           = 2100;
 
-    private final Expr       lhs;  // left hand side
-    private final List<Expr> args; // list of arguments
+    private final Expr       lhs;     // left hand side
+    private final List<Expr> args;    // list of arguments
+    private final Expr       listArg; // optional list expansion argument
 
     /**
      * Create a new call expression.
      *
-     * @param lhs  Left hand side to evaluate before execute the call on its result.
-     * @param args Expressions to evaluate as arguments of the call.
+     * @param lhs     Left hand side to evaluate before execute the call on its result.
+     * @param args    Expressions to evaluate as arguments of the call.
+     * @param listArg Expression to evaluate as list-argument of the call.
      */
-    public Call(final Expr lhs, final List<Expr> args) {
-        this.lhs  = lhs;
-        this.args = args;
+    public Call(final Expr lhs, final List<Expr> args, final Expr listArg) {
+        this.lhs     = lhs;
+        this.args    = args;
+        this.listArg = listArg;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class Call extends Expr {
         }
         // supply the original expressions (args), which are needed for 'rw' parameters
         try {
-            return lhs.call(state, args);
+            return lhs.call(state, args, listArg);
         } catch (final SetlException se) {
             final StringBuilder error = new StringBuilder();
             error.append("Error in \"");
@@ -86,6 +89,9 @@ public class Call extends Expr {
         for (final Expr expr : args) {
             expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
+        if (listArg != null) {
+            listArg.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        }
         // add dummy variable to prevent optimization, behavior of called function is unknown here!
         unboundVariables.add(Variable.getPreventOptimizationDummy());
     }
@@ -107,6 +113,13 @@ public class Call extends Expr {
                 sb.append(", ");
             }
         }
+        if (listArg != null) {
+            if ( ! args.isEmpty()) {
+                sb.append(", ");
+            }
+            sb.append("*");
+            listArg.appendString(state, sb, 0);
+        }
 
         sb.append(")");
     }
@@ -115,7 +128,7 @@ public class Call extends Expr {
 
     @Override
     public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
         if (lhs instanceof Variable) {
             result.addMember(state, new SetlString(((Variable) lhs).getID()));
@@ -129,12 +142,18 @@ public class Call extends Expr {
         }
         result.addMember(state, arguments);
 
+        if (listArg != null) {
+            result.addMember(state, listArg.toTerm(state));
+        } else {
+            result.addMember(state, SetlString.NIL);
+        }
+
         return result;
     }
 
     @Override
     public Term toTermQuoted(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
+        final Term result = new Term(FUNCTIONAL_CHARACTER, 3);
 
         if (lhs instanceof Variable) {
             result.addMember(state, new SetlString(((Variable) lhs).getID()));
@@ -148,6 +167,12 @@ public class Call extends Expr {
         }
         result.addMember(state, arguments);
 
+        if (listArg != null) {
+            result.addMember(state, listArg.eval(state).toTerm(state));
+        } else {
+            result.addMember(state, SetlString.NIL);
+        }
+
         return result;
     }
 
@@ -160,22 +185,33 @@ public class Call extends Expr {
      * @throws TermConversionException Thrown in case of a malformed term.
      */
     public static Call termToExpr(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
-            final Value lhsTerm = term.firstMember();
-            final Expr  lhs;
-            if (lhsTerm instanceof SetlString) {
-                lhs = new Variable(lhsTerm.getUnquotedString(state));
+        try {
+            if (term.size() != 3 || !(term.getMember(2) instanceof SetlList)) {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             } else {
-                lhs = TermConverter.valueToExpr(state, lhsTerm);
+                final Value lhsTerm = term.firstMember();
+                final Expr lhs;
+                if (lhsTerm instanceof SetlString) {
+                    lhs = new Variable(lhsTerm.getUnquotedString(state));
+                } else {
+                    lhs = TermConverter.valueToExpr(state, lhsTerm);
+                }
+
+                final SetlList argsLst = (SetlList) term.getMember(2);
+                final List<Expr> args = new ArrayList<Expr>(argsLst.size());
+                for (final Value v : argsLst) {
+                    args.add(TermConverter.valueToExpr(state, v));
+                }
+
+                Expr listArg = null;
+                if (!term.lastMember().equals(SetlString.NIL)) {
+                    listArg = TermConverter.valueToExpr(state, term.lastMember());
+                }
+
+                return new Call(lhs, args, listArg);
             }
-            final SetlList   argsLst = (SetlList) term.lastMember();
-            final List<Expr> args    = new ArrayList<Expr>(argsLst.size());
-            for (final Value v : argsLst) {
-                args.add(TermConverter.valueToExpr(state, v));
-            }
-            return new Call(lhs, args);
+        } catch (SetlException se) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         }
     }
 
@@ -187,12 +223,24 @@ public class Call extends Expr {
             return 0;
         } else if (other.getClass() == Call.class) {
             Call otr = (Call) other;
-            if (lhs == otr.lhs && args == otr.args) {
+            if (lhs == otr.lhs && args == otr.args && listArg == otr.listArg) {
                 return 0; // clone
             }
             int cmp = lhs.compareTo(otr.lhs);
             if (cmp != 0) {
                 return cmp;
+            }
+            if (listArg != null) {
+                if (otr.listArg != null) {
+                    cmp = listArg.compareTo(otr.listArg);
+                    if (cmp != 0) {
+                        return cmp;
+                    }
+                } else {
+                    return 1;
+                }
+            } else if (otr.listArg != null) {
+                return -1;
             }
             final Iterator<Expr> iterFirst  = args.iterator();
             final Iterator<Expr> iterSecond = otr.args.iterator();
@@ -227,9 +275,20 @@ public class Call extends Expr {
             return true;
         } else if (obj.getClass() == Call.class) {
             Call other = (Call) obj;
-            if (lhs == other.lhs && args == other.args) {
+            if (lhs == other.lhs && args == other.args && listArg == other.listArg) {
                 return true; // clone
             } else if (args.size() == other.args.size() && lhs.equals(other.lhs)) {
+                if (listArg != null) {
+                    if (other.listArg != null) {
+                        if (! listArg.equals(other.listArg)) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else if (other.listArg != null) {
+                    return false;
+                }
                 final Iterator<Expr> iterFirst  = args.iterator();
                 final Iterator<Expr> iterSecond = other.args.iterator();
                 while (iterFirst.hasNext() && iterSecond.hasNext()) {

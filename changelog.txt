@@ -9,6 +9,7 @@ Changes (* notice | + feature added, replaced or improved | - feature removed | 
    may now be written as
    r[a,b] := 1; print(r[a,b]);
  + added specification of optional and unlimited parameters for procedures, closures and classes
+ + added ability to expand lists as arguments for function calls
 
 ---v2.2.4--- 2014-06-09
  + added "getClass()" method to objects, that refers to the class used to create

@@ -163,7 +163,7 @@ public class SetlObject extends Value {
                            final String member
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
-        return overloadQuerry(state, member).call(state, args);
+        return overloadQuerry(state, member).call(state, args, null);
     }
 
     /**
@@ -186,7 +186,7 @@ public class SetlObject extends Value {
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
         args.add(new ValueExpr(other));
-        return overloadQuerry(state, member).call(state, args);
+        return overloadQuerry(state, member).call(state, args, null);
     }
 
     /**
@@ -586,8 +586,8 @@ public class SetlObject extends Value {
     /* function call */
 
     @Override
-    public Value call(final State state, final List<Expr> args) throws SetlException {
-        return overloadQuerry(state, CALL).call(state, args);
+    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
+        return overloadQuerry(state, CALL).call(state, args, listArg);
     }
     private final static String CALL = createOverloadVariable(Call.functionalCharacter());
 

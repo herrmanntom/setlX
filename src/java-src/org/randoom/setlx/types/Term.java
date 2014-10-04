@@ -560,13 +560,14 @@ public class Term extends IndexedCollectionValue {
 
     // viral operation
     @Override
-    public Term call(final State state, final List<Expr> args) throws SetlException {
+    public Term call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
         if (functionalCharacter.equalsIgnoreCase(VariableIgnore.getFunctionalCharacter())) {
             return (    new Call(
                             new Variable(
                                 TermConverter.valueToExpr(state, this).toString(state)
                             ),
-                            args
+                            args,
+                            listArg
                         )
                    ).toTerm(state);
         } else {

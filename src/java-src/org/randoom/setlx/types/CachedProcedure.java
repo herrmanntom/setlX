@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.ParameterList;
@@ -128,10 +129,23 @@ public class CachedProcedure extends Procedure {
     /* function call */
 
     @Override
-    public Value call(final State state, final List<Expr> args) throws SetlException {
-        final int        nArguments = args.size();
-        final SetlObject object     = this.object;
+    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
+        final SetlObject object = this.object;
         this.object = null;
+
+        SetlList listArguments = null;
+        if (listArg != null) {
+            Value listArgument = listArg.eval(state);
+            if (listArgument.getClass() != SetlList.class) {
+                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
+            }
+            listArguments = (SetlList) listArgument;
+        }
+
+        int nArguments = args.size();
+        if (listArguments != null) {
+            nArguments += listArguments.size();
+        }
 
         if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
             final StringBuilder error = new StringBuilder();
@@ -149,6 +163,12 @@ public class CachedProcedure extends Procedure {
             final Value v = arg.eval(state);
             values.add(v);
             key.addMember(state, v);
+        }
+        if (listArguments != null) {
+            for (Value listArgument : listArguments) {
+                values.add(listArgument);
+                key.addMember(state, listArgument);
+            }
         }
 
         Value                      cachedResult = null;

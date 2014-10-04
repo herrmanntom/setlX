@@ -431,17 +431,22 @@ call [boolean enableIgnore, Expr lhs] returns [Expr c]
     @init {
         $c = lhs;
     }
-    : '(' callParameters[$enableIgnore]         ')' { $c = new Call($c, $callParameters.params);                     }
+    : '(' callParameters[$enableIgnore]         ')' { $c = new Call($c, $callParameters.params, $callParameters.ex); }
     | '[' collectionAccessParams[$enableIgnore] ']' { $c = new CollectionAccess($c, $collectionAccessParams.params); }
     | '{' expr[$enableIgnore]                   '}' { $c = new CollectMap($c, $expr.ex);                             }
     ;
 
-callParameters [boolean enableIgnore] returns [List<Expr> params]
+callParameters [boolean enableIgnore] returns [List<Expr> params, Expr ex]
     @init {
         $params = new ArrayList<Expr>();
+        $ex     = null;
     }
     : exprList[$enableIgnore] { $params = $exprList.exprs; }
-    |  /* epsilon */
+      (
+         ',' '*' expr[false]  { $ex     = $expr.ex;        }
+      )?
+    | '*' expr[false]         { $ex     = $expr.ex;        }
+    | /* epsilon */
     ;
 
 collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]

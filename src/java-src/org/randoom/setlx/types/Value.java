@@ -813,10 +813,11 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
      *
      * @param state          Current state of the running setlX program.
      * @param args           Arguments of the function call.
+     * @param listArg        List argument of the function call.
      * @return               Return value of the call.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value call(final State state, final List<Expr> args) throws SetlException {
+    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
         final StringBuilder error = new StringBuilder();
         error.append("Can not perform call with arguments '");
         final Iterator<Expr> argIter = args.iterator();
@@ -825,6 +826,13 @@ public abstract class Value extends CodeFragment implements Comparable<Value> {
             if (argIter.hasNext()) {
                 error.append(", ");
             }
+        }
+        if (listArg != null) {
+            if (! args.isEmpty()) {
+                error.append(", ");
+            }
+            error.append("*");
+            listArg.appendString(state, error, 0);
         }
         error.append("' on this operand-type; '");
         this.appendString(state, error, 0);

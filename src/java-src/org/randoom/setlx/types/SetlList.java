@@ -277,17 +277,17 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public Value cartesianProduct(final State state, final Value otr) throws SetlException {
+    public Value cartesianProduct(final State state, final Value other) throws SetlException {
         // zip := procedure(xs, ys) {
         //      assert(#xs == #ys, "list of different size");
         //      return [ [xs[i], ys[i]] : i in [1..#xs] ];
         // };
-        if (otr.getClass() == SetlList.class) {
-            final SetlList other = (SetlList) otr;
+        if (other.getClass() == SetlList.class) {
+            final SetlList setlList = (SetlList) other;
             final int      size  = this.size();
-            if (size != other.size()) {
+            if (size != setlList.size()) {
                 throw new UndefinedOperationException(
-                    "Both sides of '" + this.toString(state) + " >< " + other.toString(state) + "' are not of equal length."
+                    "Both sides of '" + this.toString(state) + " >< " + setlList.toString(state) + "' are not of equal length."
                 );
             }
 
@@ -296,16 +296,16 @@ public class SetlList extends IndexedCollectionValue {
             for (int i = 1; i <= size; ++i) {
                 final SetlList tuple = new SetlList(2);
                 tuple.addMember(state, getMember(i));
-                tuple.addMember(state, other.getMember(i));
+                tuple.addMember(state, setlList.getMember(i));
                 result.addMember(state, tuple);
             }
 
             return result;
-        } else if (otr.getClass() == Term.class) {
-            return ((Term) otr).cartesianProductFlipped(state, this);
+        } else if (other.getClass() == Term.class) {
+            return ((Term) other).cartesianProductFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
-                "Right-hand-side of '" + this.toString(state) + " >< " + otr.toString(state) + "' is not a list."
+                "Right-hand-side of '" + this.toString(state) + " >< " + other.toString(state) + "' is not a list."
             );
         }
     }
@@ -318,14 +318,14 @@ public class SetlList extends IndexedCollectionValue {
      * @return      Collection of all contained members.
      */
     public SetlSet collect(final State state) {
-        final HashMap<Value, Integer> map        = new HashMap<Value, Integer>();
-              Integer                 occurences = null;
+        final HashMap<Value, Integer> map         = new HashMap<Value, Integer>();
+              Integer                 occurrences;
         for (final Value v : list) {
-            occurences = map.get(v);
-            if (occurences == null) {
+            occurrences = map.get(v);
+            if (occurrences == null) {
                 map.put(v, 1);
             } else {
-                map.put(v, ++occurences);
+                map.put(v, ++occurrences);
             }
         }
         final SetlSet result = new SetlSet();
@@ -406,15 +406,13 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     private Value getMemberZZZInternal(final State state, final Value vIndex) throws SetlException {
-        int index = 0;
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
-            index = vIndex.jIntValue();
+            return getMemberZZZInternal(vIndex.jIntValue());
         } else {
             throw new IncompatibleTypeException(
                 "Index '" + vIndex.toString(state) + "' is not a integer."
             );
         }
-        return getMemberZZZInternal(index);
     }
 
     private Value getMemberZZZInternal(final int index) throws NumberToLargeException {
@@ -617,39 +615,39 @@ public class SetlList extends IndexedCollectionValue {
     }
 
     @Override
-    public void setMember(final State state, final Value vIndex, final Value v) throws SetlException {
+    public void setMember(final State state, final Value index, final Value v) throws SetlException {
         separateFromOriginal();
-        int index = 0;
-        if (vIndex.isInteger() == SetlBoolean.TRUE) {
-            index = vIndex.jIntValue();
+        int indexValue;
+        if (index.isInteger() == SetlBoolean.TRUE) {
+            indexValue = index.jIntValue();
         } else {
             throw new IncompatibleTypeException(
-                "Index '" + vIndex + "' is not a integer."
+                "Index '" + index + "' is not a integer."
             );
         }
-        if (index < 1) {
+        if (indexValue < 1) {
             throw new NumberToLargeException(
-                "Index '" + index + "' is lower as '1'."
+                "Index '" + indexValue + "' is lower as '1'."
             );
         }
 
         // in java the index is one lower
-        --index;
+        --indexValue;
 
-        if (index >= list.size()) {
+        if (indexValue >= list.size()) {
             if (v == Om.OM) {
                 return; // nothing to do
             } else {
-                list.ensureCapacity(index + 1);
+                list.ensureCapacity(indexValue + 1);
                 // fill gap from size to index with OM, if necessary
-                while (index >= list.size()) {
+                while (indexValue >= list.size()) {
                     list.add(Om.OM);
                 }
             }
         }
 
         // set index to value
-        list.set(index, v);
+        list.set(indexValue, v);
 
         if (v == Om.OM) {
             compress();

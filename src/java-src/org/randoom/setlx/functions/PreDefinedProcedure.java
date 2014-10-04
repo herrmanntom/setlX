@@ -2,14 +2,12 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.types.Procedure;
-import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
 import org.randoom.setlx.utilities.ParameterList;
@@ -129,13 +127,26 @@ public abstract class PreDefinedProcedure extends Procedure {
 
     // this function is called from within SetlX
     @Override
-    public final Value call(final State state, final List<Expr> args) throws SetlException {
+    public final Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
         try {
             // increase callStackDepth
             state.callStackDepth += 2; // this method + the overloaded execute()
                                        // after that all bets are off
 
-            final int nArguments = args.size();
+            SetlList listArguments = null;
+            if (listArg != null) {
+                Value listArgument = listArg.eval(state);
+                if (listArgument.getClass() != SetlList.class) {
+                    throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
+                }
+                listArguments = (SetlList) listArgument;
+            }
+
+            int nArguments = args.size();
+            if (listArguments != null) {
+                nArguments += listArguments.size();
+            }
+
             if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
                 final StringBuilder error = new StringBuilder();
                 error.append("'");
@@ -151,6 +162,11 @@ public abstract class PreDefinedProcedure extends Procedure {
             final ArrayList<Value> values = new ArrayList<Value>(nArguments);
             for (final Expr arg : args) {
                 values.add(arg.eval(state).clone());
+            }
+            if (listArguments != null) {
+                for (Value listArgument : listArguments) {
+                    values.add(listArgument);
+                }
             }
 
             // assign parameters

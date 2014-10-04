@@ -215,6 +215,11 @@ public class SetlX {
                     termLoop
             );
             if ( ! noExecution) {
+                try {
+                    Thread.sleep(50); // wait a bit for the optimizer
+                } catch (InterruptedException ie) {
+                    // don't care
+                }
                 executeFiles(state, programs);
             }
         } else {
@@ -234,12 +239,17 @@ public class SetlX {
                 // prompt including newline to visually separate the next input
                 state.prompt("\n=> ");
                 state.resetParserErrorCount();
-                blk         = ParseSetlX.parseInteractive(state);
+                blk = ParseSetlX.parseInteractive(state);
                 if ( ! state.isMultiLineEnabled()) {
                     state.outWriteLn();
                 }
                 blk.markLastExprStatement();
-                skipTest    = false;
+                skipTest = false;
+                try {
+                    Thread.sleep(50); // wait a bit for the optimizer
+                } catch (InterruptedException ie) {
+                    // don't care
+                }
             } catch (final EndOfFileException eofe) {
                 // user wants to quit
                 state.outWriteLn("\n\nGood Bye! (EOF)");

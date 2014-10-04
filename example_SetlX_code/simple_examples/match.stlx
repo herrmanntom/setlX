@@ -76,7 +76,7 @@ print(canonical(exprTerm));
 match (exprTerm) {
     case fnc(u + _ ** v): // MUST NOT match, because it matches only a call to `fnc'
         print("match: fnc: u = $u$, v = $v$");
-    case ^call(fnc, [u + _ ** v]): // matches all function calls with matching arguments
+    case ^call(fnc, [u + _ ** v], "nil"): // matches all function calls with matching arguments
         print("match: fnc = $fnc$, u = $u$, v = $v$");
     default :
         print("failed to match");

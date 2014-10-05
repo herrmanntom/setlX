@@ -34,12 +34,36 @@ a := << <<1 2>> <<3 4>> >>;
 
 print("la_solve($a$, $v$) = $la_solve(a, v)$");
 
+print("\nThe next example shows what happens if the condition number");
+print("of the matrix used in la_solve is big:\n");
+a := << <<1.000 2.000>> <<2.000 3.999>> >>;
+b := <<4.000 7.999>>;
+x := la_solve(a, b);
+print("la_solve($a$, $b$) =");
+print("$x$\n");
+c := <<4.001 7.998>>;
+x := la_solve(a, c);
+print("la_solve($a$, $c$) ");
+print("$x$\n");
+print("la_cond($a$) = $la_cond(a)$\n");
+
+print("Singular Value Decomposition:\n");
 [u, s, v] := la_svd(a);
 print("svd($a$) = [u, v, d], where");
 print("u = $u$");
 print("s = $s$");
 print("v = $v$");
 print("u * s * v! = $u * s * v!$");
+print("\n");
 
+print("Eigenvectors and Eigenvalues:\n");
 print("la_eigenValues($a$) = $la_eigenValues(a)$");
 print("la_eigenVectors($a$) = $la_eigenVectors(a)$");
+
+extractEigenVectors := procedure(a) {
+    eigV := la_eigenVectors(a);
+    rng  := [1 .. #eigV];
+    return [ la_vector([eigV[row][col] : row in rng]): col in rng ];
+};
+print("eigenvectors of $a$");
+print(extractEigenVectors(a));

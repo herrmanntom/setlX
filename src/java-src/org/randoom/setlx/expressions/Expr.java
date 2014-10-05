@@ -1,6 +1,7 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -15,13 +16,14 @@ import java.util.List;
  */
 public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
-    // collection of reusable replacement values
+    // collection of reusable resultSoftReference values
     private final static HashMap<Expr, SoftReference<Value>> REPLACEMENTS = new HashMap<Expr, SoftReference<Value>>();
 
     // false if expression is `static' (does not contain variables) and can be replaced by a static result
-    private Boolean isNotReplaceable = true;
-    // value which is the result of this expression, if (isReplaceable == true)
-    private Value   replacement      = null;
+    private Boolean              isNotReplaceable    = true;
+    // references to values which are the result of this expression, if (isReplaceable == true)
+    private Value                resultHardReference = null;
+    private SoftReference<Value> resultSoftReference = null;
 
     /**
      * Evaluate this expression.
@@ -37,29 +39,34 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
             if (isNotReplaceable) {
                 return this.evaluate(state);
-            } else if (replacement != null) {
-                return replacement.clone();
-            } else /* if ( ! isNotReplaceable && replacement == null) */ {
+            } else if (resultHardReference != null) {
+                return resultHardReference.clone();
+            }
+            // look up if same expression was already evaluated
+            if (resultSoftReference == null) {
                 synchronized (REPLACEMENTS) {
-                    // look up if same expression was already evaluated
-                    final SoftReference<Value> result = REPLACEMENTS.get(this);
-                    if (result != null) {
-                        replacement = result.get();
-
-                        if (replacement == null) { // reference was cleared up
-                            REPLACEMENTS.remove(this);
-                        }
-                    }
+                    resultSoftReference = REPLACEMENTS.get(this);
                 }
+            }
+            Value result = null;
+            if (resultSoftReference != null) {
+                result = resultSoftReference.get();
+            }
 
-                if (replacement == null) { // not found
-                    replacement = evaluate(state);
-                    synchronized (REPLACEMENTS) {
-                        REPLACEMENTS.put(this, new SoftReference<Value>(replacement));
-                    }
+            if (result != null) {
+                return result.clone();
+            } else {
+                result = evaluate(state);
+                resultSoftReference = new SoftReference<Value>(result);
+                if (result.isList() == SetlBoolean.FALSE && result.isSet() == SetlBoolean.FALSE) {
+                    // collections are potentially very large, so only
+                    // keep hard references to other values
+                    resultHardReference = result;
                 }
-
-                return replacement;
+                synchronized (REPLACEMENTS) {
+                    REPLACEMENTS.put(this, resultSoftReference);
+                }
+                return result;
             }
         } catch (final SetlException se) {
             se.addToTrace("Error in \"" + this.toString(state) + "\":");

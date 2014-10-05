@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
@@ -781,7 +782,7 @@ public class Rational extends NumberValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == Rational.class) {

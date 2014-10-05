@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -101,7 +102,7 @@ public class VariableIgnore extends AssignableExpression {
     /* comparisons */
 
     @Override
-    public final int compareTo(final Expr other) {
+    public final int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         }

@@ -3,15 +3,12 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.statementBranches.TryCatchAbstractBranch;
+import org.randoom.setlx.statementBranches.AbstractTryCatchBranch;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -35,8 +32,8 @@ public class TryCatch extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatch.class);
 
-    private final Block                        blockToTry;
-    private final List<TryCatchAbstractBranch> tryList;
+    private final Block                               blockToTry;
+    private final FragmentList<AbstractTryCatchBranch> tryList;
 
     /**
      * Create a new try-catch statement.
@@ -44,7 +41,7 @@ public class TryCatch extends Statement {
      * @param blockToTry Block of statement to "try"
      * @param tryList    List of catch branches.
      */
-    public TryCatch(final Block blockToTry, final List<TryCatchAbstractBranch> tryList) {
+    public TryCatch(final Block blockToTry, final FragmentList<AbstractTryCatchBranch> tryList) {
         this.blockToTry = blockToTry;
         this.tryList    = tryList;
     }
@@ -57,7 +54,7 @@ public class TryCatch extends Statement {
 
             return blockToTry.execute(state);
         } catch (final CatchableInSetlXException cise) {
-            for (final TryCatchAbstractBranch br : tryList) {
+            for (final AbstractTryCatchBranch br : tryList) {
                 if (br.catches(state, cise)) {
                     return br.execute(state, cise);
                 }
@@ -83,7 +80,7 @@ public class TryCatch extends Statement {
         blockToTry.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         // catch blocks cannot be trusted to assign anything in any case
         final int preBound = boundVariables.size();
-        for (final TryCatchAbstractBranch br : tryList) {
+        for (final AbstractTryCatchBranch br : tryList) {
             br.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
         while (boundVariables.size() > preBound) {
@@ -98,7 +95,7 @@ public class TryCatch extends Statement {
         state.appendLineStart(sb, tabs);
         sb.append("try ");
         blockToTry.appendString(state, sb, tabs, true);
-        for (final TryCatchAbstractBranch br : tryList) {
+        for (final AbstractTryCatchBranch br : tryList) {
             br.appendString(state, sb, tabs);
         }
     }
@@ -112,7 +109,7 @@ public class TryCatch extends Statement {
         result.addMember(state, blockToTry.toTerm(state));
 
         final SetlList branchList = new SetlList(tryList.size());
-        for (final TryCatchAbstractBranch br: tryList) {
+        for (final AbstractTryCatchBranch br: tryList) {
             branchList.addMember(state, br.toTerm(state));
         }
         result.addMember(state, branchList);
@@ -132,14 +129,57 @@ public class TryCatch extends Statement {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Block                        block      = TermConverter.valueToBlock(state, term.firstMember());
-            final SetlList                     branches   = (SetlList) term.lastMember();
-            final List<TryCatchAbstractBranch> branchList = new ArrayList<TryCatchAbstractBranch>(branches.size());
+            final Block                                block      = TermConverter.valueToBlock(state, term.firstMember());
+            final SetlList                             branches   = (SetlList) term.lastMember();
+            final FragmentList<AbstractTryCatchBranch> branchList = new FragmentList<AbstractTryCatchBranch>(branches.size());
             for (final Value v : branches) {
-                branchList.add(TryCatchAbstractBranch.valueToTryCatchAbstractBranch(state, v));
+                branchList.add(AbstractTryCatchBranch.valueToTryCatchAbstractBranch(state, v));
             }
             return new TryCatch(block, branchList);
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == TryCatch.class) {
+            TryCatch otr = (TryCatch) other;
+            final int cmp = blockToTry.compareTo(otr.blockToTry);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return tryList.compareTo(otr.tryList);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(TryCatch.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == TryCatch.class) {
+            TryCatch otr = (TryCatch) obj;
+            return blockToTry.equals(otr.blockToTry) && tryList.equals(otr.tryList);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + blockToTry.hashCode();
+        hash = hash * 31 + tryList.hashCode();
+        return hash;
     }
 }
 

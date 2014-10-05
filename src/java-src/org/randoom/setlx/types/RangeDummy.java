@@ -1,6 +1,7 @@
 package org.randoom.setlx.types;
 
 import org.randoom.setlx.expressionUtilities.Range;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -27,7 +28,7 @@ public class RangeDummy extends Value {
     }
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         if (other == RD) {
             return 0;
         } else {

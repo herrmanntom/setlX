@@ -243,7 +243,7 @@ public class Procedure extends Value {
     protected void appendStringWithoutStatements(final State state, final StringBuilder sb) {
         object = null;
         sb.append("procedure(");
-        parameters.appendString(state, sb, 0);
+        parameters.appendString(state, sb);
         sb.append(")");
     }
 
@@ -282,7 +282,7 @@ public class Procedure extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         object = null;
         if (this == other) {
             return 0;

@@ -22,7 +22,7 @@ import java.util.List;
  *       ====
  *       expr
  */
-public class Condition extends CodeFragment implements Comparable<Condition> {
+public class Condition extends CodeFragment {
     private final Expr expr;
 
     /**
@@ -77,11 +77,21 @@ public class Condition extends CodeFragment implements Comparable<Condition> {
     /* comparisons */
 
     @Override
-    public int compareTo(final Condition other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
+        } else if (other.getClass() == Condition.class) {
+            return expr.compareTo(((Condition) other).expr);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
-        return expr.compareTo(other.expr);
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Condition.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -95,11 +105,9 @@ public class Condition extends CodeFragment implements Comparable<Condition> {
         return false;
     }
 
-    private final static int INIT_HASH_CODE = Condition.class.hashCode();
-
     @Override
     public int hashCode() {
-        return INIT_HASH_CODE + expr.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
     }
 }
 

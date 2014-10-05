@@ -2,6 +2,7 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.types.RangeDummy;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -70,7 +71,7 @@ public class CollectionAccessRangeDummy extends Expr {
     /* comparisons */
 
     @Override
-    public final int compareTo(final Expr other) {
+    public final int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         }

@@ -12,27 +12,31 @@ import org.randoom.setlx.utilities.State;
  */
 public abstract class Statement extends CodeFragment {
 
-    //TODO: use enum
     /**
-     * Code returned by executeWithErrorHandling() when the execution stopped
-     * without any error occurring or the user explicitly exiting.
-     *
-     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+     * Code returned by executeWithErrorHandling().
      */
-    public final static int EXECUTE_OK    = 23;
-    /**
-     * Code returned by executeWithErrorHandling() when the execution stopped
-     * after some kind of error.
-     *
-     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
-     */
-    public final static int EXECUTE_ERROR = 33;
-    /**
-     * Code returned by executeWithErrorHandling() when the user used the exit statement.
-     *
-     * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
-     */
-    public final static int EXECUTE_EXIT  = 42;
+    public enum EXECUTE {
+        /**
+         * Code returned by executeWithErrorHandling() when the execution stopped
+         * without any error occurring or the user explicitly exiting.
+         *
+         * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+         */
+        OK,
+        /**
+         * Code returned by executeWithErrorHandling() when the execution stopped
+         * after some kind of error.
+         *
+         * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+         */
+        ERROR,
+        /**
+         * Code returned by executeWithErrorHandling() when the user used the exit statement.
+         *
+         * @see org.randoom.setlx.statements.Statement#executeWithErrorHandling(State, boolean)
+         */
+        EXIT
+    }
 
     /**
      * Execute-method to be implemented by classes representing actual statements.
@@ -50,34 +54,34 @@ public abstract class Statement extends CodeFragment {
      * @param hintAtJVMxOptions Print hints to -X?? JVM options to get around certain errors.
      * @return                  Coded result type. (see EXECUTE_? constants)
      */
-    public int executeWithErrorHandling(final State state, final boolean hintAtJVMxOptions) {
+    public EXECUTE executeWithErrorHandling(final State state, final boolean hintAtJVMxOptions) {
         try {
             // increase callStackDepth
             ++(state.callStackDepth);
 
             execute(state);
-            return EXECUTE_OK;
+            return EXECUTE.OK;
 
         } catch (final AbortException ae) { // code detected user did something wrong
             state.errWriteLn(ae.getMessage());
-            return EXECUTE_ERROR;
+            return EXECUTE.ERROR;
 
         } catch (final ExitException ee) { // user/code wants to quit
             if (state.isInteractive()) {
                 state.outWriteLn(ee.getMessage());
             }
 
-            return EXECUTE_EXIT;
+            return EXECUTE.EXIT;
 
         } catch (final SetlException se) { // user/code did something wrong
             se.printExceptionsTrace(state, 40);
-            return EXECUTE_ERROR;
+            return EXECUTE.ERROR;
 
         } catch (final StackOverflowError soe) {
             state.storeStackDepthOfFirstCall(state.callStackDepth);
 
             state.errWriteOutOfStack(soe, false);
-            return EXECUTE_ERROR;
+            return EXECUTE.ERROR;
 
         } catch (final OutOfMemoryError oome) {
             try {
@@ -92,16 +96,15 @@ public abstract class Statement extends CodeFragment {
             }
 
             state.errWriteOutOfMemory(hintAtJVMxOptions, false);
-            return EXECUTE_ERROR;
+            return EXECUTE.ERROR;
 
         } catch (final Exception e) { // this should never happen...
             state.errWriteInternalError(e);
-            return EXECUTE_ERROR;
+            return EXECUTE.ERROR;
         } finally {
             // decrease callStackDepth
             --(state.callStackDepth);
         }
     }
-
 }
 

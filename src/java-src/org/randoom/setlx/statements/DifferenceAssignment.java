@@ -10,8 +10,6 @@ import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.List;
-
 /**
  * Implementation of the -= operator, on statement level.
  *
@@ -24,13 +22,9 @@ import java.util.List;
  *       ==========                 ====
  *          lhs                     rhs
  */
-public class DifferenceAssignment extends StatementWithPrintableResult {
+public class DifferenceAssignment extends AbstractAssignment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(DifferenceAssignment.class);
-
-    private final AssignableExpression lhs;
-    private final Expr                 rhs;
-    private       boolean              printAfterEval;
 
     /**
      * Create new DifferenceAssignment.
@@ -39,14 +33,7 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
      * @param rhs Expression to evaluate.
      */
     public DifferenceAssignment(final AssignableExpression lhs, final Expr rhs) {
-        this.lhs            = lhs;
-        this.rhs            = rhs;
-        this.printAfterEval = false;
-    }
-
-    /*package*/ @Override
-    void setPrintAfterExecution() {
-        printAfterEval = true;
+        super(lhs, rhs);
     }
 
     @Override
@@ -61,40 +48,18 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
         return null;
     }
 
-    @Override
-    public void collectVariablesAndOptimize (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        // first we evaluate lhs and rhs as usual
-        lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-
-        // then assign to lhs
-        lhs.collectVariablesWhenAssigned(state, boundVariables, boundVariables, boundVariables);
-    }
-
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.appendLineStart(sb, tabs);
-        lhs.appendString(state, sb, tabs);
+    public void appendOperator(final StringBuilder sb) {
         sb.append(" -= ");
-        rhs.appendString(state, sb, tabs);
-        sb.append(";");
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) throws SetlException {
-        final Term result = new Term(FUNCTIONAL_CHARACTER, 2);
-        result.addMember(state, lhs.toTerm(state));
-        result.addMember(state, rhs.toTerm(state));
-        return result;
+    public String getFunctionalCharacter() {
+        return FUNCTIONAL_CHARACTER;
     }
 
     /**
@@ -116,5 +81,13 @@ public class DifferenceAssignment extends StatementWithPrintableResult {
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
+    /* comparisons */
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(DifferenceAssignment.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
 }
 

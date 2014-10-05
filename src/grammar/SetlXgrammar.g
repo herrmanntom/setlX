@@ -34,12 +34,12 @@ grammar SetlXgrammar;
 
 initBlock returns [Block blk]
     @init{
-        List<Statement> stmnts = new ArrayList<Statement>();
+        FragmentList<Statement> stmnts = new FragmentList<Statement>();
     }
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )+
-      { $blk = new Block(setlXstate, stmnts); }
+      { $blk = new Block(stmnts); }
     ;
 
 initExpr returns [Expr ae]
@@ -49,23 +49,23 @@ initExpr returns [Expr ae]
 
 block returns [Block blk]
     @init{
-        List<Statement> stmnts = new ArrayList<Statement>();
+        FragmentList<Statement> stmnts = new FragmentList<Statement>();
     }
     : (
         statement  { if ($statement.stmnt != null) { stmnts.add($statement.stmnt); } }
       )*
-      { $blk = new Block(setlXstate, stmnts); }
+      { $blk = new Block(stmnts); }
     ;
 
 statement returns [Statement stmnt]
     @init{
-        List<IfThenAbstractBranch>      ifList     = new ArrayList<IfThenAbstractBranch>();
-        List<SwitchAbstractBranch>      caseList   = new ArrayList<SwitchAbstractBranch>();
-        List<MatchAbstractBranch>       matchList  = new ArrayList<MatchAbstractBranch>();
-        List<TryCatchAbstractBranch>    tryList    = new ArrayList<TryCatchAbstractBranch>();
-        Condition                       condition  = null;
-        Block                           block      = null;
-        Expr                            expression = null;
+        FragmentList<AbstractIfThenBranch>   ifList     = new FragmentList<AbstractIfThenBranch>();
+        FragmentList<AbstractSwitchBranch>   caseList   = new FragmentList<AbstractSwitchBranch>();
+        FragmentList<AbstractMatchBranch>    matchList  = new FragmentList<AbstractMatchBranch>();
+        FragmentList<AbstractTryCatchBranch> tryList    = new FragmentList<AbstractTryCatchBranch>();
+        Condition                            condition  = null;
+        Block                                block      = null;
+        Expr                                 expression = null;
     }
     : 'class' ID '(' procedureParameters[true] ')' '{' b1 = block ('static' '{' b2 = block '}' {block = $b2.blk;})? '}'
                          { $stmnt = new ClassConstructor($ID.text, new SetlClass($procedureParameters.paramList, $b1.blk, block)); }
@@ -122,8 +122,8 @@ statement returns [Statement stmnt]
 
 match returns [Match m]
     @init{
-        List<MatchAbstractBranch> matchList  = new ArrayList<MatchAbstractBranch>();
-        Condition                 condition  = null;
+        FragmentList<AbstractMatchBranch> matchList  = new FragmentList<AbstractMatchBranch>();
+        Condition                         condition  = null;
     }
     : 'match' '(' expr[false] ')' '{'
       (
@@ -141,8 +141,8 @@ match returns [Match m]
 
 scan returns [Scan s]
     @init{
-        List<MatchAbstractScanBranch> scanList  = new ArrayList<MatchAbstractScanBranch>();
-        Variable                      posVar    = null;
+        FragmentList<AbstractMatchScanBranch> scanList  = new FragmentList<AbstractMatchScanBranch>();
+        Variable                              posVar    = null;
     }
     : 'scan' '(' expr[false] ')' ('using' variable {posVar = $variable.v;})? '{'
       (
@@ -261,7 +261,7 @@ expr [boolean enableIgnore] returns [Expr ex]
     ;
 
 lambdaProcedure returns [LambdaProcedure lp]
-    : lambdaParameters '|->' expr[false] { $lp = new LambdaProcedure(setlXstate, $lambdaParameters.paramList, $expr.ex); }
+    : lambdaParameters '|->' expr[false] { $lp = new LambdaProcedure($lambdaParameters.paramList, $expr.ex); }
     ;
 
 lambdaParameters returns [ParameterList paramList]

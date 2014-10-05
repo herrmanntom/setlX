@@ -34,7 +34,7 @@ public class SetlClass extends Value {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlClass.class);
 
-    private final static Block  REBUILD_MARKER       = new Block(null, 0);
+    private final static Block  REBUILD_MARKER       = new Block(0);
 
     private final ParameterList      parameters;          // parameter list
     private final Block              initBlock;           // statements in the body of the definition
@@ -42,8 +42,6 @@ public class SetlClass extends Value {
     private       Block              staticBlock;         // statements in the static block
     private       HashSet<String>    staticVars;          // variables defined in the static block
     private       SetlHashMap<Value> staticDefs;          // definitions from static block
-
-    private       State              state;               // state used during rebuild of staticBlock;
 
     /**
      * Create a new instance of this data type.
@@ -77,7 +75,7 @@ public class SetlClass extends Value {
     private Block getStaticBlock() {
         if (staticBlock == REBUILD_MARKER) {
             // rebuild static block
-            final Block sBlock = new Block(state);
+            final Block sBlock = new Block();
             for (final Entry<String, Value> entry : staticDefs.entrySet()) {
                 sBlock.add(new ExpressionStatement(new Assignment(new Variable(entry.getKey()), new ValueExpr(entry.getValue()))));
             }
@@ -329,7 +327,6 @@ public class SetlClass extends Value {
 
         // mark static block to be rebuild on access
         staticBlock = REBUILD_MARKER;
-        this.state  = state;
     }
 
     /* string and char operations */
@@ -358,7 +355,7 @@ public class SetlClass extends Value {
             sb.append(className);
         }
         sb.append(" (");
-        parameters.appendString(state, sb, 0);
+        parameters.appendString(state, sb);
         sb.append(") {");
         sb.append(endl);
         initBlock.appendString(state, sb, tabs + 1, /* brackets = */ false);
@@ -420,7 +417,7 @@ public class SetlClass extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other){
+    public int compareTo(final CodeFragment other){
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlClass.class) {

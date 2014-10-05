@@ -5,6 +5,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -30,12 +31,11 @@ public class LambdaProcedure extends Procedure {
     /**
      * Create new lambda definition.
      *
-     * @param state      Current state of the running setlX program.
      * @param parameters List of parameters.
      * @param expr       lambda-expression.
      */
-    public LambdaProcedure(final State state, final ParameterList parameters, final Expr expr) {
-        super(parameters, new Block(state, 1));
+    public LambdaProcedure(final ParameterList parameters, final Expr expr) {
+        super(parameters, new Block(1));
         this.expr = expr;
         statements.add(new Return(expr));
     }
@@ -63,10 +63,10 @@ public class LambdaProcedure extends Procedure {
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
         object = null;
         if (parameters.hasSizeOfOne()) {
-            parameters.appendString(state, sb, 0);
+            parameters.appendString(state, sb);
         } else {
             sb.append("[");
-            parameters.appendString(state, sb, 0);
+            parameters.appendString(state, sb);
             sb.append("]");
         }
         sb.append(" |-> ");
@@ -101,14 +101,14 @@ public class LambdaProcedure extends Procedure {
         } else {
             final ParameterList parameters = ParameterList.termFragmentToParameterList(state, term.firstMember());
             final Expr          expr       = TermConverter.valueToExpr(state, term.lastMember());
-            return new LambdaProcedure(state, parameters, expr);
+            return new LambdaProcedure(parameters, expr);
         }
     }
 
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         object = null;
         if (this == other) {
             return 0;

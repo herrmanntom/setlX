@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Base class for all SetlX expressions.
  */
-public abstract class Expr extends CodeFragment implements Comparable<Expr> {
+public abstract class Expr extends CodeFragment {
 
     // collection of reusable resultSoftReference values
     private final static HashMap<Expr, SoftReference<Value>> REPLACEMENTS = new HashMap<Expr, SoftReference<Value>>();
@@ -162,9 +162,6 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
     /* string operations */
 
-    @Override
-    public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
-
     /**
      * Appends a string representation of this expression to the given
      * StringBuilder object, automatically inserting brackets when required.
@@ -195,9 +192,6 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
     /* term operations */
 
-    @Override
-    public abstract Value toTerm(final State state) throws SetlException;
-
     /**
      * Generate term representing the code this expression represents, when
      * this expression is quoted ('@').
@@ -211,35 +205,6 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
     public          Value toTermQuoted(final State state) throws SetlException  {
         return toTerm(state);
     }
-
-    /* comparisons */
-
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
-    @Override
-    public abstract int compareTo(final Expr other);
-
-    /**
-     * In order to compare "incomparable" expressions, e.g. of different subtypes of
-     * Expr, the return value of this function is used to establish some
-     * semi arbitrary order to be used in compareTo():
-     *
-     * This ranking is necessary to allow sets and lists of different types.
-     *
-     * @see org.randoom.setlx.utilities.CodeFragment#generateCompareToOrderConstant(Class)
-     *
-     * @return Number representing the order of this type in compareTo().
-     */
-    public abstract long compareToOrdering();
-
-    @Override
-    public abstract boolean equals(Object obj);
-
-    @Override
-    public abstract int hashCode();
 
     /**
      * Precedence level in SetlX-grammar. Manly used for automatic bracket insertion

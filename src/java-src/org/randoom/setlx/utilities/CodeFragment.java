@@ -11,7 +11,7 @@ import java.util.Locale;
  * Base class, which most other classes representing some SetlX-code element
  * inherit.
  */
-public abstract class CodeFragment {
+public abstract class CodeFragment implements Comparable<CodeFragment> {
 
     /**
      * Gather all bound and unbound variables in this fragment and its siblings.
@@ -86,8 +86,12 @@ public abstract class CodeFragment {
      *
      * @param state Current state of the running setlX program.
      * @return      Generated term.
+     * @throws SetlException in case of some (user-) error.
      */
     public abstract Value toTerm(final State state) throws SetlException;
+
+    @Override
+    public abstract int compareTo(final CodeFragment other);
 
     /**
      * In order to compare "incomparable" values, e.g. of different subtypes of
@@ -100,13 +104,13 @@ public abstract class CodeFragment {
      *
      * @return Number representing the order of this type in compareTo().
      */
-    //public abstract long compareToOrdering();
+    public abstract long compareToOrdering();
 
-    //@Override
-    //public abstract boolean equals(Object obj);
+    @Override
+    public abstract boolean equals(Object obj);
 
-    //@Override
-    //public abstract int hashCode();
+    @Override
+    public abstract int hashCode();
 
     /**
      * Generate the functional character used in toTerm() based upon the

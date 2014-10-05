@@ -8,7 +8,6 @@ import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -16,11 +15,10 @@ import java.util.List;
 /**
  * A list of parameter definitions.
  */
-public class ParameterList extends CodeFragment implements Comparable<ParameterList> {
-    private ArrayList<ParameterDef> parameters;
-    private int                     rwParameters;
-    private int                     numberOfParametersWithOutDefault;
-    private boolean                 isLastParameterOfTypeList;
+public class ParameterList extends FragmentList<ParameterDef> {
+    private int     rwParameters;
+    private int     numberOfParametersWithOutDefault;
+    private boolean isLastParameterOfTypeList;
 
     /**
      * Create a new Parameter list
@@ -34,7 +32,7 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
      * @param initialCapacity initial capacity of the list
      */
     public ParameterList(int initialCapacity) {
-        parameters                       = new ArrayList<ParameterDef>(initialCapacity);
+        super(initialCapacity);
         rwParameters                     = 0;
         numberOfParametersWithOutDefault = 0;
         isLastParameterOfTypeList        = false;
@@ -43,19 +41,20 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
     /**
      * Appends the specified ParameterDef to the end of this list.
      *
-     * @param parameterDef Parameter definition to append.
+     * @param element Parameter definition to append.
      */
-    public void add(ParameterDef parameterDef) {
+    @Override
+    public void add(ParameterDef element) {
         isLastParameterOfTypeList = false;
-        if (parameterDef.getType() == ParameterDef.ParameterType.READ_WRITE) {
+        if (element.getType() == ParameterDef.ParameterType.READ_WRITE) {
             ++rwParameters;
-        } else if (parameterDef.getType() == ParameterDef.ParameterType.LIST) {
+        } else if (element.getType() == ParameterDef.ParameterType.LIST) {
             isLastParameterOfTypeList = true;
         }
-        if (! parameterDef.hasDefaultValue()) {
+        if (! element.hasDefaultValue()) {
             ++numberOfParametersWithOutDefault;
         }
-        parameters.add(parameterDef);
+        super.add(element);
     }
 
     /**
@@ -63,17 +62,25 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
      * @return True if this lists contains exactly one parameter.
      */
     public boolean hasSizeOfOne() {
-        return parameters.size() == 1;
+        return fragmentList.size() == 1;
     }
 
-    @Override
+    /**
+     * Gather all bound and unbound variables in this fragment and its siblings.
+     * Optimizes this fragment, if this can be safely done.
+     *
+     * @param state            Current state of the running setlX program.
+     * @param boundVariables   Variables "assigned" in this fragment.
+     * @param unboundVariables Variables not present in bound when used.
+     * @param usedVariables    Variables present in bound when used.
+     */
     public void collectVariablesAndOptimize (
             final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
     ) {
-        for (final ParameterDef def : parameters) {
+        for (final ParameterDef def : fragmentList) {
             def.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
@@ -141,7 +148,7 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
         if (isLastParameterOfTypeList) {
             return Integer.MAX_VALUE;
         } else {
-            return parameters.size();
+            return fragmentList.size();
         }
     }
 
@@ -156,9 +163,9 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
      */
     public boolean putParameterValuesIntoScope(final State state, final List<Value> values, final String assignmentContext) throws SetlException {
         final int numberOfValues = values.size();
-        final int size           = parameters.size();
+        final int size           = fragmentList.size();
         for (int i = 0; i < size; ++i) {
-            final ParameterDef param = parameters.get(i);
+            final ParameterDef param = fragmentList.get(i);
                   Value        value = null;
             if (i < numberOfValues) {
                 value = values.get(i);
@@ -195,9 +202,9 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
     public HashMap<ParameterDef, Value> putParameterValuesIntoMap(final State state, final List<Value> values) throws SetlException {
         final HashMap<ParameterDef, Value> assignments    = new HashMap<ParameterDef, Value>();
         final int                          numberOfValues = values.size();
-        final int                          size           = parameters.size();
+        final int                          size           = fragmentList.size();
         for (int i = 0; i < size; ++i) {
-            final ParameterDef param = parameters.get(i);
+            final ParameterDef param = fragmentList.get(i);
                   Value        value = null;
             if (i < numberOfValues) {
                 value = values.get(i);
@@ -237,9 +244,9 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
         if (rwParameters > 0) {
             wba = new WriteBackAgent(rwParameters);
 
-            final int size = Math.min(parameters.size(), args.size());
+            final int size = Math.min(fragmentList.size(), args.size());
             for (int i = 0; i < size; ++i) {
-                final ParameterDef param = parameters.get(i);
+                final ParameterDef param = fragmentList.get(i);
                 if (param.getType() == ParameterDef.ParameterType.READ_WRITE) {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
@@ -269,9 +276,9 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
         if (rwParameters > 0) {
             wba = new WriteBackAgent(rwParameters);
 
-            final int size = Math.min(parameters.size(), args.size());
+            final int size = Math.min(fragmentList.size(), args.size());
             for (int i = 0; i < size; ++i) {
-                final ParameterDef param = parameters.get(i);
+                final ParameterDef param = fragmentList.get(i);
                 if (param.getType() == ParameterDef.ParameterType.READ_WRITE) {
                     // value of parameter after execution
                     final Value postValue = assignments.get(param);
@@ -287,9 +294,17 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
         return wba;
     }
 
-    @Override
-    public void appendString(State state, StringBuilder sb, int tabs) {
-        final Iterator<ParameterDef> iterator = parameters.iterator();
+    /**
+     * Appends a string representation of this code fragment to the given
+     * StringBuilder object.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toString(State)
+     *
+     * @param state Current state of the running setlX program.
+     * @param sb    StringBuilder to append to.
+     */
+    public void appendString(State state, StringBuilder sb) {
+        final Iterator<ParameterDef> iterator = fragmentList.iterator();
         while (iterator.hasNext()) {
             iterator.next().appendString(state, sb, 0);
             if (iterator.hasNext()) {
@@ -297,11 +312,17 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
             }
         }
     }
-
-    @Override
+    /**
+     * Returns a string representation of this code fragment.
+     *
+     * @see org.randoom.setlx.utilities.CodeFragment#toString()
+     *
+     * @param state Current state of the running setlX program.
+     * @return      String representation.
+     */
     public Value toTerm(final State state) throws SetlException {
-        final SetlList paramList = new SetlList(parameters.size());
-        for (final ParameterDef param: parameters) {
+        final SetlList paramList = new SetlList(fragmentList.size());
+        for (final ParameterDef param: fragmentList) {
             paramList.addMember(state, param.toTerm(state));
         }
         return paramList;
@@ -326,60 +347,5 @@ public class ParameterList extends CodeFragment implements Comparable<ParameterL
             }
             return parameters;
         }
-    }
-
-    @Override
-    public int compareTo(ParameterList o) {
-        final int size = parameters.size();
-        int cmp = Integer.valueOf(size).compareTo(o.parameters.size());
-        if (cmp != 0) {
-            return cmp;
-        }
-        for (int index = 0; index < size; ++index) {
-            cmp = parameters.get(index).compareTo(o.parameters.get(index));
-            if (cmp != 0) {
-                return cmp;
-            }
-        }
-        return 0;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj.getClass() != ParameterList.class) {
-            return false;
-        }
-        return equals((ParameterList) obj);
-    }
-
-    /**
-     * Indicates whether some other ParameterList is "equal to" this one.
-     *
-     * @param   other   the reference to a ParameterList with which to compare.
-     * @return  {@code true} if this object is the same as the obj
-     *          argument; {@code false} otherwise.
-     */
-    public boolean equals(ParameterList other) {
-        if (this == other) {
-            return true;
-        }
-        final int size = parameters.size();
-        if (size == other.parameters.size()) {
-            for (int index = 0; index < other.parameters.size(); ++index) {
-                if ( ! parameters.get(index).equalTo(other.parameters.get(index))) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private final static int initHashCode = ParameterList.class.hashCode();
-
-    @Override
-    public int hashCode() {
-        return initHashCode + parameters.size();
     }
 }

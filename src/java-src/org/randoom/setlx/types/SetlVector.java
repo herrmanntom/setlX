@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.randoom.setlx.exceptions.*;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -496,7 +497,7 @@ public class SetlVector extends IndexedCollectionValue {
     /* comparisons */
 
     @Override
-    public int compareTo(Value other) {
+    public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlVector.class) {

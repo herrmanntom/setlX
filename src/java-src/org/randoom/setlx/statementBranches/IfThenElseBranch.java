@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -22,7 +23,7 @@ import java.util.List;
  *                                                                                                       =====
  *                                                                                                     statements
  */
-public class IfThenElseBranch extends IfThenAbstractBranch {
+public class IfThenElseBranch extends AbstractIfThenBranch {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThenElseBranch.class);
 
@@ -89,6 +90,41 @@ public class IfThenElseBranch extends IfThenAbstractBranch {
             final Block block = TermConverter.valueToBlock(state, term.firstMember());
             return new IfThenElseBranch(block);
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == IfThenElseBranch.class) {
+            return statements.compareTo(((IfThenElseBranch) other).statements);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(IfThenElseBranch.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == IfThenElseBranch.class) {
+            return statements.equals(((IfThenElseBranch) obj).statements);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.hashCode();
     }
 
     /**

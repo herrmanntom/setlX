@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
@@ -73,5 +74,40 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     @Override
     public Value toTerm(final State state) throws SetlException {
         return expr.toTerm(state);
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == ExpressionStatement.class) {
+            return expr.compareTo(((ExpressionStatement) other).expr);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ExpressionStatement.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == ExpressionStatement.class) {
+            return expr.equals(((ExpressionStatement) obj).expr);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
     }
 }

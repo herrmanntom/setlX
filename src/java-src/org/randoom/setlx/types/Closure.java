@@ -201,7 +201,7 @@ public class Closure extends Procedure {
     protected void appendStringWithoutStatements(final State state, final StringBuilder sb) {
         object = null;
         sb.append("closure(");
-        parameters.appendString(state, sb, 0);
+        parameters.appendString(state, sb);
         sb.append(")");
     }
 
@@ -244,7 +244,7 @@ public class Closure extends Procedure {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         object = null;
         if (this == other) {
             return 0;

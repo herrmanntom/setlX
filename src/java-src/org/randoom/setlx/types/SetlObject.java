@@ -56,6 +56,7 @@ import org.randoom.setlx.functions.PD_sort;
 import org.randoom.setlx.functions.PD_split;
 import org.randoom.setlx.functions.PD_str;
 import org.randoom.setlx.functions.PreDefinedProcedure;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
@@ -120,9 +121,9 @@ public class SetlObject extends Value {
         return result;
     }
 
-    private LambdaProcedure getClassMember(final State state) {
+    private LambdaProcedure getClassMember() {
         if (getClassMember == null) {
-            getClassMember = new LambdaProcedure(state, new ParameterList(0), new ValueExpr(classDefinition));
+            getClassMember = new LambdaProcedure(new ParameterList(0), new ValueExpr(classDefinition));
         }
         return getClassMember;
     }
@@ -550,7 +551,7 @@ public class SetlObject extends Value {
 
     private Value getObjectMemberUnClonedUnSafe(final State state, final String variable) throws SetlException {
         if (variable.equals(GET_CLASS_MEMBER)) {
-            return getClassMember(state);
+            return getClassMember();
         }
         Value result = members.get(variable);
         if (result == null) {
@@ -621,7 +622,7 @@ public class SetlObject extends Value {
         sb.append("; ");
         sb.append(GET_CLASS_MEMBER);
         sb.append(" := ");
-        getClassMember(state).appendString(state, sb, tabs);
+        getClassMember().appendString(state, sb, tabs);
         sb.append("}>");
     }
 
@@ -677,7 +678,7 @@ public class SetlObject extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlObject.class) {

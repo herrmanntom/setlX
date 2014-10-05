@@ -6,8 +6,8 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.expressions.Variable;
-import org.randoom.setlx.statementBranches.MatchAbstractBranch;
-import org.randoom.setlx.statementBranches.MatchAbstractScanBranch;
+import org.randoom.setlx.statementBranches.AbstractMatchBranch;
+import org.randoom.setlx.statementBranches.AbstractMatchScanBranch;
 import org.randoom.setlx.statementBranches.MatchDefaultBranch;
 import org.randoom.setlx.types.Rational;
 import org.randoom.setlx.types.SetlList;
@@ -15,12 +15,7 @@ import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.ScanResult;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +29,7 @@ import java.util.List;
  *     | 'scan' '(' expr ')' ('using' variable)? '{' [...] '}'
  *     ;
  *
- * implemented with different classes which inherit from MatchAbstractScanBranch:
+ * implemented with different classes which inherit from AbstractMatchScanBranch:
  *                  ====              ========       =====
  *                  expr               posVar      branchList
  */
@@ -42,9 +37,9 @@ public class Scan extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Scan.class);
 
-    private final Expr                          expr;
-    private final Variable                      posVar;
-    private final List<MatchAbstractScanBranch> branchList;
+    private final Expr                                  expr;
+    private final Variable                              posVar;
+    private final FragmentList<AbstractMatchScanBranch> branchList;
 
     /**
      * Create a new scan statement.
@@ -53,7 +48,7 @@ public class Scan extends Statement {
      * @param posVar     Variable storing the current position inside the string.
      * @param branchList List of scan branches.
      */
-    public Scan(final Expr expr, final Variable posVar, final List<MatchAbstractScanBranch> branchList) {
+    public Scan(final Expr expr, final Variable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
         this.expr       = expr;
         this.posVar     = posVar;
         this.branchList = branchList;
@@ -78,7 +73,7 @@ public class Scan extends Statement {
             int        columnNr = 1;
             while(string.size() > 0) {
                 int                     largestMatchSize   = Integer.MIN_VALUE;
-                MatchAbstractScanBranch largestMatchBranch = null;
+                AbstractMatchScanBranch largestMatchBranch = null;
                 MatchResult             largestMatchResult = null;
 
                 // map of current position in input-string
@@ -100,7 +95,7 @@ public class Scan extends Statement {
                 position.addMember(state, column);
 
                 // find branch which matches largest string
-                for (final MatchAbstractScanBranch br : branchList) {
+                for (final AbstractMatchScanBranch br : branchList) {
                     final ScanResult result = br.scannes(state, string);
                     if (result.isMatch() && result.getEndOffset() > largestMatchSize) {
                         // scope for condition
@@ -221,7 +216,7 @@ public class Scan extends Statement {
         // binding inside an scan are only valid if present in all branches
         // and last branch is an default-branch
         List<String> boundHere = null;
-        for (final MatchAbstractBranch br : branchList) {
+        for (final AbstractMatchBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(state, boundTmp, unboundVariables, usedVariables);
@@ -255,7 +250,7 @@ public class Scan extends Statement {
         }
         sb.append("{");
         sb.append(state.getEndl());
-        for (final MatchAbstractBranch br : branchList) {
+        for (final AbstractMatchBranch br : branchList) {
             br.appendString(state, sb, tabs + 1);
         }
         state.appendLineStart(sb, tabs);
@@ -277,7 +272,7 @@ public class Scan extends Statement {
         result.addMember(state, expr.toTerm(state));
 
         final SetlList bList = new SetlList(branchList.size());
-        for (final MatchAbstractBranch br: branchList) {
+        for (final AbstractMatchBranch br: branchList) {
             bList.addMember(state, br.toTerm(state));
         }
         result.addMember(state, bList);
@@ -303,12 +298,12 @@ public class Scan extends Statement {
                     posVar = Variable.termToExpr(state, (Term) term.firstMember());
                 }
 
-                final Expr                          expr       = TermConverter.valueToExpr(state, term.getMember(2));
+                final Expr                                  expr       = TermConverter.valueToExpr(state, term.getMember(2));
 
-                final SetlList                      branches   = (SetlList) term.lastMember();
-                final List<MatchAbstractScanBranch> branchList = new ArrayList<MatchAbstractScanBranch>(branches.size());
+                final SetlList                              branches   = (SetlList) term.lastMember();
+                final FragmentList<AbstractMatchScanBranch> branchList = new FragmentList<AbstractMatchScanBranch>(branches.size());
                 for (final Value v : branches) {
-                    branchList.add(MatchAbstractScanBranch.valueToMatchAbstractScanBranch(state, v));
+                    branchList.add(AbstractMatchScanBranch.valueToMatchAbstractScanBranch(state, v));
                 }
 
                 return new Scan(expr, posVar, branchList);
@@ -316,6 +311,68 @@ public class Scan extends Statement {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == Scan.class) {
+            Scan otr = (Scan) other;
+            int cmp = expr.compareTo(otr.expr);
+            if (cmp != 0) {
+                return cmp;
+            }
+            cmp = branchList.compareTo(otr.branchList);
+            if (cmp != 0) {
+                return cmp;
+            }
+            if (posVar != null) {
+                if (otr.posVar != null) {
+                    return posVar.compareTo(otr.posVar);
+                } else {
+                    return 1;
+                }
+            } else if (otr.posVar != null) {
+                return -1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Scan.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == Scan.class) {
+            Scan otr = (Scan) obj;
+            if (expr.equals(otr.expr) && branchList.equals(otr.branchList)) {
+                if (posVar != null && otr.posVar != null) {
+                    return posVar.equals(otr.posVar);
+                } else if (posVar == null && otr.posVar == null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
+        hash = hash * 31 + branchList.hashCode();
+        return hash;
     }
 }
 

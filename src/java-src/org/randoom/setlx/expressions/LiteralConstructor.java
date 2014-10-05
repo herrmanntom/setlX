@@ -3,6 +3,7 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -90,7 +91,7 @@ public class LiteralConstructor extends Expr {
     /* comparisons */
 
     @Override
-    public int compareTo(final Expr other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == LiteralConstructor.class) {

@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
@@ -151,7 +152,7 @@ public class Variable extends AssignableExpression {
     /* comparisons */
 
     @Override
-    public int compareTo(final Expr other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == Variable.class) {

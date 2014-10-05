@@ -35,7 +35,7 @@ import java.util.List;
  *       ==========      ====        ||      ========
  *       assignable   collection     ||        next
  */
-public class SetlIterator extends CodeFragment implements Comparable<SetlIterator> {
+public class SetlIterator extends CodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIterator.class);
 
@@ -244,28 +244,39 @@ public class SetlIterator extends CodeFragment implements Comparable<SetlIterato
     /* comparisons */
 
     @Override
-    public int compareTo(final SetlIterator other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
-        }
-        int cmp = assignable.compareTo(other.assignable);
-        if (cmp != 0) {
-            return cmp;
-        }
-        cmp = collection.compareTo(other.collection);
-        if (cmp != 0) {
-            return cmp;
-        }
-        if (next != null) {
-            if (other.next != null) {
-                return next.compareTo(other.next);
-            } else {
-                return -1;
+        }if (this.getClass() == other.getClass()) {
+            SetlIterator otr = (SetlIterator) other;
+            int cmp = assignable.compareTo(otr.assignable);
+            if (cmp != 0) {
+                return cmp;
             }
-        } if (other.next != null) {
-            return 1;
+            cmp = collection.compareTo(otr.collection);
+            if (cmp != 0) {
+                return cmp;
+            }
+            if (next != null) {
+                if (otr.next != null) {
+                    return next.compareTo(otr.next);
+                } else {
+                    return -1;
+                }
+            } if (otr.next != null) {
+                return 1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
-        return 0;
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlIterator.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
@@ -286,11 +297,9 @@ public class SetlIterator extends CodeFragment implements Comparable<SetlIterato
         return false;
     }
 
-    private final static int INIT_HASH_CODE = Condition.class.hashCode();
-
     @Override
     public int hashCode() {
-        int hash = INIT_HASH_CODE + assignable.hashCode();
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + assignable.hashCode();
         hash = hash * 31 + collection.hashCode();
         if (next != null) {
             hash = hash * 31 + next.hashCode();

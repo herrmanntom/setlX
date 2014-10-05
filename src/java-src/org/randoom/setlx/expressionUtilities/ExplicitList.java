@@ -7,6 +7,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.IndexedCollectionValue;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 import org.randoom.setlx.utilities.VariableScope;
@@ -210,7 +211,7 @@ public class ExplicitList extends CollectionBuilder {
     /* comparisons */
 
     @Override
-    public int compareTo(final CollectionBuilder other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == ExplicitList.class) {

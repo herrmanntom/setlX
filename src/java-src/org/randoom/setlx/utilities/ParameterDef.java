@@ -23,7 +23,7 @@ import java.util.List;
  *       ==== ========
  *       type   var
  */
-public class ParameterDef extends CodeFragment implements Comparable<ParameterDef> {
+public class ParameterDef extends CodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER      = "^parameter";
     private final static String FUNCTIONAL_CHARACTER_RW   = "^rwParameter";
@@ -231,16 +231,26 @@ public class ParameterDef extends CodeFragment implements Comparable<ParameterDe
     }
 
     @Override
-    public int compareTo(final ParameterDef o) {
-        if (this == o) {
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
             return 0;
-        } else {
-            final int cmp = type.compareTo(o.type);
+        } else if (other.getClass() == ParameterDef.class) {
+            ParameterDef otr = (ParameterDef) other;
+            final int cmp = type.compareTo(otr.type);
             if (cmp != 0) {
                 return cmp;
             }
-            return var.getID().compareTo(o.var.getID());
+            return var.getID().compareTo(otr.var.getID());
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering()) ? -1 : 1;
         }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ParameterDef.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override

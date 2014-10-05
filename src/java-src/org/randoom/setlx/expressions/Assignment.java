@@ -73,11 +73,11 @@ public class Assignment extends BinaryExpression {
     }
 
     /**
-     * Convert a term representing a Assignment into such an expression.
+     * Convert a term representing a DirectAssignment into such an expression.
      *
      * @param state                    Current state of the running setlX program.
      * @param term                     Term to convert.
-     * @return                         Resulting Assignment Expression.
+     * @return                         Resulting DirectAssignment Expression.
      * @throws TermConversionException Thrown in case of a malformed term.
      */
     public static Assignment termToExpr(final State state, final Term term) throws TermConversionException {

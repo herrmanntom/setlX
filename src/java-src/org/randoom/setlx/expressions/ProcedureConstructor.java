@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.*;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
@@ -115,7 +116,7 @@ public class ProcedureConstructor extends Expr {
     /* comparisons */
 
     @Override
-    public final int compareTo(final Expr other) {
+    public final int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == ProcedureConstructor.class) {

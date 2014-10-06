@@ -1293,6 +1293,16 @@ Therefore, the  program from Figure \ref{fig:buggy-map.stlx} yields the followin
     r{2} = {}
 \end{verbatim}
 
+We can use binary relations also for functions accepting more than one argument.  For example, the
+statements
+\begin{verbatim}
+    r := {};
+    r[1,2] := 3;
+    r[2,1] := 4;
+\end{verbatim}
+define a function that maps the pair $[1,2]$ to the value $3$, while the pair $[2,1]$ is mapped to
+the value $4$.
+
 \noindent
 \textbf{Remark}:
 This section has shown that binary relations can be used to represent the data type of a

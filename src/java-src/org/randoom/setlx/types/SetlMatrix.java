@@ -34,9 +34,8 @@ public class SetlMatrix extends IndexedCollectionValue {
     /**
      * Create a new matrix.
      *
-     * @param state          Current state of the running setlX program.
-     * @param vectors        List of vectors to fill the matrix with.
-     * @throws SetlException Thrown in case of some (user-) error.
+     * @param state   Current state of the running setlX program.
+     * @param vectors List of vectors to fill the matrix with.
      */
     public SetlMatrix(final State state, final List<SetlVector> vectors) {
               String error = null;
@@ -749,14 +748,22 @@ public class SetlMatrix extends IndexedCollectionValue {
      * @return x
      * @throws UndefinedOperationException thrown if number of rows differs.
      */
-    public SetlMatrix solve(SetlMatrix other) throws UndefinedOperationException {
-        if(this.matrix.getRowDimension() != other.matrix.getRowDimension()) {
+    public Value solve(SetlMatrix other) throws UndefinedOperationException {
+        if(matrix.getRowDimension() != other.matrix.getRowDimension()) {
             throw new UndefinedOperationException("Row numbers must be equal to solve A * X = other.");
         }
         try {
-            return new SetlMatrix(this.matrix.solve(other.matrix));
+            SetlMatrix result = new SetlMatrix(matrix.solve(other.matrix));
+            if (result.matrix.getRowDimension() == 1 || result.matrix.getColumnDimension() == 1) {
+                return result.toVector();
+            } else {
+                return result;
+            }
         } catch (RuntimeException re) {
             throw new UndefinedOperationException("Error during solve: " + re.getMessage(), re);
+        } catch (IncompatibleTypeException ite) {
+            // this should be impossible
+            throw new UndefinedOperationException("Error during solve: " + ite.getMessage(), ite);
         }
     }
 

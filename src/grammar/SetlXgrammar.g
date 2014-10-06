@@ -397,24 +397,24 @@ procedureParameters [boolean enableRw] returns [ParameterList paramList]
     @init {
         $paramList = new ParameterList();
     }
-    : pp1 = procedureParameter[$enableRw]       { $paramList.add($pp1.param);                                  }
+    : pp1 = procedureParameter[$enableRw]       { $paramList.add($pp1.param); }
       (
-        ',' pp2 = procedureParameter[$enableRw] { $paramList.add($pp2.param);                                  }
+        ',' pp2 = procedureParameter[$enableRw] { $paramList.add($pp2.param); }
       )*
       (
-        ',' dp  = procedureParameterWithDefault { $paramList.add($dp.param);                                   }
+        ',' dp1  = procedureDefaultParameter    { $paramList.add($dp1.param); }
       )*
       (
-        ',' '*' v1 = variable                   { $paramList.add(new ParameterDef($v1.v, ParameterType.LIST)); }
+        ',' lp1 = procedureListParameter        { $paramList.add($lp1.param); }
       )?
-    | dp1 = procedureParameterWithDefault       { $paramList.add($dp1.param);                                  }
+    | dp2 = procedureDefaultParameter           { $paramList.add($dp2.param); }
       (
-        ',' dp2 = procedureParameterWithDefault { $paramList.add($dp2.param);                                  }
+        ',' dp3 = procedureDefaultParameter     { $paramList.add($dp3.param); }
       )*
       (
-        ',' '*' v1 = variable                   { $paramList.add(new ParameterDef($v1.v, ParameterType.LIST)); }
+        ',' lp2 = procedureListParameter        { $paramList.add($lp2.param); }
       )?
-    | '*' v2 = variable                         { $paramList.add(new ParameterDef($v2.v, ParameterType.LIST)); }
+    | lp3 = procedureListParameter              { $paramList.add($lp3.param); }
     | /* epsilon */
     ;
 
@@ -423,8 +423,12 @@ procedureParameter [boolean enableRw] returns [ParameterDef param]
     | variable                   { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY);  }
     ;
 
-procedureParameterWithDefault  returns [ParameterDef param]
+procedureDefaultParameter returns [ParameterDef param]
     : variable ':=' expr[false] { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY, $expr.ex); }
+    ;
+
+procedureListParameter returns [ParameterDef param]
+    : '*' variable { $param = new ParameterDef($variable.v, ParameterType.LIST); }
     ;
 
 call [boolean enableIgnore, Expr lhs] returns [Expr c]

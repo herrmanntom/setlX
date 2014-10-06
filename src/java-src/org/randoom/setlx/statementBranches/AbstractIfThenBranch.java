@@ -8,7 +8,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * Base class for branches of the if-then-else statement.
  */
-public abstract class IfThenAbstractBranch extends AbstractBranch {
+public abstract class AbstractIfThenBranch extends AbstractBranch {
 
     /**
      * Convert a term representing an if-then-else branch into such a branch.
@@ -18,9 +18,9 @@ public abstract class IfThenAbstractBranch extends AbstractBranch {
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static   IfThenAbstractBranch valueToIfThenAbstractBranch(final State state, final Value value) throws TermConversionException {
+    public static AbstractIfThenBranch valueToIfThenAbstractBranch(final State state, final Value value) throws TermConversionException {
         if (value.getClass() != Term.class) {
-            throw new TermConversionException("malformed IfThenAbstractBranch");
+            throw new TermConversionException("malformed AbstractIfThenBranch");
         } else {
             final Term   term = (Term) value;
             final String fc   = term.getFunctionalCharacter();
@@ -31,7 +31,7 @@ public abstract class IfThenAbstractBranch extends AbstractBranch {
             } else if (fc.equals(IfThenElseBranch.getFunctionalCharacter())) {
                 return IfThenElseBranch.termToBranch(state, term);
             } else {
-                throw new TermConversionException("malformed IfThenAbstractBranch");
+                throw new TermConversionException("malformed AbstractIfThenBranch");
             }
         }
     }

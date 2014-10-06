@@ -6,6 +6,7 @@ import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -100,6 +101,49 @@ public class ClassConstructor extends Statement {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == ClassConstructor.class) {
+            ClassConstructor otr = (ClassConstructor) other;
+            final int cmp = name.compareTo(otr.name);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return classDefinition.compareTo(otr.classDefinition);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ClassConstructor.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == ClassConstructor.class) {
+            ClassConstructor otr = (ClassConstructor) obj;
+            return name.equals(otr.name) && classDefinition.equals(otr.classDefinition);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + name.hashCode();
+        hash = hash * 31 + classDefinition.hashCode();
+        return hash;
     }
 }
 

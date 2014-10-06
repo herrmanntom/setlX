@@ -19,17 +19,17 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String  VERSION         = "2.3.0";
-    private final static String  SETLX_URL       = "http://setlX.randoom.org/";
-    private final static String  C_YEARS         = "2011-2014";
-    private final static String  VERSION_PREFIX  = "v";
-    private final static String  HEADER          = "-====================================setlX====================================-";
+    private final static String  VERSION        = "2.3.0";
+    private final static String  SETLX_URL      = "http://setlX.randoom.org/";
+    private final static String  C_YEARS        = "2011-2014";
+    private final static String  VERSION_PREFIX = "v";
+    private final static String  HEADER         = "-====================================setlX====================================-";
 
-    private final static int     EXIT_OK         = 0;
-    private final static int     EXIT_ERROR      = 1;
+    private final static int     EXIT_OK        = 0;
+    private final static int     EXIT_ERROR     = 1;
 
     // print extra information and use correct indentation when printing statements etc
-    private       static boolean verbose         = false;
+    private       static boolean verbose        = false;
 
     /**
      * The main method.
@@ -41,7 +41,7 @@ public class SetlX {
         String              dumpTermFile = null;  // file to write loaded code as term into
         boolean             help         = false;
         boolean             harshWelcome = false; // do not print entire welcome message
-        boolean             interactive  = false;
+        boolean             interactive;
         boolean             noExecution  = false;
         boolean             termLoop     = false; // convert loaded code to term and back
 
@@ -49,7 +49,7 @@ public class SetlX {
         String              statement    = null;  // code to be executed when using -ex option
         final List<String>  files        = new ArrayList<String>();
 
-        String              libraryPath  = null;
+        String              libraryPath;
         if ((libraryPath = System.getenv("SETLX_LIBRARY_PATH")) == null) {
             libraryPath = "";
         }
@@ -232,8 +232,8 @@ public class SetlX {
 
     private static void parseAndExecuteInteractive(final State state) {
         state.setInteractive(true);
-        Block   blk      = null;
-        boolean skipTest = false;
+        Block   blk;
+        boolean skipTest;
         do {
             try {
                 // prompt including newline to visually separate the next input
@@ -277,7 +277,7 @@ public class SetlX {
                 break;
 
             }
-        } while (skipTest || (blk != null && blk.executeWithErrorHandling(state, true) != Block.EXECUTE_EXIT));
+        } while (skipTest || (blk.executeWithErrorHandling(state, true) != Block.EXECUTE.EXIT));
         printExecutionFinished(state);
     }
 
@@ -302,7 +302,7 @@ public class SetlX {
         // parse content of all files
         try {
             if (expression != null) {
-                final Block exp = new Block(state);
+                final Block exp = new Block();
                 exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(state, expression)));
                 exp.markLastExprStatement();
                 programs.add(exp);
@@ -438,7 +438,7 @@ public class SetlX {
 
         // run the parsed code
         for (int program = 0; program < programs.size(); ++program) {
-            if (programs.get(program).executeWithErrorHandling(state, true) != Block.EXECUTE_OK) {
+            if (programs.get(program).executeWithErrorHandling(state, true) != Block.EXECUTE.OK) {
                 break; // stop in case of error
             }
             // remove reference to stored code to free some memory

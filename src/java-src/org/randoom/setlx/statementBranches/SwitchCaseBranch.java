@@ -6,6 +6,7 @@ import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -24,7 +25,7 @@ import java.util.List;
  *                            =========     =====
  *                            condition   statements
  */
-public class SwitchCaseBranch extends SwitchAbstractBranch {
+public class SwitchCaseBranch extends AbstractSwitchBranch {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SwitchCaseBranch.class);
 
@@ -102,6 +103,49 @@ public class SwitchCaseBranch extends SwitchAbstractBranch {
             final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
             return new SwitchCaseBranch(condition, block);
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == SwitchCaseBranch.class) {
+            SwitchCaseBranch otr = (SwitchCaseBranch) other;
+            final int cmp = condition.compareTo(otr.condition);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return statements.compareTo(otr.statements);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SwitchCaseBranch.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == SwitchCaseBranch.class) {
+            SwitchCaseBranch otr = (SwitchCaseBranch) obj;
+            return condition.equals(otr.condition) && statements.equals(otr.statements);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + condition.hashCode();
+        hash = hash * 31 + statements.hashCode();
+        return hash;
     }
 
     /**

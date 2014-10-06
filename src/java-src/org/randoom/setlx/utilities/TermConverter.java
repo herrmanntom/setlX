@@ -254,7 +254,7 @@ public class TermConverter {
         if (s instanceof Block) {
             return (Block) s;
         } else { // wrap into block
-            final Block b = new Block(state, 1);
+            final Block b = new Block(1);
             b.add(s);
             return b;
         }

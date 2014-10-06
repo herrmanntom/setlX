@@ -6,6 +6,7 @@ import org.randoom.setlx.expressionUtilities.Condition;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
@@ -24,7 +25,7 @@ import java.util.List;
  *                =========         =====
  *                condition       statements
  */
-public class IfThenBranch extends IfThenAbstractBranch {
+public class IfThenBranch extends AbstractIfThenBranch {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IfThenBranch.class);
 
@@ -100,6 +101,49 @@ public class IfThenBranch extends IfThenAbstractBranch {
             final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
             return new IfThenBranch(condition, block);
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == IfThenBranch.class) {
+            IfThenBranch otr = (IfThenBranch) other;
+            final int cmp = condition.compareTo(otr.condition);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return statements.compareTo(otr.statements);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(IfThenBranch.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == IfThenBranch.class) {
+            IfThenBranch otr = (IfThenBranch) obj;
+            return condition.equals(otr.condition) && statements.equals(otr.statements);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + condition.hashCode();
+        hash = hash * 31 + statements.hashCode();
+        return hash;
     }
 
     /**

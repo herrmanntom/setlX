@@ -10,10 +10,7 @@ import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.SetlHashMap;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -169,7 +166,7 @@ public class Exists extends Expr {
     /* comparisons */
 
     @Override
-    public int compareTo(final Expr other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == Exists.class) {

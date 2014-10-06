@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -779,7 +780,7 @@ public class SetlList extends IndexedCollectionValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlList.class) {

@@ -3,6 +3,7 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public abstract class UnaryExpression extends Expr {
     /* comparisons */
 
     @Override
-    public final int compareTo(final Expr other) {
+    public final int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (this.getClass() == other.getClass()) {

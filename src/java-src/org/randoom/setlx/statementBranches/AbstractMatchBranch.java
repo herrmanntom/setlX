@@ -10,7 +10,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * Base class for branches of the match statement.
  */
-public abstract class MatchAbstractBranch extends AbstractBranch {
+public abstract class AbstractMatchBranch extends AbstractBranch {
 
     /**
      * Evaluate the match-condition of this branch and return the result.
@@ -31,9 +31,9 @@ public abstract class MatchAbstractBranch extends AbstractBranch {
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static MatchAbstractBranch valueToMatchAbstractBranch(final State state, final Value value) throws TermConversionException {
+    public static AbstractMatchBranch valueToMatchAbstractBranch(final State state, final Value value) throws TermConversionException {
         if (value.getClass() != Term.class) {
-            throw new TermConversionException("malformed MatchAbstractBranch");
+            throw new TermConversionException("malformed AbstractMatchBranch");
         } else {
             final Term   term = (Term) value;
             final String fc   = term.getFunctionalCharacter();
@@ -44,7 +44,7 @@ public abstract class MatchAbstractBranch extends AbstractBranch {
             } else if (fc.equals(MatchDefaultBranch.getFunctionalCharacter())) {
                 return MatchDefaultBranch.termToBranch(state, term);
             } else {
-                throw new TermConversionException("malformed MatchAbstractBranch");
+                throw new TermConversionException("malformed AbstractMatchBranch");
             }
         }
     }

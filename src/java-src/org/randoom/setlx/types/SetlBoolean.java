@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -134,7 +135,7 @@ public class SetlBoolean extends Value {
 
     // FALSE < TRUE
     @Override
-    public int compareTo(final Value other){
+    public int compareTo(final CodeFragment other){
         if (this == other) {
             // as only exacly one FALSE and TRUE object exist, we can compare by reference
             return 0;

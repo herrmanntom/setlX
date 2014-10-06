@@ -11,10 +11,7 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ScanResult;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -35,7 +32,7 @@ import java.util.regex.PatternSyntaxException;
  *                                         ====       ====        =========       =====
  *                                        pattern    assignTo     condition     statements
  */
-public class MatchRegexBranch extends MatchAbstractScanBranch {
+public class MatchRegexBranch extends AbstractMatchScanBranch {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
 
@@ -60,7 +57,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
         // if pattern is static it can be compiled now
         if (pattern.isReplaceable()) {
-            Value patternReplacement = null;
+            Value patternReplacement;
             try {
                 patternReplacement = pattern.eval(new State());
             } catch (final Throwable t) {
@@ -118,7 +115,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
 
     @Override
     public ScanResult scannes(final State state, final SetlString string) throws SetlException {
-        Pattern pttrn = null;
+        Pattern pttrn;
 
         if (runtimePattern != null) {
             pttrn = runtimePattern;
@@ -129,7 +126,7 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                     "Pattern argument '" + patternStr.toString(state) + "' is not a string."
                 );
             }
-            final String p = ((SetlString) patternStr).getUnquotedString(state);
+            final String p = patternStr.getUnquotedString(state);
             // parse pattern
             try {
                 pttrn = Pattern.compile(p);
@@ -279,6 +276,94 @@ public class MatchRegexBranch extends MatchAbstractScanBranch {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == MatchRegexBranch.class) {
+            MatchRegexBranch otr = (MatchRegexBranch) other;
+            int cmp = pattern.compareTo(otr.pattern);
+            if (cmp != 0) {
+                return cmp;
+            }
+            cmp = statements.compareTo(otr.statements);
+            if (cmp != 0) {
+                return cmp;
+            }
+            if (assignTo != null) {
+                if (otr.assignTo != null) {
+                    cmp = assignTo.compareTo(otr.assignTo);
+                } else {
+                    return 1;
+                }
+            } else if (otr.assignTo != null) {
+                return -1;
+            }
+            if (cmp != 0) {
+                return cmp;
+            }
+            if (condition != null) {
+                if (otr.condition != null) {
+                    return condition.compareTo(otr.condition);
+                } else {
+                    return 1;
+                }
+            } else if (otr.condition != null) {
+                return -1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(MatchRegexBranch.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == MatchRegexBranch.class) {
+            MatchRegexBranch otr = (MatchRegexBranch) obj;
+            if (pattern.equals(otr.pattern) && statements.equals(otr.statements)) {
+                boolean assignToEqual = false;
+                if (assignTo != null && otr.assignTo != null) {
+                    assignToEqual = assignTo.equals(otr.assignTo);
+                } else if (assignTo == null && otr.assignTo == null) {
+                    assignToEqual = true;
+                }
+                if (assignToEqual) {
+                    if (condition != null && otr.condition != null) {
+                        return condition.equals(otr.condition);
+                    } else if (condition == null && otr.condition == null) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + pattern.hashCode();
+        hash = hash * 31 + statements.hashCode();
+        if (assignTo != null) {
+            hash = hash * 31 + assignTo.hashCode();
+        }
+        if (condition != null) {
+            hash = hash * 31 + condition.hashCode();
+        }
+        return hash;
     }
 
     /**

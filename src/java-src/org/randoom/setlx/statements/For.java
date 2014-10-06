@@ -9,6 +9,7 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -153,6 +154,54 @@ public class For extends Statement {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == For.class) {
+            For otr = (For) other;
+            int cmp = condition.compareTo(otr.condition);
+            if (cmp != 0) {
+                return cmp;
+            }
+            cmp = iterator.compareTo(otr.iterator);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return statements.compareTo(otr.statements);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(For.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == For.class) {
+            For otr = (For) obj;
+            return condition.equals(otr.condition) && iterator.equals(otr.iterator) && statements.equals(otr.statements);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + iterator.hashCode();
+        hash = hash * 31 + condition.hashCode();
+        hash = hash * 31 + statements.hashCode();
+        return hash;
     }
 }
 

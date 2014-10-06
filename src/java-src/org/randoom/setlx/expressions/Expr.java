@@ -1,6 +1,7 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -13,15 +14,16 @@ import java.util.List;
 /**
  * Base class for all SetlX expressions.
  */
-public abstract class Expr extends CodeFragment implements Comparable<Expr> {
+public abstract class Expr extends CodeFragment {
 
-    // collection of reusable replacement values
+    // collection of reusable resultSoftReference values
     private final static HashMap<Expr, SoftReference<Value>> REPLACEMENTS = new HashMap<Expr, SoftReference<Value>>();
 
     // false if expression is `static' (does not contain variables) and can be replaced by a static result
-    private Boolean isNotReplaceable = true;
-    // value which is the result of this expression, if (isReplaceable == true)
-    private Value   replacement      = null;
+    private Boolean              isNotReplaceable    = true;
+    // references to values which are the result of this expression, if (isReplaceable == true)
+    private Value                resultHardReference = null;
+    private SoftReference<Value> resultSoftReference = null;
 
     /**
      * Evaluate this expression.
@@ -37,29 +39,34 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
             if (isNotReplaceable) {
                 return this.evaluate(state);
-            } else if (replacement != null) {
-                return replacement.clone();
-            } else /* if ( ! isNotReplaceable && replacement == null) */ {
+            } else if (resultHardReference != null) {
+                return resultHardReference.clone();
+            }
+            // look up if same expression was already evaluated
+            if (resultSoftReference == null) {
                 synchronized (REPLACEMENTS) {
-                    // look up if same expression was already evaluated
-                    final SoftReference<Value> result = REPLACEMENTS.get(this);
-                    if (result != null) {
-                        replacement = result.get();
-
-                        if (replacement == null) { // reference was cleared up
-                            REPLACEMENTS.remove(this);
-                        }
-                    }
+                    resultSoftReference = REPLACEMENTS.get(this);
                 }
+            }
+            Value result = null;
+            if (resultSoftReference != null) {
+                result = resultSoftReference.get();
+            }
 
-                if (replacement == null) { // not found
-                    replacement = evaluate(state);
-                    synchronized (REPLACEMENTS) {
-                        REPLACEMENTS.put(this, new SoftReference<Value>(replacement));
-                    }
+            if (result != null) {
+                return result.clone();
+            } else {
+                result = evaluate(state);
+                resultSoftReference = new SoftReference<Value>(result);
+                if (result.isList() == SetlBoolean.FALSE && result.isSet() == SetlBoolean.FALSE) {
+                    // collections are potentially very large, so only
+                    // keep hard references to other values
+                    resultHardReference = result;
                 }
-
-                return replacement;
+                synchronized (REPLACEMENTS) {
+                    REPLACEMENTS.put(this, resultSoftReference);
+                }
+                return result;
             }
         } catch (final SetlException se) {
             se.addToTrace("Error in \"" + this.toString(state) + "\":");
@@ -155,9 +162,6 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
     /* string operations */
 
-    @Override
-    public abstract void appendString(final State state, final StringBuilder sb, final int tabs);
-
     /**
      * Appends a string representation of this expression to the given
      * StringBuilder object, automatically inserting brackets when required.
@@ -188,9 +192,6 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
 
     /* term operations */
 
-    @Override
-    public abstract Value toTerm(final State state) throws SetlException;
-
     /**
      * Generate term representing the code this expression represents, when
      * this expression is quoted ('@').
@@ -204,35 +205,6 @@ public abstract class Expr extends CodeFragment implements Comparable<Expr> {
     public          Value toTermQuoted(final State state) throws SetlException  {
         return toTerm(state);
     }
-
-    /* comparisons */
-
-    /* Compare two Values.  Return value is < 0 if this value is less than the
-     * value given as argument, > 0 if its greater and == 0 if both values
-     * contain the same elements.
-     * Useful output is only possible if both values are of the same type.
-     */
-    @Override
-    public abstract int compareTo(final Expr other);
-
-    /**
-     * In order to compare "incomparable" expressions, e.g. of different subtypes of
-     * Expr, the return value of this function is used to establish some
-     * semi arbitrary order to be used in compareTo():
-     *
-     * This ranking is necessary to allow sets and lists of different types.
-     *
-     * @see org.randoom.setlx.utilities.CodeFragment#generateCompareToOrderConstant(Class)
-     *
-     * @return Number representing the order of this type in compareTo().
-     */
-    public abstract long compareToOrdering();
-
-    @Override
-    public abstract boolean equals(Object obj);
-
-    @Override
-    public abstract int hashCode();
 
     /**
      * Precedence level in SetlX-grammar. Manly used for automatic bracket insertion

@@ -3,6 +3,7 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.BacktrackException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
@@ -71,6 +72,33 @@ public class Backtrack extends Statement {
         } else {
             return BT;
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public final int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        }
+        return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Backtrack.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return this == obj;
+    }
+
+    @Override
+    public final int hashCode() {
+        return (int) COMPARE_TO_ORDER_CONSTANT;
     }
 }
 

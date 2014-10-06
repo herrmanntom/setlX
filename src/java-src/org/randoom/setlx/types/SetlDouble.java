@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.math.BigInteger;
@@ -503,7 +504,7 @@ public class SetlDouble extends NumberValue {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlDouble.class) {

@@ -10,6 +10,7 @@ import java.util.List;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -821,7 +822,7 @@ public class SetlMatrix extends IndexedCollectionValue {
     /* comparisons */
 
     @Override
-    public int compareTo(Value other) {
+    public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
         } else if (other.getClass() == SetlMatrix.class) {

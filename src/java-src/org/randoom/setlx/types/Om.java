@@ -1,5 +1,6 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -39,7 +40,7 @@ public class Om extends Value {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other){
+    public int compareTo(final CodeFragment other) {
         if (other == OM) {
             return 0;
         }  else {

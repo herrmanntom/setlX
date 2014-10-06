@@ -3,16 +3,12 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.statementBranches.MatchAbstractBranch;
+import org.randoom.setlx.statementBranches.AbstractMatchBranch;
 import org.randoom.setlx.statementBranches.MatchDefaultBranch;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.MatchResult;
-import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +22,7 @@ import java.util.List;
  *     | 'match' '(' expr ')' '{' [...] '}'
  *     ;
  *
- * implemented with different classes which inherit from MatchAbstractBranch:
+ * implemented with different classes which inherit from AbstractMatchBranch:
  *                   ====          ====
  *                   expr       branchList
  */
@@ -34,8 +30,8 @@ public class Match extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Match.class);
 
-    private final Expr                        expr;
-    private final List<MatchAbstractBranch>   branchList;
+    private final Expr                              expr;
+    private final FragmentList<AbstractMatchBranch> branchList;
 
     /**
      * Create a new match statement.
@@ -43,7 +39,7 @@ public class Match extends Statement {
      * @param expr       Expression forming the term to match.
      * @param branchList List of match branches.
      */
-    public Match(final Expr expr, final List<MatchAbstractBranch> branchList) {
+    public Match(final Expr expr, final FragmentList<AbstractMatchBranch> branchList) {
         this.expr       = expr;
         this.branchList = branchList;
     }
@@ -56,7 +52,7 @@ public class Match extends Statement {
             // increase callStackDepth
             ++(state.callStackDepth);
 
-            for (final MatchAbstractBranch br : branchList) {
+            for (final AbstractMatchBranch br : branchList) {
                 final MatchResult result = br.matches(state, term);
                 if (result.isMatch()) {
                     // scope for execution
@@ -113,7 +109,7 @@ public class Match extends Statement {
         // and last branch is an default-branch
         final int preBound = boundVariables.size();
         List<String> boundHere = null;
-        for (final MatchAbstractBranch br : branchList) {
+        for (final AbstractMatchBranch br : branchList) {
             final List<String> boundTmp = new ArrayList<String>(boundVariables);
 
             br.collectVariablesAndOptimize(state, boundTmp, unboundVariables, usedVariables);
@@ -138,7 +134,7 @@ public class Match extends Statement {
         expr.appendString(state, sb, 0);
         sb.append(") {");
         sb.append(state.getEndl());
-        for (final MatchAbstractBranch br : branchList) {
+        for (final AbstractMatchBranch br : branchList) {
             br.appendString(state, sb, tabs + 1);
         }
         state.appendLineStart(sb, tabs);
@@ -154,7 +150,7 @@ public class Match extends Statement {
         result.addMember(state, expr.toTerm(state));
 
         final SetlList branchList = new SetlList(this.branchList.size());
-        for (final MatchAbstractBranch br: this.branchList) {
+        for (final AbstractMatchBranch br: this.branchList) {
             branchList.addMember(state, br.toTerm(state));
         }
         result.addMember(state, branchList);
@@ -174,14 +170,57 @@ public class Match extends Statement {
         if (term.size() != 2 || ! (term.lastMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Expr                      expr       = TermConverter.valueToExpr(state, term.firstMember());
-            final SetlList                  branches   = (SetlList) term.lastMember();
-            final List<MatchAbstractBranch> branchList = new ArrayList<MatchAbstractBranch>(branches.size());
+            final Expr                              expr       = TermConverter.valueToExpr(state, term.firstMember());
+            final SetlList                          branches   = (SetlList) term.lastMember();
+            final FragmentList<AbstractMatchBranch> branchList = new FragmentList<AbstractMatchBranch>(branches.size());
             for (final Value v : branches) {
-                branchList.add(MatchAbstractBranch.valueToMatchAbstractBranch(state, v));
+                branchList.add(AbstractMatchBranch.valueToMatchAbstractBranch(state, v));
             }
             return new Match(expr, branchList);
         }
+    }
+
+    /* comparisons */
+
+    @Override
+    public int compareTo(final CodeFragment other) {
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == Match.class) {
+            Match otr = (Match) other;
+            final int cmp = expr.compareTo(otr.expr);
+            if (cmp != 0) {
+                return cmp;
+            }
+            return branchList.compareTo(otr.branchList);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Match.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj.getClass() == Match.class) {
+            Match otr = (Match) obj;
+            return expr.equals(otr.expr) && branchList.equals(otr.branchList);
+        }
+        return false;
+    }
+
+    @Override
+    public final int hashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
+        hash = hash * 31 + branchList.hashCode();
+        return hash;
     }
 }
 

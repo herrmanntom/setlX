@@ -1,17 +1,13 @@
 package org.randoom.setlx.statements;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.*;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,48 +27,42 @@ import java.util.List;
  *       =========
  *       statements
  */
-public class Block extends Statement implements Comparable<Block> {
+public class Block extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Block.class);
     // how deep can the call stack be, before checking to replace the stack
     private       static int    MAX_CALL_STACK_DEPTH = -1;
 
-    private final List<Statement> statements;
-    private       State           state; // reference to state object last used (for compare/equalTo)
+    private final FragmentList<Statement> statements;
 
     /**
      * Create a new empty block of setlX statements.
-     *
-     * @param state Current state of the running setlX program.
      */
-    public Block(final State state) {
-        this(state, new ArrayList<Statement>());
+    public Block() {
+        this(new FragmentList<Statement>());
     }
 
     /**
      * Create a new empty block of setlX statements.
      *
-     * @param state Current state of the running setlX program.
      * @param size  Initial statement capacity of the block.
      */
-    public Block(final State state, final int size) {
-        this(state, new ArrayList<Statement>(size));
+    public Block(final int size) {
+        this(new FragmentList<Statement>(size));
     }
 
     /**
      * Create a new block of setlX statements.
      *
-     * @param state      Current state of the running setlX program.
      * @param statements Statements in the new block.
      */
-    public Block(final State state, final List<Statement> statements) {
+    public Block(final FragmentList<Statement> statements) {
         this.statements = statements;
-        this.state      = state;
     }
 
     @Override
     public Block clone() {
-        final Block clone = new Block(state, statements.size());
+        final Block clone = new Block(statements.size());
         clone.statements.addAll(statements);
         return clone;
     }
@@ -88,8 +78,6 @@ public class Block extends Statement implements Comparable<Block> {
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        this.state = state;
-
         // store and increase callStackDepth
         final int oldCallStackDepth = state.callStackDepth;
         state.callStackDepth += 2; // one for the block, one for the next statement
@@ -104,7 +92,7 @@ public class Block extends Statement implements Comparable<Block> {
 
         try {
             if (executeInCurrentStack) {
-                ReturnMessage result = null;
+                ReturnMessage result;
                 for (final Statement stmnt : statements) {
                     if (state.executionStopped) {
                         throw new StopExecutionException();
@@ -270,7 +258,7 @@ public class Block extends Statement implements Comparable<Block> {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final SetlList stmnts = (SetlList) term.lastMember();
-            final Block    block  = new Block(state, stmnts.size());
+            final Block    block  = new Block(stmnts.size());
             for (final Value v : stmnts) {
                 block.add(TermConverter.valueToStatement(state, v));
             }
@@ -278,26 +266,49 @@ public class Block extends Statement implements Comparable<Block> {
         }
     }
 
+    /* comparisons */
+
     @Override
-    public int compareTo(final Block other) {
+    public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
-        } else {
-            final int size = statements.size();
-            final int cmp  = Integer.valueOf(size).compareTo(other.statements.size());
-            if (cmp != 0 || size == 0) {
-                return cmp;
+        } else if (other.getClass() == Block.class) {
+            final FragmentList<Statement> otherStatements = ((Block) other).statements;
+            if (statements == otherStatements) {
+                return 0; // clone
             }
-            // TODO implement compareTo without toString(), then remove state member
-            return toString(state).compareTo(other.toString(state));
+            final Iterator<Statement> iterFirst  = statements.iterator();
+            final Iterator<Statement> iterSecond = otherStatements.iterator();
+            while (iterFirst.hasNext() && iterSecond.hasNext()) {
+                final int cmp = iterFirst.next().compareTo(iterSecond.next());
+                if (cmp != 0) {
+                    return cmp;
+                }
+            }
+            if (iterFirst.hasNext()) {
+                return 1;
+            }
+            if (iterSecond.hasNext()) {
+                return -1;
+            }
+            return 0;
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SumAssignment.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
     }
 
     @Override
     public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof Block) {
+        } else if (obj.getClass() == Block.class) {
             return this.equalTo((Block) obj);
         }
         return false;
@@ -311,29 +322,22 @@ public class Block extends Statement implements Comparable<Block> {
      * @return      True if `this' equals `other', false otherwise.
      */
     public boolean equalTo(final Block other) {
-        if (this == other) {
-            return true;
-        } else {
-            final int size = statements.size();
-            if (size == other.statements.size()) {
-                if (size == 0) {
-                    return true;
-                }
-                // TODO implement equals without toString(), then remove state member
-                return toString(state).equals(other.toString(state));
-            }
-        }
-        return false;
+        return this == other || statements.equals(other.statements);
+    }
+
+    @Override
+    public final int hashCode() {
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.hashCode();
     }
 
     // private subclass to cheat the end of the world... or stack, whatever comes first
     private class BlockExecThread extends Thread {
-        private final List<Statement>                   statements;
+        private final FragmentList<Statement>           statements;
         private final org.randoom.setlx.utilities.State state;
         /*package*/   ReturnMessage                     result;
         /*package*/   Throwable                         error;
 
-        /*package*/ BlockExecThread(final List<Statement> statements, final org.randoom.setlx.utilities.State state) {
+        /*package*/ BlockExecThread(final FragmentList<Statement> statements, final org.randoom.setlx.utilities.State state) {
             this.statements = statements;
             this.state      = state;
             this.result     = null;
@@ -345,11 +349,11 @@ public class Block extends Statement implements Comparable<Block> {
             try {
                 state.callStackDepth  = 0;
 
-                for (final Statement stmnt : statements) {
+                for (final Statement statement : statements) {
                     if (state.executionStopped) {
                         throw new StopExecutionException();
                     }
-                    result = stmnt.execute(state);
+                    result = statement.execute(state);
                     if (result != null) {
                         break;
                     }

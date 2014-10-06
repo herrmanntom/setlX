@@ -8,11 +8,8 @@ import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.*;
-import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.*;
 import org.randoom.setlx.utilities.ParameterDef.ParameterType;
-import org.randoom.setlx.utilities.ParameterList;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -152,7 +149,7 @@ public abstract class PreDefinedProcedure extends Procedure {
                 error.append("'");
                 error.append(getName());
                 error.append("(");
-                parameters.appendString(state, error, 0);
+                parameters.appendString(state, error);
                 error.append(")'");
                 parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
                 throw new IncorrectNumberOfParametersException(error.toString());
@@ -199,7 +196,7 @@ public abstract class PreDefinedProcedure extends Procedure {
     public final void appendString(final State state, final StringBuilder sb, final int tabs) {
         final String endl = state.getEndl();
         sb.append("procedure(");
-        parameters.appendString(state, sb, 0);
+        parameters.appendString(state, sb);
         sb.append(") {");
         sb.append(endl);
         state.appendLineStart(sb, tabs + 1);
@@ -225,7 +222,7 @@ public abstract class PreDefinedProcedure extends Procedure {
     /* comparisons */
 
     @Override
-    public int compareTo(final Value other) {
+    public int compareTo(final CodeFragment other) {
         object = null;
         if (this == other) {
             return 0;

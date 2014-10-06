@@ -11,7 +11,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * Base class for branches of the scan statement.
  */
-public abstract class MatchAbstractScanBranch extends MatchAbstractBranch {
+public abstract class AbstractMatchScanBranch extends AbstractMatchBranch {
     /**
      * Evaluate the scan-condition of this branch and return the result.
      * (To be implemented by classes representing actual branches)
@@ -31,9 +31,9 @@ public abstract class MatchAbstractScanBranch extends MatchAbstractBranch {
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static   MatchAbstractScanBranch valueToMatchAbstractScanBranch(final State state, final Value value) throws TermConversionException {
+    public static AbstractMatchScanBranch valueToMatchAbstractScanBranch(final State state, final Value value) throws TermConversionException {
         if (value.getClass() != Term.class) {
-            throw new TermConversionException("malformed MatchAbstractScanBranch");
+            throw new TermConversionException("malformed AbstractMatchScanBranch");
         } else {
             final Term   term = (Term) value;
             final String fc   = term.getFunctionalCharacter();

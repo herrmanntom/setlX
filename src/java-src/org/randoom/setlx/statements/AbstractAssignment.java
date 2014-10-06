@@ -1,6 +1,8 @@
-package org.randoom.setlx.expressions;
+package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.expressions.AssignableExpression;
+import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -8,39 +10,56 @@ import org.randoom.setlx.utilities.State;
 import java.util.List;
 
 /**
- * Generic implementation for expressions with left-hand-side and right-hand-side.
+ * Implementation of the -= operator, on statement level.
+ *
+ * grammar rule:
+ * assignmentOther
+ *     : assignable ('-=' | [...] ) expr
+ *     ;
+ *
+ * implemented here as:
+ *       ==========                 ====
+ *          lhs                     rhs
  */
-public abstract class BinaryExpression extends Expr {
+public abstract class AbstractAssignment extends StatementWithPrintableResult {
+
+    /** Expression to assign to.                */
+    protected final AssignableExpression lhs;
+    /** Expression to evaluate.                 */
+    protected final Expr                 rhs;
+    /** Enable to print result after execution. */
+    protected       boolean              printAfterEval;
 
     /**
-     * Left-hand-side of the expression.
-     */
-    protected final Expr lhs;
-    /**
-     * Left-hand-side of the expression.
-     */
-    protected final Expr rhs;
-
-    /**
-     * Constructor.
+     * Create new DirectAssignment.
      *
-     * @param lhs Left hand side of the expression.
-     * @param rhs Right hand side of the expression.
+     * @param lhs Expression to assign to.
+     * @param rhs Expression to evaluate.
      */
-    protected BinaryExpression(final Expr lhs, final Expr rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+    protected AbstractAssignment(final AssignableExpression lhs, final Expr rhs) {
+        this.lhs            = lhs;
+        this.rhs            = rhs;
+        this.printAfterEval = false;
     }
 
     @Override
-    protected void collectVariables (
+    /*package*/ final void setPrintAfterExecution() {
+        printAfterEval = true;
+    }
+
+    @Override
+    public final void collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
+        // first we evaluate lhs and rhs as usual
         lhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         rhs.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+
+        // then assign to lhs
+        lhs.collectVariablesWhenAssigned(state, boundVariables, boundVariables, boundVariables);
     }
 
     /* string operations */
@@ -56,10 +75,12 @@ public abstract class BinaryExpression extends Expr {
     public abstract void appendOperator(final StringBuilder sb);
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        lhs.appendBracketedExpr(state, sb, tabs, precedence(), false);
+    public final void appendString(final State state, final StringBuilder sb, final int tabs) {
+        state.appendLineStart(sb, tabs);
+        lhs.appendString(state, sb, tabs);
         appendOperator(sb);
-        rhs.appendBracketedExpr(state, sb, tabs, precedence(), true);
+        rhs.appendString(state, sb, tabs);
+        sb.append(";");
     }
 
     /* term operations */
@@ -86,7 +107,7 @@ public abstract class BinaryExpression extends Expr {
         if (this == other) {
             return 0;
         } else if (this.getClass() == other.getClass()) {
-            final BinaryExpression otr = (BinaryExpression) other;
+            final AbstractAssignment otr = (AbstractAssignment) other;
             int cmp = lhs.compareTo(otr.lhs);
             if (cmp != 0) {
                 return cmp;
@@ -102,7 +123,7 @@ public abstract class BinaryExpression extends Expr {
         if (this == obj) {
             return true;
         } else if (this.getClass() == obj.getClass()) {
-            final BinaryExpression other = (BinaryExpression) obj;
+            final AbstractAssignment other = (AbstractAssignment) obj;
             return lhs.equals(other.lhs) && rhs.equals(other.rhs);
         }
         return false;

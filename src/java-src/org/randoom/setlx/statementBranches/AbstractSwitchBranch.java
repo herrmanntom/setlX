@@ -8,7 +8,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * Base class for branches of the switch statement.
  */
-public abstract class SwitchAbstractBranch extends AbstractBranch {
+public abstract class AbstractSwitchBranch extends AbstractBranch {
 
     /**
      * Convert a term representing an if-then-else branch into such a branch.
@@ -18,9 +18,9 @@ public abstract class SwitchAbstractBranch extends AbstractBranch {
      * @return                         Resulting branch.
      * @throws TermConversionException Thrown in case of an malformed term.
      */
-    public static SwitchAbstractBranch valueToSwitchAbstractBranch(final State state, final Value value) throws TermConversionException {
+    public static AbstractSwitchBranch valueToSwitchAbstractBranch(final State state, final Value value) throws TermConversionException {
         if (value.getClass() != Term.class) {
-            throw new TermConversionException("malformed SwitchAbstractBranch");
+            throw new TermConversionException("malformed AbstractSwitchBranch");
         } else {
             final Term   term = (Term) value;
             final String fc   = term.getFunctionalCharacter();
@@ -29,7 +29,7 @@ public abstract class SwitchAbstractBranch extends AbstractBranch {
             } else if (fc.equals(SwitchDefaultBranch.getFunctionalCharacter())) {
                 return SwitchDefaultBranch.termToBranch(state, term);
             } else {
-                throw new TermConversionException("malformed SwitchAbstractBranch");
+                throw new TermConversionException("malformed AbstractSwitchBranch");
             }
         }
     }

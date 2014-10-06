@@ -1,0 +1,65 @@
+times := {};
+
+// Modify the given function so that the execution times are recorded.
+profiler := closure(function, functionName) {
+    times[functionName] := 0;
+    tracedFunction := closure(*args) {
+        start  := now();
+        result := function(*args);
+        stop   := now();
+        time   := stop - start;
+        times[functionName] += time;
+        return result;
+    };
+    return tracedFunction;
+};
+
+// Generate a random n >< n matrix.
+randomMatrix := procedure(n) {
+    s := [1 .. n];
+    return la_matrix([[random() : i in s] : j in s]);
+};
+
+// This procedure generates k random matrices of dimension n and computes their
+// condition.  Next, it computes the geometric mean and the maximum of those conditions.
+mean_max := procedure(k, n) {
+    conditions := [];
+    for (i in [1 .. k]) {
+        a := randomMatrix(n);
+        conditions[i] := la_cond(a);
+    }
+    mean   := (*/ conditions) ** (1.0 / k);
+    maxVal := max(conditions);
+    return [mean, maxVal];
+};
+
+// This procedure generates k * k matrices of dimension n and computes their condition.
+// The matrices are computed in groups of k matrices each.  For each of these group,
+// the maximum and the geometric mean of the conditions of these matrices is computed.
+// Furthermore, this function records the time that is used to generate the matrices and
+// to compute their mean.
+main := closure(k := 10, n := 100) {
+    resetRandom();
+    la_cond  := profiler(la_cond , "la_cond" );
+    mean_max := profiler(mean_max, "mean_max");
+    for (i in [1 .. k]) {
+        print(mean_max(k, n));
+    }
+    times_cond := 0.001 * times["la_cond" ];
+    times_mean := 0.001 * times["mean_max"];
+    // Since the resulting times vary, the next two lines can not be executed in
+    // the test bench.
+    /*
+       print("Time spend computing condition: $times_cond$ seconds.");
+       print("Time spend generating matrices: $times_mean - times_cond$ seconds.");
+    */
+    if (2 * times_cond > times_mean ) {
+        print("Computing the condition took more time than generating the matrices.");
+    } else {
+        print("Generating the matrices took more time than computing the condition.");
+    }
+};
+
+main(12);
+
+        

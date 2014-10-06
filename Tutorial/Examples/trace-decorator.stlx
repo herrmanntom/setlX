@@ -1,0 +1,34 @@
+// Modify the given function so that the invocation of the function is traced
+tracer := procedure(function, functionName) {
+    tracedFunction := closure(*args) {
+        argsString := args + "";
+        argsString := argsString[2..-2];
+        print("calling $functionName$($argsString$)");
+        result := function(*args);
+        print("$functionName$($argsString$) = $result$");
+        return result;
+    };
+    return tracedFunction;
+};
+
+gcd := procedure(n, m) {
+    if (m == 0) {
+        return n;
+    }
+    return gcd(m, n % m);
+};
+
+gcd := tracer(gcd, "gcd");
+
+gcd(123456, 654321);
+
+factorial := procedure(n) {
+    if (n == 0) {
+        return 1;
+    }
+    return n * factorial(n-1);
+};
+
+factorial := tracer(factorial, "factorial");
+
+factorial(10);

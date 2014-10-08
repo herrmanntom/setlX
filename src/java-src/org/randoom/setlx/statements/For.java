@@ -164,15 +164,24 @@ public class For extends Statement {
             return 0;
         } else if (other.getClass() == For.class) {
             For otr = (For) other;
-            int cmp = condition.compareTo(otr.condition);
+            int cmp = iterator.compareTo(otr.iterator);
             if (cmp != 0) {
                 return cmp;
             }
-            cmp = iterator.compareTo(otr.iterator);
+            cmp = statements.compareTo(otr.statements);
             if (cmp != 0) {
                 return cmp;
             }
-            return statements.compareTo(otr.statements);
+            if (condition != null) {
+                if (otr.condition != null) {
+                    return condition.compareTo(otr.condition);
+                } else {
+                    return 1;
+                }
+            } else if (otr.condition != null) {
+                return -1;
+            }
+            return 0;
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
@@ -191,7 +200,13 @@ public class For extends Statement {
             return true;
         } else if (obj.getClass() == For.class) {
             For otr = (For) obj;
-            return condition.equals(otr.condition) && iterator.equals(otr.iterator) && statements.equals(otr.statements);
+            if (iterator.equals(otr.iterator) && statements.equals(otr.statements)) {
+                if (condition != null && otr.condition != null) {
+                    return condition.equals(otr.condition);
+                } else if (condition == null && otr.condition == null) {
+                    return true;
+                }
+            }
         }
         return false;
     }

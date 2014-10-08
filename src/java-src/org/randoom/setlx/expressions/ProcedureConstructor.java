@@ -96,6 +96,9 @@ public class ProcedureConstructor extends Expr {
             closureVariables.remove("this");
 
             this.closureVariables = closureVariables;
+        } else {
+            // add dummy variable to prevent optimization. Too much overhead for just returning the definition...
+            unboundVariables.add(Variable.getPreventOptimizationDummy());
         }
     }
 

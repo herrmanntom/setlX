@@ -66,20 +66,18 @@ assigns the value \texttt{3} to both  \texttt{a} and \texttt{b}.
 \section{Functions}
 The code shown in figure
 \ref{fig:primes-slim.stlx} on page \pageref{fig:primes-slim.stlx} shows a simple program
-to compute prime numbers.  It defines two functions.  The function \texttt{factors} takes a
-natural number $p$ as its first argument and computes the set of all factors of $p$.  Here, a number
-$f$ is a factor of $p$ iff dividing $p$ by $f$ leaves no remainder, that is 
-$p \,\texttt{\symbol{37}}\, f = 0$.
-The second function \texttt{primes} takes a natural number $n$ as an argument and computes the
-set of all those prime numbers that are less or equal to $n$.  
+to compute \href{http://en.wikipedia.org/wiki/Prime_number}{\emph{prime numbers}}.  
+It defines two functions.  The function \texttt{factors} takes a
+natural number \texttt{p} as its first argument and computes the set of all factors of \texttt{p}.  Here, a number
+\texttt{f} is a factor of \texttt{p} iff dividing \texttt{p} by \texttt{f} leaves no remainder, that is 
+the expression \texttt{p \symbol{37} f} is equal to \texttt{0}.
+The second function \texttt{primes} takes a natural number \texttt{n} as an argument and computes the
+set of all those numbers \texttt{p} less or equal to \texttt{n} that have only the trivial factors
+\texttt{1} and \texttt{p}.  These numbers are, by definition, prime numbers.
 
-The idea is that a number $p$ is prime
-iff the set of all  factors of $p$ contains just $1$ and $p$.  
 Note that, as \setlx\ is a functional language, the functions that are defined by the
-keyword \texttt{procedure}  are assigned to variables.  As already
-mentioned n the previous chapter, these functions can be used like
-any other values.
-
+keyword \texttt{procedure} are assigned to variables.  As already mentioned n the previous chapter,
+these functions can be used like any other values.
 
 \begin{figure}[!ht]
 \centering
@@ -120,14 +118,32 @@ The meaning of the symbols used in this grammar rule are as follows:
       \textsc{Ebnf}-notation the grammar rule for \textsl{paramList} is given as
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\textsl{paramList} \;\rightarrow\; (\textsl{paramSpec}\;\; (\squoted{,}\; \textsl{paramSpec})^*)?$
+      $
+      \begin{array}[t]{lcl}
+        \textsl{paramList} & \rightarrow & 
+        \bigl(\textsl{paramSpec}\;\; (\squoted{,}\; \textsl{paramSpec})^* \;\; (\squoted{,} \;\; \squoted{*} \;\mathtt{VAR})?\bigr)? \\[0.1cm]
+        & \mid & \squoted{*} \;\mathtt{VAR} \\
+      \end{array}
+      $
       \\[0.2cm]
       Therefore, a \textsl{paramList} is a possibly empty list of parameter specifications that are 
-      separated by a comma ``\texttt{,}''.  A parameter specification is either just a variable
+      separated by a comma ``\texttt{,}''.  Optionally, as the last element, a parameter list can
+      contain a variable that is prefixed with the operator ``\texttt{*}''.  This is used when
+      a function takes a variable number of arguments and will be explained later.  Furthermore,
+      a parameter list can consist of a single variable prefixed with the operator ``\texttt{*}''.
+
+      A parameter specification is either just a variable,
+      or it is a variable with the assignment of a default value,
       or it is a variable preceded by the token ``\texttt{rw}'':
       \\[0.2cm]
       \hspace*{1.3cm}
-      $\textsl{paramSpec} \;\rightarrow\; (\mathtt{ID} \mid \squoted{rw}\; \mathtt{ID})$.
+      $
+      \begin{array}[b]{lcl}
+        \textsl{paramSpec} & \rightarrow & \mathtt{VAR}                                \\[0.1cm]
+                           & \mid        & \mathtt{VAR} \;\squoted{:=}\; \textsl{expr} \\[0.1cm]
+                           & \mid        & \squoted{rw}\; \mathtt{VAR}
+      \end{array}
+      $
       \\[0.2cm]  
       If the parameter is preceded by the keyword \texttt{rw}, then this parameter is a 
       \emph{read-write parameter}, which means that the function can change the value of the
@@ -137,12 +153,79 @@ The meaning of the symbols used in this grammar rule are as follows:
       \href{http://en.wikipedia.org/wiki/Call_by_name#Call_by_name}{\emph{call by name}}
       semantics.  Parameters not specified as read-write parameters have a strict
       \href{http://en.wikipedia.org/wiki/Call_by_value#Call_by_value}{\emph{call by value}} 
-      semantics, and therefore changes to those parameters will not be
+      semantics, and hence changes to those parameters will not be
       visible outside the function.
 \item \textsl{block} is a sequence of statements.
 \end{enumerate}
-Note that the definition of a function has to be terminated by the symbol ``\texttt{;}''.
+Note that the definition of a function has to be terminated by the symbol ``\texttt{;}''.  The
+reason is that the function is part of an assignment and every assignment is terminated with a semicolon.
+Lets have a few examples of function definitions.  The examples in Figure \ref{fig:functions.stlx} show
+several functions definition.
 
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    f := procedure(a, b, c) {
+        return a + b + c;
+    };
+    print(f(1,2,3));
+    
+    g := procedure(a, b := 2, c := 3) {
+        return a + b + c;
+    };
+    print(g);
+    print(g(1));
+    print(g(1, 3));
+    print(g(1, 3, 5));
+    
+    h := procedure(a := 1, b := 2, c := 3, *rest) {
+        s := a + b + c;
+        for (x in rest) {
+            s += x;
+        }
+        return s;
+    };
+    print(h);
+    print(h(1));
+    print(h(2, 4));
+    print(h(2, 4, 6));
+    print(h(1, 2, 3, 4, 5, 6));
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Function with and without default arguments.}
+\label{fig:functions.stlx}
+\end{figure}
+
+\begin{enumerate}
+\item The function $f$ takes three arguments.  It adds these arguments and returns the resulting
+      sum.  As none of the arguments has a default assigned, $f$ can only be called with three arguments.
+\item The function $g$ also takes three arguments, but this time both the second and the third
+      argument have a default value.  Therefore, $g$ can be called with either one argument, two
+      arguments, or three arguments.
+\item The function $h$ takes four arguments.  The first three arguments are regular arguments and
+      each of them has a default value.  The remaining argument \texttt{rest} is prefixed with a 
+      \squoted{*}.  Therefore, this argument is a list that collects all arguments beyond the third
+      argument.  Hence, the function $h$ can be called with any number of arguments.  For example,
+      if we call $h$ as
+      \\[0.2cm]
+      \hspace*{1.3cm}
+      \texttt{h(1, 2, 3, 4, 5, 6)}
+      \\[0.2cm]
+      then \texttt{a} is set to \texttt{1}, \texttt{b} is set to \texttt{2}, \texttt{c} is set to
+      \texttt{3}, and \texttt{rest} is set to the list \texttt{[4, 5, 6]}.  Later, when we discuss
+      \emph{closures} we will see that having an argument prefixed with the \squoted{*}-operator
+      enables us to build so called 
+      \href{http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators}{\emph{decorator functions}}.
+      This is a very powerful idea that has been borrowed from the programming language \textsl{Python}.
+\end{enumerate}
 There is a variant syntax for defining a function which is appropriate if the definition of the
 function is just a single expression.  For example, the function mapping $x$ to the square
 $x*x$ can be defined as
@@ -161,7 +244,7 @@ can be defined as follows:
 The syntax for a lambda definition is given by the follwing grammar rule:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\textsl{fctDef} \;\rightarrow\; \mathtt{ID} \quoted{:=} \textsl{lambdaParams} \quoted{|->} \textsl{expr} \quoted{;}$
+$\textsl{fctDef} \;\rightarrow\; \mathtt{VAR} \quoted{:=} \textsl{lambdaParams} \quoted{|->} \textsl{expr} \quoted{;}$
 \\[0.2cm]
 Here, \textsl{lambdaParams} is either just a single parameter or a list of parameters, where the
 parameters are enclosed in square brackets and are separated by commas, while

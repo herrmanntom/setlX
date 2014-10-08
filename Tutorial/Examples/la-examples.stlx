@@ -43,7 +43,7 @@ print("la_solve($a$, $b$) =");
 print("$x$\n");
 c := <<4.001 7.998>>;
 x := la_solve(a, c);
-print("la_solve($a$, $c$) ");
+print("la_solve($a$, $c$) =");
 print("$x$\n");
 print("la_cond($a$) = $la_cond(a)$\n");
 

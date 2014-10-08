@@ -9,7 +9,7 @@ export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"
 
-$setlXlaunchScript --version > "$tmpFile"
+$setlXlaunchScript --version | head -n 1 > "$tmpFile"
 if [ $? -ne 0 ]
   then
     cat "$tmpFile"

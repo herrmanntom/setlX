@@ -68,7 +68,7 @@ The following folders are used to structure the interpreter and its surrounding 
 	\folder{grammar\_pure}
 			{\SetlX{} grammar in ANTLR syntax as used by the interpreter, but without any Java statements. This `pure' version can be automatically created from the interpreter syntax with the included `EBNF\_extractor' by executing \command{make update}. Also includes a simple program to parse \SetlX{} code without interpretation.}
 	\folder{src}
-			{Launching script, make files and source code of the interpreter itself.}
+			{Launching script, ant build files and source code of the interpreter itself.}
 	\begin{itemize}
 		\folder{antlr}
 				{ANTLR `jar' file and license.}
@@ -78,9 +78,11 @@ The following folders are used to structure the interpreter and its surrounding 
 				{Java code of the interpreter (see section \ref{srcStructure}).}
 		\folder{simpleTest}
 				{Some very simple \SetlX{} code examples to test specific features for regressions, which are otherwise hard to detect. This test can be run by executing `\command{make test}'.}
+	\end{itemize}
+	\folder{src\_gfx}
+			{Source code of the graphics extension of \setlX.}
 	\folder{Tutorial}
 			{\LaTeX{} sources for the tutorial.}
-	\end{itemize}
 \end{itemize}
 
 \subsection{Source Code Structure}\label{srcStructure}
@@ -134,11 +136,11 @@ In order to be found by this algorithm, predefined procedures have to follow str
 	\item The `\command{super();}' constructor must be called.
 	\item The following variable must be present in the class and set with the invocation of the classes constructor (the constructor itself should be private):
 \begin{lstlisting}[frame=none,numbers=none]
-public final static PreDefinedProcedure DEFINITION
-                                    = new PD_<name>();
+public final static PreDefinedProcedure
+         DEFINITION = new PD_<name>();
 \end{lstlisting}
 	\item And finally the actual work of the function has to be implemented inside the `\command{execute()}' method. The value returned by this method is used as return value of the function during execution.\\
-	If no value should be returned, return `\command{Om.OM}' instead (import \command{org.randoom.setlx.types.Om}).
+	Return `\command{Om.OM}' (import \command{org.randoom.setlx.types.Om}), if there is no other useful result.
 
 \end{itemize}
 
@@ -148,30 +150,51 @@ A simple predefined procedure without parameters is shown in figure \ref{lblPDFu
 
 \nonSubsubsection{Using Parameters in Predefined Procedures}
 
-If the predefined procedure uses parameters, they have to be defined in the constructor by invoking:
+If the predefined procedure uses parameters, they have to be defined as static constants before 
+`\command{DEFINITION}' is initialized:
 \begin{lstlisting}[frame=none,numbers=none]
-addParameter("value");
+private final static ParameterDef
+          VALUE = createParameter("value");
 \end{lstlisting}
 
 Hereby \command{"value"} is the name of the parameter. The name of the parameter is only shown when the function itself is used as an argument to print() inside a \SetlX{} program.
 
 Read-Write parameters (`\command{rw}') can be defined using:
 \begin{lstlisting}[frame=none,numbers=none]
-addParameter("value", ParameterType.READ_WRITE);
+private final static ParameterDef
+          VALUE = createRwParameter("value");
 \end{lstlisting}
 
-When `\command{execute(List<Value> args, List<Value> writeBackVars)}' is called, the current values of these parameters are placed inside the `\command{args}' list in \emph{the same order as they are added in the constructor}. When the procedure is called with a different number of parameters from within \SetlX{}, the user gets an error and the execution is halted. If a procedure should be allowed to handle more or fewer parameters as defined, the following methods can be called inside the constructor after parameter definitions:
+Optional parameters (`\command{:= 1}') can be defined using:
 \begin{lstlisting}[frame=none,numbers=none]
-enableUnlimitedParameters();
-setMinimumNumberOfParameters();
+private final static ParameterDef 
+          VALUE = createOptionalParameter("value", Rational.ONE);
 \end{lstlisting}
+The second argument specifies the default value, if the user does not specify the parameter when calling the new procedure.
 
-To (re)set the value of read-write parameters, the following function has to be called inside `\command{execute()}':
+And finally, List-Write parameters (`\command{*}') can be defined using:
 \begin{lstlisting}[frame=none,numbers=none]
-writeBackVars.add(new SetlReal("1.0"));
+private final static ParameterDef
+          VALUE = createListParameter("value");
 \end{lstlisting}
 
-These have to occur in \emph{the same order and number} as read-write parameters are defined in the constructor. A predefined procedure using a single read-write parameter is shown in figure \ref{lblPDFunctionRW}.
+The parameter definitions must be added in the order they should appear to new procedure. This is done by calling `\command{addParameter()}' in its constructor:
+\begin{lstlisting}[frame=none,numbers=none]
+addParameter(VALUE);
+\end{lstlisting}
+
+
+Before `\command{execute(State state, HashMap<ParameterDef, Value> args)}' is invoked, the current values of these parameters are placed inside the `\command{args}' map.
+When the procedure is called with an incorrect number of parameters from within \SetlX{}, the user gets an error and the execution is aborted, before `\command{execute()}' is invoked.
+This means that the `\command{args} map' is always well defined and all registered parameter have values assigned to them.
+Thus they can be used without additional checks.
+
+To (re)set the value of read-write parameters, just update its value in `\command{args}':
+\begin{lstlisting}[frame=none,numbers=none]
+args.put(VALUE, Rational.TWO);
+\end{lstlisting}
+
+A predefined procedure using a single read-write parameter is shown in figure \ref{lblPDFunctionRW}.
 
 \includeListing[e]{../src/java-src/org/randoom/setlx/functions/PD_from.java}{showstringspaces=false}{lblPDFunctionRW}{}{Predefined Procedure `\command{from()}' using a read-write parameter}
 
@@ -306,6 +329,7 @@ The following software was used when developing the \setlX{} interpreter:
 			\item listings
 			\item hyperref
 			\item hypcap
+			\item a4wide
 		\end{itemize}
 	\item Apache Ant 1.8.4
 	\item GNU Make 3.82

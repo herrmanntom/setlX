@@ -6,6 +6,7 @@ import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
+
 /**
  * now()                   : get current time since epoch in ms
  */

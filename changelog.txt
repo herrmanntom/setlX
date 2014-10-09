@@ -1,6 +1,6 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
----v2.3.0--- 2014-09-xx
+---v2.3.0--- 2014-10-09
  + implemented matrix functionality
  + separated closures and procedures; normal procedures do not have closure functionality
  + allow to access relations with multiple parameters without explicitly wrapping those

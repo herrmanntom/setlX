@@ -47,6 +47,7 @@
             <arg value="describe"/>
             <arg value="--abbrev=40"/>
             <arg value="--always"/>
+            <arg value="--long"/>
             <arg value="--dirty"/>
         </exec>
         <tstamp>
@@ -98,6 +99,7 @@
             <arg value="describe"/>
             <arg value="--abbrev=40"/>
             <arg value="--always"/>
+            <arg value="--long"/>
             <arg value="--dirty"/>
         </exec>
         <tstamp>

@@ -8,7 +8,7 @@ import org.randoom.setlx.utilities.State;
  *
  * For internal use only.
  */
-public class Top extends Value {
+public class Top extends ImmutableValue {
     /**
      * The largest value far as compareTo is concerned.
      */
@@ -46,16 +46,14 @@ public class Top extends Value {
     }
 
     @Override
-    public boolean equalTo(final Object v) {
+    public boolean equalTo(final Object other) {
         // as only exactly one object of class Top ever exists, we can get away with comparing the reference
-        return this == v;
+        return this == other;
     }
 
-    private final static int initHashCode = Top.class.hashCode();
-
     @Override
-    public int hashCode() {
-        return initHashCode;
+    public int computeHashCode() {
+        return Top.class.hashCode();
     }
 }
 

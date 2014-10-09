@@ -161,7 +161,7 @@ public class Switch extends Statement {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + branchList.hashCode();
     }
 }

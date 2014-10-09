@@ -6,7 +6,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * This class represents an undefined value.
  */
-public class Om extends Value {
+public class Om extends ImmutableValue {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Om.class);
 
@@ -61,7 +61,7 @@ public class Om extends Value {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT);
     }
 

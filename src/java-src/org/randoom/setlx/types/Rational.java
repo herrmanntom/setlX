@@ -338,10 +338,7 @@ public class Rational extends NumberValue {
             return true;
         }
         final Rational a = new Rational(nominator.abs(), denominator.abs());
-        if (a.compareTo(RAT_BIG) > 0) {
-            return false; // too big
-        }
-        return a.compareTo(RAT_SMALL) >= 0;
+        return a.compareTo(RAT_BIG) <= 0 && a.compareTo(RAT_SMALL) >= 0;
     }
 
     /* native type conversions */
@@ -490,48 +487,48 @@ public class Rational extends NumberValue {
 
     @Override
     public void fillCollectionWithinRange(final State state,
-                                          final Value step_,
-                                          final Value stop_,
+                                          final Value step,
+                                          final Value stop,
                                           final CollectionValue collection)
         throws SetlException
     {
-        Rational step = null;
-        Rational stop = null;
+        Rational stepValue;
+        Rational stopValue;
 
         // check if types make sense (essentially only numbers make sense here)
-        if (step_.getClass() == Rational.class) {
-            step = (Rational) step_;
+        if (step.getClass() == Rational.class) {
+            stepValue = (Rational) step;
         } else {
             throw new IncompatibleTypeException(
-                "Step size '" + step_.toString(state) + "' is not a rational number."
+                "Step size '" + step.toString(state) + "' is not a rational number."
             );
         }
-        if (stop_.getClass() == Rational.class) {
-            stop = (Rational) stop_;
+        if (stop.getClass() == Rational.class) {
+            stopValue = (Rational) stop;
         } else {
             throw new IncompatibleTypeException(
-                "Stop argument '" + stop_.toString(state) + "' is not a rational number."
+                "Stop argument '" + stop.toString(state) + "' is not a rational number."
             );
         }
         // collect all elements in range
         Rational i = this;
-        if (step.compareTo(Rational.ZERO) > 0) {
-            for (; i.compareTo(stop) <= 0; i = (Rational) i.sum(state, step)) {
+        if (stepValue.compareTo(Rational.ZERO) > 0) {
+            for (; i.compareTo(stopValue) <= 0; i = (Rational) i.sum(state, stepValue)) {
                 if (state.executionStopped) {
                     throw new StopExecutionException();
                 }
                 collection.addMember(state, i);
             }
-        } else if (step.compareTo(Rational.ZERO) < 0) {
-            for (; i.compareTo(stop) >= 0; i = (Rational) i.sum(state, step)) {
+        } else if (stepValue.compareTo(Rational.ZERO) < 0) {
+            for (; i.compareTo(stopValue) >= 0; i = (Rational) i.sum(state, stepValue)) {
                 if (state.executionStopped) {
                     throw new StopExecutionException();
                 }
                 collection.addMember(state, i);
             }
-        } else { // step == 0!
+        } else { // stepValue == 0!
             throw new UndefinedOperationException(
-                "Step size '" + step.toString(state) + "' is illogical."
+                "Step size '" + stepValue.toString(state) + "' is illogical."
             );
         }
     }
@@ -821,7 +818,7 @@ public class Rational extends NumberValue {
     private final static int initHashCode = Rational.class.hashCode();
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return (initHashCode + nominator.hashCode()) * 31 + denominator.hashCode();
     }
 }

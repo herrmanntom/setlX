@@ -277,7 +277,7 @@ public class MatchCaseBranch extends AbstractMatchBranch {
 
     @Override
     public final int hashCode() {
-        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + statements.hashCode();
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + statements.computeHashCode();
         if (condition != null) {
             hash = hash * 31 + condition.hashCode();
         }

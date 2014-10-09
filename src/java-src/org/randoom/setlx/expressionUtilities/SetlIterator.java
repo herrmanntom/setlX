@@ -10,11 +10,7 @@ import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.ReturnMessage;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.VariableScope;
+import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +31,7 @@ import java.util.List;
  *       ==========      ====        ||      ========
  *       assignable   collection     ||        next
  */
-public class SetlIterator extends CodeFragment {
+public class SetlIterator extends ImmutableCodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIterator.class);
 
@@ -298,7 +294,7 @@ public class SetlIterator extends CodeFragment {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + assignable.hashCode();
         hash = hash * 31 + collection.hashCode();
         if (next != null) {

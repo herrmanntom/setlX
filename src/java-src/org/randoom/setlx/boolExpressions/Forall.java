@@ -200,7 +200,7 @@ public class Forall extends Expr {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + iterator.hashCode();
         hash = hash * 31 + condition.hashCode();
         return hash;

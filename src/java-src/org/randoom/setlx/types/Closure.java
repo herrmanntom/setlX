@@ -283,8 +283,7 @@ public class Closure extends Procedure {
     }
 
     @Override
-    public int hashCode() {
-        object = null;
+    public int computeHashCode() {
         return (((int) COMPARE_TO_ORDER_CONSTANT) + parameters.hashCode()) * 31 + statements.size();
     }
 

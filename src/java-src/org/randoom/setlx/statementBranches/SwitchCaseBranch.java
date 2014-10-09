@@ -144,7 +144,7 @@ public class SwitchCaseBranch extends AbstractSwitchBranch {
     @Override
     public final int hashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + condition.hashCode();
-        hash = hash * 31 + statements.hashCode();
+        hash = hash * 31 + statements.computeHashCode();
         return hash;
     }
 

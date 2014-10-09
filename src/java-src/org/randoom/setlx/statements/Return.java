@@ -156,7 +156,7 @@ public class Return extends Statement {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = (int) COMPARE_TO_ORDER_CONSTANT;
         if (result != null) {
             hash += result.hashCode();

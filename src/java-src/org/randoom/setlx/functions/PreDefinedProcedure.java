@@ -23,7 +23,6 @@ public abstract class PreDefinedProcedure extends Procedure {
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
 
     private String name;
-    private int    nameHashCode;
 
     /**
      * Initialize a new predefined procedure.
@@ -34,7 +33,6 @@ public abstract class PreDefinedProcedure extends Procedure {
     protected PreDefinedProcedure() {
         super(new ParameterList(), new Block(null));
         this.name         = null;
-        this.nameHashCode = -1;
     }
 
     /**
@@ -44,8 +42,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      */
     public final String getName() {
         if (name == null) {
-            name         = this.getClass().getSimpleName().substring(3);
-            nameHashCode = name.hashCode();
+            name = this.getClass().getSimpleName().substring(3);
         }
         return name;
     }
@@ -252,11 +249,8 @@ public abstract class PreDefinedProcedure extends Procedure {
     }
 
     @Override
-    public int hashCode() {
-        if (nameHashCode == -1) {
-            getName();
-        }
-        return ((int) COMPARE_TO_ORDER_CONSTANT) + nameHashCode;
+    public int computeHashCode() {
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + getName().hashCode();
     }
 }
 

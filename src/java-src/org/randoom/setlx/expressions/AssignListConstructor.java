@@ -177,8 +177,8 @@ public class AssignListConstructor extends AssignableExpression {
     }
 
     @Override
-    public int hashCode() {
-        return ((int) COMPARE_TO_ORDER_CONSTANT) + list.hashCode();
+    public int computeHashCode() {
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + list.computeHashCode();
     }
 
     @Override

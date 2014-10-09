@@ -196,7 +196,7 @@ public class Range extends CollectionBuilder {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + start.hashCode();
         hash = hash * 31 + stop.hashCode();
         if (second != null) {

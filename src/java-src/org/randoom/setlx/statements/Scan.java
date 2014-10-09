@@ -369,7 +369,7 @@ public class Scan extends Statement {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
         hash = hash * 31 + branchList.hashCode();
         return hash;

@@ -241,7 +241,7 @@ public class ExplicitListWithRest extends CollectionBuilder {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
               int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + rest.hashCode();
         final int size = list.size();
         hash = hash * 31 + size;

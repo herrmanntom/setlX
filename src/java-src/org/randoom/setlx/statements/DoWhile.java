@@ -149,9 +149,9 @@ public class DoWhile extends Statement {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + condition.hashCode();
-        hash = hash * 31 + statements.hashCode();
+        hash = hash * 31 + statements.computeHashCode();
         return hash;
     }
 }

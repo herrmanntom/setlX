@@ -3,7 +3,7 @@ package org.randoom.setlx.expressions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.lang.ref.SoftReference;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Base class for all SetlX expressions.
  */
-public abstract class Expr extends CodeFragment {
+public abstract class Expr extends ImmutableCodeFragment {
 
     // collection of reusable resultSoftReference values
     private final static HashMap<Expr, SoftReference<Value>> REPLACEMENTS = new HashMap<Expr, SoftReference<Value>>();

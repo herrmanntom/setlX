@@ -23,7 +23,7 @@ import java.util.List;
  *                       ===================         =====
  *                            parameters           statements
  */
-public class Procedure extends Value {
+public class Procedure extends ImmutableValue {
     // functional character used in terms
     private   final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Procedure.class);
 
@@ -321,8 +321,7 @@ public class Procedure extends Value {
     }
 
     @Override
-    public int hashCode() {
-        object = null;
+    public int computeHashCode() {
         return (((int) COMPARE_TO_ORDER_CONSTANT) + parameters.hashCode()) * 31 + statements.size();
     }
 

@@ -8,7 +8,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * This base class provides some functionality for all numeric values.
  */
-public abstract class NumberValue extends Value {
+public abstract class NumberValue extends ImmutableValue {
 
     /* arithmetic operations */
 

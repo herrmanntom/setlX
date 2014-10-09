@@ -3,14 +3,14 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
 /**
  * Base class for all SetlX statements.
  */
-public abstract class Statement extends CodeFragment {
+public abstract class Statement extends ImmutableCodeFragment {
 
     /**
      * Code returned by executeWithErrorHandling().

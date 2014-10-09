@@ -182,7 +182,7 @@ public class TermConstructor extends Expr {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + fChar.hashCode();
         final int size = args.size();
         hash = hash * 31 + size;

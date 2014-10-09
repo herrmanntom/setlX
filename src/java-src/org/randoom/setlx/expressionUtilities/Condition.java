@@ -6,6 +6,7 @@ import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
  *       ====
  *       expr
  */
-public class Condition extends CodeFragment {
+public class Condition extends ImmutableCodeFragment {
     private final Expr expr;
 
     /**
@@ -106,7 +107,7 @@ public class Condition extends CodeFragment {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
     }
 }

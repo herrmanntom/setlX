@@ -9,7 +9,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * The setlX string data type.
  */
-public class SetlBoolean extends Value {
+public class SetlBoolean extends ImmutableValue {
 
     /**
      * SetlBoolean value of false.
@@ -162,7 +162,7 @@ public class SetlBoolean extends Value {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         if (this == TRUE) {
             return ((int) COMPARE_TO_ORDER_CONSTANT);
         } else {

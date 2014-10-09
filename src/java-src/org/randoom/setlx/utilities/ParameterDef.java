@@ -23,7 +23,7 @@ import java.util.List;
  *       ==== ========
  *       type   var
  */
-public class ParameterDef extends CodeFragment {
+public class ParameterDef extends ImmutableCodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER      = "^parameter";
     private final static String FUNCTIONAL_CHARACTER_RW   = "^rwParameter";
@@ -142,15 +142,6 @@ public class ParameterDef extends CodeFragment {
      */
     public boolean hasDefaultValue() {
         return defaultExpr != null;
-    }
-
-    /**
-     * Get variable-name used as binding for this parameter.
-     *
-     * @return Variable-name used as binding.
-     */
-    public String getVar() {
-        return var.getID();
     }
 
     /**
@@ -284,8 +275,8 @@ public class ParameterDef extends CodeFragment {
     }
 
     @Override
-    public int hashCode() {
-        return var.hashCode();
+    public int computeHashCode() {
+        return var.computeHashCode();
     }
 }
 

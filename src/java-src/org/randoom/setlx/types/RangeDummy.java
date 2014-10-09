@@ -7,7 +7,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * This class represents the value of the 'range' expression '..'.
  */
-public class RangeDummy extends Value {
+public class RangeDummy extends ImmutableValue {
 
     /**
      * Singleton of the one and only RangeDummy.
@@ -49,7 +49,7 @@ public class RangeDummy extends Value {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT);
     }
 }

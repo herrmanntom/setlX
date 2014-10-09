@@ -130,7 +130,7 @@ public abstract class AbstractAssignment extends StatementWithPrintableResult {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) compareToOrdering()) + lhs.hashCode();
         hash = hash * 31 + rhs.hashCode();
         return hash;

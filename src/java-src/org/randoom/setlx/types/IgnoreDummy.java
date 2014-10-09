@@ -7,7 +7,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * This class represents the value of the 'ignore' expression '-'.
  */
-public class IgnoreDummy extends Value {
+public class IgnoreDummy extends ImmutableValue {
 
     /**
      * Singleton of the one and only IgnoreDummy.
@@ -59,7 +59,7 @@ public class IgnoreDummy extends Value {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return (int) COMPARE_TO_ORDER_CONSTANT;
     }
 }

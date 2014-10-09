@@ -140,7 +140,7 @@ public class ClassConstructor extends Statement {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + name.hashCode();
         hash = hash * 31 + classDefinition.hashCode();
         return hash;

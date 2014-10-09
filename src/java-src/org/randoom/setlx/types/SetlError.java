@@ -7,7 +7,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * The setlX data type for encapsulating errors caught in try-catch.
  */
-public class SetlError extends Value {
+public class SetlError extends ImmutableValue {
 
     private final String message;
 
@@ -81,7 +81,7 @@ public class SetlError extends Value {
     private final static int initHashCode = SetlError.class.hashCode();
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return initHashCode * 31 + message.hashCode();
     }
 }

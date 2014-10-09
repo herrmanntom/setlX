@@ -301,7 +301,7 @@ public class StringConstructor extends Expr {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + originalStr.hashCode();
     }
 

@@ -537,7 +537,7 @@ public class SetlDouble extends NumberValue {
     private final static int initHashCode = SetlDouble.class.hashCode();
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         final Double d = this.doubleValue;
         return initHashCode + d.hashCode();
     }

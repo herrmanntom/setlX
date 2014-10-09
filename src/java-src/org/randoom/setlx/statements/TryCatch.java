@@ -176,8 +176,8 @@ public class TryCatch extends Statement {
     }
 
     @Override
-    public final int hashCode() {
-        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + blockToTry.hashCode();
+    public final int computeHashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + blockToTry.computeHashCode();
         hash = hash * 31 + tryList.hashCode();
         return hash;
     }

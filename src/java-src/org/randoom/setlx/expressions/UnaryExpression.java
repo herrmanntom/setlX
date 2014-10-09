@@ -78,7 +78,7 @@ public abstract class UnaryExpression extends Expr {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return  ((int) compareToOrdering()) + expr.hashCode();
     }
 }

@@ -147,7 +147,7 @@ public class ProcedureConstructor extends Expr {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return  ((int) compareToOrdering()) + definition.hashCode();
     }
 

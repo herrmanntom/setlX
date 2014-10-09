@@ -326,7 +326,7 @@ public class Block extends Statement {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.hashCode();
     }
 

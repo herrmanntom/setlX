@@ -188,7 +188,7 @@ public class Variable extends AssignableExpression {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + id.hashCode();
     }
 

@@ -176,10 +176,10 @@ public class Check extends Statement {
     }
 
     @Override
-    public final int hashCode() {
-        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + statements.hashCode();
+    public final int computeHashCode() {
+        int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + statements.computeHashCode();
         if (recovery != null) {
-            hash = hash * 31 + recovery.hashCode();
+            hash = hash * 31 + recovery.computeHashCode();
         }
         return hash;
     }

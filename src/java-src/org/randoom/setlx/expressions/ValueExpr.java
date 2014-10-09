@@ -88,7 +88,7 @@ public class ValueExpr extends Expr {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return  ((int) compareToOrdering()) + value.hashCode();
     }
 

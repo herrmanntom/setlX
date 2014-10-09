@@ -124,7 +124,7 @@ public class IfThenElseBranch extends AbstractIfThenBranch {
 
     @Override
     public final int hashCode() {
-        return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.hashCode();
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.computeHashCode();
     }
 
     /**

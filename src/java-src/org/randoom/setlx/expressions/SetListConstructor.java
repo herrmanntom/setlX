@@ -206,7 +206,7 @@ public class SetListConstructor extends Expr {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + type.hashCode();
         if (builder != null) {
             hash = hash * 31 + builder.hashCode();

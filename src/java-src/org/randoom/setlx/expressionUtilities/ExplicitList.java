@@ -271,7 +271,7 @@ public class ExplicitList extends CollectionBuilder {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         final int size = list.size();
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + size;
         if (size >= 1) {

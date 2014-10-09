@@ -311,7 +311,7 @@ public class CollectionAccess extends AssignableExpression {
     }
 
     @Override
-    public int hashCode() {
+    public int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + lhs.hashCode();
         final int size = args.size();
         hash = hash * 31 + size;

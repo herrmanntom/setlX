@@ -91,7 +91,7 @@ public class CollectionAccessRangeDummy extends Expr {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return (int) COMPARE_TO_ORDER_CONSTANT;
     }
 

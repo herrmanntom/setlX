@@ -356,7 +356,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
     @Override
     public final int hashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + pattern.hashCode();
-        hash = hash * 31 + statements.hashCode();
+        hash = hash * 31 + statements.computeHashCode();
         if (assignTo != null) {
             hash = hash * 31 + assignTo.hashCode();
         }

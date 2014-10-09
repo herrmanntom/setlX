@@ -153,8 +153,8 @@ public abstract class AbstractTryCatchBranch extends CodeFragment {
 
     @Override
     public final int hashCode() {
-        int hash = ((int) compareToOrdering()) + errorVar.hashCode();
-        hash = hash * 31 + blockToRecover.hashCode();
+        int hash = ((int) compareToOrdering()) + errorVar.computeHashCode();
+        hash = hash * 31 + blockToRecover.computeHashCode();
         return hash;
     }
 }

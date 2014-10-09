@@ -90,9 +90,15 @@ public class ProcedureConstructor extends Expr {
 
         if (isClosure) {
             final HashSet<String> closureVariables = new HashSet<String>();
-            closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
-            closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size())); // TODO check why we need used here
 
+            // variables added to unbound where never assigned in this scope...
+            // most likely they are predefined procedures
+            closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
+
+            // variables added to used are prebound ones detected as closure variables in definition.collectVariablesAndOptimize();
+            closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
+
+            // remove some commonly encountered "unbound" variables
             closureVariables.remove("this");
 
             this.closureVariables = closureVariables;

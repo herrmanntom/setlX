@@ -63,11 +63,14 @@ public class Matrix implements Cloneable, java.io.Serializable {
    */
    private double[][] A;
 
-   /** Row and column dimensions.
+   /** Row dimension.
    @serial row dimension.
+   */
+   private final int m;
+   /** Column dimension.
    @serial column dimension.
    */
-   private final int m, n;
+   private final int n;
 
 /* ------------------------
    Constructors
@@ -75,7 +78,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
    /** Construct an m-by-n matrix of zeros. 
    @param m    Number of rows.
-   @param n    Number of colums.
+   @param n    Number of columns.
    */
 
    public Matrix (int m, int n) {
@@ -86,7 +89,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
    /** Construct an m-by-n constant matrix.
    @param m    Number of rows.
-   @param n    Number of colums.
+   @param n    Number of columns.
    @param s    Fill the matrix with this scalar value.
    */
 
@@ -156,7 +159,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
 
    /** Construct a matrix from a copy of a 2-D array.
    @param A    Two-dimensional array of doubles.
-     * @return 
+   @return     Created matrix.
    @exception  IllegalArgumentException All rows must have the same length
    */
 
@@ -176,7 +179,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
    }
 
    /** Make a deep copy of a matrix
-     * @return 
+   @return Matrix copy.
    */
 
    public Matrix copy () {
@@ -978,7 +981,7 @@ public class Matrix implements Cloneable, java.io.Serializable {
      * whitespace, all the elements for each row appear on a single line,
      * the last row is followed by a blank line.
    @param input the input stream.
-     * @return 
+     * @return Created matrix.
      * @throws java.io.IOException
    */
 

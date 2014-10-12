@@ -705,9 +705,167 @@ The reader should note that we have made heavy use of closures to implement the 
 \label{fig:regexp2NFA.stlx}
 \end{figure}
 
+\section{Decorators}
+The programming language \href{https://www.python.org}{\textsl{Python}} has a nice feature called 
+\href{http://en.wikipedia.org/wiki/Python_syntax_and_semantics#Decorators}{\emph{decorators}} that
+makes it easy to modify existing functions.  For example, a trace decorator is a function that can
+modify a given function so that every invocation of the function and every value returned by the
+function are automatically traced.  \setlx\ supports similar techniques as \textsl{Python} and,
+therefore, it is easy to implement decorators in \setlx, too.  In this section, we show how a simple
+albeit powerful trace decorator can be implemented in just a few lines of \setlx\ code.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    gcd := procedure(n, m) {
+        if (m == 0) {
+            return n;
+        }
+        return gcd(m, n % m);
+    };
+    myTracer := tracer();
+    gcd := myTracer.trace(gcd, "gcd");
+    n   := gcd(36, 27);
+    gcd := myTracer.untrace("gcd");
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{Using the trace decorator.}
+\label{fig:tarce-decorator-use.stlx}
+\end{figure}
+
+Figure \ref{fig:tarce-decorator.stlx} on page \pageref{fig:tarce-decorator.stlx} shows the class
+\texttt{trace}.  This class implements a trace decorator.  Before we discuss the details of its
+implementation, lets us show how this decorator is used.  Figure \ref{fig:tarce-decorator-use.stlx}
+shows the implementation of the function \texttt{gcd} computing the greatest common divisor of two
+natural numbers using the \href{http://en.wikipedia.org/wiki/Euclidean_algorithm}{Euclidean algorithm}.
+Suppose we want to trace every invocation of the function \texttt{gcd}.  We do so by first creating
+an object of class \texttt{tracer} in line 7 of Figure \ref{fig:tarce-decorator-use.stlx}.  Then the line
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{gcd := myTracer.trace(gcd, "gcd");}
+\\[0.2cm]
+activates tracing for the function \texttt{gcd}.  Note that the first argument of the method
+\texttt{trace} is the function we want to trace, while the second argument is the name of the function.
+After executing this assignment statement, the function \texttt{gcd} will be traced.
+For example, the call \texttt{gcd(36, 27)} produces the following output:
+\begin{verbatim}
+    calling gcd(36, 27)
+    calling gcd(27, 9)
+    calling gcd(9, 0)
+    gcd(9, 0) = 9
+    gcd(27, 9) = 9
+    gcd(36, 27) = 9
+    ~< Result: 9 >~
+\end{verbatim}
+This shows that every time the function \texttt{gcd} is called, a statement of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{calling gcd($m$, $n$)}
+\\[0.2cm]
+is printed.  This is true even for the recursive invocations of \texttt{gcd}.  Furthermore,
+every time the function \texttt{gcd} returns a result, this is also printed together with the
+arguments used to compute this result.
+
+To stop tracing the function \texttt{gcd}, we simply issue the statement:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{gcd := myTracer.untrace("gcd");}
+\\[0.2cm]
+After this assignment, the function \texttt{gcd} is restored to its original state and will not print
+anything when called.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    class tracer() {
+        mStoredProcedures := {};
+        
+        trace := procedure(function, functionName) {
+            mStoredProcedures[functionName] := function;
+            tracedFunction := closure(*args) {
+                argsString := args + "";
+                argsString := argsString[2..-2];
+                print("calling $functionName$($argsString$)");
+                result := function(*args);
+                print("$functionName$($argsString$) = $result$");
+                return result;
+            };
+            return tracedFunction;
+        };
+        untrace := procedure(functionName) {
+            return mStoredProcedures[functionName];
+        };
+    }
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A class providing a trace decorator.}
+\label{fig:tarce-decorator.stlx}
+\end{figure}
+
+Let us proceed to discuss how the class \texttt{tracer} is implemented in \setlx.  Figure
+\ref{fig:tarce-decorator.stlx} shows the implementation of this class.  We discuss this
+implementation line by line.
+\begin{enumerate}
+\item Line 2 defines the member variable \texttt{mStoredProcedures}.  This variable will store a map
+      that is represented as a binary relation.  The keys of this maps are procedure names, while the
+      values entered into this map are the procedures themselves.  Initially, this map is empty.  Every time a
+      procedure is traced, the old value of the procedure is stored in this map.  This is needed in
+      order to implement the method \texttt{untrace} that restores a given procedure to its original
+      state.
+\item The workhorse of the class \texttt{tracer} is the method \texttt{trace} defined in line 4.
+      This method takes two arguments:  The first argument is a procedure, while the second argument
+      is the name of the procedure.  The function will return a new procedure that behaves like the
+      given procedure but, furthermore, traces the invocation of the original procedure as discussed
+      previously in the example.  The procedure \texttt{trace} works as follows:
+      \begin{enumerate}
+      \item In line 5, the old value of the procedure to be traced is saved in the dictionary 
+            \texttt{mStoredProcedures}.
+      \item Next, line 6 defines a closure called \texttt{tracedFunction}.  This is a function    
+            called with a variable number of arguments.  The reason is that we do
+            not know how many 
+            arguments the procedure \texttt{function} that is given as argument to the method
+            \texttt{trace} actually takes.  In the example discussed above, we had traced the
+            function \texttt{gcd} that takes two arguments.  We could just as well have traced a
+            procedure taking only one argument as we could have traced a procedure taking nine
+            arguments.
+      \item In line 7 to 9, the closure \texttt{tracedFunction} constructs a string containing the
+            arguments and the name of the function and then prints this string.  This
+            \texttt{tracedFunction} refers to \texttt{function} and \texttt{functionName}.  As these
+            variables  are only defined in the method \texttt{trace}, the function \texttt{tracedFunction} needs to
+            be defined as a closure so that it can access these variables.
+      \item Line 10 is the most important line of the whole implementation:  It is here that the
+            original procedure is called with the given arguments.  Note how prefixing the list of
+            arguments \texttt{args} with the operator ``\texttt{*}'' makes it possible to call this
+            function without knowing how many arguments the procedure takes.
+      \item Line 11 print the result that has been computed by the \texttt{function}.
+      \item This result is returned in line 12.
+      \item Finally, the method \texttt{trace} returns the newly created closure.  By assigning this
+            closure to the name of the original procedure we can thus trace the procedure.
+      \end{enumerate}
+\item As a convenience, the class \texttt{tracer} also provides the method \texttt{untrace} in
+      line 16.  This procedure looks up the original procedure stored under the given name in the
+      dictionary \texttt{mStoredProcedures} and returns it.  Hence, assigning the value returned by
+      this procedure to the name of a procedure stops tracing this procedure.
+\end{enumerate}
 
 
 %%% Local Variables: 
-%%% mode: latex
+%%% Mode: Latex
 %%% TeX-master: "tutorial"
 %%% End: 

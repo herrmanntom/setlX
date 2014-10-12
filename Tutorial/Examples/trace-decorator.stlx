@@ -1,26 +1,32 @@
-// Modify the given function so that the invocation of the function is traced
-tracer := procedure(function, functionName) {
-    tracedFunction := closure(*args) {
-        argsString := args + "";
-        argsString := argsString[2..-2];
-        print("calling $functionName$($argsString$)");
-        result := function(*args);
-        print("$functionName$($argsString$) = $result$");
-        return result;
+class tracer() {
+    // dictionary for the original procedure definitions
+    mStoredProcedures := {};
+    
+    // Modify the given function so that the invocation of the function is traced
+    trace := procedure(function, functionName) {
+        mStoredProcedures[functionName] := function;
+        tracedFunction := closure(*args) {
+            argsString := args + "";
+            argsString := argsString[2..-2];
+            print("calling $functionName$($argsString$)");
+            result := function(*args);
+            print("$functionName$($argsString$) = $result$");
+            return result;
+        };
+        return tracedFunction;
     };
-    return tracedFunction;
-};
+    untrace := procedure(functionName) {
+        return mStoredProcedures[functionName];
+    };
+}
 
+// Define some functions to test tracer.
 gcd := procedure(n, m) {
     if (m == 0) {
         return n;
     }
     return gcd(m, n % m);
 };
-
-gcd := tracer(gcd, "gcd");
-
-gcd(123456, 654321);
 
 factorial := procedure(n) {
     if (n == 0) {
@@ -29,6 +35,23 @@ factorial := procedure(n) {
     return n * factorial(n-1);
 };
 
-factorial := tracer(factorial, "factorial");
+// get a tracer ...
+myTracer := tracer();
 
+// use it
+print("now tracing gcd and factorial ...");
+gcd       := myTracer.trace(gcd, "gcd");
+factorial := myTracer.trace(factorial, "factorial");
+
+// test the tracer
+gcd(123456, 654321);
 factorial(10);
+
+// undo tracing
+print("untracing gcd and factorial ...");
+gcd       := myTracer.untrace("gcd");
+factorial := myTracer.untrace("factorial");
+
+// test it
+print("gcd(123456, 654321) = $gcd(123456, 654321)$");
+print("factorial(10) = $factorial(10)$");

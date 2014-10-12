@@ -285,6 +285,34 @@ Of course, it is much easier to build the list of the first 10 squares using the
 \hspace*{1.3cm}
 \texttt{t := [x*x : $\hspace*{-0.3cm}$x in [1..10]];}
 
+\subsection{Calling a Procedure}
+There are two ways to call a procedure.  If a procedure has $n$ arguments, then one way to call $f$ is
+to write
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(a_1, \cdots, a_n)$
+\\[0.2cm]
+where $a_1$, $\cdots$, $a_n$ are the arguments.  However, there is another way to call a procedure:
+If $l$ is a list of the form
+\\[0.2cm]
+\hspace*{1.3cm}
+$l = [a_1, \cdots, a_n]$,
+\\[0.2cm]
+then the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(\mathtt{*}\,l)$
+\\[0.2cm]
+is equivalent to the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+$f(a_1, \cdots, a_n)$.
+\\[0.2cm]
+Later, when we discuss functional programming in Chapter \ref{chapter:closures}, we will see that
+this is very handy.  The reason is that this technique permits us to write second order functions
+that take procedures as inputs and modify these procedures.  Even though we will not know the number
+of parameters that the procedures given as input take, we will still be able to modify them.
+
 \subsection{Memoization}
 The function $\textsl{fib}: \mathbb{N} \rightarrow
 \mathbb{N}$ computing the

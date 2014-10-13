@@ -1,0 +1,247 @@
+// Computes the smallest set s such 
+//   s0 <= s                   and
+//   s = +/ { f(x) : x in s }  
+// holds.  s is computed via fixpoint iteration.
+
+fixpoint := procedure(s0, f) {
+    result := newElements := s0;
+    while (true) {
+        newElements := {} +/ { f(q) : q in newElements };
+        if (newElements <= result) {
+            return result;
+        }
+        result += newElements;
+    }
+};
+
+class regexp2NFA(sigma) {
+    this.gStateCount := -1;
+    this.mSigma      := sigma;
+
+    toNFA := procedure(r) {
+        match (r) {
+        case 0:
+             return genEmptyNFA();
+        case "":
+             return genEpsilonNFA();
+        case c | isString(c): 
+             return genCharNFA(c);
+        case Cat(r1, r2): 
+             return catenate(toNFA(r1), toNFA(r2)); 
+        case Or(r1, r2): 
+             return disjunction(toNFA(r1), toNFA(r2));
+        case Star(r0): 
+             return kleene(toNFA(r0));
+        }
+    };
+
+    genEmptyNFA := procedure() {
+        q0 := getNewState();
+        q1 := getNewState();
+        return [ {q0, q1}, mSigma, {}, q0, q1 ];
+    };
+
+    genEpsilonNFA := procedure() {
+        q0 := getNewState();
+        q1 := getNewState();
+        delta := { [ [q0, ""], {q1} ] };
+        return [ {q0, q1}, mSigma, delta, q0, q1 ];
+    };
+    
+    genCharNFA := procedure(c) {
+        q0 := getNewState();
+        q1 := getNewState();
+        delta := { [[q0, c], {q1}] };
+        return [ {q0, q1}, mSigma, delta, q0, q1 ];
+    };
+
+    catenate := procedure(f1, f2) {
+        [m1, _, delta1, q1, q2] := f1;
+        [m2, _, delta2, q3, q4] := f2;
+        delta := { [[q2, ""], {q3}] } + delta1 + delta2; 
+        return [ m1 + m2, mSigma, delta, q1, q4 ];
+    };
+
+    disjunction := procedure(f1, f2) {
+        [m1, _, delta1, q1, q3] := f1;
+        [m2, _, delta2, q2, q4] := f2;
+        q0 := getNewState(); 
+        q5 := getNewState(); 
+        delta := delta1 + delta2;
+        delta += { [[q0, ""], {q1, q2}], [[q3, ""], {q5}], [[q4, ""], {q5}] };
+        return [ { q0, q5 } + m1 + m2, mSigma, delta, q0, q5 ];
+    };
+
+    kleene := procedure(f) {
+        [m, _, delta0, q1, q2] := f;
+        q0 := getNewState(); 
+        q3 := getNewState(); 
+        delta := { [[q0, ""], {q1, q3}], [[q2, ""], {q1, q3}] } + delta0;
+        return [ { q0, q3 } + m, mSigma, delta, q0, q3 ];
+    };
+
+    getNewState := procedure() {
+        this.gStateCount += 1;
+        return "q" + gStateCount;
+    };
+}
+
+// Given a transition function delta and a state s, this function
+// computes the set of all those states that can be reached from the state
+// s via epsilon transitions.
+epsClosure := procedure(s, delta) {
+    result := fixpoint({s}, closure(q) { return delta[q, ""]; });
+    return result;
+};
+
+// Given a transition function delta, a state q, and a character c,
+// this function computes the set of all those states that can be reached 
+// from q when we first have a transition from q to some other state  p 
+// on reading the character c followed by any number of epsilon transitions
+// starting in p.
+deltaStar := closure(s, c, delta) {
+    if (delta[s, c] != om) {
+        return {} +/ { epsClosure(q, delta) : q in delta[s, c] };
+    } else {
+        return {};
+    }
+};
+
+// This function extends the function deltaStar from a single state
+// q to a set of states m.
+capitalDelta := closure(m, c, delta) {
+    return {} +/ { deltaStar(q, c, delta) : q in m };
+};
+
+// This function takes a non-deterministic finite state machine and converts it 
+// into an equivalent deterministic finite state machine.
+nfa2dfa := procedure(nfa) {
+    [states, sigma, delta, q0, final] := nfa;
+    newStart   := epsClosure(q0, delta);
+    nextStates := closure(m) { return { capitalDelta(m, c, delta) : c in sigma }; };
+    newStates  := fixpoint({newStart}, nextStates);
+    newDelta   := { [[m, c], capitalDelta(m, c, delta)] : m in newStates, c in sigma };
+    newFinal   := { m : m in newStates | m * final != {} };
+    return [newStates, sigma, newDelta, newStart, newFinal];
+};
+
+// Check whether the regular expressions r1 and r2 describe
+// the same language.
+regExpEquiv := procedure(r1, r2, sigma) {
+    fsm1      := regexp2DFA(r1, sigma);
+    fsm2      := regexp2DFA(r2, sigma);    
+    r1MinusR2 := fsmComplement(fsm1, fsm2);
+    r2MinusR1 := fsmComplement(fsm2, fsm1);
+    return isEmpty(r1MinusR2) && isEmpty(r2MinusR1);
+};
+regexp2DFA := procedure(r, sigma) {
+    converter := regexp2NFA(sigma);
+    [states, sigma, delta, q0, final] := converter.toNFA(r);    
+    return nfa2dfa([states, sigma, delta, q0, { final }]);    
+};
+// Return a DFA that recognizes the language L(f1) \ L(f2).
+fsmComplement := procedure(f1, f2) {
+    [states1, sigma, delta1, q1, a1] := f1;
+    [states2,     _, delta2, q2, a2] := f2;
+    states := states1 >< states2;
+    delta  := {};
+    for ([q1, q2] in states, c in sigma) {
+        delta[[q1, q2], c] := [delta1[q1, c], delta2[q2, c]];
+    }
+    return [states, sigma, delta, [q1, q2], a1 >< (states2 - a2)];
+};
+isEmpty := procedure(fsm) {
+    [states, sigma, delta, q0, accepting] := fsm;
+    reachable := fixpoint({q0}, closure(q) { return { delta[q, c] : c in sigma }; });
+    return reachable * accepting == {};
+};
+
+// The parser implemented in the function parseExpr parses an arithmetic 
+// expression according to the following EBNF grammar.
+//
+//   regExp  -> product ("+" product)*
+//   product -> factor factor*
+//   factor  -> atom "*"?
+//   atom    -> "(" expr ")" | CHAR | "" | 0
+
+myParse := procedure(s) {
+     tl := tokenizeString(s);
+     [regexp, rl] := parseRegExp(tl);
+     assert(rl == [], "Parse Error: could not parse $tl$");
+     return regexp;
+};
+
+// This procedure takes a token list tl and tries to interpret this list
+// as a regular expression.
+parseRegExp := procedure(tl) {
+    [result, rl] := parseProduct(tl);
+    while (#rl > 1 && rl[1] == "+") {
+        [arg, rl] := parseProduct(rl[2..]);
+        result := Or(result, arg);
+    }
+    return [result, rl];
+};
+
+parseProduct := procedure(tl) {
+    [result, rl] := parseFactor(tl);
+    while (#rl > 0 && !(rl[1] in ["+", "*", ")"])) {
+        [arg, rl] := parseFactor(rl);
+        result := Cat(result, arg);
+    }
+    return [result, rl];
+};
+
+parseFactor := procedure(tl) {
+    [atom, rl] := parseAtom(tl);
+    if (#rl > 0 && rl[1] == "*") {
+        return [Star(atom), rl[2..]];
+    }
+    return [atom, rl];
+};
+
+parseAtom := procedure(tl) {
+    match (tl) {
+        case [ 0  | rl] : return [ 0, rl];
+        case ["(" | rl] : [expr, ql] := parseRegExp(rl);
+                          assert(ql[1] == ")", "Parse Error");
+                          return [expr, ql[2..]];
+        case [ s  | rl] : assert(isString(s) && #s <= 1, "parse error: $tl$");
+                          return [ s, rl];
+        default : abort("parse error in parseAtom($tl$)");
+    }
+};
+
+// This procedure partitions the string s into a list of tokens.
+// It recognizes numbers, the operator symbols "+", "-", "*", "/", "**"
+// and the parentheses "(" and ")".
+tokenizeString := procedure(s) {
+    tokenList := [];
+    scan (s) {
+        regex '[+*()]'   as [ op ]: tokenList += [ op ];
+        regex '[a-zA-Z]' as [ c  ]: tokenList += [ c  ];
+        regex '0'                 : tokenList += [ 0  ];
+        regex '""'                : tokenList += [ "" ];
+        regex '[ \t\v\n]+'        : // skip
+    }
+    return tokenList;
+};
+
+test := procedure(sigma, s1, s2) {
+    r1 := myParse(s1);
+    r2 := myParse(s2);
+    if (regExpEquiv(r1, r2, sigma)) {
+        print("The regular expressions $s1$ and $s2$ are equivalent.");
+    } else {
+        print("The regular expressions $s1$ and $s2$ are not equivalent.");
+    }
+};
+
+sigma := { "a", "b" };
+
+// test(sigma, "(ab)*(\"\"+(aa+b)(a+b)*)", "\"\"+(b+a(ba)*a+ab(ab)*b)(b+a)*");
+test(sigma, "(bba+ba+a)*(b+bb)", "(a+ba+bba)*(b+bb+\"\")");
+// test(sigma, "b*+(aa*bb*+(ab)*)", "(ab)*+b(a+b)*");
+// test(sigma, "(0+0000)*", "0(000)*");
+test(sigma, "a* + b*", "(a + b)*");
+test(sigma, "(b*(ab)*)*", "(b + ab)*");
+

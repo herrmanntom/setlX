@@ -1,0 +1,3 @@
+The regular expressions (bba+ba+a)*(b+bb) and (a+ba+bba)*(b+bb+"") are not equivalent.
+The regular expressions a* + b* and (a + b)* are not equivalent.
+The regular expressions (b*(ab)*)* and (b + ab)* are equivalent.

@@ -1,0 +1,49 @@
+Testing automaton to recognize binary numbers divisable by 3:
+testing 0000 % 3 == 0: true
+testing 0000 % 3 != 0: false
+testing product:       false
+testing 1000 % 3 == 0: false
+testing 1000 % 3 != 0: true
+testing product:       false
+testing 1100 % 3 == 0: true
+testing 1100 % 3 != 0: false
+testing product:       false
+testing 1110 % 3 == 0: false
+testing 1110 % 3 != 0: true
+testing product:       false
+testing 1111 % 3 == 0: true
+testing 1111 % 3 != 0: false
+testing product:       false
+testing 1101 % 3 == 0: false
+testing 1101 % 3 != 0: true
+testing product:       false
+testing 1010 % 3 == 0: false
+testing 1010 % 3 != 0: true
+testing product:       false
+testing 1011 % 3 == 0: false
+testing 1011 % 3 != 0: true
+testing product:       false
+testing 1001 % 3 == 0: true
+testing 1001 % 3 != 0: false
+testing product:       false
+testing 0100 % 3 == 0: false
+testing 0100 % 3 != 0: true
+testing product:       false
+testing 0110 % 3 == 0: true
+testing 0110 % 3 != 0: false
+testing product:       false
+testing 0111 % 3 == 0: false
+testing 0111 % 3 != 0: true
+testing product:       false
+testing 0101 % 3 == 0: false
+testing 0101 % 3 != 0: true
+testing product:       false
+testing 0010 % 3 == 0: false
+testing 0010 % 3 != 0: true
+testing product:       false
+testing 0011 % 3 == 0: true
+testing 0011 % 3 != 0: false
+testing product:       false
+testing 0001 % 3 == 0: false
+testing 0001 % 3 != 0: true
+testing product:       false

@@ -1,0 +1,48 @@
+
+The following grammar has been read:
+
+expr -> product exprRest
+exprRest -> '+' product exprRest
+exprRest -> '-' product exprRest
+exprRest -> 
+product -> factor productRest
+productRest -> '*' factor productRest
+productRest -> '/' factor productRest
+productRest -> 
+factor -> '(' expr ')'
+factor -> NUMBER
+
+Computing First and Follow for k = 1:
+
+First(expr, 1) = {["'('"], ["NUMBER"]}
+First(exprRest, 1) = {[], ["'+'"], ["'-'"]}
+First(factor, 1) = {["'('"], ["NUMBER"]}
+First(product, 1) = {["'('"], ["NUMBER"]}
+First(productRest, 1) = {[], ["'*'"], ["'/'"]}
+Follow(expr, 1) = {["$"], ["')'"]}
+Follow(exprRest, 1) = {["$"], ["')'"]}
+Follow(factor, 1) = {["$"], ["')'"], ["'*'"], ["'+'"], ["'-'"], ["'/'"]}
+Follow(product, 1) = {["$"], ["')'"], ["'+'"], ["'-'"]}
+Follow(productRest, 1) = {["$"], ["')'"], ["'+'"], ["'-'"]}
+
+Computing the parse table:
+
+pt(expr, ["'('"]) = {"expr -> product exprRest"}
+pt(expr, ["NUMBER"]) = {"expr -> product exprRest"}
+pt(exprRest, ["$"]) = {"exprRest -> /* epsilon */"}
+pt(exprRest, ["')'"]) = {"exprRest -> /* epsilon */"}
+pt(exprRest, ["'+'"]) = {"exprRest -> '+' product exprRest"}
+pt(exprRest, ["'-'"]) = {"exprRest -> '-' product exprRest"}
+pt(factor, ["'('"]) = {"factor -> '(' expr ')'"}
+pt(factor, ["NUMBER"]) = {"factor -> NUMBER"}
+pt(product, ["'('"]) = {"product -> factor productRest"}
+pt(product, ["NUMBER"]) = {"product -> factor productRest"}
+pt(productRest, ["$"]) = {"productRest -> /* epsilon */"}
+pt(productRest, ["')'"]) = {"productRest -> /* epsilon */"}
+pt(productRest, ["'*'"]) = {"productRest -> '*' factor productRest"}
+pt(productRest, ["'+'"]) = {"productRest -> /* epsilon */"}
+pt(productRest, ["'-'"]) = {"productRest -> /* epsilon */"}
+pt(productRest, ["'/'"]) = {"productRest -> '/' factor productRest"}
+
+The grammar is an LL(1) grammar.
+

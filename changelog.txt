@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.3.1--- 2014-10-13
+ # minor performance fixes
+ + updated tutorial
+
 ---v2.3.0--- 2014-10-09
  + implemented matrix functionality
  + separated closures and procedures; normal procedures do not have closure functionality

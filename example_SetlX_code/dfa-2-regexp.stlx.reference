@@ -1,0 +1,16 @@
+states: { S0, ..., S1 }
+
+start state: S0
+
+state encoding:
+S0 = 0
+S1 = 1
+
+transitions:
+delta(S0, a) = S0
+delta(S0, b) = S1
+delta(S1, a) = S1
+
+set of accepting states: {S1}
+
+regular expression: (a)*(b+b(a)*(""+a))

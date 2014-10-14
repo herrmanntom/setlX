@@ -1,0 +1,118 @@
+Grammar:
+
+expr: [Var("expr"), Token("'+'"), Var("prod")];
+expr: [Var("prod")];
+prod: [Var("prod"), Token("'*'"), Var("fact")];
+prod: [Var("fact")];
+fact: [Token("'('"), Var("expr"), Token("')'")];
+fact: [Token("'1'")];
+fact: [Token("'2'")];
+fact: [Token("'3'")];
+
+Input: 1*2+3
+
+
+i = 0:
+
+prediction:
+{<expr -> (*) expr '+' prod, 0>, <expr -> (*) prod, 0>}
+prediction:
+{<expr -> (*) expr '+' prod, 0>, <prod -> (*) fact, 0>, <expr -> (*) prod, 0>, <prod -> (*) prod '*' fact, 0>}
+prediction:
+{<fact -> (*) '(' expr ')', 0>, <fact -> (*) '1', 0>, <fact -> (*) '2', 0>, <fact -> (*) '3', 0>, <expr -> (*) expr '+' prod, 0>, <prod -> (*) fact, 0>, <expr -> (*) prod, 0>, <prod -> (*) prod '*' fact, 0>}
+scanning:
+<fact -> '1' (*), 0>
+i = 1:
+
+completion:
+{<prod -> fact (*), 0>}
+completion:
+{<prod -> fact (*), 0>, <expr -> prod (*), 0>, <prod -> prod (*) '*' fact, 0>}
+completion:
+{<sHat -> expr (*), 0>, <expr -> expr (*) '+' prod, 0>, <prod -> fact (*), 0>, <expr -> prod (*), 0>, <prod -> prod (*) '*' fact, 0>}
+scanning:
+<prod -> prod '*' (*) fact, 0>
+i = 2:
+
+prediction:
+{<fact -> (*) '(' expr ')', 2>, <fact -> (*) '1', 2>, <fact -> (*) '2', 2>, <fact -> (*) '3', 2>}
+scanning:
+<fact -> '2' (*), 2>
+i = 3:
+
+completion:
+{<prod -> prod '*' fact (*), 0>}
+completion:
+{<expr -> prod (*), 0>, <prod -> prod (*) '*' fact, 0>, <prod -> prod '*' fact (*), 0>}
+completion:
+{<sHat -> expr (*), 0>, <expr -> expr (*) '+' prod, 0>, <expr -> prod (*), 0>, <prod -> prod (*) '*' fact, 0>, <prod -> prod '*' fact (*), 0>}
+scanning:
+<expr -> expr '+' (*) prod, 0>
+i = 4:
+
+prediction:
+{<prod -> (*) fact, 4>, <prod -> (*) prod '*' fact, 4>}
+prediction:
+{<fact -> (*) '(' expr ')', 4>, <fact -> (*) '1', 4>, <fact -> (*) '2', 4>, <fact -> (*) '3', 4>, <prod -> (*) fact, 4>, <prod -> (*) prod '*' fact, 4>}
+scanning:
+<fact -> '3' (*), 4>
+i = 5:
+
+completion:
+{<prod -> fact (*), 4>}
+completion:
+{<expr -> expr '+' prod (*), 0>, <prod -> fact (*), 4>, <prod -> prod (*) '*' fact, 4>}
+completion:
+{<sHat -> expr (*), 0>, <expr -> expr (*) '+' prod, 0>, <expr -> expr '+' prod (*), 0>, <prod -> fact (*), 4>, <prod -> prod (*) '*' fact, 4>}
+
+Q0:
+<fact -> (*) '(' expr ')', 0>
+<fact -> (*) '1', 0>
+<fact -> (*) '2', 0>
+<fact -> (*) '3', 0>
+<sHat -> (*) expr, 0>
+<expr -> (*) expr '+' prod, 0>
+<prod -> (*) fact, 0>
+<expr -> (*) prod, 0>
+<prod -> (*) prod '*' fact, 0>
+
+Q1:
+<fact -> '1' (*), 0>
+<sHat -> expr (*), 0>
+<expr -> expr (*) '+' prod, 0>
+<prod -> fact (*), 0>
+<expr -> prod (*), 0>
+<prod -> prod (*) '*' fact, 0>
+
+Q2:
+<fact -> (*) '(' expr ')', 2>
+<fact -> (*) '1', 2>
+<fact -> (*) '2', 2>
+<fact -> (*) '3', 2>
+<prod -> prod '*' (*) fact, 0>
+
+Q3:
+<fact -> '2' (*), 2>
+<sHat -> expr (*), 0>
+<expr -> expr (*) '+' prod, 0>
+<expr -> prod (*), 0>
+<prod -> prod (*) '*' fact, 0>
+<prod -> prod '*' fact (*), 0>
+
+Q4:
+<fact -> (*) '(' expr ')', 4>
+<fact -> (*) '1', 4>
+<fact -> (*) '2', 4>
+<fact -> (*) '3', 4>
+<prod -> (*) fact, 4>
+<prod -> (*) prod '*' fact, 4>
+<expr -> expr '+' (*) prod, 0>
+
+Q5:
+<fact -> '3' (*), 4>
+<sHat -> expr (*), 0>
+<expr -> expr (*) '+' prod, 0>
+<expr -> expr '+' prod (*), 0>
+<prod -> fact (*), 4>
+<prod -> prod (*) '*' fact, 4>
+Parsing successful!

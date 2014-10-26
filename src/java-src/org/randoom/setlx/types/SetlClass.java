@@ -268,7 +268,7 @@ public class SetlClass extends Value {
 
         for (final String var : vars) {
             final Value value = state.findValue(var);
-            if (value.getClass() == Closure.class) {
+            if (value instanceof Closure) {
                 ((Closure) value).setClosure(null);
             }
             if (value != Om.OM) {
@@ -310,7 +310,7 @@ public class SetlClass extends Value {
             optimize(state);
         }
 
-        if (value.getClass() == Closure.class) {
+        if (value instanceof Closure) {
             ((Closure) value).setClosure(null);
         }
 

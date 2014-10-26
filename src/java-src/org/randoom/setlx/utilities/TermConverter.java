@@ -13,18 +13,7 @@ import org.randoom.setlx.expressions.VariableIgnore;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
-import org.randoom.setlx.types.CachedProcedure;
-import org.randoom.setlx.types.Closure;
-import org.randoom.setlx.types.Om;
-import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlClass;
-import org.randoom.setlx.types.IgnoreDummy;
-import org.randoom.setlx.types.LambdaProcedure;
-import org.randoom.setlx.types.Procedure;
-import org.randoom.setlx.types.RangeDummy;
-import org.randoom.setlx.types.SetlObject;
-import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.types.*;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -58,6 +47,8 @@ public class TermConverter {
                     return CachedProcedure.termToValue(state, term);
                 } else if (fc.equals(Closure.getFunctionalCharacter())) {
                     return Closure.termToValue(state, term);
+                } else if (fc.equals(LambdaClosure.getFunctionalCharacter())) {
+                    return LambdaClosure.termToValue(state, term);
                 } else if (fc.equals(LambdaProcedure.getFunctionalCharacter())) {
                     return LambdaProcedure.termToValue(state, term);
                 } else if (fc.equals(Procedure.getFunctionalCharacter())) {

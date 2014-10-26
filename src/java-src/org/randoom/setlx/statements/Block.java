@@ -104,41 +104,7 @@ public class Block extends Statement {
                 }
             } else {
                 // prevent running out of stack by creating a new thread
-                final BlockExecThread callExec = new BlockExecThread(statements, state);
-                callExec.setName(Thread.currentThread().getName() + "::block");
-
-                try {
-                    callExec.start();
-                    callExec.join();
-                    if (callExec.result != null) {
-                        return callExec.result;
-                    }
-                } catch (final InterruptedException e) {
-                    throw new StopExecutionException();
-                }
-
-                // handle exceptions thrown in thread
-                if (callExec.error != null) {
-                    if (callExec.error instanceof SetlException) {
-                        throw (SetlException) callExec.error;
-                    } else if (callExec.error instanceof StackOverflowError) {
-                        throw (StackOverflowError) callExec.error;
-                    } else if (callExec.error instanceof OutOfMemoryError) {
-                        try {
-                            // free some memory
-                            state.resetState();
-                            // give hint to the garbage collector
-                            Runtime.getRuntime().gc();
-                            // sleep a while
-                            Thread.sleep(50);
-                        } catch (final InterruptedException e) {
-                            throw new StopExecutionException();
-                        }
-                        throw (OutOfMemoryError) callExec.error;
-                    } else if (callExec.error instanceof RuntimeException) {
-                        throw (RuntimeException) callExec.error;
-                    }
-                }
+                return new StatementRunner(this, state).execute();
             }
         } catch (final StackOverflowError soe) {
             state.storeStackDepthOfFirstCall(state.callStackDepth);
@@ -328,51 +294,6 @@ public class Block extends Statement {
     @Override
     public final int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.hashCode();
-    }
-
-    // private subclass to cheat the end of the world... or stack, whatever comes first
-    private class BlockExecThread extends Thread {
-        private final FragmentList<Statement>           statements;
-        private final org.randoom.setlx.utilities.State state;
-        /*package*/   ReturnMessage                     result;
-        /*package*/   Throwable                         error;
-
-        /*package*/ BlockExecThread(final FragmentList<Statement> statements, final org.randoom.setlx.utilities.State state) {
-            this.statements = statements;
-            this.state      = state;
-            this.result     = null;
-            this.error      = null;
-        }
-
-        @Override
-        public void run() {
-            try {
-                state.callStackDepth  = 0;
-
-                for (final Statement statement : statements) {
-                    if (state.executionStopped) {
-                        throw new StopExecutionException();
-                    }
-                    result = statement.execute(state);
-                    if (result != null) {
-                        break;
-                    }
-                }
-                error  = null;
-            } catch (final SetlException se) {
-                result = null;
-                error  = se;
-            } catch (final StackOverflowError soe) {
-                result = null;
-                error  = soe;
-            } catch (final OutOfMemoryError oome) {
-                result = null;
-                error  = oome;
-            } catch (final RuntimeException e) {
-                result = null;
-                error  = e;
-            }
-        }
     }
 }
 

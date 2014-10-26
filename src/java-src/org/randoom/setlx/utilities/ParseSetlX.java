@@ -189,29 +189,29 @@ public class ParseSetlX {
             // set state object for parser
             parser.setSetlXState(state);
 
-            final ParserThread parserThread = new ParserThread(parser, type);
+            final ParserRunner parserRunner = new ParserRunner(parser, type);
                   CodeFragment fragment     = null;
 
             try {
-                parserThread.setName(Thread.currentThread().getName() + "::parser");
                 if (executeInThread) {
-                    parserThread.run();
+                    parserRunner.run();
                 } else {
-                    parserThread.start();
-                    parserThread.join();
+                    Thread thread = parserRunner.createThread();
+                    thread.start();
+                    thread.join();
                 }
-                fragment = parserThread.result;
+                fragment = parserRunner.result;
             } catch (final InterruptedException e) {
                 throw new StopExecutionException();
             }
 
             // handle exceptions thrown in thread
-            if (parserThread.error != null) {
-                if (parserThread.error instanceof RecognitionException) {
-                    throw (RecognitionException) parserThread.error;
-                } else if (parserThread.error instanceof StackOverflowError) {
-                    throw (StackOverflowError) parserThread.error;
-                } else if (parserThread.error instanceof OutOfMemoryError) {
+            if (parserRunner.error != null) {
+                if (parserRunner.error instanceof RecognitionException) {
+                    throw (RecognitionException) parserRunner.error;
+                } else if (parserRunner.error instanceof StackOverflowError) {
+                    throw (StackOverflowError) parserRunner.error;
+                } else if (parserRunner.error instanceof OutOfMemoryError) {
                     try {
                         // free some memory
                         state.resetState();
@@ -222,9 +222,9 @@ public class ParseSetlX {
                     } catch (final InterruptedException e) {
                         /* don't care */
                     }
-                    throw (OutOfMemoryError) parserThread.error;
-                } else if (parserThread.error instanceof RuntimeException) {
-                    throw (RuntimeException) parserThread.error;
+                    throw (OutOfMemoryError) parserRunner.error;
+                } else if (parserRunner.error instanceof RuntimeException) {
+                    throw (RuntimeException) parserRunner.error;
                 }
             }
 
@@ -242,9 +242,7 @@ public class ParseSetlX {
 
             // start optimizing the fragment
             if (fragment != null) {
-                Thread optimizer = new OptimizerThread(fragment, state);
-                optimizer.setName(Thread.currentThread().getName() + "::optimizer");
-                optimizer.start();
+                new OptimizerRunner(fragment, state).createThread().start();
             }
 
             return fragment;
@@ -278,14 +276,13 @@ public class ParseSetlX {
     }
 
     // private subclass to execute the parser in a different thread
-    private static class ParserThread extends Thread {
+    private static class ParserRunner extends BaseRunnable {
         private final SetlXgrammarParser parser;
         private final CodeType           type;
         private       CodeFragment       result;
         private       Throwable          error;
 
-
-        /*package*/ ParserThread(final SetlXgrammarParser parser, final CodeType type) {
+        /*package*/ ParserRunner(final SetlXgrammarParser parser, final CodeType type) {
             this.parser = parser;
             this.type   = type;
             this.result = null;
@@ -317,14 +314,19 @@ public class ParseSetlX {
                 error  = e;
             }
         }
+
+        @Override
+        public String getThreadName() {
+            return "parser";
+        }
     }
 
     // private subclass to execute optimization using a different thread
-    private static class OptimizerThread extends Thread {
+    private static class OptimizerRunner extends BaseRunnable {
         private final CodeFragment                      fragment;
         private final org.randoom.setlx.utilities.State state;
 
-        /*package*/ OptimizerThread(final CodeFragment fragment, final org.randoom.setlx.utilities.State state) {
+        /*package*/ OptimizerRunner(final CodeFragment fragment, final org.randoom.setlx.utilities.State state) {
             this.fragment = fragment;
             this.state    = state;
         }
@@ -343,6 +345,11 @@ public class ParseSetlX {
                 state.errWriteLn("Error while optimizing parsed code.");
                 state.errWriteInternalError(e);
             }
+        }
+
+        @Override
+        public String getThreadName() {
+            return "optimizer";
         }
     }
 
@@ -366,8 +373,8 @@ public class ParseSetlX {
 
             final StringBuilder buf = new StringBuilder();
 
-            if (state.isRuntimeDebuggingEnabled() && recognizer instanceof Parser) {
-                final List<String> stack = ((Parser)recognizer).getRuleInvocationStack();
+            if (state.isRuntimeDebuggingEnabled() && recognizer instanceof org.antlr.v4.runtime.Parser) {
+                final List<String> stack = ((org.antlr.v4.runtime.Parser)recognizer).getRuleInvocationStack();
                 Collections.reverse(stack);
 
                 buf.append("rule stack: ");

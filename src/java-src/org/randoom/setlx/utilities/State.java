@@ -596,31 +596,38 @@ public class State {
         if (STACK_MEASUREMENT <= 0) {
             // create new thread to measure entire stack size, independent of
             // current stack usage size in this thread.
-            final Thread stackEstimater = new Thread(new Runnable() {
-
-                @Override
-                public void run() {
-                    STACK_MEASUREMENT = measureStackSize_slave(2);
-                }
-            });
-            stackEstimater.setName(Thread.currentThread().getName() + "::stackEstimator");
-            stackEstimater.start();
+            final Thread stackEstimator = new StackEstimator().createThread();
             try {
-                stackEstimater.join();
-            } catch (final InterruptedException e) { }
+                stackEstimator.start();
+                stackEstimator.join();
+            } catch (final InterruptedException e) {
+                // if control gets here, the measurement is done
+            }
         }
         return STACK_MEASUREMENT;
     }
 
-    private static int measureStackSize_slave(int size) {
-        try {
-            if (size >= ABSOLUTE_MAX_STACK) {
-                // Forever loop protection in case Java ever gets an unlimited stack.
-                return ABSOLUTE_MAX_STACK;
+    private static class StackEstimator extends BaseRunnable {
+        @Override
+        public void run() {
+            STACK_MEASUREMENT = measureStackSize_slave(2);
+        }
+
+        @Override
+        public String getThreadName() {
+            return "stackEstimator";
+        }
+
+        private static int measureStackSize_slave(int size) {
+            try {
+                if (size >= ABSOLUTE_MAX_STACK) {
+                    // Forever loop protection in case Java ever gets an unlimited stack.
+                    return ABSOLUTE_MAX_STACK;
+                }
+                return measureStackSize_slave(++size);
+            } catch (final StackOverflowError soe) {
+                return size;
             }
-            return measureStackSize_slave(++size);
-        } catch (final StackOverflowError soe) {
-            return size;
         }
     }
 

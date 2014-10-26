@@ -6,6 +6,7 @@ import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.BaseRunnable;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
@@ -418,14 +419,16 @@ public class Rational extends NumberValue {
     }
 
     // private subclass for threaded factorial computation
-    private class Factorial extends Thread {
+    private class Factorial extends BaseRunnable {
         private final int        from;
         private final int        to;
+        private final int        runnerIndex;
         /*package*/   BigInteger result;
 
-        public Factorial(final int from, final int to) {
-            this.from   = from;
-            this.to     = to;
+        public Factorial(final int from, final int to, int runnerIndex) {
+            this.from        = from;
+            this.to          = to;
+            this.runnerIndex = runnerIndex;
             this.result = BigInteger.valueOf(from);
         }
 
@@ -434,6 +437,11 @@ public class Rational extends NumberValue {
             for (int i = from + 1; i < to; ++i) {
                 result = result.multiply(BigInteger.valueOf(i));
             }
+        }
+
+        @Override
+        public String getThreadName() {
+            return "factorial" + runnerIndex;
         }
     }
 
@@ -448,10 +456,10 @@ public class Rational extends NumberValue {
         }
 
         // The next line will throw an exception if mNominator > 2^31,
-		// but wanting that is crazy talk
-		final int n = jIntValue();
-		BigInteger result = BigInteger.ONE;
-		final int CORES = state.getNumberOfCores();
+        // but wanting that is crazy talk
+        final int n = jIntValue();
+        BigInteger result = BigInteger.ONE;
+        final int CORES = state.getNumberOfCores();
         // use simple implementation when computing a small factorial or having
         // only one CPU (less overhead)
         if (n <= 512 || CORES <= 1) {
@@ -460,15 +468,16 @@ public class Rational extends NumberValue {
             }
         } else { // use multiple threads for a bigger factorial
             // create as many threads as there are processors
-            final Factorial threads[] = new Factorial[CORES];
+            final Factorial runners[] = new Factorial[CORES];
+            final Thread    threads[] = new Thread[CORES];
             for (int i = 0; i < CORES; ++i) {
                 final int from = n/CORES * (i) + 1;
                       int to   = n/CORES * (i + 1) + 1;
                 if (i == CORES - 1) { // last thread
                     to += n % CORES; // pick up the slack
                 }
-                threads[i] = new Factorial(from, to);
-                threads[i].setName(Thread.currentThread().getName() + "::factorial" + i);
+                runners[i] = new Factorial(from, to, i);
+                threads[i] = runners[i].createThread();
                 // start thread
                 threads[i].start();
             }
@@ -476,7 +485,7 @@ public class Rational extends NumberValue {
             for (int i = 0; i < CORES; ++i) {
                 try {
                     threads[i].join();
-                    result = result.multiply(threads[i].result);
+                    result = result.multiply(runners[i].result);
                 } catch (final InterruptedException ie) {
                     throw new StopExecutionException();
                 }

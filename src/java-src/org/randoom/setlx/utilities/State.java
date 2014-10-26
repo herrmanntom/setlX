@@ -127,6 +127,7 @@ public class State {
         assertsDisabled         = false;
         runtimeDebuggingEnabled = false;
         resetState(false);
+        measureStackSize();
     }
 
     /**
@@ -579,12 +580,12 @@ public class State {
     public int getMaxStackSize() {
         // As setlX's estimation is far from perfect, we assume somewhat more
         // stack usage then its internal accounting guesses.
-        // Also a few stack (~66) frames should be free for functions out of our
+        // Also a few stack (~100) frames should be free for functions out of our
         // control, like the ones from the JDK ;-)
         //
-        // Thus the maximum stack size is about 2/3 of (measured stack - 66).
+        // Thus the maximum stack size is about 1/6 of (measured stack - 100).
 
-        return ((measureStackSize() - 66) * 2) / 3;
+        return (measureStackSize() - 100) / 6;
     }
 
     /**
@@ -596,12 +597,15 @@ public class State {
         if (STACK_MEASUREMENT <= 0) {
             // create new thread to measure entire stack size, independent of
             // current stack usage size in this thread.
-            final Thread stackEstimator = new StackEstimator().createThread();
-            try {
-                stackEstimator.start();
-                stackEstimator.join();
-            } catch (final InterruptedException e) {
-                // if control gets here, the measurement is done
+            // Do it twice, because lazy VMs only honor the request for more stack after it ran out once...
+            for (int i = 0; i < 2; ++i) {
+                final Thread stackEstimator = new StackEstimator().createThread();
+                try {
+                    stackEstimator.start();
+                    stackEstimator.join();
+                } catch (final InterruptedException e) {
+                    // if control gets here, the measurement is done
+                }
             }
         }
         return STACK_MEASUREMENT;

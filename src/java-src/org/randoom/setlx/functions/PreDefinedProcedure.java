@@ -122,69 +122,56 @@ public abstract class PreDefinedProcedure extends Procedure {
     // this function is called from within SetlX
     @Override
     public final Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
-        try {
-            // increase callStackDepth
-            state.callStackDepth += 2; // this method + the overloaded execute()
-                                       // after that all bets are off
-
-            SetlList listArguments = null;
-            if (listArg != null) {
-                Value listArgument = listArg.eval(state);
-                if (listArgument.getClass() != SetlList.class) {
-                    throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
-                }
-                listArguments = (SetlList) listArgument;
+        SetlList listArguments = null;
+        if (listArg != null) {
+            Value listArgument = listArg.eval(state);
+            if (listArgument.getClass() != SetlList.class) {
+                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
             }
-
-            int nArguments = args.size();
-            if (listArguments != null) {
-                nArguments += listArguments.size();
-            }
-
-            if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
-                final StringBuilder error = new StringBuilder();
-                error.append("'");
-                error.append(getName());
-                error.append("(");
-                parameters.appendString(state, error);
-                error.append(")'");
-                parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
-                throw new IncorrectNumberOfParametersException(error.toString());
-            }
-
-            // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<Value>(nArguments);
-            for (final Expr arg : args) {
-                values.add(arg.eval(state).clone());
-            }
-            if (listArguments != null) {
-                for (Value listArgument : listArguments) {
-                    values.add(listArgument);
-                }
-            }
-
-            // assign parameters
-            HashMap<ParameterDef, Value> assignments = parameters.putParameterValuesIntoMap(state, values);
-
-            // call predefined function (which may add writeBack-values to List)
-            final Value result  = this.execute(state, assignments);
-
-            // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
-            final WriteBackAgent wba = parameters.extractRwParametersFromMap(assignments, args);
-            if (wba != null) {
-                // assign variables
-                wba.writeBack(state, FUNCTIONAL_CHARACTER);
-            }
-
-            return result;
-
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
-        } finally {
-            // decrease callStackDepth
-            state.callStackDepth -= 2;
+            listArguments = (SetlList) listArgument;
         }
+
+        int nArguments = args.size();
+        if (listArguments != null) {
+            nArguments += listArguments.size();
+        }
+
+        if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
+            final StringBuilder error = new StringBuilder();
+            error.append("'");
+            error.append(getName());
+            error.append("(");
+            parameters.appendString(state, error);
+            error.append(")'");
+            parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
+            throw new IncorrectNumberOfParametersException(error.toString());
+        }
+
+        // evaluate arguments
+        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        for (final Expr arg : args) {
+            values.add(arg.eval(state).clone());
+        }
+        if (listArguments != null) {
+            for (Value listArgument : listArguments) {
+                values.add(listArgument);
+            }
+        }
+
+        // assign parameters
+        HashMap<ParameterDef, Value> assignments = parameters.putParameterValuesIntoMap(state, values);
+
+        // call predefined function (which may add writeBack-values to List)
+        final Value result  = this.execute(state, assignments);
+
+        // extract 'rw' arguments from writeBackVars list and store them into WriteBackAgent
+        final WriteBackAgent wba = parameters.extractRwParametersFromMap(assignments, args);
+        if (wba != null) {
+            // assign variables
+            wba.writeBack(state, FUNCTIONAL_CHARACTER);
+        }
+
+        return result;
     }
 
     /* string and char operations */

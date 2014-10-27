@@ -95,5 +95,19 @@ public interface EnvironmentProvider {
      */
     public abstract String  filterLibraryName(final String name);
 
+    /**
+     * Get the maximum number of threads that should be started on this platform.
+     *
+     * @return Maximum number of threads that should be started.
+     */
+    public abstract int getMaximumNumberOfThreads();
+
+
+    /**
+     * Get the stack size in kb to request from the VM for each new thread.
+     *
+     * @return Stack size in kb to request from the VM.
+     */
+    public abstract int getStackSizeWishInKb();
 }
 

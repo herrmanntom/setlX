@@ -164,7 +164,7 @@ public class SetlObject extends Value {
                            final String member
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
-        return overloadQuerry(state, member).call(state, args, null);
+        return overloadQuery(state, member).call(state, args, null);
     }
 
     /**
@@ -187,7 +187,7 @@ public class SetlObject extends Value {
     ) throws SetlException {
         final ArrayList<Expr> args = new ArrayList<Expr>();
         args.add(new ValueExpr(other));
-        return overloadQuerry(state, member).call(state, args, null);
+        return overloadQuery(state, member).call(state, args, null);
     }
 
     /**
@@ -206,7 +206,7 @@ public class SetlObject extends Value {
         return overload(state, "f_" + functionName, other);
     }
 
-    private Value overloadQuerry(final State state, final String member) throws SetlException {
+    private Value overloadQuery(final State state, final String member) throws SetlException {
         final Value function = getObjectMemberUnClonedUnSafe(state, member);
         if (function != Om.OM) {
             return function;
@@ -588,7 +588,7 @@ public class SetlObject extends Value {
 
     @Override
     public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
-        return overloadQuerry(state, CALL).call(state, args, listArg);
+        return overloadQuery(state, CALL).call(state, args, listArg);
     }
     private final static String CALL = createOverloadVariable(Call.functionalCharacter());
 

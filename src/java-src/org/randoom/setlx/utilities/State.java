@@ -13,6 +13,7 @@ import org.randoom.setlx.types.Value;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.security.InvalidParameterException;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -79,7 +80,7 @@ public class State {
     // number of CPUs/Cores in System
     private final static  int                    CORES = Runtime.getRuntime().availableProcessors();
     // measurement of this JVM's stack size
-    private       static  int                    STACK_MEASUREMENT  = -1;
+    private       static  int                    STACK_MEASUREMENT;
     // maximum accepted stack measurement; is roughly equal to -Xss48m using the 64 bit OpenJDK 7
     private final static  int                    ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
 
@@ -112,7 +113,6 @@ public class State {
      * @param envProvider Environment provider implementation to use.
      */
     public State(final EnvironmentProvider envProvider) {
-        this.envProvider        = envProvider;
         parserErrorCapture      = null;
         parserErrorCount        = 0;
         loadedLibraries         = new HashSet<String>();
@@ -126,8 +126,8 @@ public class State {
         traceAssignments        = false;
         assertsDisabled         = false;
         runtimeDebuggingEnabled = false;
+        setEnvironmentProvider(envProvider);
         resetState(false);
-        measureStackSize();
     }
 
     /**
@@ -155,7 +155,7 @@ public class State {
         if (cleanup) {
             ROOT_SCOPE.clearUndefinedAndInnerBindings();
         }
-        callStackDepth      = 15; // add a bit to account for initialization stuff
+        callStackDepth      = 0;
         firstCallStackDepth = -1;
         executionStopped    = false;
     }
@@ -167,6 +167,8 @@ public class State {
      */
     public void setEnvironmentProvider(final EnvironmentProvider envProvider) {
         this.envProvider = envProvider;
+        STACK_MEASUREMENT = -1;
+        measureStackSize(this);
     }
 
     /**
@@ -583,9 +585,9 @@ public class State {
         // Also a few stack (~100) frames should be free for functions out of our
         // control, like the ones from the JDK ;-)
         //
-        // Thus the maximum stack size is about 1/6 of (measured stack - 100).
+        // Thus the maximum stack size is about 4/5 of (measured stack - 100).
 
-        return (measureStackSize() - 100) / 6;
+        return ((measureStackSize(this) - 100) * 4) / 5;
     }
 
     /**
@@ -593,28 +595,34 @@ public class State {
      *
      * @return Maximum number of stack frames.
      */
-    private static int measureStackSize() {
+    private static int measureStackSize(State state) {
         if (STACK_MEASUREMENT <= 0) {
             // create new thread to measure entire stack size, independent of
             // current stack usage size in this thread.
             // Do it twice, because lazy VMs only honor the request for more stack after it ran out once...
             for (int i = 0; i < 2; ++i) {
-                final Thread stackEstimator = new StackEstimator().createThread();
+                final Thread stackEstimator = new StackEstimator().createThread(state, false);
                 try {
                     stackEstimator.start();
                     stackEstimator.join();
                 } catch (final InterruptedException e) {
-                    // if control gets here, the measurement is done
+                    // don't care
                 }
             }
+            // round it down to hundreds of stack frames
+            STACK_MEASUREMENT = (STACK_MEASUREMENT / 250) * 250;
         }
         return STACK_MEASUREMENT;
     }
 
     private static class StackEstimator extends BaseRunnable {
         @Override
-        public void run() {
-            STACK_MEASUREMENT = measureStackSize_slave(2);
+        public void exec() {
+            try {
+                measureStackSize_slave(BigDecimal.valueOf(1), 2);
+            } catch (final StackOverflowError soe) {
+                // if control gets here, the measurement is done
+            }
         }
 
         @Override
@@ -622,16 +630,13 @@ public class State {
             return "stackEstimator";
         }
 
-        private static int measureStackSize_slave(int size) {
-            try {
-                if (size >= ABSOLUTE_MAX_STACK) {
-                    // Forever loop protection in case Java ever gets an unlimited stack.
-                    return ABSOLUTE_MAX_STACK;
-                }
-                return measureStackSize_slave(++size);
-            } catch (final StackOverflowError soe) {
-                return size;
+        private static BigDecimal measureStackSize_slave(BigDecimal argObject, int size) {
+            STACK_MEASUREMENT = size;
+            if (size >= ABSOLUTE_MAX_STACK) {
+                // Forever loop protection in case Java ever gets an unlimited stack.
+                return argObject;
             }
+            return measureStackSize_slave(argObject.add(BigDecimal.valueOf(1)), ++size);
         }
     }
 

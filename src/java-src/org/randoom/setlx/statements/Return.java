@@ -43,9 +43,6 @@ public class Return extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         if (result != null) {
-            // increase callStackDepth
-            ++(state.callStackDepth);
-
             return ReturnMessage.createMessage(result.eval(state));
         } else {
             return ReturnMessage.OM;

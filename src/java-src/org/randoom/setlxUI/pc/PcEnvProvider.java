@@ -166,5 +166,15 @@ public class PcEnvProvider implements EnvironmentProvider {
             return libraryPath + name;
         }
     }
+
+    @Override
+    public int getMaximumNumberOfThreads() {
+        return 256;
+    }
+
+    @Override
+    public int getStackSizeWishInKb() {
+        return 2048;
+    }
 }
 

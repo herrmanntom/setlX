@@ -152,14 +152,14 @@ public class ParseSetlX {
     /* private methods */
 
     private static Block parseBlock(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
-        return (Block) handleFragmentParsing(state, input, CodeType.BLOCK, false);
+        return (Block) handleFragmentParsing(state, input, CodeType.BLOCK);
     }
 
     private static Expr parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
-        return (Expr) handleFragmentParsing(state, input, CodeType.EXPR, true);
+        return (Expr) handleFragmentParsing(state, input, CodeType.EXPR);
     }
 
-    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final CodeType type, final boolean executeInThread) throws SyntaxErrorException, StopExecutionException {
+    private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final CodeType type) throws SyntaxErrorException, StopExecutionException {
               SetlXgrammarLexer  lexer  = null;
               SetlXgrammarParser parser = null;
         final LinkedList<String> oldCap = state.getParserErrorCapture();
@@ -190,16 +190,12 @@ public class ParseSetlX {
             parser.setSetlXState(state);
 
             final ParserRunner parserRunner = new ParserRunner(parser, type);
-                  CodeFragment fragment     = null;
+            final Thread       parserThread = parserRunner.createThread(state, false);
+                  CodeFragment fragment;
 
             try {
-                if (executeInThread) {
-                    parserRunner.run();
-                } else {
-                    Thread thread = parserRunner.createThread();
-                    thread.start();
-                    thread.join();
-                }
+                parserThread.start();
+                parserThread.join();
                 fragment = parserRunner.result;
             } catch (final InterruptedException e) {
                 throw new StopExecutionException();
@@ -242,7 +238,7 @@ public class ParseSetlX {
 
             // start optimizing the fragment
             if (fragment != null) {
-                new OptimizerRunner(fragment, state).createThread().start();
+                new OptimizerRunner(fragment, state).createThread(state, false).start();
             }
 
             return fragment;
@@ -290,7 +286,7 @@ public class ParseSetlX {
         }
 
         @Override
-        public void run() {
+        public void exec() {
             try {
                 switch (type) {
                     case EXPR:
@@ -323,16 +319,16 @@ public class ParseSetlX {
 
     // private subclass to execute optimization using a different thread
     private static class OptimizerRunner extends BaseRunnable {
-        private final CodeFragment                      fragment;
-        private final org.randoom.setlx.utilities.State state;
+        private final CodeFragment fragment;
+        private final State        state;
 
-        /*package*/ OptimizerRunner(final CodeFragment fragment, final org.randoom.setlx.utilities.State state) {
+        /*package*/ OptimizerRunner(final CodeFragment fragment, final State state) {
             this.fragment = fragment;
             this.state    = state;
         }
 
         @Override
-        public void run() {
+        public void exec() {
             try {
                 fragment.optimize(state);
             } catch (final StackOverflowError soe) {

@@ -54,9 +54,6 @@ public abstract class Statement extends ImmutableCodeFragment {
      */
     public EXECUTE executeWithErrorHandling(final State state, final boolean hintAtJVMxOptions) {
         try {
-            // increase callStackDepth
-            ++(state.callStackDepth);
-
             new StatementRunner(this, state).execute();
 
             return EXECUTE.OK;
@@ -100,9 +97,6 @@ public abstract class Statement extends ImmutableCodeFragment {
         } catch (final Exception e) { // this should never happen...
             state.errWriteInternalError(e);
             return EXECUTE.ERROR;
-        } finally {
-            // decrease callStackDepth
-            --(state.callStackDepth);
         }
     }
 
@@ -129,7 +123,7 @@ public abstract class Statement extends ImmutableCodeFragment {
         }
 
         @Override
-        public void run() {
+        public void exec() {
             try {
                 state.callStackDepth  = 0;
 
@@ -169,7 +163,7 @@ public abstract class Statement extends ImmutableCodeFragment {
             try {
                     // prevent running out of stack by creating a new thread
                     try {
-                        Thread thread = createThread();
+                        Thread thread = createThread(state, false);
                         thread.start();
                         thread.join();
                         if (result != null) {
@@ -186,16 +180,6 @@ public abstract class Statement extends ImmutableCodeFragment {
                         } else if (error instanceof StackOverflowError) {
                             throw (StackOverflowError) error;
                         } else if (error instanceof OutOfMemoryError) {
-                            try {
-                                // free some memory
-                                state.resetState();
-                                // give hint to the garbage collector
-                                Runtime.getRuntime().gc();
-                                // sleep a while
-                                Thread.sleep(50);
-                            } catch (final InterruptedException e) {
-                                throw new StopExecutionException();
-                            }
                             throw (OutOfMemoryError) error;
                         } else if (error instanceof RuntimeException) {
                             throw (RuntimeException) error;

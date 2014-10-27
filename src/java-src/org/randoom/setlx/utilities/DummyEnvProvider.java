@@ -68,4 +68,14 @@ public class DummyEnvProvider implements EnvironmentProvider {
         return "";
     }
 
+    @Override
+    public int getMaximumNumberOfThreads() {
+        return 0;
+    }
+
+    @Override
+    public int getStackSizeWishInKb() {
+        return 0;
+    }
+
 }

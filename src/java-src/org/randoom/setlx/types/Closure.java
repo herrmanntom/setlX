@@ -124,7 +124,7 @@ public class Closure extends Procedure {
     @Override
     protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
         // increase callStackDepth
-        ++(state.callStackDepth);
+        state.callStackDepth += 2; // lots of parameters here...
 
         // save old scope
         final VariableScope oldScope = state.getScope();
@@ -185,7 +185,7 @@ public class Closure extends Procedure {
             }
 
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
         }
 
         if (result != null) {

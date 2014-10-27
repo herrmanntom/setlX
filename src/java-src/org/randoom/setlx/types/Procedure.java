@@ -103,7 +103,7 @@ public class Procedure extends ImmutableValue {
     public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
         try {
             // increase callStackDepth
-            ++(state.callStackDepth);
+            state.callStackDepth += 2; // lots of parameters here...
 
             final SetlObject object = this.object;
             this.object = null;
@@ -143,13 +143,12 @@ public class Procedure extends ImmutableValue {
             }
 
             return callAfterEval(state, args, values, object);
-
         } catch (final StackOverflowError soe) {
             state.storeStackDepthOfFirstCall(state.callStackDepth);
             throw soe;
         } finally {
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
         }
     }
 
@@ -166,7 +165,7 @@ public class Procedure extends ImmutableValue {
      */
     protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
         // increase callStackDepth
-        ++(state.callStackDepth);
+        state.callStackDepth += 2; // lots of parameters here...
 
         // save old scope
         final VariableScope oldScope = state.getScope();
@@ -212,7 +211,7 @@ public class Procedure extends ImmutableValue {
             }
 
             // decrease callStackDepth
-            --(state.callStackDepth);
+            state.callStackDepth -= 2;
         }
 
         if (result != null) {

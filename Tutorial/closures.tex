@@ -242,13 +242,49 @@ respectively.
 \end{figure}
 
 Notice that the variable \texttt{count} is defined outside the procedure
-\texttt{counter}.  Still, 
+\texttt{counter}.  Still, it is accessible in the closure \texttt{counter} because \texttt{counter}
+has been defined using the keyword \texttt{closure} instead of the keyword \texttt{procedure}.
 
 You should also notice that the function \texttt{ctr9} created in line 10 gets its
 \underline{own} copy of the variable \texttt{count}.  In the case of the function
 \texttt{ctr9}, this copy of \texttt{count} is initialized with the value 9.  Therefore, after
 we have called the function \texttt{ctr9} in line 13, the variables \texttt{x}, \texttt{y}, and
 \texttt{z} will have the values $10$, $11$, and $12$. 
+
+\subsection{Lambda Definitions for Closures}
+There is a short-hand notation for the definition of a closure that can be used if the closure only
+contains a single \texttt{return} statement. This short-hand notation relates to closures as lambda definitions relate to
+procedures.  This short-hand notation is called a \emph{lambda closure}.  Here is a simple example:
+The following two lines define a function \texttt{f} that computes the cube of its argument.
+\\[0.2cm]
+\hspace*{1.3cm} \texttt{c := 3;}            \\
+\hspace*{1.3cm} \texttt{f := x |=> x * c;}
+\\[0.2cm]
+These two lines are equivalent to the following two lines:
+\\[0.2cm]
+\hspace*{1.3cm} \texttt{c := 3;}            \\
+\hspace*{1.3cm} \texttt{f := closure(x) \{ return x * c; \};}
+\\[0.2cm]
+In general, the expression
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x |=> \textsl{expr}}
+\\[0.2cm]
+is equivalent to the following expression:
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{closure(x) \{ return \textsl{expr}; \}}
+\\[0.2cm]
+If there is more than one argument to a closure, the arguments have to be enclosed in square
+brackets.  For example, 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{f := [x,y] |=> sqrt(x ** c + y ** c);}
+\\[0.2cm]
+is equivalent to
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{f := closure(x,y) \{ return sqrt(x ** c + y ** c); \};}
 
 \section[Closures in Action]{Closures in Action: Generating Finite State Machines from Regular Expressions}
 In this section we demonstrate a non-trivial application of closures.  We present a program that

@@ -1,5 +1,5 @@
 delta := procedure(f) {
-    return closure(n) { return f(n+1) - f(n); };
+    return n |=> f(n+1) - f(n);
 };
 
 g := n |-> n;

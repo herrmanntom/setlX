@@ -40,7 +40,7 @@ public class ProcedureConstructor extends Expr {
      */
     public ProcedureConstructor(final Procedure definition) {
         this.definition       = definition;
-        this.isClosure        = definition.getClass() == Closure.class;
+        this.isClosure        = definition instanceof Closure;
         this.closureVariables = null;
     }
 

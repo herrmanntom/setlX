@@ -574,7 +574,7 @@ public class SetlObject extends Value {
             );
         }
         separateFromOriginal();
-        if (value.getClass() == Closure.class) {
+        if (value instanceof Closure) {
             ((Closure) value).setClosure(null);
         }
 

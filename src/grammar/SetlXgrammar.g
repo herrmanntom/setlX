@@ -260,8 +260,12 @@ expr [boolean enableIgnore] returns [Expr ex]
       )?
     ;
 
-lambdaProcedure returns [LambdaProcedure lp]
-    : lambdaParameters '|->' expr[false] { $lp = new LambdaProcedure($lambdaParameters.paramList, $expr.ex); }
+lambdaProcedure returns [Procedure lp]
+    : lambdaParameters
+      (
+        '|->' expr[false] { $lp = new LambdaProcedure($lambdaParameters.paramList, $expr.ex); }
+      | '|=>' expr[false] { $lp = new LambdaClosure($lambdaParameters.paramList, $expr.ex);   }
+      )
     ;
 
 lambdaParameters returns [ParameterList paramList]

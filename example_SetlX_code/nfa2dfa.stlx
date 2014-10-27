@@ -42,9 +42,9 @@ capitalDelta := procedure(m, c, delta) {
 nfa2dfa := procedure(nfa) {
     [states, sigma, delta, q0, final] := nfa;
     newStart   := epsClosure(q0, delta);
-    nextStates := closure(m) { return {capitalDelta(m, c, delta) : c in sigma}; };
+    nextStates := m |=> { capitalDelta(m, c, delta) : c in sigma };
     newStates  := fixpoint({newStart}, nextStates);
-    newDelta   := closure(m, c) { return capitalDelta(m, c, delta); };
+    newDelta   := [m, c] |=> capitalDelta(m, c, delta);
     newFinal   := { m : m in newStates | m * final != {} };
     return [newStates, sigma, newDelta, newStart, newFinal];
 };

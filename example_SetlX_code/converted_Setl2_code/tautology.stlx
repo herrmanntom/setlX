@@ -235,7 +235,7 @@ parse_atom := procedure(l) {
 };
 
 print("Bitte Formel eingeben");
-s := get();
+s := get(":");
 l := scanFormula(s);
 f := parse_formula(l);
 print(f);

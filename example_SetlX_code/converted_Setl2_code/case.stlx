@@ -1,28 +1,28 @@
 
-n := read();
+n := read(":");
 m := n % 10;
 switch {
 	case m == 0 :
-		print("letzte Ziffer ist 0");
+		print("last digit is 0");
 	case m == 1 :
-		print("letzte Ziffer ist 1");
+		print("last digit is 1");
 	case m == 2 :
-		print("letzte Ziffer ist 2");
+		print("last digit is 2");
 	case m == 3 :
-		print("letzte Ziffer ist 3");
+		print("last digit is 3");
 	case m == 4 :
-		print("letzte Ziffer ist 4");
+		print("last digit is 4");
 	case m == 5 :
-		print("letzte Ziffer ist 5");
+		print("last digit is 5");
 	case m == 6 :
-		print("letzte Ziffer ist 6");
+		print("last digit is 6");
 	case m == 7 :
-		print("letzte Ziffer ist 7");
+		print("last digit is 7");
 	case m == 8 :
-		print("letzte Ziffer ist 8");
+		print("last digit is 8");
 	case m == 9 :
-		print("letzte Ziffer ist 9");
+		print("last digit is 9");
 	default :
-		print("unm�glicher Fehler aufgetreten");
+		print("impossible error");
 }
 

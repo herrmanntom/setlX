@@ -7,7 +7,7 @@ kgV := procedure(m, n) {
 	return min(gV(m, n));
 };
 
-m := read();
-n := read();
+m := read(":");
+n := read(":");
 print("Das kgV von ", m, " und ", n, " ist ", kgV(m, n), ".");
 

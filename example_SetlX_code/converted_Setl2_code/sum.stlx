@@ -7,7 +7,7 @@ sum := procedure(n) {
 	}
 };
 
-n := read();
+n := read(":");
 total := sum(n);
 print("Summe 0 + 1 + 2 + ... + ", n, " = ", total);
 

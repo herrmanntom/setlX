@@ -425,7 +425,8 @@ public class Rational extends NumberValue {
         private final int        runnerIndex;
         /*package*/   BigInteger result;
 
-        public Factorial(final int from, final int to, int runnerIndex) {
+        public Factorial(final State state, final int from, final int to, int runnerIndex) {
+            super(state, true);
             this.from        = from;
             this.to          = to;
             this.runnerIndex = runnerIndex;
@@ -433,7 +434,7 @@ public class Rational extends NumberValue {
         }
 
         @Override
-        public void exec() {
+        public void exec(State state) {
             for (int i = from + 1; i < to; ++i) {
                 result = result.multiply(BigInteger.valueOf(i));
             }
@@ -476,8 +477,8 @@ public class Rational extends NumberValue {
                 if (i == CORES - 1) { // last thread
                     to += n % CORES; // pick up the slack
                 }
-                runners[i] = new Factorial(from, to, i);
-                threads[i] = runners[i].createThread(state, true);
+                runners[i] = new Factorial(state, from, to, i);
+                threads[i] = runners[i].createThread();
                 // start thread
                 threads[i].start();
             }

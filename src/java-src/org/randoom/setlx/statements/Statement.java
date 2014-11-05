@@ -3,7 +3,6 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.AbortException;
 import org.randoom.setlx.exceptions.ExitException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.utilities.*;
 
 /**
@@ -54,7 +53,7 @@ public abstract class Statement extends ImmutableCodeFragment {
      */
     public EXECUTE executeWithErrorHandling(final State state, final boolean hintAtJVMxOptions) {
         try {
-            new StatementRunner(this, state).execute();
+            new StatementRunner(this, state).startAsThread();
 
             return EXECUTE.OK;
 
@@ -104,10 +103,8 @@ public abstract class Statement extends ImmutableCodeFragment {
      * Subclass to cheat the end of the world... or stack, whatever comes first.
      */
     protected class StatementRunner extends BaseRunnable {
-        private final Statement                         statement;
-        private final org.randoom.setlx.utilities.State state;
-        private       ReturnMessage                     result;
-        private       Throwable                         error;
+        private final Statement     statement;
+        private       ReturnMessage result;
 
         /**
          * Create a new StatementRunner.
@@ -116,33 +113,14 @@ public abstract class Statement extends ImmutableCodeFragment {
          * @param state     Current state of the running setlX program.
          */
         /*package*/ StatementRunner(final Statement statement, final State state) {
+            super(state, false);
             this.statement = statement;
-            this.state      = state;
             this.result     = null;
-            this.error      = null;
         }
 
         @Override
-        public void exec() {
-            try {
-                state.callStackDepth  = 0;
-
-                result = statement.execute(state);
-                error  = null;
-
-            } catch (final SetlException se) {
-                result = null;
-                error  = se;
-            } catch (final StackOverflowError soe) {
-                result = null;
-                error  = soe;
-            } catch (final OutOfMemoryError oome) {
-                result = null;
-                error  = oome;
-            } catch (final RuntimeException e) {
-                result = null;
-                error  = e;
-            }
+        public void exec(State state) throws SetlException {
+            result = statement.execute(state);
         }
 
         @Override
@@ -151,48 +129,12 @@ public abstract class Statement extends ImmutableCodeFragment {
         }
 
         /**
-         * Execute this StatementRunner in a new thread an behave like a normal statement.
+         * Get result of the execution
          *
-         * @return               Result of the execution (e.g. return value, continue, etc).
-         * @throws SetlException Thrown in case of some (user-) error.
+         * @return result of the execution
          */
-        public ReturnMessage execute() throws SetlException {
-            // store and increase callStackDepth
-            final int oldCallStackDepth = state.callStackDepth;
-
-            try {
-                    // prevent running out of stack by creating a new thread
-                    try {
-                        Thread thread = createThread(state, false);
-                        thread.start();
-                        thread.join();
-                        if (result != null) {
-                            return result;
-                        }
-                    } catch (final InterruptedException e) {
-                        throw new StopExecutionException();
-                    }
-
-                    // handle exceptions thrown in thread
-                    if (error != null) {
-                        if (error instanceof SetlException) {
-                            throw (SetlException) error;
-                        } else if (error instanceof StackOverflowError) {
-                            throw (StackOverflowError) error;
-                        } else if (error instanceof OutOfMemoryError) {
-                            throw (OutOfMemoryError) error;
-                        } else if (error instanceof RuntimeException) {
-                            throw (RuntimeException) error;
-                        }
-                    }
-            } catch (final StackOverflowError soe) {
-                state.storeStackDepthOfFirstCall(state.callStackDepth);
-                throw soe;
-            } finally {
-                // reset callStackDepth
-                state.callStackDepth = oldCallStackDepth;
-            }
-            return null;
+        public ReturnMessage getResult() {
+            return result;
         }
     }
 }

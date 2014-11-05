@@ -3,6 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
@@ -601,12 +602,13 @@ public class State {
             // current stack usage size in this thread.
             // Do it twice, because lazy VMs only honor the request for more stack after it ran out once...
             for (int i = 0; i < 2; ++i) {
-                final Thread stackEstimator = new StackEstimator().createThread(state, false);
                 try {
-                    stackEstimator.start();
-                    stackEstimator.join();
-                } catch (final InterruptedException e) {
+                    new StackEstimator(state).startAsThread();
+                } catch (StopExecutionException see) {
                     // don't care
+                } catch (SetlException e) {
+                    // impossible
+                    e.printStackTrace();
                 }
             }
             // round it down to hundreds of stack frames
@@ -616,8 +618,17 @@ public class State {
     }
 
     private static class StackEstimator extends BaseRunnable {
+        /**
+         * Create a new StackEstimator
+         *
+         * @param state Current state of the running setlX program.
+         */
+        protected StackEstimator(State state) {
+            super(state, true);
+        }
+
         @Override
-        public void exec() {
+        public void exec(State state) {
             try {
                 measureStackSize_slave(BigDecimal.valueOf(1), 2);
             } catch (final StackOverflowError soe) {

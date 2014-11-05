@@ -104,7 +104,9 @@ public class Block extends Statement {
                 }
             } else {
                 // prevent running out of stack by creating a new thread
-                return new StatementRunner(this, state).execute();
+                StatementRunner statementRunner = new StatementRunner(this, state);
+                statementRunner.startAsThread();
+                return statementRunner.getResult();
             }
         } catch (final StackOverflowError soe) {
             state.storeStackDepthOfFirstCall(state.callStackDepth);

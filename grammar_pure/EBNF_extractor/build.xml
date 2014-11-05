@@ -7,7 +7,7 @@
 
     <!-- discover library jars and add them to the class-path -->
     <path id="antlr-jar">
-        <fileset dir="../../src/antlr" includes="antlr-*.jar"/>
+        <fileset dir="../../src/lib" includes="antlr-*.jar"/>
     </path>
     <path id="classpath">
         <path refid="antlr-jar"/>

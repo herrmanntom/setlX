@@ -64,7 +64,7 @@ public class PcEnvProvider implements EnvironmentProvider {
         try {
             return getStdIn().ready();
         } catch (final IOException ioe) {
-            throw new JVMIOException("Unable to open stdIn!");
+            throw new JVMIOException("Unable to open stdIn!", ioe);
         }
     }
     @Override
@@ -73,7 +73,7 @@ public class PcEnvProvider implements EnvironmentProvider {
                    // line is read and returned without termination character(s)
             return getStdIn().readLine();
         } catch (final IOException ioe) {
-            throw new JVMIOException("Unable to open stdIn!");
+            throw new JVMIOException("Unable to open stdIn!", ioe);
         }
     }
 

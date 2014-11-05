@@ -10,10 +10,11 @@ public class JVMIOException extends SetlException {
     /**
      * Create new JVMIOException.
      *
-     * @param msg More detailed message.
+     * @param msg   User friendly message.
+     * @param cause Exception thrown by the JVM.
      */
-    public JVMIOException(final String msg) {
-        super(msg);
+    public JVMIOException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
 }
 

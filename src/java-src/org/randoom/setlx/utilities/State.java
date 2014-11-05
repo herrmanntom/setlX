@@ -624,7 +624,7 @@ public class State {
          * @param state Current state of the running setlX program.
          */
         protected StackEstimator(State state) {
-            super(state, true);
+            super(state, false);
         }
 
         @Override

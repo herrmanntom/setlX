@@ -1,4 +1,4 @@
-CLASSPATH=.:../src/lib/antlr-4.4-complete.jar
+CLASSPATH=.:../src/libs/antlr-4.4-complete.jar
 
 run: PureLexer.class PureParser.class ParsePure.class input.stlx
 	java  -cp $(CLASSPATH) ParsePure < input.stlx

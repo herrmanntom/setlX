@@ -45,7 +45,7 @@ public class AssignListConstructor extends AssignableExpression {
      * @param constructor Constructor for explicit list of variables.
      */
     public AssignListConstructor(final ExplicitList constructor) {
-        this.list = constructor;
+        this.list = unify(constructor);
     }
 
     @Override

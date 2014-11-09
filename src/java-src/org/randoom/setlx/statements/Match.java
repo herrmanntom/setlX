@@ -40,8 +40,8 @@ public class Match extends Statement {
      * @param branchList List of match branches.
      */
     public Match(final Expr expr, final FragmentList<AbstractMatchBranch> branchList) {
-        this.expr       = expr;
-        this.branchList = branchList;
+        this.expr       = unify(expr);
+        this.branchList = unify(branchList);
     }
 
     @Override

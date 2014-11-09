@@ -38,7 +38,7 @@ public class Assignment extends BinaryExpression {
      */
     public Assignment(final AssignableExpression lhs, final Expr rhs) {
         super(lhs, rhs);
-        this.lhs = lhs;
+        this.lhs = unify(lhs);
     }
 
     @Override

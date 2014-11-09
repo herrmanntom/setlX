@@ -10,6 +10,7 @@ import org.randoom.setlx.types.SetlError;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.ReturnMessage;
 import org.randoom.setlx.utilities.State;
 
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Base class for catch branches of the try-catch statement.
  */
-public abstract class AbstractTryCatchBranch extends CodeFragment {
+public abstract class AbstractTryCatchBranch extends ImmutableCodeFragment {
 
     /** Variable to bind caught exception to.           */
     protected final Variable errorVar;
@@ -33,7 +34,7 @@ public abstract class AbstractTryCatchBranch extends CodeFragment {
      */
     protected AbstractTryCatchBranch(final Variable errorVar, final Block blockToRecover){
         this.errorVar       = errorVar;
-        this.blockToRecover = blockToRecover;
+        this.blockToRecover = unify(blockToRecover);
     }
 
     @Override
@@ -160,7 +161,7 @@ public abstract class AbstractTryCatchBranch extends CodeFragment {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) compareToOrdering()) + errorVar.computeHashCode();
         hash = hash * 31 + blockToRecover.computeHashCode();
         return hash;

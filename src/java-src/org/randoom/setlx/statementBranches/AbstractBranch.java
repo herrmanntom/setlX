@@ -2,13 +2,13 @@ package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
 /**
  * Base class for branches.
  */
-public abstract class AbstractBranch extends CodeFragment {
+public abstract class AbstractBranch extends ImmutableCodeFragment {
 
     /**
      * Evaluate the condition of this branch and return the result as Java boolean.

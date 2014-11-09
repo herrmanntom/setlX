@@ -265,9 +265,9 @@ public class ParseSetlX {
 
     // private subclass to execute the parser in a different thread
     private static class ParserRunner extends BaseRunnable {
-        private final SetlXgrammarParser parser;
-        private final CodeType           type;
-        private       CodeFragment       result;
+        private final SetlXgrammarParser    parser;
+        private final CodeType              type;
+        private       ImmutableCodeFragment result;
 
         /*package*/ ParserRunner(State state, final SetlXgrammarParser parser, final CodeType type) {
             super(state, false);
@@ -294,7 +294,7 @@ public class ParseSetlX {
         }
 
         public CodeFragment getResult() {
-            return result;
+            return ImmutableCodeFragment.unify(result);
         }
     }
 

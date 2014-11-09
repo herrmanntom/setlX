@@ -21,6 +21,11 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         fragmentList = new ArrayList<B>(initialCapacity);
     }
 
+    public FragmentList(B singleElement) {
+        fragmentList = new ArrayList<B>(1);
+        fragmentList.add(singleElement);
+    }
+
     public int size() {
         return fragmentList.size();
     }
@@ -42,6 +47,10 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
 
     public B get(int index) {
         return fragmentList.get(index);
+    }
+
+    public void set(int index, B fragment) {
+        fragmentList.set(index, fragment);
     }
 
     @Override

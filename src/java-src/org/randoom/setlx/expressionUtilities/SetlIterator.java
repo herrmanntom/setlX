@@ -50,9 +50,9 @@ public class SetlIterator extends ImmutableCodeFragment {
     }
 
     private SetlIterator(final AssignableExpression assignable, final Expr collection, final SetlIterator next) {
-        this.assignable = assignable;
-        this.collection = collection;
-        this.next       = next;
+        this.assignable = unify(assignable);
+        this.collection = unify(collection);
+        this.next       = unify(next);
     }
 
     /**

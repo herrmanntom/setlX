@@ -39,8 +39,8 @@ public class IfThenElseIfBranch extends AbstractIfThenBranch {
      * @param statements Statements to execute when condition is met.
      */
     public IfThenElseIfBranch(final Condition condition, final Block statements){
-        this.condition  = condition;
-        this.statements = statements;
+        this.condition  = unify(condition);
+        this.statements = unify(statements);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class IfThenElseIfBranch extends AbstractIfThenBranch {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + condition.hashCode();
         hash = hash * 31 + statements.computeHashCode();
         return hash;

@@ -39,8 +39,8 @@ public class DoWhile extends Statement {
      * @param statements Statements to execute inside the loop.
      */
     public DoWhile(final Condition condition, final Block statements) {
-        this.condition  = condition;
-        this.statements = statements;
+        this.condition  = unify(condition);
+        this.statements = unify(statements);
     }
 
     @Override

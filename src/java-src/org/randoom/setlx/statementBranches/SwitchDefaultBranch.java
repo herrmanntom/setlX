@@ -35,7 +35,7 @@ public class SwitchDefaultBranch extends AbstractSwitchBranch {
      * @param statements Statements to execute.
      */
     public SwitchDefaultBranch(final Block statements) {
-        this.statements = statements;
+        this.statements = unify(statements);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class SwitchDefaultBranch extends AbstractSwitchBranch {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.computeHashCode();
     }
 

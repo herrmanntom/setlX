@@ -31,7 +31,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      *       constructor directly.
      */
     protected PreDefinedProcedure() {
-        super(new ParameterList(), new Block(null));
+        super(new ParameterList(), new Block());
         this.name         = null;
     }
 

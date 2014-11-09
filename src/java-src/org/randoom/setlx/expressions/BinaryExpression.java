@@ -28,8 +28,8 @@ public abstract class BinaryExpression extends Expr {
      * @param rhs Right hand side of the expression.
      */
     protected BinaryExpression(final Expr lhs, final Expr rhs) {
-        this.lhs = lhs;
-        this.rhs = rhs;
+        this.lhs = unify(lhs);
+        this.rhs = unify(rhs);
     }
 
     @Override

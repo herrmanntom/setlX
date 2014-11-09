@@ -7,12 +7,7 @@ tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 # set overrides for setlX launcher script
 export OVERRIDE_setlXJarDirectory="$PWD/src/"
 export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
-# options for different stack sizes
-#export OVERRIDE_setlXjavaParameters="$OVERRIDE_setlXjavaParameters -Xss160k" # smallest stack possible (on 64 bit)
-#export OVERRIDE_setlXjavaParameters="$OVERRIDE_setlXjavaParameters -Xss576k" # some weird stack size
-#export OVERRIDE_setlXjavaParameters="$OVERRIDE_setlXjavaParameters -Xss8m"   # increase stack size
-#export OVERRIDE_setlXjavaParameters="$OVERRIDE_setlXjavaParameters -Xss48m"  # max supported stack size
-#export OVERRIDE_setlXjavaParameters="$OVERRIDE_setlXjavaParameters -Xss64m"  # some huge stack size
+#export OVERRIDE_setlXjavaParameters="-d32 -Xmx3000m"
 
 # other locations for tests
 setlXlaunchScript="$PWD/src/setlX"

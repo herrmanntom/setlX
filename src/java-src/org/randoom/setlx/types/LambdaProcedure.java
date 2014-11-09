@@ -5,10 +5,7 @@ import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.Return;
-import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.ParameterList;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.*;
 
 /**
  * This class represents a lambda procedure.
@@ -35,9 +32,8 @@ public class LambdaProcedure extends Procedure {
      * @param expr       lambda-expression.
      */
     public LambdaProcedure(final ParameterList parameters, final Expr expr) {
-        super(parameters, new Block(1));
-        this.expr = expr;
-        statements.add(new Return(expr));
+        super(parameters, new Block(new Return(ImmutableCodeFragment.unify(expr))));
+        this.expr = ImmutableCodeFragment.unify(expr);
     }
     private LambdaProcedure(
         final ParameterList parameters,
@@ -45,7 +41,7 @@ public class LambdaProcedure extends Procedure {
         final Expr          expr
     ) {
         super(parameters, statements);
-        this.expr = expr;
+        this.expr = ImmutableCodeFragment.unify(expr);
     }
 
     @Override

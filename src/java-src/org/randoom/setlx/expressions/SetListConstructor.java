@@ -55,7 +55,7 @@ public class SetListConstructor extends Expr {
      */
     public SetListConstructor(final CollectionType type, final CollectionBuilder constructor) {
         this.type    = type;
-        this.builder = constructor;
+        this.builder = unify(constructor);
     }
 
     @Override

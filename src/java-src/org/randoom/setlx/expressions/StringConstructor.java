@@ -142,9 +142,9 @@ public class StringConstructor extends Expr {
     }
 
     private StringConstructor(final String originalStr, final ArrayList<String> fragments, final ArrayList<Expr> exprs) {
-        this.originalStr    = originalStr;
-        this.fragments      = fragments;
-        this.exprs          = exprs;
+        this.originalStr = originalStr;
+        this.fragments   = fragments;
+        this.exprs       = unify(exprs);
     }
 
     @Override

@@ -43,12 +43,12 @@ public class Block extends Statement {
     }
 
     /**
-     * Create a new empty block of setlX statements.
+     * Create a new block containing exactly one setlX statement.
      *
-     * @param size  Initial statement capacity of the block.
+     * @param statement Only statement of the block.
      */
-    public Block(final int size) {
-        this(new FragmentList<Statement>(size));
+    public Block(final Statement statement) {
+        this(new FragmentList<Statement>(statement));
     }
 
     /**
@@ -57,23 +57,7 @@ public class Block extends Statement {
      * @param statements Statements in the new block.
      */
     public Block(final FragmentList<Statement> statements) {
-        this.statements = statements;
-    }
-
-    @Override
-    public Block clone() {
-        final Block clone = new Block(statements.size());
-        clone.statements.addAll(statements);
-        return clone;
-    }
-
-    /**
-     * Add another statement to this block.
-     *
-     * @param stmnt statement to add
-     */
-    public void add(final Statement stmnt) {
-        statements.add(stmnt);
+        this.statements = unify(statements);
     }
 
     @Override
@@ -225,12 +209,12 @@ public class Block extends Statement {
         if (term.size() != 1 || ! (term.firstMember() instanceof SetlList)) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final SetlList stmnts = (SetlList) term.lastMember();
-            final Block    block  = new Block(stmnts.size());
+            final SetlList                stmnts = (SetlList) term.lastMember();
+            final FragmentList<Statement> block  = new FragmentList<Statement>(stmnts.size());
             for (final Value v : stmnts) {
                 block.add(TermConverter.valueToStatement(state, v));
             }
-            return block;
+            return new Block(block);
         }
     }
 

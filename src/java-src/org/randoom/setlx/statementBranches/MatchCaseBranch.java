@@ -49,10 +49,10 @@ public class MatchCaseBranch extends AbstractMatchBranch {
      * @param statements Statements to execute when condition is met.
      */
     public MatchCaseBranch(final List<Expr> exprs, final Condition condition, final Block statements) {
-        this.exprs      = exprs;
+        this.exprs      = unify(exprs);
         this.terms      = new ArrayList<Value>(exprs.size());
-        this.condition  = condition;
-        this.statements = statements;
+        this.condition  = unify(condition);
+        this.statements = unify(statements);
     }
 
     @Override
@@ -276,7 +276,7 @@ public class MatchCaseBranch extends AbstractMatchBranch {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + statements.computeHashCode();
         if (condition != null) {
             hash = hash * 31 + condition.hashCode();

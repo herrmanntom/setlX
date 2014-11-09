@@ -45,8 +45,8 @@ public class CollectionAccess extends AssignableExpression {
      * @param args List of parameters.
      */
     public CollectionAccess(final Expr lhs, final List<Expr> args) {
-        this.lhs              = lhs;
-        this.args             = args;
+        this.lhs              = unify(lhs);
+        this.args             = unify(args);
         this.argsContainRange = args.contains(CollectionAccessRangeDummy.CARD);
     }
 

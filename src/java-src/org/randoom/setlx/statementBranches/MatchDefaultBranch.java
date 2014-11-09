@@ -39,7 +39,7 @@ public class MatchDefaultBranch extends AbstractMatchScanBranch {
      * @param statements Statements to execute.
      */
     public MatchDefaultBranch(final Block statements) {
-        this.statements = statements;
+        this.statements = unify(statements);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MatchDefaultBranch extends AbstractMatchScanBranch {
     }
 
     @Override
-    public ScanResult scannes(final State state, final SetlString string) {
+    public ScanResult scans(final State state, final SetlString string) {
         return new ScanResult(true, END_OFFSET);
     }
 
@@ -140,7 +140,7 @@ public class MatchDefaultBranch extends AbstractMatchScanBranch {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + statements.computeHashCode();
     }
 

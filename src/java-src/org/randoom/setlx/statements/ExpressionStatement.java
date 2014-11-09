@@ -32,7 +32,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
      * @param expression Contained expression.
      */
     public ExpressionStatement(final Expr expression) {
-        this.expr           = expression;
+        this.expr           = unify(expression);
         this.printAfterEval = false;
     }
 

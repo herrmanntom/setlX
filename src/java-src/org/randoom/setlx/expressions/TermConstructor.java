@@ -38,7 +38,7 @@ public class TermConstructor extends Expr {
      */
     public TermConstructor(final String fChar, final List<Expr> args) {
         this.fChar = fChar;
-        this.args = args;
+        this.args = unify(args);
     }
 
     @Override

@@ -1,11 +1,101 @@
 package org.randoom.setlx.utilities;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Base class for all immutable CodeFragments.
  */
 public abstract class ImmutableCodeFragment extends CodeFragment {
 
+    private final static HashMap<CodeFragment, CodeFragment> UNIFIED_CODE_FRAGMENTS = new HashMap<CodeFragment, CodeFragment>();
+
     private Integer hashCode = null;
+
+    /**
+     * Unify all occurrences of the same code fragment.
+     *
+     * @param codeFragment CodeFragment to unify
+     * @param <CF>         Type of CodeFragment to unify
+     * @return             Unified CodeFragment
+     */
+    @SuppressWarnings("unchecked")
+    public final static <CF extends ImmutableCodeFragment> CF unify(CF codeFragment) {
+        if (codeFragment == null) {
+            return null;
+        }
+        CodeFragment preExistingCodeFragment = UNIFIED_CODE_FRAGMENTS.get(codeFragment);
+        if (preExistingCodeFragment == null) {
+            preExistingCodeFragment = codeFragment;
+            UNIFIED_CODE_FRAGMENTS.put(codeFragment, preExistingCodeFragment);
+        }
+        return (CF) preExistingCodeFragment; // unchecked: preExistingCodeFragment always is of required type
+    }
+
+    /**
+     * Unify all occurrences of the same code fragments inside given List.
+     *
+     * @param codeFragmentList CodeFragments to unify
+     * @param <CF>             Type of CodeFragment to unify
+     * @return                 Unified CodeFragment
+     */
+    public final static <CF extends ImmutableCodeFragment> List<CF> unify(List<CF> codeFragmentList) {
+        if (codeFragmentList == null) {
+            return null;
+        }
+        for (int i = 0; i < codeFragmentList.size(); i++) {
+            codeFragmentList.set(i, unify(codeFragmentList.get(i)));
+        }
+        return codeFragmentList;
+    }
+
+    /**
+     * Unify all occurrences of the same code fragments inside given List.
+     *
+     * @param codeFragmentList CodeFragments to unify
+     * @param <CF>             Type of CodeFragment to unify
+     * @return                 Unified CodeFragment
+     */
+    public final static <CF extends ImmutableCodeFragment> ArrayList<CF> unify(ArrayList<CF> codeFragmentList) {
+        if (codeFragmentList == null) {
+            return null;
+        }
+        return (ArrayList<CF>) unify((List<CF>) codeFragmentList);
+    }
+
+    /**
+     * Unify all occurrences of the same code fragments inside given List.
+     *
+     * @param codeFragmentList CodeFragments to unify
+     * @param <CF>             Type of CodeFragment to unify
+     * @return                 Unified CodeFragment
+     */
+    public final static <CF extends ImmutableCodeFragment> FragmentList<CF> unify(FragmentList<CF> codeFragmentList) {
+        if (codeFragmentList == null) {
+            return null;
+        }
+        for (int i = 0; i < codeFragmentList.size(); i++) {
+            codeFragmentList.set(i, unify(codeFragmentList.get(i)));
+        }
+        return codeFragmentList;
+    }
+
+    /**
+     * Unify all occurrences of the same code fragments inside given List.
+     *
+     * @param codeFragmentList CodeFragments to unify
+     * @return                 Unified CodeFragment
+     */
+    public final static ParameterList unify(ParameterList codeFragmentList) {
+        if (codeFragmentList == null) {
+            return null;
+        }
+        for (int i = 0; i < codeFragmentList.size(); i++) {
+            codeFragmentList.set(i, unify(codeFragmentList.get(i)));
+        }
+        return codeFragmentList;
+    }
 
     /* comparisons */
 

@@ -37,7 +37,7 @@ public class ExplicitList extends CollectionBuilder {
      * @param exprList List of expressions to evaluate.
      */
     public ExplicitList(final List<Expr> exprList) {
-        this.list = exprList;
+        this.list = unify(exprList);
     }
 
     @Override

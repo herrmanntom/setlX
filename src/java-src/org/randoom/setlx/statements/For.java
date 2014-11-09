@@ -79,10 +79,10 @@ public class For extends Statement {
      * @param statements Statements to execute inside the loop.
      */
     public For(final SetlIterator iterator, final Condition condition, final Block statements) {
-        this.iterator   = iterator;
-        this.condition  = condition;
-        this.statements = statements;
-        this.exec       = new Exec(condition, statements);
+        this.iterator   = unify(iterator);
+        this.condition  = unify(condition);
+        this.statements = unify(statements);
+        this.exec       = new Exec(this.condition, this.statements);
     }
 
     @Override
@@ -214,7 +214,9 @@ public class For extends Statement {
     @Override
     public final int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + iterator.hashCode();
-        hash = hash * 31 + condition.hashCode();
+        if (condition != null) {
+            hash = hash * 31 + condition.hashCode();
+        }
         hash = hash * 31 + statements.computeHashCode();
         return hash;
     }

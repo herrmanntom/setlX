@@ -8,17 +8,12 @@ import org.randoom.setlx.utilities.State;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
  * Base class for all SetlX expressions.
  */
 public abstract class Expr extends ImmutableCodeFragment {
-
-    // collection of reusable resultSoftReference values
-    private final static HashMap<Expr, SoftReference<Value>> REPLACEMENTS = new HashMap<Expr, SoftReference<Value>>();
-
     // false if expression is `static' (does not contain variables) and can be replaced by a static result
     private Boolean              isNotReplaceable    = true;
     // references to values which are the result of this expression, if (isReplaceable == true)
@@ -39,17 +34,11 @@ public abstract class Expr extends ImmutableCodeFragment {
 
             if (isNotReplaceable) {
                 return this.evaluate(state);
-            } else if (resultHardReference != null) {
-                return resultHardReference.clone();
-            }
-            // look up if same expression was already evaluated
-            if (resultSoftReference == null) {
-                synchronized (REPLACEMENTS) {
-                    resultSoftReference = REPLACEMENTS.get(this);
-                }
             }
             Value result = null;
-            if (resultSoftReference != null) {
+            if (resultHardReference != null) {
+                result = resultHardReference;
+            } else if (resultSoftReference != null) {
                 result = resultSoftReference.get();
             }
 
@@ -57,14 +46,12 @@ public abstract class Expr extends ImmutableCodeFragment {
                 return result.clone();
             } else {
                 result = evaluate(state);
-                resultSoftReference = new SoftReference<Value>(result);
                 if (result.isList() == SetlBoolean.FALSE && result.isSet() == SetlBoolean.FALSE) {
                     // collections are potentially very large, so only
                     // keep hard references to other values
                     resultHardReference = result;
-                }
-                synchronized (REPLACEMENTS) {
-                    REPLACEMENTS.put(this, resultSoftReference);
+                } else {
+                    resultSoftReference = new SoftReference<Value>(result);
                 }
                 return result;
             }

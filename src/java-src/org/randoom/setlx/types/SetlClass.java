@@ -10,6 +10,8 @@ import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
+import org.randoom.setlx.statements.Return;
+import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.utilities.*;
 
 import java.util.ArrayList;
@@ -32,9 +34,9 @@ import java.util.Map.Entry;
  */
 public class SetlClass extends Value {
     // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlClass.class);
-
-    private final static Block  REBUILD_MARKER       = new Block(0);
+    private final static String FUNCTIONAL_CHARACTER      = generateFunctionalCharacter(SetlClass.class);
+    private final static long   COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlClass.class);
+    private final static Block  REBUILD_MARKER            = new Block(new Return(new ValueExpr(new SetlString(FUNCTIONAL_CHARACTER + COMPARE_TO_ORDER_CONSTANT))));
 
     private final ParameterList      parameters;          // parameter list
     private final Block              initBlock;           // statements in the body of the definition
@@ -75,11 +77,11 @@ public class SetlClass extends Value {
     private Block getStaticBlock() {
         if (staticBlock == REBUILD_MARKER) {
             // rebuild static block
-            final Block sBlock = new Block();
+            final FragmentList<Statement> sBlock = new FragmentList<Statement>(staticDefs.size());
             for (final Entry<String, Value> entry : staticDefs.entrySet()) {
                 sBlock.add(new ExpressionStatement(new Assignment(new Variable(entry.getKey()), new ValueExpr(entry.getValue()))));
             }
-            staticBlock = sBlock;
+            staticBlock = new Block(sBlock);
         }
         return staticBlock;
     }
@@ -107,7 +109,7 @@ public class SetlClass extends Value {
         }
         Block staticBlock = null;
         if (getStaticBlock() != null) {
-            staticBlock = getStaticBlock().clone();
+            staticBlock = REBUILD_MARKER;
         }
         HashSet<String> staticVars = null;
         if (this.staticVars != null) {
@@ -447,8 +449,6 @@ public class SetlClass extends Value {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
-
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlClass.class);
 
     @Override
     public long compareToOrdering() {

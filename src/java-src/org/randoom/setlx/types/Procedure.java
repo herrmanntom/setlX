@@ -47,9 +47,9 @@ public class Procedure extends ImmutableValue {
      * @param statements statements in the body of the procedure
      */
     public Procedure(final ParameterList parameters, final Block statements) {
-        this.parameters          = parameters;
-        this.statements          = statements;
-        this.object              = null;
+        this.parameters = ImmutableCodeFragment.unify(parameters);
+        this.statements = ImmutableCodeFragment.unify(statements);
+        this.object     = null;
     }
 
     @Override

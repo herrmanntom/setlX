@@ -21,7 +21,7 @@ public abstract class AbstractMatchScanBranch extends AbstractMatchBranch {
      * @return               Result of the scan.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract ScanResult scannes(final State state, SetlString string) throws SetlException;
+    public abstract ScanResult scans(final State state, SetlString string) throws SetlException;
 
     /**
      * Convert a term representing a match branch into such a branch.

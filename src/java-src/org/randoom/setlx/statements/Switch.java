@@ -40,7 +40,7 @@ public class Switch extends Statement {
      * @param branchList List of switch branches.
      */
     public Switch(final FragmentList<AbstractSwitchBranch> branchList) {
-        this.branchList = branchList;
+        this.branchList = unify(branchList);
     }
 
     @Override

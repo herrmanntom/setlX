@@ -52,9 +52,9 @@ public class Call extends Expr {
      * @param listArg Expression to evaluate as list-argument of the call.
      */
     public Call(final Expr lhs, final List<Expr> args, final Expr listArg) {
-        this.lhs     = lhs;
-        this.args    = args;
-        this.listArg = listArg;
+        this.lhs     = unify(lhs);
+        this.args    = unify(args);
+        this.listArg = unify(listArg);
     }
 
     @Override

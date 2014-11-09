@@ -2,7 +2,6 @@ package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Term;
-import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
@@ -24,7 +23,7 @@ public abstract class UnaryExpression extends Expr {
      * @param expr argument of the expression.
      */
     protected UnaryExpression(final Expr expr) {
-        this.expr = expr;
+        this.expr = unify(expr);
     }
 
     @Override

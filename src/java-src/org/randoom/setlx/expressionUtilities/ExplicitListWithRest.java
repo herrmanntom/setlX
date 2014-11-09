@@ -42,8 +42,8 @@ public class ExplicitListWithRest extends CollectionBuilder {
      * @param rest     Expression to assign the rest to.
      */
     public ExplicitListWithRest(final List<Expr> exprList, final Expr rest) {
-        this.list = exprList;
-        this.rest = rest;
+        this.list = unify(exprList);
+        this.rest = unify(rest);
     }
 
     @Override

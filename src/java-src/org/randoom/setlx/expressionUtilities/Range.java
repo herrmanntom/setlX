@@ -41,9 +41,9 @@ public class Range extends CollectionBuilder {
      * @param stop   Expression to evaluate to the stop value.
      */
     public Range(final Expr start, final Expr second, final Expr stop) {
-        this.start  = start;
-        this.second = second;
-        this.stop   = stop;
+        this.start  = unify(start);
+        this.second = unify(second);
+        this.stop   = unify(stop);
     }
 
     @Override

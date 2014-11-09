@@ -44,8 +44,8 @@ public class MemberAccess extends AssignableExpression {
      * @param member Member to access.
      */
     public MemberAccess(final Expr lhs, final Variable member) {
-        this.lhs      = lhs;
-        this.member   = member;
+        this.lhs      = unify(lhs);
+        this.member   = unify(member);
         this.memberID = member.getID();
     }
 

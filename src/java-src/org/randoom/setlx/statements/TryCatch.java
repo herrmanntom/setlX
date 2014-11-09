@@ -32,7 +32,7 @@ public class TryCatch extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(TryCatch.class);
 
-    private final Block                               blockToTry;
+    private final Block                                blockToTry;
     private final FragmentList<AbstractTryCatchBranch> tryList;
 
     /**
@@ -42,8 +42,8 @@ public class TryCatch extends Statement {
      * @param tryList    List of catch branches.
      */
     public TryCatch(final Block blockToTry, final FragmentList<AbstractTryCatchBranch> tryList) {
-        this.blockToTry = blockToTry;
-        this.tryList    = tryList;
+        this.blockToTry = unify(blockToTry);
+        this.tryList    = unify(tryList);
     }
 
     @Override

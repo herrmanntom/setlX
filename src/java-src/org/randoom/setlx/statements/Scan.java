@@ -49,9 +49,9 @@ public class Scan extends Statement {
      * @param branchList List of scan branches.
      */
     public Scan(final Expr expr, final Variable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
-        this.expr       = expr;
-        this.posVar     = posVar;
-        this.branchList = branchList;
+        this.expr       = unify(expr);
+        this.posVar     = unify(posVar);
+        this.branchList = unify(branchList);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Scan extends Statement {
 
                 // find branch which matches largest string
                 for (final AbstractMatchScanBranch br : branchList) {
-                    final ScanResult result = br.scannes(state, string);
+                    final ScanResult result = br.scans(state, string);
                     if (result.isMatch() && result.getEndOffset() > largestMatchSize) {
                         // scope for condition
                         final VariableScope innerScope = outerScope.createLinkedScope();

@@ -56,10 +56,10 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
         this(pattern, assignTo, condition, statements, state);
 
         // if pattern is static it can be compiled now
-        if (pattern.isReplaceable()) {
+        if (this.pattern.isReplaceable()) {
             Value patternReplacement;
             try {
-                patternReplacement = pattern.eval(new State());
+                patternReplacement = this.pattern.eval(new State());
             } catch (final Throwable t) {
                 patternReplacement = null;
             }
@@ -70,7 +70,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
                     );
                 } catch (final PatternSyntaxException pse) {
                     state.writeParserErrLn(
-                        "Error while parsing regex-pattern " + pattern.toString(state) + " {\n"
+                        "Error while parsing regex-pattern " + this.pattern.toString(state) + " {\n"
                       + "\t" + pse.getDescription() + " near index " + (pse.getIndex() + 1) + "\n"
                       + "}"
                     );
@@ -86,12 +86,12 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
     }
 
     private MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements, final State state) {
-        this.pattern        = pattern;
+        this.pattern        = unify(pattern);
         this.runtimePattern = null;
-        this.assignTo       = assignTo;
+        this.assignTo       = unify(assignTo);
         this.assignTerm     = null;
-        this.condition      = condition;
-        this.statements     = statements;
+        this.condition      = unify(condition);
+        this.statements     = unify(statements);
 
         // optimize pattern
         this.pattern.optimize(state);
@@ -100,7 +100,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
     @Override
     public MatchResult matches(final State state, final Value term) throws SetlException {
         if (term.getClass() == SetlString.class) {
-            final ScanResult result = scannes(state, (SetlString) term);
+            final ScanResult result = scans(state, (SetlString) term);
             if (result.isMatch() && ((SetlString) term).size() == result.getEndOffset()) {
                 return result;
             }
@@ -114,7 +114,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
     }
 
     @Override
-    public ScanResult scannes(final State state, final SetlString string) throws SetlException {
+    public ScanResult scans(final State state, final SetlString string) throws SetlException {
         Pattern pttrn;
 
         if (runtimePattern != null) {
@@ -354,7 +354,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
     }
 
     @Override
-    public final int hashCode() {
+    public final int computeHashCode() {
         int hash = ((int) COMPARE_TO_ORDER_CONSTANT) + pattern.hashCode();
         hash = hash * 31 + statements.computeHashCode();
         if (assignTo != null) {

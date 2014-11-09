@@ -37,7 +37,7 @@ public class Return extends Statement {
      * @param result Expression to evaluate before returning.
      */
     public Return(final Expr result) {
-        this.result = result;
+        this.result = unify(result);
     }
 
     @Override

@@ -87,8 +87,8 @@ public class Exists extends Expr {
      * @param condition Condition to evaluate.
      */
     public Exists(final SetlIterator iterator, final Condition condition) {
-        this.iterator           = iterator;
-        this.condition          = condition;
+        this.iterator           = unify(iterator);
+        this.condition          = unify(condition);
         this.iterationVariables = null;
     }
 

@@ -302,8 +302,7 @@ public class SetlX {
         // parse content of all files
         try {
             if (expression != null) {
-                final Block exp = new Block();
-                exp.add(new ExpressionStatement(ParseSetlX.parseStringToExpr(state, expression)));
+                final Block exp = new Block(new ExpressionStatement(ParseSetlX.parseStringToExpr(state, expression)));
                 exp.markLastExprStatement();
                 programs.add(exp);
             }

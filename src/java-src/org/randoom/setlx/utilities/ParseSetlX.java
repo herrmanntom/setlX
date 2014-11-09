@@ -173,11 +173,11 @@ public class ParseSetlX {
             lexer.addErrorListener(errorL);
             parser.addErrorListener(errorL);
 
-            if (state.isRuntimeDebuggingEnabled()) {
-                parser.addErrorListener(new DiagnosticErrorListener());
-                // use more stringent parser mode
-                // parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
-            }
+//            if (state.isRuntimeDebuggingEnabled()) {
+//                parser.addErrorListener(new DiagnosticErrorListener());
+//                // use more stringent parser mode
+//                // parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+//            }
 
             // capture parser errors
             state.setParserErrorCapture(new LinkedList<String>());
@@ -188,8 +188,14 @@ public class ParseSetlX {
             final ParserRunner parserRunner = new ParserRunner(state, parser, type);
                   CodeFragment fragment     = null;
             try {
-                // now ANTLR will add its parser errors into our capture ...
-                parserRunner.startAsThread();
+                // run ANTLR, which will add its parser errors into our capture ...
+                if (Thread.currentThread().getName().endsWith(parserRunner.getThreadName())) {
+                    parserRunner.exec(state);
+                } else {
+                    parserRunner.startAsThread();
+                }
+
+                // get parsed fragment
                 fragment = parserRunner.getResult();
 
             } catch (StopExecutionException see) {

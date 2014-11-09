@@ -13,7 +13,8 @@ import java.util.List;
  */
 public class PcEnvProvider implements EnvironmentProvider {
 
-    private final static String TAB = "\t";
+    private final static boolean IS_32_BIT_VM = "32".equals(System.getProperty("sun.arch.data.model"));
+    private final static String  TAB          = "\t";
 
     private final String         endl;
     private final String         osName;
@@ -169,12 +170,23 @@ public class PcEnvProvider implements EnvironmentProvider {
 
     @Override
     public int getMaximumNumberOfThreads() {
+        if (IS_32_BIT_VM) {
+            return 64;
+        }
         return 256;
     }
 
     @Override
     public int getStackSizeWishInKb() {
+        if (IS_32_BIT_VM) {
+            return 1024;
+        }
         return 2048;
+    }
+
+    @Override
+    public int getSmallStackSizeWishInKb() {
+        return 0; // use default
     }
 }
 

@@ -24,7 +24,7 @@ public abstract class BaseRunnable implements Runnable {
     protected BaseRunnable(State state, boolean smallStackSize) {
         this.state          = state;
         this.smallStackSize = smallStackSize;
-        this.error         = null;
+        this.error          = null;
     }
 
     /**
@@ -39,7 +39,7 @@ public abstract class BaseRunnable implements Runnable {
         }
         int stackSize;
         if (smallStackSize) {
-            stackSize = Math.min(64, environmentProvider.getStackSizeWishInKb());
+            stackSize = environmentProvider.getSmallStackSizeWishInKb();
         } else {
             stackSize = environmentProvider.getStackSizeWishInKb();
         }

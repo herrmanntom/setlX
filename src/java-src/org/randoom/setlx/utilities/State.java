@@ -169,7 +169,9 @@ public class State {
     public void setEnvironmentProvider(final EnvironmentProvider envProvider) {
         this.envProvider = envProvider;
         STACK_MEASUREMENT = -1;
-        measureStackSize(this);
+        if (envProvider != DummyEnvProvider.DUMMY) {
+            measureStackSize(this);
+        }
     }
 
     /**

@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * This "environment" lets all calls die silently.
  */
-public class DummyEnvProvider implements EnvironmentProvider {
+public final class DummyEnvProvider implements EnvironmentProvider {
 
     /**
      * Singleton dummy environment provider.
@@ -70,11 +70,16 @@ public class DummyEnvProvider implements EnvironmentProvider {
 
     @Override
     public int getMaximumNumberOfThreads() {
-        return 0;
+        return Integer.MAX_VALUE;
     }
 
     @Override
     public int getStackSizeWishInKb() {
+        return 0;
+    }
+
+    @Override
+    public int getSmallStackSizeWishInKb() {
         return 0;
     }
 

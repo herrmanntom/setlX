@@ -1,6 +1,6 @@
 Error(s) while parsing string "This will fail: $]$" {
 	rule stack: [initExpr, expr]
-line 1:1 at [@0,0:0=']',<37>,1:0]: no viable alternative at input ']'
+line 1:1 no viable alternative at input ']'
 }
 Error(s) while parsing string "Guess what this will do: $99 / 5" {
 	closing '$' missing

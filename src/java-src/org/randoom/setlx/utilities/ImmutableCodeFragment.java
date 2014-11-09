@@ -25,12 +25,19 @@ public abstract class ImmutableCodeFragment extends CodeFragment {
         if (codeFragment == null) {
             return null;
         }
-        CodeFragment preExistingCodeFragment = UNIFIED_CODE_FRAGMENTS.get(codeFragment);
-        if (preExistingCodeFragment == null) {
-            preExistingCodeFragment = codeFragment;
-            UNIFIED_CODE_FRAGMENTS.put(codeFragment, preExistingCodeFragment);
+        try {
+            CodeFragment preExistingCodeFragment = UNIFIED_CODE_FRAGMENTS.get(codeFragment);
+            if (preExistingCodeFragment == null) {
+                preExistingCodeFragment = codeFragment;
+                UNIFIED_CODE_FRAGMENTS.put(codeFragment, preExistingCodeFragment);
+            }
+            return (CF) preExistingCodeFragment; // unchecked: preExistingCodeFragment always is of required type
+        } catch (NullPointerException npe) {
+            // This may get caused by syntax errors during parsing.
+            // E.g. if some code fragment was injected in to the syntax tree as null.
+            // So this should be ignored, so that the parser may find additional errors in the input
+            return null;
         }
-        return (CF) preExistingCodeFragment; // unchecked: preExistingCodeFragment always is of required type
     }
 
     /**

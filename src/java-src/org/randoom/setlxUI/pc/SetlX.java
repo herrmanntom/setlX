@@ -359,11 +359,7 @@ public class SetlX {
                     programs.set(i, (Block) TermConverter.valueToStatement(state, programs.get(i).toTerm(state)));
                 } catch (final SetlException se) {
                     state.errWriteLn("Error during termLoop!");
-                    if (state.isRuntimeDebuggingEnabled()) {
-                        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                        se.printStackTrace(new PrintStream(out));
-                        state.errWrite(out.toString());
-                    }
+                    se.printExceptionsTrace(state, 40);
                 }
             }
         }
@@ -382,11 +378,7 @@ public class SetlX {
                         programs.get(i).toTerm(state).canonical(state, sb);
                     } catch (SetlException se) {
                         state.errWriteLn("Error during termDump!");
-                        if (state.isRuntimeDebuggingEnabled()) {
-                            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            se.printStackTrace(new PrintStream(out));
-                            state.errWrite(out.toString());
-                        }
+                        se.printExceptionsTrace(state, 40);
                     }
                     programTerm = sb.toString();
                 }

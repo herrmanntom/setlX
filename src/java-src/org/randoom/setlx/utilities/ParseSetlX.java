@@ -43,10 +43,10 @@ public class ParseSetlX {
                 // parse the file contents
                 return parseBlock(state, new ANTLRFileStream(fileName));
             } else {
-                throw new FileNotReadableException("File '" + fileName + "' could not be read.");
+                throw new FileNotReadableException("File '" + fileName + "' could not be read.", null);
             }
         } catch (final IOException ioe) {
-            throw new FileNotReadableException("File '" + fileName + "' could not be read.");
+            throw new FileNotReadableException("File '" + fileName + "' could not be read.", ioe);
         }
     }
 
@@ -76,10 +76,10 @@ public class ParseSetlX {
                     return parseBlock(state, new ANTLRFileStream(name));
                 }
             } else {
-                throw new FileNotReadableException("Library '" + name + "' could not be read.");
+                throw new FileNotReadableException("Library '" + name + "' could not be read.", null);
             }
         } catch (final IOException ioe) {
-            throw new FileNotReadableException("Library '" + name + "' could not be found.");
+            throw new FileNotReadableException("Library '" + name + "' could not be found.", ioe);
         }
     }
 
@@ -99,7 +99,7 @@ public class ParseSetlX {
             return parseBlock(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
-            throw new EndOfFileException();
+            throw new EndOfFileException(ioe);
         }
     }
 
@@ -120,7 +120,7 @@ public class ParseSetlX {
             return parseBlock(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
-            throw new EndOfFileException();
+            throw new EndOfFileException(ioe);
         }
     }
 
@@ -141,7 +141,7 @@ public class ParseSetlX {
             return parseExpr(state, new ANTLRInputStream(stream));
 
         } catch (final IOException ioe) {
-            throw new EndOfFileException();
+            throw new EndOfFileException(ioe);
         }
     }
 
@@ -173,11 +173,11 @@ public class ParseSetlX {
             lexer.addErrorListener(errorL);
             parser.addErrorListener(errorL);
 
-//            if (state.isRuntimeDebuggingEnabled()) {
-//                parser.addErrorListener(new DiagnosticErrorListener());
-//                // use more stringent parser mode
-//                // parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
-//            }
+            if (state.isRuntimeDebuggingEnabled()) {
+                parser.addErrorListener(new DiagnosticErrorListener());
+                // use more stringent parser mode
+                // parser.getInterpreter().setPredictionMode(PredictionMode.LL_EXACT_AMBIG_DETECTION);
+            }
 
             // capture parser errors
             state.setParserErrorCapture(new LinkedList<String>());
@@ -344,22 +344,14 @@ public class ParseSetlX {
 
                 buf.append("rule stack: ");
                 buf.append(stack);
-                buf.append("\nline ");
-                buf.append(line);
-                buf.append(":");
-                buf.append(charPositionInLine);
-                buf.append(" at ");
-                buf.append(offendingSymbol);
-                buf.append(": ");
-                buf.append(msg);
-            } else {
-                buf.append("line ");
-                buf.append(line);
-                buf.append(":");
-                buf.append(charPositionInLine);
-                buf.append(" ");
-                buf.append(msg);
+                buf.append("\n");
             }
+            buf.append("line ");
+            buf.append(line);
+            buf.append(":");
+            buf.append(charPositionInLine);
+            buf.append(" ");
+            buf.append(msg);
 
             state.writeParserErrLn(buf.toString());
         }

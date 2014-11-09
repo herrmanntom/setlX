@@ -11,16 +11,26 @@ public class EndOfFileException extends ParserException {
      * Create new EndOfFileException exception.
      */
     public EndOfFileException() {
-        this("EndOfFile");
+        this("EndOfFile", null);
+    }
+
+    /**
+     * Create new EndOfFileException exception.
+     *
+     * @param cause Exception thrown by the JVM.
+     */
+    public EndOfFileException(final Throwable cause) {
+        this("EndOfFile", cause);
     }
 
     /**
      * Create new EndOfFileException.
      *
      * @param msg More detailed message.
+     * @param cause Exception thrown by the JVM.
      */
-    public EndOfFileException(final String msg) {
-        super(msg);
+    public EndOfFileException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
 }
 

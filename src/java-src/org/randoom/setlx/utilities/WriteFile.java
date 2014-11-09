@@ -32,9 +32,9 @@ public class WriteFile {
             out = new BufferedWriter(fWr);
             out.write(content);
         } catch (final FileNotFoundException fnfe) {
-            throw new FileNotWritableException("File '" + fileName + "' could not be opened for writing.");
+            throw new FileNotWritableException("File '" + fileName + "' could not be opened for writing.", fnfe);
         } catch (final IOException ioe) {
-            throw new FileNotWritableException(ioe.getMessage());
+            throw new FileNotWritableException(ioe.getMessage(), ioe);
         } finally {
             try {
                 if (out != null) {

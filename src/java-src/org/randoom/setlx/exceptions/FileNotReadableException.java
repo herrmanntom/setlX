@@ -10,10 +10,11 @@ public class FileNotReadableException extends ParserException {
     /**
      * Create a new FileNotReadableException.
      *
-     * @param msg More detailed message.
+     * @param msg   More detailed message.
+     * @param cause Exception thrown by the JVM.
      */
-    public FileNotReadableException(final String msg) {
-        super(msg);
+    public FileNotReadableException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
 }
 

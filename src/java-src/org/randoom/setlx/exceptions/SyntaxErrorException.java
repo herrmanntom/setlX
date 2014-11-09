@@ -12,7 +12,7 @@ public class SyntaxErrorException extends ParserException {
     private final LinkedList<String> errors;
 
     private SyntaxErrorException(final String message, final LinkedList<String> errors) {
-        super(message);
+        super(message, null);
         this.errors  = errors;
     }
 

@@ -46,15 +46,11 @@ public class MathFunction extends PreDefinedProcedure {
             } catch (final SetlException se) {
                 throw se;
             } catch (final Exception e) {
-                if (state.isRuntimeDebuggingEnabled()) {
-                    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    e.printStackTrace(new PrintStream(out));
-                    state.errWrite(out.toString());
-                }
                 throw new JVMException(
                     "Error during calling a predefined mathematical function.\n" +
                     "This is probably a bug in the interpreter.\n" +
-                    "Please report it including executed source example."
+                    "Please report it including executed source example.",
+                    e
                 );
             }
         } else if (arg.getClass() == SetlObject.class) {

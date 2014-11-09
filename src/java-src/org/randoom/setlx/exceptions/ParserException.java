@@ -10,10 +10,11 @@ public abstract class ParserException extends CatchableInSetlXException {
     /**
      * Create new ParserException.
      *
-     * @param msg More detailed error message.
+     * @param msg   More detailed error message.
+     * @param cause Exception thrown by the JVM.
      */
-    public ParserException(final String msg) {
-        super(msg);
+    public ParserException(final String msg, Throwable cause) {
+        super(msg, cause);
     }
 }
 

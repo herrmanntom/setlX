@@ -313,9 +313,19 @@ public class State {
                 "Please report this error including steps and/or code to reproduce to" +
                 "`setlx@randoom.org'."
         );
+        errWriteStackTrace(e);
+    }
+
+    /**
+     * Write the stack trace message, after an exception occurred.
+     * Only prints output when runtime debugging is enabled.
+     *
+     * @param t Exception/Error that occurred.
+     */
+    public void errWriteStackTrace(final Throwable t) {
         if (isRuntimeDebuggingEnabled()) {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            e.printStackTrace(new PrintStream(out));
+            t.printStackTrace(new PrintStream(out));
             errWrite(out.toString());
         }
     }
@@ -348,9 +358,7 @@ public class State {
         errWriteLn(message);
 
         if (isRuntimeDebuggingEnabled()) {
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            soe.printStackTrace(new PrintStream(out));
-            errWrite(out.toString());
+            errWriteStackTrace(soe);
             errWriteLn("callStackDepth assumption was: " + firstCallStackDepth);
             errWriteLn("max callStackDepth is:         " + getMaxStackSize());
         }

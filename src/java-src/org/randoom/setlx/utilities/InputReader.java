@@ -56,7 +56,7 @@ public final class InputReader {
             throw eof;
         } catch (final JVMIOException e) {
             // should never happen
-            throw new EndOfFileException("unable to read from stdin...");
+            throw new EndOfFileException("unable to read from stdin...", e);
         }
     }
 }

@@ -10,10 +10,11 @@ public class FileNotWritableException extends SetlException {
     /**
      * Create a new FileNotWritableException.
      *
-     * @param msg More detailed message.
+     * @param msg   More detailed message.
+     * @param cause Exception thrown by the JVM.
      */
-    public FileNotWritableException(final String msg) {
-        super(msg);
+    public FileNotWritableException(final String msg, final Throwable cause) {
+        super(msg, cause);
     }
 }
 

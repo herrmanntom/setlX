@@ -66,6 +66,10 @@ public abstract class SetlException extends Exception {
                 state.errWriteLn(trace.get(i));
             }
         }
+        if (getCause() != null && state.isRuntimeDebuggingEnabled()) {
+            state.errWriteLn("Caused by:");
+            state.errWriteStackTrace(getCause());
+        }
     }
 }
 

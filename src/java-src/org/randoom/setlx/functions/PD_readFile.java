@@ -105,9 +105,9 @@ public class PD_readFile extends PreDefinedProcedure {
             return fileContent;
 
         } catch (final FileNotFoundException fnfe) {
-            throw new FileNotReadableException("File '" + fileName + "' does not exist.");
+            throw new FileNotReadableException("File '" + fileName + "' does not exist.", fnfe);
         } catch (final IOException ioe) {
-            throw new FileNotReadableException("Unable to read file '" + fileName + "'.");
+            throw new FileNotReadableException("Unable to read file '" + fileName + "'.", ioe);
         } finally {
             try {
                 if (fBr != null) {

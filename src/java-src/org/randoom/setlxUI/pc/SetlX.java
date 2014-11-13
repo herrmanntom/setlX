@@ -5,13 +5,11 @@ import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.utilities.TermConverter;
-import org.randoom.setlx.utilities.WriteFile;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.WriteFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,17 +17,19 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String  VERSION        = "2.3.3";
-    private final static String  SETLX_URL      = "http://setlX.randoom.org/";
-    private final static String  C_YEARS        = "2011-2014";
-    private final static String  VERSION_PREFIX = "v";
-    private final static String  HEADER         = "-====================================setlX====================================-";
+    private final static String  VERSION                = "2.3.3";
+    private final static String  SETLX_URL              = "http://setlX.randoom.org/";
+    private final static String  C_YEARS                = "2011-2014";
+    private final static String  VERSION_PREFIX         = "v";
+    private final static String  HEADER                 = "-====================================setlX====================================-";
 
-    private final static int     EXIT_OK        = 0;
-    private final static int     EXIT_ERROR     = 1;
+    private final static int     EXIT_OK                = 0;
+    private final static int     EXIT_ERROR             = 1;
+
+    private final static int     MAX_EXCEPTION_MESSAGES = 40;
 
     // print extra information and use correct indentation when printing statements etc
-    private       static boolean verbose        = false;
+    private       static boolean verbose                = false;
 
     /**
      * The main method.
@@ -63,6 +63,8 @@ public class SetlX {
         } catch (final IllegalRedefinitionException e) {
             // impossible
         }
+
+        state.setMaxExceptionMessages(MAX_EXCEPTION_MESSAGES);
 
         // split combined short options like -amn into -a -m -n
         final List<String> arguments = new ArrayList<String>(args.length);
@@ -359,7 +361,7 @@ public class SetlX {
                     programs.set(i, (Block) TermConverter.valueToStatement(state, programs.get(i).toTerm(state)));
                 } catch (final SetlException se) {
                     state.errWriteLn("Error during termLoop!");
-                    se.printExceptionsTrace(state, 40);
+                    se.printExceptionsTrace(state);
                 }
             }
         }
@@ -378,7 +380,7 @@ public class SetlX {
                         programs.get(i).toTerm(state).canonical(state, sb);
                     } catch (SetlException se) {
                         state.errWriteLn("Error during termDump!");
-                        se.printExceptionsTrace(state, 40);
+                        se.printExceptionsTrace(state);
                     }
                     programTerm = sb.toString();
                 }

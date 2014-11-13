@@ -131,75 +131,65 @@ public class CachedProcedure extends Procedure {
 
     @Override
     public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
-        try {
-            // increase callStackDepth
-            state.callStackDepth += 2; // lots of parameters here...
-            final SetlObject object = this.object;
-            this.object = null;
+        final SetlObject object = this.object;
+        this.object = null;
 
-            SetlList listArguments = null;
-            if (listArg != null) {
-                Value listArgument = listArg.eval(state);
-                if (listArgument.getClass() != SetlList.class) {
-                    throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
-                }
-                listArguments = (SetlList) listArgument;
+        SetlList listArguments = null;
+        if (listArg != null) {
+            Value listArgument = listArg.eval(state);
+            if (listArgument.getClass() != SetlList.class) {
+                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
             }
+            listArguments = (SetlList) listArgument;
+        }
 
-            int nArguments = args.size();
-            if (listArguments != null) {
-                nArguments += listArguments.size();
-            }
+        int nArguments = args.size();
+        if (listArguments != null) {
+            nArguments += listArguments.size();
+        }
 
-            if (!parameters.isAssignableWithThisManyActualArguments(nArguments)) {
-                final StringBuilder error = new StringBuilder();
-                error.append("'");
-                appendStringWithoutStatements(state, error);
-                error.append("'");
-                parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
-                throw new IncorrectNumberOfParametersException(error.toString());
-            }
+        if (!parameters.isAssignableWithThisManyActualArguments(nArguments)) {
+            final StringBuilder error = new StringBuilder();
+            error.append("'");
+            appendStringWithoutStatements(state, error);
+            error.append("'");
+            parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
+            throw new IncorrectNumberOfParametersException(error.toString());
+        }
 
-            // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<Value>(nArguments);
-            final SetlList key = new SetlList(nArguments);
-            for (Expr arg : args) {
-                final Value v = arg.eval(state);
-                values.add(v);
-                key.addMember(state, v);
+        // evaluate arguments
+        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        final SetlList key = new SetlList(nArguments);
+        for (Expr arg : args) {
+            final Value v = arg.eval(state);
+            values.add(v);
+            key.addMember(state, v);
+        }
+        if (listArguments != null) {
+            for (Value listArgument : listArguments) {
+                values.add(listArgument);
+                key.addMember(state, listArgument);
             }
-            if (listArguments != null) {
-                for (Value listArgument : listArguments) {
-                    values.add(listArgument);
-                    key.addMember(state, listArgument);
-                }
-            }
+        }
 
-            Value cachedResult = null;
-            final SoftReference<Value> result = cache.get(key);
-            if (result != null) {
-                cachedResult = result.get();
-            }
+        Value cachedResult = null;
+        final SoftReference<Value> result = cache.get(key);
+        if (result != null) {
+            cachedResult = result.get();
+        }
 
-            if (cachedResult != null) {
-                ++cacheHits;
-                return cachedResult.clone();
-            } else {
-                // cache om to prevent recursion loop
-                cache.put(key, new SoftReference<Value>(Om.OM));
-                // call function
-                cachedResult = callAfterEval(state, args, values, object);
-                // put value into cache
-                cache.put(key, new SoftReference<Value>(cachedResult));
-                // return value
-                return cachedResult.clone();
-            }
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
-        } finally {
-            // decrease callStackDepth
-            state.callStackDepth -= 2;
+        if (cachedResult != null) {
+            ++cacheHits;
+            return cachedResult.clone();
+        } else {
+            // cache om to prevent recursion loop
+            cache.put(key, new SoftReference<Value>(Om.OM));
+            // call function
+            cachedResult = callAfterEval(state, args, values, object);
+            // put value into cache
+            cache.put(key, new SoftReference<Value>(cachedResult));
+            // return value
+            return cachedResult.clone();
         }
     }
 

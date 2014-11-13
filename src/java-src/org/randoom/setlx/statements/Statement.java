@@ -69,12 +69,10 @@ public abstract class Statement extends ImmutableCodeFragment {
             return EXECUTE.EXIT;
 
         } catch (final SetlException se) { // user/code did something wrong
-            se.printExceptionsTrace(state, 40);
+            se.printExceptionsTrace(state);
             return EXECUTE.ERROR;
 
         } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-
             state.errWriteOutOfStack(soe, false);
             return EXECUTE.ERROR;
 
@@ -102,7 +100,7 @@ public abstract class Statement extends ImmutableCodeFragment {
     /**
      * Subclass to cheat the end of the world... or stack, whatever comes first.
      */
-    protected class StatementRunner extends BaseRunnable {
+    private class StatementRunner extends BaseRunnable {
         private final Statement     statement;
         private       ReturnMessage result;
 
@@ -112,8 +110,8 @@ public abstract class Statement extends ImmutableCodeFragment {
          * @param statement Statement to execute.
          * @param state     Current state of the running setlX program.
          */
-        /*package*/ StatementRunner(final Statement statement, final State state) {
-            super(state, false);
+        private StatementRunner(final Statement statement, final State state) {
+            super(state, StackSize.LARGE);
             this.statement = statement;
             this.result     = null;
         }

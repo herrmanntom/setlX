@@ -50,26 +50,22 @@ public abstract class SetlException extends Exception {
      * Messages in the middle of the trace are suppressed, when number of messages
      * exceeds the 'max_messages' parameter.
      *
-     * @param state        State of the currently executed SetlX program.
-     * @param max_messages Maximum of messages to print.
+     * @param state State of the currently executed SetlX program.
      */
-    public void printExceptionsTrace(final State state, final int max_messages) {
+    public void printExceptionsTrace(final State state) {
         final int end = trace.size();
-        final int m_2 = max_messages / 2;
+        final int m_2 = state.getMaxExceptionMessages() / 2;
         for (int i = end - 1; i >= 0; --i) {
             // leave out some messages in the middle, which are most likely just clutter
-            if (end > max_messages && i > m_2 - 1 && i < end - (m_2 + 1)) {
+            if (end > state.getMaxExceptionMessages() && i > m_2 - 1 && i < end - (m_2 + 1)) {
                 if (i == m_2) {
-                    state.errWriteLn(" ... \n     omitted " + (end - max_messages) + " messages\n ... ");
+                    state.errWriteLn(" ... \n     omitted " + (end - state.getMaxExceptionMessages()) + " messages\n ... ");
                 }
             } else {
                 state.errWriteLn(trace.get(i));
             }
         }
-        if (getCause() != null && state.isRuntimeDebuggingEnabled()) {
-            state.errWriteLn("Caused by:");
-            state.errWriteStackTrace(getCause());
-        }
+        state.errWriteStackTrace(getCause(), true);
     }
 }
 

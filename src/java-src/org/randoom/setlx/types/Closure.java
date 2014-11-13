@@ -123,9 +123,6 @@ public class Closure extends Procedure {
 
     @Override
     protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
-        // increase callStackDepth
-        state.callStackDepth += 2; // lots of parameters here...
-
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
@@ -172,9 +169,6 @@ public class Closure extends Procedure {
                 }
             }
 
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
         } finally { // make sure scope is always reset
             // restore old scope
             state.setScope(oldScope);
@@ -183,9 +177,6 @@ public class Closure extends Procedure {
             if (wba != null) {
                 wba.writeBack(state, FUNCTIONAL_CHARACTER);
             }
-
-            // decrease callStackDepth
-            state.callStackDepth -= 2;
         }
 
         if (result != null) {

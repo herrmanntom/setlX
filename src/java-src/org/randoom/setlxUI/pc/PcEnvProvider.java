@@ -169,24 +169,24 @@ public class PcEnvProvider implements EnvironmentProvider {
     }
 
     @Override
-    public int getMaximumNumberOfThreads() {
+    public int getStackSizeWishInKb() {
         if (IS_32_BIT_VM) {
-            return 64;
+            return 86 * 1024;
         }
-        return 256;
+        return 172 * 1024;
     }
 
     @Override
-    public int getStackSizeWishInKb() {
-        if (IS_32_BIT_VM) {
-            return 1024;
-        }
-        return 2048;
+    public int getMediumStackSizeWishInKb() {
+        return 0; // use default
     }
 
     @Override
     public int getSmallStackSizeWishInKb() {
-        return 0; // use default
+        if (IS_32_BIT_VM) {
+            return 256;
+        }
+        return 512;
     }
 }
 

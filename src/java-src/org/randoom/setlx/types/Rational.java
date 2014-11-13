@@ -426,7 +426,7 @@ public class Rational extends NumberValue {
         /*package*/   BigInteger result;
 
         public Factorial(final State state, final int from, final int to, int runnerIndex) {
-            super(state, true);
+            super(state, StackSize.SMALL);
             this.from        = from;
             this.to          = to;
             this.runnerIndex = runnerIndex;

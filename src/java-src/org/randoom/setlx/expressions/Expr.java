@@ -29,9 +29,6 @@ public abstract class Expr extends ImmutableCodeFragment {
      */
     public Value eval(final State state) throws SetlException {
         try {
-            // increase callStackDepth
-            state.callStackDepth += 2; // one for this eval(), one for evaluate()
-
             if (isNotReplaceable) {
                 return this.evaluate(state);
             }
@@ -58,12 +55,6 @@ public abstract class Expr extends ImmutableCodeFragment {
         } catch (final SetlException se) {
             se.addToTrace("Error in \"" + this.toString(state) + "\":");
             throw se;
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
-        } finally {
-            // decrease callStackDepth
-            state.callStackDepth -= 2;
         }
     }
 

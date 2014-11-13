@@ -9,5 +9,5 @@ sum := procedure(n) {
 
 n := read(":");
 total := sum(n);
-print("Summe 0 + 1 + 2 + ... + ", n, " = ", total);
+print("Sum 0 + 1 + 2 + ... + ", n, " = ", total);
 

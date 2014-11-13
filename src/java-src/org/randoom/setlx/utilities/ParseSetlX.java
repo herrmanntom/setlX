@@ -270,7 +270,7 @@ public class ParseSetlX {
         private       ImmutableCodeFragment result;
 
         /*package*/ ParserRunner(State state, final SetlXgrammarParser parser, final CodeType type) {
-            super(state, false);
+            super(state, StackSize.MEDIUM);
             this.parser = parser;
             this.type   = type;
             this.result = null;
@@ -303,7 +303,7 @@ public class ParseSetlX {
         private final CodeFragment fragment;
 
         /*package*/ OptimizerRunner(final State state, final CodeFragment fragment) {
-            super(state, false);
+            super(state, StackSize.LARGE);
             this.fragment = fragment;
         }
 

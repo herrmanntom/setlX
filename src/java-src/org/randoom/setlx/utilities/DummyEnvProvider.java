@@ -69,12 +69,12 @@ public final class DummyEnvProvider implements EnvironmentProvider {
     }
 
     @Override
-    public int getMaximumNumberOfThreads() {
-        return Integer.MAX_VALUE;
+    public int getStackSizeWishInKb() {
+        return 0;
     }
 
     @Override
-    public int getStackSizeWishInKb() {
+    public int getMediumStackSizeWishInKb() {
         return 0;
     }
 

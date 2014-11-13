@@ -69,23 +69,15 @@ public abstract class AbstractTryCatchBranch extends ImmutableCodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public final ReturnMessage execute(final State state, final CatchableInSetlXException cise) throws SetlException {
-        try {
-            // increase callStackDepth
-            ++(state.callStackDepth);
-
-            if (cise instanceof ThrownInSetlXException) {
-                // assign directly
-                errorVar.assign(state, ((ThrownInSetlXException) cise).getValue().clone(), getFunctionalCharacter());
-            } else {
-                // wrap into error
-                errorVar.assign(state, new SetlError(cise), getFunctionalCharacter());
-            }
-            // execute
-            return blockToRecover.execute(state);
-        } finally {
-            // decrease callStackDepth
-            --(state.callStackDepth);
+        if (cise instanceof ThrownInSetlXException) {
+            // assign directly
+            errorVar.assign(state, ((ThrownInSetlXException) cise).getValue().clone(), getFunctionalCharacter());
+        } else {
+            // wrap into error
+            errorVar.assign(state, new SetlError(cise), getFunctionalCharacter());
         }
+        // execute
+        return blockToRecover.execute(state);
     }
 
     /* term operations */

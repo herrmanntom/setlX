@@ -3,30 +3,26 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.JVMIOException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
-import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.SetlDouble.DoublePrintMode;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.math.BigDecimal;
-import java.security.InvalidParameterException;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
+import java.util.*;
 
 /**
  * This class represents the current state of the interpreter.
  */
 public class State {
 
+    /**
+     * Get detailed implementation version of this setlX binary.
+     *
+     * @return Implementation version.
+     */
     public static String getSetlXSourceVersion() {
         String implementationVersion = State.class.getPackage().getImplementationVersion();
         if (implementationVersion == null) {
@@ -47,10 +43,6 @@ public class State {
      * Print a trace when assigning variables.
      */
     public                boolean                traceAssignments;
-    /**
-     * Current call stack depth assumption.
-     */
-    public                int                    callStackDepth;
     /**
      * Execution should be terminated at the next possibility.
      */
@@ -80,11 +72,6 @@ public class State {
 
     // number of CPUs/Cores in System
     private final static  int                    CORES = Runtime.getRuntime().availableProcessors();
-    // measurement of this JVM's stack size
-    private       static  int                    STACK_MEASUREMENT;
-    // maximum accepted stack measurement; is roughly equal to -Xss48m using the 64 bit OpenJDK 7
-    private final static  int                    ABSOLUTE_MAX_STACK = 2 * 1024 * 1024;
-
 
     // is input feed by a human?
     private               boolean                human;
@@ -92,14 +79,13 @@ public class State {
     // random number generator
     private               Random                 randoom;
 
-    private               int                    firstCallStackDepth;
-
     private               boolean                randoomPredictable;
     private               boolean                multiLineMode;
     private               boolean                interactive;
     private               boolean                printVerbose;
     private               boolean                assertsDisabled;
     private               boolean                runtimeDebuggingEnabled;
+    private               int                    maxExceptionMessages;
 
     /**
      * Create new state implementation, using a dummy environment.
@@ -127,6 +113,7 @@ public class State {
         traceAssignments        = false;
         assertsDisabled         = false;
         runtimeDebuggingEnabled = false;
+        maxExceptionMessages    = 40;
         setEnvironmentProvider(envProvider);
         resetState(false);
     }
@@ -156,8 +143,6 @@ public class State {
         if (cleanup) {
             ROOT_SCOPE.clearUndefinedAndInnerBindings();
         }
-        callStackDepth      = 0;
-        firstCallStackDepth = -1;
         executionStopped    = false;
     }
 
@@ -168,10 +153,6 @@ public class State {
      */
     public void setEnvironmentProvider(final EnvironmentProvider envProvider) {
         this.envProvider = envProvider;
-        STACK_MEASUREMENT = -1;
-        if (envProvider != DummyEnvProvider.DUMMY) {
-            measureStackSize(this);
-        }
     }
 
     /**
@@ -305,7 +286,7 @@ public class State {
      * Write the standard error message, after an otherwise unhandled exception occurred.
      * Prints some extra debug output when runtime debugging is enabled.
      *
-     * @param e Exception that occurred.
+     * @param e \Exception that occurred.\
      */
     public void errWriteInternalError(final Exception e) {
         errWriteLn(
@@ -313,20 +294,37 @@ public class State {
                 "Please report this error including steps and/or code to reproduce to" +
                 "`setlx@randoom.org'."
         );
-        errWriteStackTrace(e);
+        errWriteStackTrace(e, false);
     }
 
     /**
      * Write the stack trace message, after an exception occurred.
      * Only prints output when runtime debugging is enabled.
      *
-     * @param t Exception/Error that occurred.
+     * @param t       Exception/Error that occurred.
+     * @param isCause Is this throwable the cause of an already printed one?
      */
-    public void errWriteStackTrace(final Throwable t) {
-        if (isRuntimeDebuggingEnabled()) {
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            t.printStackTrace(new PrintStream(out));
-            errWrite(out.toString());
+    public void errWriteStackTrace(final Throwable t, boolean isCause) {
+        if (isRuntimeDebuggingEnabled() && t != null) {
+            if (isCause) {
+                errWrite("Caused by: ");
+            }
+            errWriteLn(t.getClass().getName() + ": " +  t.getMessage());
+            StackTraceElement[] stackTrace = t.getStackTrace();
+            int maxExceptionMessages = this.maxExceptionMessages * 2;
+            final int end = stackTrace.length;
+            final int m_2 = maxExceptionMessages / 2;
+            for (int i = 0; i < end; ++i) {
+                // leave out some messages in the middle, which are most likely just clutter
+                if (end > maxExceptionMessages && i > m_2 - 1 && i < end - (m_2 + 1)) {
+                    if (i == m_2) {
+                        errWriteLn("   ... \n     omitted " + (end - maxExceptionMessages) + " messages\n   ... ");
+                    }
+                } else {
+                    errWriteLn("  at " + stackTrace[i].toString());
+                }
+            }
+            errWriteStackTrace(t.getCause(), true);
         }
     }
 
@@ -358,9 +356,7 @@ public class State {
         errWriteLn(message);
 
         if (isRuntimeDebuggingEnabled()) {
-            errWriteStackTrace(soe);
-            errWriteLn("callStackDepth assumption was: " + firstCallStackDepth);
-            errWriteLn("max callStackDepth is:         " + getMaxStackSize());
+            errWriteStackTrace(soe, false);
         }
     }
 
@@ -586,100 +582,6 @@ public class State {
     }
 
     /**
-     * Estimate maximum number of stack frames on current JVM.
-     *
-     * @return Maximum number of stack frames.
-     */
-    public int getMaxStackSize() {
-        // As setlX's estimation is far from perfect, we assume somewhat more
-        // stack usage then its internal accounting guesses.
-        // Also a few stack (~100) frames should be free for functions out of our
-        // control, like the ones from the JDK ;-)
-        //
-        // Thus the maximum stack size is about 4/5 of (measured stack - 100).
-
-        return ((measureStackSize(this) - 100) * 4) / 5;
-    }
-
-    /**
-     * Measure maximum number of stack frames on current JVM.
-     *
-     * @return Maximum number of stack frames.
-     */
-    private static int measureStackSize(State state) {
-        if (STACK_MEASUREMENT <= 0) {
-            // create new thread to measure entire stack size, independent of
-            // current stack usage size in this thread.
-            // Do it twice, because lazy VMs only honor the request for more stack after it ran out once...
-            for (int i = 0; i < 2; ++i) {
-                try {
-                    new StackEstimator(state).startAsThread();
-                } catch (StopExecutionException see) {
-                    // don't care
-                } catch (SetlException e) {
-                    // impossible
-                    e.printStackTrace();
-                }
-            }
-            // round it down to hundreds of stack frames
-            STACK_MEASUREMENT = (STACK_MEASUREMENT / 250) * 250;
-        }
-        return STACK_MEASUREMENT;
-    }
-
-    private static class StackEstimator extends BaseRunnable {
-        /**
-         * Create a new StackEstimator
-         *
-         * @param state Current state of the running setlX program.
-         */
-        protected StackEstimator(State state) {
-            super(state, false);
-        }
-
-        @Override
-        public void exec(State state) {
-            try {
-                measureStackSize_slave(BigDecimal.valueOf(1), 2);
-            } catch (final StackOverflowError soe) {
-                // if control gets here, the measurement is done
-            }
-        }
-
-        @Override
-        public String getThreadName() {
-            return "stackEstimator";
-        }
-
-        private static BigDecimal measureStackSize_slave(BigDecimal argObject, int size) {
-            STACK_MEASUREMENT = size;
-            if (size >= ABSOLUTE_MAX_STACK) {
-                // Forever loop protection in case Java ever gets an unlimited stack.
-                return argObject;
-            }
-            return measureStackSize_slave(argObject.add(BigDecimal.valueOf(1)), ++size);
-        }
-    }
-
-    /**
-     * Store call stack depth given to this function when it is invoked the
-     * first time.
-     * Subsequent invocations do nothing until the state is reset.
-     *
-     * @param callStackDepth Call stack depth to store.
-     */
-    public void storeStackDepthOfFirstCall(final int callStackDepth) {
-        if (firstCallStackDepth < 0 && callStackDepth > 0) {
-            firstCallStackDepth = callStackDepth;
-        }
-        if (this.callStackDepth != callStackDepth) {
-            // this should not be possible!
-            // but reading the parameter prevents javac optimizing the whole thing away
-            throw new InvalidParameterException("this.callStackDepth != callStackDepth");
-        }
-    }
-
-    /**
      * Set flag to stop execution when it is checked by the next statement
      * or expression.
      *
@@ -792,6 +694,25 @@ public class State {
      */
     public boolean isRuntimeDebuggingEnabled() {
         return runtimeDebuggingEnabled;
+    }
+
+    /**
+     * Get maximum number of messages to print when dumping stack trace.
+     *
+     * @return Maximum number of messages to print.
+     */
+    public int getMaxExceptionMessages() {
+        return maxExceptionMessages;
+    }
+
+
+    /**
+     * Set maximum number of messages to print when dumping stack trace.
+     *
+     * @param maxExceptionMessages Maximum number of messages to print.
+     */
+    public void setMaxExceptionMessages(int maxExceptionMessages) {
+        this.maxExceptionMessages = maxExceptionMessages;
     }
 
     /**
@@ -978,11 +899,7 @@ public class State {
     public boolean putValueCheckUpTo(final String var, final Value value, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
         final Value now = classDefinitions.get(var);
         if (now != null) {
-            if (now.equalTo(value)) {
-                return true;
-            } else {
-                return false;
-            }
+            return now.equalTo(value);
         }
         final boolean result = variableScope.storeValueCheckUpTo(this, var, value, outerScope, checkObjects);
         if (traceAssignments && result) {

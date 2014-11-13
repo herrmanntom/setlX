@@ -345,17 +345,7 @@ public class SetlIterator extends ImmutableCodeFragment {
                    Stops iteration if requested by execution.                 */
                 ReturnMessage result;
                 if (next != null) {
-                    try {
-                        // increase callStackDepth
-                        state.callStackDepth += 2; // lots of parameters
-                        result = next.evaluate(state, exec, outerScope);
-                    } catch (final StackOverflowError soe) {
-                        state.storeStackDepthOfFirstCall(state.callStackDepth);
-                        throw soe;
-                    } finally {
-                        // decrease callStackDepth
-                        state.callStackDepth -= 2;
-                    }
+                    result = next.evaluate(state, exec, outerScope);
                 } else {
                     result = exec.execute(state, v);
                 }

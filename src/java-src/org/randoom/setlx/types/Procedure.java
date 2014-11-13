@@ -101,55 +101,44 @@ public class Procedure extends ImmutableValue {
 
     @Override
     public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
-        try {
-            // increase callStackDepth
-            state.callStackDepth += 2; // lots of parameters here...
+        final SetlObject object = this.object;
+        this.object = null;
 
-            final SetlObject object = this.object;
-            this.object = null;
-
-            SetlList listArguments = null;
-            if (listArg != null) {
-                Value listArgument = listArg.eval(state);
-                if (listArgument.getClass() != SetlList.class) {
-                    throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
-                }
-                listArguments = (SetlList) listArgument;
+        SetlList listArguments = null;
+        if (listArg != null) {
+            Value listArgument = listArg.eval(state);
+            if (listArgument.getClass() != SetlList.class) {
+                throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
             }
-
-            int nArguments = args.size();
-            if (listArguments != null) {
-                nArguments += listArguments.size();
-            }
-
-            if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
-                final StringBuilder error = new StringBuilder();
-                error.append("'");
-                appendStringWithoutStatements(state, error);
-                error.append("'");
-                parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
-                throw new IncorrectNumberOfParametersException(error.toString());
-            }
-
-            // evaluate arguments
-            final ArrayList<Value> values = new ArrayList<Value>(nArguments);
-            for (final Expr arg : args) {
-                values.add(arg.eval(state));
-            }
-            if (listArguments != null) {
-                for (Value listArgument : listArguments) {
-                    values.add(listArgument);
-                }
-            }
-
-            return callAfterEval(state, args, values, object);
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
-        } finally {
-            // decrease callStackDepth
-            state.callStackDepth -= 2;
+            listArguments = (SetlList) listArgument;
         }
+
+        int nArguments = args.size();
+        if (listArguments != null) {
+            nArguments += listArguments.size();
+        }
+
+        if (! parameters.isAssignableWithThisManyActualArguments(nArguments)) {
+            final StringBuilder error = new StringBuilder();
+            error.append("'");
+            appendStringWithoutStatements(state, error);
+            error.append("'");
+            parameters.appendIncorrectNumberOfParametersErrorMessage(error, nArguments);
+            throw new IncorrectNumberOfParametersException(error.toString());
+        }
+
+        // evaluate arguments
+        final ArrayList<Value> values = new ArrayList<Value>(nArguments);
+        for (final Expr arg : args) {
+            values.add(arg.eval(state));
+        }
+        if (listArguments != null) {
+            for (Value listArgument : listArguments) {
+                values.add(listArgument);
+            }
+        }
+
+        return callAfterEval(state, args, values, object);
     }
 
     /**
@@ -164,9 +153,6 @@ public class Procedure extends ImmutableValue {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
-        // increase callStackDepth
-        state.callStackDepth += 2; // lots of parameters here...
-
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
@@ -198,9 +184,6 @@ public class Procedure extends ImmutableValue {
                 wba = parameters.extractRwParametersFromScope(state, args);
             }
 
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
         } finally { // make sure scope is always reset
             // restore old scope
             state.setScope(oldScope);
@@ -209,9 +192,6 @@ public class Procedure extends ImmutableValue {
             if (wba != null) {
                 wba.writeBack(state, FUNCTIONAL_CHARACTER);
             }
-
-            // decrease callStackDepth
-            state.callStackDepth -= 2;
         }
 
         if (result != null) {

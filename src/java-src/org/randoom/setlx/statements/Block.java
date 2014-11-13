@@ -30,8 +30,6 @@ import java.util.List;
 public class Block extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Block.class);
-    // how deep can the call stack be, before checking to replace the stack
-    private       static int    MAX_CALL_STACK_DEPTH = -1;
 
     private final FragmentList<Statement> statements;
 
@@ -62,42 +60,15 @@ public class Block extends Statement {
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        // store and increase callStackDepth
-        final int oldCallStackDepth = state.callStackDepth;
-        state.callStackDepth += 2; // one for the block, one for the next statement
-
-        boolean executeInCurrentStack = true;
-        if (MAX_CALL_STACK_DEPTH < 0) {
-            MAX_CALL_STACK_DEPTH = state.getMaxStackSize();
-        }
-        if (MAX_CALL_STACK_DEPTH > 0 && state.callStackDepth >= MAX_CALL_STACK_DEPTH) {
-            executeInCurrentStack = false;
-        }
-
-        try {
-            if (executeInCurrentStack) {
-                ReturnMessage result;
-                for (final Statement stmnt : statements) {
-                    if (state.executionStopped) {
-                        throw new StopExecutionException();
-                    }
-                    result = stmnt.execute(state);
-                    if (result != null) {
-                        return result;
-                    }
-                }
-            } else {
-                // prevent running out of stack by creating a new thread
-                StatementRunner statementRunner = new StatementRunner(this, state);
-                statementRunner.startAsThread();
-                return statementRunner.getResult();
+        ReturnMessage result;
+        for (final Statement stmnt : statements) {
+            if (state.executionStopped) {
+                throw new StopExecutionException();
             }
-        } catch (final StackOverflowError soe) {
-            state.storeStackDepthOfFirstCall(state.callStackDepth);
-            throw soe;
-        } finally {
-            // reset callStackDepth
-            state.callStackDepth = oldCallStackDepth;
+            result = stmnt.execute(state);
+            if (result != null) {
+                return result;
+            }
         }
         return null;
     }

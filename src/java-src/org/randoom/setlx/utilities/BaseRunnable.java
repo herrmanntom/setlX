@@ -3,28 +3,36 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 /**
  * Base class for all Runnables in setlX.
  * Mainly used to control naming and stack size.
  */
 public abstract class BaseRunnable implements Runnable {
-    private final static AtomicInteger count = new AtomicInteger(0);
-
     private final State     state;
-    private final boolean   smallStackSize;
+    private final StackSize stackSize;
     private       Throwable error;
 
     /**
-     * Initialize this new BaseRunnable
-     * @param state          Current state of the running setlX program.
-     * @param smallStackSize Set low stack size for this thread.
+     * Select how much Stack this thread should request
      */
-    protected BaseRunnable(State state, boolean smallStackSize) {
-        this.state          = state;
-        this.smallStackSize = smallStackSize;
-        this.error          = null;
+    public static enum StackSize {
+        /** request large stack size */
+        LARGE,
+        /** request medium stack size */
+        MEDIUM,
+        /** request small stack size */
+        SMALL
+    }
+
+    /**
+     * Initialize this new BaseRunnable
+     * @param state     Current state of the running setlX program.
+     * @param stackSize Set preferred stack size for this thread.
+     */
+    protected BaseRunnable(State state, StackSize stackSize) {
+        this.state     = state;
+        this.stackSize = stackSize;
+        this.error     = null;
     }
 
     /**
@@ -34,28 +42,30 @@ public abstract class BaseRunnable implements Runnable {
      */
     public Thread createThread() {
         EnvironmentProvider environmentProvider = state.getEnvironmentProvider();
-        if (count.getAndIncrement() >= environmentProvider.getMaximumNumberOfThreads()) {
-            throw new StackOverflowError("Out of stack replacement threads.");
-        }
-        int stackSize;
-        if (smallStackSize) {
-            stackSize = environmentProvider.getSmallStackSizeWishInKb();
+        int size;
+        if (stackSize == StackSize.SMALL) {
+            size = environmentProvider.getSmallStackSizeWishInKb();
+        } else if (stackSize == StackSize.MEDIUM) {
+            size = environmentProvider.getMediumStackSizeWishInKb();
         } else {
-            stackSize = environmentProvider.getStackSizeWishInKb();
+            size = environmentProvider.getStackSizeWishInKb();
         }
         Thread currentThread = Thread.currentThread();
         return new Thread(
                 currentThread.getThreadGroup(),
                 this,
                 currentThread.getName() + "::" + getThreadName(),
-                stackSize * 1024
+                size * 1024
         );
     }
 
+    /**
+     * Start this runnable as a thread and return after that thread finishes.
+     * Rethrows all exceptions thrown in that thread.
+     *
+     * @throws SetlException when this exception was thrown in started thread.
+     */
     public void startAsThread() throws SetlException {
-        // store and increase callStackDepth
-        final int oldCallStackDepth = state.callStackDepth;
-
         try {
             // prevent running out of stack by creating a new thread
             Thread thread = createThread();
@@ -67,7 +77,6 @@ public abstract class BaseRunnable implements Runnable {
                 if (error instanceof SetlException) {
                     throw (SetlException) error;
                 } else if (error instanceof StackOverflowError) {
-                    state.storeStackDepthOfFirstCall(state.callStackDepth);
                     throw (StackOverflowError) error;
                 } else if (error instanceof OutOfMemoryError) {
                     throw (OutOfMemoryError) error;
@@ -77,16 +86,12 @@ public abstract class BaseRunnable implements Runnable {
             }
         } catch (final InterruptedException e) {
             throw new StopExecutionException();
-        } finally {
-            // reset callStackDepth
-            state.callStackDepth = oldCallStackDepth;
         }
     }
 
     @Override
     public final void run() {
         try {
-            state.callStackDepth  = 0;
             exec(state);
         } catch (final SetlException se) {
             error = se;
@@ -96,8 +101,6 @@ public abstract class BaseRunnable implements Runnable {
             error = oome;
         } catch (final RuntimeException re) {
             error = re;
-        } finally {
-            count.getAndDecrement();
         }
     }
 

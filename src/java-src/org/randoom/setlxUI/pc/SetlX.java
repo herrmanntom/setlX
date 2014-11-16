@@ -217,11 +217,6 @@ public class SetlX {
                     termLoop
             );
             if ( ! noExecution) {
-                try {
-                    Thread.sleep(50); // wait a bit for the optimizer
-                } catch (InterruptedException ie) {
-                    // don't care
-                }
                 executeFiles(state, programs);
             }
         } else {
@@ -247,11 +242,6 @@ public class SetlX {
                 }
                 blk.markLastExprStatement();
                 skipTest = false;
-                try {
-                    Thread.sleep(50); // wait a bit for the optimizer
-                } catch (InterruptedException ie) {
-                    // don't care
-                }
             } catch (final EndOfFileException eofe) {
                 // user wants to quit
                 state.outWriteLn("\n\nGood Bye! (EOF)");

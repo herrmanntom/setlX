@@ -100,7 +100,7 @@ public abstract class Statement extends ImmutableCodeFragment {
     /**
      * Subclass to cheat the end of the world... or stack, whatever comes first.
      */
-    private class StatementRunner extends BaseRunnable {
+    private class StatementRunner extends ErrorHandlingRunnable {
         private final Statement     statement;
         private       ReturnMessage result;
 

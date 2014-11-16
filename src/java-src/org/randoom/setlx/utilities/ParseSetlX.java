@@ -2,7 +2,8 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.grammar.*;
+import org.randoom.setlx.grammar.SetlXgrammarLexer;
+import org.randoom.setlx.grammar.SetlXgrammarParser;
 import org.randoom.setlx.statements.Block;
 
 import org.antlr.v4.runtime.*;
@@ -10,8 +11,8 @@ import org.antlr.v4.runtime.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class ParseSetlX {
 
-    private enum CodeType {
+    private static enum CodeType {
         EXPR,
         BLOCK
     }
@@ -156,7 +157,7 @@ public class ParseSetlX {
     }
 
     private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final CodeType type) throws SyntaxErrorException, StopExecutionException {
-        SetlXgrammarLexer lexer = null;
+        SetlXgrammarLexer  lexer  = null;
         SetlXgrammarParser parser = null;
         final LinkedList<String> oldCap = state.getParserErrorCapture();
         try {
@@ -218,7 +219,7 @@ public class ParseSetlX {
             // start optimizing the fragment
             if (fragment != null) {
                 try {
-                    new OptimizerRunner(state, fragment).startAsThread();
+                    fragment.optimize(state);
                 } catch (final StackOverflowError soe) {
                     state.errWriteLn("Error while optimizing parsed code.");
                     state.errWriteOutOfStack(soe, false);
@@ -228,8 +229,6 @@ public class ParseSetlX {
                 } catch (final RuntimeException e) {
                     state.errWriteLn("Error while optimizing parsed code.");
                     state.errWriteInternalError(e);
-                } catch (SetlException e) {
-                    // don't care
                 }
             }
 
@@ -264,12 +263,12 @@ public class ParseSetlX {
     }
 
     // private subclass to execute the parser in a different thread
-    private static class ParserRunner extends BaseRunnable {
+    private static class ParserRunner extends ErrorHandlingRunnable {
         private final SetlXgrammarParser    parser;
         private final CodeType              type;
         private       ImmutableCodeFragment result;
 
-        /*package*/ ParserRunner(State state, final SetlXgrammarParser parser, final CodeType type) {
+        private ParserRunner(State state, final SetlXgrammarParser parser, final CodeType type) {
             super(state, StackSize.MEDIUM);
             this.parser = parser;
             this.type   = type;
@@ -295,26 +294,6 @@ public class ParseSetlX {
 
         public CodeFragment getResult() {
             return ImmutableCodeFragment.unify(result);
-        }
-    }
-
-    // private subclass to execute optimization using a different thread
-    private static class OptimizerRunner extends BaseRunnable {
-        private final CodeFragment fragment;
-
-        /*package*/ OptimizerRunner(final State state, final CodeFragment fragment) {
-            super(state, StackSize.LARGE);
-            this.fragment = fragment;
-        }
-
-        @Override
-        public void exec(State state) {
-            fragment.optimize(state);
-        }
-
-        @Override
-        public String getThreadName() {
-            return "optimizer";
         }
     }
 

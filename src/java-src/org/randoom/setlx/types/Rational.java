@@ -434,7 +434,7 @@ public class Rational extends NumberValue {
         }
 
         @Override
-        public void exec(State state) {
+        public void run() {
             for (int i = from + 1; i < to; ++i) {
                 result = result.multiply(BigInteger.valueOf(i));
             }

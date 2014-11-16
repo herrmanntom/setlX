@@ -84,15 +84,15 @@ chmod +x /usr/local/bin/setlX
 \end{center}
 
 \begin{enumerate}
-	\item Copy all `\command{setlX*.jar}' files and the `\command{setlX.cmd}' file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Progam Files\textbackslash{}setlX\textbackslash{}}').
+	\item Copy all `\command{setlX*.jar}' files and the `\command{setlX.cmd}' file into some folder, which is accessible by all users, who should be able to execute \setlX{} (e.g. `\command{C:\textbackslash{}Program Files\textbackslash{}setlX\textbackslash{}}').
 	\item Open the copied `\command{setlX.cmd}'-script in your favorite text editor.
 	\item Change the contents of the `\command{setlXJarDirectory}'-variable to the path where you copied the jar-files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
-set setlXJarDirectory=C:\Progam Files\setlX\
+set setlXJarDirectory=C:\Program Files\setlX\
 \end{lstlisting}
 	\item \textbf{(Optional)} Change the `\command{SETLX\_LIBRARY\_PATH}'-variable and set it to the path where \setlX{} should look for library files, e.g.
 \begin{lstlisting}[frame=none,numbers=none]
-set SETLX_LIBRARY_PATH=C:\Progam Files\setlX\library
+set SETLX_LIBRARY_PATH=C:\Program Files\setlX\library
 \end{lstlisting}
 	\item Save and close the file.
 	\item Add the folder you placed both files into to the search-path (requires Administrator privileges):
@@ -107,7 +107,7 @@ set SETLX_LIBRARY_PATH=C:\Progam Files\setlX\library
 		\item Select the `\command{Path}' variable in the `\command{System variables}' section and click on `\command{Edit...}', which opens jet another window.
 		\item Do not alter the existing content of the `\command{Variable value}' field, but add a semicolon (`\command{;}'), followed by the full path to the folder where you installed setlX, to its very end. Using the previous example path, the new value should look like:
 \begin{lstlisting}[frame=none,numbers=none]
-<previous value>;C:\Progam Files\setlX
+<previous value>;C:\Program Files\setlX
 \end{lstlisting}
 		\item Accept all changes by clicking `\command{OK}' in all windows you opened before.
 		\item End you current session and login into Windows again.

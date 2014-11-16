@@ -71,7 +71,7 @@ public class Rational extends NumberValue {
     private final static    BigInteger  INTEGER_MAX_VALUE = BigInteger.valueOf(Integer.MAX_VALUE);
     private final static    BigInteger  INTEGER_MIN_VALUE = BigInteger.valueOf(Integer.MIN_VALUE);
 
-    private final           BigInteger  nominator;
+    private final           BigInteger  numerator;
     private final           BigInteger  denominator;
     private final           boolean     isInteger;
 
@@ -80,17 +80,17 @@ public class Rational extends NumberValue {
     }
 
     private Rational(final BigInteger number) {
-        this.nominator      = number;
-        this.denominator    = BigInteger.ONE;
-        this.isInteger      = true;
+        this.numerator   = number;
+        this.denominator = BigInteger.ONE;
+        this.isInteger   = true;
     }
 
     /**
-     * This constructor creates a new rational number with nominator n and
+     * This constructor creates a new rational number with numerator n and
      * denominator d.  Care is taken, that the denominator is always positive
      * and that the rational number is in lowest terms.
      *
-     * @param n Nominator of the new rational number.
+     * @param n Numerator of the new rational number.
      * @param d Denominator of the new rational number.
      */
     private Rational(BigInteger n, BigInteger d) {
@@ -99,9 +99,9 @@ public class Rational extends NumberValue {
             d = d.negate();
         }
         final BigInteger ggt = n.gcd(d);
-        this.nominator       = n.divide(ggt);
-        this.denominator     = d.divide(ggt);
-        this.isInteger       = this.denominator.equals(BigInteger.ONE);
+        this.numerator   = n.divide(ggt);
+        this.denominator = d.divide(ggt);
+        this.isInteger   = this.denominator.equals(BigInteger.ONE);
         if (this.denominator.equals(BigInteger.ZERO)) {
             throw new NumberFormatException("new Rational: Division by zero!");
         }
@@ -155,23 +155,23 @@ public class Rational extends NumberValue {
     /**
      * Get Rational representing the specified value.
      *
-     * @param nominator   Nominator of the value to represent.
+     * @param numerator   Numerator of the value to represent.
      * @param denominator Denominator of the value to represent.
      * @return            Rational representation.
      */
-    public static Rational valueOf(final BigInteger nominator, final BigInteger denominator) {
-        return new Rational(nominator, denominator);
+    public static Rational valueOf(final BigInteger numerator, final BigInteger denominator) {
+        return new Rational(numerator, denominator);
     }
 
     /**
      * Get Rational representing the specified value.
      *
-     * @param nominator   Nominator of the value to represent.
+     * @param numerator   Numerator of the value to represent.
      * @param denominator Denominator of the value to represent.
      * @return            Rational representation.
      */
-    public static Rational valueOf(final long nominator, final long denominator) {
-        return new Rational(BigInteger.valueOf(nominator), BigInteger.valueOf(denominator));
+    public static Rational valueOf(final long numerator, final long denominator) {
+        return new Rational(BigInteger.valueOf(numerator), BigInteger.valueOf(denominator));
     }
 
     @Override
@@ -181,12 +181,12 @@ public class Rational extends NumberValue {
     }
 
     /**
-     * Get nominator of the represented value.
+     * Get numerator of the represented value.
      *
-     * @return Nominator of the represented value.
+     * @return Numerator of the represented value.
      */
-    /*package*/ BigInteger getNominatorValue() {
-        return nominator;
+    /*package*/ BigInteger getNumeratorValue() {
+        return numerator;
     }
 
     /**
@@ -220,21 +220,21 @@ public class Rational extends NumberValue {
      * @return true if this number is in fact prime.
      */
     public boolean isPrime() {
-        if ( ! isInteger || nominator.compareTo(BigInteger.ONE) <= 0) {
+        if ( ! isInteger || numerator.compareTo(BigInteger.ONE) <= 0) {
             return false;
         }
         for (int i = 0; i < SOME_PRIMES.length; ++i) {
-            if (nominator.mod(SOME_PRIMES[i]).equals(BigInteger.ZERO)) {
-                return nominator.equals(SOME_PRIMES[i]);
-            } else if (SOME_PRIMES_SQUARED[i].compareTo(nominator) >= 0) {
+            if (numerator.mod(SOME_PRIMES[i]).equals(BigInteger.ZERO)) {
+                return numerator.equals(SOME_PRIMES[i]);
+            } else if (SOME_PRIMES_SQUARED[i].compareTo(numerator) >= 0) {
                 return true;
             }
         }
 
         final BigInteger two = SOME_PRIMES[0]; // == BigInteger.valueOf(2)
               BigInteger i   = SOME_PRIMES[SOME_PRIMES.length -1].add(two);
-        while (i.multiply(i).compareTo(nominator) <= 0) {
-            if (nominator.mod(i).equals(BigInteger.ZERO)) {
+        while (i.multiply(i).compareTo(numerator) <= 0) {
+            if (numerator.mod(i).equals(BigInteger.ZERO)) {
                 return false;
             }
             i = i.add(two);
@@ -251,10 +251,10 @@ public class Rational extends NumberValue {
     public boolean isProbablePrime() {
         if ( ! isInteger ) {
             return false;
-        } else if (nominator.compareTo(INTEGER_MAX_VALUE) < 0) {
-            return nominator.isProbablePrime(15);
+        } else if (numerator.compareTo(INTEGER_MAX_VALUE) < 0) {
+            return numerator.isProbablePrime(15);
         }
-        return nominator.isProbablePrime(30);
+        return numerator.isProbablePrime(30);
     }
 
     /**
@@ -268,12 +268,12 @@ public class Rational extends NumberValue {
      * @throws NotAnIntegerException Thrown when this number is not an integer.
      */
     public Rational nextProbablePrime(final State state) throws NotAnIntegerException {
-        if ( ! isInteger || nominator.compareTo(BigInteger.ZERO) <= 0) {
+        if ( ! isInteger || numerator.compareTo(BigInteger.ZERO) <= 0) {
             throw new NotAnIntegerException(
                 "'" + this.toString(state) + "' is not an integer >= 1."
             );
         }
-        return new Rational(nominator.nextProbablePrime());
+        return new Rational(numerator.nextProbablePrime());
     }
 
     /* type check (sort of Boolean operation) */
@@ -299,7 +299,7 @@ public class Rational extends NumberValue {
         if (isInteger) {
             return this;
         } else {
-            return new Rational(nominator.divide(denominator));
+            return new Rational(numerator.divide(denominator));
         }
     }
 
@@ -310,7 +310,7 @@ public class Rational extends NumberValue {
 
     @Override
     public SetlDouble toDouble(final State state) throws NumberToLargeException, UndefinedOperationException {
-        return SetlDouble.valueOf(nominator, denominator);
+        return SetlDouble.valueOf(numerator, denominator);
     }
 
     /**
@@ -320,7 +320,7 @@ public class Rational extends NumberValue {
      * @throws NumberToLargeException if this value cannot be converted.
      */
     /*package*/ SetlDouble toDouble() throws NumberToLargeException {
-        return SetlDouble.valueOf(nominator, denominator);
+        return SetlDouble.valueOf(numerator, denominator);
     }
 
     /* native type checks */
@@ -328,8 +328,8 @@ public class Rational extends NumberValue {
     @Override
     public boolean jIntConvertible() {
         return (isInteger &&
-                nominator.compareTo(INTEGER_MAX_VALUE) < 0 &&
-                nominator.compareTo(INTEGER_MIN_VALUE) > 0
+                numerator.compareTo(INTEGER_MAX_VALUE) < 0 &&
+                numerator.compareTo(INTEGER_MIN_VALUE) > 0
                );
     }
 
@@ -338,7 +338,7 @@ public class Rational extends NumberValue {
         if (this.compareTo(ZERO) == 0) {
             return true;
         }
-        final Rational a = new Rational(nominator.abs(), denominator.abs());
+        final Rational a = new Rational(numerator.abs(), denominator.abs());
         return a.compareTo(RAT_BIG) <= 0 && a.compareTo(RAT_SMALL) >= 0;
     }
 
@@ -347,11 +347,11 @@ public class Rational extends NumberValue {
     @Override
     public double toJDoubleValue(final State state) throws NumberToLargeException {
         if (!jDoubleConvertible()) {
-            final String msg = "The fraction " + nominator + "/" + denominator
+            final String msg = "The fraction " + numerator + "/" + denominator
                        + "is too big or too small";
             throw new NumberToLargeException(msg);
         }
-        final SetlDouble sd = SetlDouble.valueOf(nominator, denominator);
+        final SetlDouble sd = SetlDouble.valueOf(numerator, denominator);
         return sd.jDoubleValue();
     }
 
@@ -359,26 +359,26 @@ public class Rational extends NumberValue {
     public int jIntValue() throws NotAnIntegerException, NumberToLargeException {
         if (!isInteger) {
             throw new NotAnIntegerException(
-                "The fraction " + nominator + "/" + denominator + " can't be converted" +
+                "The fraction " + numerator + "/" + denominator + " can't be converted" +
                 " to an integer as the denominator is not 1."
             );
         }
-        if (nominator.compareTo(INTEGER_MAX_VALUE) > 0 ||
-            nominator.compareTo(INTEGER_MIN_VALUE) < 0)
+        if (numerator.compareTo(INTEGER_MAX_VALUE) > 0 ||
+            numerator.compareTo(INTEGER_MIN_VALUE) < 0)
         {
             throw new NumberToLargeException(
-                "The value of " + nominator + " is too large or to small for " +
+                "The value of " + numerator + " is too large or to small for " +
                 "this operation."
             );
         } else {
-            return nominator.intValue();
+            return numerator.intValue();
         }
     }
 
     /* arithmetic operations */
     @Override
     public Rational absoluteValue(final State state) {
-        return new Rational(nominator.abs(), denominator.abs());
+        return new Rational(numerator.abs(), denominator.abs());
     }
 
     // The ceil(ing) of a number x is defined as the lowest integer n such that n => x.
@@ -387,11 +387,11 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
     public Rational ceil(final State state) {
-        if (nominator.compareTo(BigInteger.ZERO) > 0 && ! isInteger) {
-            final BigInteger q = nominator.divide(denominator).add(BigInteger.ONE);
+        if (numerator.compareTo(BigInteger.ZERO) > 0 && ! isInteger) {
+            final BigInteger q = numerator.divide(denominator).add(BigInteger.ONE);
             return new Rational(q);
         }
-        return new Rational(nominator.divide(denominator));
+        return new Rational(numerator.divide(denominator));
     }
 
     @Override
@@ -399,11 +399,11 @@ public class Rational extends NumberValue {
         if (subtrahend.getClass() == Rational.class) {
             final Rational s = (Rational) subtrahend;
             if (isInteger && s.isInteger) {
-                // mNominator/1 - s.mNominator/1  <==>  mNominator - s.mNominator
-                return new Rational(nominator.subtract(s.nominator));
+                // numerator/1 - s.numerator/1  <==>  numerator - s.numerator
+                return new Rational(numerator.subtract(s.numerator));
             } else {
-                // mNominator/mDenominator - s.mNominator/s.mDenominator = (mNominator * s.mDenominator - mDenominator * s.mNominator) / (mDenominator * s.mDenominator)
-                final BigInteger n = nominator.multiply(s.denominator).subtract(denominator.multiply(s.nominator));
+                // numerator/denominator - s.numerator/s.denominator = (numerator * s.denominator - denominator * s.numerator) / (denominator * s.denominator)
+                final BigInteger n = numerator.multiply(s.denominator).subtract(denominator.multiply(s.numerator));
                 final BigInteger d = denominator.multiply(s.denominator);
                 return new Rational(n, d);
             }
@@ -449,14 +449,14 @@ public class Rational extends NumberValue {
     @Override
     public Rational factorial(final State state) throws SetlException {
         if ( ! isInteger ||
-               nominator.compareTo(BigInteger.ZERO) < 0
+               numerator.compareTo(BigInteger.ZERO) < 0
         ) {
             throw new UndefinedOperationException(
                 "'(" + this.toString(state) + ")!' is undefined."
             );
         }
 
-        // The next line will throw an exception if mNominator > 2^31,
+        // The next line will throw an exception if numerator > 2^31,
         // but wanting that is crazy talk
         final int n = jIntValue();
         BigInteger result = BigInteger.ONE;
@@ -549,10 +549,10 @@ public class Rational extends NumberValue {
     // a = (a/b) * b + r with 0 <= r < b.  Rather, Java always rounds to 0.
     @Override
     public Rational floor(final State state) {
-        if (nominator.compareTo(BigInteger.ZERO) < 0 && ! isInteger) {
-            return new Rational(nominator.divide(denominator).subtract(BigInteger.ONE));
+        if (numerator.compareTo(BigInteger.ZERO) < 0 && ! isInteger) {
+            return new Rational(numerator.divide(denominator).subtract(BigInteger.ONE));
         }
-        return new Rational(nominator.divide(denominator));
+        return new Rational(numerator.divide(denominator));
     }
 
     @Override
@@ -570,7 +570,7 @@ public class Rational extends NumberValue {
 
     @Override
     public Rational minus(final State state) {
-        return new Rational(nominator.negate(), denominator);
+        return new Rational(numerator.negate(), denominator);
     }
 
     // The mathematical specification of the modulo function is:
@@ -580,10 +580,10 @@ public class Rational extends NumberValue {
         if (modulo.getClass() == Rational.class) {
             final Rational b = (Rational) modulo;
             if (isInteger && b.isInteger) {
-                if (b.nominator.equals(BigInteger.ZERO)) {
+                if (b.numerator.equals(BigInteger.ZERO)) {
                     throw new UndefinedOperationException("'" + this.toString(state) + " % 0' is undefined.");
                 } else {
-                    return new Rational(nominator.mod(b.nominator));
+                    return new Rational(numerator.mod(b.numerator));
                 }
             } else {
                 final Rational ab = (Rational) this.quotient(state, b);
@@ -601,9 +601,9 @@ public class Rational extends NumberValue {
     @Override
     protected Rational power(final State state, final int exponent) throws NumberToLargeException {
         if (exponent >= 0) {
-            return new Rational(nominator  .pow(exponent     ), denominator.pow(exponent     ));
+            return new Rational(numerator.pow(exponent), denominator.pow(exponent     ));
         } else {
-            return new Rational(denominator.pow(exponent * -1), nominator  .pow(exponent * -1));
+            return new Rational(denominator.pow(exponent * -1), numerator.pow(exponent * -1));
         }
     }
 
@@ -617,11 +617,11 @@ public class Rational extends NumberValue {
         if (multiplier.getClass() == Rational.class) {
             final Rational r = (Rational) multiplier;
             if (isInteger && r.isInteger) {
-                // mNominator/1 * r.mNominator/1  <==>  mNominator * r.mNominator
-                return new Rational(nominator.multiply(r.nominator));
+                // numerator/1 * r.numerator/1  <==>  numerator * r.numerator
+                return new Rational(numerator.multiply(r.numerator));
             } else {
-                // mNominator/mDenominator * r.mNominator/r.mDenominator = (mNominator * r.mNominator) / (mDenominator * r.mDenominator)
-                return new Rational(nominator.multiply(r.nominator), denominator.multiply(r.denominator));
+                // numerator/denominator * r.numerator/r.denominator = (numerator * r.numerator) / (denominator * r.denominator)
+                return new Rational(numerator.multiply(r.numerator), denominator.multiply(r.denominator));
             }
         } else if (multiplier.isDouble() == SetlBoolean.TRUE ||
                    multiplier.isList()   == SetlBoolean.TRUE ||
@@ -644,17 +644,17 @@ public class Rational extends NumberValue {
         if (divisor.getClass() == Rational.class) {
             final Rational d = (Rational) divisor;
             if (isInteger && d.isInteger) {
-                // (mNominator/1) / (d.mNominator/1)  <==>  mNominator / d.mNominator
-                if (d.nominator.equals(BigInteger.ZERO)) {
+                // (numerator/1) / (d.numerator/1)  <==>  numerator / d.numerator
+                if (d.numerator.equals(BigInteger.ZERO)) {
                     throw new UndefinedOperationException("'" + this.toString(state) + " / 0' is undefined.");
                 }
-                return new Rational(nominator, d.nominator);
+                return new Rational(numerator, d.numerator);
             } else {
-                // (mNominator/mDenominator) / (d.mNominator/d.mDenominator) = (mNominator * d.mDenominator) / (mDenominator * d.mNominator)
-                if (d.nominator.equals(BigInteger.ZERO)) {
+                // (numerator/denominator) / (d.numerator/d.denominator) = (numerator * d.denominator) / (denominator * d.numerator)
+                if (d.numerator.equals(BigInteger.ZERO)) {
                     throw new UndefinedOperationException("'(" + this.toString(state) + ") / 0' is undefined.");
                 }
-                return new Rational(nominator.multiply(d.denominator), denominator.multiply(d.nominator));
+                return new Rational(numerator.multiply(d.denominator), denominator.multiply(d.numerator));
             }
         } else if (divisor.getClass() == SetlDouble.class) {
             return ((SetlDouble) divisor).quotientFlipped(state, this);
@@ -672,9 +672,9 @@ public class Rational extends NumberValue {
         if (isInteger) {
             BigInteger rnd;
             do {
-                rnd = new BigInteger(nominator.bitLength(), state.getRandom());
-            } while (rnd.compareTo(nominator.abs()) > 0);
-            if (nominator.compareTo(BigInteger.ZERO) < 0) {
+                rnd = new BigInteger(numerator.bitLength(), state.getRandom());
+            } while (rnd.compareTo(numerator.abs()) > 0);
+            if (numerator.compareTo(BigInteger.ZERO) < 0) {
                 rnd = rnd.negate();
             }
             return new Rational(rnd);
@@ -696,7 +696,7 @@ public class Rational extends NumberValue {
         } else {
             final Rational choices = (Rational) numberOfChoices.difference(state, Rational.ONE);
             final Rational r       = choices.rnd(state);
-            return new Rational(nominator.multiply(r.nominator), denominator.multiply(choices.nominator));
+            return new Rational(numerator.multiply(r.numerator), denominator.multiply(choices.numerator));
         }
     }
 
@@ -704,8 +704,8 @@ public class Rational extends NumberValue {
     public Rational round(final State state) throws SetlException {
         if (isInteger) {
             return this;
-        } else if (nominator.signum() > 0) {
-            final BigInteger[] dr = nominator.divideAndRemainder(denominator);
+        } else if (numerator.signum() > 0) {
+            final BigInteger[] dr = numerator.divideAndRemainder(denominator);
             final BigInteger   a  = dr[0];
             final BigInteger   b  = dr[1];
             final BigInteger   b2 = b.multiply(new BigInteger("2"));
@@ -715,8 +715,8 @@ public class Rational extends NumberValue {
             } else {
                 return new Rational(a.add(BigInteger.ONE));
             }
-        } else /* if (nominator.signum() <= 0) */ {
-            final BigInteger   nn = nominator.negate();
+        } else /* if (numerator.signum() <= 0) */ {
+            final BigInteger   nn = numerator.negate();
             final BigInteger[] dr = nn.divideAndRemainder(denominator);
             final BigInteger   a  = dr[0];
             final BigInteger   b  = dr[1];
@@ -737,11 +737,11 @@ public class Rational extends NumberValue {
         if (summand.getClass() == Rational.class) {
             final Rational r = (Rational) summand;
             if (isInteger && r.isInteger) {
-                // mNominator/1 + r.mNominator/1  <==>  mNominator + r.mNominator
-                return new Rational(nominator.add(r.nominator));
+                // numerator/1 + r.numerator/1  <==>  numerator + r.numerator
+                return new Rational(numerator.add(r.numerator));
             } else {
-                // mNominator/mDenominator + r.mNominator/r.mDenominator = (mNominator * r.mDenominator + mDenominator * r.mNominator) / (mDenominator * r.mDenominator)
-                final BigInteger n = nominator.multiply(r.denominator).add(denominator.multiply(r.nominator));
+                // numerator/denominator + r.numerator/r.denominator = (numerator * r.denominator + denominator * r.numerator) / (denominator * r.denominator)
+                final BigInteger n = numerator.multiply(r.denominator).add(denominator.multiply(r.numerator));
                 final BigInteger d = denominator.multiply(r.denominator);
                 return new Rational(n, d);
             }
@@ -763,7 +763,7 @@ public class Rational extends NumberValue {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        sb.append(nominator.toString());
+        sb.append(numerator.toString());
         if ( ! isInteger) {
             sb.append('/');
             sb.append(denominator.toString());
@@ -772,12 +772,12 @@ public class Rational extends NumberValue {
 
     @Override
     public SetlString charConvert(final State state) throws NumberToLargeException {
-        if (nominator.compareTo(BigInteger.valueOf(127)) <= 0 &&
-            nominator.compareTo(BigInteger.ZERO) >= 0         &&
+        if (numerator.compareTo(BigInteger.valueOf(127)) <= 0 &&
+            numerator.compareTo(BigInteger.ZERO) >= 0         &&
             isInteger
            )
         {
-            return new SetlString((char) nominator.intValue());
+            return new SetlString((char) numerator.intValue());
         } else {
             throw new NumberToLargeException(
                 "'" + this.toString(state) + "' is not usable for ASCII conversation" +
@@ -796,11 +796,11 @@ public class Rational extends NumberValue {
             final Rational r = (Rational) other;
             if (isInteger && r.isInteger) {
                 // a/1 == p/1  <==>  a == p
-                return nominator.compareTo(r.nominator);
+                return numerator.compareTo(r.numerator);
             } else {
                 // a/b == p/q  <==>  a * q == b * p
-                final BigInteger aq = nominator.multiply(r.denominator);
-                final BigInteger bp = denominator.multiply(r.nominator);
+                final BigInteger aq = numerator.multiply(r.denominator);
+                final BigInteger bp = denominator.multiply(r.numerator);
                 return aq.compareTo(bp);
             }
         } else if (other.getClass() == SetlDouble.class) {
@@ -829,6 +829,6 @@ public class Rational extends NumberValue {
 
     @Override
     public int computeHashCode() {
-        return (initHashCode + nominator.hashCode()) * 31 + denominator.hashCode();
+        return (initHashCode + numerator.hashCode()) * 31 + denominator.hashCode();
     }
 }

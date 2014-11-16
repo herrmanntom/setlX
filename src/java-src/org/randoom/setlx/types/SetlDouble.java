@@ -109,15 +109,15 @@ public class SetlDouble extends NumberValue {
     /**
      * Create a new SetlDouble from a rational of two BigIntegers.
      *
-     * @param  nominator                   Nominator value of the rational.
+     * @param  numerator                   Numerator value of the rational.
      * @param  denominator                 Denominator value of the rational.
      * @return                             The new SetlDouble.
      * @throws NumberToLargeException      Thrown in case the BigDecimal is too large or small.
      */
-    public static SetlDouble valueOf(final BigInteger nominator, final BigInteger denominator)
+    public static SetlDouble valueOf(final BigInteger numerator, final BigInteger denominator)
         throws NumberToLargeException
     {
-        BigInteger nom   = nominator;
+        BigInteger nom   = numerator;
         BigInteger denom = denominator;
         double n = nom  .doubleValue();
         double d = denom.doubleValue();
@@ -134,7 +134,7 @@ public class SetlDouble extends NumberValue {
             return new SetlDouble(r);
         } catch (final ArithmeticException ae) {
             throw new NumberToLargeException(
-                "The value of " + nominator + "/" + denominator + " is too large or too small for this operation."
+                "The value of " + numerator + "/" + denominator + " is too large or too small for this operation."
             );
         }
     }
@@ -188,32 +188,32 @@ public class SetlDouble extends NumberValue {
         final long valueMask    = 0x000fffffffffffffL;
         final long biasedExp    = ((bits & exponentMask) >>> 52);
         final boolean sign      = ((bits & signMask) == signMask);
-        BigInteger nominator;
+        BigInteger numerator;
         BigInteger denominator;
         if (biasedExp == 0) {  // denormalized number
             final long exponent = - 1022 - 52;
             final long mantissa = bits & valueMask;
             if (sign) {
-                nominator = BigInteger.valueOf(-mantissa);
+                numerator = BigInteger.valueOf(-mantissa);
             } else {
-                nominator = BigInteger.valueOf(mantissa);
+                numerator = BigInteger.valueOf(mantissa);
             }
             denominator = BigInteger.valueOf(1).shiftLeft((int) -exponent);
-            return Rational.valueOf(nominator, denominator);
+            return Rational.valueOf(numerator, denominator);
         } else if (biasedExp < 2047) {  // normalized number
             final long exponent = biasedExp - 1023 - 52;
             final long mantissa = (1L << 52) | (bits & valueMask);
             if (sign) {
-                nominator = BigInteger.valueOf(-mantissa);
+                numerator = BigInteger.valueOf(-mantissa);
             } else {
-                nominator = BigInteger.valueOf(mantissa);
+                numerator = BigInteger.valueOf(mantissa);
             }
             if (exponent < 0) {
                 denominator = BigInteger.valueOf(1).shiftLeft((int) -exponent);
-                return Rational.valueOf(nominator, denominator);
+                return Rational.valueOf(numerator, denominator);
             } else {
-                nominator = nominator.shiftLeft((int) exponent);
-                return Rational.valueOf(nominator);
+                numerator = numerator.shiftLeft((int) exponent);
+                return Rational.valueOf(numerator);
             }
         } else { // not a number (NaN) -> Should be impossible, as that is checked in valueOf
             final String msg = "This is not a number (NaN).";
@@ -301,7 +301,7 @@ public class SetlDouble extends NumberValue {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     /*package*/ Value differenceFlipped(final State state, final Rational minuend) throws SetlException {
-        final BigInteger n   = minuend.getNominatorValue();
+        final BigInteger n   = minuend.getNumeratorValue();
         final BigInteger d   = minuend.getDenominatorValue();
         final SetlDouble lhs = SetlDouble.valueOf(n, d);
         return lhs.difference(state, this);
@@ -402,7 +402,7 @@ public class SetlDouble extends NumberValue {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     /*package*/ Value quotientFlipped(final State state, final Rational dividend) throws SetlException {
-        final BigInteger n   = dividend.getNominatorValue();
+        final BigInteger n   = dividend.getNumeratorValue();
         final BigInteger d   = dividend.getDenominatorValue();
         final SetlDouble lhs = SetlDouble.valueOf(n, d);
         return lhs.quotient(state, this);

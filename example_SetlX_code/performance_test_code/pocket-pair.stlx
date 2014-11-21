@@ -1,0 +1,176 @@
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Utility functions.                                                         //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// Compare recursive lists lexicographically.
+lessThan := procedure(lhs, rhs) {
+    if (isNumber(lhs) && isNumber(rhs)) {
+        return lhs < rhs;
+    }
+    if (isList(lhs) && isList(rhs)) {
+        if (lhs == [] && rhs != []) {
+            return true;
+        }
+        if (rhs == []) {
+            return false;
+        }
+        // at this point, neither lhs nor rhs can be empty 
+        if (lessThan(lhs[1], rhs[1])) {
+            return true;
+        }
+        if (lhs[1] == rhs[1]) {
+            return lessThan(lhs[2..], rhs[2..]);
+        }
+        return false;
+    }
+    abort("invalid arguments in lessThan($lhs$, $rhs$)");
+};
+
+// Compute the set of all subsets of the set s that have exactly k elements.
+subsetsOfSizeK := procedure(s, k) {
+    if (k == 0) {
+        return { {} };
+    }
+    return { t + { x } : x in s, t in subsetsOfSizeK(s - { x }, k - 1) };
+};
+
+////////////////////////////////////////////////////////////////////////////////
+//                                                                            //
+// Functions related to poker.                                                //
+//                                                                            //
+////////////////////////////////////////////////////////////////////////////////
+
+// Return a list of the ranks, sorted with highest card first.
+cardRanks := procedure(cards) {
+    ranks := reverse([c[1] : c in cards]);
+    if (ranks == [14, 5, 4, 3, 2]) {
+        return [5, 4, 3, 2, 1];
+    } else {
+        return ranks;
+    }
+};
+
+// Return true if the ordered ranks form a 5-card straight.
+isStraight := procedure(ranks) {
+    return ranks[1] == ranks[5] + 4 && #{ x : x in ranks } == 5;
+};
+
+// Return true if all the cards have the same suit.
+isFlush := procedure(hand) {
+    return #{ card[2] : card in hand } == 1;
+};
+
+// Return the first rank that this hand has exactly n of.  Return om if
+// there is no n-of-a-kind in the hand for the given value of n. 
+kind := procedure(n, ranks) {
+    for (r in ranks) {
+        if (#[x : x in ranks | r == x] == n) {
+            return r;
+        }
+    }
+};
+
+// If there are two pair, return the two ranks as a
+// pair [highest, lowest], otherwise return om.
+twoPair := procedure(ranks) {
+    highPair := kind(2, ranks);
+    lowPair  := kind(2, reverse(ranks));
+    if (highPair != om && lowPair != om && highPair != lowPair) {
+        return [highPair, lowPair];
+    }
+};
+                
+handRank := procedure(hand) {
+    ranks := cardRanks(hand);
+    if (isStraight(ranks) && isFlush(hand)) {                   // straight flush
+        return [8, max(ranks)];
+    } else if (kind(4, ranks) != om) {                          // 4 of a kind
+        return [7, kind(4, ranks), kind(1, ranks)];
+    } else if (kind(3, ranks) != om && kind(2, ranks) != om) {  // full house
+        return [6, kind(3, ranks), kind(2, ranks)];
+    } else if (isFlush(hand)) {                                 // flush
+        return [5, ranks];
+    } else if (isStraight(ranks)) {                             // straight
+        return [4, max(ranks)];
+    } else if (kind(3, ranks) != om) {                          // 3 of a kind
+        return [3, kind(3, ranks), ranks];
+    } else if (twoPair(ranks) != om) {                          // 2 pair
+        return [2, twoPair(ranks), kind(1, ranks)]; 
+    } else if (kind(2, ranks) != om) {                          // kind
+        return [1, kind(2, ranks), ranks];
+    } else {                                                    // high card
+        return [0, ranks];
+    }
+};
+
+// Given a list of hands, return a hand rank that is best among those hands.
+bestRank := procedure(hands) {
+     return findMax({ handRank(h) : h in hands }); 
+};
+
+// Find the best hand in the given set of poker ranks.
+findMax := procedure(s) {
+    best := from(s);
+    for (x in s) {
+        if (lessThan(best, x)) {
+            best := x;
+        }
+    }
+    return best;
+};
+
+// This function returns a set of five cards.  These cards are interpreted as 
+// the flop, turn, and river combined.  The parameters playerA and playerB both
+// represent hands that have already been dealt.
+deal := procedure(playerA, playerB) {
+    deck  := { [r, s] : r in {2 .. 14}, s in "shdc" };
+    rest  := deck - playerA - playerB;
+    rest  := shuffle([ c : c in rest ]);
+    return { rest[i] : i in [1 .. 5 ] };
+};
+
+main := procedure() {
+    n := 5000;
+    computeChances(n);
+};
+
+// This function computes the all in win probability if pocket aces play against ace-king.
+computeChances := procedure(n) {
+    resetRandom();
+    playerA := { [14, "h"], [14, "d"] };
+    playerB := { [14, "s"], [13, "c"] };
+    noWins := 0;
+    noDraw := 0;
+    noLoss := 0;
+    count  := 0;
+    while (count < n) {
+        table := deal(playerA, playerB);
+        aRank := bestRank(subsetsOfSizeK(playerA + table, 5));
+        bRank := bestRank(subsetsOfSizeK(playerB + table, 5));
+        // print("table = $table$");
+        // print(playerA, ": ", aRank);
+        // print(playerB, ": ", bRank);
+        if (lessThan(aRank, bRank)) {
+            noLoss += 1;
+            // print("Player B wins.");
+        } else if (lessThan(bRank, aRank)) {
+            noWins += 1;
+            // print("Player A wins.");
+        } else {
+            noDraw += 1;
+            // print("It's a tie.");
+        }
+        // print("");
+        count += 1;
+    }
+    print("chances to win   with pocket aces: ", 1.0 * noWins / n);
+    print("chances to draw  with pocket aces: ", 1.0 * noDraw / n);
+    print("chances to loose with pocket aces: ", 1.0 * noLoss / n);
+};
+
+main();
+
+
+

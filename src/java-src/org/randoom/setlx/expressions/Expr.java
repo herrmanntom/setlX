@@ -43,11 +43,11 @@ public abstract class Expr extends ImmutableCodeFragment {
                 return result.clone();
             } else {
                 result = evaluate(state);
-                if (result.isList() == SetlBoolean.FALSE && result.isSet() == SetlBoolean.FALSE) {
-                    // collections are potentially very large, so only
-                    // keep hard references to other values
+                if (result.isImmutable()) {
                     resultHardReference = result;
                 } else {
+                    // collections (== mutable values) are potentially very large, so only
+                    // keep hard references to other values
                     resultSoftReference = new SoftReference<Value>(result);
                 }
                 return result;

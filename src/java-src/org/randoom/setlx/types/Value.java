@@ -90,6 +90,15 @@ public abstract class Value extends CodeFragment {
 
     /* type checks (sort of Boolean operation) */
 
+    /**
+     * Check if this value is an immutable value, i.e. the contents of it cannot be changed at runtime.
+     *
+     * @return true, if this value is an immutable value
+     */
+    public boolean isImmutable() {
+        return false;
+    }
+
     public SetlBoolean isBoolean() {
         return SetlBoolean.FALSE;
     }

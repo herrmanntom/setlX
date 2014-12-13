@@ -190,7 +190,8 @@ public class ParseSetlX {
                   CodeFragment fragment     = null;
             try {
                 // run ANTLR, which will add its parser errors into our capture ...
-                if (Thread.currentThread().getName().endsWith(parserRunner.getThreadName())) {
+                String threadName = Thread.currentThread().getName();
+                if (threadName.endsWith(BaseRunnable.StackSize.LARGE.getThreadNamePrefix()) || threadName.endsWith(BaseRunnable.StackSize.MEDIUM.getThreadNamePrefix())) {
                     parserRunner.exec(state);
                 } else {
                     parserRunner.startAsThread();

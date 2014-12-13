@@ -18,7 +18,22 @@ public abstract class BaseRunnable implements Runnable {
         /** request medium stack size */
         MEDIUM,
         /** request small stack size */
-        SMALL
+        SMALL;
+
+        private String threadNamePrefix;
+
+        private StackSize() {
+            threadNamePrefix = ":" + this.name();
+        }
+
+        /**
+         * Get stack size prefix added to thread name when created with this stack size.
+         *
+         * @return Stack size prefix added to thread name.
+         */
+        public String getThreadNamePrefix() {
+            return threadNamePrefix;
+        }
     }
 
     /**
@@ -50,7 +65,7 @@ public abstract class BaseRunnable implements Runnable {
         return new Thread(
                 currentThread.getThreadGroup(),
                 this,
-                currentThread.getName() + "::" + getThreadName(),
+                currentThread.getName() + "::" + getThreadName() + stackSize.getThreadNamePrefix(),
                 size * 1024
         );
     }

@@ -190,6 +190,8 @@ public class SetlX {
             }
         }
 
+        Thread.currentThread().setName("setlXmain");
+
         // interactive == no files and no code supplied as parameters
         interactive = (files.isEmpty() && expression == null && statement == null);
         // display help if options specify to execute both files and a single expression/statement
@@ -416,8 +418,6 @@ public class SetlX {
         if (verbose) {
             printExecutionStart(state);
         }
-
-        Thread.currentThread().setName("setlXmain");
 
         // run the parsed code
         for (int program = 0; program < programs.size(); ++program) {

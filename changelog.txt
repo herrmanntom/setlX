@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.3.3--- 2014-12-14
+ # fixed operator associativity
+ # hopefully final rework of stack handling
+
 ---v2.3.2--- 2014-10-26
  + implemented lambda closures (e.g. x |=> y )
  # reworked stack handling

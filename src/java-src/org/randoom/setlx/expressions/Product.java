@@ -21,7 +21,7 @@ import java.util.List;
  *       ======      ======
  *        lhs         rhs
  */
-public class Product extends BinaryExpression {
+public class Product extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Product.class);
     // precedence level in SetlX-grammar

@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.expressions.BinaryExpression;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.LeftAssociativeBinaryExpression;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -22,7 +23,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       ====      ====
  *       lhs        rhs
  */
-public class LessOrEqual extends BinaryExpression {
+public class LessOrEqual extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LessOrEqual.class);
     // precedence level in SetlX-grammar

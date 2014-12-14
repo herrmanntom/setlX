@@ -1,7 +1,7 @@
 package org.randoom.setlx.boolExpressions;
 
-import org.randoom.setlx.expressions.BinaryExpression;
 import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.expressions.LeftAssociativeBinaryExpression;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Generic implementation for expressions with left-hand-side and right-hand-side, which perform lazy evaluation.
  */
-public abstract class LazyEvaluatingBinaryExpression extends BinaryExpression {
+public abstract class LazyEvaluatingLeftAssociativeBinaryExpression extends LeftAssociativeBinaryExpression {
 
     /**
      * Constructor.
@@ -19,7 +19,7 @@ public abstract class LazyEvaluatingBinaryExpression extends BinaryExpression {
      * @param lhs Left hand side of the expression.
      * @param rhs Right hand side of the expression.
      */
-    protected LazyEvaluatingBinaryExpression(final Expr lhs, final Expr rhs) {
+    protected LazyEvaluatingLeftAssociativeBinaryExpression(final Expr lhs, final Expr rhs) {
         super(lhs, rhs);
     }
 

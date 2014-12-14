@@ -21,7 +21,7 @@ import java.util.List;
  *       ==========       =======================
  *           lhs                   rhs
  */
-public class Assignment extends BinaryExpression {
+public class Assignment extends RightAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assignment.class);
 

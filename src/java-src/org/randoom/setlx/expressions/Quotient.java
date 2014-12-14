@@ -21,7 +21,7 @@ import java.util.List;
  *       ======              ======
  *        lhs                 rhs
  */
-public class Quotient extends BinaryExpression {
+public class Quotient extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Quotient.class);
     // precedence level in SetlX-grammar

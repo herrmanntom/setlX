@@ -22,7 +22,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       ===========       ===========
  *           lhs               rhs
  */
-public class Disjunction extends LazyEvaluatingBinaryExpression {
+public class Disjunction extends LazyEvaluatingLeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Disjunction.class);
     // precedence level in SetlX-grammar

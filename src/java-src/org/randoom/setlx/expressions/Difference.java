@@ -19,7 +19,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       =======              =======
  *         lhs                  rhs
  */
-public class Difference extends BinaryExpression {
+public class Difference extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Difference.class);
     // precedence level in SetlX-grammar

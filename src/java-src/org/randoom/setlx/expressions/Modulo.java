@@ -19,7 +19,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       =====              =====
  *        lhs                rhs
  */
-public class Modulo extends BinaryExpression {
+public class Modulo extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Modulo.class);
     // precedence level in SetlX-grammar

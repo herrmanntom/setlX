@@ -19,7 +19,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       ======       ===============
  *        lhs            exponent
  */
-public class Power extends BinaryExpression {
+public class Power extends RightAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Power.class);
     // precedence level in SetlX-grammar

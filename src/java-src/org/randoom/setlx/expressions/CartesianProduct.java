@@ -19,7 +19,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       =====               =====
  *       mLhs                mRhs
  */
-public class CartesianProduct extends BinaryExpression {
+public class CartesianProduct extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(CartesianProduct.class);
     // precedence level in SetlX-grammar

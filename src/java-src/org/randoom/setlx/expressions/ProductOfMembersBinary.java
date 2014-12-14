@@ -23,7 +23,7 @@ import java.util.List;
 ///       ======              ======
 ///       neutral           collection
 ///
-public class ProductOfMembersBinary extends BinaryExpression {
+public class ProductOfMembersBinary extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(ProductOfMembersBinary.class);
     // precedence level in SetlX-grammar

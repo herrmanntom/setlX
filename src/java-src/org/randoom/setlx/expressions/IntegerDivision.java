@@ -19,7 +19,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       =====              =====
  *        lhs                rhs
  */
-public class IntegerDivision extends BinaryExpression {
+public class IntegerDivision extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(IntegerDivision.class);
     // precedence level in SetlX-grammar

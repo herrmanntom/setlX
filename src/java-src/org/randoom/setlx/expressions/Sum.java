@@ -19,7 +19,7 @@ import org.randoom.setlx.utilities.TermConverter;
  *       =======      =======
  *         lhs          rhs
  */
-public class Sum extends BinaryExpression {
+public class Sum extends LeftAssociativeBinaryExpression {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Sum.class);
     // precedence level in SetlX-grammar

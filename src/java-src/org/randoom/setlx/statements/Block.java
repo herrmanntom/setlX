@@ -196,25 +196,7 @@ public class Block extends Statement {
         if (this == other) {
             return 0;
         } else if (other.getClass() == Block.class) {
-            final FragmentList<Statement> otherStatements = ((Block) other).statements;
-            if (statements == otherStatements) {
-                return 0; // clone
-            }
-            final Iterator<Statement> iterFirst  = statements.iterator();
-            final Iterator<Statement> iterSecond = otherStatements.iterator();
-            while (iterFirst.hasNext() && iterSecond.hasNext()) {
-                final int cmp = iterFirst.next().compareTo(iterSecond.next());
-                if (cmp != 0) {
-                    return cmp;
-                }
-            }
-            if (iterFirst.hasNext()) {
-                return 1;
-            }
-            if (iterSecond.hasNext()) {
-                return -1;
-            }
-            return 0;
+            return statements.compareTo(((Block) other).statements);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }

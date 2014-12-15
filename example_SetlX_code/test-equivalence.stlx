@@ -219,7 +219,7 @@ tokenizeString := procedure(s) {
         regex '[a-zA-Z]' as [ c  ]: tokenList += [ c  ];
         regex '0'                 : tokenList += [ 0  ];
         regex '""'                : tokenList += [ "" ];
-        regex '[ \t\v\n]+'        : // skip
+        regex '[ \t\n\r]+'        : // skip
     }
     return tokenList;
 };

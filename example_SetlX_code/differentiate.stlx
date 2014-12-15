@@ -84,7 +84,7 @@ tokenizeString := procedure(s) {
               tokenList += [ Var(variable)    ];
         regex '0|[1-9][0-9]*' as [ number ]: 
               tokenList += [ Number(int(number)) ];
-        regex '[ \t\v\n]+': // skip
+        regex '[ \t\n\r]+': // skip
     }
     return tokenList;
 };

@@ -1,0 +1,3 @@
+gfx_setFont();
+gfx_setFont("Arial");
+print("gfx-test successful");

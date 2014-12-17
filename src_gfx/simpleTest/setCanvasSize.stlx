@@ -1,2 +1,0 @@
-gfx_setCanvasSize( 300, 50 );
-print("gfx-test successful");

@@ -1,4 +1,0 @@
-gfx_addSpeedSlider();
-gfx_addSpeedSlider(false);
-gfx_addSpeedSlider(true);
-print("gfx-test successful");

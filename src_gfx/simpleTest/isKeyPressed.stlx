@@ -1,2 +1,0 @@
-gfx_isKeyPressed(1);
-print("gfx-test successful");

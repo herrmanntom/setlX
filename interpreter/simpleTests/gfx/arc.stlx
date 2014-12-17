@@ -1,0 +1,2 @@
+gfx_arc(5.0, 5.0, 5.0, 20.0, 20.0);
+print("gfx-test successful");

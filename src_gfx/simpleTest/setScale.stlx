@@ -1,2 +1,0 @@
-gfx_setScale( 0, 20 );
-print("gfx-test successful");

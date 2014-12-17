@@ -1,0 +1,2 @@
+gfx_textLeft(10,10,"Text");
+print("gfx-test successful");

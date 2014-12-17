@@ -1,0 +1,2 @@
+gfx_point( 10.0, 10.0 ); 
+print("gfx-test successful");

@@ -1,2 +1,0 @@
-gfx_setPenColorRGB(100,100,100);
-print("gfx-test successful");

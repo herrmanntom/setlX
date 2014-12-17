@@ -1,3 +1,0 @@
-gfx_clear();
-gfx_clear("RED");
-print("gfx-test successful");

@@ -1,3 +1,0 @@
-gfx_setYscale();
-gfx_setYscale( 0, 20 );
-print("gfx-test successful");

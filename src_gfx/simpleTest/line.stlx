@@ -1,2 +1,0 @@
-gfx_line(0.0,0.0,20.0,20.0);
-print("gfx-test successful");

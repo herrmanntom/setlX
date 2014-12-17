@@ -1,0 +1,2 @@
+gfx_filledEllipse(7.0, 7.0, 10.0, 2.0);
+print("gfx-test successful");

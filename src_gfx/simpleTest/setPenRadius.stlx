@@ -1,3 +1,0 @@
-gfx_setPenRadius();
-gfx_setPenRadius( 2.0 );
-print("gfx-test successful");

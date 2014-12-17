@@ -1,2 +1,0 @@
-gfx_setMessage("Message");
-print("gfx-test successful");

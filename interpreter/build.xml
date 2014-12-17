@@ -8,18 +8,18 @@
     </condition>
 
     <target name="jar">
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src"/>
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src_gfx"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="core"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="gfx_addon"/>
     </target>
 
     <target name="jar-j1.6">
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src"     target="jar-j1.6"/>
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src_gfx" target="jar-j1.6"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="core"     target="jar-j1.6"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="gfx_addon" target="jar-j1.6"/>
     </target>
 
     <target name="test">
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src"     target="test"/>
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src_gfx" target="test"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="core"     target="test"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="gfx_addon" target="test"/>
     </target>
 
     <target name="download-j1.6-rt.jar" unless="isJava6">
@@ -30,13 +30,13 @@
 
     <!-- clean up the mess we made by building -->
     <target name="clean">
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src"     target="clean"/>
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src_gfx" target="clean"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="core"     target="clean"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="gfx_addon" target="clean"/>
     </target>
 
     <target name="cleaner">
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src"     target="dist-clean"/>
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="src_gfx" target="dist-clean"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="core"     target="dist-clean"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="gfx_addon" target="dist-clean"/>
     </target>
 
     <target name="dist-clean" depends="cleaner">

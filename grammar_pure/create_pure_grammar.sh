@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sourceGrammar="../src/grammar/SetlXgrammar.g"
+sourceGrammar="../interpreter/core/src/main/antlr/SetlXgrammar.g"
 targetGrammar="Pure.g"
 EBNF_extractor="EBNF_extractor/EBNF.jar"
 

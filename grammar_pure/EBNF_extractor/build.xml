@@ -1,13 +1,15 @@
 <project name="EBNF" basedir="." default="jar">
     <!-- variables which determine paths and other information used later -->
-    <property name="main-class"  value="EBNF"/>
-    <property name="src.dir"     value="src"/>
-    <property name="build.dir"   value="build"/>
-    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="interpreter.dir" value="${basedir}/../../interpreter"/>
+    <property name="libs.dir"        value="${interpreter.dir}/libs"/>
+    <property name="main-class"      value="EBNF"/>
+    <property name="src.dir"         value="src"/>
+    <property name="build.dir"       value="target"/>
+    <property name="classes.dir"     value="${build.dir}/classes"/>
 
     <!-- discover library jars and add them to the class-path -->
     <path id="antlr-jar">
-        <fileset dir="../../src/libs" includes="antlr-*.jar"/>
+        <fileset dir="${libs.dir}" includes="antlr-*.jar"/>
     </path>
     <path id="classpath">
         <path refid="antlr-jar"/>

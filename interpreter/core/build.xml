@@ -1,13 +1,16 @@
 <project name="setlX" basedir="." default="jar">
     <!-- variables which determine paths and other information used later -->
-    <property name="main-class"  value="org.randoom.setlxUI.pc.SetlX"/>
-    <property name="j16rt.dir"   value="${basedir}/../buildTools/java_1_6"/>
-    <property name="src.dir"     value="${basedir}/java-src"/>
-    <property name="build.dir"   value="${basedir}/build"/>
-    <property name="classes.dir" value="${build.dir}/classes"/>
-    <property name="doc.dir"     value="${build.dir}/javadoc"/>
+    <property name="interpreter.dir" value="${basedir}/.."/>
+    <property name="libs.dir"        value="${interpreter.dir}/libs"/>
+    <property name="main-class"      value="org.randoom.setlxUI.pc.SetlX"/>
+    <property name="j16rt.dir"       value="${interpreter.dir}/buildTools/java_1_6"/>
+    <property name="src.dir"         value="${basedir}/src/main/java"/>
+    <property name="grammar.dir"     value="${basedir}/src/main/antlr"/>
+    <property name="build.dir"       value="${basedir}/target"/>
+    <property name="classes.dir"     value="${build.dir}/classes"/>
+    <property name="doc.dir"         value="${build.dir}/javadoc"/>
 
-    <condition property="setlX.executable" value="setlX" else="setlX.cmd">
+    <condition property="setlX.executable" value="${interpreter.dir}/setlX" else="${interpreter.dir}/setlX.cmd">
         <os family="unix" />
     </condition>
     <condition property="isJava6">
@@ -16,7 +19,7 @@
 
     <!-- discover library jars and add them to the class-path -->
     <path id="antlr-jar">
-        <fileset dir="libs" includes="antlr-*.jar"/>
+        <fileset dir="${libs.dir}" includes="antlr-*.jar"/>
     </path>
     <path id="classpath">
         <path refid="antlr-jar"/>
@@ -29,9 +32,9 @@
     </path>
 
     <target name="test" depends="jar">
-        <exec executable="${setlX.executable}" dir="${basedir}" resolveexecutable="true">
+        <exec executable="${setlX.executable}" dir="${interpreter.dir}" resolveexecutable="true">
             <arg value="--runtimeDebugging"/>
-            <arg file="simpleTest/test.stlx"/>
+            <arg file="${interpreter.dir}/simpleTests/core/test.stlx"/>
         </exec>
     </target>
 
@@ -47,7 +50,7 @@
         <tstamp>
             <format property="timeAndDate.str" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
-        <jar destfile="${ant.project.name}.jar" basedir="${classes.dir}" index="true">
+        <jar destfile="${interpreter.dir}/${ant.project.name}.jar" basedir="${classes.dir}" index="true">
             <manifest>
                 <attribute name="Main-Class"              value="${main-class}"/>
                 <attribute name="Built-By"                value="${user.name} on ${timeAndDate.str}" />
@@ -98,7 +101,7 @@
         <tstamp>
             <format property="timeAndDate.str" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
-        <jar destfile="${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
+        <jar destfile="${interpreter.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}"
              index="true">
             <manifest>
                 <attribute name="Main-Class"              value="${main-class}"/>
@@ -120,18 +123,18 @@
                  author="false" version="false" use="true"
                  windowtitle="${ant.project.name} API"
                  doctitle="&lt;h1&gt;${ant.project.name}&lt;/h1&gt;"/>
-        <jar destfile="${ant.project.name}-doc.jar" basedir="${doc.dir}"/>
+        <jar destfile="${interpreter.dir}/${ant.project.name}-doc.jar" basedir="${doc.dir}"/>
     </target>
 
     <target name="src-jar" depends="grammar">
-        <jar destfile="${ant.project.name}-src.jar" basedir="${src.dir}"/>
+        <jar destfile="${interpreter.dir}/${ant.project.name}-src.jar" basedir="${src.dir}"/>
     </target>
 
     <!-- checks if the grammar needs to be updated or not -->
     <target name="checkForGrammarChanges">
         <!-- set "isUpToDate" to "true", if targetfile is newer as srcfile -->
         <uptodate property="isUpToDate"
-                  srcfile="grammar/SetlXgrammar.g"
+                  srcfile="${grammar.dir}/SetlXgrammar.g"
                   targetfile="${src.dir}/org/randoom/setlx/grammar/SetlXgrammarParser.java"/>
     </target>
 
@@ -143,7 +146,7 @@
             <arg value="-Werror"/>
             <arg line="-o ${src.dir}/org/randoom/setlx/grammar/"/>
             <arg line="-package org.randoom.setlx.grammar"/>
-            <arg file="grammar/SetlXgrammar.g"/>
+            <arg file="${grammar.dir}/SetlXgrammar.g"/>
         </java>
         <!-- extract antlr runtime classes and add them to the build tree -->
         <mkdir dir="${classes.dir}"/>
@@ -156,7 +159,7 @@
     </target>
 
     <target name="download-j1.6-rt.jar" unless="isJava6">
-        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="${basedir}/../" target="download-j1.6-rt.jar"/>
+        <ant inheritAll="false" inheritRefs="false" antfile="build.xml" dir="${interpreter.dir}" target="download-j1.6-rt.jar"/>
     </target>
 
     <!-- clean up the mess we made by building -->
@@ -167,7 +170,7 @@
 
     <target name="dist-clean" depends="clean">
         <delete>
-            <fileset dir="${basedir}" includes="*.jar"/>
+            <fileset dir="${interpreter.dir}" includes="*.jar"/>
         </delete>
     </target>
 </project>

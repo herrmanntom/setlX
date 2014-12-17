@@ -1,4 +1,4 @@
-CLASSPATH=.:../src/libs/antlr-4.4-complete.jar
+CLASSPATH=.:../interpreter/libs/antlr-4.4-complete.jar
 
 run: PureLexer.class PureParser.class ParsePure.class input.stlx
 	java  -cp $(CLASSPATH) ParsePure < input.stlx
@@ -9,7 +9,7 @@ PureLexer.class PureParser.class ParsePure.class: PureLexer.java PureParser.java
 Pure.tokens PureLexer.java PureParser.java: Pure.g
 	java  -cp $(CLASSPATH) org.antlr.v4.Tool -no-listener -Werror Pure.g
 
-Pure.g: ../src/grammar/SetlXgrammar.g
+Pure.g: ../interpreter/core/src/main/antlr/SetlXgrammar.g
 	cd EBNF_extractor; ant; cd -
 	sh create_pure_grammar.sh
 

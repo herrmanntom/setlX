@@ -5,12 +5,12 @@ trap 'kill 0;exit' INT QUIT ABRT KILL TERM
 tmpFile=$(mktemp -t setlx-XXXXXXXXXX)
 
 # set overrides for setlX launcher script
-export OVERRIDE_setlXJarDirectory="$PWD/src/"
+export OVERRIDE_setlXJarDirectory="$PWD/interpreter/"
 export OVERRIDE_setlXjavaParameters="-d64 -Xmx6144m"
 #export OVERRIDE_setlXjavaParameters="-d32 -Xmx3000m"
 
 # other locations for tests
-setlXlaunchScript="$PWD/src/setlX"
+setlXlaunchScript="$PWD/interpreter/setlX"
 setlXOptions="--predictableRandom --runtimeDebugging" # and --termLoop on most examples!
 diffDir="$PWD"
 exampleDirs=("example_SetlX_code" "Tutorial/Examples")
@@ -19,8 +19,8 @@ exampleDirs=("example_SetlX_code" "Tutorial/Examples")
 renice -n 10 $$
 
 # prepare the interpreter
-simpleTest="src/simpleTest/test.stlx"
-cd src; ant -emacs -logger org.apache.tools.ant.NoBannerLogger test >"$tmpFile" 2>&1; cd ..
+simpleTest="interpreter/simpleTests/core/test.stlx"
+cd interpreter; ant -emacs -logger org.apache.tools.ant.NoBannerLogger test >"$tmpFile" 2>&1; cd ..
 
 # check for failed tests
 failedCount=$(grep -c "failed" "$tmpFile")

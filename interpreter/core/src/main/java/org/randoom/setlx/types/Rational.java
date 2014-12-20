@@ -419,7 +419,7 @@ public class Rational extends NumberValue {
     }
 
     // private subclass for threaded factorial computation
-    private class Factorial extends BaseRunnable {
+    private static final class Factorial extends BaseRunnable {
         private final int        from;
         private final int        to;
         private final int        runnerIndex;

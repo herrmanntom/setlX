@@ -39,7 +39,7 @@ public class For extends Statement {
     private final Block          statements;
     private final Exec           exec;
 
-    private class Exec implements SetlIteratorExecutionContainer {
+    private static final class Exec implements SetlIteratorExecutionContainer {
         private final Condition condition;
         private final Block     statements;
 

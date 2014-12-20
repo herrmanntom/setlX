@@ -264,7 +264,7 @@ public class ParseSetlX {
     }
 
     // private subclass to execute the parser in a different thread
-    private static class ParserRunner extends ErrorHandlingRunnable {
+    private static final class ParserRunner extends ErrorHandlingRunnable {
         private final SetlXgrammarParser    parser;
         private final CodeType              type;
         private       ImmutableCodeFragment result;

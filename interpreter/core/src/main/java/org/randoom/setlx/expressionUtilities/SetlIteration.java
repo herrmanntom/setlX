@@ -35,7 +35,7 @@ public class SetlIteration extends CollectionBuilder {
     private final SetlIterator iterator;
     private final Condition    condition;
 
-    private class Exec implements SetlIteratorExecutionContainer {
+    private static final class Exec implements SetlIteratorExecutionContainer {
         private final Expr            expr;
         private final Condition       condition;
         private final CollectionValue collection;

@@ -326,7 +326,7 @@ public class VariableScope {
                     if (object.scopeDepth > scopeDepth) {
                         if (iterator == null) {
                             iterator = objects.descendingIterator();
-                            if (object != null && iterator.hasNext()) {
+                            if (iterator.hasNext()) {
                                 iterator.next(); // "throw away" last one, as that already is current 'object'
                             }
                         }
@@ -346,7 +346,7 @@ public class VariableScope {
                         } else {
                             if (iterator == null) {
                                 iterator = objects.descendingIterator();
-                                if (object != null && iterator.hasNext()) {
+                                if (iterator.hasNext()) {
                                     iterator.next(); // "throw away" last one, as that already is current 'object'
                                 }
                             }

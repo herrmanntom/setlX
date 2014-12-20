@@ -43,7 +43,7 @@ public class Forall extends Expr {
     private final Condition     condition;
     private       Set<String>   iterationVariables;
 
-    private class Exec implements SetlIteratorExecutionContainer {
+    private static final class Exec implements SetlIteratorExecutionContainer {
         private final Condition          condition;
         private final Set<String>        iterationVariables;
         private       SetlBoolean        result;

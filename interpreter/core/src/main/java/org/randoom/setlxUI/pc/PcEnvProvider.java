@@ -111,17 +111,17 @@ public class PcEnvProvider implements EnvironmentProvider {
             prompt.append("\n");
             promptForInput(prompt.toString());
             final String promptEnd = "Please enter a number between 1 and " + nAnswer + ": ";
-            String input = null;
-            while (input == null) {
+            while (true) {
                 promptForInput(promptEnd);
-                input = inReadLine();
+                String input = inReadLine();
                 try {
                     final int n = Integer.valueOf(input);
                     if (n >= 1 && n <= nAnswer) {
                         return answers.get(n - 1);
                     }
-                } catch (final Exception e) {}
-                input = null;
+                } catch (final Exception e) {
+                    // don't care
+                }
             }
         } else /* if (answers.size() == 1) */ {
             final String answer = answers.get(0);
@@ -136,7 +136,6 @@ public class PcEnvProvider implements EnvironmentProvider {
             inReadLine();
             return answer;
         }
-        return null; // never to be reached
     }
 
     @Override

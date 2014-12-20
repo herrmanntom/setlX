@@ -88,7 +88,7 @@ tokenizeString := procedure(s) {
         regex '[a-z][a-zA-Z_0-9]*' as [ v ]: tokenList += [ Var(v)   ];
         regex '[A-Z][A-Z_0-9]*'    as [ t ]: tokenList += [ Token(t) ];
         regex '''[^'']*'''         as [ l ]: tokenList += [ Token(l) ];
-        regex '[ \t\v\n\r]+'               : // skip
+        regex '[ \t\n\r]+'                 : // skip
         regex '.|\n'               as [ c ]: abort("tokenizeString: $c$");
     }
     return tokenList;

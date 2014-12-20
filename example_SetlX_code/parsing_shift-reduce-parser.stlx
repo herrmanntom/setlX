@@ -236,7 +236,7 @@ tokenizeString := procedure(s) {
     scan (s) {
         regex '0|[1-9][0-9]*' as [ number   ]: tokenList += [ "int"    ];
         regex '[-+*/()]'      as [ operator ]: tokenList += [ operator ];
-        regex '[ \t\v\n\r]+'                 : // skip
+        regex '[ \t\n\r]+'                   : // skip
     }
     return tokenList;
 };

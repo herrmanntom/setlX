@@ -45,7 +45,7 @@ As set theory is the language of mathematics, many mathematical algorithms that 
 Designed mostly by Karl Stroetmann, the \SetlX{} language is an evolution of \Setl{} by Jack Schwartz.
 It was specifically conceived to make the unique features of \Setl{} more accessible to today's computer science students.
 
-The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann. Its official homepage is \url{http://setlX.randoom.org/}. You may send bug-reports and\slash{}or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}.
+The \setlX{} interpreter, which currently is the \SetlX{} reference implementation, was implemented by Tom Herrmann. Its official homepage is \url{http://setlX.randoom.org/}. You may send bug-reports and\slash{}or questions about the \setlX{} interpreter via e-mail to \mailto{setlx@randoom.org}, or create an issue on github (\url{https://github.com/herrmanntom/setlX}).
 
 
 \section{Installation}
@@ -175,7 +175,6 @@ In addition to file-paths a number of options can be used when running \setlX{}:
 \section{System Requirements}
 
 To run \setlX{} a Java runtime (JRE) is required, which is compatible to Java version 1.6 (aka version 6) or higher.
-%Running it with Version 1.5 (aka version 5) is largely untested, but should work. However recompilation from source is required and somewhat problematic (see section \ref{MACj5}).
 
 When building from source, the corresponding Java Development Kit (JDK) and a ant-installation have to be present as well.
 
@@ -190,10 +189,6 @@ Due to its implementation and execution by the Java Virtual Machine (JVM), an `o
 The JVM is only able to dynamically increase its memory allocation in very limited bounds, no matter how much free memory is available.
 
 To work around these problems, edit the used launching script (`\command{setlX}' or `\command{setlX.cmd}') with a text editor and follow the directions given at the top.
-
-%\subsection{Subpar Parsing Errors}
-%
-%Parsing errors are subpar, which make root cause of syntax errors sometimes hard to detect in a slew of messages.
 
 \subsection{Input in Interactive Mode on Unix}
 
@@ -214,7 +209,7 @@ Optionally, when the interpreter source is available, the interpreter can be (re
 ant
 \end{lstlisting}
 
-in the `\command{src}' folder.
+in the `\command{interpreter}' folder.
 
 A self-contained `.jar' file will be created, which can be launched on all Java-Platforms without additional scripts, jars or environment-variables by executing
 
@@ -229,36 +224,6 @@ java -jar setlX.jar
 \end{lstlisting}
 
 However, the \command{setlX} and \command{setlX.cmd} scripts can also be used to launch the jar file created by this process.
-
-%\subsection{Building for Java 1.5 (esp. a 1st Generation Intel Macintosh)}\label{MACj5}
-%
-%To create \setlX{} for a machine, which is limited to Java 1.5, you need another machine running both Java 1.5 and Java 1.6.
-%
-%The main example for such situation is a 1st generation Apple Macintosh with Intel CPU running Mac OS X 10.5 or earlier. These machines are artificially limited by Apple to Java 1.5 only. It is recommended that you try installing an unofficial ``Soylatte''\footnote{\url{http://landonf.bikemonkey.org/static/soylatte/}} port of Java 1.6 for these machines, or upgrade to Mac OS X 10.6 or higher. You should only attempt to rebuild \setlX{} for Java 1.5 if you can not, or do not want to install this port.
-%
-%On the second machine running Java 1.5 and 1.6, do the following:
-%
-%\begin{enumerate}
-%	\item Activate Java 1.6.\\
-%		On a Mac this can be done using:
-%\begin{lstlisting}[frame=none,numbers=none]
-%/Applications/Utilities/Java Preferences
-%\end{lstlisting}
-%	\item Switch to the sub-directory src and execute the following command:
-%\begin{lstlisting}[frame=none,numbers=none]
-%make java-src/grammar/SetlXgrammar*.java
-%\end{lstlisting}
-%	\item Activate Java 1.5.\\
-%		On a Mac this can again be done using:
-%\begin{lstlisting}[frame=none,numbers=none]
-%/Applications/Utilities/Java Preferences
-%\end{lstlisting}
-%	\item Switch to the sub-directory src again and execute the following command:
-%\begin{lstlisting}[frame=none,numbers=none]
-%make
-%\end{lstlisting}
-%\end{enumerate}
-%This will create the file `\command{setlX.jar}', which can be installed on the machine running Java 1.5 as stated in section \ref{Unix}.
 
 \section{Disclaimer}
 

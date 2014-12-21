@@ -478,7 +478,11 @@ public class SingularValueDecomposition implements java.io.Serializable {
    */
 
    public Matrix getU () {
-      return new Matrix(U,m,Math.min(m+1,n));
+      int length = Integer.MAX_VALUE;
+      if (m > 0) {
+         length = U[0].length;
+      }
+      return new Matrix(U,m,Math.min(Math.min(m+1,n), length));
    }
 
    /** Return the right singular vectors

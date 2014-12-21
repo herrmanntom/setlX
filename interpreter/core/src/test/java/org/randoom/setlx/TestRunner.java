@@ -14,7 +14,7 @@ public class TestRunner {
             System.err.println("Failure: " + f.toString());
             // System.err.println(f.getMessage() + " " + f.getTrace() + " " + f.getDescription() + " " + f.getException());
         }
-        System.out.println("Tests run: " + testResult.getRunCount() + " Tests failed: " + testResult.getFailureCount());
+        System.out.println("Tests run: " + testResult.getRunCount() + ", Tests failures: " + testResult.getFailureCount());
         if (testResult.getFailureCount() > 0) {
             System.err.println("Still buggy");
             System.exit(1);

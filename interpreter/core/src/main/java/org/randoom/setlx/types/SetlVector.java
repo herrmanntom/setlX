@@ -21,7 +21,7 @@ public class SetlVector extends IndexedCollectionValue {
      * @param vector initialization array
      */
     public SetlVector(final ArrayList<Double> vector) {
-        this.vector = vector;
+        this.vector = new ArrayList<Double>(vector);
     }
 
     /**

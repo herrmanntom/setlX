@@ -61,7 +61,7 @@ public class SetlVector extends IndexedCollectionValue {
         return new SetlVector(new ArrayList<Double>(vector));
     }
 
-    private class SetlVectorIterator implements Iterator<Value> {
+    private static class SetlVectorIterator implements Iterator<Value> {
         private final SetlVector        setlVector;
         private       ArrayList<Double> content;
         private final boolean           descending;
@@ -69,7 +69,7 @@ public class SetlVector extends IndexedCollectionValue {
 
         private SetlVectorIterator(final SetlVector setlVector, boolean descending) {
             this.setlVector = setlVector;
-            this.content = setlVector.vector;
+            this.content    = setlVector.vector;
             this.descending = descending;
             if (descending) {
                 this.position = content.size() - 1;
@@ -81,9 +81,9 @@ public class SetlVector extends IndexedCollectionValue {
         @Override
         public boolean hasNext() {
             if (descending) {
-                return 0 < position;
+                return 0 <= position;
             } else {
-                return position < content.size() -1;
+                return position < content.size();
             }
         }
 
@@ -105,12 +105,12 @@ public class SetlVector extends IndexedCollectionValue {
 
         @Override
         public void remove() {
-            setlVector.removeMember(position + 1);
             if (descending) {
-                position--;
+                setlVector.removeMember(position--);
             } else {
-                content = setlVector.vector;
+                setlVector.removeMember(position - 1);
             }
+            content = setlVector.vector;
         }
     }
 

@@ -113,12 +113,12 @@ public class SetlList extends IndexedCollectionValue {
         return this.list.iterator();
     }
 
-    private class SetlListDecendingIterator implements Iterator<Value> {
+    private static class SetlListDescendingIterator implements Iterator<Value> {
         private final SetlList         listShell;
         private final ArrayList<Value> content;
         private       int              position;
 
-        private SetlListDecendingIterator(final SetlList listShell) {
+        private SetlListDescendingIterator(final SetlList listShell) {
             this.listShell = listShell;
             this.content   = listShell.list;
             this.position  = content.size() - 1;
@@ -126,7 +126,7 @@ public class SetlList extends IndexedCollectionValue {
 
         @Override
         public boolean hasNext() {
-            return 0 < position;
+            return 0 <= position;
         }
 
         @Override
@@ -143,7 +143,7 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public Iterator<Value> descendingIterator() {
-        return new SetlListDecendingIterator(this);
+        return new SetlListDescendingIterator(this);
     }
 
     /**

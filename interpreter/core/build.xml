@@ -6,8 +6,10 @@
     <property name="j16rt.dir"       value="${interpreter.dir}/buildTools/java_1_6"/>
     <property name="src.dir"         value="${basedir}/src/main/java"/>
     <property name="grammar.dir"     value="${basedir}/src/main/antlr"/>
+    <property name="test.dir"        value="${basedir}/src/test/java"/>
     <property name="build.dir"       value="${basedir}/target"/>
     <property name="classes.dir"     value="${build.dir}/classes"/>
+    <property name="testclasses.dir" value="${build.dir}/testclasses"/>
     <property name="doc.dir"         value="${build.dir}/javadoc"/>
 
     <condition property="setlX.executable" value="${interpreter.dir}/setlX" else="${interpreter.dir}/setlX.cmd">
@@ -25,6 +27,19 @@
         <path refid="antlr-jar"/>
         <pathelement path="${classes.dir}"/>
     </path>
+    <path id="junit-jar">
+        <fileset dir="${libs.dir}" includes="junit-*.jar"/>
+    </path>
+    <path id="hamcrest-jar">
+        <fileset dir="${libs.dir}" includes="hamcrest-core-*.jar"/>
+    </path>
+    <path id="test-classpath">
+        <path refid="junit-jar"/>
+        <path refid="hamcrest-jar"/>
+        <pathelement path="${testclasses.dir}"/>
+        <path refid="antlr-jar"/>
+        <pathelement path="${classes.dir}"/>
+    </path>
 
     <!-- discover rt.jar from java-1.6 for building 1.6 compatible with newer javac -->
     <path id="rt.jar-j1.6">
@@ -32,6 +47,13 @@
     </path>
 
     <target name="test" depends="jar">
+        <mkdir dir="${testclasses.dir}"/>
+        <javac srcdir="${test.dir}" destdir="${testclasses.dir}"
+               debug="true" debuglevel="lines,source"
+               classpathref="test-classpath" includeantruntime="false">
+            <compilerarg value="-Xlint:all"/>
+        </javac>
+        <java classname="org.randoom.setlx.TestRunner" classpathref="test-classpath" failonerror="true" />
         <exec executable="${setlX.executable}" dir="${interpreter.dir}" resolveexecutable="true">
             <arg value="--runtimeDebugging"/>
             <arg file="${interpreter.dir}/simpleTests/core/test.stlx"/>

@@ -1,43 +1,215 @@
-package org.randoom.setlx.tests;
+package org.randoom.setlx.types;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Arrays;
-import java.util.List;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.utilities.State;
+
+import java.util.*;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
-import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.types.CollectionValue;
-import org.randoom.setlx.types.NumberValue;
-import org.randoom.setlx.types.Rational;
-import org.randoom.setlx.types.SetlDouble;
-import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlMatrix;
-import org.randoom.setlx.types.SetlVector;
-import org.randoom.setlx.types.Value;
-
 /**
  * @author Patrick Robinson
  */
-public class MatrixTest {
+public class SetlMatrixTest {
 
-    static Map<Integer, SetlDouble> sdi;
-    static double[][] simpleBase;
-    static SetlMatrix simple;
-    static double[][] snsBase;
-    static SetlMatrix sns;
-    static Map<Integer, double[][]> simple_pow_results;
-    static Map<Character, double[][]> simple_svd;
-    static Map<Character, double[][]> sns_svd;
-    static Map<Character, double[][]> simple_eig;
+    private State state;
+    private Map<Integer, SetlDouble> sdi;
+    private double[][] simpleBase;
+    private SetlMatrix simple;
+    private double[][] snsBase;
+    private SetlMatrix sns;
+    private Map<Integer, double[][]> simple_pow_results;
+    private Map<Character, double[][]> simple_svd;
+    private Map<Character, double[][]> sns_svd;
+    private Map<Character, double[][]> simple_eig;
+
+    @Before
+    public void testSetup() {
+        state = new State();
+
+        sdi = new TreeMap<Integer, SetlDouble>();
+        try {
+            for (int i = -10000; i <= 10000; i++) {
+                sdi.put(i, SetlDouble.valueOf(i));
+            }
+        } catch (UndefinedOperationException ex) {
+            System.err.println(ex.getMessage());
+            fail("Error in setting up sdi");
+        }
+        simpleBase = new double[2][2];
+        simpleBase[0][0] = 1;
+        simpleBase[0][1] = 2;
+        simpleBase[1][0] = 3;
+        simpleBase[1][1] = 4;
+        simple = new SetlMatrix(new Jama.Matrix(simpleBase));
+        snsBase = new double[2][3];
+        snsBase[0][0] = 1;
+        snsBase[0][1] = 2;
+        snsBase[0][2] = 3;
+        snsBase[1][0] = 4;
+        snsBase[1][1] = 5;
+        snsBase[1][2] = 6;
+        sns = new SetlMatrix(new Jama.Matrix(snsBase));
+        simple_pow_results = new TreeMap<Integer, double[][]>();
+        /**
+         * Octave results:
+         * -5: [[-106.437 48.687] [73.031 -33.406]]
+         * -4: [[39.625 -18.125] [-27.187 12.437]]
+         * -3: [[-14.75 6.75] [10.125 -4.625]]
+         * -2: [[5.5 -2.5] [-3.75 1.75]]
+         * -1: [[-2 1] [1.5 -0.5]]
+         * +0: [[1 0] [0 1]]
+         * +1: [[1 2] [3 4]]
+         * +2: [[7 10] [15 22]]
+         * +3: [[37 54] [81 118]]
+         * +4: [[199 290] [435 634]]
+         * +5: [[1069 1558] [2337 3406]]
+         */
+        double[][] tmpBase = new double[2][2];
+        tmpBase[0][0] = -106.437;
+        tmpBase[0][1] = 48.687;
+        tmpBase[1][0] = 73.031;
+        tmpBase[1][1] = -33.406;
+        simple_pow_results.put(-5, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 39.625;
+        tmpBase[0][1] = -18.125;
+        tmpBase[1][0] = -27.187;
+        tmpBase[1][1] = 12.437;
+        simple_pow_results.put(-4, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = -14.75;
+        tmpBase[0][1] = 6.75;
+        tmpBase[1][0] = 10.125;
+        tmpBase[1][1] = -4.625;
+        simple_pow_results.put(-3, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 5.5;
+        tmpBase[0][1] = -2.5;
+        tmpBase[1][0] = -3.75;
+        tmpBase[1][1] = 1.75;
+        simple_pow_results.put(-2, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = -2;
+        tmpBase[0][1] = 1;
+        tmpBase[1][0] = 1.5;
+        tmpBase[1][1] = -0.5;
+        simple_pow_results.put(-1, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 1;
+        tmpBase[0][1] = 0;
+        tmpBase[1][0] = 0;
+        tmpBase[1][1] = 1;
+        simple_pow_results.put(0, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 1;
+        tmpBase[0][1] = 2;
+        tmpBase[1][0] = 3;
+        tmpBase[1][1] = 4;
+        simple_pow_results.put(1, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 7;
+        tmpBase[0][1] = 10;
+        tmpBase[1][0] = 15;
+        tmpBase[1][1] = 22;
+        simple_pow_results.put(2, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 37;
+        tmpBase[0][1] = 54;
+        tmpBase[1][0] = 81;
+        tmpBase[1][1] = 118;
+        simple_pow_results.put(3, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 199;
+        tmpBase[0][1] = 290;
+        tmpBase[1][0] = 435;
+        tmpBase[1][1] = 634;
+        simple_pow_results.put(4, tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 1069;
+        tmpBase[0][1] = 1558;
+        tmpBase[1][0] = 2337;
+        tmpBase[1][1] = 3406;
+        simple_pow_results.put(5, tmpBase);
+        /**
+         * svd(simple)
+         * u: [[-0.40455 -0.91451] [-0.91451 0.40455]]
+         * s: [[5.46499 0] [0 0.36597]]
+         * v: [[-0.57605 0.81742] [-0.81742 -0.57605]]
+         */
+        simple_svd = new TreeMap<Character, double[][]>();
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 0.40455;
+        tmpBase[0][1] = 0.91451;
+        tmpBase[1][0] = 0.91451;
+        tmpBase[1][1] = -0.40455;
+        simple_svd.put('u', tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 5.46499;
+        tmpBase[0][1] = 0;
+        tmpBase[1][0] = 0;
+        tmpBase[1][1] = 0.36597;
+        simple_svd.put('s', tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = 0.57605;
+        tmpBase[0][1] = -0.81742;
+        tmpBase[1][0] = 0.81742;
+        tmpBase[1][1] = 0.57605;
+        simple_svd.put('v', tmpBase);
+        /**
+         * svd(sns)
+         */
+        sns_svd = new TreeMap<Character, double[][]>();
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = -0.38632;
+        tmpBase[0][1] = -0.92237;
+        tmpBase[1][0] = -0.92237;
+        tmpBase[1][1] = 0.38632;
+        sns_svd.put('u', tmpBase);
+        tmpBase = new double[3][3];
+        tmpBase[0][0] = 9.50803;
+        tmpBase[0][1] = 0;
+        tmpBase[0][2] = 0;
+        tmpBase[1][0] = 0;
+        tmpBase[1][1] = 0.77287;
+        tmpBase[1][2] = 0;
+        tmpBase[2][0] = 0;
+        tmpBase[2][1] = 0;
+        tmpBase[2][2] = 0;
+        sns_svd.put('s', tmpBase);
+        tmpBase = new double[3][3];
+        tmpBase[0][0] = -0.42867;
+        tmpBase[0][1] = 0.80596;
+        tmpBase[0][2] = 0.40825;
+        tmpBase[1][0] = -0.56631;
+        tmpBase[1][1] = -0.23811;
+        tmpBase[1][2] = -0.11650;
+        tmpBase[2][0] = -0.70395;
+        tmpBase[2][1] = -0.75812;
+        tmpBase[2][2] = 0.74082;
+        sns_svd.put('v', tmpBase);
+        /**
+         * eig(simple)
+         */
+        simple_eig = new TreeMap<Character, double[][]>();
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = -0.82456;
+        tmpBase[0][1] = -0.41597;
+        tmpBase[1][0] = 0.56577;
+        tmpBase[1][1] = -0.90938;
+        simple_eig.put('v', tmpBase);
+        tmpBase = new double[2][2];
+        tmpBase[0][0] = -0.37228;
+        tmpBase[0][1] = 0;
+        tmpBase[1][0] = 0;
+        tmpBase[1][1] = 5.37228;
+        simple_eig.put('l', tmpBase);
+    }
 
 //    @Test
 //    public void testMultiply() {
@@ -158,14 +330,14 @@ public class MatrixTest {
         assertTrue("compare to different error: wrong result", sns.compareTo(simple) != 0);
 
         StringBuilder stringBuilder = new StringBuilder();
-        simple.canonical(null, stringBuilder);
-        assertTrue("canonical error: wrong result " + stringBuilder.toString() + " vs < [ 1.0  2.0 ]  [ 3.0  4.0 ] >", stringBuilder.toString().equals("< [ 1.0  2.0 ]  [ 3.0  4.0 ] >"));
+        simple.canonical(state, stringBuilder);
+        assertTrue("canonical error: wrong result " + stringBuilder.toString() + " vs << <<1.0 2.0>> <<3.0 4.0>> >>", stringBuilder.toString().equals("<< <<1.0 2.0>> <<3.0 4.0>> >>"));
 
         Value b = sdi.get(0);
         for (Value row : simple) {
             try {
-                for (Value cell : (CollectionValue) row) {
-                    b = b.sum(null, cell);
+                for (Value cell : (SetlVector) row) {
+                    b = b.sum(state, cell);
                 }
             } catch (SetlException ex) {
                 System.err.println(ex.getMessage());
@@ -179,7 +351,7 @@ public class MatrixTest {
         idx.add(Rational.ONE);
         SetlList tmpList;
         try {
-            tmpList = (SetlList) simple.collectionAccess(null, idx);
+            tmpList = (SetlList) simple.collectionAccess(state, idx);
         } catch (SetlException ex) {
             System.err.println(ex.getMessage());
             fail("matrix[] access error: exception");
@@ -417,187 +589,6 @@ public class MatrixTest {
 //            assertTrue("solve wrong_error: probably transpose error: " + ex.getMessage(), ex.getMessage().equals("Row numbers must be equal to solve A * X = B."));
 //        }
 ////		System.err.println("[DEBUG]: should_fail_solve done");
-//    }
-
-//    @BeforeClass
-//    public static void testSetup() {
-//        sdi = new TreeMap<Integer, SetlDouble>();
-//        try {
-//            for (int i = -10000; i <= 10000; i++) {
-//                sdi.put(i, SetlDouble.valueOf(i));
-//            }
-//        } catch (UndefinedOperationException ex) {
-//            System.err.println(ex.getMessage());
-//            fail("Error in setting up sdi");
-//        }
-//        simpleBase = new double[2][2];
-//        simpleBase[0][0] = 1;
-//        simpleBase[0][1] = 2;
-//        simpleBase[1][0] = 3;
-//        simpleBase[1][1] = 4;
-//        simple = new SetlMatrix(new Jama.Matrix(simpleBase));
-//        snsBase = new double[2][3];
-//        snsBase[0][0] = 1;
-//        snsBase[0][1] = 2;
-//        snsBase[0][2] = 3;
-//        snsBase[1][0] = 4;
-//        snsBase[1][1] = 5;
-//        snsBase[1][2] = 6;
-//        sns = new SetlMatrix(new Jama.Matrix(snsBase));
-//        simple_pow_results = new TreeMap<Integer, double[][]>();
-//        /**
-//         * Octave results:
-//         * -5: [[-106.437 48.687] [73.031 -33.406]]
-//         * -4: [[39.625 -18.125] [-27.187 12.437]]
-//         * -3: [[-14.75 6.75] [10.125 -4.625]]
-//         * -2: [[5.5 -2.5] [-3.75 1.75]]
-//         * -1: [[-2 1] [1.5 -0.5]]
-//         * +0: [[1 0] [0 1]]
-//         * +1: [[1 2] [3 4]]
-//         * +2: [[7 10] [15 22]]
-//         * +3: [[37 54] [81 118]]
-//         * +4: [[199 290] [435 634]]
-//         * +5: [[1069 1558] [2337 3406]]
-//         */
-//        double[][] tmpBase = new double[2][2];
-//        tmpBase[0][0] = -106.437;
-//        tmpBase[0][1] = 48.687;
-//        tmpBase[1][0] = 73.031;
-//        tmpBase[1][1] = -33.406;
-//        simple_pow_results.put(-5, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 39.625;
-//        tmpBase[0][1] = -18.125;
-//        tmpBase[1][0] = -27.187;
-//        tmpBase[1][1] = 12.437;
-//        simple_pow_results.put(-4, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = -14.75;
-//        tmpBase[0][1] = 6.75;
-//        tmpBase[1][0] = 10.125;
-//        tmpBase[1][1] = -4.625;
-//        simple_pow_results.put(-3, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 5.5;
-//        tmpBase[0][1] = -2.5;
-//        tmpBase[1][0] = -3.75;
-//        tmpBase[1][1] = 1.75;
-//        simple_pow_results.put(-2, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = -2;
-//        tmpBase[0][1] = 1;
-//        tmpBase[1][0] = 1.5;
-//        tmpBase[1][1] = -0.5;
-//        simple_pow_results.put(-1, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 1;
-//        tmpBase[0][1] = 0;
-//        tmpBase[1][0] = 0;
-//        tmpBase[1][1] = 1;
-//        simple_pow_results.put(0, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 1;
-//        tmpBase[0][1] = 2;
-//        tmpBase[1][0] = 3;
-//        tmpBase[1][1] = 4;
-//        simple_pow_results.put(1, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 7;
-//        tmpBase[0][1] = 10;
-//        tmpBase[1][0] = 15;
-//        tmpBase[1][1] = 22;
-//        simple_pow_results.put(2, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 37;
-//        tmpBase[0][1] = 54;
-//        tmpBase[1][0] = 81;
-//        tmpBase[1][1] = 118;
-//        simple_pow_results.put(3, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 199;
-//        tmpBase[0][1] = 290;
-//        tmpBase[1][0] = 435;
-//        tmpBase[1][1] = 634;
-//        simple_pow_results.put(4, tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 1069;
-//        tmpBase[0][1] = 1558;
-//        tmpBase[1][0] = 2337;
-//        tmpBase[1][1] = 3406;
-//        simple_pow_results.put(5, tmpBase);
-//        /**
-//         * svd(simple)
-//         * u: [[-0.40455 -0.91451] [-0.91451 0.40455]]
-//         * s: [[5.46499 0] [0 0.36597]]
-//         * v: [[-0.57605 0.81742] [-0.81742 -0.57605]]
-//         */
-//        simple_svd = new TreeMap<Character, double[][]>();
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 0.40455;
-//        tmpBase[0][1] = 0.91451;
-//        tmpBase[1][0] = 0.91451;
-//        tmpBase[1][1] = -0.40455;
-//        simple_svd.put('u', tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 5.46499;
-//        tmpBase[0][1] = 0;
-//        tmpBase[1][0] = 0;
-//        tmpBase[1][1] = 0.36597;
-//        simple_svd.put('s', tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = 0.57605;
-//        tmpBase[0][1] = -0.81742;
-//        tmpBase[1][0] = 0.81742;
-//        tmpBase[1][1] = 0.57605;
-//        simple_svd.put('v', tmpBase);
-//        /**
-//         * svd(sns)
-//         */
-//        sns_svd = new TreeMap<Character, double[][]>();
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = -0.38632;
-//        tmpBase[0][1] = -0.92237;
-//        tmpBase[1][0] = -0.92237;
-//        tmpBase[1][1] = 0.38632;
-//        sns_svd.put('u', tmpBase);
-//        tmpBase = new double[3][3];
-//        tmpBase[0][0] = 9.50803;
-//        tmpBase[0][1] = 0;
-//        tmpBase[0][2] = 0;
-//        tmpBase[1][0] = 0;
-//        tmpBase[1][1] = 0.77287;
-//        tmpBase[1][2] = 0;
-//        tmpBase[2][0] = 0;
-//        tmpBase[2][1] = 0;
-//        tmpBase[2][2] = 0;
-//        sns_svd.put('s', tmpBase);
-//        tmpBase = new double[3][3];
-//        tmpBase[0][0] = -0.42867;
-//        tmpBase[0][1] = 0.80596;
-//        tmpBase[0][2] = 0.40825;
-//        tmpBase[1][0] = -0.56631;
-//        tmpBase[1][1] = -0.23811;
-//        tmpBase[1][2] = -0.11650;
-//        tmpBase[2][0] = -0.70395;
-//        tmpBase[2][1] = -0.75812;
-//        tmpBase[2][2] = 0.74082;
-//        sns_svd.put('v', tmpBase);
-//        /**
-//         * eig(simple)
-//         */
-//        simple_eig = new TreeMap<Character, double[][]>();
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = -0.82456;
-//        tmpBase[0][1] = -0.41597;
-//        tmpBase[1][0] = 0.56577;
-//        tmpBase[1][1] = -0.90938;
-//        simple_eig.put('v', tmpBase);
-//        tmpBase = new double[2][2];
-//        tmpBase[0][0] = -0.37228;
-//        tmpBase[0][1] = 0;
-//        tmpBase[1][0] = 0;
-//        tmpBase[1][1] = 5.37228;
-//        simple_eig.put('l', tmpBase);
 //    }
 //
 //    @Test

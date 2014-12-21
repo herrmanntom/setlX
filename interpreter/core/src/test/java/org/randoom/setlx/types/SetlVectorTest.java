@@ -1,80 +1,50 @@
-package org.randoom.setlx.tests;
+package org.randoom.setlx.types;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
-
-import static org.junit.Assert.assertTrue;
-
-import static org.junit.Assert.fail;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.types.NumberValue;
-import org.randoom.setlx.types.Rational;
-import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlDouble;
-import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlMatrix;
-import org.randoom.setlx.types.SetlVector;
-import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.State;
+
+import java.util.*;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Patrick Robinson
  */
-public class VectorTest {
+public class SetlVectorTest {
 
-    static Map<Integer, SetlDouble> sdi;
-    static NumberValue[] simpleBase;
-    static SetlVector simple;
-    static Map<Integer, Value[]> simple_sdi_results_mul;
-    static Random rng;
+    private State state;
+    private Map<Integer, SetlDouble> sdi;
+    private ArrayList<Double> simpleBase;
+    private SetlVector simple;
+    private Map<Integer, ArrayList<SetlDouble>> simple_sdi_results_mul;
+    private Random rng;
 
-    @BeforeClass
-    public static void testSetup() {
-        // System.err.println("[DEBUG]: testSetup");
+    @Before
+    public void testSetup() throws SetlException {
+        state = new State();
+
         rng = new Random();
-        simpleBase = new NumberValue[3];
-        try {
-            simpleBase[0] = SetlDouble.valueOf(1);
-            simpleBase[1] = SetlDouble.valueOf(2);
-            simpleBase[2] = SetlDouble.valueOf(3);
-        } catch (UndefinedOperationException ex) {
-            System.err.println(ex.getMessage());
-            fail("Error in setting up simpleBase");
-        }
+        simpleBase = new ArrayList<Double>(3);
+        simpleBase.add(1.0);
+        simpleBase.add(2.0);
+        simpleBase.add(3.0);
         sdi = new TreeMap<Integer, SetlDouble>();
-        try {
             for (int i = -10000; i <= 10000; i++) {
                 sdi.put(i, SetlDouble.valueOf(i));
             }
-        } catch (UndefinedOperationException ex) {
-            System.err.println(ex.getMessage());
-            fail("Error in setting up sdi");
+        simple_sdi_results_mul = new TreeMap<Integer, ArrayList<SetlDouble>>();
+        for (int i = -10000; i <= 10000; i++) {
+            ArrayList<SetlDouble> a = new ArrayList<SetlDouble>(3);
+            a.add((SetlDouble) SetlDouble.valueOf(simpleBase.get(0)).product(state, sdi.get(i)));
+            a.add((SetlDouble) SetlDouble.valueOf(simpleBase.get(1)).product(state,sdi.get(i)));
+            a.add((SetlDouble) SetlDouble.valueOf(simpleBase.get(2)).product(state,sdi.get(i)));
+            simple_sdi_results_mul.put(i, a);
         }
-        simple_sdi_results_mul = new TreeMap<Integer, Value[]>();
-        try {
-            for (int i = -10000; i <= 10000; i++) {
-                Value[] a = new Value[3];
-                a[0] = simpleBase[0].product(null, sdi.get(i));
-                a[1] = simpleBase[1].product(null, sdi.get(i));
-                a[2] = simpleBase[2].product(null, sdi.get(i));
-                simple_sdi_results_mul.put(i, a);
-            }
-        } catch (SetlException ex) {
-            System.err.println(ex.getMessage());
-            fail("Error in setting up simple_sdi_results");
-        }
-//        try {
-//            simple = new SetlVector(simpleBase);
-//        } catch (IncompatibleTypeException ex) {
-//            System.err.println(ex.getMessage());
-//            fail("Simple vector construction throws IncompatibleTypeException.");
-//        }
+        simple = new SetlVector(simpleBase);
     }
 
 //    @Test
@@ -217,44 +187,46 @@ public class VectorTest {
 //        }
 //    }
 //
-//    @Test
-//    public void testTools() {
-//        // System.err.println("[DEBUG]: testTools");
-//        // ==, clone, compare, iterator, canonical, ...
-//        assertTrue("== error", simple.equalTo(simple));
-//        assertTrue("clone error", simple.equalTo(simple.clone()));
-//        assertTrue("compareTo equal error", simple.compareTo(simple) == 0);
-//        Value b = sdi.get(0);
-//        for (Value a : simple) {
-//            try {
-//                b = b.sum(null, a);
-//            } catch (SetlException ex) {
-//                System.err.println(ex.getMessage());
-//                fail("Iterator error: sum " + a);
-//                return;
-//            }
-//        }
-//        assertTrue("Iterator error: wrong result " + b + " vs 6", b.equalTo(sdi.get(6)));
-//        StringBuilder simpleBuilder = new StringBuilder();
-//        simple.canonical(null, simpleBuilder);
-//        assertTrue("Canonical error: wrong result " + simpleBuilder.toString() + " vs < 1.0  2.0  3.0 >", simpleBuilder.toString().equals("< 1.0  2.0  3.0 >"));
-//        List<Value> simpleIdx = new ArrayList<Value>();
-//        simpleIdx.add(Rational.ONE);
-//        try {
-//            assertTrue("Simple[] error: wrong result", simple.collectionAccess(null, simpleIdx).equalTo(sdi.get(1)));
-//        } catch (SetlException ex) {
-//            System.err.println(ex.getMessage());
-//            fail("Simple[] error: access exception");
-//        }
-//        SetlVector scl = (SetlVector) simple.clone();
-//        try {
-//            scl.setMember(null, Rational.ONE, sdi.get(4));
-//        } catch (SetlException ex) {
-//            System.err.println(ex.getMessage());
-//            fail("Simple[] := error: access exception");
-//        }
-//        assertTrue("Simple[] := error: wrong result", scl.getValue()[0].equalTo(sdi.get(4)));
-//    }
+    @Test
+    public void testTools() {
+        // System.err.println("[DEBUG]: testTools");
+        // ==, clone, compare, iterator, canonical, ...
+        assertTrue("== error", simple.equalTo(simple));
+        assertTrue("clone error", simple.equalTo(simple.clone()));
+        assertTrue("compareTo equal error", simple.compareTo(simple) == 0);
+        Value b = sdi.get(0);
+        for (Value a : simple) {
+            try {
+            b = b.sum(state, a);
+            } catch (SetlException ex) {
+                System.err.println(ex.getMessage());
+                fail("Iterator error: sum " + a);
+                return;
+            }
+        }
+        assertTrue("Iterator error: wrong result " + b + " vs 6.0", b.equalTo(sdi.get(6)));
+        StringBuilder simpleBuilder = new StringBuilder();
+        simple.canonical(state, simpleBuilder);
+        assertTrue("Canonical error: wrong result " + simpleBuilder.toString() + " vs <<1.0 2.0 3.0>>", simpleBuilder.toString().equals("<<1.0 2.0 3.0>>"));
+        List<Value> simpleIdx = new ArrayList<Value>();
+        simpleIdx.add(Rational.ONE);
+        try {
+            assertTrue("Simple[] error: wrong result", simple.collectionAccess(null, simpleIdx).equalTo(sdi.get(1)));
+        } catch (SetlException ex) {
+            System.err.println(ex.getMessage());
+            fail("Simple[] error: access exception");
+        }
+        SetlVector scl = (SetlVector) simple.clone();
+        try {
+            scl.setMember(state, Rational.ONE, sdi.get(4));
+        } catch (SetlException ex) {
+            System.err.println(ex.getMessage());
+            fail("Simple[] := error: access exception");
+        }
+            assertTrue("Simple[] := error: wrong result", scl.getVectorCopy().get(0).equals(sdi.get(4).jDoubleValue()));
+    }
+
+
 //
 //    @Test
 //    public void testSum() {

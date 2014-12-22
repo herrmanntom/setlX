@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 /**
  * @author Patrick Robinson
  */
+@SuppressWarnings("JavaDoc")
 public class SetlVectorTest {
 
     private State state;

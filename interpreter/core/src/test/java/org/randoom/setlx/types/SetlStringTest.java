@@ -9,6 +9,7 @@ import java.util.Iterator;
 
 import static org.junit.Assert.assertEquals;
 
+@SuppressWarnings("JavaDoc")
 public class SetlStringTest {
     private State state;
 

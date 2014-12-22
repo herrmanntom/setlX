@@ -53,7 +53,9 @@
                classpathref="test-classpath" includeantruntime="false">
             <compilerarg value="-Xlint:all"/>
         </javac>
-        <java classname="org.randoom.setlx.TestRunner" classpathref="test-classpath" failonerror="true" />
+        <java classname="org.randoom.setlx.TestRunner" classpathref="test-classpath" failonerror="true">
+            <arg path="${test.dir}"/>
+        </java>
         <exec executable="${setlX.executable}" dir="${interpreter.dir}" resolveexecutable="true">
             <arg value="--runtimeDebugging"/>
             <arg file="${interpreter.dir}/simpleTests/core/test.stlx"/>

@@ -449,6 +449,7 @@ public class SetlMatrixTest {
             sns.difference(null, simple);
             fail("sum missing_error");
         } catch (IncompatibleTypeException ex) {
+            // catching this exception is expected
         } catch (SetlException ex) {
             System.err.println(ex.getMessage());
             fail("sum wrong_error");
@@ -482,8 +483,7 @@ public class SetlMatrixTest {
         return true;
     }
 
-//    @Test
-    @Ignore
+    @Test
     public void testPow() {
         for (int i = -5; i <= 5; i++) {
             try {

@@ -260,7 +260,7 @@ public class SetlMatrix extends IndexedCollectionValue {
             if(ex == 0) {
                 Jama.Matrix base = new Jama.Matrix(this.matrix.getRowDimension(), this.matrix.getRowDimension());
                 for(int i = 0; i < this.matrix.getRowDimension(); i++) {
-                    base.set(i, i, 0);
+                    base.set(i, i, 1);
                 }
                 return new SetlMatrix(base);
             }

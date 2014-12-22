@@ -1,5 +1,8 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.3.4--- 2014-12-22
+ # fixed matrix ** 0 computation
+
 ---v2.3.3--- 2014-12-14
  # fixed operator associativity
  # hopefully final rework of stack handling

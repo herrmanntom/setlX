@@ -3,6 +3,7 @@ package org.randoom.setlx.types;
 import org.junit.Before;
 import org.junit.Test;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
 import java.util.*;
@@ -218,5 +219,98 @@ public class SetlVectorTest {
         assertTrue("Simple dif matrix error: instanceof", s instanceof SetlVector);
         sbase = ((SetlVector) s).getVectorCopy();
         assertTrue("Simple dif matrix error: wrong result: " + sbase + " vs [0,0,0]", sbase.get(0).equals(0.0) && sbase.get(1).equals(0.0) && sbase.get(2).equals(0.0));
+    }
+
+    private SetlVector generateVectorOfFourDoubles() {
+        ArrayList<Double> vector = new ArrayList<Double>();
+        vector.add(1.0);
+        vector.add(2.0);
+        vector.add(3.0);
+        vector.add(4.0);
+        return new SetlVector(vector);
+    }
+
+    @Test
+    public void givenSetlVectorWhenIteratingThenIterationIsCorrect() throws UndefinedOperationException {
+        // given
+        SetlVector vector = generateVectorOfFourDoubles();
+
+        // when
+        ArrayList<Value> values = new ArrayList<Value>();
+        Iterator<Value> iterator = vector.iterator();
+        while (iterator.hasNext()) {
+            values.add(iterator.next());
+        }
+
+        // then
+        assertEquals(vector.size(), values.size());
+        assertEquals(SetlDouble.ONE, values.get(0));
+        assertEquals(SetlDouble.valueOf(4.0), values.get(3));
+    }
+
+    @Test
+    public void givenSetlVectorWhenIteratingAndRemovingThenIterationIsCorrect() throws UndefinedOperationException {
+        // given
+        SetlVector vector = generateVectorOfFourDoubles();
+
+        // when
+        ArrayList<Value> values = new ArrayList<Value>();
+        Iterator<Value> iterator = vector.iterator();
+        while (iterator.hasNext()) {
+            Value value = iterator.next();
+            if (value.equalTo(SetlDouble.valueOf(2.0)) || value.equalTo(SetlDouble.valueOf(3.0))) {
+                iterator.remove();
+            } else {
+                values.add(value);
+            }
+        }
+
+        // then
+        assertEquals(2, vector.size());
+        assertEquals(vector.size(), values.size());
+        assertEquals(SetlDouble.ONE, values.get(0));
+        assertEquals(SetlDouble.valueOf(4.0), values.get(1));
+    }
+
+    @Test
+    public void givenSetlVectorWhenIteratingInReverseThenIterationIsCorrect() throws UndefinedOperationException {
+        // given
+        SetlVector vector = generateVectorOfFourDoubles();
+
+        // when
+        ArrayList<Value> values = new ArrayList<Value>();
+        Iterator<Value> iterator = vector.descendingIterator();
+        while (iterator.hasNext()) {
+            values.add(iterator.next());
+        }
+
+        // then
+        assertEquals(vector.size(), values.size());
+        assertEquals(SetlDouble.valueOf(4.0), values.get(0));
+        assertEquals(SetlDouble.ONE, values.get(3));
+    }
+
+    @Test
+    public void givenSetlVectorWhenIteratingInReverseAndRemovingThenIterationIsCorrect() throws UndefinedOperationException {
+        // given
+        SetlVector vector = generateVectorOfFourDoubles();
+
+        // when
+        ArrayList<Value> values = new ArrayList<Value>();
+        Iterator<Value> iterator = vector.descendingIterator();
+        while (iterator.hasNext()) {
+            Value value = iterator.next();
+            if (value.equalTo(SetlDouble.valueOf(2.0)) || value.equalTo(SetlDouble.valueOf(3.0))) {
+                iterator.remove();
+            } else {
+                values.add(value);
+            }
+        }
+
+        // then
+        assertEquals(2, vector.size());
+        assertEquals(vector.size(), values.size());
+        assertEquals(SetlDouble.valueOf(4.0), values.get(0));
+        assertEquals(SetlDouble.ONE, values.get(1));
     }
 }

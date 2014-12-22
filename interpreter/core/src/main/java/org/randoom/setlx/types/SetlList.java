@@ -137,7 +137,7 @@ public class SetlList extends IndexedCollectionValue {
         @Override
         public void remove() {
             listShell.separateFromOriginal();
-            content.remove(position--);
+            content.remove(position + 1);
         }
     }
 

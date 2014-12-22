@@ -198,16 +198,16 @@ public class SetlString extends IndexedCollectionValue {
     private static class SetlStringIterator implements Iterator<Value> {
         private final SetlString    stringShell;
         private final StringBuilder content;
-        private final boolean       decending;
+        private final boolean       descending;
         private       int           size;
         private       int           position;
 
-        private SetlStringIterator(final SetlString stringShell, final boolean decending) {
+        private SetlStringIterator(final SetlString stringShell, final boolean descending) {
             this.stringShell = stringShell;
             this.content     = stringShell.content;
-            this.decending   = decending;
+            this.descending  = descending;
             this.size        = this.content.length();
-            if (decending) {
+            if (descending) {
                 this.position  = this.size - 1;
             } else {
                 this.position  = 0;
@@ -216,12 +216,12 @@ public class SetlString extends IndexedCollectionValue {
 
         @Override
         public boolean hasNext() {
-            return (decending && 0 <= position) || ( ! decending && position < size);
+            return (descending && 0 <= position) || ( !descending && position < size);
         }
 
         @Override
         public SetlString next() {
-            if (decending) {
+            if (descending) {
                 return new SetlString(content.charAt(position--));
             } else {
                 return new SetlString(content.charAt(position++));
@@ -231,10 +231,10 @@ public class SetlString extends IndexedCollectionValue {
         @Override
         public void remove() {
             stringShell.separateFromOriginal();
-            if (decending) {
-                content.deleteCharAt(position--);
+            if (descending) {
+                content.deleteCharAt(position + 1);
             } else {
-                content.deleteCharAt(position - 1);
+                content.deleteCharAt(--position);
             }
             size = content.length();
         }
@@ -242,12 +242,12 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Iterator<Value> iterator() {
-        return new SetlStringIterator(this, false /*not decending*/);
+        return new SetlStringIterator(this, false /*not descending*/);
     }
 
     @Override
     public Iterator<Value> descendingIterator() {
-        return new SetlStringIterator(this, true  /*decending*/);
+        return new SetlStringIterator(this, true  /*descending*/);
     }
 
     /* type checks (sort of boolean operation) */

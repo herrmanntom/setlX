@@ -10,10 +10,10 @@ import org.randoom.setlx.utilities.State;
  */
 public class Sum extends ABinaryInfixOperator {
     @Override
-    public void evaluate(State state, ValueStack values) throws SetlException {
+    public Value evaluate(State state, ValueStack values) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
-        values.push(lhs.sum(state, rhs));
+        return lhs.sum(state, rhs);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -9,8 +10,8 @@ import org.randoom.setlx.utilities.State;
  */
 public class Minus extends AUnaryPostfixOperator {
     @Override
-    public void evaluate(State state, ValueStack values) throws SetlException {
-        values.push(values.poll().minus(state));
+    public Value evaluate(State state, ValueStack values) throws SetlException {
+        return values.poll().minus(state);
     }
 
     @Override

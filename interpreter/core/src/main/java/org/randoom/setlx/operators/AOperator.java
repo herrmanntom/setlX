@@ -2,6 +2,7 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
 /**
@@ -9,13 +10,14 @@ import org.randoom.setlx.utilities.State;
  */
 public abstract class AOperator {
     /**
-     * Evaluate this expression, taking arguments from value stack and putting results back there.
+     * Evaluate this expression, taking arguments from value stack and returning results.
      *
      * @param state          Current state of the running setlX program.
      * @param values         Value stack to work with.
+     * @return               Result of the evaluation.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract void evaluate(State state, ValueStack values) throws SetlException;
+    public abstract Value evaluate(State state, ValueStack values) throws SetlException;
 
     /**
      * Does this operator have and argument to print before operator symbol?

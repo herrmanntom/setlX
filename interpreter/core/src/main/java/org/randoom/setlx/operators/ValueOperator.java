@@ -22,8 +22,8 @@ public class ValueOperator extends AZeroOperator {
     }
 
     @Override
-    public void evaluate(State state, ValueStack values) throws SetlException {
-        values.push(value);
+    public Value evaluate(State state, ValueStack values) throws SetlException {
+        return value;
     }
 
     @Override

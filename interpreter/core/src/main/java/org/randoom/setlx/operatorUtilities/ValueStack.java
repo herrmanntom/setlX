@@ -31,7 +31,7 @@ public class ValueStack {
      *
      * @param value to put on the stack.
      */
-    public void push(Value value) {
+    /*package*/ void push(Value value) {
         values.push(value);
     }
 

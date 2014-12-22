@@ -42,7 +42,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
         ValueStack values = new ValueStack();
 
         for (AOperator operator : operators) {
-            operator.evaluate(state, values);
+            values.push(operator.evaluate(state, values));
         }
 
         if (values.size() == 1) {

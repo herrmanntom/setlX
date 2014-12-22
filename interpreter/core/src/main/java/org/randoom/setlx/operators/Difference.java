@@ -10,10 +10,10 @@ import org.randoom.setlx.utilities.State;
  */
 public class Difference extends ABinaryInfixOperator {
     @Override
-    public void evaluate(State state, ValueStack values) throws SetlException {
+    public Value evaluate(State state, ValueStack values) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
-        values.push(lhs.difference(state, rhs));
+        return lhs.difference(state, rhs);
     }
 
     @Override

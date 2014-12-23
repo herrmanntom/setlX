@@ -35,4 +35,16 @@ public class Sum extends ABinaryInfixOperator {
     public int precedence() {
         return 1600;
     }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Sum.class);
+
+    @Override
+    public long compareToOrdering() {
+        return COMPARE_TO_ORDER_CONSTANT;
+    }
+
+    @Override
+    public int computeHashCode() {
+        return (int) COMPARE_TO_ORDER_CONSTANT;
+    }
 }

@@ -4,10 +4,10 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operators.AOperator;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,15 +15,15 @@ import java.util.List;
  * Stack of operators that can be evaluated.
  */
 public class OperatorExpression extends ImmutableCodeFragment {
-    private ArrayList<AOperator> operators;
+    private FragmentList<AOperator> operators;
 
     /**
      * Create a new operator stack.
      *
      * @param operators Operator stack to evaluate.
      */
-    public OperatorExpression(ArrayList<AOperator> operators) {
-        this.operators = operators;
+    public OperatorExpression(FragmentList<AOperator> operators) {
+        this.operators = unify(operators);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
         if (expressionFragments.size() == 1) {
             sb.append(expressionFragments.poll().getExpression());
         } else {
-            throw new IllegalStateException("Error in operator stack evaluation!");
+            throw new IllegalStateException("Error in operator printing!");
         }
     }
 
@@ -121,14 +121,31 @@ public class OperatorExpression extends ImmutableCodeFragment {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        throw new IllegalStateException("Not implemented");
+        ValueStack termFragments = new ValueStack();
+
+        for (AOperator operator : operators) {
+            termFragments.push(operator.buildTerm(state, termFragments));
+        }
+
+        if (termFragments.size() == 1) {
+            return termFragments.poll();
+        } else {
+            throw new IllegalStateException("Error in operator toTerm!");
+        }
     }
 
     /* comparisons */
 
     @Override
     public int compareTo(CodeFragment other) {
-        throw new IllegalStateException("Not implemented");
+        if (this == other) {
+            return 0;
+        } else if (other.getClass() == OperatorExpression.class) {
+            final OperatorExpression otr = (OperatorExpression) other;
+            return operators.compareTo(otr.operators);
+        } else {
+            return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
+        }
     }
 
     private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(OperatorExpression.class);
@@ -150,6 +167,6 @@ public class OperatorExpression extends ImmutableCodeFragment {
 
     @Override
     public int computeHashCode() {
-        throw new IllegalStateException("Not implemented");
+        return ((int) COMPARE_TO_ORDER_CONSTANT) + operators.hashCode();
     }
 }

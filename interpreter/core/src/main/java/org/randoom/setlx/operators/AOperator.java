@@ -2,15 +2,19 @@ package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
+
+import java.util.List;
 
 /**
  * Base class for all SetlX operators.
  */
-public abstract class AOperator {
+public abstract class AOperator extends ImmutableCodeFragment {
     /**
-     * Evaluate this expression, taking arguments from value stack and returning results.
+     * Evaluate this operator, taking arguments from value stack and returning results.
      *
      * @param state          Current state of the running setlX program.
      * @param values         Value stack to work with.
@@ -64,4 +68,29 @@ public abstract class AOperator {
      * @return Precedence level.
      */
     public abstract int precedence();
+
+    @Override
+    public void collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    @Override
+    public void appendString(State state, StringBuilder sb, int tabs) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    /**
+     * Create term for this operator, taking arguments from term stack and returning results.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param termFragments  Term stack to work with.
+     * @return               Resulting term.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public abstract Value buildTerm(State state, ValueStack termFragments) throws SetlException;
+
+    @Override
+    public Value toTerm(State state) throws SetlException {
+        throw new IllegalStateException("Not implemented");
+    }
 }

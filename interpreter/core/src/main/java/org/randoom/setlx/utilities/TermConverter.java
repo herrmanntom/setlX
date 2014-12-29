@@ -10,6 +10,7 @@ import org.randoom.setlx.expressions.SetListConstructor;
 import org.randoom.setlx.expressions.TermConstructor;
 import org.randoom.setlx.expressions.ValueExpr;
 import org.randoom.setlx.expressions.VariableIgnore;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
@@ -223,8 +224,8 @@ public class TermConverter {
         final CodeFragment cf = valueToCodeFragment(state, value, false);
         if (cf instanceof Statement) {
             return (Statement) cf;
-        } else if (cf instanceof Expr) {
-            return new ExpressionStatement((Expr) cf);
+        } else if (cf instanceof OperatorExpression) {
+            return new ExpressionStatement((OperatorExpression) cf);
         } else {
             throw new TermConversionException(
                 "This term does not represent a Statement."

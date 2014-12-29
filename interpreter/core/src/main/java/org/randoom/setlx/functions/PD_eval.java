@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ParameterDef;
@@ -36,10 +36,10 @@ public class PD_eval extends PreDefinedProcedure {
         final String exprStr = exprArg.getUnquotedString(state);
 
         state.resetParserErrorCount();
-        final Expr   expr    = ParseSetlX.parseStringToExpr(state, exprStr);
+        final OperatorExpression expr = ParseSetlX.parseStringToExpr(state, exprStr);
 
         // eval and return result
-        return expr.eval(state);
+        return expr.evaluate(state);
     }
 }
 

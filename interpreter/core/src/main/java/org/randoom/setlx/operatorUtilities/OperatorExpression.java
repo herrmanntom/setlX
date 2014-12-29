@@ -140,7 +140,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
     public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
-        } else if (other.getClass() == OperatorExpression.class) {
+        } else if (other.getClass() == OperatorExpression.class || other.getClass() == AssignableOperatorExpression.class) {
             final OperatorExpression otr = (OperatorExpression) other;
             return operators.compareTo(otr.operators);
         } else {
@@ -159,7 +159,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
     public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj.getClass() == OperatorExpression.class) {
+        } else if (obj.getClass() == OperatorExpression.class || obj.getClass() == AssignableOperatorExpression.class) {
             return this.operators.equals(((OperatorExpression) obj).operators);
         }
         return false;

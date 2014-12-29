@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.*;
 import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.grammar.SetlXgrammarLexer;
 import org.randoom.setlx.grammar.SetlXgrammarParser;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 
 import org.antlr.v4.runtime.*;
@@ -134,7 +135,7 @@ public class ParseSetlX {
      * @throws ParserException        Thrown in case of parser errors.
      * @throws StopExecutionException Thrown when an InterruptedException got caught.
      */
-    public static Expr parseStringToExpr(final State state, final String input) throws ParserException, StopExecutionException {
+    public static OperatorExpression parseStringToExpr(final State state, final String input) throws ParserException, StopExecutionException {
         try {
             final InputStream stream = new ByteArrayInputStream(input.getBytes());
 
@@ -152,8 +153,8 @@ public class ParseSetlX {
         return (Block) handleFragmentParsing(state, input, CodeType.BLOCK);
     }
 
-    private static Expr parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
-        return (Expr) handleFragmentParsing(state, input, CodeType.EXPR);
+    private static OperatorExpression parseExpr(final State state, final ANTLRInputStream input) throws SyntaxErrorException, StopExecutionException {
+        return (OperatorExpression) handleFragmentParsing(state, input, CodeType.EXPR);
     }
 
     private static CodeFragment handleFragmentParsing(final State state, final ANTLRInputStream input, final CodeType type) throws SyntaxErrorException, StopExecutionException {
@@ -280,7 +281,7 @@ public class ParseSetlX {
         public void exec(State state) {
             switch (type) {
                 case EXPR:
-                    result = parser.initExpr().ae;
+                    result = parser.initExpr().oe;
                     break;
                 case BLOCK:
                     result = parser.initBlock().blk;

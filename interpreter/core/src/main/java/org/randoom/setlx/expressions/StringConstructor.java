@@ -61,40 +61,40 @@ public class StringConstructor extends Expr {
                         innerExpr = false;
                         // parse inner expr
                         final int errCount = state.getParserErrorCount();
-                        try {
+//                        try {
                             // SetlString parses escape characters properly
                             final String eStr = SetlString.parseString(expr.toString());
-                            final Expr   exp  = ParseSetlX.parseStringToExpr(state, eStr);
-                            // add inner expr to mExprs
-                            this.exprs.add(exp);
-                        } catch (final ParserException pe) {
-                            /* Doing error handling here is futile, as outer parsing run,
-                             * which called this constructor, will notice via the global
-                             * error count and (later) halt.
-                             * However we can at least provide the user with some feedback.
-                             */
-                            if (state.getParserErrorCount() > errCount) {
-                                state.writeParserErrLn(
-                                    "Error(s) while parsing string " + this.toString(state) + " {"
-                                );
-                                if (pe instanceof SyntaxErrorException) {
-                                    for (final String err : ((SyntaxErrorException) pe).getErrors()) {
-                                        state.writeParserErrLn(
-                                            "\t" + err
-                                        );
-                                    }
-                                } else {
-                                    state.writeParserErrLn(
-                                        pe.getMessage()
-                                    );
-                                }
-                                state.writeParserErrLn(
-                                    "}"
-                                );
-                            }
-                        } catch (final StopExecutionException see) {
-                            state.errWriteInternalError(see);
-                        }
+//                            final Expr   exp  = ParseSetlX.parseStringToExpr(state, eStr);
+//                            // add inner expr to mExprs
+//                            this.exprs.add(exp);
+//                        } catch (final ParserException pe) {
+//                            /* Doing error handling here is futile, as outer parsing run,
+//                             * which called this constructor, will notice via the global
+//                             * error count and (later) halt.
+//                             * However we can at least provide the user with some feedback.
+//                             */
+//                            if (state.getParserErrorCount() > errCount) {
+//                                state.writeParserErrLn(
+//                                    "Error(s) while parsing string " + this.toString(state) + " {"
+//                                );
+//                                if (pe instanceof SyntaxErrorException) {
+//                                    for (final String err : ((SyntaxErrorException) pe).getErrors()) {
+//                                        state.writeParserErrLn(
+//                                            "\t" + err
+//                                        );
+//                                    }
+//                                } else {
+//                                    state.writeParserErrLn(
+//                                        pe.getMessage()
+//                                    );
+//                                }
+//                                state.writeParserErrLn(
+//                                    "}"
+//                                );
+//                            }
+//                        } catch (final StopExecutionException see) {
+//                            state.errWriteInternalError(see);
+//                        }
                         // clear expression
                         expr.setLength(0);
                     } else {

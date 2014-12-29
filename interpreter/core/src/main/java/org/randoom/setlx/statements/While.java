@@ -2,7 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Condition;
+import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -104,7 +104,7 @@ public class While extends Statement {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition = TermConverter.valueToCondition(state, term.firstMember());
+            final Condition condition = null; // FIXME TermConverter.valueToCondition(state, term.firstMember());
             final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
             return new While(condition, block);
         }

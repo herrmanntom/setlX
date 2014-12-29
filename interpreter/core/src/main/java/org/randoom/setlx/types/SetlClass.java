@@ -79,7 +79,7 @@ public class SetlClass extends Value {
             // rebuild static block
             final FragmentList<Statement> sBlock = new FragmentList<Statement>(staticDefs.size());
             for (final Entry<String, Value> entry : staticDefs.entrySet()) {
-                sBlock.add(new ExpressionStatement(new Assignment(new Variable(entry.getKey()), new ValueExpr(entry.getValue()))));
+                //FIXME sBlock.add(new ExpressionStatement(new Assignment(new Variable(entry.getKey()), new ValueExpr(entry.getValue()))));
             }
             staticBlock = new Block(sBlock);
         }

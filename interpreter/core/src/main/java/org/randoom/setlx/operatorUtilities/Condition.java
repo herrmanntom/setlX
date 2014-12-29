@@ -1,53 +1,53 @@
-package org.randoom.setlx.statements;
+package org.randoom.setlx.operatorUtilities;
 
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
-import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.List;
 
 /**
- * Statement containing a single expression.
+ * Wrapper class, checking if eval() returns a boolean, used in various statements.
  *
  * grammar rule:
- * statement
- *     : [...]
- *     | expr ';'
+ * condition
+ *     : expr
  *     ;
- *
+
  * implemented here as:
- *       =======
- *        expr
+ *       ====
+ *       expr
  */
-public class ExpressionStatement extends StatementWithPrintableResult {
+public class Condition extends ImmutableCodeFragment {
     private final OperatorExpression expr;
-    private       boolean printAfterEval;
 
     /**
-     * Create a new ExpressionStatement.
+     * Create a new Condition.
      *
-     * @param expression Contained expression.
+     * @param expr Expression to evaluate to Boolean result.
      */
-    public ExpressionStatement(final OperatorExpression expression) {
-        this.expr           = unify(expression);
-        this.printAfterEval = false;
+    public Condition(final OperatorExpression expr) {
+        this.expr = unify(expr);
     }
 
-    /*package*/ @Override
-    void setPrintAfterExecution() {
-        printAfterEval = true;
-    }
-
-    @Override
-    public ReturnMessage execute(final State state) throws SetlException {
+    /**
+     * Evaluate this condition.
+     *
+     * @param state          Current state of the running setlX program.
+     * @return               Result of the evaluation.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public SetlBoolean eval(final State state) throws SetlException {
         final Value v = expr.evaluate(state);
-        if (printAfterEval) {
-            printResult(state, v);
+        if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) { // is Boolean value?
+            return (SetlBoolean) v;
+        } else {
+            throw new IncompatibleTypeException("'" + v + "' is not a Boolean value.");
         }
-        return null;
     }
 
     @Override
@@ -64,9 +64,7 @@ public class ExpressionStatement extends StatementWithPrintableResult {
 
     @Override
     public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        state.appendLineStart(sb, tabs);
         expr.appendString(state, sb, tabs);
-        sb.append(";");
     }
 
     /* term operations */
@@ -82,14 +80,14 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     public int compareTo(final CodeFragment other) {
         if (this == other) {
             return 0;
-        } else if (other.getClass() == ExpressionStatement.class) {
-            return expr.compareTo(((ExpressionStatement) other).expr);
+        } else if (other.getClass() == Condition.class) {
+            return expr.compareTo(((Condition) other).expr);
         } else {
             return (this.compareToOrdering() < other.compareToOrdering())? -1 : 1;
         }
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ExpressionStatement.class);
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Condition.class);
 
     @Override
     public long compareToOrdering() {
@@ -97,17 +95,19 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj.getClass() == ExpressionStatement.class) {
-            return expr.equals(((ExpressionStatement) obj).expr);
+        } else if (obj.getClass() == Condition.class) {
+            Condition condition = (Condition) obj;
+            return expr.equals(condition.expr);
         }
         return false;
     }
 
     @Override
-    public final int computeHashCode() {
+    public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + expr.hashCode();
     }
 }
+

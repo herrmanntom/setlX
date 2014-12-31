@@ -1,8 +1,8 @@
 package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.expressions.AssignableExpression;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -24,11 +24,11 @@ import java.util.List;
 public abstract class AbstractAssignment extends StatementWithPrintableResult {
 
     /** Expression to assign to.                */
-    protected final AssignableExpression lhs;
+    protected final AssignableOperatorExpression lhs;
     /** Expression to evaluate.                 */
-    protected final Expr                 rhs;
+    protected final OperatorExpression           rhs;
     /** Enable to print result after execution. */
-    protected       boolean              printAfterEval;
+    protected       boolean                      printAfterEval;
 
     /**
      * Create new DirectAssignment.
@@ -36,7 +36,7 @@ public abstract class AbstractAssignment extends StatementWithPrintableResult {
      * @param lhs Expression to assign to.
      * @param rhs Expression to evaluate.
      */
-    protected AbstractAssignment(final AssignableExpression lhs, final Expr rhs) {
+    protected AbstractAssignment(final AssignableOperatorExpression lhs, final OperatorExpression rhs) {
         this.lhs            = unify(lhs);
         this.rhs            = unify(rhs);
         this.printAfterEval = false;
@@ -48,7 +48,7 @@ public abstract class AbstractAssignment extends StatementWithPrintableResult {
     }
 
     @Override
-    public final void collectVariablesAndOptimize (
+    public final boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -60,6 +60,7 @@ public abstract class AbstractAssignment extends StatementWithPrintableResult {
 
         // then assign to lhs
         lhs.collectVariablesWhenAssigned(state, boundVariables, boundVariables, boundVariables);
+        return false;
     }
 
     /* string operations */

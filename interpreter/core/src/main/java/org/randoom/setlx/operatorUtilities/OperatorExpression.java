@@ -8,7 +8,7 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +16,16 @@ import java.util.List;
  */
 public class OperatorExpression extends ImmutableCodeFragment {
     private FragmentList<AOperator> operators;
+    private boolean isConstant;
+
+    /**
+     * Create a new operator stack.
+     *
+     * @param operator Operator evaluate.
+     */
+    public OperatorExpression(AOperator operator) {
+        this(new FragmentList<AOperator>(operator));
+    }
 
     /**
      * Create a new operator stack.
@@ -24,11 +34,93 @@ public class OperatorExpression extends ImmutableCodeFragment {
      */
     public OperatorExpression(FragmentList<AOperator> operators) {
         this.operators = unify(operators);
+        isConstant = false;
+    }
+
+    /**
+     * @return operators in this stack.
+     */
+    protected FragmentList<AOperator> getOperators() {
+        return operators;
     }
 
     @Override
-    public void collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
-        throw new IllegalStateException("Not implemented");
+    public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        if (isConstant) {
+            // already marked as constant, no variables are needed during execution
+            return true;
+        }
+
+        final int preBoundSize   = boundVariables.size();
+        final int preUnboundSize = unboundVariables.size();
+        final int preUsedSize    = usedVariables.size();
+
+        // collect variables in this expression
+        Stack<OptimizerData> optimizerFragments = new Stack<OptimizerData>();
+
+        for (AOperator operator : operators) {
+            optimizerFragments.push(operator.collectVariables(state, boundVariables, unboundVariables, usedVariables, optimizerFragments));
+        }
+
+        if (optimizerFragments.size() == 1) {
+            OptimizerData optimizerData = optimizerFragments.poll();
+
+            // prerequisite for optimization is that no variables are provided for later
+            // expressions and that no unbound variables are used in this expression
+            if (boundVariables.size() == preBoundSize && unboundVariables.size() == preUnboundSize) {
+                // optimize when there where also no variables used at all
+                if (usedVariables.size() != preUsedSize) {
+                    isConstant = optimizerData.isAllowOptimization();
+                }
+                // or if all used variables are not prebound
+                else {
+                    final List<String> prebound     = boundVariables.subList(0, preBoundSize);
+                    final List<String> usedHere     = new ArrayList<String>(usedVariables.subList(preUsedSize, usedVariables.size()));
+                    final int          usedHereSize = usedHere.size();
+
+                    // check if any prebound variables could have been used
+                    usedHere.removeAll(prebound);
+                    if (usedHere.size() == usedHereSize) {
+                        // definitely not, therefore safe to optimize
+                        isConstant = optimizerData.isAllowOptimization();
+                    }
+                }
+            }
+
+            return isConstant;
+        } else {
+            throw new IllegalStateException("Error in operator stack optimization!");
+        }
+    }
+
+    /**
+     * Data for optimization.
+     */
+    public static class OptimizerData {
+        private boolean allowOptimization;
+
+        /**
+         * Create new OptimizerFragment.
+         *
+         * @param allowOptimization true iff this fragment may be optimized if it is constant
+         */
+        public OptimizerData(boolean allowOptimization) {
+            this.allowOptimization = allowOptimization;
+        }
+
+        /**
+         * @return true iff this fragment is constant and can be optimized.
+         */
+        public boolean isAllowOptimization() {
+            return allowOptimization;
+        }
+    }
+
+    /**
+     * @return true iff this expression is constant, e.g. will always evaluate to the same result.
+     */
+    public boolean isConstant() {
+        return isConstant;
     }
 
     /**
@@ -39,7 +131,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value evaluate(final State state) throws SetlException {
-        ValueStack values = new ValueStack();
+        Stack<Value> values = new Stack<Value>();
 
         for (AOperator operator : operators) {
             values.push(operator.evaluate(state, values));
@@ -56,7 +148,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
 
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
-        LinkedList<ExpressionFragment> expressionFragments = new LinkedList<ExpressionFragment>();
+        Stack<ExpressionFragment> expressionFragments = new Stack<ExpressionFragment>();
 
         for (AOperator operator : operators) {
             ExpressionFragment rhs = null;
@@ -121,7 +213,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
 
     @Override
     public Value toTerm(State state) throws SetlException {
-        ValueStack termFragments = new ValueStack();
+        Stack<Value> termFragments = new Stack<Value>();
 
         for (AOperator operator : operators) {
             termFragments.push(operator.buildTerm(state, termFragments));
@@ -136,11 +228,20 @@ public class OperatorExpression extends ImmutableCodeFragment {
 
     /* comparisons */
 
+    /**
+     * Check if this class is comparable to an OperatorExpression.
+     *
+     * @return true if this class is comparable
+     */
+    protected boolean isComparableToOperatorExpression() {
+        return true;
+    }
+
     @Override
     public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
-        } else if (other.getClass() == OperatorExpression.class || other.getClass() == AssignableOperatorExpression.class) {
+        } else if (isComparableToOperatorExpression()) {
             final OperatorExpression otr = (OperatorExpression) other;
             return operators.compareTo(otr.operators);
         } else {
@@ -156,10 +257,11 @@ public class OperatorExpression extends ImmutableCodeFragment {
     }
 
     @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj.getClass() == OperatorExpression.class || obj.getClass() == AssignableOperatorExpression.class) {
+        } else if (isComparableToOperatorExpression()) {
             return this.operators.equals(((OperatorExpression) obj).operators);
         }
         return false;

@@ -1,6 +1,5 @@
 package org.randoom.setlx.types;
 
-import org.randoom.setlx.expressionUtilities.Range;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
@@ -36,7 +35,7 @@ public class RangeDummy extends ImmutableValue {
         }
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Range.class);
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(RangeDummy.class);
 
     @Override
     public long compareToOrdering() {

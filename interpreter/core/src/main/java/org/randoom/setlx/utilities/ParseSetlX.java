@@ -1,7 +1,6 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.*;
-import org.randoom.setlx.expressions.Expr;
 import org.randoom.setlx.grammar.SetlXgrammarLexer;
 import org.randoom.setlx.grammar.SetlXgrammarParser;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;

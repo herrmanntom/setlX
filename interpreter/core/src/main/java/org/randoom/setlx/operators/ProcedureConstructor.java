@@ -1,7 +1,8 @@
-package org.randoom.setlx.expressions;
+package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.SetlHashMap;
@@ -23,7 +24,7 @@ import java.util.List;
  *       ===================
  *           definition
  */
-public class ProcedureConstructor extends Expr {
+public class ProcedureConstructor extends AZeroOperator {
     // precedence level in SetlX-grammar
     private final static int      LAMBDA_PRECEDENCE = 1050;
     private final static int      PRECEDENCE        = 9999;
@@ -44,7 +45,39 @@ public class ProcedureConstructor extends Expr {
     }
 
     @Override
-    protected Procedure evaluate(final State state) throws SetlException {
+    public boolean collectVariablesAndOptimize (
+            final State        state,
+            final List<String> boundVariables,
+            final List<String> unboundVariables,
+            final List<String> usedVariables
+    ) {
+        final int preUnbound = unboundVariables.size();
+        final int preUsed    = usedVariables.size();
+        definition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+
+        if (isClosure) {
+            final HashSet<String> closureVariables = new HashSet<String>();
+
+            // variables added to unbound where never assigned in this scope...
+            // most likely they are predefined procedures
+            closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
+
+            // variables added to used are prebound ones detected as closure variables in definition.collectVariablesAndOptimize();
+            closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
+
+            // remove some commonly encountered "unbound" variables
+            closureVariables.remove("this");
+
+            this.closureVariables = closureVariables;
+        } else {
+            // Prevent optimization. Too much overhead for just returning the definition...
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Procedure evaluate(State state, Stack<Value> values) throws SetlException {
         if (isClosure) {
             if (closureVariables == null) {
                 this.optimize(state);
@@ -74,48 +107,17 @@ public class ProcedureConstructor extends Expr {
         }
     }
 
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        final int preUnbound = unboundVariables.size();
-        final int preUsed    = usedVariables.size();
-        definition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-
-        if (isClosure) {
-            final HashSet<String> closureVariables = new HashSet<String>();
-
-            // variables added to unbound where never assigned in this scope...
-            // most likely they are predefined procedures
-            closureVariables.addAll(unboundVariables.subList(preUnbound, unboundVariables.size()));
-
-            // variables added to used are prebound ones detected as closure variables in definition.collectVariablesAndOptimize();
-            closureVariables.addAll(usedVariables.subList(preUsed, usedVariables.size()));
-
-            // remove some commonly encountered "unbound" variables
-            closureVariables.remove("this");
-
-            this.closureVariables = closureVariables;
-        } else {
-            // add dummy variable to prevent optimization. Too much overhead for just returning the definition...
-            unboundVariables.add(Variable.getPreventOptimizationDummy());
-        }
-    }
-
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
-        definition.appendString(state, sb, tabs);
+    public void appendOperatorSign(final State state, final StringBuilder sb) {
+        definition.appendString(state, sb, 0);
     }
 
     /* term operations */
 
     @Override
-    public Value toTerm(final State state) throws SetlException {
+    public Value modifyTerm(final State state, Term term) throws SetlException {
         return definition.toTerm(state);
     }
 

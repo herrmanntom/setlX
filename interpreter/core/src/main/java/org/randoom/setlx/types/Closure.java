@@ -2,8 +2,9 @@ package org.randoom.setlx.types;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.*;
 
@@ -89,7 +90,7 @@ public class Closure extends Procedure {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
             final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
@@ -110,19 +111,17 @@ public class Closure extends Procedure {
         // upon defining this procedure, all variables which are unbound inside
         // will be read to create the closure for this procedure
         for (final String var : innerUnboundVariables) {
-            //noinspection StringEquality
-            if (var == Variable.getPreventOptimizationDummy()) {
-                continue;
-            } else if (boundVariables.contains(var)) {
+            if (boundVariables.contains(var)) {
                 usedVariables.add(var);
             } else {
                 unboundVariables.add(var);
             }
         }
+        return false;
     }
 
     @Override
-    protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
+    protected Value callAfterEval(final State state, final List<OperatorExpression> args, final List<Value> values, final SetlObject object) throws SetlException {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call
@@ -138,7 +137,7 @@ public class Closure extends Procedure {
         if (closure != null) {
             for (final Map.Entry<String, Value> entry : closure.entrySet()) {
                 final Value value = entry.getValue();
-                new Variable(entry.getKey()).assignUnclonedCheckUpTo(state, value, oldScope, true, FUNCTIONAL_CHARACTER);
+                AssignableOperatorExpression.convertToAssignable(new Variable(entry.getKey())).assignUnclonedCheckUpTo(state, value, oldScope, true, FUNCTIONAL_CHARACTER);
             }
         }
 

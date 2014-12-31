@@ -2,7 +2,7 @@ package org.randoom.setlx.statementBranches;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Condition;
+import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
@@ -45,7 +45,7 @@ public class IfThenBranch extends AbstractIfThenBranch {
 
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
-        return condition.eval(state) == SetlBoolean.TRUE;
+        return condition.evaluate(state) == SetlBoolean.TRUE;
     }
 
     @Override
@@ -54,14 +54,14 @@ public class IfThenBranch extends AbstractIfThenBranch {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+            && statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

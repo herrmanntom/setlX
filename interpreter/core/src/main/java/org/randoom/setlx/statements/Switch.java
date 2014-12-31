@@ -54,7 +54,7 @@ public class Switch extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -78,6 +78,7 @@ public class Switch extends Statement {
         if (branchList.get(branchList.size() - 1) instanceof SwitchDefaultBranch) {
             boundVariables.addAll(boundHere);
         }
+        return false;
     }
 
     /* string operations */

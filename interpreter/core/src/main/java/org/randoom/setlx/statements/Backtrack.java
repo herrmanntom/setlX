@@ -36,12 +36,14 @@ public class Backtrack extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
-    ) { /* nothing to collect */ }
+    ) {
+        return true;
+    }
 
     /* string operations */
 

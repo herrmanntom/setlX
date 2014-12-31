@@ -3,9 +3,8 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.ValueExpr;
-import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.ValueOperator;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.*;
@@ -18,6 +17,7 @@ import java.util.List;
 /**
  * Base class for all procedures, which can be loaded at runtime by setlX.
  */
+@SuppressWarnings("AbstractClassExtendsConcreteClass")
 public abstract class PreDefinedProcedure extends Procedure {
     // functional characters used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(PreDefinedProcedure.class);
@@ -66,7 +66,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @return new ParameterDef
      */
     protected static ParameterDef createParameter(final String param) {
-        return new ParameterDef(new Variable(param), ParameterType.READ_ONLY);
+        return new ParameterDef(param, ParameterType.READ_ONLY);
     }
 
     /**
@@ -76,7 +76,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @return new ParameterDef
      */
     protected static ParameterDef createRwParameter(final String param) {
-        return new ParameterDef(new Variable(param), ParameterType.READ_WRITE);
+        return new ParameterDef(param, ParameterType.READ_WRITE);
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @return new ParameterDef
      */
     protected static ParameterDef createOptionalParameter(final String param, final Value defaultValue) {
-        return new ParameterDef(new Variable(param), ParameterType.READ_ONLY, new ValueExpr(defaultValue));
+        return new ParameterDef(param, ParameterType.READ_ONLY, new OperatorExpression(new ValueOperator(defaultValue)));
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class PreDefinedProcedure extends Procedure {
      * @return new ParameterDef
      */
     protected static ParameterDef createListParameter(final String param) {
-        return new ParameterDef(new Variable(param), ParameterType.LIST);
+        return new ParameterDef(param, ParameterType.LIST);
     }
 
     /**
@@ -121,10 +121,10 @@ public abstract class PreDefinedProcedure extends Procedure {
 
     // this function is called from within SetlX
     @Override
-    public final Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
+    public final Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         SetlList listArguments = null;
         if (listArg != null) {
-            Value listArgument = listArg.eval(state);
+            Value listArgument = listArg.evaluate(state);
             if (listArgument.getClass() != SetlList.class) {
                 throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
             }
@@ -149,8 +149,8 @@ public abstract class PreDefinedProcedure extends Procedure {
 
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(nArguments);
-        for (final Expr arg : args) {
-            values.add(arg.eval(state).clone());
+        for (final OperatorExpression arg : args) {
+            values.add(arg.evaluate(state).clone());
         }
         if (listArguments != null) {
             for (Value listArgument : listArguments) {

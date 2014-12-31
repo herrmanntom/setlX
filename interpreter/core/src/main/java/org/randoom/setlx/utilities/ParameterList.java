@@ -3,7 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
@@ -238,7 +238,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @return               WriteBackAgent containing expressions and their current values
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public WriteBackAgent extractRwParametersFromScope(final State state, final List<Expr> args) throws SetlException {
+    public WriteBackAgent extractRwParametersFromScope(final State state, final List<OperatorExpression> args) throws SetlException {
         WriteBackAgent wba = null;
 
         if (rwParameters > 0) {
@@ -251,7 +251,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
                     // value of parameter after execution
                     final Value postValue = param.getValue(state);
                     // expression used to fill parameter before execution
-                    final Expr preExpr   = args.get(i);
+                    final OperatorExpression preExpr = args.get(i);
                         /* if possible the WriteBackAgent will set the variable used in this
                            expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);
@@ -270,7 +270,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @return               WriteBackAgent containing expressions and their current values
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public WriteBackAgent extractRwParametersFromMap(final HashMap<ParameterDef, Value> assignments, final List<Expr> args) throws SetlException {
+    public WriteBackAgent extractRwParametersFromMap(final HashMap<ParameterDef, Value> assignments, final List<OperatorExpression> args) throws SetlException {
         WriteBackAgent wba = null;
 
         if (rwParameters > 0) {
@@ -283,7 +283,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
                     // value of parameter after execution
                     final Value postValue = assignments.get(param);
                     // expression used to fill parameter before execution
-                    final Expr preExpr   = args.get(i);
+                    final OperatorExpression preExpr = args.get(i);
                         /* if possible the WriteBackAgent will set the variable used in this
                            expression to its postExecution state in the outer environment    */
                     wba.add(preExpr, postValue);
@@ -312,6 +312,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
             }
         }
     }
+
     /**
      * Returns a string representation of this code fragment.
      *
@@ -319,6 +320,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      *
      * @param state Current state of the running setlX program.
      * @return      String representation.
+     * @throws SetlException in case of some (User-) error.
      */
     public Value toTerm(final State state) throws SetlException {
         final SetlList paramList = new SetlList(fragmentList.size());

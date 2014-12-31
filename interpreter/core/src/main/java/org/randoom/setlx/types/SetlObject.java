@@ -1,68 +1,23 @@
 package org.randoom.setlx.types;
 
-import org.randoom.setlx.boolExpressions.Conjunction;
-import org.randoom.setlx.boolExpressions.Disjunction;
-import org.randoom.setlx.boolExpressions.Equals;
-import org.randoom.setlx.boolExpressions.Implication;
-import org.randoom.setlx.boolExpressions.In;
-import org.randoom.setlx.boolExpressions.LessThan;
-import org.randoom.setlx.boolExpressions.Not;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Call;
-import org.randoom.setlx.expressions.Cardinality;
-import org.randoom.setlx.expressions.CartesianProduct;
-import org.randoom.setlx.expressions.Difference;
-import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Factorial;
-import org.randoom.setlx.expressions.IntegerDivision;
-import org.randoom.setlx.expressions.Minus;
-import org.randoom.setlx.expressions.Modulo;
-import org.randoom.setlx.expressions.Power;
-import org.randoom.setlx.expressions.Product;
-import org.randoom.setlx.expressions.ProductOfMembersBinary;
-import org.randoom.setlx.expressions.Quotient;
-import org.randoom.setlx.expressions.Sum;
-import org.randoom.setlx.expressions.SumOfMembersBinary;
-import org.randoom.setlx.expressions.ValueExpr;
-import org.randoom.setlx.functions.PD_abs;
-import org.randoom.setlx.functions.PD_arb;
-import org.randoom.setlx.functions.PD_args;
-import org.randoom.setlx.functions.PD_ceil;
-import org.randoom.setlx.functions.PD_char;
-import org.randoom.setlx.functions.PD_domain;
-import org.randoom.setlx.functions.PD_fct;
-import org.randoom.setlx.functions.PD_first;
-import org.randoom.setlx.functions.PD_floor;
-import org.randoom.setlx.functions.PD_fromB;
-import org.randoom.setlx.functions.PD_fromE;
-import org.randoom.setlx.functions.PD_int;
-import org.randoom.setlx.functions.PD_join;
-import org.randoom.setlx.functions.PD_last;
-import org.randoom.setlx.functions.PD_max;
-import org.randoom.setlx.functions.PD_min;
-import org.randoom.setlx.functions.PD_nextPermutation;
-import org.randoom.setlx.functions.PD_permutations;
-import org.randoom.setlx.functions.PD_pow;
-import org.randoom.setlx.functions.PD_range;
-import org.randoom.setlx.functions.PD_rational;
-import org.randoom.setlx.functions.PD_reverse;
-import org.randoom.setlx.functions.PD_round;
-import org.randoom.setlx.functions.PD_shuffle;
-import org.randoom.setlx.functions.PD_sort;
-import org.randoom.setlx.functions.PD_split;
-import org.randoom.setlx.functions.PD_str;
-import org.randoom.setlx.functions.PreDefinedProcedure;
+import org.randoom.setlx.functions.*;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.Difference;
+import org.randoom.setlx.operators.Minus;
+import org.randoom.setlx.operators.Product;
+import org.randoom.setlx.operators.Sum;
+import org.randoom.setlx.operators.ValueOperator;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -123,7 +78,7 @@ public class SetlObject extends Value {
 
     private LambdaProcedure getClassMember() {
         if (getClassMember == null) {
-            getClassMember = new LambdaProcedure(new ParameterList(0), new ValueExpr(classDefinition));
+            getClassMember = new LambdaProcedure(new ParameterList(0), new OperatorExpression(new ValueOperator(classDefinition)));
         }
         return getClassMember;
     }
@@ -163,7 +118,7 @@ public class SetlObject extends Value {
     private Value overload(final State  state,
                            final String member
     ) throws SetlException {
-        final ArrayList<Expr> args = new ArrayList<Expr>();
+        final ArrayList<OperatorExpression> args = new ArrayList<OperatorExpression>();
         return overloadQuery(state, member).call(state, args, null);
     }
 
@@ -185,8 +140,8 @@ public class SetlObject extends Value {
                            final String member,
                            final Value  other
     ) throws SetlException {
-        final ArrayList<Expr> args = new ArrayList<Expr>();
-        args.add(new ValueExpr(other));
+        final ArrayList<OperatorExpression> args = new ArrayList<OperatorExpression>();
+        args.add(new OperatorExpression(new ValueOperator(other)));
         return overloadQuery(state, member).call(state, args, null);
     }
 
@@ -215,8 +170,8 @@ public class SetlObject extends Value {
             "Member '" + member + "' is undefined in '" + this.toString(state) + "'."
         );
     }
-    private static String createOverloadVariable(final String functionalCharacter) {
-        return functionalCharacter.substring(1);
+    private static String createOverloadVariable(final Class<? extends CodeFragment> clazz) {
+        return CodeFragment.generateFunctionalCharacter(clazz).substring(1);
     }
     private static String createOverloadVariable(final PreDefinedProcedure function) {
         return "f_" + function.getName();
@@ -224,29 +179,29 @@ public class SetlObject extends Value {
 
     /* Boolean operations */
 
-    @Override
-    public Value conjunction(final State state, final Expr other) throws SetlException {
-        return overload(state, CONJUNCTION, other.eval(state));
-    }
-    private final static String CONJUNCTION = createOverloadVariable(Conjunction.functionalCharacter());
-
-    @Override
-    public Value disjunction(final State state, final Expr other) throws SetlException {
-        return overload(state, DISJUNCTION, other.eval(state));
-    }
-    private final static String DISJUNCTION = createOverloadVariable(Disjunction.functionalCharacter());
-
-    @Override
-    public Value implication(final State state, final Expr other) throws SetlException {
-        return overload(state, IMPLICATION, other.eval(state));
-    }
-    private final static String IMPLICATION = createOverloadVariable(Implication.functionalCharacter());
-
-    @Override
-    public Value not(final State state) throws SetlException {
-        return overload(state, NOT);
-    }
-    private final static String NOT = createOverloadVariable(Not.functionalCharacter());
+//    @Override
+//    public Value conjunction(final State state, final OperatorExpression other) throws SetlException {
+//        return overload(state, CONJUNCTION, other.evaluate(state));
+//    }
+//    private final static String CONJUNCTION = createOverloadVariable(Conjunction.functionalCharacter());
+//
+//    @Override
+//    public Value disjunction(final State state, final OperatorExpression other) throws SetlException {
+//        return overload(state, DISJUNCTION, other.evaluate(state));
+//    }
+//    private final static String DISJUNCTION = createOverloadVariable(Disjunction.functionalCharacter());
+//
+//    @Override
+//    public Value implication(final State state, final OperatorExpression other) throws SetlException {
+//        return overload(state, IMPLICATION, other.evaluate(state));
+//    }
+//    private final static String IMPLICATION = createOverloadVariable(Implication.functionalCharacter());
+//
+//    @Override
+//    public Value not(final State state) throws SetlException {
+//        return overload(state, NOT);
+//    }
+//    private final static String NOT = createOverloadVariable(Not.functionalCharacter());
 
     /* type checks (sort of boolean operation) */
 
@@ -299,18 +254,18 @@ public class SetlObject extends Value {
 
     @Override
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-        if (subtrahend.getClass() == Term.class) {
-            return ((Term) subtrahend).differenceFlipped(state, this);
-        }
+//        if (subtrahend.getClass() == Term.class) {
+//            return ((Term) subtrahend).differenceFlipped(state, this);
+//        }
         return overload(state, DIFFERENCE, subtrahend);
     }
-    private final static String DIFFERENCE = createOverloadVariable(Difference.functionalCharacter());
+    private final static String DIFFERENCE = createOverloadVariable(Difference.class);
 
-    @Override
-    public Value factorial(final State state) throws SetlException {
-        return overload(state, FACTORIAL);
-    }
-    private final static String FACTORIAL = createOverloadVariable(Factorial.functionalCharacter());
+//    @Override
+//    public Value factorial(final State state) throws SetlException {
+//        return overload(state, FACTORIAL);
+//    }
+//    private final static String FACTORIAL = createOverloadVariable(Factorial.functionalCharacter());
 
     @Override
     public Value floor(final State state) throws SetlException {
@@ -318,55 +273,56 @@ public class SetlObject extends Value {
     }
     private final static String FLOOR = createOverloadVariable(PD_floor.DEFINITION);
 
-    @Override
-    public Value integerDivision(final State state, final Value divisor) throws SetlException {
-        if (divisor.getClass() == Term.class) {
-            return ((Term) divisor).integerDivisionFlipped(state, this);
-        }
-        return overload(state, INTEGER_DIVISON, divisor);
-    }
-    private final static String INTEGER_DIVISON = createOverloadVariable(IntegerDivision.functionalCharacter());
+//    @Override
+//    public Value integerDivision(final State state, final Value divisor) throws SetlException {
+//        if (divisor.getClass() == Term.class) {
+//            return ((Term) divisor).integerDivisionFlipped(state, this);
+//        }
+//        return overload(state, INTEGER_DIVISON, divisor);
+//    }
+//    private final static String INTEGER_DIVISON = createOverloadVariable(IntegerDivision.functionalCharacter());
 
     @Override
     public Value minus(final State state) throws SetlException {
         return overload(state, MINUS);
     }
-    private final static String MINUS = createOverloadVariable(Minus.functionalCharacter());
+    private final static String MINUS = createOverloadVariable(Minus.class);
 
-    @Override
-    public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo.getClass() == Term.class) {
-            return ((Term) modulo).moduloFlipped(state, this);
-        }
-        return overload(state, MODULO, modulo);
-    }
-    private final static String MODULO = createOverloadVariable(Modulo.functionalCharacter());
-
-    @Override
-    public Value power(final State state, final Value exponent) throws SetlException {
-        if (exponent.getClass() == Term.class) {
-            return ((Term) exponent).powerFlipped(state, this);
-        }
-        return overload(state, POWER, exponent);
-    }
-    private final static String POWER = createOverloadVariable(Power.functionalCharacter());
-
+//    @Override
+//    public Value modulo(final State state, final Value modulo) throws SetlException {
+//        if (modulo.getClass() == Term.class) {
+//            return ((Term) modulo).moduloFlipped(state, this);
+//        }
+//        return overload(state, MODULO, modulo);
+//    }
+//    private final static String MODULO = createOverloadVariable(Modulo.functionalCharacter());
+//
+//    @Override
+//    public Value power(final State state, final Value exponent) throws SetlException {
+//        if (exponent.getClass() == Term.class) {
+//            return ((Term) exponent).powerFlipped(state, this);
+//        }
+//        return overload(state, POWER, exponent);
+//    }
+//    private final static String POWER = createOverloadVariable(Power.functionalCharacter());
+//
     @Override
     public Value product(final State state, final Value multiplier) throws SetlException {
-        if (multiplier.getClass() == Term.class) {
-            return ((Term) multiplier).productFlipped(state, this);
-        }
+//        if (multiplier.getClass() == Term.class) {
+//            return ((Term) multiplier).productFlipped(state, this);
+//        }
         return overload(state, PRODUCT, multiplier);
     }
-    private final static String PRODUCT = createOverloadVariable(Product.functionalCharacter());
-    @Override
-    public Value quotient(final State state, final Value divisor) throws SetlException {
-        if (divisor.getClass() == Term.class) {
-            return ((Term) divisor).quotientFlipped(state, this);
-        }
-        return overload(state, QUOTIENT, divisor);
-    }
-    private final static String QUOTIENT = createOverloadVariable(Quotient.functionalCharacter());
+    private final static String PRODUCT = createOverloadVariable(Product.class);
+
+//    @Override
+//    public Value quotient(final State state, final Value divisor) throws SetlException {
+//        if (divisor.getClass() == Term.class) {
+//            return ((Term) divisor).quotientFlipped(state, this);
+//        }
+//        return overload(state, QUOTIENT, divisor);
+//    }
+//    private final static String QUOTIENT = createOverloadVariable(Quotient.functionalCharacter());
 
     @Override
     public Value round(final State state) throws SetlException {
@@ -376,14 +332,14 @@ public class SetlObject extends Value {
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand.getClass() == Term.class) {
+        /*if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand.getClass() == SetlString.class) {
+        } else*/ if (summand.getClass() == SetlString.class) {
             return ((SetlString) summand).sumFlipped(state, this);
         }
         return overload(state, SUM, summand);
     }
-    private final static String SUM = createOverloadVariable(Sum.functionalCharacter());
+    private final static String SUM = createOverloadVariable(Sum.class);
 
     /* operations on collection values (Lists/Tuples, Sets [, Strings]) */
 
@@ -399,33 +355,33 @@ public class SetlObject extends Value {
     }
     private final static String ARGS = createOverloadVariable(PD_args.DEFINITION);
 
-    @Override
-    public Value cardinality(final State state) throws SetlException {
-        return overload(state, CARDINALITY);
-    }
-    private final static String CARDINALITY = createOverloadVariable(Cardinality.functionalCharacter());
+//    @Override
+//    public Value cardinality(final State state) throws SetlException {
+//        return overload(state, CARDINALITY);
+//    }
+//    private final static String CARDINALITY = createOverloadVariable(Cardinality.functionalCharacter());
+//
+//    @Override
+//    public Value cartesianProduct(final State state, final Value other) throws SetlException {
+//        if (other.getClass() == Term.class) {
+//            return ((Term) other).cartesianProductFlipped(state, this);
+//        }
+//        return overload(state, CARTESIAN_PRODUCT, other);
+//    }
+//    private final static String CARTESIAN_PRODUCT = createOverloadVariable(CartesianProduct.functionalCharacter());
 
-    @Override
-    public Value cartesianProduct(final State state, final Value other) throws SetlException {
-        if (other.getClass() == Term.class) {
-            return ((Term) other).cartesianProductFlipped(state, this);
-        }
-        return overload(state, CARTESIAN_PRODUCT, other);
-    }
-    private final static String CARTESIAN_PRODUCT = createOverloadVariable(CartesianProduct.functionalCharacter());
-
-    @Override
-    public SetlBoolean containsMember(final State state, final Value element) throws SetlException {
-        final Value result = overload(state, CONTAINS_MEMBER, element);
-        if (result.isBoolean() == SetlBoolean.FALSE) {
-            throw new IncompatibleTypeException(
-                "Result of '" + CONTAINS_MEMBER + "' is not a Boolean value."
-            );
-        } else {
-            return (SetlBoolean) result;
-        }
-    }
-    private final static String CONTAINS_MEMBER = createOverloadVariable(In.functionalCharacter());
+//    @Override
+//    public SetlBoolean containsMember(final State state, final Value element) throws SetlException {
+//        final Value result = overload(state, CONTAINS_MEMBER, element);
+//        if (result.isBoolean() == SetlBoolean.FALSE) {
+//            throw new IncompatibleTypeException(
+//                "Result of '" + CONTAINS_MEMBER + "' is not a Boolean value."
+//            );
+//        } else {
+//            return (SetlBoolean) result;
+//        }
+//    }
+//    private final static String CONTAINS_MEMBER = createOverloadVariable(In.functionalCharacter());
 
     @Override
     public Value domain(final State state) throws SetlException {
@@ -469,11 +425,11 @@ public class SetlObject extends Value {
     }
     private final static String MIN = createOverloadVariable(PD_min.DEFINITION);
 
-    @Override
-    public Value productOfMembers(final State state, final Value neutral) throws SetlException {
-        return overload(state, PRODUCT_OF_MEMBERS, neutral);
-    }
-    private final static String PRODUCT_OF_MEMBERS = createOverloadVariable(ProductOfMembersBinary.functionalCharacter());
+//    @Override
+//    public Value productOfMembers(final State state, final Value neutral) throws SetlException {
+//        return overload(state, PRODUCT_OF_MEMBERS, neutral);
+//    }
+//    private final static String PRODUCT_OF_MEMBERS = createOverloadVariable(ProductOfMembersBinary.functionalCharacter());
 
     @Override
     public Value nextPermutation(final State state) throws SetlException {
@@ -535,11 +491,11 @@ public class SetlObject extends Value {
     }
     private final static String SPLIT = createOverloadVariable(PD_split.DEFINITION);
 
-    @Override
-    public Value sumOfMembers(final State state, final Value neutral) throws SetlException {
-        return overload(state, SUM_OF_MEMBERS, neutral);
-    }
-    private final static String SUM_OF_MEMBERS = createOverloadVariable(SumOfMembersBinary.functionalCharacter());
+//    @Override
+//    public Value sumOfMembers(final State state, final Value neutral) throws SetlException {
+//        return overload(state, SUM_OF_MEMBERS, neutral);
+//    }
+//    private final static String SUM_OF_MEMBERS = createOverloadVariable(SumOfMembersBinary.functionalCharacter());
 
     /* features of objects */
 
@@ -586,11 +542,11 @@ public class SetlObject extends Value {
 
     /* function call */
 
-    @Override
-    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
-        return overloadQuery(state, CALL).call(state, args, listArg);
-    }
-    private final static String CALL = createOverloadVariable(Call.functionalCharacter());
+//    @Override
+//    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+//        return overloadQuery(state, CALL).call(state, args, listArg);
+//    }
+//    private final static String CALL = createOverloadVariable(Call.functionalCharacter());
 
     /* string and char operations */
 
@@ -723,43 +679,43 @@ public class SetlObject extends Value {
         return hash * 31 + classDefinition.hashCode();
     }
 
-    @Override
-    public final SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
-        if (getObjectMemberUnClonedUnSafe(state, IS_EQUAL_TO) != Om.OM) {
-            final Value result = overload(state, IS_EQUAL_TO, other);
-            if (result.isBoolean() == SetlBoolean.FALSE) {
-                throw new IncompatibleTypeException(
-                    "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
-                );
-            } else {
-                return (SetlBoolean) result;
-            }
-        }
-
-        if (other.isObject() == SetlBoolean.FALSE) {
-            return SetlBoolean.FALSE;
-        } else {
-            throw new UndefinedOperationException(
-                "Member '" + IS_EQUAL_TO + "' is undefined in '" + this.toString(state) + "'."
-            );
-        }
-    }
-    private final static String IS_EQUAL_TO = createOverloadVariable(Equals.functionalCharacter());
+//    @Override
+//    public final SetlBoolean isEqualTo(final State state, final Value other) throws SetlException {
+//        if (getObjectMemberUnClonedUnSafe(state, IS_EQUAL_TO) != Om.OM) {
+//            final Value result = overload(state, IS_EQUAL_TO, other);
+//            if (result.isBoolean() == SetlBoolean.FALSE) {
+//                throw new IncompatibleTypeException(
+//                    "Result of '" + IS_EQUAL_TO + "' is not a Boolean value."
+//                );
+//            } else {
+//                return (SetlBoolean) result;
+//            }
+//        }
+//
+//        if (other.isObject() == SetlBoolean.FALSE) {
+//            return SetlBoolean.FALSE;
+//        } else {
+//            throw new UndefinedOperationException(
+//                "Member '" + IS_EQUAL_TO + "' is undefined in '" + this.toString(state) + "'."
+//            );
+//        }
+//    }
+//    private final static String IS_EQUAL_TO = createOverloadVariable(Equals.functionalCharacter());
 
     /* this comparison is different than `this.compareTo(other) < 0' and should
        throw errors on seemingly incomparable types like `5 < TRUE'            */
-    @Override
-    public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
-        final Value result = overload(state, IS_LESS_THAN, other);
-        if (result.isBoolean() == SetlBoolean.FALSE) {
-            throw new IncompatibleTypeException(
-                "Result of '" + IS_LESS_THAN + "' is not a Boolean value."
-            );
-        } else {
-            return (SetlBoolean) result;
-        }
-    }
-    private final static String IS_LESS_THAN = createOverloadVariable(LessThan.functionalCharacter());
+//    @Override
+//    public SetlBoolean isLessThan(final State state, final Value other) throws SetlException {
+//        final Value result = overload(state, IS_LESS_THAN, other);
+//        if (result.isBoolean() == SetlBoolean.FALSE) {
+//            throw new IncompatibleTypeException(
+//                "Result of '" + IS_LESS_THAN + "' is not a Boolean value."
+//            );
+//        } else {
+//            return (SetlBoolean) result;
+//        }
+//    }
+//    private final static String IS_LESS_THAN = createOverloadVariable(LessThan.functionalCharacter());
 
     /**
      * Gather all bindings set in this object

@@ -2,8 +2,9 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -48,9 +49,9 @@ public class ParameterDef extends ImmutableCodeFragment {
         LIST
     }
 
-    private final Variable      var;
+    private final String var;
     private final ParameterType type;
-    private final Expr          defaultExpr;
+    private final OperatorExpression defaultExpr;
 
     /**
      * Create a new parameter definition.
@@ -59,7 +60,7 @@ public class ParameterDef extends ImmutableCodeFragment {
      * @param type        Type of parameter.
      * @param defaultExpr Expression to compute default value.
      */
-    public ParameterDef(final Variable var, final ParameterType type, final Expr defaultExpr) {
+    public ParameterDef(final String var, final ParameterType type, final OperatorExpression defaultExpr) {
         this.var         = var;
         this.type        = type;
         this.defaultExpr = defaultExpr;
@@ -71,7 +72,7 @@ public class ParameterDef extends ImmutableCodeFragment {
      * @param var  Variable to bind to.
      * @param type Type of parameter.
      */
-    public ParameterDef(final Variable var, final ParameterType type) {
+    public ParameterDef(final String var, final ParameterType type) {
         this(var, type, null);
     }
 
@@ -80,21 +81,26 @@ public class ParameterDef extends ImmutableCodeFragment {
      *
      * @param var  Variable to bind to.
      */
-    public ParameterDef(final Variable var) {
+    public ParameterDef(final String var) {
         this(var, ParameterType.READ_ONLY);
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        var.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        if (boundVariables.contains(var)) {
+            usedVariables.add(var);
+        } else {
+            unboundVariables.add(var);
+        }
         if (defaultExpr != null) {
             defaultExpr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
+        return false;
     }
 
     /**
@@ -106,7 +112,7 @@ public class ParameterDef extends ImmutableCodeFragment {
      * @throws SetlException Thrown in case of redefining a class.
      */
     public void assign(final State state, final Value v, final String context) throws SetlException {
-        var.assign(state, v, context);
+        state.putValue(var, v, context);
     }
 
     /**
@@ -117,7 +123,7 @@ public class ParameterDef extends ImmutableCodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value getValue(final State state) throws SetlException {
-        return var.eval(state);
+        return state.findValue(var);
     }
 
     /**
@@ -129,7 +135,7 @@ public class ParameterDef extends ImmutableCodeFragment {
      */
     public Value getDefaultValue(final State state) throws SetlException {
         if (defaultExpr != null) {
-            return defaultExpr.eval(state);
+            return defaultExpr.evaluate(state);
         } else {
             return null;
         }
@@ -162,7 +168,7 @@ public class ParameterDef extends ImmutableCodeFragment {
         } else if (type == ParameterType.LIST) {
             sb.append("*");
         }
-        var.appendString(state, sb, 0);
+        sb.append(var);
         if (defaultExpr != null) {
             sb.append(" := ");
             defaultExpr.appendString(state, sb, 0);
@@ -181,7 +187,7 @@ public class ParameterDef extends ImmutableCodeFragment {
         } else {
             result = new Term(FUNCTIONAL_CHARACTER, 2);
         }
-        result.addMember(state, var.toTerm(state));
+        result.addMember(state, new SetlString(var));
         if (defaultExpr != null) {
             result.addMember(state, defaultExpr.toTerm(state));
         } else {
@@ -204,9 +210,9 @@ public class ParameterDef extends ImmutableCodeFragment {
         }
         final Term   term = (Term) value;
         final String fc   = term.getFunctionalCharacter();
-        if (term.size() == 2 && term.firstMember().getClass() == Term.class) {
-            final Variable var = Variable.termToExpr(state, (Term) term.firstMember());
-                  Expr     defaultExpr = null;
+        if (term.size() == 2 && term.firstMember().getClass() == SetlString.class) {
+            final String var = term.firstMember().getUnquotedString(state);
+            OperatorExpression defaultExpr = null;
             if (! term.lastMember().equals(SetlString.NIL)) {
                 defaultExpr = TermConverter.valueToExpr(state, term.lastMember());
             }
@@ -231,7 +237,7 @@ public class ParameterDef extends ImmutableCodeFragment {
             if (cmp != 0) {
                 return cmp;
             }
-            cmp = var.getID().compareTo(otr.var.getID());
+            cmp = var.compareTo(otr.var);
             if (cmp != 0) {
                 return cmp;
             }
@@ -276,7 +282,7 @@ public class ParameterDef extends ImmutableCodeFragment {
 
     @Override
     public int computeHashCode() {
-        return var.computeHashCode();
+        return var.hashCode();
     }
 }
 

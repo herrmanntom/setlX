@@ -1,20 +1,18 @@
 package org.randoom.setlx.operatorUtilities;
 
-import org.randoom.setlx.types.Value;
-
 import java.util.LinkedList;
 
 /**
  * A stack of values used when evaluating expressions of operators.
  */
-public class ValueStack {
-    private LinkedList<Value> values;
+public class Stack<T> {
+    private LinkedList<T> values;
 
     /**
      * Create a new value stack.
      */
-    public ValueStack() {
-        values = new LinkedList<Value>();
+    public Stack() {
+        values = new LinkedList<T>();
     }
 
     /**
@@ -31,7 +29,7 @@ public class ValueStack {
      *
      * @param value to put on the stack.
      */
-    /*package*/ void push(Value value) {
+    /*package*/ void push(T value) {
         values.push(value);
     }
 
@@ -41,8 +39,8 @@ public class ValueStack {
      * @return value from the stack.
      * @throws IllegalStateException if the stack is empty.
      */
-    public Value poll() throws IllegalStateException {
-        Value value = values.poll();
+    public T poll() throws IllegalStateException {
+        T value = values.poll();
         if (value == null) {
             throw new IllegalStateException("Error in operator stack evaluation! Stack is empty");
         } else {

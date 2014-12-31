@@ -1,11 +1,12 @@
-package org.randoom.setlx.expressions;
+package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.ParserException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
-import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -13,7 +14,6 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ParseSetlX;
 import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.TermConverter;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,16 +23,13 @@ import java.util.List;
  * Wrapper Expression for SetlX Strings, which parses and expands $$-expressions
  * at runtime.
  */
-public class StringConstructor extends Expr {
+public class StringConstructor extends AZeroOperator {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(StringConstructor.class);
 
-    // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 9999;
-
-    private final String            originalStr; // original String
-    private final ArrayList<String> fragments;   // list of string fragments for after and between expressions
-    private final ArrayList<Expr>   exprs;       // list of $-Expressions
+    private final String originalStr;                        // original String
+    private final ArrayList<String> fragments;               // list of string fragments for after and between expressions
+    private final ArrayList<OperatorExpression> expressions; // list of $-Expressions
 
     /**
      * Constructor, which parses $-Expressions in the string to create.
@@ -42,7 +39,7 @@ public class StringConstructor extends Expr {
      * @param originalStr String read by the parser.
      */
     public StringConstructor(final State state, final boolean quoted, final String originalStr) {
-        this(originalStr, new ArrayList<String>(), new ArrayList<Expr>());
+        this(originalStr, new ArrayList<String>(), new ArrayList<OperatorExpression>());
 
         // Strip out double quotes which the parser left in
         final String orgStr = originalStr.substring(1, originalStr.length() - 1);
@@ -61,40 +58,40 @@ public class StringConstructor extends Expr {
                         innerExpr = false;
                         // parse inner expr
                         final int errCount = state.getParserErrorCount();
-//                        try {
+                        try {
                             // SetlString parses escape characters properly
                             final String eStr = SetlString.parseString(expr.toString());
-//                            final Expr   exp  = ParseSetlX.parseStringToExpr(state, eStr);
-//                            // add inner expr to mExprs
-//                            this.exprs.add(exp);
-//                        } catch (final ParserException pe) {
-//                            /* Doing error handling here is futile, as outer parsing run,
-//                             * which called this constructor, will notice via the global
-//                             * error count and (later) halt.
-//                             * However we can at least provide the user with some feedback.
-//                             */
-//                            if (state.getParserErrorCount() > errCount) {
-//                                state.writeParserErrLn(
-//                                    "Error(s) while parsing string " + this.toString(state) + " {"
-//                                );
-//                                if (pe instanceof SyntaxErrorException) {
-//                                    for (final String err : ((SyntaxErrorException) pe).getErrors()) {
-//                                        state.writeParserErrLn(
-//                                            "\t" + err
-//                                        );
-//                                    }
-//                                } else {
-//                                    state.writeParserErrLn(
-//                                        pe.getMessage()
-//                                    );
-//                                }
-//                                state.writeParserErrLn(
-//                                    "}"
-//                                );
-//                            }
-//                        } catch (final StopExecutionException see) {
-//                            state.errWriteInternalError(see);
-//                        }
+                            final OperatorExpression exp = ParseSetlX.parseStringToExpr(state, eStr);
+                            // add inner expr to mExprs
+                            this.expressions.add(exp);
+                        } catch (final ParserException pe) {
+                            /* Doing error handling here is futile, as outer parsing run,
+                             * which called this constructor, will notice via the global
+                             * error count and (later) halt.
+                             * However we can at least provide the user with some feedback.
+                             */
+                            if (state.getParserErrorCount() > errCount) {
+                                state.writeParserErrLn(
+                                    "Error(s) while parsing string " + this.toString(state) + " {"
+                                );
+                                if (pe instanceof SyntaxErrorException) {
+                                    for (final String err : ((SyntaxErrorException) pe).getErrors()) {
+                                        state.writeParserErrLn(
+                                            "\t" + err
+                                        );
+                                    }
+                                } else {
+                                    state.writeParserErrLn(
+                                        pe.getMessage()
+                                    );
+                                }
+                                state.writeParserErrLn(
+                                    "}"
+                                );
+                            }
+                        } catch (final StopExecutionException see) {
+                            state.errWriteInternalError(see);
+                        }
                         // clear expression
                         expr.setLength(0);
                     } else {
@@ -135,32 +132,46 @@ public class StringConstructor extends Expr {
             this.fragments.add(fragment.toString());
 
             this.fragments.trimToSize();
-            this.exprs.trimToSize();
+            this.expressions.trimToSize();
         } else {
             this.fragments.add(orgStr);
         }
     }
 
-    private StringConstructor(final String originalStr, final ArrayList<String> fragments, final ArrayList<Expr> exprs) {
+    private StringConstructor(final String originalStr, final ArrayList<String> fragments, final ArrayList<OperatorExpression> expressions) {
         this.originalStr = originalStr;
         this.fragments   = fragments;
-        this.exprs       = unify(exprs);
+        this.expressions = unify(expressions);
     }
 
     @Override
-    protected SetlString evaluate(final State state) throws SetlException {
-        final Iterator<String>  fIter   = fragments.iterator();
-        final Iterator<Expr>    eIter   = exprs.iterator();
-        final StringBuilder     data    = new StringBuilder();
+    public boolean collectVariablesAndOptimize (
+        final State        state,
+        final List<String> boundVariables,
+        final List<String> unboundVariables,
+        final List<String> usedVariables
+    ) {
+        boolean allowOptimization = true;
+        for (final OperatorExpression expr : expressions) {
+            allowOptimization = allowOptimization && expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        }
+        return allowOptimization;
+    }
+
+    @Override
+    public SetlString evaluate(State state, Stack<Value> values) throws SetlException {
+        final Iterator<String>             fIter = fragments.iterator();
+        final Iterator<OperatorExpression> eIter = expressions.iterator();
+        final StringBuilder                data  = new StringBuilder();
 
         // there always is at least one fragment, even if empty; add it to data
         SetlString.parseString(fIter.next(), data);
 
         while (eIter.hasNext() && fIter.hasNext()) {
             // eval expression, but fail gracefully
-            final Expr    exp = eIter.next();
+            final OperatorExpression exp = eIter.next();
             try {
-                exp.eval(state).appendUnquotedString(state, data, 0);
+                exp.evaluate(state).appendUnquotedString(state, data, 0);
             } catch (final SetlException se) {
                 data.append("$Error: ");
                 data.append(se.getMessage());
@@ -184,91 +195,79 @@ public class StringConstructor extends Expr {
         return SetlString.newSetlStringFromSB(data);
     }
 
-    @Override
-    protected void collectVariables (
-        final State        state,
-        final List<String> boundVariables,
-        final List<String> unboundVariables,
-        final List<String> usedVariables
-    ) {
-        for (final Expr expr : exprs) {
-            expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        }
-    }
-
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+    public void appendOperatorSign(final State state, final StringBuilder sb) {
         sb.append(originalStr);
     }
 
     /* term operations */
 
-    @Override
-    public Value toTerm(final State state) throws SetlException {
-        final Term result  = new Term(FUNCTIONAL_CHARACTER, 2);
 
+
+    @Override
+    public Value modifyTerm(State state, Term term) throws SetlException {
         final SetlList strList = new SetlList(fragments.size());
         for (final String str: fragments) {
             strList.addMember(state, new SetlString(str));
         }
-        result.addMember(state, strList);
+        term.addMember(state, strList);
 
-        final SetlList expList = new SetlList(exprs.size());
-        for (final Expr expr: exprs) {
+        final SetlList expList = new SetlList(expressions.size());
+        for (final OperatorExpression expr: expressions) {
             expList.addMember(state, expr.toTerm(state));
         }
-        result.addMember(state, expList);
+        term.addMember(state, expList);
 
-        return result;
+        return term;
     }
 
-    /**
-     * Convert a term representing a StringConstructor into such an expression.
-     *
-     * @param state                    Current state of the running setlX program.
-     * @param term                     Term to convert.
-     * @return                         Resulting StringConstructor Expression.
-     * @throws TermConversionException Thrown in case of an malformed term.
-     */
-    public static Expr termToExpr(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
-            final StringBuilder     originalStr = new StringBuilder();
-            final SetlList          frags       = (SetlList) term.firstMember();
-            final SetlList          exps        = (SetlList) term.lastMember();
-
-            final ArrayList<String> fragments   = new ArrayList<String>(frags.size());
-            final ArrayList<Expr>   exprs       = new ArrayList<Expr>(exps.size());
-
-            final Iterator<Value>   fIter       = frags.iterator();
-            final Iterator<Value>   eIter       = exps.iterator();
-
-            originalStr.append("\"");
-
-            while (fIter.hasNext()) {
-                final SetlString  sstring = (SetlString) fIter.next();
-                final String      string  = sstring.getUnquotedString(state);
-                originalStr.append(sstring.getEscapedString());
-                fragments.add(string);
-
-                if (eIter.hasNext()) {
-                    final Expr expr = TermConverter.valueToExpr(state, eIter.next());
-                    exprs.add(expr);
-                    originalStr.append("$");
-                    originalStr.append(expr.toString(state).replace("$", "\\$"));
-                    originalStr.append("$");
-                }
-            }
-            if (eIter.hasNext()) {
-                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-            }
-            originalStr.append("\"");
-            return new StringConstructor(originalStr.toString(), fragments, exprs);
-        }
-    }
+//    /**
+//     * Convert a term representing a StringConstructor into such an expression.
+//     *
+//     * @param state                    Current state of the running setlX program.
+//     * @param term                     Term to convert.
+//     * @return                         Resulting StringConstructor Expression.
+//     * @throws TermConversionException Thrown in case of an malformed term.
+//     */
+//    public static Expr termToExpr(final State state, final Term term) throws TermConversionException {
+//        if (term.size() != 2 || ! (term.firstMember() instanceof SetlList && term.lastMember() instanceof SetlList)) {
+//            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+//        } else {
+//            final StringBuilder     originalStr = new StringBuilder();
+//            final SetlList          frags       = (SetlList) term.firstMember();
+//            final SetlList          exps        = (SetlList) term.lastMember();
+//
+//            final ArrayList<String> fragments   = new ArrayList<String>(frags.size());
+//            final ArrayList<Expr>   exprs       = new ArrayList<Expr>(exps.size());
+//
+//            final Iterator<Value>   fIter       = frags.iterator();
+//            final Iterator<Value>   eIter       = exps.iterator();
+//
+//            originalStr.append("\"");
+//
+//            while (fIter.hasNext()) {
+//                final SetlString  sstring = (SetlString) fIter.next();
+//                final String      string  = sstring.getUnquotedString(state);
+//                originalStr.append(sstring.getEscapedString());
+//                fragments.add(string);
+//
+//                if (eIter.hasNext()) {
+//                    final Expr expr = TermConverter.valueToExpr(state, eIter.next());
+//                    exprs.add(expr);
+//                    originalStr.append("$");
+//                    originalStr.append(expr.toString(state).replace("$", "\\$"));
+//                    originalStr.append("$");
+//                }
+//            }
+//            if (eIter.hasNext()) {
+//                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+//            }
+//            originalStr.append("\"");
+//            return new StringConstructor(originalStr.toString(), fragments, exprs);
+//        }
+//    }
 
     /* comparisons */
 
@@ -303,11 +302,6 @@ public class StringConstructor extends Expr {
     @Override
     public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + originalStr.hashCode();
-    }
-
-    @Override
-    public int precedence() {
-        return PRECEDENCE;
     }
 
     /**

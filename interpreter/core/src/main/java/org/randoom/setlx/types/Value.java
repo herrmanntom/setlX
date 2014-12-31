@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.NotAnIntegerException;
 import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
@@ -22,13 +22,14 @@ public abstract class Value extends CodeFragment {
     public abstract Value clone();
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         /* nothing to collect or optimize (for most, but not all, values) */
+        return true;
     }
 
     /* Boolean operations */
@@ -41,7 +42,7 @@ public abstract class Value extends CodeFragment {
      * @return               Difference of this and subtrahend.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value conjunction(final State state, final Expr other) throws SetlException {
+    public Value conjunction(final State state, final OperatorExpression other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " && " + other.toString(state) + "' is not a Boolean value."
         );
@@ -55,7 +56,7 @@ public abstract class Value extends CodeFragment {
      * @return               Difference of this and subtrahend.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value disjunction(final State state, final Expr other) throws SetlException {
+    public Value disjunction(final State state, final OperatorExpression other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " || " + other.toString(state) + "' is not a Boolean value."
         );
@@ -69,7 +70,7 @@ public abstract class Value extends CodeFragment {
      * @return               Difference of this and subtrahend.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value implication(final State state, final Expr other) throws SetlException {
+    public Value implication(final State state, final OperatorExpression other) throws SetlException {
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " => " + other.toString(state) + "' is not a Boolean value."
         );
@@ -324,9 +325,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value difference(final State state, final Value subtrahend) throws SetlException {
-        if (subtrahend.getClass() == Term.class) {
-            return ((Term) subtrahend).differenceFlipped(state, this);
-        }
+//        if (subtrahend.getClass() == Term.class) {
+//            return ((Term) subtrahend).differenceFlipped(state, this);
+//        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " - " + subtrahend.toString(state) + "' is undefined."
         );
@@ -363,9 +364,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value integerDivision(final State state, final Value divisor) throws SetlException {
-        if (divisor.getClass() == Term.class) {
-            return ((Term) divisor).integerDivisionFlipped(state, this);
-        }
+//        if (divisor.getClass() == Term.class) {
+//            return ((Term) divisor).integerDivisionFlipped(state, this);
+//        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " \\ " + divisor.toString(state) + "' is undefined."
         );
@@ -406,9 +407,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value modulo(final State state, final Value modulo) throws SetlException {
-        if (modulo.getClass() == Term.class) {
-            return ((Term) modulo).moduloFlipped(state, this);
-        }
+//        if (modulo.getClass() == Term.class) {
+//            return ((Term) modulo).moduloFlipped(state, this);
+//        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " % " + modulo.toString(state) + "' is undefined."
         );
@@ -427,9 +428,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value power(final State state, final Value exponent) throws SetlException {
-        if (exponent.getClass() == Term.class) {
-            return ((Term) exponent).powerFlipped(state, this);
-        }
+//        if (exponent.getClass() == Term.class) {
+//            return ((Term) exponent).powerFlipped(state, this);
+//        }
         throw new IncompatibleTypeException(
             "Left-hand-side of '" + this.toString(state) + " ** " + exponent.toString(state) + "' is not a number."
         );
@@ -444,9 +445,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value product(final State state, final Value multiplier) throws SetlException {
-        if (multiplier.getClass() == Term.class) {
-            return ((Term) multiplier).productFlipped(state, this);
-        }
+//        if (multiplier.getClass() == Term.class) {
+//            return ((Term) multiplier).productFlipped(state, this);
+//        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " * " + multiplier.toString(state) + "' is undefined."
         );
@@ -465,9 +466,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value quotient(final State state, final Value divisor) throws SetlException {
-        if (divisor.getClass() == Term.class) {
-            return ((Term) divisor).quotientFlipped(state, this);
-        }
+//        if (divisor.getClass() == Term.class) {
+//            return ((Term) divisor).quotientFlipped(state, this);
+//        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " / " + divisor.toString(state) + "' is undefined."
         );
@@ -504,9 +505,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand.getClass() == Term.class) {
+        /*if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (this != Om.OM && summand.getClass() == SetlString.class) {
+        } else*/ if (this != Om.OM && summand.getClass() == SetlString.class) {
             return ((SetlString) summand).sumFlipped(state, this);
         }
         throw new UndefinedOperationException(
@@ -552,9 +553,9 @@ public abstract class Value extends CodeFragment {
      * @throws SetlException Thrown in case of some (user-) error.
      */
     public Value cartesianProduct(final State state, final Value other) throws SetlException {
-        if (other.getClass() == Term.class) {
-            return ((Term) other).cartesianProductFlipped(state, this);
-        }
+//        if (other.getClass() == Term.class) {
+//            return ((Term) other).cartesianProductFlipped(state, this);
+//        }
         throw new UndefinedOperationException(
             "'" + this.toString(state) + " >< " + other.toString(state) + "' is undefined."
         );
@@ -826,10 +827,10 @@ public abstract class Value extends CodeFragment {
      * @return               Return value of the call.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
+    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         final StringBuilder error = new StringBuilder();
         error.append("Can not perform call with arguments '");
-        final Iterator<Expr> argIter = args.iterator();
+        final Iterator<OperatorExpression> argIter = args.iterator();
         while (argIter.hasNext()) {
             argIter.next().appendString(state, error, 0);
             if (argIter.hasNext()) {

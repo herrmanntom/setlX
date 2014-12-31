@@ -1,7 +1,8 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -13,6 +14,18 @@ import java.util.List;
  */
 public abstract class AOperator extends ImmutableCodeFragment {
     /**
+     * Gather all bound and unbound variables in this operator and its input.
+     *
+     * @param state            Current state of the running setlX program.
+     * @param boundVariables   Variables "assigned" by this operator.
+     * @param unboundVariables Variables not present in bound when used
+     * @param usedVariables    Variables present in bound when used
+     * @param optimizerData    Stack of data for optimization.
+     * @return                 Data for optimization.
+     */
+    public abstract OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData);
+
+    /**
      * Evaluate this operator, taking arguments from value stack and returning results.
      *
      * @param state          Current state of the running setlX program.
@@ -20,7 +33,7 @@ public abstract class AOperator extends ImmutableCodeFragment {
      * @return               Result of the evaluation.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract Value evaluate(State state, ValueStack values) throws SetlException;
+    public abstract Value evaluate(State state, Stack<Value> values) throws SetlException;
 
     /**
      * Does this operator have and argument to print before operator symbol?
@@ -69,12 +82,7 @@ public abstract class AOperator extends ImmutableCodeFragment {
     public abstract int precedence();
 
     @Override
-    public void collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    @Override
-    public void appendString(State state, StringBuilder sb, int tabs) {
+    public final void appendString(State state, StringBuilder sb, int tabs) {
         throw new IllegalStateException("Not implemented");
     }
 
@@ -86,10 +94,10 @@ public abstract class AOperator extends ImmutableCodeFragment {
      * @return               Resulting term.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public abstract Value buildTerm(State state, ValueStack termFragments) throws SetlException;
+    public abstract Value buildTerm(State state, Stack<Value> termFragments) throws SetlException;
 
     @Override
-    public Value toTerm(State state) throws SetlException {
+    public final Value toTerm(State state) throws SetlException {
         throw new IllegalStateException("Not implemented");
     }
 }

@@ -1,7 +1,7 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
@@ -10,7 +10,7 @@ import org.randoom.setlx.utilities.State;
  */
 public class Sum extends ABinaryInfixOperator {
     @Override
-    public Value evaluate(State state, ValueStack values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
         return lhs.sum(state, rhs);

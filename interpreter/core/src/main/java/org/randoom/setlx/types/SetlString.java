@@ -5,7 +5,7 @@ import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.StringConstructor;
+import org.randoom.setlx.operators.StringConstructor;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.ScanResult;
@@ -332,8 +332,8 @@ public class SetlString extends IndexedCollectionValue {
                 sb.append(content);
             }
             return newSetlStringFromSB(sb);
-        } else if (multiplier.getClass() == Term.class) {
-            return ((Term) multiplier).productFlipped(state, this);
+//        } else if (multiplier.getClass() == Term.class) {
+//            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "String multiplier '" + multiplier + "' is not an integer."
@@ -359,8 +359,8 @@ public class SetlString extends IndexedCollectionValue {
                 content.append(current);
             }
             return this;
-        } else if (multiplier.getClass() == Term.class) {
-            return ((Term) multiplier).productFlipped(state, this);
+//        } else if (multiplier.getClass() == Term.class) {
+//            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "String multiplier '" + multiplier + "' is not an integer."
@@ -370,9 +370,9 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand.getClass() == Term.class) {
+        /*if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand == Om.OM) {
+        } else*/ if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " + " + summand + "' is undefined."
             );
@@ -386,9 +386,9 @@ public class SetlString extends IndexedCollectionValue {
 
     @Override
     public Value sumAssign(final State state, final Value summand) throws SetlException {
-        if (summand.getClass() == Term.class) {
+        /*if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand == Om.OM) {
+        } else*/ if (summand == Om.OM) {
             throw new IncompatibleTypeException(
                 "'" + this + " += " + summand + "' is undefined."
             );

@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.ParameterList;
@@ -130,13 +130,13 @@ public class CachedProcedure extends Procedure {
     /* function call */
 
     @Override
-    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
+    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         final SetlObject object = this.object;
         this.object = null;
 
         SetlList listArguments = null;
         if (listArg != null) {
-            Value listArgument = listArg.eval(state);
+            Value listArgument = listArg.evaluate(state);
             if (listArgument.getClass() != SetlList.class) {
                 throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
             }
@@ -160,8 +160,8 @@ public class CachedProcedure extends Procedure {
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(nArguments);
         final SetlList key = new SetlList(nArguments);
-        for (Expr arg : args) {
-            final Value v = arg.eval(state);
+        for (OperatorExpression arg : args) {
+            final Value v = arg.evaluate(state);
             values.add(v);
             key.addMember(state, v);
         }

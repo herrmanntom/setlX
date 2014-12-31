@@ -3,6 +3,7 @@ package org.randoom.setlx.operatorUtilities;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.types.CollectionValue;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -160,7 +161,7 @@ public class SetlIterator extends ImmutableCodeFragment {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State                    state,
         final List<String>             boundVariables,
         final List<String>             unboundVariables,
@@ -197,42 +198,38 @@ public class SetlIterator extends ImmutableCodeFragment {
         return result;
     }
 
-//    /**
-//     * Convert a term representing a SetlIterator into such a CodeFragment.
-//     *
-//     * @param state                    Current state of the running setlX program.
-//     * @param value                    Term to convert.
-//     * @return                         Resulting SetlIterator.
-//     * @throws org.randoom.setlx.exceptions.TermConversionException Thrown in case of an malformed term.
-//     */
-//    public static SetlIterator valueToIterator(final State state, final Value value) throws TermConversionException {
-//        if (value.getClass() != Term.class) {
-//            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//        } else {
-//            try {
-//                final Term   term = (Term) value;
-//                final String fc   = term.getFunctionalCharacter();
-//                if (! fc.equals(FUNCTIONAL_CHARACTER) || term.size() != 3) {
-//                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//                }
-//
-//                final Expr assignable = TermConverter.valueToExpr(state, term.firstMember());
-//                if ( ! (assignable instanceof AssignableExpression)) {
-//                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//                }
-//
-//                final Expr          collection = TermConverter.valueToExpr(state, term.getMember(2));
-//
-//                      SetlIterator iterator   = null;
-//                if (! term.lastMember().equals(SetlString.NIL)) {
-//                    iterator    = SetlIterator.valueToIterator(state, term.lastMember());
-//                }
-//                return new org.randoom.setlx.expressionUtilities.SetlIterator((AssignableExpression) assignable, collection, iterator);
-//            } catch (final SetlException se) {
-//                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-//            }
-//        }
-//    }
+    /**
+     * Convert a term representing a SetlIterator into such a CodeFragment.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param value                    Term to convert.
+     * @return                         Resulting SetlIterator.
+     * @throws org.randoom.setlx.exceptions.TermConversionException Thrown in case of an malformed term.
+     */
+    public static SetlIterator valueToIterator(final State state, final Value value) throws TermConversionException {
+        if (value.getClass() != Term.class) {
+            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+        } else {
+            try {
+                final Term   term = (Term) value;
+                final String fc   = term.getFunctionalCharacter();
+                if (! fc.equals(FUNCTIONAL_CHARACTER) || term.size() != 3) {
+                    throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+                }
+
+                final AssignableOperatorExpression assignable = TermConverter.valueToAssignableExpr(state, term.firstMember());
+                final OperatorExpression collection = TermConverter.valueToExpr(state, term.getMember(2));
+
+                SetlIterator iterator = null;
+                if (! term.lastMember().equals(SetlString.NIL)) {
+                    iterator = SetlIterator.valueToIterator(state, term.lastMember());
+                }
+                return new SetlIterator(assignable, collection, iterator);
+            } catch (final SetlException se) {
+                throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+            }
+        }
+    }
 
     /* comparisons */
 

@@ -62,7 +62,7 @@ public class TryCatch extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -77,6 +77,7 @@ public class TryCatch extends Statement {
         while (boundVariables.size() > preBound) {
             boundVariables.remove(boundVariables.size() - 1);
         }
+        return false;
     }
 
     /* string operations */

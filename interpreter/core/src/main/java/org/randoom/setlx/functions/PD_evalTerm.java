@@ -2,7 +2,7 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Value;
@@ -39,8 +39,8 @@ public class PD_evalTerm extends PreDefinedProcedure {
         Value              result   = Om.OM;
 
         // execute the contents
-        if (fragment instanceof Expr) {
-            result = ((Expr) fragment).eval(state);
+        if (fragment instanceof OperatorExpression) {
+            result = ((OperatorExpression) fragment).evaluate(state);
         } else if (fragment instanceof Statement) {
             ((Statement) fragment).execute(state);
         } else {

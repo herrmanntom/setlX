@@ -3,7 +3,8 @@ package org.randoom.setlx.statementBranches;
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
-import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.State;
@@ -34,6 +35,10 @@ public class TryCatchUsrBranch extends AbstractTryCatchBranch {
      * @param blockToRecover Statements to execute when exception is caught.
      */
     public TryCatchUsrBranch(final Variable errorVar, final Block blockToRecover){
+        super(errorVar, blockToRecover);
+    }
+
+    private TryCatchUsrBranch(final AssignableOperatorExpression errorVar, final Block blockToRecover){
         super(errorVar, blockToRecover);
     }
 
@@ -68,11 +73,11 @@ public class TryCatchUsrBranch extends AbstractTryCatchBranch {
      * @throws TermConversionException Thrown in case of a malformed term.
      */
     public static TryCatchUsrBranch termToBranch(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2 || term.firstMember().getClass() != Term.class) {
+        if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Variable var   = Variable.termToExpr(state, (Term) term.firstMember());
-            final Block    block = TermConverter.valueToBlock(state, term.lastMember());
+            final AssignableOperatorExpression var = TermConverter.valueToAssignableExpr(state, term.firstMember());
+            final Block block = TermConverter.valueToBlock(state, term.lastMember());
             return new TryCatchUsrBranch(var, block);
         }
     }

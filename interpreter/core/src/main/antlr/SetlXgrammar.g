@@ -1,7 +1,6 @@
 grammar SetlXgrammar;
 
 @parser::header {
-    import org.randoom.setlx.boolExpressions.*;
     import org.randoom.setlx.exceptions.UndefinedOperationException;
     import org.randoom.setlx.operators.*;
     import org.randoom.setlx.operatorUtilities.*;
@@ -66,109 +65,109 @@ statement returns [Statement stmnt]
         Block                                block      = null;
         OperatorExpression                   expression = null;
     }
-    : //'class' ID '(' procedureParameters[true] ')' '{' b1 = block ('static' '{' b2 = block '}' {block = $b2.blk;})? '}'
-//                         { $stmnt = new ClassConstructor($ID.text, new SetlClass($procedureParameters.paramList, $b1.blk, block)); }
-//      (
-//        ';' { customErrorHandling(SEMICOLON_FOLLOWING_CLASS); }
-//      )?
-//    | 'if'          '(' c1 = condition ')' '{' b1 = block '}'        { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));             }
-//      (
-//        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}'        { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));       }
-//      )*
-//      (
-//        'else'                             '{' b3 = block '}'        { ifList.add(new IfThenElseBranch($b3.blk));                  }
-//      )?
-//      { $stmnt = new IfThen(ifList); }
-//    | 'switch' '{'
-//      (
-//        'case' c1 = condition ':' b1 = block                         { caseList.add(new SwitchCaseBranch($c1.cnd, $b1.blk));       }
-//      )*
-//      (
-//        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));             }
-//      )?
-//      '}' { $stmnt = new Switch(caseList); }
+    : 'class' ID '(' procedureParameters[true] ')' '{' b1 = block ('static' '{' b2 = block '}' {block = $b2.blk;})? '}'
+                         { $stmnt = new ClassConstructor($ID.text, new SetlClass($procedureParameters.paramList, $b1.blk, block)); }
+      (
+        ';' { customErrorHandling(SEMICOLON_FOLLOWING_CLASS); }
+      )?
+    | 'if'          '(' c1 = condition ')' '{' b1 = block '}'        { ifList.add(new IfThenBranch($c1.cnd, $b1.blk));             }
+      (
+        'else' 'if' '(' c2 = condition ')' '{' b2 = block '}'        { ifList.add(new IfThenElseIfBranch($c2.cnd, $b2.blk));       }
+      )*
+      (
+        'else'                             '{' b3 = block '}'        { ifList.add(new IfThenElseBranch($b3.blk));                  }
+      )?
+      { $stmnt = new IfThen(ifList); }
+    | 'switch' '{'
+      (
+        'case' c1 = condition ':' b1 = block                         { caseList.add(new SwitchCaseBranch($c1.cnd, $b1.blk));       }
+      )*
+      (
+        'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));             }
+      )?
+      '}' { $stmnt = new Switch(caseList); }
 //    | match                                                          { $stmnt = $match.m;                                          }
 //    | scan                                                           { $stmnt = $scan.s;                                           }
 //    | 'for' '(' iteratorChain[false] ('|' condition {condition = $condition.cnd;} )? ')' '{' block '}'
 //                                                                     { $stmnt = new For($iteratorChain.ic, condition, $block.blk); }
-    /*|*/ 'while' '(' condition ')' '{' block '}'                        { $stmnt = new While($condition.cnd, $block.blk);             }
-//    | 'do' '{' block '}' 'while' '(' condition ')' ';'               { $stmnt = new DoWhile($condition.cnd, $block.blk);           }
-//    | 'try'                                '{' b1 = block '}'
-//      (
-//         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));         }
-//       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));         }
-//      )*
-//      (
-//         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));         }
-//      )?
-//      { $stmnt = new TryCatch($b1.blk, tryList); }
-//    | 'check' '{' b1 = block '}' ('afterBacktrack' '{' b2 = block { block = $b2.blk; } '}')?
-//                                                                     { $stmnt = new Check($b1.blk, block);                         }
+    | 'while' '(' condition ')' '{' block '}'                        { $stmnt = new While($condition.cnd, $block.blk);             }
+    | 'do' '{' block '}' 'while' '(' condition ')' ';'               { $stmnt = new DoWhile($condition.cnd, $block.blk);           }
+    | 'try'                                '{' b1 = block '}'
+      (
+         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));         }
+       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));         }
+      )*
+      (
+         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));         }
+      )?
+      { $stmnt = new TryCatch($b1.blk, tryList); }
+    | 'check' '{' b1 = block '}' ('afterBacktrack' '{' b2 = block { block = $b2.blk; } '}')?
+                                                                     { $stmnt = new Check($b1.blk, block);                         }
     | 'backtrack' ';'                                                { $stmnt = Backtrack.BT;                                      }
     | 'break' ';'                                                    { $stmnt = Break.B;                                           }
     | 'continue' ';'                                                 { $stmnt = Continue.C;                                        }
     | 'exit' ';'                                                     { $stmnt = Exit.E;                                            }
-//    | 'return' (expr[false] { expression = $expr.ex; } )? ';'        { $stmnt = new Return(expression);                            }
-//    | 'assert' '(' condition ',' expr[false] ')' ';'                 { $stmnt = (setlXstate.areAssertsDisabled())?
-//                                                                                   null
-//                                                                               :
-//                                                                                   new Assert($condition.cnd, $expr.ex);
-//                                                                               ;                                                   }
+    | 'return' (expr[false] { expression = $expr.ex; } )? ';'        { $stmnt = new Return(expression);                            }
+    | 'assert' '(' condition ',' expr[false] ')' ';'                 { $stmnt = (setlXstate.areAssertsDisabled())?
+                                                                                   null
+                                                                               :
+                                                                                   new Assert($condition.cnd, $expr.ex);
+                                                                               ;                                                   }
 //    | assignmentOther  ';'                                           { $stmnt = $assignmentOther.assign;                           }
 //    | assignmentDirect ';'                                           { $stmnt = new ExpressionStatement($assignmentDirect.assign); }
     | expr[false] ';'                                                { $stmnt = new ExpressionStatement($expr.ex);                 }
     ;
 
-//match returns [Match m]
-//    @init{
-//        FragmentList<AbstractMatchBranch> matchList  = new FragmentList<AbstractMatchBranch>();
-//        Condition                         condition  = null;
-//    }
-//    : 'match' '(' expr[false] ')' '{'
-//      (
-//         'case'  exprList[true] ('|' c1 = condition {condition = $c1.cnd;})? ':' b1 = block
-//             { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk)); condition = null; }
-//       | regexBranch
-//             { matchList.add($regexBranch.rb);                                                            }
-//      )+
-//      (
-//        'default' ':' b4 = block
-//             { matchList.add(new MatchDefaultBranch($b4.blk));                                            }
-//      )?
-//      '}'    { $m = new Match($expr.ex, matchList);                                                       }
-//    ;
+match returns [Match m]
+    @init{
+        FragmentList<AbstractMatchBranch> matchList  = new FragmentList<AbstractMatchBranch>();
+        Condition                         condition  = null;
+    }
+    : 'match' '(' expr[false] ')' '{'
+      (
+         'case'  exprList[true] ('|' c1 = condition {condition = $c1.cnd;})? ':' b1 = block
+             { matchList.add(new MatchCaseBranch($exprList.exprs, condition, $b1.blk)); condition = null; }
+       | regexBranch
+             { matchList.add($regexBranch.rb);                                                            }
+      )+
+      (
+        'default' ':' b4 = block
+             { matchList.add(new MatchDefaultBranch($b4.blk));                                            }
+      )?
+      '}'    { $m = new Match($expr.ex, matchList);                                                       }
+    ;
 
-//scan returns [Scan s]
-//    @init{
-//        FragmentList<AbstractMatchScanBranch> scanList  = new FragmentList<AbstractMatchScanBranch>();
-//        Variable                              posVar    = null;
-//    }
-//    : 'scan' '(' expr[false] ')' ('using' variable {posVar = $variable.v;})? '{'
-//      (
-//        regexBranch         { scanList.add($regexBranch.rb);                    }
-//      )+
-//      (
-//        'default' ':' block { scanList.add(new MatchDefaultBranch($block.blk)); }
-//      )?
-//      '}'          { $s = new Scan($expr.ex, posVar, scanList); posVar = null;  }
-//    ;
+scan returns [Scan s]
+    @init{
+        FragmentList<AbstractMatchScanBranch> scanList  = new FragmentList<AbstractMatchScanBranch>();
+        Variable                              posVar    = null;
+    }
+    : 'scan' '(' expr[false] ')' ('using' variable {posVar = $variable.v;})? '{'
+      (
+        regexBranch         { scanList.add($regexBranch.rb);                    }
+      )+
+      (
+        'default' ':' block { scanList.add(new MatchDefaultBranch($block.blk)); }
+      )?
+      '}'          { $s = new Scan($expr.ex, posVar, scanList); posVar = null;  }
+    ;
 
-//regexBranch returns [MatchRegexBranch rb]
-//    @init{
-//        Expr      assignTo  = null;
-//        Condition condition = null;
-//    }
-//    : 'regex' pattern = expr[false]
-//      (
-//        'as' assign = expr[true] { assignTo = $assign.ex;      }
-//      )?
-//      (
-//        '|'  condition           { condition = $condition.cnd; }
-//      )?
-//      ':' block
-//      { $rb = new MatchRegexBranch(setlXstate, $pattern.ex, assignTo, condition, $block.blk);
-//        assignTo = null; condition = null; }
-//    ;
+regexBranch returns [MatchRegexBranch rb]
+    @init{
+        OperatorExpression assignTo = null;
+        Condition condition = null;
+    }
+    : 'regex' pattern = expr[false]
+      (
+        'as' assign = expr[true] { assignTo = $assign.ex;      }
+      )?
+      (
+        '|'  condition           { condition = $condition.cnd; }
+      )?
+      ':' block
+      { $rb = new MatchRegexBranch(setlXstate, $pattern.ex, assignTo, condition, $block.blk);
+        assignTo = null; condition = null; }
+    ;
 
 //listOfVariables returns [List<Variable> lov]
 //    @init {
@@ -188,15 +187,15 @@ condition returns [Condition cnd]
     : expr[false]  { $cnd = new Condition($expr.ex); }
     ;
 
-//exprList [boolean enableIgnore] returns [List<OperatorExpression> exprs]
-//    @init {
-//        $exprs = new ArrayList<OperatorExpression>();
-//    }
-//    : e1 = expr[$enableIgnore]       { $exprs.add($e1.ex); }
-//      (
-//        ',' e2 = expr[$enableIgnore] { $exprs.add($e2.ex); }
-//      )*
-//    ;
+exprList [boolean enableIgnore] returns [FragmentList<OperatorExpression> exprs]
+    @init {
+        $exprs = new FragmentList<OperatorExpression>();
+    }
+    : e1 = expr[$enableIgnore]       { $exprs.add($e1.ex); }
+      (
+        ',' e2 = expr[$enableIgnore] { $exprs.add($e2.ex); }
+      )*
+    ;
 
 //assignmentOther returns [Statement assign]
 //    : assignable[false]
@@ -258,37 +257,36 @@ expr [boolean enableIgnore] returns [OperatorExpression ex]
     ;
 
 exprContent [boolean enableIgnore, FragmentList<AOperator> operators]
-    : //lambdaProcedure          { $ex = new ProcedureConstructor($lambdaProcedure.lp); }
-    //    |
-          implication[$enableIgnore, $operators]
+    : lambdaProcedure          { operators.add(new ProcedureConstructor($lambdaProcedure.lp)); }
+    | implication[$enableIgnore, $operators]
     //      (
     //         '<==>' i2 = implication[$enableIgnore] { $ex = new BoolEquals  ($ex, $i2.i); }
     //       | '<!=>' i2 = implication[$enableIgnore] { $ex = new BoolNotEqual($ex, $i2.i); }
     //      )?
     ;
 
-//lambdaProcedure returns [Procedure lp]
-//    : lambdaParameters
-//      (
-//        '|->' expr[false] { $lp = new LambdaProcedure($lambdaParameters.paramList, $expr.ex); }
-//      | '|=>' expr[false] { $lp = new LambdaClosure($lambdaParameters.paramList, $expr.ex);   }
-//      )
-//    ;
+lambdaProcedure returns [Procedure lp]
+    : lambdaParameters
+      (
+        '|->' expr[false] { $lp = new LambdaProcedure($lambdaParameters.paramList, $expr.ex); }
+      | '|=>' expr[false] { $lp = new LambdaClosure($lambdaParameters.paramList, $expr.ex);   }
+      )
+    ;
 
-//lambdaParameters returns [ParameterList paramList]
-//    @init {
-//        $paramList = new ParameterList();
-//    }
-//    : variable             { $paramList.add(new ParameterDef($variable.v, ParameterType.READ_ONLY)); }
-//    | '['
-//      (
-//       v1 = variable       { $paramList.add(new ParameterDef($v1.v, ParameterType.READ_ONLY));       }
-//       (
-//         ',' v2 = variable { $paramList.add(new ParameterDef($v2.v, ParameterType.READ_ONLY));       }
-//       )*
-//      )?
-//      ']'
-//    ;
+lambdaParameters returns [ParameterList paramList]
+    @init {
+        $paramList = new ParameterList();
+    }
+    : variable             { $paramList.add(new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY)); }
+    | '['
+      (
+       v1 = variable       { $paramList.add(new ParameterDef($v1.v.getId(), ParameterType.READ_ONLY));       }
+       (
+         ',' v2 = variable { $paramList.add(new ParameterDef($v2.v.getId(), ParameterType.READ_ONLY));       }
+       )*
+      )?
+      ']'
+    ;
 
 implication [boolean enableIgnore, FragmentList<AOperator> operators]
     : disjunction[$enableIgnore, $operators]
@@ -375,7 +373,7 @@ factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
 //    |
      (
          '(' exprContent[$enableIgnore, $operators] ')'
-//       | procedure                   { $f = new ProcedureConstructor($procedure.pd); }
+       | procedure                   { operators.add(new ProcedureConstructor($procedure.pd)); }
        | variable                    { operators.add($variable.v); }
       )
 //      (
@@ -396,52 +394,52 @@ factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
 //    |  /* epsilon */ { $args = new ArrayList<Expr>(); }
 //    ;
 
-//procedure returns [Procedure pd]
-//    : 'procedure'       '(' procedureParameters[true] ')' '{' block '}'
-//      { $pd = new Procedure($procedureParameters.paramList, $block.blk);       }
-//    | 'cachedProcedure' '(' procedureParameters[false] ')' '{' block '}'
-//      { $pd = new CachedProcedure($procedureParameters.paramList, $block.blk); }
-//    | 'closure'         '(' procedureParameters[true] ')' '{' block '}'
-//      { $pd = new Closure($procedureParameters.paramList, $block.blk);         }
-//    ;
+procedure returns [Procedure pd]
+    : 'procedure'       '(' procedureParameters[true] ')' '{' block '}'
+      { $pd = new Procedure($procedureParameters.paramList, $block.blk);       }
+    | 'cachedProcedure' '(' procedureParameters[false] ')' '{' block '}'
+      { $pd = new CachedProcedure($procedureParameters.paramList, $block.blk); }
+    | 'closure'         '(' procedureParameters[true] ')' '{' block '}'
+      { $pd = new Closure($procedureParameters.paramList, $block.blk);         }
+    ;
 
-//procedureParameters [boolean enableRw] returns [ParameterList paramList]
-//    @init {
-//        $paramList = new ParameterList();
-//    }
-//    : pp1 = procedureParameter[$enableRw]       { $paramList.add($pp1.param); }
-//      (
-//        ',' pp2 = procedureParameter[$enableRw] { $paramList.add($pp2.param); }
-//      )*
-//      (
-//        ',' dp1  = procedureDefaultParameter    { $paramList.add($dp1.param); }
-//      )*
-//      (
-//        ',' lp1 = procedureListParameter        { $paramList.add($lp1.param); }
-//      )?
-//    | dp2 = procedureDefaultParameter           { $paramList.add($dp2.param); }
-//      (
-//        ',' dp3 = procedureDefaultParameter     { $paramList.add($dp3.param); }
-//      )*
-//      (
-//        ',' lp2 = procedureListParameter        { $paramList.add($lp2.param); }
-//      )?
-//    | lp3 = procedureListParameter              { $paramList.add($lp3.param); }
-//    | /* epsilon */
-//    ;
+procedureParameters [boolean enableRw] returns [ParameterList paramList]
+    @init {
+        $paramList = new ParameterList();
+    }
+    : pp1 = procedureParameter[$enableRw]       { $paramList.add($pp1.param); }
+      (
+        ',' pp2 = procedureParameter[$enableRw] { $paramList.add($pp2.param); }
+      )*
+      (
+        ',' dp1  = procedureDefaultParameter    { $paramList.add($dp1.param); }
+      )*
+      (
+        ',' lp1 = procedureListParameter        { $paramList.add($lp1.param); }
+      )?
+    | dp2 = procedureDefaultParameter           { $paramList.add($dp2.param); }
+      (
+        ',' dp3 = procedureDefaultParameter     { $paramList.add($dp3.param); }
+      )*
+      (
+        ',' lp2 = procedureListParameter        { $paramList.add($lp2.param); }
+      )?
+    | lp3 = procedureListParameter              { $paramList.add($lp3.param); }
+    | /* epsilon */
+    ;
 
-//procedureParameter [boolean enableRw] returns [ParameterDef param]
-//    : {$enableRw}? 'rw' variable { $param = new ParameterDef($variable.v, ParameterType.READ_WRITE); }
-//    | variable                   { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY);  }
-//    ;
+procedureParameter [boolean enableRw] returns [ParameterDef param]
+    : {$enableRw}? 'rw' variable { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_WRITE); }
+    | variable                   { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY);  }
+    ;
 
-//procedureDefaultParameter returns [ParameterDef param]
-//    : variable ':=' expr[false] { $param = new ParameterDef($variable.v, ParameterType.READ_ONLY, $expr.ex); }
-//    ;
+procedureDefaultParameter returns [ParameterDef param]
+    : variable ':=' expr[false] { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY, $expr.ex); }
+    ;
 
-//procedureListParameter returns [ParameterDef param]
-//    : '*' variable { $param = new ParameterDef($variable.v, ParameterType.LIST); }
-//    ;
+procedureListParameter returns [ParameterDef param]
+    : '*' variable { $param = new ParameterDef($variable.v.getId(), ParameterType.LIST); }
+    ;
 
 //call [boolean enableIgnore, Expr lhs] returns [Expr c]
 //    @init {
@@ -491,13 +489,12 @@ value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]
 //                           { $v = new SetListConstructor(CollectionType.LIST, cb);          }
 //    | '{' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? '}'
 //                           { $v = new SetListConstructor(CollectionType.SET, cb);           }
-//    | STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
-//    | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
-//    | 
-    matrix               { $v = new ValueOperator($matrix.m);                                 }
-    | vector               { $v = new ValueOperator($vector.v);                                 }
-    | atomicValue          { $v = new ValueOperator($atomicValue.av);                           }
-//    | {$enableIgnore}? '_' { $v = VariableIgnore.VI;                                        }
+    /*|*/ STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
+    | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
+    | matrix               { $v = new ValueOperator($matrix.m);                             }
+    | vector               { $v = new ValueOperator($vector.v);                             }
+    | atomicValue          { $v = new ValueOperator($atomicValue.av);                       }
+    | {$enableIgnore}? '_' { $v = VariableIgnore.VI;                                        }
     ;
 
 //collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]

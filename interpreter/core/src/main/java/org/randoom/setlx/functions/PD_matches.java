@@ -3,7 +3,8 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
-import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.types.SetlBoolean;
@@ -60,7 +61,7 @@ public class PD_matches extends PreDefinedProcedure {
             );
         }
 
-        boolean captureGroups = false;
+        boolean captureGroups;
         if (capture instanceof SetlBoolean) {
             captureGroups = (capture == SetlBoolean.TRUE);
         } else {
@@ -74,7 +75,7 @@ public class PD_matches extends PreDefinedProcedure {
             final Pattern    pattern = Pattern.compile(patternStr.getUnquotedString(state));
             if (captureGroups) {
                 if (assignTerm == null) {
-                    assignTerm = (new Variable("x").toTerm(state));
+                    assignTerm = new OperatorExpression(new Variable("x")).toTerm(state);
                 }
                 final ScanResult result = str.matchRegexPattern(state, pattern, true, assignTerm);
                 if (result.isMatch()) {

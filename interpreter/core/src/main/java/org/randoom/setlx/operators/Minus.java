@@ -1,7 +1,7 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
@@ -10,8 +10,9 @@ import org.randoom.setlx.utilities.State;
  * Operator that inverts one value on the stack.
  */
 public class Minus extends AUnaryPostfixOperator {
+
     @Override
-    public Value evaluate(State state, ValueStack values) throws SetlException {
+    public Value evaluate(State state, Stack<Value> values) throws SetlException {
         return values.poll().minus(state);
     }
 

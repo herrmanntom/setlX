@@ -61,11 +61,11 @@ public class Block extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         ReturnMessage result;
-        for (final Statement stmnt : statements) {
+        for (final Statement statement : statements) {
             if (state.executionStopped) {
                 throw new StopExecutionException();
             }
-            result = stmnt.execute(state);
+            result = statement.execute(state);
             if (result != null) {
                 return result;
             }
@@ -74,15 +74,17 @@ public class Block extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        for (final Statement stmnt : statements) {
-            stmnt.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        boolean allowOptimization = true;
+        for (final Statement statement : statements) {
+            allowOptimization = allowOptimization && statement.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
+        return allowOptimization;
     }
 
     /**
@@ -95,9 +97,9 @@ public class Block extends Statement {
      */
     public void markLastExprStatement() {
         if (statements.size() > 0) {
-            final Statement stmnt = statements.get(statements.size() - 1);
-            if (stmnt instanceof StatementWithPrintableResult) {
-                ((StatementWithPrintableResult) stmnt).setPrintAfterExecution();
+            final Statement statement = statements.get(statements.size() - 1);
+            if (statement instanceof StatementWithPrintableResult) {
+                ((StatementWithPrintableResult) statement).setPrintAfterExecution();
             }
         }
     }

@@ -41,7 +41,7 @@ public class Condition extends ImmutableCodeFragment {
      * @return               Result of the evaluation.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public SetlBoolean eval(final State state) throws SetlException {
+    public SetlBoolean evaluate(final State state) throws SetlException {
         final Value v = expr.evaluate(state);
         if (v == SetlBoolean.TRUE || v == SetlBoolean.FALSE) { // is Boolean value?
             return (SetlBoolean) v;
@@ -51,13 +51,13 @@ public class Condition extends ImmutableCodeFragment {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

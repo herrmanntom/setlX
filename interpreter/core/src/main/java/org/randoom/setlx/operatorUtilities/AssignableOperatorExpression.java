@@ -9,6 +9,7 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,13 +17,56 @@ import java.util.List;
  */
 public class AssignableOperatorExpression extends OperatorExpression {
 
+    private AssignableOperatorExpression(FragmentList<AOperator> operators) {
+        super(operators);
+    }
+
     /**
-     * Create a new operator stack.
+     * Create a assignable operator stack from a normal one.
      *
-     * @param operators Operator stack to evaluate.
+     * @param operatorExpression           Operator stack to convert.
+     * @return                             Assignable operator stack.
+     * @throws UndefinedOperationException in case operators are not instances of AOperator.
      */
-    public <T extends AOperator & IAssignableOperator> AssignableOperatorExpression(FragmentList<T> operators) {
-        super(new FragmentList<AOperator>(operators));
+    public static AssignableOperatorExpression convertToAssignable(OperatorExpression operatorExpression) throws UndefinedOperationException {
+        FragmentList<AOperator> operators = operatorExpression.getOperators();
+        for (AOperator operator : operators) {
+            if (! (operator instanceof IAssignableOperator)) {
+                throw new UndefinedOperationException("Trying to convert AOperator that is not an IAssignableOperator!");
+            }
+        }
+        return new AssignableOperatorExpression(operators);
+    }
+
+    /**
+     * Create a assignable operator stack from a list of operators.
+     *
+     * @param operator Operator to convert.
+     * @return         Assignable operator stack.
+     */
+    public static <T extends AOperator & IAssignableOperator> AssignableOperatorExpression convertToAssignable(T operator) {
+        FragmentList<AOperator> aOperators = new FragmentList<AOperator>(1);
+        aOperators.add(operator);
+        return new AssignableOperatorExpression(aOperators);
+    }
+
+    /**
+     * Create a assignable operator stack from a list of operators.
+     *
+     * @param operators                    Operator stack to convert.
+     * @return                             Assignable operator stack.
+     * @throws UndefinedOperationException in case operators are not instances of AOperator.
+     */
+    public static AssignableOperatorExpression convertToAssignable(List<IAssignableOperator> operators) throws UndefinedOperationException {
+        FragmentList<AOperator> aOperators = new FragmentList<AOperator>(operators.size());
+        for (IAssignableOperator operator : operators) {
+            if (operator instanceof AOperator) {
+                aOperators.add((AOperator) operator);
+            } else {
+                throw new UndefinedOperationException("Trying to convert IAssignableOperator that is not an AOperator!");
+            }
+        }
+        return new AssignableOperatorExpression(aOperators);
     }
 
     /**
@@ -42,6 +86,19 @@ public class AssignableOperatorExpression extends OperatorExpression {
             final List<String> unboundVariables,
             final List<String> usedVariables
     ) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    /**
+     * Sets this expression to the given value. Does not clone 'value' and does
+     * not return 'value' for chained assignments.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param value          Value to assign.
+     * @param context        Context description of the assignment for trace.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public void assignUncloned(final State state, final Value value, final String context) throws SetlException {
         throw new IllegalStateException("Not implemented");
     }
 

@@ -2,8 +2,8 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.AssignableExpression;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.ReturnMessage;
@@ -32,13 +32,13 @@ public class ProductAssignment extends AbstractAssignment {
      * @param lhs Expression to assign to.
      * @param rhs Expression to evaluate.
      */
-    public ProductAssignment(final AssignableExpression lhs, final Expr rhs) {
+    public ProductAssignment(final AssignableOperatorExpression lhs, final OperatorExpression rhs) {
         super(lhs, rhs);
     }
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        final Value assigned = lhs.eval(state).productAssign(state, rhs.eval(state).clone());
+        final Value assigned = lhs.evaluate(state).productAssign(state, rhs.evaluate(state).clone());
         lhs.assignUncloned(state, assigned, FUNCTIONAL_CHARACTER);
 
         if (printAfterEval) {
@@ -72,11 +72,9 @@ public class ProductAssignment extends AbstractAssignment {
      */
     public static ProductAssignment termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() == 2) {
-            final Expr lhs = TermConverter.valueToExpr(state, term.firstMember());
-            final Expr rhs = TermConverter.valueToExpr(state, term.lastMember());
-            if (lhs instanceof AssignableExpression) {
-                return new ProductAssignment((AssignableExpression) lhs, rhs);
-            }
+            final AssignableOperatorExpression lhs = TermConverter.valueToAssignableExpr(state, term.firstMember());
+            final OperatorExpression rhs = TermConverter.valueToExpr(state, term.lastMember());
+            return new ProductAssignment(lhs, rhs);
         }
         throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }

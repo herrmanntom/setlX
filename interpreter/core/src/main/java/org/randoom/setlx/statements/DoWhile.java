@@ -2,7 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Condition;
+import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -56,19 +56,19 @@ public class DoWhile extends Statement {
                 }
                 return result;
             }
-        } while (condition.eval(state) == SetlBoolean.TRUE);
+        } while (condition.evaluate(state) == SetlBoolean.TRUE);
         return null;
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+            && statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

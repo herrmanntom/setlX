@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.*;
 
@@ -72,7 +72,7 @@ public class Procedure extends ImmutableValue {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -87,6 +87,7 @@ public class Procedure extends ImmutableValue {
         parameters.collectVariablesAndOptimize(state, innerBoundVariables, innerBoundVariables, innerBoundVariables);
 
         statements.collectVariablesAndOptimize(state, innerBoundVariables, innerUnboundVariables, innerUsedVariables);
+        return false;
     }
 
     /* type checks (sort of Boolean operation) */
@@ -100,13 +101,13 @@ public class Procedure extends ImmutableValue {
     /* function call */
 
     @Override
-    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
+    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         final SetlObject object = this.object;
         this.object = null;
 
         SetlList listArguments = null;
         if (listArg != null) {
-            Value listArgument = listArg.eval(state);
+            Value listArgument = listArg.evaluate(state);
             if (listArgument.getClass() != SetlList.class) {
                 throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
             }
@@ -129,8 +130,8 @@ public class Procedure extends ImmutableValue {
 
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(nArguments);
-        for (final Expr arg : args) {
-            values.add(arg.eval(state));
+        for (final OperatorExpression arg : args) {
+            values.add(arg.evaluate(state));
         }
         if (listArguments != null) {
             for (Value listArgument : listArguments) {
@@ -152,7 +153,7 @@ public class Procedure extends ImmutableValue {
      * @return               Return value of this function call.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    protected Value callAfterEval(final State state, final List<Expr> args, final List<Value> values, final SetlObject object) throws SetlException {
+    protected Value callAfterEval(final State state, final List<OperatorExpression> args, final List<Value> values, final SetlObject object) throws SetlException {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call

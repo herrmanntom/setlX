@@ -49,13 +49,13 @@ public class IfThenElseBranch extends AbstractIfThenBranch {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

@@ -2,7 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -29,36 +29,34 @@ public class Return extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Return.class);
 
-    private final Expr result;
+    private final OperatorExpression result;
 
     /**
      * Create a new return statement.
      *
      * @param result Expression to evaluate before returning.
      */
-    public Return(final Expr result) {
+    public Return(final OperatorExpression result) {
         this.result = unify(result);
     }
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         if (result != null) {
-            return ReturnMessage.createMessage(result.eval(state));
+            return ReturnMessage.createMessage(result.evaluate(state));
         } else {
             return ReturnMessage.OM;
         }
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        if (result != null) {
-            result.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        }
+        return result == null || result.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -99,7 +97,7 @@ public class Return extends Statement {
         if (term.size() != 1) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            Expr expr = null;
+            OperatorExpression expr = null;
             if (! term.firstMember().equals(SetlString.NIL)) {
                 expr = TermConverter.valueToExpr(state, term.firstMember());
             }
@@ -114,7 +112,7 @@ public class Return extends Statement {
         if (this == other) {
             return 0;
         } else if (other.getClass() == Return.class) {
-            final Expr otherResult = ((Return) other).result;
+            final OperatorExpression otherResult = ((Return) other).result;
             if (result != null) {
                 if (otherResult != null) {
                     return result.compareTo(otherResult);
@@ -142,7 +140,7 @@ public class Return extends Statement {
         if (this == obj) {
             return true;
         } else if (obj.getClass() == Return.class) {
-            final Expr otherResult = ((Return) obj).result;
+            final OperatorExpression otherResult = ((Return) obj).result;
             if (result != null && otherResult != null) {
                 return result.equals(otherResult);
             } else if (result == null && otherResult == null) {

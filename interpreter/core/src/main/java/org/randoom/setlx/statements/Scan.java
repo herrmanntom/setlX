@@ -4,8 +4,9 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statementBranches.AbstractMatchBranch;
 import org.randoom.setlx.statementBranches.AbstractMatchScanBranch;
 import org.randoom.setlx.statementBranches.MatchDefaultBranch;
@@ -15,7 +16,14 @@ import org.randoom.setlx.types.SetlSet;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.*;
+import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
+import org.randoom.setlx.utilities.MatchResult;
+import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.ScanResult;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.VariableScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +45,8 @@ public class Scan extends Statement {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Scan.class);
 
-    private final Expr                                  expr;
-    private final Variable                              posVar;
+    private final OperatorExpression expr;
+    private final AssignableOperatorExpression posVar;
     private final FragmentList<AbstractMatchScanBranch> branchList;
 
     /**
@@ -48,7 +56,11 @@ public class Scan extends Statement {
      * @param posVar     Variable storing the current position inside the string.
      * @param branchList List of scan branches.
      */
-    public Scan(final Expr expr, final Variable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
+    public Scan(final OperatorExpression expr, final Variable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
+        this(expr, AssignableOperatorExpression.convertToAssignable(posVar), branchList);
+    }
+
+    private Scan(final OperatorExpression expr, final AssignableOperatorExpression posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
         this.expr       = unify(expr);
         this.posVar     = unify(posVar);
         this.branchList = unify(branchList);
@@ -56,7 +68,7 @@ public class Scan extends Statement {
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        final Value value = expr.eval(state);
+        final Value value = expr.evaluate(state);
         if ( ! (value instanceof SetlString)) {
             throw new IncompatibleTypeException(
                 "The value '" + value + "' is not a string and cannot be scaned."
@@ -189,7 +201,7 @@ public class Scan extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -227,6 +239,7 @@ public class Scan extends Statement {
             boundHere.removeAll(tempAssigned);
             boundVariables.addAll(boundHere);
         }
+        return false;
     }
 
     /* string operations */
@@ -286,12 +299,12 @@ public class Scan extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                Variable posVar = null;
+                AssignableOperatorExpression posVar = null;
                 if (! term.firstMember().equals(SetlString.NIL)) {
-                    posVar = Variable.termToExpr(state, (Term) term.firstMember());
+                    posVar = TermConverter.valueToAssignableExpr(state, term.firstMember());
                 }
 
-                final Expr                                  expr       = TermConverter.valueToExpr(state, term.getMember(2));
+                final OperatorExpression                    expr       = TermConverter.valueToExpr(state, term.getMember(2));
 
                 final SetlList                              branches   = (SetlList) term.lastMember();
                 final FragmentList<AbstractMatchScanBranch> branchList = new FragmentList<AbstractMatchScanBranch>(branches.size());

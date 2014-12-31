@@ -5,7 +5,6 @@ import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressionUtilities.ExplicitListWithRest;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
@@ -188,8 +187,8 @@ public class SetlList extends IndexedCollectionValue {
                 }
             }
             return result;
-        } else if (multiplier.getClass() == Term.class) {
-            return ((Term) multiplier).productFlipped(state, this);
+//        } else if (multiplier.getClass() == Term.class) {
+//            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "List multiplier '" + multiplier.toString(state) + "' is not an integer."
@@ -216,8 +215,8 @@ public class SetlList extends IndexedCollectionValue {
                 }
             }
             return this;
-        } else if (multiplier.getClass() == Term.class) {
-            return ((Term) multiplier).productFlipped(state, this);
+//        } else if (multiplier.getClass() == Term.class) {
+//            return ((Term) multiplier).productFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "List multiplier '" + multiplier.toString(state) + "' is not an integer."
@@ -227,9 +226,9 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public Value sum(final State state, final Value summand) throws SetlException {
-        if (summand.getClass() == Term.class) {
+        /*if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand.getClass() == SetlString.class) {
+        } else */if (summand.getClass() == SetlString.class) {
             return ((SetlString) summand).sumFlipped(state, this);
         } else if (summand instanceof CollectionValue) {
             final ArrayList<Value> list = new ArrayList<Value>(this.list.size() + summand.size());
@@ -252,9 +251,9 @@ public class SetlList extends IndexedCollectionValue {
 
     @Override
     public Value sumAssign(final State state, final Value summand) throws SetlException {
-        if (summand.getClass() == Term.class) {
+        /*if (summand.getClass() == Term.class) {
             return ((Term) summand).sumFlipped(state, this);
-        } else if (summand.getClass() == SetlString.class) {
+        } else */if (summand.getClass() == SetlString.class) {
             return ((SetlString)summand).sumFlipped(state, this);
         } else if (summand instanceof CollectionValue) {
             separateFromOriginal();
@@ -302,8 +301,8 @@ public class SetlList extends IndexedCollectionValue {
             }
 
             return result;
-        } else if (other.getClass() == Term.class) {
-            return ((Term) other).cartesianProductFlipped(state, this);
+//        } else if (other.getClass() == Term.class) {
+//            return ((Term) other).cartesianProductFlipped(state, this);
         } else {
             throw new IncompatibleTypeException(
                 "Right-hand-side of '" + this.toString(state) + " >< " + other.toString(state) + "' is not a list."
@@ -742,10 +741,10 @@ public class SetlList extends IndexedCollectionValue {
         final IndexedCollectionValue otherCollection = (IndexedCollectionValue) other;
 
         if (list.size() == 1 && list.get(0).getClass() == Term.class) {
-            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) list.get(0), otherCollection);
-            if (result.isMatch()) {
-                return result;
-            }
+//            final MatchResult result = ExplicitListWithRest.matchTerm(state, (Term) list.get(0), otherCollection);
+//            if (result.isMatch()) {
+//                return result;
+//            }
         }
 
         if (list.size() != otherCollection.size()) {

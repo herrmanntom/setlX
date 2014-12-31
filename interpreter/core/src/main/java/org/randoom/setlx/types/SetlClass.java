@@ -4,10 +4,8 @@ import org.randoom.setlx.exceptions.IncorrectNumberOfParametersException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.expressions.Assignment;
-import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.ValueExpr;
-import org.randoom.setlx.expressions.Variable;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.ValueOperator;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Return;
@@ -36,7 +34,7 @@ public class SetlClass extends Value {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER      = generateFunctionalCharacter(SetlClass.class);
     private final static long   COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetlClass.class);
-    private final static Block  REBUILD_MARKER            = new Block(new Return(new ValueExpr(new SetlString(FUNCTIONAL_CHARACTER + COMPARE_TO_ORDER_CONSTANT))));
+    private final static Block  REBUILD_MARKER            = new Block(new Return(new OperatorExpression(new ValueOperator(new SetlString(FUNCTIONAL_CHARACTER + COMPARE_TO_ORDER_CONSTANT)))));
 
     private final ParameterList      parameters;          // parameter list
     private final Block              initBlock;           // statements in the body of the definition
@@ -126,7 +124,7 @@ public class SetlClass extends Value {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -152,12 +150,14 @@ public class SetlClass extends Value {
 
         this.initVars   = initVars;
         this.staticVars = staticVars;
+
+        return false;
     }
 
     /* function call */
 
     @Override
-    public Value call(final State state, final List<Expr> args, final Expr listArg) throws SetlException {
+    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         if (staticVars == null) {
             optimize(state);
         }
@@ -169,7 +169,7 @@ public class SetlClass extends Value {
 
         SetlList listArguments = null;
         if (listArg != null) {
-            Value listArgument = listArg.eval(state);
+            Value listArgument = listArg.evaluate(state);
             if (listArgument.getClass() != SetlList.class) {
                 throw new UndefinedOperationException("List argument '" + listArg.toString(state) + "' is not a list.");
             }
@@ -191,8 +191,8 @@ public class SetlClass extends Value {
 
         // evaluate arguments
         final ArrayList<Value> values = new ArrayList<Value>(nArguments);
-        for (final Expr arg : args) {
-            values.add(arg.eval(state));
+        for (final OperatorExpression arg : args) {
+            values.add(arg.evaluate(state));
         }
         if (listArguments != null) {
             for (Value listArgument : listArguments) {

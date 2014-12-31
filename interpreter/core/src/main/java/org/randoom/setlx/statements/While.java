@@ -13,7 +13,7 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.util.List;
 
 /**
- * Everyones favorite: the while statement.
+ * Everyone's favorite: the while statement.
  *
  * grammar rule:
  * statement
@@ -46,7 +46,7 @@ public class While extends Statement {
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
         ReturnMessage result;
-        while (condition.eval(state) == SetlBoolean.TRUE) {
+        while (condition.evaluate(state) == SetlBoolean.TRUE) {
             result = statements.execute(state);
             if (result != null) {
                 if (result == ReturnMessage.CONTINUE) {
@@ -61,14 +61,14 @@ public class While extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+            && statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -104,7 +104,7 @@ public class While extends Statement {
         if (term.size() != 2) {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
-            final Condition condition = null; // FIXME TermConverter.valueToCondition(state, term.firstMember());
+            final Condition condition = TermConverter.valueToCondition(state, term.firstMember());
             final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
             return new While(condition, block);
         }

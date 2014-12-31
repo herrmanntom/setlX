@@ -3,8 +3,8 @@ package org.randoom.setlx.statements;
 import org.randoom.setlx.exceptions.AssertException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.Condition;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -32,7 +32,7 @@ public class Assert extends Statement {
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Assert.class);
 
     private final Condition condition;
-    private final Expr      message;
+    private final OperatorExpression message;
 
     /**
      * Create a new Assert statement.
@@ -40,28 +40,28 @@ public class Assert extends Statement {
      * @param condition Condition to check before execution.
      * @param message   Message to throw as exception, when condition evaluates to false.
      */
-    public Assert(final Condition condition, final Expr message) {
+    public Assert(final Condition condition, final OperatorExpression message) {
         this.condition = unify(condition);
         this.message   = unify(message);
     }
 
     @Override
     public ReturnMessage execute(final State state) throws SetlException {
-        if (condition.eval(state) != SetlBoolean.TRUE) {
-            throw new AssertException("Assertion failed: " + message.eval(state).toString(state));
+        if (condition.evaluate(state) != SetlBoolean.TRUE) {
+            throw new AssertException("Assertion failed: " + message.evaluate(state).toString(state));
         }
         return null;
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
-        message.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables)
+         && message.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */
@@ -99,7 +99,7 @@ public class Assert extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             final Condition condition = TermConverter.valueToCondition(state, term.firstMember());
-            final Expr      message   = TermConverter.valueToExpr(state, term.lastMember());
+            final OperatorExpression message = TermConverter.valueToExpr(state, term.lastMember());
             return new Assert(condition, message);
         }
     }

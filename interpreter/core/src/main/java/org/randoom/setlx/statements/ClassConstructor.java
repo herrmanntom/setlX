@@ -51,14 +51,14 @@ public class ClassConstructor extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         boundVariables.add(name);
-        classDefinition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return classDefinition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

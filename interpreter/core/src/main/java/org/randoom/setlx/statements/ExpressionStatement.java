@@ -51,13 +51,13 @@ public class ExpressionStatement extends StatementWithPrintableResult {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
-        expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        return expr.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
     }
 
     /* string operations */

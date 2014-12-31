@@ -4,8 +4,8 @@ import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.SyntaxErrorException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressions.Expr;
+import org.randoom.setlx.operatorUtilities.Condition;
+import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
@@ -36,12 +36,12 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(MatchRegexBranch.class);
 
-    private final Expr      pattern;        // pattern to match
-    private       Pattern   runtimePattern; // compiled pattern to match
-    private final Expr      assignTo;       // variable to store groups
-    private       Value     assignTerm;     // term of variable to store groups
-    private final Condition condition;      // optional condition to confirm match
-    private final Block     statements;     // block to execute after match
+    private final OperatorExpression pattern;  // pattern to match
+    private       Pattern runtimePattern;      // compiled pattern to match
+    private final OperatorExpression assignTo; // variable to store groups
+    private       Value assignTerm;            // term of variable to store groups
+    private final Condition condition;         // optional condition to confirm match
+    private final Block statements;            // block to execute after match
 
     /**
      * Create new regex-branch.
@@ -52,14 +52,14 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
      * @param condition  Condition to check before execution.
      * @param statements Statements to execute when condition is met.
      */
-    public MatchRegexBranch(final State state, final Expr pattern, final Expr assignTo, final Condition condition, final Block statements) {
+    public MatchRegexBranch(final State state, final OperatorExpression pattern, final OperatorExpression assignTo, final Condition condition, final Block statements) {
         this(pattern, assignTo, condition, statements, state);
 
         // if pattern is static it can be compiled now
-        if (this.pattern.isReplaceable()) {
+        if (this.pattern.isConstant()) {
             Value patternReplacement;
             try {
-                patternReplacement = this.pattern.eval(new State());
+                patternReplacement = this.pattern.evaluate(new State());
             } catch (final Throwable t) {
                 patternReplacement = null;
             }
@@ -85,7 +85,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
         }
     }
 
-    private MatchRegexBranch(final Expr pattern, final Expr assignTo, final Condition condition, final Block statements, final State state) {
+    private MatchRegexBranch(final OperatorExpression pattern, final OperatorExpression assignTo, final Condition condition, final Block statements, final State state) {
         this.pattern        = unify(pattern);
         this.runtimePattern = null;
         this.assignTo       = unify(assignTo);
@@ -110,7 +110,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
 
     @Override
     public boolean evalConditionToBool(final State state) throws SetlException {
-        return condition == null || condition.eval(state) == SetlBoolean.TRUE;
+        return condition == null || condition.evaluate(state) == SetlBoolean.TRUE;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
         if (runtimePattern != null) {
             pttrn = runtimePattern;
         } else {
-            final Value patternStr = pattern.eval(state);
+            final Value patternStr = pattern.evaluate(state);
             if (patternStr.getClass() != SetlString.class) {
                 throw new IncompatibleTypeException(
                     "Pattern argument '" + patternStr.toString(state) + "' is not a string."
@@ -131,7 +131,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
             try {
                 pttrn = Pattern.compile(p);
                 // store pattern if it is static
-                if (pattern.isReplaceable()) {
+                if (pattern.isConstant()) {
                     runtimePattern = pttrn;
                 }
             } catch (final PatternSyntaxException pse) {
@@ -160,7 +160,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -192,6 +192,7 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
                 boundVariables.remove(preIndex + (i - 1));
             }
         }
+        return false;
     }
 
     /* string operations */
@@ -257,9 +258,9 @@ public class MatchRegexBranch extends AbstractMatchScanBranch {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final Expr pattern = TermConverter.valueToExpr(state, term.firstMember());
+                final OperatorExpression pattern = TermConverter.valueToExpr(state, term.firstMember());
 
-                Expr assignTo = null;
+                OperatorExpression assignTo = null;
                 if (! term.getMember(2).equals(SetlString.NIL)) {
                     assignTo = TermConverter.valueToExpr(state, term.getMember(2));
                 }

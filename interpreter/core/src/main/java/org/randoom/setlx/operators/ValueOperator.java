@@ -1,11 +1,13 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
+
+import java.util.List;
 
 /**
  * A simple operator that puts a value on the stack.
@@ -24,7 +26,12 @@ public class ValueOperator extends AZeroOperator {
     }
 
     @Override
-    public Value evaluate(State state, ValueStack values) throws SetlException {
+    public boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        return true;
+    }
+
+    @Override
+    public Value evaluate(State state, Stack<Value> values) throws SetlException {
         return value;
     }
 

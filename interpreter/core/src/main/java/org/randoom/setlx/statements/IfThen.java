@@ -56,7 +56,7 @@ public class IfThen extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
@@ -80,6 +80,7 @@ public class IfThen extends Statement {
         if (branchList.get(branchList.size() - 1) instanceof IfThenElseBranch) {
             boundVariables.addAll(boundHere);
         }
+        return false;
     }
 
     /* string operations */

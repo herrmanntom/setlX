@@ -2,9 +2,9 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressionUtilities.SetlIterator;
-import org.randoom.setlx.expressionUtilities.SetlIteratorExecutionContainer;
+import org.randoom.setlx.operatorUtilities.Condition;
+import org.randoom.setlx.operatorUtilities.SetlIterator;
+import org.randoom.setlx.operatorUtilities.SetlIteratorExecutionContainer;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
@@ -34,8 +34,8 @@ public class For extends Statement {
     // functional character used in terms
     private final static String  FUNCTIONAL_CHARACTER = generateFunctionalCharacter(For.class);
 
-    private final SetlIterator   iterator;
-    private final Condition      condition;
+    private final SetlIterator iterator;
+    private final Condition condition;
     private final Block          statements;
     private final Exec           exec;
 
@@ -50,7 +50,7 @@ public class For extends Statement {
 
         @Override
         public ReturnMessage execute(final State state, final Value lastIterationValue) throws SetlException {
-            if (condition == null || condition.eval(state) == SetlBoolean.TRUE) {
+            if (condition == null || condition.evaluate(state) == SetlBoolean.TRUE) {
                 return statements.execute(state);
                 // ContinueException and BreakException are handled by outer iterator
             }
@@ -91,13 +91,14 @@ public class For extends Statement {
     }
 
     @Override
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
     ) {
         iterator.collectVariablesAndOptimize(state, exec, boundVariables, unboundVariables, usedVariables);
+        return false;
     }
 
     /* string operations */
@@ -143,12 +144,12 @@ public class For extends Statement {
             throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
         } else {
             try {
-                final SetlIterator  iterator  = SetlIterator.valueToIterator(state, term.firstMember());
-                      Condition condition = null;
+                final SetlIterator iterator = SetlIterator.valueToIterator(state, term.firstMember());
+                Condition condition = null;
                 if ( ! term.getMember(2).equals(SetlString.NIL)) {
                     condition = TermConverter.valueToCondition(state, term.getMember(2));
                 }
-                final Block     block     = TermConverter.valueToBlock(state, term.lastMember());
+                final Block block = TermConverter.valueToBlock(state, term.lastMember());
                 return new For(iterator, condition, block);
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);

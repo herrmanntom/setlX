@@ -15,5 +15,15 @@ public class TermConversionException extends SetlException {
     public TermConversionException(final String msg) {
         super(msg);
     }
+
+    /**
+     * Create a new TermConversionException.
+     *
+     * @param msg   More detailed message.
+     * @param cause The cause (which is saved for later retrieval by the getCause() method).
+     */
+    public TermConversionException(final String msg, Throwable cause) {
+        super(msg, cause);
+    }
 }
 

@@ -1,8 +1,9 @@
-package org.randoom.setlx.expressions;
+package org.randoom.setlx.operators;
 
-import org.randoom.setlx.exceptions.TermConversionException;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
@@ -11,12 +12,7 @@ import java.util.List;
 /**
  * Wrapper Expression for SetlX Literals, which parses escape sequences at runtime.
  */
-public class LiteralConstructor extends Expr {
-    // functional character used in terms
-    private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(LiteralConstructor.class);
-    // precedence level in SetlX-grammar
-    private final static int    PRECEDENCE           = 9999;
-
+public class LiteralConstructor extends AZeroOperator {
     private final String     originalLiteral;
     private final SetlString runtimeString;
 
@@ -35,58 +31,52 @@ public class LiteralConstructor extends Expr {
     }
 
     @Override
-    public SetlString eval(final State state) {
+    public SetlString evaluate(State state, Stack<Value> values)  {
         return runtimeString;
     }
 
     @Override
-    protected SetlString evaluate(final State state) {
-        return runtimeString;
-    }
-
-    @Override
-    protected void collectVariables (
+    public boolean collectVariablesAndOptimize (
         final State        state,
         final List<String> boundVariables,
         final List<String> unboundVariables,
         final List<String> usedVariables
-    ) { /* nothing to collect */ }
+    ) {
+        return true;
+    }
 
     /* string operations */
 
     @Override
-    public void appendString(final State state, final StringBuilder sb, final int tabs) {
+    public void appendOperatorSign(final State state, final StringBuilder sb) {
         sb.append(originalLiteral);
     }
 
     /* term operations */
 
     @Override
-    public Term toTerm(final State state) {
-        final Term result  = new Term(FUNCTIONAL_CHARACTER, 1);
-
-        result.addMember(state, runtimeString);
-
-        return result;
+    public Term modifyTerm(final State state, Term term) {
+        term.addMember(state, runtimeString);
+        return term;
     }
 
-    /**
-     * Convert a term representing a LiteralConstructor into such an expression.
-     *
-     * @param state                    Current state of the running setlX program.
-     * @param term                     Term to convert.
-     * @return                         Resulting LiteralConstructor Expression.
-     * @throws TermConversionException Thrown in case of an malformed term.
-     */
-    public static LiteralConstructor termToExpr(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
-            final SetlString runtimeString   = (SetlString) term.firstMember();
-            final String     originalLiteral = "'" + runtimeString.getEscapedLiteral() + "'";
-            return new LiteralConstructor(originalLiteral, runtimeString);
-        }
-    }
+//    /**
+//     * Convert a term representing a LiteralConstructor into such an expression.
+//     *
+//     * @param state                    Current state of the running setlX program.
+//     * @param term                     Term to convert.
+//     * @return                         Resulting LiteralConstructor Expression.
+//     * @throws TermConversionException Thrown in case of an malformed term.
+//     */
+//    public static LiteralConstructor termToExpr(final State state, final Term term) throws TermConversionException {
+//        if (term.size() != 1 || ! (term.firstMember() instanceof SetlString)) {
+//            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
+//        } else {
+//            final SetlString runtimeString   = (SetlString) term.firstMember();
+//            final String     originalLiteral = "'" + runtimeString.getEscapedLiteral() + "'";
+//            return new LiteralConstructor(originalLiteral, runtimeString);
+//        }
+//    }
 
     /* comparisons */
 
@@ -121,11 +111,6 @@ public class LiteralConstructor extends Expr {
     @Override
     public int computeHashCode() {
         return ((int) COMPARE_TO_ORDER_CONSTANT) + originalLiteral.hashCode();
-    }
-
-    @Override
-    public int precedence() {
-        return PRECEDENCE;
     }
 }
 

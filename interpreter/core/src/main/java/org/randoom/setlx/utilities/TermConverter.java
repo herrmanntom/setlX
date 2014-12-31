@@ -1,20 +1,26 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.boolExpressions.Equals;
-import org.randoom.setlx.expressionUtilities.Condition;
-import org.randoom.setlx.expressions.CollectionAccessRangeDummy;
-import org.randoom.setlx.expressions.Expr;
-import org.randoom.setlx.expressions.ProcedureConstructor;
-import org.randoom.setlx.expressions.SetListConstructor;
-import org.randoom.setlx.expressions.TermConstructor;
-import org.randoom.setlx.expressions.ValueExpr;
-import org.randoom.setlx.expressions.VariableIgnore;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
-import org.randoom.setlx.types.*;
+import org.randoom.setlx.types.CachedProcedure;
+import org.randoom.setlx.types.Closure;
+import org.randoom.setlx.types.IgnoreDummy;
+import org.randoom.setlx.types.LambdaClosure;
+import org.randoom.setlx.types.LambdaProcedure;
+import org.randoom.setlx.types.Om;
+import org.randoom.setlx.types.Procedure;
+import org.randoom.setlx.types.RangeDummy;
+import org.randoom.setlx.types.SetlBoolean;
+import org.randoom.setlx.types.SetlClass;
+import org.randoom.setlx.types.SetlObject;
+import org.randoom.setlx.types.Term;
+import org.randoom.setlx.types.Value;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -26,7 +32,6 @@ import java.util.Map;
  */
 public class TermConverter {
 
-    private final static Map<String, Method> EXPR_CONVERTERS      = new HashMap<String, Method>();
     private final static Map<String, Method> STATEMENT_CONVERTERS = new HashMap<String, Method>();
 
     /**
@@ -85,11 +90,8 @@ public class TermConverter {
             try {
                 if (fc.length() >= 3 && fc.charAt(0) == '^') { // all internally used terms start with ^
                     Method  converter   = null;
-                    synchronized (EXPR_CONVERTERS) {
-                        // search in expr map
-                        converter = EXPR_CONVERTERS.get(fc);
-                        // and in statement map if allowed and nothing was found (yet)
-                        if ( ! restrictToExpr && converter == null) {
+                    if ( ! restrictToExpr) {
+                        synchronized (STATEMENT_CONVERTERS) {
                             converter = STATEMENT_CONVERTERS.get(fc);
                         }
                     }
@@ -97,46 +99,20 @@ public class TermConverter {
                     if (converter == null) {
                         // string used for method look-up
                         final String    needle           = fc.substring(1, 2).toUpperCase(Locale.US) + fc.substring(2);
-                        // look it up in [bool]expression and statement packages
-                        final String    packageNameBExpr = Equals   .class.getPackage().getName();
-                        final String    packageNameExpr  = Expr     .class.getPackage().getName();
+                        // look it up in statement package
                         final String    packageNameStmnt = Statement.class.getPackage().getName();
                         // class which is searched
                               Class<?>  clAss            = null;
                         try {
-                            clAss     = Class.forName(packageNameBExpr + '.' + needle);
-                            converter = clAss.getMethod("termToExpr", State.class, Term.class);
+                            clAss     = Class.forName(packageNameStmnt + '.' + needle);
+                            converter = clAss.getMethod("termToStatement", State.class, Term.class);
 
-                            synchronized (EXPR_CONVERTERS) {
-                                EXPR_CONVERTERS.put(fc, converter);
+                            synchronized (STATEMENT_CONVERTERS) {
+                                STATEMENT_CONVERTERS.put(fc, converter);
                             }
                         } catch (final Exception e1) {
-                            // look-up failed, try next package
-                            try {
-                                clAss     = Class.forName(packageNameExpr + '.' + needle);
-                                converter = clAss.getMethod("termToExpr", State.class, Term.class);
-
-                                synchronized (EXPR_CONVERTERS) {
-                                    EXPR_CONVERTERS.put(fc, converter);
-                                }
-                            } catch (final Exception e2) {
-                                // look-up failed, try next package
-                                if (restrictToExpr) {
-                                    converter = null;
-                                } else {
-                                    try {
-                                        clAss     = Class.forName(packageNameStmnt + '.' + needle);
-                                        converter = clAss.getMethod("termToStatement", State.class, Term.class);
-
-                                        synchronized (EXPR_CONVERTERS) {
-                                            STATEMENT_CONVERTERS.put(fc, converter);
-                                        }
-                                    } catch (final Exception e3) {
-                                        // look-up failed, nothing more to try
-                                        converter   = null;
-                                    }
-                                }
-                            }
+                            // look-up failed, nothing more to try
+                            converter   = null;
                         }
                     }
                     // invoke method found
@@ -155,39 +131,40 @@ public class TermConverter {
                     // special cases
                     final Value specialValue = valueTermToValue(state, value);
 
-                    if (specialValue == Om.OM) {
-                        return new ValueExpr(specialValue);
-                    } else if (specialValue instanceof Procedure) {
-                        return new ProcedureConstructor((Procedure) specialValue);
-                    } else if (specialValue.isClass() == SetlBoolean.TRUE) {
-                        return new ValueExpr(specialValue);
-                    } else if (specialValue.isObject() == SetlBoolean.TRUE) {
-                        return new ValueExpr(specialValue);
-                    }
+//                    if (specialValue == Om.OM) {
+//                        return new ValueExpr(specialValue);
+//                    } else if (specialValue instanceof Procedure) {
+//                        return new ProcedureConstructor((Procedure) specialValue);
+//                    } else if (specialValue.isClass() == SetlBoolean.TRUE) {
+//                        return new ValueExpr(specialValue);
+//                    } else if (specialValue.isObject() == SetlBoolean.TRUE) {
+//                        return new ValueExpr(specialValue);
+//                    }
                 }
                 // This term does not represent an CodeFragment.
-                return TermConstructor.termToExpr(state, term);
+//                return TermConstructor.termToExpr(state, term);
             } catch (final TermConversionException tce) {
                 // some error occurred... create TermConstructor for this custom term
-                return TermConstructor.termToExpr(state, term);
+//                return TermConstructor.termToExpr(state, term);
             }
         } else { // `value' is in fact a (more or less) simple value
-            try {
-                if (value == IgnoreDummy.ID) {
-                    return VariableIgnore.VI;
-                } else if (value == RangeDummy.RD) {
-                    return CollectionAccessRangeDummy.CARD;
-                } else if (value.isList() == SetlBoolean.TRUE || value.isSet() == SetlBoolean.TRUE) {
-                    return SetListConstructor.valueToExpr(state, value);
-                } else {
-                    // not a special value
-                    return new ValueExpr(value);
-                }
-            } catch (final TermConversionException tce) {
-                // some error occurred... create ValueExpr for this value
-                return new ValueExpr(value);
-            }
+//            try {
+//                if (value == IgnoreDummy.ID) {
+//                    return VariableIgnore.VI;
+//                } else if (value == RangeDummy.RD) {
+//                    return CollectionAccessRangeDummy.CARD;
+//                } else if (value.isList() == SetlBoolean.TRUE || value.isSet() == SetlBoolean.TRUE) {
+//                    return SetListConstructor.valueToExpr(state, value);
+//                } else {
+//                    // not a special value
+//                    return new ValueExpr(value);
+//                }
+//            } catch (final TermConversionException tce) {
+//                // some error occurred... create ValueExpr for this value
+//                return new ValueExpr(value);
+//            }
         }
+        return null;
     }
 
     /**
@@ -197,8 +174,24 @@ public class TermConverter {
      * @param value Term to convert.
      * @return      Resulting Expr.
      */
-    public static Expr valueToExpr(final State state, final Value value) {
-        return (Expr) valueToCodeFragment(state, value, true);
+    public static OperatorExpression valueToExpr(final State state, final Value value) {
+        return (OperatorExpression) valueToCodeFragment(state, value, true);
+    }
+
+    /**
+     * Convert a term (or value) representing a setlX-Expr into such an expression.
+     *
+     * @param state Current state of the running setlX program.
+     * @param value Term to convert.
+     * @return      Resulting Expr.
+     * @throws TermConversionException in case the term is not of an assignable expression
+     */
+    public static AssignableOperatorExpression valueToAssignableExpr(final State state, final Value value) throws TermConversionException {
+        try {
+            return AssignableOperatorExpression.convertToAssignable(valueToExpr(state, value));
+        } catch (UndefinedOperationException e) {
+            throw new TermConversionException("malformed assignable expression", e);
+        }
     }
 
     /**

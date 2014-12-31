@@ -1,16 +1,49 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operatorUtilities.ValueStack;
+import org.randoom.setlx.operatorUtilities.OperatorExpression.OptimizerData;
+import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.State;
 
+import java.util.List;
+
 /**
  * Base class for binary infix operators.
  */
 public abstract class ABinaryInfixOperator extends AOperator {
+
+    @Override
+    public final boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    @Override
+    public final OptimizerData collectVariables(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, Stack<OptimizerData> optimizerData) {
+        OptimizerData rhs = optimizerData.poll();
+        OptimizerData lhs = optimizerData.poll();
+        return collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables, lhs, rhs);
+    }
+
+    /**
+     * Gather all bound and unbound variables in this operator and its siblings.
+     *
+     * @param state            Current state of the running setlX program.
+     * @param boundVariables   Variables "assigned" by this operator.
+     * @param unboundVariables Variables not present in bound when used
+     * @param usedVariables    Variables present in bound when used
+     * @param lhs              Data for optimization from left hand side.
+     * @param rhs              Data for optimization from right hand side.
+     * @return Data for optimization.
+     */
+    public OptimizerData collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables, OptimizerData lhs, OptimizerData rhs) {
+        return new OptimizerData(
+                lhs.isAllowOptimization() && rhs.isAllowOptimization()
+        );
+    }
+
     @Override
     public boolean hasArgumentBeforeOperator() {
         return true;
@@ -22,7 +55,7 @@ public abstract class ABinaryInfixOperator extends AOperator {
     }
 
     @Override
-    public Value buildTerm(State state, ValueStack termFragments) throws SetlException {
+    public Value buildTerm(State state, Stack<Value> termFragments) throws SetlException {
         Value rhs = termFragments.poll();
         Value lhs = termFragments.poll();
         Term term = new Term(generateFunctionalCharacter(this.getClass()));

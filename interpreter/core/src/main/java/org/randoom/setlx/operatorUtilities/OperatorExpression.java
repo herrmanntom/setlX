@@ -2,6 +2,7 @@ package org.randoom.setlx.operatorUtilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operators.AOperator;
+import org.randoom.setlx.operators.AZeroOperator;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.FragmentList;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 public class OperatorExpression extends ImmutableCodeFragment {
     private FragmentList<AOperator> operators;
+    private final int numberOfOperators;
     private boolean isConstant;
 
     /**
@@ -34,6 +36,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
      */
     public OperatorExpression(FragmentList<AOperator> operators) {
         this.operators = unify(operators);
+        this.numberOfOperators = operators.size();
         isConstant = false;
     }
 
@@ -133,24 +136,55 @@ public class OperatorExpression extends ImmutableCodeFragment {
     public Value evaluate(final State state) throws SetlException {
         Stack<Value> values = new Stack<Value>();
 
-        for (AOperator operator : operators) {
-            values.push(operator.evaluate(state, values));
+        for (int i = 0; i < numberOfOperators; i++) {
+            AOperator operator = operators.get(i);
+            try {
+                values.push(operator.evaluate(state, values));
+            } catch (final SetlException se) {
+                StringBuilder error = new StringBuilder();
+                error.append("Error computing '");
+                if (operator.hasArgumentBeforeOperator()) {
+                    values.getLastValuePolled().appendString(state, error, 0);
+                }
+                operator.appendOperatorSign(state, error);
+                if (operator.hasArgumentAfterOperator()) {
+                    Value rhs = values.getLastValuePolled();
+                    if (operator.hasArgumentBeforeOperator()) {
+                        rhs = values.getSecondTolastValuePolled();
+                    }
+                    rhs.appendString(state, error, 0);
+                }
+                error.append("':");
+                se.addToTrace(error.toString());
+                while (i < numberOfOperators) {
+                    error = new StringBuilder();
+                    error.append("Error in \"");
+                    appendExpression(state, error, ++i);
+                    error.append("\":");
+                    se.addToTrace(error.toString());
+                    while (i < numberOfOperators && operators.get(i) instanceof AZeroOperator) {
+                        ++i;
+                    }
+                }
+                throw se;
+            }
         }
 
-        if (values.size() == 1) {
-            return values.poll();
-        } else {
-            throw new IllegalStateException("Error in operator stack evaluation!");
-        }
+        return values.poll();
     }
 
     /* string operations */
 
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
+        appendExpression(state, sb, numberOfOperators);
+    }
+
+    private void appendExpression(State state, StringBuilder sb, int maxOperatorDepth) {
         Stack<ExpressionFragment> expressionFragments = new Stack<ExpressionFragment>();
 
-        for (AOperator operator : operators) {
+        for (int i = 0; i < maxOperatorDepth; i++) {
+            AOperator operator = operators.get(i);
             ExpressionFragment rhs = null;
             if (operator.hasArgumentAfterOperator()) {
                 rhs = expressionFragments.poll();
@@ -184,11 +218,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
             expressionFragments.push(new ExpressionFragment(expressionFragment.toString(), operator.precedence()));
         }
 
-        if (expressionFragments.size() == 1) {
-            sb.append(expressionFragments.poll().getExpression());
-        } else {
-            throw new IllegalStateException("Error in operator printing!");
-        }
+        sb.append(expressionFragments.poll().getExpression());
     }
 
     private static class ExpressionFragment {
@@ -219,11 +249,7 @@ public class OperatorExpression extends ImmutableCodeFragment {
             termFragments.push(operator.buildTerm(state, termFragments));
         }
 
-        if (termFragments.size() == 1) {
-            return termFragments.poll();
-        } else {
-            throw new IllegalStateException("Error in operator toTerm!");
-        }
+        return termFragments.poll();
     }
 
     /* comparisons */

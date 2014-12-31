@@ -9,7 +9,6 @@ import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.VariableScope;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**

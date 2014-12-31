@@ -7,12 +7,16 @@ import java.util.LinkedList;
  */
 public class Stack<T> {
     private LinkedList<T> values;
+    private T lastValuePolled;
+    private T secondTolastValuePolled;
 
     /**
      * Create a new value stack.
      */
     public Stack() {
         values = new LinkedList<T>();
+        lastValuePolled = null;
+        secondTolastValuePolled = null;
     }
 
     /**
@@ -41,10 +45,26 @@ public class Stack<T> {
      */
     public T poll() throws IllegalStateException {
         T value = values.poll();
+        secondTolastValuePolled = lastValuePolled;
+        lastValuePolled = value;
         if (value == null) {
             throw new IllegalStateException("Error in operator stack evaluation! Stack is empty");
         } else {
             return value;
         }
+    }
+
+    /**
+     * @return Last value taken from stack.
+     */
+    public T getLastValuePolled() {
+        return lastValuePolled;
+    }
+
+    /**
+     * @return Second to last value taken from stack.
+     */
+    public T getSecondTolastValuePolled() {
+        return secondTolastValuePolled;
     }
 }

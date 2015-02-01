@@ -89,8 +89,8 @@ statement returns [Statement stmnt]
       '}' { $stmnt = new Switch(caseList); }
     | match                                                          { $stmnt = $match.m;                                          }
     | scan                                                           { $stmnt = $scan.s;                                           }
-//    | 'for' '(' iteratorChain[false] ('|' condition {condition = $condition.cnd;} )? ')' '{' block '}'
-//                                                                     { $stmnt = new For($iteratorChain.ic, condition, $block.blk); }
+    | 'for' '(' iteratorChain[false] ('|' condition {condition = $condition.cnd;} )? ')' '{' block '}'
+                                                                     { $stmnt = new For($iteratorChain.ic, condition, $block.blk); }
     | 'while' '(' condition ')' '{' block '}'                        { $stmnt = new While($condition.cnd, $block.blk);             }
     | 'do' '{' block '}' 'while' '(' condition ')' ';'               { $stmnt = new DoWhile($condition.cnd, $block.blk);           }
     | 'try'                                '{' b1 = block '}'
@@ -169,16 +169,6 @@ regexBranch returns [MatchRegexBranch rb]
       { $rb = new MatchRegexBranch(setlXstate, $pattern.ex, assignTo, condition, $block.blk);
         assignTo = null; condition = null; }
     ;
-
-//listOfVariables returns [List<Variable> lov]
-//    @init {
-//        $lov = new ArrayList<Variable>();
-//    }
-//    : v1 = variable       { $lov.add($v1.v);             }
-//      (
-//        ',' v2 = variable { $lov.add($v2.v);             }
-//      )*
-//    ;
 
 assignableVariable returns [AssignableVariable v]
     : ID { $v = new AssignableVariable($ID.text); }
@@ -543,19 +533,19 @@ value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]
 //      )
 //    ;
 
-//iteratorChain [boolean enableIgnore] returns [SetlIterator ic]
-//    :
-//      i1 = iterator[$enableIgnore]   { $ic = $i1.iter;    }
-//      (
-//        ','
-//        i2 = iterator[$enableIgnore] { $ic.add($i2.iter); }
-//      )*
-//    ;
+iteratorChain [boolean enableIgnore] returns [SetlIterator ic]
+    :
+      i1 = iterator[$enableIgnore]   { $ic = $i1.iter;    }
+      (
+        ','
+        i2 = iterator[$enableIgnore] { $ic.add($i2.iter); }
+      )*
+    ;
 
-//iterator [boolean enableIgnore] returns [SetlIterator iter]
-//    :
-//      assignable[true] 'in' expr[$enableIgnore] { $iter = new SetlIterator($assignable.a, $expr.ex); }
-//    ;
+iterator [boolean enableIgnore] returns [SetlIterator iter]
+    :
+      assignable[true] 'in' expr[$enableIgnore] { $iter = new SetlIterator($assignable.a, $expr.ex); }
+    ;
 
 matrix returns [SetlMatrix m]
     @init {

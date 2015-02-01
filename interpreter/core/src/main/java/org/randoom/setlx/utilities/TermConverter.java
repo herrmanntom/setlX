@@ -2,7 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
@@ -10,13 +10,10 @@ import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedure;
 import org.randoom.setlx.types.Closure;
-import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaClosure;
 import org.randoom.setlx.types.LambdaProcedure;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Procedure;
-import org.randoom.setlx.types.RangeDummy;
-import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Term;
@@ -186,9 +183,9 @@ public class TermConverter {
      * @return      Resulting Expr.
      * @throws TermConversionException in case the term is not of an assignable expression
      */
-    public static AssignableOperatorExpression valueToAssignableExpr(final State state, final Value value) throws TermConversionException {
+    public static AAssignableExpression valueToAssignableExpr(final State state, final Value value) throws TermConversionException {
         try {
-            return AssignableOperatorExpression.convertToAssignable(valueToExpr(state, value));
+            return AAssignableExpression.convertToAssignable(valueToExpr(state, value));
         } catch (UndefinedOperationException e) {
             throw new TermConversionException("malformed assignable expression", e);
         }

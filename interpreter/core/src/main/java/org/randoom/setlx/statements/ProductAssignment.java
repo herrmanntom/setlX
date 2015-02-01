@@ -2,7 +2,7 @@ package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;
@@ -32,7 +32,7 @@ public class ProductAssignment extends AbstractAssignment {
      * @param lhs Expression to assign to.
      * @param rhs Expression to evaluate.
      */
-    public ProductAssignment(final AssignableOperatorExpression lhs, final OperatorExpression rhs) {
+    public ProductAssignment(final AAssignableExpression lhs, final OperatorExpression rhs) {
         super(lhs, rhs);
     }
 
@@ -72,7 +72,7 @@ public class ProductAssignment extends AbstractAssignment {
      */
     public static ProductAssignment termToStatement(final State state, final Term term) throws TermConversionException {
         if (term.size() == 2) {
-            final AssignableOperatorExpression lhs = TermConverter.valueToAssignableExpr(state, term.firstMember());
+            final AAssignableExpression lhs = TermConverter.valueToAssignableExpr(state, term.firstMember());
             final OperatorExpression rhs = TermConverter.valueToExpr(state, term.lastMember());
             return new ProductAssignment(lhs, rhs);
         }

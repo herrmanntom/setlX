@@ -2,7 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.Value;
 
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class WriteBackAgent {
 
-    private final List<AssignableOperatorExpression> expressions;
+    private final List<AAssignableExpression> expressions;
     private final List<Value> values;
 
     /**
@@ -23,7 +23,7 @@ public class WriteBackAgent {
      * @param size Number of write-back values used.
      */
     public WriteBackAgent(final int size) {
-        this.expressions = new ArrayList<AssignableOperatorExpression>(size);
+        this.expressions = new ArrayList<AAssignableExpression>(size);
         this.values      = new ArrayList<Value>(size);
     }
 
@@ -36,7 +36,7 @@ public class WriteBackAgent {
      */
     public boolean add(final OperatorExpression expression, final Value value) {
         try {
-            this.expressions.add(AssignableOperatorExpression.convertToAssignable(expression));
+            this.expressions.add(AAssignableExpression.convertToAssignable(expression));
             this.values.add(value);
             return true;
         } catch (UndefinedOperationException e) {

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Operator that gets a variable from the current scope and puts it on the stack.
  */
-public class Variable extends AZeroOperator implements IAssignableOperator {
+public class Variable extends AZeroOperator {
     // This functional character is used internally
     private final static String FUNCTIONAL_CHARACTER          = "^Variable";
     // this one is used externally (e.g. during toString)
@@ -61,14 +61,6 @@ public class Variable extends AZeroOperator implements IAssignableOperator {
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         return state.findValue(id);
     }
-
-//    public void assignUncloned(final State state, final Value value, final String context) throws IllegalRedefinitionException {
-//        state.putValue(id, value, context);
-//    }
-//
-//    public boolean assignUnclonedCheckUpTo(final State state, final Value value, final VariableScope outerScope, final boolean checkObjects, final String context) throws SetlException {
-//        return state.putValueCheckUpTo(id, value, outerScope, checkObjects, context);
-//    }
 
     @Override
     public void appendOperatorSign(State state, StringBuilder sb) {

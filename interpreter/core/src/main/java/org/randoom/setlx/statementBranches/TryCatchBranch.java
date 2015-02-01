@@ -1,8 +1,9 @@
 package org.randoom.setlx.statementBranches;
 
+import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.Term;
@@ -32,11 +33,7 @@ public class TryCatchBranch extends AbstractTryCatchBranch {
      * @param errorVar       Variable to bind caught exception to.
      * @param blockToRecover Statements to execute when exception is caught.
      */
-    public TryCatchBranch(final Variable errorVar, final Block blockToRecover){
-        super(errorVar, blockToRecover);
-    }
-
-    private TryCatchBranch(final AssignableOperatorExpression errorVar, final Block blockToRecover){
+    public TryCatchBranch(final AssignableVariable errorVar, final Block blockToRecover){
         super(errorVar, blockToRecover);
     }
 
@@ -71,13 +68,14 @@ public class TryCatchBranch extends AbstractTryCatchBranch {
      * @throws TermConversionException Thrown in case of a malformed term.
      */
     public static TryCatchBranch termToBranch(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 2) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
-            final AssignableOperatorExpression var = TermConverter.valueToAssignableExpr(state, term.firstMember());
+        if (term.size() == 2) {
+            final AAssignableExpression var = TermConverter.valueToAssignableExpr(state, term.firstMember());
             final Block block = TermConverter.valueToBlock(state, term.lastMember());
-            return new TryCatchBranch(var, block);
+            if (var.getClass() == AssignableVariable.class) {
+                return new TryCatchBranch((AssignableVariable) var, block);
+            }
         }
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
     /* comparisons */

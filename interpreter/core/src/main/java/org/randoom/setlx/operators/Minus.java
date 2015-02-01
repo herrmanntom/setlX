@@ -9,7 +9,7 @@ import org.randoom.setlx.utilities.State;
 /**
  * Operator that inverts one value on the stack.
  */
-public class Minus extends AUnaryPostfixOperator {
+public class Minus extends AUnaryPrefixOperator {
 
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {

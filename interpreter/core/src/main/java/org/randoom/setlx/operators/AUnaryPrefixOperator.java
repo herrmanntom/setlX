@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Base class for unary postfix operators.
  */
-public abstract class AUnaryPostfixOperator extends AOperator {
+public abstract class AUnaryPrefixOperator extends AOperator {
 
     @Override
     public final boolean collectVariablesAndOptimize(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {

@@ -1,7 +1,7 @@
 package org.randoom.setlx.statements;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -24,7 +24,7 @@ import java.util.List;
 public abstract class AbstractAssignment extends StatementWithPrintableResult {
 
     /** Expression to assign to.                */
-    protected final AssignableOperatorExpression lhs;
+    protected final AAssignableExpression lhs;
     /** Expression to evaluate.                 */
     protected final OperatorExpression           rhs;
     /** Enable to print result after execution. */
@@ -36,7 +36,7 @@ public abstract class AbstractAssignment extends StatementWithPrintableResult {
      * @param lhs Expression to assign to.
      * @param rhs Expression to evaluate.
      */
-    protected AbstractAssignment(final AssignableOperatorExpression lhs, final OperatorExpression rhs) {
+    protected AbstractAssignment(final AAssignableExpression lhs, final OperatorExpression rhs) {
         this.lhs            = unify(lhs);
         this.rhs            = unify(rhs);
         this.printAfterEval = false;

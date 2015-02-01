@@ -2,9 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Term;
 import org.randoom.setlx.types.Value;

@@ -1,10 +1,11 @@
 package org.randoom.setlx.statementBranches;
 
+import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.CatchableInSetlXException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.ThrownInSetlXException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.types.SetlError;
@@ -23,7 +24,7 @@ import java.util.List;
 public abstract class AbstractTryCatchBranch extends ImmutableCodeFragment {
 
     /** Variable to bind caught exception to.           */
-    protected final AssignableOperatorExpression errorVar;
+    protected final AssignableVariable errorVar;
     /** Statements to execute when exception is caught. */
     protected final Block blockToRecover;
 
@@ -33,17 +34,7 @@ public abstract class AbstractTryCatchBranch extends ImmutableCodeFragment {
      * @param errorVar       Variable to bind caught exception to.
      * @param blockToRecover Statements to execute when exception is caught.
      */
-    protected AbstractTryCatchBranch(final Variable errorVar, final Block blockToRecover){
-        this(AssignableOperatorExpression.convertToAssignable(errorVar), blockToRecover);
-    }
-
-    /**
-     * Create new catch-branch.
-     *
-     * @param errorVar       Variable to bind caught exception to.
-     * @param blockToRecover Statements to execute when exception is caught.
-     */
-    protected AbstractTryCatchBranch(final AssignableOperatorExpression errorVar, final Block blockToRecover){
+    protected AbstractTryCatchBranch(final AssignableVariable errorVar, final Block blockToRecover){
         this.errorVar       = unify(errorVar);
         this.blockToRecover = unify(blockToRecover);
     }

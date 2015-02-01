@@ -23,7 +23,7 @@ import java.util.List;
  *
  *                                  ===
  */
-public class VariableIgnore extends AZeroOperator implements IAssignableOperator {
+public class VariableIgnore extends AZeroOperator {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(VariableIgnore.class);
 

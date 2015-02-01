@@ -1,8 +1,9 @@
 package org.randoom.setlx.types;
 
+import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
@@ -137,7 +138,7 @@ public class Closure extends Procedure {
         if (closure != null) {
             for (final Map.Entry<String, Value> entry : closure.entrySet()) {
                 final Value value = entry.getValue();
-                AssignableOperatorExpression.convertToAssignable(new Variable(entry.getKey())).assignUnclonedCheckUpTo(state, value, oldScope, true, FUNCTIONAL_CHARACTER);
+                new AssignableVariable(entry.getKey()).assignUnclonedCheckUpTo(state, value, oldScope, true, FUNCTIONAL_CHARACTER);
             }
         }
 

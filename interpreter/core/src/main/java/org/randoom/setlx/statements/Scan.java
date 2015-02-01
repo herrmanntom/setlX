@@ -1,10 +1,11 @@
 package org.randoom.setlx.statements;
 
+import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.operatorUtilities.AssignableOperatorExpression;
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statementBranches.AbstractMatchBranch;
@@ -46,7 +47,7 @@ public class Scan extends Statement {
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(Scan.class);
 
     private final OperatorExpression expr;
-    private final AssignableOperatorExpression posVar;
+    private final AssignableVariable posVar;
     private final FragmentList<AbstractMatchScanBranch> branchList;
 
     /**
@@ -56,11 +57,7 @@ public class Scan extends Statement {
      * @param posVar     Variable storing the current position inside the string.
      * @param branchList List of scan branches.
      */
-    public Scan(final OperatorExpression expr, final Variable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
-        this(expr, AssignableOperatorExpression.convertToAssignable(posVar), branchList);
-    }
-
-    private Scan(final OperatorExpression expr, final AssignableOperatorExpression posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
+    public Scan(final OperatorExpression expr, final AssignableVariable posVar, final FragmentList<AbstractMatchScanBranch> branchList) {
         this.expr       = unify(expr);
         this.posVar     = unify(posVar);
         this.branchList = unify(branchList);
@@ -295,11 +292,9 @@ public class Scan extends Statement {
      * @throws TermConversionException Thrown in case of an malformed term.
      */
     public static Scan termToStatement(final State state, final Term term) throws TermConversionException {
-        if (term.size() != 3 || ! (term.lastMember() instanceof SetlList)) {
-            throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
-        } else {
+        if (term.size() == 3 && term.lastMember() instanceof SetlList) {
             try {
-                AssignableOperatorExpression posVar = null;
+                AAssignableExpression posVar = null;
                 if (! term.firstMember().equals(SetlString.NIL)) {
                     posVar = TermConverter.valueToAssignableExpr(state, term.firstMember());
                 }
@@ -312,11 +307,14 @@ public class Scan extends Statement {
                     branchList.add(AbstractMatchScanBranch.valueToMatchAbstractScanBranch(state, v));
                 }
 
-                return new Scan(expr, posVar, branchList);
+                if (posVar.getClass() == AssignableVariable.class) {
+                    return new Scan(expr, (AssignableVariable) posVar, branchList);
+                }
             } catch (final SetlException se) {
                 throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
             }
         }
+        throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
     }
 
     /* comparisons */

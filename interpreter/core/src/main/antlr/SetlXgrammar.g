@@ -1,6 +1,7 @@
 grammar SetlXgrammar;
 
 @parser::header {
+    import org.randoom.setlx.assignments.*;
     import org.randoom.setlx.exceptions.UndefinedOperationException;
     import org.randoom.setlx.operators.*;
     import org.randoom.setlx.operatorUtilities.*;
@@ -86,19 +87,19 @@ statement returns [Statement stmnt]
         'default'                    ':' b2 = block                  { caseList.add(new SwitchDefaultBranch($b2.blk));             }
       )?
       '}' { $stmnt = new Switch(caseList); }
-//    | match                                                          { $stmnt = $match.m;                                          }
-//    | scan                                                           { $stmnt = $scan.s;                                           }
+    | match                                                          { $stmnt = $match.m;                                          }
+    | scan                                                           { $stmnt = $scan.s;                                           }
 //    | 'for' '(' iteratorChain[false] ('|' condition {condition = $condition.cnd;} )? ')' '{' block '}'
 //                                                                     { $stmnt = new For($iteratorChain.ic, condition, $block.blk); }
     | 'while' '(' condition ')' '{' block '}'                        { $stmnt = new While($condition.cnd, $block.blk);             }
     | 'do' '{' block '}' 'while' '(' condition ')' ';'               { $stmnt = new DoWhile($condition.cnd, $block.blk);           }
     | 'try'                                '{' b1 = block '}'
       (
-         'catchLng'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));         }
-       | 'catchUsr'  '(' v1 = variable ')' '{' b2 = block '}'        { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));         }
+         'catchLng'  '(' v1 = assignableVariable ')' '{' b2 = block '}' { tryList.add(new TryCatchLngBranch($v1.v, $b2.blk));         }
+       | 'catchUsr'  '(' v1 = assignableVariable ')' '{' b2 = block '}' { tryList.add(new TryCatchUsrBranch($v1.v, $b2.blk));         }
       )*
       (
-         'catch'     '(' v2 = variable ')' '{' b3 = block '}'        { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));         }
+         'catch'     '(' v2 = assignableVariable ')' '{' b3 = block '}' { tryList.add(new TryCatchBranch   ($v2.v, $b3.blk));         }
       )?
       { $stmnt = new TryCatch($b1.blk, tryList); }
     | 'check' '{' b1 = block '}' ('afterBacktrack' '{' b2 = block { block = $b2.blk; } '}')?
@@ -113,8 +114,8 @@ statement returns [Statement stmnt]
                                                                                :
                                                                                    new Assert($condition.cnd, $expr.ex);
                                                                                ;                                                   }
-//    | assignmentOther  ';'                                           { $stmnt = $assignmentOther.assign;                           }
-//    | assignmentDirect ';'                                           { $stmnt = new ExpressionStatement($assignmentDirect.assign); }
+    | assignmentOther  ';'                                           { $stmnt = $assignmentOther.assign;                           }
+    | assignmentDirect ';'                                           { $stmnt = new ExpressionStatement($assignmentDirect.assign); }
     | expr[false] ';'                                                { $stmnt = new ExpressionStatement($expr.ex);                 }
     ;
 
@@ -140,9 +141,9 @@ match returns [Match m]
 scan returns [Scan s]
     @init{
         FragmentList<AbstractMatchScanBranch> scanList  = new FragmentList<AbstractMatchScanBranch>();
-        Variable                              posVar    = null;
+        AssignableVariable                    posVar    = null;
     }
-    : 'scan' '(' expr[false] ')' ('using' variable {posVar = $variable.v;})? '{'
+    : 'scan' '(' expr[false] ')' ('using' assignableVariable {posVar = $assignableVariable.v;})? '{'
       (
         regexBranch         { scanList.add($regexBranch.rb);                    }
       )+
@@ -179,6 +180,11 @@ regexBranch returns [MatchRegexBranch rb]
 //      )*
 //    ;
 
+assignableVariable returns [AssignableVariable v]
+    : ID { $v = new AssignableVariable($ID.text); }
+    ;
+
+
 variable returns [Variable v]
     : ID { $v = new Variable($ID.text); }
     ;
@@ -197,35 +203,36 @@ exprList [boolean enableIgnore] returns [FragmentList<OperatorExpression> exprs]
       )*
     ;
 
-//assignmentOther returns [Statement assign]
-//    : assignable[false]
-//      (
-//         '+='  e = expr[false] { $assign = new SumAssignment            ($assignable.a, $e.ex); }
-//       | '-='  e = expr[false] { $assign = new DifferenceAssignment     ($assignable.a, $e.ex); }
-//       | '*='  e = expr[false] { $assign = new ProductAssignment        ($assignable.a, $e.ex); }
-//       | '/='  e = expr[false] { $assign = new QuotientAssignment       ($assignable.a, $e.ex); }
-//       | '\\=' e = expr[false] { $assign = new IntegerDivisionAssignment($assignable.a, $e.ex); }
-//       | '%='  e = expr[false] { $assign = new ModuloAssignment         ($assignable.a, $e.ex); }
-//      )
-//    ;
+assignmentOther returns [Statement assign]
+    : assignable[false]
+      (
+         '+='  e = expr[false] { $assign = new SumAssignment            ($assignable.a, $e.ex); }
+       | '-='  e = expr[false] { $assign = new DifferenceAssignment     ($assignable.a, $e.ex); }
+       | '*='  e = expr[false] { $assign = new ProductAssignment        ($assignable.a, $e.ex); }
+       | '/='  e = expr[false] { $assign = new QuotientAssignment       ($assignable.a, $e.ex); }
+       | '\\=' e = expr[false] { $assign = new IntegerDivisionAssignment($assignable.a, $e.ex); }
+       | '%='  e = expr[false] { $assign = new ModuloAssignment         ($assignable.a, $e.ex); }
+      )
+    ;
 
-//assignmentDirect returns [Expr assign]
-//    @init {
-//        Expr    rhs  = null;
-//    }
-//    : assignable[false] ':='
-//      (
-//         as = assignmentDirect { rhs = $as.assign;  }
-//       | expr[false]           { rhs = $expr.ex;    }
-//      )
-//      { $assign = new Assignment($assignable.a, rhs); }
-//    ;
+assignmentDirect returns [OperatorExpression assign]
+    @init {
+        FragmentList<AOperator> operators = new FragmentList<AOperator>();
+    }
+    : assignmentDirectContent[operators] { $assign = new OperatorExpression(operators); }
+    ;
 
-//assignable [boolean enableIgnore] returns [AssignableOperatorExpression a]
-//    @init {
-//        FragmentList<AOperator> operators = new ;
-//    }
-//    : variable                   { $a = $variable.v;                                        }
+assignmentDirectContent [FragmentList<AOperator> operators] returns [OperatorExpression assign]
+    : assignable[false] ':='
+      (
+         assignmentDirectContent[operators]
+       | exprContent[false, operators]
+      )
+      { operators.add(new Assignment($assignable.a)); }
+    ;
+
+assignable [boolean enableIgnore] returns [AAssignableExpression a]
+    : assignableVariable           { $a = $assignableVariable.v;                              }
 //      (
 //         '.' variable            { $a = new MemberAccess($a, $variable.v);                  }
 //       | '['                     { exprs = new ArrayList<Expr>();                           }
@@ -237,7 +244,7 @@ exprList [boolean enableIgnore] returns [FragmentList<OperatorExpression> exprs]
 //      )*
 //    | '[' explicitAssignList ']' { $a = new AssignListConstructor($explicitAssignList.eil); }
 //    | {$enableIgnore}? '_'       { $a = VariableIgnore.VI;                                  }
-//    ;
+    ;
 
 //explicitAssignList returns [ExplicitList eil]
 //    @init {
@@ -429,12 +436,12 @@ procedureParameters [boolean enableRw] returns [ParameterList paramList]
     ;
 
 procedureParameter [boolean enableRw] returns [ParameterDef param]
-    : {$enableRw}? 'rw' variable { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_WRITE); }
-    | variable                   { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY);  }
+    : {$enableRw}? 'rw' assignableVariable { $param = new ParameterDef($assignableVariable.v.getId(), ParameterType.READ_WRITE); }
+    | variable                             { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY);  }
     ;
 
 procedureDefaultParameter returns [ParameterDef param]
-    : variable ':=' expr[false] { $param = new ParameterDef($variable.v.getId(), ParameterType.READ_ONLY, $expr.ex); }
+    : assignableVariable ':=' expr[false] { $param = new ParameterDef($assignableVariable.v.getId(), ParameterType.READ_ONLY, $expr.ex); }
     ;
 
 procedureListParameter returns [ParameterDef param]

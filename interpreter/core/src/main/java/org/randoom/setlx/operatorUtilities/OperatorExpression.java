@@ -5,8 +5,8 @@ import org.randoom.setlx.operators.AOperator;
 import org.randoom.setlx.operators.AZeroOperator;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.Expression;
 import org.randoom.setlx.utilities.FragmentList;
-import org.randoom.setlx.utilities.ImmutableCodeFragment;
 import org.randoom.setlx.utilities.State;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Stack of operators that can be evaluated.
  */
-public class OperatorExpression extends ImmutableCodeFragment {
+public class OperatorExpression extends Expression {
     private FragmentList<AOperator> operators;
     private final int numberOfOperators;
     private boolean isConstant;
@@ -38,13 +38,6 @@ public class OperatorExpression extends ImmutableCodeFragment {
         this.operators = unify(operators);
         this.numberOfOperators = operators.size();
         isConstant = false;
-    }
-
-    /**
-     * @return operators in this stack.
-     */
-    protected FragmentList<AOperator> getOperators() {
-        return operators;
     }
 
     @Override

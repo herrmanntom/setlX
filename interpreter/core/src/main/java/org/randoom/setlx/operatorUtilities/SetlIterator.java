@@ -1,5 +1,6 @@
 package org.randoom.setlx.operatorUtilities;
 
+import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.StopExecutionException;
@@ -33,7 +34,7 @@ public class SetlIterator extends ImmutableCodeFragment {
     // functional character used in terms
     private final static String FUNCTIONAL_CHARACTER = generateFunctionalCharacter(SetlIterator.class);
 
-    private final AssignableOperatorExpression assignable;
+    private final AAssignableExpression assignable;
     private final OperatorExpression           collection;
     private       SetlIterator                 next;       // next iterator in iteratorChain
 
@@ -43,11 +44,11 @@ public class SetlIterator extends ImmutableCodeFragment {
      * @param assignable Expression assigned during the iteration.
      * @param collection Collection to iterate over.
      */
-    public SetlIterator(final AssignableOperatorExpression assignable, final OperatorExpression collection) {
+    public SetlIterator(final AAssignableExpression assignable, final OperatorExpression collection) {
         this(assignable, collection, null);
     }
 
-    private SetlIterator(final AssignableOperatorExpression assignable, final OperatorExpression collection, final SetlIterator next) {
+    private SetlIterator(final AAssignableExpression assignable, final OperatorExpression collection, final SetlIterator next) {
         this.assignable = unify(assignable);
         this.collection = unify(collection);
         this.next       = unify(next);
@@ -217,7 +218,7 @@ public class SetlIterator extends ImmutableCodeFragment {
                     throw new TermConversionException("malformed " + FUNCTIONAL_CHARACTER);
                 }
 
-                final AssignableOperatorExpression assignable = TermConverter.valueToAssignableExpr(state, term.firstMember());
+                final AAssignableExpression assignable = TermConverter.valueToAssignableExpr(state, term.firstMember());
                 final OperatorExpression collection = TermConverter.valueToExpr(state, term.getMember(2));
 
                 SetlIterator iterator = null;

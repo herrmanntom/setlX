@@ -1,6 +1,5 @@
 package org.randoom.setlx.types;
 
-import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.operators.StringConstructor;
 import org.randoom.setlx.operators.Variable;
@@ -10,7 +9,6 @@ import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -532,8 +530,13 @@ public class Term extends IndexedCollectionValue {
     }
 
     @Override
-    public void setMember(final State state, final Value index, final Value v) throws SetlException {
-        body.setMember(state, index, v);
+    public void setMember(final State state, final Value index, final Value value) throws SetlException {
+        body.setMember(state, index, value);
+    }
+
+    @Override
+    public void setMember(final State state, int index, final Value value) throws SetlException {
+        body.setMember(state, index, value);
     }
 
     @Override

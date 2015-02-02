@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.State;
 import org.randoom.setlx.utilities.TermConverter;
@@ -14,7 +15,6 @@ import org.randoom.setlx.utilities.TermConverter;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * This class represents an automatically caching function definition.
@@ -130,7 +130,7 @@ public class CachedProcedure extends Procedure {
     /* function call */
 
     @Override
-    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         final SetlObject object = this.object;
         this.object = null;
 

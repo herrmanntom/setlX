@@ -162,7 +162,7 @@ public class SetlVectorTest {
         }
         SetlVector scl = (SetlVector) simple.clone();
         try {
-            scl.setMember(state, Rational.ONE, sdi.get(4));
+            scl.setMember(state, 1, sdi.get(4));
         } catch (SetlException ex) {
             System.err.println(ex.getMessage());
             fail("Simple[] := error: access exception");

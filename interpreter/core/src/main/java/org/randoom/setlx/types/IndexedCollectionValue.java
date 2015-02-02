@@ -134,5 +134,15 @@ public abstract class IndexedCollectionValue extends CollectionValue {
         );
     }
 
+    /**
+     * Set a specified member of this collection value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          The of the member to set. Note: Index starts with 1, not 0.
+     * @param value          The value to set the member to.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public abstract void setMember(final State state, final int index, final Value value) throws SetlException;
+
 }
 

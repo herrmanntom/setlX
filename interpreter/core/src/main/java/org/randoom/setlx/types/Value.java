@@ -7,6 +7,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
 
@@ -765,7 +766,15 @@ public abstract class Value extends CodeFragment {
         );
     }
 
-    public void setMember(final State state, final Value index, final Value v) throws SetlException {
+    /**
+     * Set a specified member of this collection value.
+     *
+     * @param state          Current state of the running setlX program.
+     * @param index          The of the member to set. Note: Index starts with 1, not 0.
+     * @param value          The value to set the member to.
+     * @throws SetlException Thrown in case of some (user-) error.
+     */
+    public void setMember(final State state, final Value index, final Value value) throws SetlException {
         throw new IncompatibleTypeException(
             "Can not set member with index '" + index.toString(state) + "' from operand;" +
             " '" + this.toString(state) + "' is not a collection value or direct access is unsupported for this type."
@@ -827,7 +836,7 @@ public abstract class Value extends CodeFragment {
      * @return               Return value of the call.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         final StringBuilder error = new StringBuilder();
         error.append("Can not perform call with arguments '");
         final Iterator<OperatorExpression> argIter = args.iterator();

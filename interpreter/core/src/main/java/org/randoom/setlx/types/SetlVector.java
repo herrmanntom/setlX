@@ -399,19 +399,23 @@ public class SetlVector extends IndexedCollectionValue {
     }
 
     @Override
-    public void setMember(final State state, final Value index, final Value v) throws SetlException {
+    public void setMember(final State state, final Value index, final Value value) throws SetlException {
         if(index.jIntConvertible()) {
-            int idx = index.jIntValue();
-            if(v.jDoubleConvertible()) {
-                if(idx > vector.size() || idx < 1) {
-                    throw new IncompatibleTypeException("[setMember]: Index out of bounds: " + idx);
-                }
-                vector.set(idx - 1, v.toJDoubleValue(state));
-            } else {
-                throw new IncompatibleTypeException("Argument " + v + " to replace vector dimension " + idx + " is not a number.");
-            }
+            setMember(state, index.jIntValue(), value);
         } else {
             throw new IncompatibleTypeException("Vector field access index must be an integer.");
+        }
+    }
+
+    @Override
+    public void setMember(final State state, int index, final Value value) throws SetlException {
+        if(value.jDoubleConvertible()) {
+            if(index > vector.size() || index < 1) {
+                throw new IncompatibleTypeException("[setMember]: Index out of bounds: " + index);
+            }
+            vector.set(index - 1, value.toJDoubleValue(state));
+        } else {
+            throw new IncompatibleTypeException("Argument " + value + " to replace vector dimension " + index + " is not a number.");
         }
     }
 

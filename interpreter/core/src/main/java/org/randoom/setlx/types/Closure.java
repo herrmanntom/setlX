@@ -3,11 +3,18 @@ package org.randoom.setlx.types;
 import org.randoom.setlx.assignments.AssignableVariable;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.TermConversionException;
-import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
-import org.randoom.setlx.operators.Variable;
 import org.randoom.setlx.statements.Block;
-import org.randoom.setlx.utilities.*;
+import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
+import org.randoom.setlx.utilities.ParameterDef;
+import org.randoom.setlx.utilities.ParameterList;
+import org.randoom.setlx.utilities.ReturnMessage;
+import org.randoom.setlx.utilities.SetlHashMap;
+import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.TermConverter;
+import org.randoom.setlx.utilities.VariableScope;
+import org.randoom.setlx.utilities.WriteBackAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,7 +129,7 @@ public class Closure extends Procedure {
     }
 
     @Override
-    protected Value callAfterEval(final State state, final List<OperatorExpression> args, final List<Value> values, final SetlObject object) throws SetlException {
+    protected Value callAfterEval(final State state, final FragmentList<OperatorExpression> args, final List<Value> values, final SetlObject object) throws SetlException {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call

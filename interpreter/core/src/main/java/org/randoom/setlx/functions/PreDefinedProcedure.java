@@ -121,7 +121,7 @@ public abstract class PreDefinedProcedure extends Procedure {
 
     // this function is called from within SetlX
     @Override
-    public final Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public final Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         SetlList listArguments = null;
         if (listArg != null) {
             Value listArgument = listArg.evaluate(state);

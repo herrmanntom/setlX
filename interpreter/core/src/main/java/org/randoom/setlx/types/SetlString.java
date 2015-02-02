@@ -468,16 +468,14 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public Value getMember(final State state, final Value vIndex) throws SetlException {
-        int index = 0;
-        if (vIndex.isInteger() == SetlBoolean.TRUE) {
-            index = vIndex.jIntValue();
+    public Value getMember(final State state, final Value index) throws SetlException {
+        if (index.isInteger() == SetlBoolean.TRUE) {
+            return getMember(index.jIntValue());
         } else {
             throw new IncompatibleTypeException(
-                "Index '" + vIndex + "' is not an integer."
+                "Index '" + index + "' is not an integer."
             );
         }
-        return getMember(index);
     }
 
     @Override
@@ -633,34 +631,37 @@ public class SetlString extends IndexedCollectionValue {
     }
 
     @Override
-    public void setMember(final State state, final Value vIndex, final Value v) throws SetlException {
-        separateFromOriginal();
-        int index = 0;
+    public void setMember(final State state, final Value vIndex, final Value value) throws SetlException {
         if (vIndex.isInteger() == SetlBoolean.TRUE) {
-            index = vIndex.jIntValue();
+            setMember(state, vIndex.jIntValue(), value);
         } else {
             throw new IncompatibleTypeException(
-                "Index '" + vIndex + "' is not a integer."
+                    "Index '" + vIndex + "' is not a integer."
             );
         }
+    }
+
+    @Override
+    public void setMember(final State state, int index, final Value value) throws SetlException {
+        separateFromOriginal();
         if (index < 1) {
             throw new NumberToLargeException(
                 "Index '" + index + "' is lower as '1'."
             );
         }
-        if (v == Om.OM) {
+        if (value == Om.OM) {
             throw new IncompatibleTypeException(
                 "Target value is undefined (om)."
             );
         }
 
-        final String value = v.getUnquotedString(state);
+        final String valueStr = value.getUnquotedString(state);
 
         // in java the index is one lower
         --index;
 
         if (index >= content.length()) {
-            content.ensureCapacity(index + value.length());
+            content.ensureCapacity(index + valueStr.length());
             // fill gap from size to index with banks, if necessary
             while (index >= content.length()) {
                 content.append(" ");
@@ -669,7 +670,7 @@ public class SetlString extends IndexedCollectionValue {
         // remove char at index
         content.deleteCharAt(index);
         // insert value at index
-        content.insert(index, value);
+        content.insert(index, valueStr);
     }
 
     @Override

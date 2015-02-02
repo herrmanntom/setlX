@@ -13,11 +13,11 @@ import org.randoom.setlx.operators.Product;
 import org.randoom.setlx.operators.Sum;
 import org.randoom.setlx.operators.ValueOperator;
 import org.randoom.setlx.utilities.CodeFragment;
+import org.randoom.setlx.utilities.FragmentList;
 import org.randoom.setlx.utilities.ParameterList;
 import org.randoom.setlx.utilities.SetlHashMap;
 import org.randoom.setlx.utilities.State;
 
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -118,7 +118,7 @@ public class SetlObject extends Value {
     private Value overload(final State  state,
                            final String member
     ) throws SetlException {
-        final ArrayList<OperatorExpression> args = new ArrayList<OperatorExpression>();
+        final FragmentList<OperatorExpression> args = new FragmentList<OperatorExpression>();
         return overloadQuery(state, member).call(state, args, null);
     }
 
@@ -140,7 +140,7 @@ public class SetlObject extends Value {
                            final String member,
                            final Value  other
     ) throws SetlException {
-        final ArrayList<OperatorExpression> args = new ArrayList<OperatorExpression>();
+        final FragmentList<OperatorExpression> args = new FragmentList<OperatorExpression>();
         args.add(new OperatorExpression(new ValueOperator(other)));
         return overloadQuery(state, member).call(state, args, null);
     }

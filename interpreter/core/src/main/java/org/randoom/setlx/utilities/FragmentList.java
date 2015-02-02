@@ -30,8 +30,18 @@ public class FragmentList<B extends CodeFragment> implements Iterable<B>, Compar
         fragmentList = new ArrayList<B>(elements.fragmentList);
     }
 
+    /**
+     * @return The number of elements in this list.
+     */
     public int size() {
         return fragmentList.size();
+    }
+
+    /**
+     * @return True if this list contains no elements.
+     */
+    public boolean isEmpty() {
+        return fragmentList.isEmpty();
     }
 
     @Override

@@ -101,7 +101,7 @@ public class Procedure extends ImmutableValue {
     /* function call */
 
     @Override
-    public Value call(final State state, final List<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
+    public Value call(final State state, final FragmentList<OperatorExpression> args, final OperatorExpression listArg) throws SetlException {
         final SetlObject object = this.object;
         this.object = null;
 
@@ -153,7 +153,7 @@ public class Procedure extends ImmutableValue {
      * @return               Return value of this function call.
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    protected Value callAfterEval(final State state, final List<OperatorExpression> args, final List<Value> values, final SetlObject object) throws SetlException {
+    protected Value callAfterEval(final State state, final FragmentList<OperatorExpression> args, final List<Value> values, final SetlObject object) throws SetlException {
         // save old scope
         final VariableScope oldScope = state.getScope();
         // create new scope used for the function call

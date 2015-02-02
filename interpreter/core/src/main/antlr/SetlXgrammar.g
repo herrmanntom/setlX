@@ -308,8 +308,8 @@ conjunction [boolean enableIgnore, FragmentList<AOperator> operators]
 
 comparison [boolean enableIgnore, FragmentList<AOperator> operators]
     : sum[$enableIgnore, $operators]
-//      (
-//         '=='    s2 = sum[$enableIgnore] { $comp = new Equals        ($comp, $s2.s); }
+      (
+        '=='    sum[$enableIgnore, $operators] { operators.add(new Equals());        }
 //       | '!='    s2 = sum[$enableIgnore] { $comp = new NotEqual      ($comp, $s2.s); }
 //       | '<'     s2 = sum[$enableIgnore] { $comp = new LessThan      ($comp, $s2.s); }
 //       | '<='    s2 = sum[$enableIgnore] { $comp = new LessOrEqual   ($comp, $s2.s); }
@@ -317,7 +317,7 @@ comparison [boolean enableIgnore, FragmentList<AOperator> operators]
 //       | '>='    s2 = sum[$enableIgnore] { $comp = new GreaterOrEqual($comp, $s2.s); }
 //       | 'in'    s2 = sum[$enableIgnore] { $comp = new In            ($comp, $s2.s); }
 //       | 'notin' s2 = sum[$enableIgnore] { $comp = new NotIn         ($comp, $s2.s); }
-//      )?
+      )?
     ;
 
 sum [boolean enableIgnore, FragmentList<AOperator> operators]
@@ -373,10 +373,11 @@ factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
        | procedure                   { operators.add(new ProcedureConstructor($procedure.pd)); }
        | variable                    { operators.add($variable.v); }
       )
-//      (
+      (
 //         '.' variable                { $f = new MemberAccess($f, $variable.v);       }
-//       | call[$enableIgnore, $f]     { $f = $call.c;                                 }
-//      )*
+//       |
+call[$enableIgnore]     { operators.add($call.c);                                 }
+      )*
 //      (
 //        '!'                          { $f = new Factorial($f);                       }
 //      )?
@@ -438,27 +439,24 @@ procedureListParameter returns [ParameterDef param]
     : '*' variable { $param = new ParameterDef($variable.v.getId(), ParameterType.LIST); }
     ;
 
-//call [boolean enableIgnore, Expr lhs] returns [Expr c]
-//    @init {
-//        $c = lhs;
-//    }
-//    : '(' callParameters[$enableIgnore]         ')' { $c = new Call($c, $callParameters.params, $callParameters.ex); }
+call [boolean enableIgnore] returns [AOperator c]
+    : '(' callParameters[$enableIgnore]         ')' { $c = new Call($callParameters.params, $callParameters.ex); }
 //    | '[' collectionAccessParams[$enableIgnore] ']' { $c = new CollectionAccess($c, $collectionAccessParams.params); }
 //    | '{' expr[$enableIgnore]                   '}' { $c = new CollectMap($c, $expr.ex);                             }
-//    ;
+    ;
 
-//callParameters [boolean enableIgnore] returns [List<Expr> params, Expr ex]
-//    @init {
-//        $params = new ArrayList<Expr>();
-//        $ex     = null;
-//    }
-//    : exprList[$enableIgnore] { $params = $exprList.exprs; }
-//      (
-//         ',' '*' expr[false]  { $ex     = $expr.ex;        }
-//      )?
-//    | '*' expr[false]         { $ex     = $expr.ex;        }
-//    | /* epsilon */
-//    ;
+callParameters [boolean enableIgnore] returns [FragmentList<OperatorExpression> params, OperatorExpression ex]
+    @init {
+        $params = new FragmentList<OperatorExpression>();
+        $ex     = null;
+    }
+    : exprList[$enableIgnore] { $params = $exprList.exprs; }
+      (
+         ',' '*' expr[false]  { $ex     = $expr.ex;        }
+      )?
+    | '*' expr[false]         { $ex     = $expr.ex;        }
+    | /* epsilon */
+    ;
 
 //collectionAccessParams [boolean enableIgnore] returns [List<Expr> params]
 //    @init {

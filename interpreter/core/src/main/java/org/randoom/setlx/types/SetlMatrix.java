@@ -568,33 +568,37 @@ public class SetlMatrix extends IndexedCollectionValue {
     }
 
     @Override
-    public void setMember(final State state, final Value index, final Value v) throws SetlException {
+    public void setMember(final State state, final Value index, final Value value) throws SetlException {
         if(index.jIntConvertible()) {
-            int idx = index.jIntValue();
-            if(idx > this.matrix.getRowDimension() || idx < 1) {
-                throw new IncompatibleTypeException("Index out of bounds: " + idx);
-            }
-            if(v instanceof CollectionValue) {
-                CollectionValue col = (CollectionValue)v;
-                if(col.size() != this.matrix.getColumnDimension()) {
-                    throw new IncompatibleTypeException("The collection and a row of this matrix have different numbers of elements.");
-                }
-                List<Double> newRow = new ArrayList<Double>(col.size());
-                for(Value elem : col) {
-                    if(elem.jDoubleConvertible()) {
-                        newRow.add(elem.jDoubleValue());
-                    } else {
-                        throw new IncompatibleTypeException("Matrix row assign: Element " + elem + " of the collection is not a number.");
-                    }
-                }
-                for(int i = 0; i < newRow.size(); i++) {
-                    this.matrix.set(idx, i, newRow.get(i));
-                }
-            } else {
-                throw new IncompatibleTypeException("Argument " + v + " to replace matrix row " + idx + " is not a collection.");
-            }
+            setMember(state, index.jIntValue(), value);
         } else {
             throw new IncompatibleTypeException("Matrix row access index must be an integer.");
+        }
+    }
+
+    @Override
+    public void setMember(final State state, int index, final Value value) throws SetlException {
+        if(index > this.matrix.getRowDimension() || index < 1) {
+            throw new IncompatibleTypeException("Index out of bounds: " + index);
+        }
+        if(value instanceof CollectionValue) {
+            CollectionValue col = (CollectionValue) value;
+            if(col.size() != this.matrix.getColumnDimension()) {
+                throw new IncompatibleTypeException("The collection and a row of this matrix have different numbers of elements.");
+            }
+            List<Double> newRow = new ArrayList<Double>(col.size());
+            for(Value elem : col) {
+                if(elem.jDoubleConvertible()) {
+                    newRow.add(elem.jDoubleValue());
+                } else {
+                    throw new IncompatibleTypeException("Matrix row assign: Element " + elem + " of the collection is not a number.");
+                }
+            }
+            for(int i = 0; i < newRow.size(); i++) {
+                this.matrix.set(index, i, newRow.get(i));
+            }
+        } else {
+            throw new IncompatibleTypeException("Argument " + value + " to replace matrix row " + index + " is not a collection.");
         }
     }
 

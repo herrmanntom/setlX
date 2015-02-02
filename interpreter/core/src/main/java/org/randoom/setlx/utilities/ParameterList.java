@@ -238,7 +238,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @return               WriteBackAgent containing expressions and their current values
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public WriteBackAgent extractRwParametersFromScope(final State state, final List<OperatorExpression> args) throws SetlException {
+    public WriteBackAgent extractRwParametersFromScope(final State state, final FragmentList<OperatorExpression> args) throws SetlException {
         WriteBackAgent wba = null;
 
         if (rwParameters > 0) {
@@ -270,7 +270,7 @@ public class ParameterList extends FragmentList<ParameterDef> {
      * @return               WriteBackAgent containing expressions and their current values
      * @throws SetlException Thrown in case of some (user-) error.
      */
-    public WriteBackAgent extractRwParametersFromMap(final HashMap<ParameterDef, Value> assignments, final List<OperatorExpression> args) throws SetlException {
+    public WriteBackAgent extractRwParametersFromMap(final HashMap<ParameterDef, Value> assignments, final FragmentList<OperatorExpression> args) throws SetlException {
         WriteBackAgent wba = null;
 
         if (rwParameters > 0) {

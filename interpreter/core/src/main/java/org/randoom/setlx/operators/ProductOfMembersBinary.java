@@ -6,19 +6,19 @@ import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.State;
 
 /**
- * Operator that checks if two values on the stack are equal.
+ * Operator that computes the product of the members of the next value from the stack, using the second value as neutral element.
  */
-public class Equals extends ABinaryInfixOperator {
+public class ProductOfMembersBinary extends ABinaryInfixOperator {
     @Override
     public Value evaluate(State state, Stack<Value> values) throws SetlException {
         Value rhs = values.poll();
         Value lhs = values.poll();
-        return lhs.isEqualTo(state, rhs);
+        return rhs.productOfMembers(state, lhs);
     }
 
     @Override
     public void appendOperatorSign(State state, StringBuilder sb) {
-        sb.append(" == ");
+        sb.append(" */ ");
     }
 
     @Override
@@ -33,10 +33,10 @@ public class Equals extends ABinaryInfixOperator {
 
     @Override
     public int precedence() {
-        return 1500;
+        return 1800;
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(Equals.class);
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(ProductOfMembersBinary.class);
 
     @Override
     public long compareToOrdering() {

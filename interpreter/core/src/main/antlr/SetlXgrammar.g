@@ -309,14 +309,14 @@ conjunction [boolean enableIgnore, FragmentList<AOperator> operators]
 comparison [boolean enableIgnore, FragmentList<AOperator> operators]
     : sum[$enableIgnore, $operators]
       (
-        '=='    sum[$enableIgnore, $operators] { operators.add(new Equals());        }
-//       | '!='    s2 = sum[$enableIgnore] { $comp = new NotEqual      ($comp, $s2.s); }
-//       | '<'     s2 = sum[$enableIgnore] { $comp = new LessThan      ($comp, $s2.s); }
-//       | '<='    s2 = sum[$enableIgnore] { $comp = new LessOrEqual   ($comp, $s2.s); }
-//       | '>'     s2 = sum[$enableIgnore] { $comp = new GreaterThan   ($comp, $s2.s); }
-//       | '>='    s2 = sum[$enableIgnore] { $comp = new GreaterOrEqual($comp, $s2.s); }
-//       | 'in'    s2 = sum[$enableIgnore] { $comp = new In            ($comp, $s2.s); }
-//       | 'notin' s2 = sum[$enableIgnore] { $comp = new NotIn         ($comp, $s2.s); }
+         '=='    sum[$enableIgnore, $operators] { operators.add(new Equal()       ); }
+       | '!='    sum[$enableIgnore, $operators] { operators.add(new NotEqual()    ); }
+       | '<'     sum[$enableIgnore, $operators] { operators.add(new LessThan()    ); }
+       | '<='    sum[$enableIgnore, $operators] {  operators.add(new LessOrEqual()); }
+//       | '>'     sum[$enableIgnore, $operators] { $comp = new GreaterThan   ($comp, $s2.s); }
+//       | '>='    sum[$enableIgnore, $operators] { $comp = new GreaterOrEqual($comp, $s2.s); }
+//       | 'in'    sum[$enableIgnore, $operators] { $comp = new In            ($comp, $s2.s); }
+//       | 'notin' sum[$enableIgnore, $operators] { $comp = new NotIn         ($comp, $s2.s); }
       )?
     ;
 
@@ -341,10 +341,10 @@ product [boolean enableIgnore, FragmentList<AOperator> operators]
 
 reduce [boolean enableIgnore, FragmentList<AOperator> operators]
     : p1 = prefixOperation[$enableIgnore, false, $operators]
-//      (
-//         '+/' p2 = prefixOperation[$enableIgnore, false] { $r = new SumOfMembersBinary    ($r, $p2.po); }
-//       | '*/' p2 = prefixOperation[$enableIgnore, false] { $r = new ProductOfMembersBinary($r, $p2.po); }
-//      )*
+      (
+         '+/' prefixOperation[$enableIgnore, false, $operators] { operators.add(new SumOfMembersBinary()    ); }
+       | '*/' prefixOperation[$enableIgnore, false, $operators] { operators.add(new ProductOfMembersBinary()); }
+      )*
     ;
 
 prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
@@ -352,8 +352,8 @@ prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> o
 //      (
 //        '**' p = prefixOperation[$enableIgnore, $quoted] { $po = new Power($po, $p.po);         }
 //      )?
-//    | '+/' po2 = prefixOperation[$enableIgnore, $quoted] { $po = new SumOfMembers    ($po2.po); }
-//    | '*/' po2 = prefixOperation[$enableIgnore, $quoted] { $po = new ProductOfMembers($po2.po); }
+    | '+/' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new SumOfMembers()); }
+    | '*/' prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new ProductOfMembers()); }
 //    | '#'  po2 = prefixOperation[$enableIgnore, $quoted] { $po = new Cardinality     ($po2.po); }
     | '-'  prefixOperation[$enableIgnore, $quoted, $operators] { operators.add(new Minus()); }
 //    | '@'  po2 = prefixOperation[$enableIgnore, true]    { $po = new Quote           ($po2.po); }

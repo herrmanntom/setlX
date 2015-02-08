@@ -4,7 +4,7 @@ grammar SetlXgrammar;
     import org.randoom.setlx.assignments.*;
     import org.randoom.setlx.exceptions.UndefinedOperationException;
     import org.randoom.setlx.operators.*;
-    import org.randoom.setlx.operators.SetListOperator.CollectionType;
+    import org.randoom.setlx.operators.SetListConstructor.CollectionType;
     import org.randoom.setlx.operatorUtilities.*;
     import org.randoom.setlx.statements.*;
     import org.randoom.setlx.statementBranches.*;
@@ -363,8 +363,8 @@ prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> o
 
 factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
     : '!' factor[$enableIgnore, $quoted, $operators] { operators.add(new Not());              }
-//    | TERM '(' termArguments ')' 
-//      { $f = new TermConstructor($TERM.text, $termArguments.args); }
+    | TERM '(' termArguments ')'
+      { operators.add(new TermConstructor($TERM.text, $termArguments.args)); }
 //    | 'forall' '(' iteratorChain[$enableIgnore] '|' condition ')'
 //      { $f = new Forall($iteratorChain.ic, $condition.cnd); }
 //    | 'exists' '(' iteratorChain[$enableIgnore] '|' condition ')'
@@ -388,10 +388,10 @@ call[$enableIgnore]     { operators.add($call.c);                               
       )?
     ;
 
-//termArguments returns [List<Expr> args]
-//    : exprList[true] { $args = $exprList.exprs;       }
-//    |  /* epsilon */ { $args = new ArrayList<Expr>(); }
-//    ;
+termArguments returns [FragmentList<OperatorExpression> args]
+    : exprList[true] { $args = $exprList.exprs;                        }
+    |  /* epsilon */ { $args = new FragmentList<OperatorExpression>(); }
+    ;
 
 procedure returns [Procedure pd]
     : 'procedure'       '(' procedureParameters[true] ')' '{' block '}'
@@ -482,9 +482,9 @@ value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]
         CollectionBuilder cb = null;
     }
     : '[' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? ']'
-                           { $v = new SetListOperator(CollectionType.LIST, cb);             }
+                           { $v = new SetListConstructor(CollectionType.LIST, cb);          }
     | '{' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? '}'
-                           { $v = new SetListOperator(CollectionType.SET, cb);              }
+                           { $v = new SetListConstructor(CollectionType.SET, cb);           }
     | STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
     | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
     | matrix               { $v = new ValueOperator($matrix.m);                             }

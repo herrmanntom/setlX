@@ -1,6 +1,7 @@
 package org.randoom.setlx.operators;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.TermConversionException;
 import org.randoom.setlx.operatorUtilities.CollectionBuilder;
 import org.randoom.setlx.operatorUtilities.Stack;
 import org.randoom.setlx.types.CollectionValue;
@@ -16,7 +17,7 @@ import java.util.List;
 /**
  * A operator that puts a Set or List on the stack.
  */
-public class SetListOperator extends AZeroOperator {
+public class SetListConstructor extends AZeroOperator {
     /**
      * Type of collection to construct.
      */
@@ -40,7 +41,7 @@ public class SetListOperator extends AZeroOperator {
      * @param type        Type of collection to construct.
      * @param constructor Collection contents generation object.
      */
-    public SetListOperator(final CollectionType type, final CollectionBuilder constructor) {
+    public SetListConstructor(final CollectionType type, final CollectionBuilder constructor) {
         this.type    = type;
         this.builder = unify(constructor);
     }
@@ -102,14 +103,44 @@ public class SetListOperator extends AZeroOperator {
         return result;
     }
 
-    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetListOperator.class);
+    /**
+     * Convert a term representing a StringConstructor into such an expression.
+     *
+     * @param state                    Current state of the running setlX program.
+     * @param value                    Term to convert.
+     * @return                         Resulting StringConstructor Expression.
+     * @throws TermConversionException Thrown in case of an malformed term.
+     */
+    public static SetListConstructor valueToExpr(final State state, final Value value) throws TermConversionException {
+        if ( ! (value instanceof SetlList || value instanceof SetlSet)) {
+            throw new TermConversionException("not a collectionValue");
+        } else {
+            final CollectionValue cv = (CollectionValue) value;
+            if (cv.size() == 0) { // empty
+                if (cv instanceof SetlList) {
+                    return new SetListConstructor(CollectionType.LIST, null);
+                } else /* if (cv instanceof SetlSet) */ {
+                    return new SetListConstructor(CollectionType.SET,  null);
+                }
+            } else { // not empty
+                final CollectionBuilder c = CollectionBuilder.collectionValueToBuilder(state, cv);
+                if (cv instanceof SetlList) {
+                    return new SetListConstructor(CollectionType.LIST, c);
+                } else /* if (cv instanceof SetlSet) */ {
+                    return new SetListConstructor(CollectionType.SET,  c);
+                }
+            }
+        }
+    }
+
+    private final static long COMPARE_TO_ORDER_CONSTANT = generateCompareToOrderConstant(SetListConstructor.class);
 
     @Override
     public int compareTo(CodeFragment other) {
         if (this == other) {
             return 0;
-        } else if (other.getClass() == SetListOperator.class) {
-            SetListOperator otr = (SetListOperator) other;
+        } else if (other.getClass() == SetListConstructor.class) {
+            SetListConstructor otr = (SetListConstructor) other;
             int cmp = type.compareTo(otr.type);
             if (cmp != 0) {
                 return cmp;
@@ -139,8 +170,8 @@ public class SetListOperator extends AZeroOperator {
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj.getClass() == SetListOperator.class) {
-            SetListOperator other = (SetListOperator) obj;
+        } else if (obj.getClass() == SetListConstructor.class) {
+            SetListConstructor other = (SetListConstructor) obj;
             if (type == other.type) {
                 if (builder != null && other.builder != null) {
                     return builder.equals(other.builder);

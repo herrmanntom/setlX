@@ -5,15 +5,25 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.assignments.AAssignableExpression;
 import org.randoom.setlx.operatorUtilities.Condition;
 import org.randoom.setlx.operatorUtilities.OperatorExpression;
+import org.randoom.setlx.operators.AOperator;
+import org.randoom.setlx.operators.CollectionAccessRangeDummy;
+import org.randoom.setlx.operators.ProcedureConstructor;
+import org.randoom.setlx.operators.SetListConstructor;
+import org.randoom.setlx.operators.TermConstructor;
+import org.randoom.setlx.operators.ValueOperator;
+import org.randoom.setlx.operators.VariableIgnore;
 import org.randoom.setlx.statements.Block;
 import org.randoom.setlx.statements.ExpressionStatement;
 import org.randoom.setlx.statements.Statement;
 import org.randoom.setlx.types.CachedProcedure;
 import org.randoom.setlx.types.Closure;
+import org.randoom.setlx.types.IgnoreDummy;
 import org.randoom.setlx.types.LambdaClosure;
 import org.randoom.setlx.types.LambdaProcedure;
 import org.randoom.setlx.types.Om;
 import org.randoom.setlx.types.Procedure;
+import org.randoom.setlx.types.RangeDummy;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlClass;
 import org.randoom.setlx.types.SetlObject;
 import org.randoom.setlx.types.Term;
@@ -21,14 +31,17 @@ import org.randoom.setlx.types.Value;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Utility class to convert terms into their equivalent CodeFragment at runtime.
  */
 public class TermConverter {
 
+    private final static Set<String> STATEMENT_CHECKED = new HashSet<String>();
     private final static Map<String, Method> STATEMENT_CONVERTERS = new HashMap<String, Method>();
 
     /**
@@ -91,25 +104,28 @@ public class TermConverter {
                         synchronized (STATEMENT_CONVERTERS) {
                             converter = STATEMENT_CONVERTERS.get(fc);
                         }
-                    }
-                    // search via reflection, if method was not found in maps
-                    if (converter == null) {
-                        // string used for method look-up
-                        final String    needle           = fc.substring(1, 2).toUpperCase(Locale.US) + fc.substring(2);
-                        // look it up in statement package
-                        final String    packageNameStmnt = Statement.class.getPackage().getName();
-                        // class which is searched
-                              Class<?>  clAss            = null;
-                        try {
-                            clAss     = Class.forName(packageNameStmnt + '.' + needle);
-                            converter = clAss.getMethod("termToStatement", State.class, Term.class);
+                        // search via reflection, if method was not found in map
+                        if (converter == null && ! STATEMENT_CHECKED.contains(fc)) {
+                            // string used for method look-up
+                            final String    needle           = fc.substring(1, 2).toUpperCase(Locale.US) + fc.substring(2);
+                            // look it up in statement package
+                            final String    packageNameStmnt = Statement.class.getPackage().getName();
+                            // class which is searched
+                            Class<?> clAss;
+                            try {
+                                clAss     = Class.forName(packageNameStmnt + '.' + needle);
+                                converter = clAss.getMethod("termToStatement", State.class, Term.class);
 
-                            synchronized (STATEMENT_CONVERTERS) {
-                                STATEMENT_CONVERTERS.put(fc, converter);
+                                synchronized (STATEMENT_CONVERTERS) {
+                                    STATEMENT_CONVERTERS.put(fc, converter);
+                                }
+                            } catch (final Exception e1) {
+                                // look-up failed, nothing more to try
+                                converter   = null;
                             }
-                        } catch (final Exception e1) {
-                            // look-up failed, nothing more to try
-                            converter   = null;
+                            synchronized (STATEMENT_CHECKED) {
+                                STATEMENT_CHECKED.add(fc);
+                            }
                         }
                     }
                     // invoke method found
@@ -117,6 +133,7 @@ public class TermConverter {
                         try {
                             return (CodeFragment) converter.invoke(null, state, term);
                         } catch (final Exception e) {
+                            //noinspection ConstantConditions
                             if (e instanceof TermConversionException) {
                                 throw (TermConversionException) e;
                             } else { // will never happen ;-)
@@ -128,40 +145,47 @@ public class TermConverter {
                     // special cases
                     final Value specialValue = valueTermToValue(state, value);
 
-//                    if (specialValue == Om.OM) {
-//                        return new ValueExpr(specialValue);
-//                    } else if (specialValue instanceof Procedure) {
-//                        return new ProcedureConstructor((Procedure) specialValue);
-//                    } else if (specialValue.isClass() == SetlBoolean.TRUE) {
-//                        return new ValueExpr(specialValue);
-//                    } else if (specialValue.isObject() == SetlBoolean.TRUE) {
-//                        return new ValueExpr(specialValue);
-//                    }
+                    if (specialValue == Om.OM) {
+                        return createValueExpression(specialValue);
+                    } else if (specialValue instanceof Procedure) {
+                        return createOperatorExpression(new ProcedureConstructor((Procedure) specialValue));
+                    } else if (specialValue.isClass() == SetlBoolean.TRUE) {
+                        return createValueExpression(specialValue);
+                    } else if (specialValue.isObject() == SetlBoolean.TRUE) {
+                        return createValueExpression(specialValue);
+                    }
                 }
                 // This term does not represent an CodeFragment.
-//                return TermConstructor.termToExpr(state, term);
+                return createOperatorExpression(TermConstructor.termToExpr(state, term));
             } catch (final TermConversionException tce) {
                 // some error occurred... create TermConstructor for this custom term
-//                return TermConstructor.termToExpr(state, term);
+                return createOperatorExpression(TermConstructor.termToExpr(state, term));
             }
         } else { // `value' is in fact a (more or less) simple value
-//            try {
-//                if (value == IgnoreDummy.ID) {
-//                    return VariableIgnore.VI;
-//                } else if (value == RangeDummy.RD) {
-//                    return CollectionAccessRangeDummy.CARD;
-//                } else if (value.isList() == SetlBoolean.TRUE || value.isSet() == SetlBoolean.TRUE) {
-//                    return SetListConstructor.valueToExpr(state, value);
-//                } else {
-//                    // not a special value
-//                    return new ValueExpr(value);
-//                }
-//            } catch (final TermConversionException tce) {
-//                // some error occurred... create ValueExpr for this value
-//                return new ValueExpr(value);
-//            }
+            try {
+                if (value == IgnoreDummy.ID) {
+                    return createOperatorExpression(VariableIgnore.VI);
+                } else if (value == RangeDummy.RD) {
+                    return createOperatorExpression(CollectionAccessRangeDummy.CARD);
+                } else if (value.isList() == SetlBoolean.TRUE || value.isSet() == SetlBoolean.TRUE) {
+                    return createOperatorExpression(SetListConstructor.valueToExpr(state, value));
+                } else {
+                    // not a special value
+                    return createValueExpression(value);
+                }
+            } catch (final TermConversionException tce) {
+                // some error occurred... create ValueExpr for this value
+                return createValueExpression(value);
+            }
         }
-        return null;
+    }
+
+    private static OperatorExpression createValueExpression(Value value) {
+        return createOperatorExpression(new ValueOperator(value));
+    }
+
+    private static OperatorExpression createOperatorExpression(AOperator operator) {
+        return new OperatorExpression(new FragmentList<AOperator>(operator));
     }
 
     /**

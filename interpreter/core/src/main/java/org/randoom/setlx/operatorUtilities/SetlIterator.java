@@ -80,7 +80,7 @@ public class SetlIterator extends ImmutableCodeFragment {
      * @param state          Current state of the running setlX program.
      * @param exec           Code fragments inside this specific iteration.
      * @return               Result of the evaluation.
-     * @throws org.randoom.setlx.exceptions.SetlException Thrown in case of some (user-) error.
+     * @throws SetlException Thrown in case of some (user-) error.
      */
     public ReturnMessage eval(final State state, final SetlIteratorExecutionContainer exec) throws SetlException {
         final VariableScope outerScope = state.getScope();
@@ -106,8 +106,9 @@ public class SetlIterator extends ImmutableCodeFragment {
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
+     * @return true iff this fragment may be optimized if it is constant.
      */
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State                          state,
         final SetlIteratorExecutionContainer container,
         final List<String>                   boundVariables,
@@ -115,7 +116,7 @@ public class SetlIterator extends ImmutableCodeFragment {
         final List<String>                   usedVariables
     ) {
         final List<String> tempVariables = new ArrayList<String>();
-        collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
+        return collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
     }
 
     /**
@@ -128,8 +129,9 @@ public class SetlIterator extends ImmutableCodeFragment {
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
+     * @return true iff this fragment may be optimized if it is constant.
      */
-    public void collectVariablesAndOptimize (
+    public boolean collectVariablesAndOptimize (
         final State                          state,
         final org.randoom.setlx.operatorUtilities.SetlIteratorExecutionContainer container,
         final List<String>                   tempVariables,
@@ -137,28 +139,29 @@ public class SetlIterator extends ImmutableCodeFragment {
         final List<String>                   unboundVariables,
         final List<String>                   usedVariables
     ) {
-        collection.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+        boolean allowOptimization = collection.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
 
         /* Variables in this expression get assigned temporarily.
            Collect them into a temporary list, add them to boundVariables and
            remove them again before returning. */
         final List<String> tempVars = new ArrayList<String>();
-        assignable.collectVariablesWhenAssigned(state, tempVars, unboundVariables, usedVariables);
+        allowOptimization = allowOptimization && assignable.collectVariablesWhenAssigned(state, tempVars, unboundVariables, usedVariables);
 
         final int preIndex = boundVariables.size();
         boundVariables.addAll(tempVars);
         tempVariables.addAll(tempVars);
 
         if (next != null) {
-            next.collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = allowOptimization && next.collectVariablesAndOptimize(state, container, tempVariables, boundVariables, unboundVariables, usedVariables);
         } else {
-            container.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            allowOptimization = allowOptimization && container.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
 
         // remove the added variables (DO NOT use removeAll(); same variable name could be there multiple times!)
         for (int i = tempVars.size(); i > 0; --i) {
             boundVariables.remove(preIndex + (i - 1));
         }
+        return allowOptimization;
     }
 
     @Override

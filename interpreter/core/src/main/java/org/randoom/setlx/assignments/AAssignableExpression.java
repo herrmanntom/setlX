@@ -36,8 +36,9 @@ public abstract class AAssignableExpression extends Expression {
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
+     * @return true iff this fragment may be optimized if it is constant.
      */
-    public abstract void collectVariablesWhenAssigned (
+    public abstract boolean collectVariablesWhenAssigned (
             final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,

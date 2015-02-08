@@ -58,16 +58,17 @@ public class For extends Statement {
         }
 
         @Override
-        public void collectVariablesAndOptimize (
+        public boolean collectVariablesAndOptimize (
             final State        state,
             final List<String> boundVariables,
             final List<String> unboundVariables,
             final List<String> usedVariables
         ) {
+            boolean allowOptimization = true;
             if (condition != null) {
-                condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+                allowOptimization = condition.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
             }
-            statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
+            return allowOptimization && statements.collectVariablesAndOptimize(state, boundVariables, unboundVariables, usedVariables);
         }
     }
 

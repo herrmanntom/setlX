@@ -39,8 +39,8 @@ beginCompNative := now();
 f := n!;
 endCompNative := now();
 
-if (f != fSL) {
-    abort("SetlX list factorial computation is wrong!");
+if (fSL != om && f != fSL) {
+    abort("SetlX factorial computation is wrong!");
 }
 
 beginPrint := now();

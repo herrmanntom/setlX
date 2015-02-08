@@ -4,6 +4,7 @@ grammar SetlXgrammar;
     import org.randoom.setlx.assignments.*;
     import org.randoom.setlx.exceptions.UndefinedOperationException;
     import org.randoom.setlx.operators.*;
+    import org.randoom.setlx.operators.SetListOperator.CollectionType;
     import org.randoom.setlx.operatorUtilities.*;
     import org.randoom.setlx.statements.*;
     import org.randoom.setlx.statementBranches.*;
@@ -301,9 +302,10 @@ disjunction [boolean enableIgnore, FragmentList<AOperator> operators]
 
 conjunction [boolean enableIgnore, FragmentList<AOperator> operators]
     : comparison[$enableIgnore, $operators]
-//      (
-//        '&&' c2 = comparison[$enableIgnore]  { $c = new Conjunction($c, $c2.comp); }
-//      )*
+      (
+        { FragmentList<AOperator> innerOperators = new FragmentList<AOperator>(); }
+        '&&' c2 = comparison[$enableIgnore, innerOperators]  { operators.add(new Conjunction(new OperatorExpression(innerOperators))); }
+      )*
     ;
 
 comparison [boolean enableIgnore, FragmentList<AOperator> operators]
@@ -332,10 +334,10 @@ product [boolean enableIgnore, FragmentList<AOperator> operators]
     : reduce[$enableIgnore, $operators]
       (
          '*' reduce[$enableIgnore, $operators] { operators.add(new Product());  }
-//       | '/'  r2 = reduce[$enableIgnore, $operators] { operators.add(new Quotient()); }
-//       | '\\' r2 = reduce[$enableIgnore] { $p = new IntegerDivision ($p, $r2.r); }
-//       | '%'  r2 = reduce[$enableIgnore] { $p = new Modulo          ($p, $r2.r); }
-//       | '><' r2 = reduce[$enableIgnore] { $p = new CartesianProduct($p, $r2.r); }
+       | '/' reduce[$enableIgnore, $operators] { operators.add(new Quotient()); }
+//       | '\\' reduce[$enableIgnore] { $p = new IntegerDivision ($p, $r2.r); }
+//       | '%'  reduce[$enableIgnore] { $p = new Modulo          ($p, $r2.r); }
+//       | '><' reduce[$enableIgnore] { $p = new CartesianProduct($p, $r2.r); }
       )*
     ;
 
@@ -360,15 +362,14 @@ prefixOperation [boolean enableIgnore, boolean quoted, FragmentList<AOperator> o
     ;
 
 factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
-    : //'!' f2 = factor[$enableIgnore, $quoted] { $f = new Not($f2.f);              }
+    : '!' factor[$enableIgnore, $quoted, $operators] { operators.add(new Not());              }
 //    | TERM '(' termArguments ')' 
 //      { $f = new TermConstructor($TERM.text, $termArguments.args); }
 //    | 'forall' '(' iteratorChain[$enableIgnore] '|' condition ')'
 //      { $f = new Forall($iteratorChain.ic, $condition.cnd); }
 //    | 'exists' '(' iteratorChain[$enableIgnore] '|' condition ')'
 //      { $f = new Exists($iteratorChain.ic, $condition.cnd); }
-//    |
-     (
+    | (
          '(' exprContent[$enableIgnore, $operators] ')'
        | procedure                   { operators.add(new ProcedureConstructor($procedure.pd)); }
        | variable                    { operators.add($variable.v); }
@@ -378,13 +379,13 @@ factor [boolean enableIgnore, boolean quoted, FragmentList<AOperator> operators]
 //       |
 call[$enableIgnore]     { operators.add($call.c);                                 }
       )*
-//      (
-//        '!'                          { $f = new Factorial($f);                       }
-//      )?
+      (
+        '!'                          { operators.add(new Factorial());                       }
+      )?
     | value[$enableIgnore, $quoted]  { operators.add($value.v); }
-//      (
-//        '!'                          { $f = new Factorial($f);                       }
-//      )?
+      (
+        '!'                          { operators.add(new Factorial());                       }
+      )?
     ;
 
 //termArguments returns [List<Expr> args]
@@ -477,14 +478,14 @@ callParameters [boolean enableIgnore] returns [FragmentList<OperatorExpression> 
 //    ;
 
 value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]
-//    @init {
-//        CollectionBuilder cb = null;
-//    }
-    : //'[' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? ']'
-//                           { $v = new SetListConstructor(CollectionType.LIST, cb);          }
-//    | '{' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? '}'
-//                           { $v = new SetListConstructor(CollectionType.SET, cb);           }
-    /*|*/ STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
+    @init {
+        CollectionBuilder cb = null;
+    }
+    : '[' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? ']'
+                           { $v = new SetListOperator(CollectionType.LIST, cb);             }
+    | '{' (collectionBuilder[$enableIgnore] { cb = $collectionBuilder.cb; } )? '}'
+                           { $v = new SetListOperator(CollectionType.SET, cb);              }
+    | STRING               { $v = new StringConstructor(setlXstate, $quoted, $STRING.text); }
     | LITERAL              { $v = new LiteralConstructor($LITERAL.text);                    }
     | matrix               { $v = new ValueOperator($matrix.m);                             }
     | vector               { $v = new ValueOperator($vector.v);                             }
@@ -492,44 +493,44 @@ value [boolean enableIgnore, boolean quoted] returns [AZeroOperator v]
     | {$enableIgnore}? '_' { $v = VariableIgnore.VI;                                        }
     ;
 
-//collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]
-//    @init {
-//        List<Expr> exprs = new ArrayList<Expr>();
-//    }
-//    : e1 = expr[$enableIgnore]
-//      (
-//         ',' e2 = expr[$enableIgnore]
-//         (
-//            RANGE_SIGN e3 = expr[$enableIgnore]
-//            { $cb = new Range($e1.ex, $e2.ex, $e3.ex); }
+collectionBuilder [boolean enableIgnore] returns [CollectionBuilder cb]
+    @init {
+        FragmentList<OperatorExpression> exprs = new FragmentList<OperatorExpression>();
+    }
+    : e1 = expr[$enableIgnore]
+      (
+         ',' e2 = expr[$enableIgnore]
+         (
+            RANGE_SIGN e3 = expr[$enableIgnore]
+            { $cb = new Range($e1.ex, $e2.ex, $e3.ex); }
 
-//          | { exprs.add($e1.ex); exprs.add($e2.ex); }
-//            (
-//              ',' e3 = expr[$enableIgnore] { exprs.add($e3.ex); }
-//            )*
-//            (
-//               '|' e4 = expr[false] { $cb = new ExplicitListWithRest(exprs, $e4.ex); }
-//             | /* epsilon */        { $cb = new ExplicitList        (exprs);         }
-//            )
-//         )
+          | { exprs.add($e1.ex); exprs.add($e2.ex); }
+            (
+              ',' e3 = expr[$enableIgnore] { exprs.add($e3.ex); }
+            )*
+            (
+               '|' e4 = expr[false] { $cb = new ExplicitListWithRest(exprs, $e4.ex); }
+             | /* epsilon */        { $cb = new ExplicitList        (exprs);         }
+            )
+         )
 
-//       | RANGE_SIGN e3 = expr[$enableIgnore]
-//         { $cb = new Range($e1.ex, null, $e3.ex); }
+       | RANGE_SIGN e3 = expr[$enableIgnore]
+         { $cb = new Range($e1.ex, null, $e3.ex); }
 
-//       | { exprs.add($e1.ex); }
-//         (
-//            '|' e2 = expr[false] { $cb = new ExplicitListWithRest(exprs, $e2.ex); }
-//          | /* epsilon */        { $cb = new ExplicitList        (exprs);         }
-//         )
+       | { exprs.add($e1.ex); }
+         (
+            '|' e2 = expr[false] { $cb = new ExplicitListWithRest(exprs, $e2.ex); }
+          | /* epsilon */        { $cb = new ExplicitList        (exprs);         }
+         )
 
-//       | ':' iteratorChain[$enableIgnore]
-//         (
-//            '|' c1 = condition     { $cb = new SetlIteration($e1.ex, $iteratorChain.ic, $c1.cnd); }
-//          | /* epsilon */          { $cb = new SetlIteration($e1.ex, $iteratorChain.ic, null   ); }
-//         )
+       | ':' iteratorChain[$enableIgnore]
+         (
+            '|' c1 = condition     { $cb = new SetlIteration($e1.ex, $iteratorChain.ic, $c1.cnd); }
+          | /* epsilon */          { $cb = new SetlIteration($e1.ex, $iteratorChain.ic, null   ); }
+         )
 
-//      )
-//    ;
+      )
+    ;
 
 iteratorChain [boolean enableIgnore] returns [SetlIterator ic]
     :

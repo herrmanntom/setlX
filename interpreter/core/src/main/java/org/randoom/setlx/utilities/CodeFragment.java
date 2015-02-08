@@ -21,7 +21,7 @@ public abstract class CodeFragment implements Comparable<CodeFragment> {
      * @param boundVariables   Variables "assigned" in this fragment.
      * @param unboundVariables Variables not present in bound when used.
      * @param usedVariables    Variables present in bound when used.
-     * @return true iff this fragment may be optimized if it is constant
+     * @return true iff this fragment may be optimized if it is constant.
      */
     public abstract boolean collectVariablesAndOptimize (
         final State        state,

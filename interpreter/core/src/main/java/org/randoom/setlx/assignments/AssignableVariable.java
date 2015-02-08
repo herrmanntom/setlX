@@ -45,8 +45,9 @@ public class AssignableVariable extends AAssignableExpression {
     }
 
     @Override
-    public void collectVariablesWhenAssigned(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
+    public boolean collectVariablesWhenAssigned(State state, List<String> boundVariables, List<String> unboundVariables, List<String> usedVariables) {
         boundVariables.add(id);
+        return true;
     }
 
     @Override

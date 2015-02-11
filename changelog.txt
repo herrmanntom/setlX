@@ -1,5 +1,9 @@
 Changes (* notice | + feature added, replaced or improved | - feature removed | # bugfix):
 
+---v2.3.4--- 2015-02-11
+ # return more intuitiv result for la_eigenVectors
+ # removed error on empty closures
+
 ---v2.3.3--- 2014-12-14
  # fixed operator associativity
  # hopefully final rework of stack handling

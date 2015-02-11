@@ -10,7 +10,11 @@ import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.State;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -18,6 +22,7 @@ import static org.junit.Assert.fail;
 /**
  * @author Patrick Robinson
  */
+@SuppressWarnings("JavaDoc")
 public class SetlMatrixTest {
 
     private State state;
@@ -538,9 +543,15 @@ public class SetlMatrixTest {
         // eigen*
         // simple
         try {
-            assertTrue("eig_vec error: wrong result: " + simple.eigenVectors() + " vs " + Arrays.deepToString(simple_eig.get('v')),
-                    deepEqualsCorrected(getBase(simple.eigenVectors()).getArray(), simple_eig.get('v')));
-        } catch (UndefinedOperationException ex) {
+            double[][] reference = simple_eig.get('v');
+            SetlList eigenVectors = simple.eigenVectors(state);
+            for (int i = 0; i < eigenVectors.size(); i++) {
+                SetlVector vector = (SetlVector) eigenVectors.getMember(i + 1);
+                for (int row = 0; row < reference.length; row++) {
+                    assertTrue("eig_vec error: wrong result: " + eigenVectors + " vs " + Arrays.deepToString(reference), equalsCorrected(vector.getVectorCopy().get(row), reference[row][i]));
+                }
+            }
+        } catch (SetlException ex) {
             System.err.println(ex.getMessage());
             fail("eig_vec error: exception");
         }

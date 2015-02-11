@@ -1,7 +1,6 @@
 package org.randoom.setlx.expressions;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.functions.PreDefinedProcedure;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.CodeFragment;
@@ -50,8 +49,8 @@ public class ProcedureConstructor extends Expr {
             if (closureVariables == null) {
                 this.optimize(state);
             }
+            final SetlHashMap<Value> closure = new SetlHashMap<Value>();
             if ( ! closureVariables.isEmpty()) {
-                final SetlHashMap<Value> closure = new SetlHashMap<Value>();
                 for (final String var : closureVariables) {
                     final Value val = state.findValue(var);
                     if (val != Om.OM) {
@@ -65,13 +64,11 @@ public class ProcedureConstructor extends Expr {
                         }
                     }
                 }
-                if ( ! closure.isEmpty()) {
-                    final Closure result = ((Closure) definition).createCopy();
-                    result.setClosure(closure);
-                    return result;
-                }
             }
-            throw new UndefinedOperationException("No valid closure variables detected - closure is empty!");
+            // TODO add warning: throw new UndefinedOperationException("No valid closure variables detected - closure is empty!");
+            final Closure result = ((Closure) definition).createCopy();
+            result.setClosure(closure);
+            return result;
         } else {
             return definition;
         }

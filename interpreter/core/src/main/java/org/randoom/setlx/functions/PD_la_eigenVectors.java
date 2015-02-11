@@ -28,7 +28,7 @@ public class PD_la_eigenVectors extends PreDefinedProcedure {
     @Override
     public Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         if ((args.get(MATRIX) instanceof SetlMatrix)) {
-            return ((SetlMatrix) args.get(MATRIX)).eigenVectors();
+            return ((SetlMatrix) args.get(MATRIX)).eigenVectors(state);
         } else {
             throw new IncompatibleTypeException("The parameter needs to be a matrix.");
         }

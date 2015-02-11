@@ -1,18 +1,17 @@
 package org.randoom.setlx.types;
 
 import Jama.*;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
 import org.randoom.setlx.exceptions.IncompatibleTypeException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.utilities.CodeFragment;
 import org.randoom.setlx.utilities.MatchResult;
 import org.randoom.setlx.utilities.State;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Patrick Robinson
@@ -633,11 +632,22 @@ public class SetlMatrix extends IndexedCollectionValue {
     /**
      * Calculate eigen vector matrix
      *
+     * @param state Current state of the running setlX program.
      * @return matrix
      * @throws UndefinedOperationException thrown if not square.
      */
-    public SetlMatrix eigenVectors() throws UndefinedOperationException {
-        return new SetlMatrix(getEigenvalueDecomposition().getV());
+    public SetlList eigenVectors(State state) throws UndefinedOperationException {
+        double[][] matrix = getEigenvalueDecomposition().getV().getArray();
+        int n = matrix.length;
+        SetlList vectors = new SetlList(n);
+        for (int column = 0; column < n; column++) {
+            ArrayList<Double> vector = new ArrayList<Double>(n);
+            for (int row = 0; row < n; row++) {
+                vector.add(matrix[row][column]);
+            }
+            vectors.addMember(state, new SetlVector(vector));
+        }
+        return vectors;
     }
 
     /**

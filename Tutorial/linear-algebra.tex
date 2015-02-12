@@ -636,14 +636,19 @@ square matrix, \setlx\ provides the functions
 \\[0.2cm]
 Both of these function take a single argument \texttt{a}, where \texttt{a} must be a square matrix.
 The function \texttt{la\_eigenValues} returns a list of the eigenvalues of \texttt{a}.  The
-function \texttt{la\_eigenVectors} returns a matrix.  The columns of this matrix represent the
-eigenvectors.  As a matrix is represented as a list of its rows (and not as a list of its columns),
-there is actually some work left to do if we want to convert this matrix into a list of vectors.
-The function shown in Figure \ref{fig:extract-eigenvectors.stlx} demonstrates a way to get the list of
-eigenvectors. 
+function call \texttt{la\_eigenVectors(a)} returns a list of the eigenvectors of the matrix \texttt{a}.
+For example, in order to compute the eigenvalues and eigenvectors of the matrix
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{a} :=
+\left(\begin{array}[c]{ll}
+  1 & 2 \\
+  2 & 3
+\end{array}\right)
+$
+\\[0.2cm]
+we can execute the following commands:
 
-\begin{figure}[!ht]
-\centering
 \begin{Verbatim}[ frame         = lines, 
                   framesep      = 0.3cm, 
                   firstnumber   = 1,
@@ -653,16 +658,31 @@ eigenvectors.
                   xleftmargin   = 0.8cm,
                   xrightmargin  = 0.8cm,
                 ]
-    extractEigenVectors := procedure(a) {
-        eigV := la_eigenVectors(a);
-        rng  := [1 .. #eigV];
-        return [ la_vector([eigV[row][col] : row in rng]): col in rng ];
-    };
+    a        := << <<1 2>> <<2 3>> >>;
+    [l1, l2] := la_eigenValues(a);
+    [x1, x2] := la_eigenVectors(a);
 \end{Verbatim}
-\vspace*{-0.3cm}
-\caption{A function to extract the eigenvectors from a matrix.}
-\label{fig:extract-eigenvectors.stlx}
-\end{figure}
+
+Then, the eigenvalues will be computed as
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{l1 = -0.23606797749978958} \quad and \quad \texttt{l2 = 4.23606797749979}
+\\[0.2cm]
+In this case, the exact values of these eigenvalues are 
+\\[0.2cm]
+\hspace*{1.3cm}
+$\mathtt{l1} = 2 - \sqrt{5}$ \quad and \quad $\mathtt{l2} = 2 + \sqrt{5}$.
+\\[0.2cm]
+The eigenvectors are computed as 
+\\[0.2cm]
+\hspace*{1.3cm}
+\texttt{x1 = <<-0.8506508083520399 0.5257311121191336>>} \quad and \\
+\hspace*{1.3cm}
+\texttt{x2 = <<0.5257311121191336 0.8506508083520399>>}.
+\\[0.2cm]
+The eigenvectors computed are \emph{normalized}, that is the length of these vectors is $1$.
+Furthermore, as the matrix \texttt{a} happens to be symmetric, i.e.~we have\texttt{a = a!},
+the eigenvectors are orthogonal to each other.
 
 Observe that not every square $n \times n$ matrix is 
 \href{http://en.wikipedia.org/wiki/Diagonalizable_matrix}{\emph{diagonalizable}}

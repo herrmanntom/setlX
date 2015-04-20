@@ -62,9 +62,15 @@ public class ConnectJMathPlot implements Plot {
     }
 
     @Override
-    public Graph addChart() {
+    public Graph addChart(Canvas canvas, String chartType, SetlList values) {
         return null;
     }
+
+    @Override
+    public Graph addChart(Canvas canvas, String chartType, SetlList values, String name) {
+        return null;
+    }
+
 
     @Override
     public void removeGraph(Canvas canvas, Graph graph) {
@@ -77,7 +83,7 @@ public class ConnectJMathPlot implements Plot {
     }
 
     @Override
-    public void inserttitel(Canvas canvas, SetlString titel) {
+    public void insertTitel(Canvas canvas, SetlString titel) {
 
     }
 
@@ -98,6 +104,11 @@ public class ConnectJMathPlot implements Plot {
 
     @Override
     public void modScaleType(SetlString xType, SetlString yType) {
+
+    }
+
+    @Override
+    public void addBullet(Canvas canvas, SetlList xyTupel) {
 
     }
 }

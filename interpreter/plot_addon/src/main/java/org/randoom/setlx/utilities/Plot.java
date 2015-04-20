@@ -29,7 +29,9 @@ public interface Plot {
 
     public Graph addParamGraph(Canvas canvas, SetlString xfunction, SetlString yfunction, SetlString name, SetlBoolean plotArea);
 
-    public Graph addChart();
+    public Graph addChart(Canvas canvas, String chartType, SetlList values);
+
+    public Graph addChart(Canvas canvas, String chartType, SetlList values, String name);
 
     public void removeGraph(Canvas canvas, Graph graph);
 
@@ -44,4 +46,6 @@ public interface Plot {
     public void exportCanvas(Canvas canvas, SetlString path);
 
     public void modScaleType(SetlString xType, SetlString yType);
+
+    public void addBullet(Canvas canvas, SetlList xyTupel);
 }

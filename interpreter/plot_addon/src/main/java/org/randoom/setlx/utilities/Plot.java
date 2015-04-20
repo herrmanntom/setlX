@@ -35,7 +35,7 @@ public interface Plot {
 
     public void insertLabel(Canvas canvas, SetlString xLabel, SetlString yLabel);
 
-    public void inserttitel(Canvas canvas, SetlString titel);
+    public void insertTitel(Canvas canvas, SetlString titel);
 
     public void insertLegend(Canvas canvas, Boolean visible);
 

@@ -8,7 +8,7 @@ import org.randoom.setlx.types.SetlString;
 public class ConnectJMathPlot implements Plot {
     @Override
     public Canvas createCanvas() {
-        return null;
+        return new Canvas();
     }
 
     @Override

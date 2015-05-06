@@ -6,6 +6,9 @@ import org.randoom.setlx.types.SetlString;
 
 
 public class ConnectJMathPlot implements Plot {
+
+    private static ConnectJMathPlot connector;
+
     @Override
     public Canvas createCanvas() {
         return new Canvas();
@@ -110,5 +113,12 @@ public class ConnectJMathPlot implements Plot {
     @Override
     public void addBullet(Canvas canvas, SetlList xyTupel) {
 
+    }
+
+    public static ConnectJMathPlot getInstance(){
+        if(connector == null){
+            connector = new ConnectJMathPlot();
+        }
+        return connector;
     }
 }

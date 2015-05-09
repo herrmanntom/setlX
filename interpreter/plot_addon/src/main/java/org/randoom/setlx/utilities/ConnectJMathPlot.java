@@ -1,17 +1,20 @@
 package org.randoom.setlx.utilities;
 
+
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 
-
-public class ConnectJMathPlot implements Plot {
+public class ConnectJMathPlot implements SetlXPlot {
 
     private static ConnectJMathPlot connector;
 
     @Override
     public Canvas createCanvas() {
+
+
         return new Canvas();
+
     }
 
     @Override
@@ -115,8 +118,8 @@ public class ConnectJMathPlot implements Plot {
 
     }
 
-    public static ConnectJMathPlot getInstance(){
-        if(connector == null){
+    public static ConnectJMathPlot getInstance() {
+        if (connector == null) {
             connector = new ConnectJMathPlot();
         }
         return connector;

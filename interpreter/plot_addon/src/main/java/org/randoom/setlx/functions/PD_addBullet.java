@@ -14,7 +14,7 @@ import java.util.HashMap;
 public class PD_addBullet extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef XYTUPEL = createParameter("xyTupe");
+    private final static ParameterDef XYTUPEL = createParameter("xyTupel");
     public final static PreDefinedProcedure DEFINITION = new PD_addBullet();
     private PD_addBullet(){
         super();

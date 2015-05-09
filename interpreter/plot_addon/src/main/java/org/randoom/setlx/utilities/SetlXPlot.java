@@ -5,7 +5,7 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 
-public interface Plot {
+public interface SetlXPlot {
 
     public Canvas createCanvas();
 

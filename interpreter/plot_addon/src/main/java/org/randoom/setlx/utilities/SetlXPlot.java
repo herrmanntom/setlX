@@ -19,9 +19,9 @@ public interface SetlXPlot {
 
     public Graph addGraph(Canvas canvas, String function, String name, boolean plotArea);
 
-    public Graph addGraph(Canvas canvas, List function);
+    public Graph addGraph(Canvas canvas, List<List<Double>> function);
 
-    public Graph addGraph(Canvas canvas, List function, String name);
+    public Graph addGraph(Canvas canvas, List<List<Double>> function, String name);
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction);
 
@@ -43,7 +43,7 @@ public interface SetlXPlot {
 
     public void insertLegend(Canvas canvas, Boolean visible);
 
-    public void modScale(Canvas canvas, List xMinMax, List yMinMax); //SetlList passend?
+    public void modScale(Canvas canvas, List<Double> xMinMax, List<Double> yMinMax); //SetlList passend?
 
     public void exportCanvas(Canvas canvas, String path);
 

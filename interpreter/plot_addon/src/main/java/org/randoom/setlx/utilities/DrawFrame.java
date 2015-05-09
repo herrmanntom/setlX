@@ -8,12 +8,13 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 
 
 public class DrawFrame extends JFrame {
-    private XYSeriesCollection dataset;
+    private XYSeriesCollection dataset = new XYSeriesCollection();
     private double x_Min;
-    private double x_Max;#
+    private double x_Max;
     private String xAxis;
     private String yAxis;
     private String chartTitle;
@@ -27,7 +28,7 @@ public class DrawFrame extends JFrame {
         add(jPanel, BorderLayout.CENTER);
 
         setSize(640, 480);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         xAxis = "X";
         yAxis = "Y";
@@ -36,22 +37,23 @@ public class DrawFrame extends JFrame {
         x_Max = 10.0;
     }
 
-    public void addDataset(String title, String function ) {
-        boolean autoSort = true;
-        boolean allowDuplicateXValues = false;
-        XYSeries series = new XYSeries(title, autoSort, allowDuplicateXValues);
+    public XYSeries addDataset(String title, String function ) {
+        XYSeries series = new XYSeries(title, true, false);
         CalcFunction calc = new CalcFunction(function);
         double x = x_Min;
-        for(x<=x_Max){
+        while(x<=x_Max){
             series.add(x,calc.calcYfromX(x));
             x += 0.1;
         }
         dataset.addSeries(series);
+
+        return series;
     }
 
     public void redraw(){
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxis, yAxis, this.dataset);
         jPanel = new ChartPanel(chart);
+
         /*
         if(chartPanel == null) {
             chartPanel = new ChartPanel(chart);
@@ -59,5 +61,24 @@ public class DrawFrame extends JFrame {
             jPanel.validate();
         }
         */
+    }
+    public XYSeries addListDataset(String title, List<List<Double>> function){
+        XYSeries series = new XYSeries(title, false, true);
+        for(List<Double> element: function){
+            series.add(element.get(0), element.get(1));
+        }
+        dataset.addSeries(series);
+        return series;
+    }
+
+    public XYSeries addParamDataset(String title, String xfunction, String yfunction){
+        XYSeries series = new XYSeries(title, true, false);
+        CalcFunction xcalc = new CalcFunction(xfunction);
+        CalcFunction ycalc = new CalcFunction(yfunction);
+        for(double x=-50; x<=50;x+=0.1){
+            series.add(xcalc.calcYfromX(x),ycalc.calcYfromX(x));
+        }
+        dataset.addSeries(series);
+        return series;
     }
 }

@@ -35,11 +35,11 @@ public interface SetlXPlot {
 
     public void removeGraph(Canvas canvas, Graph graph);
 
-    public void insertLabel(Canvas canvas, SetlString xLabel, SetlString yLabel);
+    public void insertLabel(Canvas canvas, String xLabel, String yLabel);
 
     public void insertTitel(Canvas canvas, SetlString titel);
 
-    public void insertLegend(Canvas canvas, Boolean visible);
+    public void legendVisible(Canvas canvas, Boolean visible);
 
     public void modScale(Canvas canvas, SetlList xMinMax, SetlList yMinMax); //SetlList passend?
 

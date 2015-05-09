@@ -83,7 +83,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void insertLabel(Canvas canvas, SetlString xLabel, SetlString yLabel) {
+    public void insertLabel(Canvas canvas, String xLabel, String yLabel) {
 
     }
 
@@ -93,7 +93,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void insertLegend(Canvas canvas, Boolean visible) {
+    public void legendVisible(Canvas canvas, Boolean visible) {
 
     }
 

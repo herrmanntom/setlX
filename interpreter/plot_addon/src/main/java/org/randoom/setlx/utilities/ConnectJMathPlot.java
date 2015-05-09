@@ -13,9 +13,8 @@ public class ConnectJMathPlot implements SetlXPlot {
 
     @Override
     public Canvas createCanvas() {
-
-        Plot plot = new XYPlot();
-        return new Canvas();
+        DrawFrame frame = new DrawFrame();
+        return new Canvas(frame);
 
     }
 

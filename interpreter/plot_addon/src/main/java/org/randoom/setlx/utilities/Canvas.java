@@ -6,7 +6,7 @@ import org.randoom.setlx.types.Value;
 public class Canvas extends Value {
     private DrawFrame frame;
 
-    public Canvas(JFrame frame){
+    public Canvas(DrawFrame frame){
         this.frame = frame;
     }
 

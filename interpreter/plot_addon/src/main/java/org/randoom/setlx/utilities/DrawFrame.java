@@ -1,5 +1,7 @@
 package org.randoom.setlx.utilities;
 
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.JFreeChart;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
@@ -9,6 +11,9 @@ import javax.swing.*;
 
 public class DrawFrame extends JFrame {
     private XYSeriesCollection dataset;
+    private String chartTitle = "Chart title";
+    private String xAxisLabel = "X";
+    private String yAxisLabel = "Y";
     public DrawFrame()
     {
         super("Graphic output");
@@ -20,18 +25,21 @@ public class DrawFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
-    private JPanel createChartPanel() {
-        // creates a line chart object
-        // returns the chart panel
+    public JPanel createChartPanel(title) {
+        addDataset(title);
+        JFreeChart chart = ChartFactory.createXYLineChart("Chart title", "X", "Y", this.dataset);
+        chart.a
     }
 
-    private XYDataset createDataset(String title ) {
-        XYSeries series = new XYSeries(title);
+    private void addDataset(String title ) {
+        boolean autoSort = true;
+        boolean allowDuplicateXValues = false;
+        XYSeries series = new XYSeries(title, autoSort, allowDuplicateXValues);
         double x = -10;
         for(x<=10){
             series.add(x,calcFuction(x));
             x += 0.1;
         }
-
+        dataset.addSeries(series);
     }
 }

@@ -107,7 +107,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void modScaleType(String xType, String yType) {
+    public void modScaleType(Canvas canvas,String xType, String yType) {
 
     }
 

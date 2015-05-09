@@ -21,7 +21,7 @@ public class PD_test extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        CalcFunction cf = new CalcFunction();
+        CalcFunction cf = new CalcFunction("x");
         return new SetlString("String");
     }
 }

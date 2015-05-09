@@ -11,9 +11,8 @@ import java.awt.*;
 
 public class DrawFrame extends JFrame {
     private XYSeriesCollection dataset;
-    private String chartTitle = "Chart title";
-    private String xAxisLabel = "X";
-    private String yAxisLabel = "Y";
+    private double x_Min;
+    private double x_Max;
     public DrawFrame()
     {
         super("Graphic output");
@@ -24,26 +23,26 @@ public class DrawFrame extends JFrame {
         setSize(640, 480);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        x_Min = -10.0;
+        x_Max = 10.0;
     }
 
-    public JPanel createChartPanel() {
-       // addDataset(title);
+    public JPanel createChartPanel(String title, String function) {
+        addDataset(title, function);
         JFreeChart chart = ChartFactory.createXYLineChart("Chart title", "X", "Y", this.dataset);
-        //chart.a
         return new JPanel();
     }
 
-    private void addDataset(String title ) {
+    private void addDataset(String title, String function ) {
         boolean autoSort = true;
         boolean allowDuplicateXValues = false;
         XYSeries series = new XYSeries(title, autoSort, allowDuplicateXValues);
-        double x = -10;
-        /*
-        for(x<=10){
-            series.add(x,calcFuction(x));
+        CalcFunction calc = new CalcFunction(function);
+        double x = x_Min;
+        for(x<=x_Max){
+            series.add(x,calc.calcYfromX(x));
             x += 0.1;
         }
-        */
         dataset.addSeries(series);
     }
 }

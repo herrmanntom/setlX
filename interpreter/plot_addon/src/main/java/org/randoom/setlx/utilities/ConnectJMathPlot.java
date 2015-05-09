@@ -1,9 +1,7 @@
 package org.randoom.setlx.utilities;
 
 
-import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlList;
-import org.randoom.setlx.types.SetlString;
+import java.util.List;
 
 public class ConnectJMathPlot implements SetlXPlot {
 
@@ -17,62 +15,63 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, SetlString function) {
+    public Graph addGraph(Canvas canvas, String function) {
+
+
+    }
+
+    @Override
+    public Graph addGraph(Canvas canvas, String function, String name) {
         return null;
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, SetlString function, SetlString name) {
+    public Graph addGraph(Canvas canvas, String function, boolean plotArea) {
         return null;
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, SetlString function, SetlBoolean plotArea) {
+    public Graph addGraph(Canvas canvas, String function, String name, boolean plotArea) {
         return null;
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, SetlString function, SetlString name, SetlBoolean plotArea) {
+    public Graph addGraph(Canvas canvas, List function) {
         return null;
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, SetlList function) {
+    public Graph addGraph(Canvas canvas, List function, String name) {
         return null;
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, SetlList function, SetlString name) {
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction) {
         return null;
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, SetlString xfunction, SetlString yfunction) {
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) {
         return null;
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, SetlString xfunction, SetlString yfunction, SetlString name) {
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, Boolean plotArea) {
         return null;
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, SetlString xfunction, SetlString yfunction, SetlBoolean plotArea) {
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, Boolean plotArea) {
         return null;
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, SetlString xfunction, SetlString yfunction, SetlString name, SetlBoolean plotArea) {
+    public Graph addChart(Canvas canvas, String chartType, List values) {
         return null;
     }
 
     @Override
-    public Graph addChart(Canvas canvas, String chartType, SetlList values) {
-        return null;
-    }
-
-    @Override
-    public Graph addChart(Canvas canvas, String chartType, SetlList values, String name) {
+    public Graph addChart(Canvas canvas, String chartType, List values, String name) {
         return null;
     }
 
@@ -88,7 +87,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void insertTitel(Canvas canvas, SetlString titel) {
+    public void insertTitel(Canvas canvas, String titel) {
 
     }
 
@@ -98,7 +97,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void modScale(Canvas canvas, SetlList xMinMax, SetlList yMinMax) {
+    public void modScale(Canvas canvas, List xMinMax, List yMinMax) {
 
     }
 
@@ -108,7 +107,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void modScaleType(SetlString xType, SetlString yType) {
+    public void modScaleType(String xType, String yType) {
 
     }
 

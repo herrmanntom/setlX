@@ -25,7 +25,6 @@ public class Canvas extends Value {
 
     @Override
     public void appendString(State state, StringBuilder sb, int tabs) {
-
     }
 
     @Override
@@ -45,6 +44,6 @@ public class Canvas extends Value {
 
     @Override
     public boolean equalTo(Object other) {
-        return false;
+        return other.getClass() == this.getClass();
     }
 }

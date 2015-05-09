@@ -43,7 +43,7 @@ public interface SetlXPlot {
 
     public void modScale(Canvas canvas, SetlList xMinMax, SetlList yMinMax); //SetlList passend?
 
-    public void exportCanvas(Canvas canvas, SetlString path);
+    public void exportCanvas(Canvas canvas, String path);
 
     public void modScaleType(SetlString xType, SetlString yType);
 

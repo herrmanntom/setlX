@@ -21,7 +21,6 @@ public class PD_createCanvas extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        ConnectJMathPlot m = new ConnectJMathPlot();
-        return m.createCanvas();
+        return ConnectJMathPlot.getInstance().createCanvas();
     }
 }

@@ -103,7 +103,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void exportCanvas(Canvas canvas, SetlString path) {
+    public void exportCanvas(Canvas canvas, String path) {
 
     }
 

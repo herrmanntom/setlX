@@ -23,7 +23,11 @@ public class PD_addBullet extends PreDefinedProcedure {
     }
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        ConnectJMathPlot.getInstance().addBullet((Canvas)args.get(CANVAS), (SetlList)args.get(XYTUPEL));
-        return new SetlString(String.valueOf(args.entrySet()));
+        SetlList list = (SetlList)args.get(XYTUPEL);
+        if(!(list.size()==2)){
+            return new SetlString("Parameter XYTUPEL must have exactly two entrys");
+        }
+        ConnectJMathPlot.getInstance().addBullet((Canvas)args.get(CANVAS), list);
+        return new SetlString("Added Bullet "+args.get(XYTUPEL)+" to Canvas "+args.get(CANVAS));
     }
 }

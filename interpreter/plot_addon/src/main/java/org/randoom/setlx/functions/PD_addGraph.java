@@ -2,10 +2,10 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Rational;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.*;
 
 import java.util.HashMap;
 
@@ -36,6 +36,46 @@ public class PD_addGraph extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        return new SetlString(String.valueOf(args.entrySet()));
+        Canvas canvas = (Canvas)args.get(CANVAS);
+        SetlString functionDefinition = (SetlString)args.get(FUNCTIONDEFINITION);
+        String function = functionDefinition.toString();
+
+        function = function.replace("\"", ""); //is there a better solution? (string is not "sin(x)" but ""sin(x)"" (two much "))
+
+        System.out.println(functionDefinition);
+        Value graphname = args.get(GRAPHNAME);
+        Value plotarea = args.get(PLOTAREA);
+        Graph g;
+        if(!graphname.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)){
+            SetlString graphNameString = (SetlString)graphname;
+            SetlBoolean plotAreaBool = (SetlBoolean)plotarea;
+            boolean area;
+            if(plotAreaBool.equalTo(SetlBoolean.TRUE)){
+                area = true;
+            }
+            else{
+                area = false;
+            }
+            return ConnectJMathPlot.getInstance().addGraph(canvas, function,graphNameString.toString(),area );
+        }
+        if(!graphname.equalTo(Rational.ONE)){
+            SetlString graphNameString = (SetlString)graphname;
+            return ConnectJMathPlot.getInstance().addGraph(canvas, function,graphNameString.toString() );
+        }
+        if(!plotarea.equalTo(Rational.ONE)){
+            SetlBoolean plotAreaBool = (SetlBoolean)plotarea;
+            boolean area;
+            if(plotAreaBool.equalTo(SetlBoolean.TRUE)){
+                area = true;
+            }
+            else{
+                area = false;
+            }
+            return ConnectJMathPlot.getInstance().addGraph(canvas, function,area );
+        }
+
+
+
+        return ConnectJMathPlot.getInstance().addGraph(canvas, functionDefinition.toString());
     }
 }

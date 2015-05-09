@@ -16,12 +16,14 @@ public class CalcFunction {
     public Double calcYfromX(Double x) {
         String s = x.toString();
         String localFunction = function.replace("x", s);
+        p(localFunction);
         try {
             Expr expr = ParseSetlX.parseStringToExpr(state, localFunction);
             Value v = expr.eval(state);
             return v.jDoubleValue();
         } catch (Exception e) {
             p(e.toString());
+            p("in CalcFunction");
         }
         return null;
     }

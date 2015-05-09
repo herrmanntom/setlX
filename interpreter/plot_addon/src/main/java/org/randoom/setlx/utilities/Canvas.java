@@ -13,7 +13,7 @@ public class Canvas extends Value {
     }
 
 
-    public JFrame getFrame(){
+    public DrawFrame getFrame(){
         return this.frame;
     }
 

@@ -27,7 +27,9 @@ public class PD_addBullet extends PreDefinedProcedure {
         if(!(list.size()==2)){
             return new SetlString("Parameter XYTUPEL must have exactly two entrys");
         }
-        ConnectJMathPlot.getInstance().addBullet((Canvas)args.get(CANVAS), list);
-        return new SetlString("Added Bullet "+args.get(XYTUPEL)+" to Canvas "+args.get(CANVAS));
+        double x = list.firstMember().jDoubleValue();
+        double y = list.lastMember().jDoubleValue();
+        ConnectJMathPlot.getInstance().addBullet((Canvas)args.get(CANVAS), x, y);
+        return new SetlString("Added Bullet ("+x+","+y+") to Canvas "+args.get(CANVAS));
     }
 }

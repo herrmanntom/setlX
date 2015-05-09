@@ -47,5 +47,5 @@ public interface SetlXPlot {
 
     public void modScaleType(SetlString xType, SetlString yType);
 
-    public void addBullet(Canvas canvas, SetlList xyTupel);
+    public void addBullet(Canvas canvas, double x, double y);
 }

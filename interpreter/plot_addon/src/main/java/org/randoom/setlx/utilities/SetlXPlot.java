@@ -19,9 +19,9 @@ public interface SetlXPlot {
 
     public Graph addGraph(Canvas canvas, String function, String name, boolean plotArea);
 
-    public Graph addGraph(Canvas canvas, List function);
+    public Graph addGraph(Canvas canvas, List<List<Double>> function);
 
-    public Graph addGraph(Canvas canvas, List function, String name);
+    public Graph addGraph(Canvas canvas, List<List<Double>> function, String name);
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction);
 

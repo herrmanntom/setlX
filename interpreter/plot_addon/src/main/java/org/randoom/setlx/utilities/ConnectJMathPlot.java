@@ -1,6 +1,8 @@
 package org.randoom.setlx.utilities;
 
 
+import org.jfree.data.xy.XYSeries;
+
 import java.util.List;
 
 public class ConnectJMathPlot implements SetlXPlot {
@@ -16,52 +18,74 @@ public class ConnectJMathPlot implements SetlXPlot {
 
     @Override
     public Graph addGraph(Canvas canvas, String function) {
-        return null;
+        XYSeries data = canvas.getFrame().addDataset("function", function);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name) {
-        return null;
+        XYSeries data = canvas.getFrame().addDataset(name, function);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
+    //TODO: at plotArea possibility
     @Override
     public Graph addGraph(Canvas canvas, String function, boolean plotArea) {
-        return null;
+        XYSeries data = canvas.getFrame().addDataset("function", function);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name, boolean plotArea) {
-        return null;
+        XYSeries data = canvas.getFrame().addDataset(name, function);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, List function) {
-        return null;
+    public Graph addGraph(Canvas canvas, List<List<Double>> function) {
+        XYSeries data = canvas.getFrame().addListDataset("function", function);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, List function, String name) {
-        return null;
+    public Graph addGraph(Canvas canvas, List<List<Double>> function, String name) {
+        XYSeries data = canvas.getFrame().addListDataset(name, function);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction) {
-        return null;
+        XYSeries data = canvas.getFrame().addParamDataset("function",xfunction,yfunction);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) {
-        return null;
+        XYSeries data = canvas.getFrame().addParamDataset(name,xfunction,yfunction);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
+    //TODO:plotArea
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, Boolean plotArea) {
-        return null;
+        XYSeries data = canvas.getFrame().addParamDataset("function",xfunction,yfunction);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, Boolean plotArea) {
-        return null;
+        XYSeries data = canvas.getFrame().addParamDataset(name,xfunction,yfunction);
+        canvas.getFrame().redraw();
+        return new Graph(data);
     }
 
     @Override

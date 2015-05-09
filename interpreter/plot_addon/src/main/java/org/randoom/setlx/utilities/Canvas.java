@@ -3,7 +3,6 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.types.Value;
 
-import javax.swing.*;
 
 public class Canvas extends Value {
     private DrawFrame frame;

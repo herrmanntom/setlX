@@ -1,6 +1,8 @@
 package org.randoom.setlx.utilities;
 
 
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.XYPlot;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
@@ -12,7 +14,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     @Override
     public Canvas createCanvas() {
 
-
+        Plot plot = new XYPlot();
         return new Canvas();
 
     }

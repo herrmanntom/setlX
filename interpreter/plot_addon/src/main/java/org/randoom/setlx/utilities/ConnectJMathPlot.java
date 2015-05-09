@@ -16,8 +16,7 @@ public class ConnectJMathPlot implements SetlXPlot {
 
     @Override
     public Graph addGraph(Canvas canvas, String function) {
-
-
+        return null;
     }
 
     @Override
@@ -107,9 +106,10 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void modScaleType(String xType, String yType) {
+    public void modScaleType(Canvas canvas, String xType, String yType) {
 
     }
+
 
     @Override
     public void addBullet(Canvas canvas, double x, double y) {

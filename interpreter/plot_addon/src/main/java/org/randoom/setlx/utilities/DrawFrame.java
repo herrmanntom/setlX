@@ -2,11 +2,11 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 import javax.swing.*;
-
-
+import java.awt.*;
 
 
 public class DrawFrame extends JFrame {
@@ -25,10 +25,12 @@ public class DrawFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
     }
-    public JPanel createChartPanel(title) {
-        addDataset(title);
+
+    public JPanel createChartPanel() {
+       // addDataset(title);
         JFreeChart chart = ChartFactory.createXYLineChart("Chart title", "X", "Y", this.dataset);
-        chart.a
+        //chart.a
+        return new JPanel();
     }
 
     private void addDataset(String title ) {
@@ -36,10 +38,12 @@ public class DrawFrame extends JFrame {
         boolean allowDuplicateXValues = false;
         XYSeries series = new XYSeries(title, autoSort, allowDuplicateXValues);
         double x = -10;
+        /*
         for(x<=10){
             series.add(x,calcFuction(x));
             x += 0.1;
         }
+        */
         dataset.addSeries(series);
     }
 }

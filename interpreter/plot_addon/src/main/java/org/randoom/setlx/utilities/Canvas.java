@@ -3,6 +3,8 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.types.Value;
 
+import javax.swing.*;
+
 public class Canvas extends Value {
     private DrawFrame frame;
 
@@ -18,7 +20,7 @@ public class Canvas extends Value {
 
     @Override
     public Value clone() {
-        return new Canvas();
+        return new Canvas(this.frame);
     }
 
     @Override

@@ -3,8 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.*;
 
 import java.util.HashMap;
 
@@ -20,6 +19,9 @@ public class PD_removeGraph extends PreDefinedProcedure {
     }
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        return new SetlString(String.valueOf(args.entrySet()));
+        Canvas c = (Canvas)args.get(CANVAS);
+        Graph g = (Graph)args.get(GRAPH);
+        ConnectJMathPlot.getInstance().removeGraph(c, g);
+        return new SetlString("Removed "+g+" from "+c);
     }
 }

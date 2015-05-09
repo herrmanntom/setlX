@@ -96,7 +96,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void modScale(Canvas canvas, List xMinMax, List yMinMax) {
+    public void modScale(Canvas canvas, double xMin, double xMax, double yMin, double yMax) {
 
     }
 

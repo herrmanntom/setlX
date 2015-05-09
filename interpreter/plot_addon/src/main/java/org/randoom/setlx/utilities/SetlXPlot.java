@@ -43,7 +43,7 @@ public interface SetlXPlot {
 
     public void legendVisible(Canvas canvas, Boolean visible);
 
-    public void modScale(Canvas canvas, List xMinMax, List yMinMax); //SetlList passend?
+    public void modScale(Canvas canvas, double xMin, double xMax, double yMin, double yMax);
 
     public void exportCanvas(Canvas canvas, String path);
 

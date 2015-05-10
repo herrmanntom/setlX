@@ -16,9 +16,8 @@ public class CalcFunction {
     public Double calcYfromX(Double x) {
         String s = x.toString();
         String localFunction = function.replace("x", s);
-        p(localFunction);
         try {
-            Expr expr = ParseSetlX.parseStringToExpr(state, localFunction);
+            Expr expr = ParseSetlX.parseStringToExpr(state, localFunction.replace("\"", ""));
             Value v = expr.eval(state);
             return v.jDoubleValue();
         } catch (Exception e) {

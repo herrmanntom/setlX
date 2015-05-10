@@ -39,13 +39,10 @@ public class PD_addGraph extends PreDefinedProcedure {
         Canvas canvas = (Canvas)args.get(CANVAS);
         SetlString functionDefinition = (SetlString)args.get(FUNCTIONDEFINITION);
         String function = functionDefinition.toString();
-
-        function = function.replace("\"", ""); //is there a better solution? (string is not "sin(x)" but ""sin(x)"" (two much "))
-
-        System.out.println(functionDefinition);
         Value graphname = args.get(GRAPHNAME);
         Value plotarea = args.get(PLOTAREA);
         Graph g;
+
         if(!graphname.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)){
             SetlString graphNameString = (SetlString)graphname;
             SetlBoolean plotAreaBool = (SetlBoolean)plotarea;
@@ -73,8 +70,6 @@ public class PD_addGraph extends PreDefinedProcedure {
             }
             return ConnectJMathPlot.getInstance().addGraph(canvas, function,area );
         }
-
-
 
         return ConnectJMathPlot.getInstance().addGraph(canvas, functionDefinition.toString());
     }

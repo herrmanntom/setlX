@@ -53,6 +53,7 @@ public class DrawFrame extends JFrame {
     public void redraw(){
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxis, yAxis, this.dataset);
         jPanel = new ChartPanel(chart);
+        jPanel.setVisible(true);
 
         /*
         if(chartPanel == null) {

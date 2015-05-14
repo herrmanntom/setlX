@@ -17,7 +17,7 @@ public class CalcFunction {
         String s = x.toString();
         String localFunction = function.replace("x", s);
         try {
-            Expr expr = ParseSetlX.parseStringToExpr(state, localFunction.replace("\"", ""));
+            Expr expr = ParseSetlX.parseStringToExpr(state, localFunction);
             Value v = expr.eval(state);
             return v.jDoubleValue();
         } catch (Exception e) {

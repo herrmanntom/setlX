@@ -55,9 +55,24 @@ public interface SetlXPlot {
      */
     public Graph addGraph(Canvas canvas, String function, String name, boolean plotArea);
 
-    public Graph addGraph(Canvas canvas, List<List<Double>> function);
+    /**
+     * adds a graph consisting of single points
+     *
+     * @param canvas
+     * @param function list of points to be plotted
+     * @return
+     */
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function);
 
-    public Graph addGraph(Canvas canvas, List<List<Double>> function, String name);
+    /**
+     * adds a graph consisting of single points and a name for the graph
+     *
+     * @param canvas
+     * @param function list of points to be plotted
+     * @param name
+     * @return
+     */
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name);
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction);
 

@@ -46,14 +46,14 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, List<List<Double>> function) {
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function) {
         XYSeries data = canvas.getFrame().addListDataset("function", function);
         canvas.getFrame().redraw();
         return new Graph(data);
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, List<List<Double>> function, String name) {
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) {
         XYSeries data = canvas.getFrame().addListDataset(name, function);
         canvas.getFrame().redraw();
         return new Graph(data);

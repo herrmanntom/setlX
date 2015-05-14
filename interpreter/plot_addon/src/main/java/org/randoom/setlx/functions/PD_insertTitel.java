@@ -24,7 +24,7 @@ public class PD_insertTitel extends PreDefinedProcedure {
     }
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        ConnectJFreeChart.getInstance().insertTitel((Canvas)args.get(CANVAS), args.get(TITLE).toString());
+        ConnectJFreeChart.getInstance().defineTitle((Canvas) args.get(CANVAS), args.get(TITLE).toString());
         return new SetlString("Added Title \""+args.get(TITLE)+"\" to "+args.get(CANVAS));
     }
 }

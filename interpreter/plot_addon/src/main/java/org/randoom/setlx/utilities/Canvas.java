@@ -38,11 +38,16 @@ public class Canvas extends Value {
 
     @Override
     public int hashCode() {
-        return 0;
+        if(frame != null) {
+            return 37*frame.hashCode();
+        }else{
+            return 0;
+        }
     }
 
     @Override
     public boolean equalTo(Object other) {
+        //equal defined as the same class
         return other.getClass() == this.getClass();
     }
 }

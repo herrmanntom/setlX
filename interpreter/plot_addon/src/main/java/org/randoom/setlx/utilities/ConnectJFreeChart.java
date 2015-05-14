@@ -110,7 +110,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void insertTitel(Canvas canvas, String titel) {
+    public void defineTitle(Canvas canvas, String title) {
 
     }
 

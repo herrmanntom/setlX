@@ -5,9 +5,9 @@ import org.jfree.data.xy.XYSeries;
 
 import java.util.List;
 
-public class ConnectJMathPlot implements SetlXPlot {
+public class ConnectJFreeChart implements SetlXPlot {
 
-    private static ConnectJMathPlot connector;
+    private static ConnectJFreeChart connector;
 
     @Override
     public Canvas createCanvas() {
@@ -140,9 +140,9 @@ public class ConnectJMathPlot implements SetlXPlot {
 
     }
 
-    public static ConnectJMathPlot getInstance() {
+    public static ConnectJFreeChart getInstance() {
         if (connector == null) {
-            connector = new ConnectJMathPlot();
+            connector = new ConnectJFreeChart();
         }
         return connector;
     }

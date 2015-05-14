@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJMathPlot;
+import org.randoom.setlx.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
@@ -27,7 +27,7 @@ public class PD_exportCanvas extends PreDefinedProcedure {
         Canvas canvas = (Canvas)args.get(CANVAS);
         SetlString path = (SetlString)args.get(PATH);
         String pathString = path.toString().replace("\"", "");
-        ConnectJMathPlot.getInstance().exportCanvas(canvas, pathString);
+        ConnectJFreeChart.getInstance().exportCanvas(canvas, pathString);
         return new SetlString("Exported Canvas "+canvas+" to "+pathString);
     }
 }

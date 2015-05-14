@@ -6,7 +6,7 @@ import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJMathPlot;
+import org.randoom.setlx.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
@@ -56,13 +56,13 @@ public class PD_addGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJMathPlot.getInstance().addGraph(canvas, function, graphNameString.toString(), area);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString(), area);
         }
 
         //if only the functionName is set
         if (!functionName.equalTo(Rational.ONE)) {
             SetlString graphNameString = (SetlString) functionName;
-            return ConnectJMathPlot.getInstance().addGraph(canvas, function, graphNameString.toString());
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString());
         }
 
         //if only the plotarea is set
@@ -74,10 +74,10 @@ public class PD_addGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJMathPlot.getInstance().addGraph(canvas, function, area);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, area);
         }
 
         //if no optional parameter is set
-        return ConnectJMathPlot.getInstance().addGraph(canvas, function);
+        return ConnectJFreeChart.getInstance().addGraph(canvas, function);
     }
 }

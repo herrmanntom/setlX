@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJMathPlot;
+import org.randoom.setlx.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
@@ -24,7 +24,7 @@ public class PD_insertTitel extends PreDefinedProcedure {
     }
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        ConnectJMathPlot.getInstance().insertTitel((Canvas)args.get(CANVAS), args.get(TITLE).toString());
+        ConnectJFreeChart.getInstance().defineTitle((Canvas) args.get(CANVAS), args.get(TITLE).toString());
         return new SetlString("Added Title \""+args.get(TITLE)+"\" to "+args.get(CANVAS));
     }
 }

@@ -5,9 +5,9 @@ import org.jfree.data.xy.XYSeries;
 
 import java.util.List;
 
-public class ConnectJMathPlot implements SetlXPlot {
+public class ConnectJFreeChart implements SetlXPlot {
 
-    private static ConnectJMathPlot connector;
+    private static ConnectJFreeChart connector;
 
     @Override
     public Canvas createCanvas() {
@@ -46,14 +46,14 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, List<List<Double>> function) {
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function) {
         XYSeries data = canvas.getFrame().addListDataset("function", function);
         canvas.getFrame().redraw();
         return new Graph(data);
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, List<List<Double>> function, String name) {
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) {
         XYSeries data = canvas.getFrame().addListDataset(name, function);
         canvas.getFrame().redraw();
         return new Graph(data);
@@ -110,7 +110,7 @@ public class ConnectJMathPlot implements SetlXPlot {
     }
 
     @Override
-    public void insertTitel(Canvas canvas, String titel) {
+    public void defineTitle(Canvas canvas, String title) {
 
     }
 
@@ -140,9 +140,9 @@ public class ConnectJMathPlot implements SetlXPlot {
 
     }
 
-    public static ConnectJMathPlot getInstance() {
+    public static ConnectJFreeChart getInstance() {
         if (connector == null) {
-            connector = new ConnectJMathPlot();
+            connector = new ConnectJFreeChart();
         }
         return connector;
     }

@@ -21,7 +21,7 @@ public class PD_removeGraph extends PreDefinedProcedure {
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         Canvas c = (Canvas)args.get(CANVAS);
         Graph g = (Graph)args.get(GRAPH);
-        ConnectJMathPlot.getInstance().removeGraph(c, g);
+        ConnectJFreeChart.getInstance().removeGraph(c, g);
         return new SetlString("Removed "+g+" from "+c);
     }
 }

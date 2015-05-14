@@ -13,6 +13,11 @@ public class CalcFunction {
         this.setFunction(function);
     }
 
+    /**
+     * evaluates the value of the function with the given parameter using setlx interpreter
+     * @param x parameter given to the (math.) function
+     * @return
+     */
     public Double calcYfromX(Double x) {
         String s = x.toString();
         String localFunction = function.replace("x", s);
@@ -22,6 +27,7 @@ public class CalcFunction {
             return v.jDoubleValue();
         } catch (Exception e) {
             p(e.toString());
+            p("in CalcFunction");
         }
         return null;
     }

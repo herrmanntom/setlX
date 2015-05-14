@@ -4,7 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJMathPlot;
+import org.randoom.setlx.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
@@ -29,7 +29,7 @@ public class PD_modScaleType extends PreDefinedProcedure {
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         final String xType = args.get(XTYPE).toString();
         final String yType = args.get(YTYPE).toString();
-        ConnectJMathPlot.getInstance().modScaleType((Canvas)args.get(CANVAS), xType, yType);
+        ConnectJFreeChart.getInstance().modScaleType((Canvas)args.get(CANVAS), xType, yType);
         return new SetlString("Set ScaleType x to "+ xType +" and y to "+ yType);
     }
 }

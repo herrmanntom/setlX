@@ -2,13 +2,17 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Rational;
+import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.ConnectJMathPlot;
+import org.randoom.setlx.utilities.Canvas;
+import org.randoom.setlx.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.ConvertSetlTypes;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class PD_addChart extends PreDefinedProcedure {
 
@@ -26,6 +30,20 @@ public class PD_addChart extends PreDefinedProcedure {
     }
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        return new SetlString(String.valueOf(args.entrySet()));
+        Canvas canvas = (Canvas)args.get(CANVAS);
+        SetlString chartType = (SetlString)args.get(CHARTTYPE);
+        String chartTypeString = chartType.toString();
+        SetlList values = (SetlList)args.get(VALUES);
+        List valuesList = ConvertSetlTypes.convertSetlList(values);
+        Value name = args.get(NAME);
+
+        if(!name.equalTo(Rational.ONE)){
+            SetlString nameSetlString = (SetlString)name;
+            String nameString = nameSetlString.toString();
+
+            return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList, nameString);
+        }
+
+        return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList);
     }
 }

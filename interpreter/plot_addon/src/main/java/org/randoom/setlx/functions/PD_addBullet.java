@@ -6,7 +6,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJMathPlot;
+import org.randoom.setlx.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
@@ -47,7 +47,7 @@ public class PD_addBullet extends PreDefinedProcedure {
             yD = yV.jDoubleValue();
         }
 
-        ConnectJMathPlot.getInstance().addBullet((Canvas) args.get(CANVAS), xD, yD);
+        ConnectJFreeChart.getInstance().addBullet((Canvas) args.get(CANVAS), xD, yD);
         return new SetlString("Added Bullet (" + xD + "," + yD + ") to Canvas " + args.get(CANVAS));
     }
 }

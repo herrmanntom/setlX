@@ -6,7 +6,7 @@ import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJMathPlot;
+import org.randoom.setlx.utilities.ConnectJFreeChart;
 import org.randoom.setlx.utilities.ParameterDef;
 import org.randoom.setlx.utilities.State;
 
@@ -61,7 +61,7 @@ public class PD_modScale extends PreDefinedProcedure {
             yMinD = yMinV.jDoubleValue();
         }
 
-        ConnectJMathPlot.getInstance().modScale((Canvas)args.get(CANVAS), xMinD, xMaxD, yMinD, yMaxD);
+        ConnectJFreeChart.getInstance().modScale((Canvas)args.get(CANVAS), xMinD, xMaxD, yMinD, yMaxD);
         return new SetlString("Set Scale to xMinMax: ("+xMinD+","+xMaxD+") and yMinMax: ("+yMinD+","+yMaxD+")");
     }
 }

@@ -24,9 +24,10 @@ public class PD_exportCanvas extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        Value canvas = args.get(CANVAS);
-        Value path = args.get(PATH);
-        ConnectJMathPlot.getInstance().exportCanvas((Canvas)canvas, path.toString());
-        return new SetlString("Exportet Canvas "+canvas+" to "+path);
+        Canvas canvas = (Canvas)args.get(CANVAS);
+        SetlString path = (SetlString)args.get(PATH);
+        String pathString = path.toString().replace("\"", "");
+        ConnectJMathPlot.getInstance().exportCanvas(canvas, pathString);
+        return new SetlString("Exported Canvas "+canvas+" to "+pathString);
     }
 }

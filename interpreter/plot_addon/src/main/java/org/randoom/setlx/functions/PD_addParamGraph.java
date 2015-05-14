@@ -28,6 +28,7 @@ public class PD_addParamGraph extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+        //Todo: implement call connector class
         return new SetlString(String.valueOf(args.entrySet()));
     }
 }

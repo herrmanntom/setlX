@@ -27,8 +27,8 @@ public class PD_modScaleType extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        final String xType = args.get(XTYPE).toString();
-        final String yType = args.get(YTYPE).toString();
+        final String xType = args.get(XTYPE).toString().replace("\"", "");
+        final String yType = args.get(YTYPE).toString().replace("\"", "");
         ConnectJFreeChart.getInstance().modScaleType((Canvas)args.get(CANVAS), xType, yType);
         return new SetlString("Set ScaleType x to "+ xType +" and y to "+ yType);
     }

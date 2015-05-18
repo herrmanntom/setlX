@@ -32,7 +32,7 @@ public class PD_addChart extends PreDefinedProcedure {
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         Canvas canvas = (Canvas)args.get(CANVAS);
         SetlString chartType = (SetlString)args.get(CHARTTYPE);
-        String chartTypeString = chartType.toString();
+        String chartTypeString = chartType.toString().replace("\"", "");;
         SetlList values = (SetlList)args.get(VALUES);
         List valuesList = ConvertSetlTypes.convertSetlList(values);
         Value name = args.get(NAME);

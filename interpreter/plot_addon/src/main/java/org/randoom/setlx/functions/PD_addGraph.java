@@ -56,13 +56,13 @@ public class PD_addGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString(), area);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString().replace("\"", ""), area);
         }
 
         //if only the functionName is set
         if (!functionName.equalTo(Rational.ONE)) {
             SetlString graphNameString = (SetlString) functionName;
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString());
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString().replace("\"", ""));
         }
 
         //if only the plotarea is set

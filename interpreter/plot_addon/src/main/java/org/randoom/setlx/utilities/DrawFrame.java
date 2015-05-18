@@ -40,6 +40,7 @@ public class DrawFrame extends JFrame {
     public XYSeries addDataset(String title, String function ) {
         XYSeries series = new XYSeries(title, true, false);
         CalcFunction calc = new CalcFunction(function);
+
         double x = x_Min;
         while(x<=x_Max){
             series.add(x,calc.calcYfromX(x));
@@ -52,8 +53,11 @@ public class DrawFrame extends JFrame {
 
     public void redraw(){
         JFreeChart chart = ChartFactory.createXYLineChart(chartTitle, xAxis, yAxis, this.dataset);
-        jPanel = new ChartPanel(chart);
-        jPanel.setVisible(true);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        jPanel.add(chartPanel);
+
+        //this.pack();
+        this.setVisible(true);
 
         /*
         if(chartPanel == null) {

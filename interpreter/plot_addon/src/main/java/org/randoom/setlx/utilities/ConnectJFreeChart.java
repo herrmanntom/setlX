@@ -12,6 +12,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public Canvas createCanvas() {
         DrawFrame frame = new DrawFrame();
+        frame.setVisible(true);
         return new Canvas(frame);
 
     }

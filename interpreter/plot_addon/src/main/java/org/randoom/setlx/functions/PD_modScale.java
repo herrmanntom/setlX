@@ -31,10 +31,10 @@ public class PD_modScale extends PreDefinedProcedure {
         SetlList xList = (SetlList) args.get(XMINMAX);
         SetlList yList = (SetlList) args.get(YMINMAX);
 
-        Value xMaxV = xList.firstMember();
-        Value xMinV = xList.lastMember();
-        Value yMaxV = yList.firstMember();
-        Value yMinV = yList.lastMember();
+        Value xMinV = xList.firstMember();
+        Value xMaxV = xList.lastMember();
+        Value yMinV = yList.firstMember();
+        Value yMaxV = yList.lastMember();
         double xMaxD;
         double xMinD;
         double yMaxD;

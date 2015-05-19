@@ -56,7 +56,7 @@ public class PD_addGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString().replace("\"", ""), area);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString.toString().replace("\"", ""), area, );
         }
 
         //if only the functionName is set
@@ -74,7 +74,7 @@ public class PD_addGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, area);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, area, );
         }
 
         //if no optional parameter is set

@@ -1,0 +1,51 @@
+// This function finds a root of the equation f(x) = 0.
+// The function works by using the regula falsi in the interval [a,b].
+// The number n is the number of iterations.
+regulaFalsi := procedure(f, a, b, n) {
+    assert(a < b, "Error: !(a < b)");
+    assert(f(a) < 0 && f(b) > 0, "Error: !(f(a) < 0 && f(b) > 0)");
+    fa := f(a); fb := f(b); 
+    for (i in [1 .. n]) {
+        c  := (fb * a - fa * b) / (fb - fa);
+        fc := f(c); 
+        if (fc <= 0) {
+            a := c; fa := fc; 
+        } else {
+            b := c; fb := fc; 
+        }
+        if (isRational(a) && isRational(b)) {
+            print("a = $nDecimalPlaces(a, 40)$, b = $nDecimalPlaces(b, 40)$");
+        } else {
+          print("a = $a$, b = $b$");
+        }
+    }
+    if (-fa < fb) {
+        return a;
+    } else {
+        return b;
+    }
+};
+
+sqrt := procedure(x) {
+    return x * x - 2;
+};
+
+r2 := regulaFalsi(sqrt, 0, 2, 60);
+
+print("2 ** (1/2) = $nDecimalPlaces(r2, 42)$");
+print("\n\n\n");
+
+cosXEqualsX := procedure(x) {
+    return x - cos(x);
+};
+
+// x := regulaFalsi(cosXEqualsX, 0.0, 1.0, 14);
+
+// print("x = $x$\n\n\n");
+
+f4 := x |-> x ** 4 - 1;
+
+x := regulaFalsi(f4, 0.0, 10.0, 100);
+
+
+

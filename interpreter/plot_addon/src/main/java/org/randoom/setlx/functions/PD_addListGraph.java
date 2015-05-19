@@ -39,7 +39,7 @@ public class PD_addListGraph extends PreDefinedProcedure {
         //if the functionName is set
         if (!functionName.equalTo(Rational.ONE)) {
             SetlString graphNameString = (SetlString) functionName;
-            return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, graphNameString.toString().replace("\"", ""));
+            return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, graphNameString.toString().replace("\"", ""), );
         }
 
         //if no optional parameter is set

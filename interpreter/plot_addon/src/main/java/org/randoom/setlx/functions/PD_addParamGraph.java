@@ -53,13 +53,13 @@ public class PD_addParamGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphNameString.toString().replace("\"", ""), area);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphNameString.toString().replace("\"", ""), area, "black");
         }
 
         //if only the functionName is set
         if (!functionName.equalTo(Rational.ONE)) {
             SetlString graphNameString = (SetlString) functionName;
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphNameString.toString().replace("\"", ""));
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphNameString.toString().replace("\"", ""), );
         }
 
         //if only the plotarea is set
@@ -71,7 +71,7 @@ public class PD_addParamGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, area);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, area, "black");
         }
 
         //if no optional parameter is set

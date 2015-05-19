@@ -47,7 +47,7 @@ public class PD_addBullet extends PreDefinedProcedure {
             yD = yV.jDoubleValue();
         }
 
-        ConnectJFreeChart.getInstance().addBullet((Canvas) args.get(CANVAS), xD, yD);
+        ConnectJFreeChart.getInstance().addBullet((Canvas) args.get(CANVAS), xD, yD, );
         return new SetlString("Added Bullet (" + xD + "," + yD + ") to Canvas " + args.get(CANVAS));
     }
 }

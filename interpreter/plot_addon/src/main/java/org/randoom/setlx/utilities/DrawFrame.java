@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -53,13 +54,13 @@ public class DrawFrame extends JFrame {
             functions.clear();
             for(Plotfunction item:func){
                 if(!item.getFunctionstring().isEmpty()){
-                    this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea());
+                    this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
                 }
                 else if(!item.getXfunction().isEmpty()){
-                    this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea());
+                    this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor());
                 }
                 else if(item.getFunction() != null){
-                    this.addListDataset(item.getTitle(), item.getFunction(), item.isArea());
+                    this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
                 }
             }
         }
@@ -78,10 +79,11 @@ public class DrawFrame extends JFrame {
             plot.setRangeAxis(this.yAxis);
         }
     }
-    public DrawFrame() {
-        super("Graphic output");
+    public DrawFrame(String title) {
+        super(title);
         chartCount = 0;
         jPanel = new JPanel();
+        jPanel.setName(title);
         add(jPanel, BorderLayout.CENTER);
         setSize(640, 480);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -93,7 +95,7 @@ public class DrawFrame extends JFrame {
         plot = null;
     }
 
-    public XYSeries addDataset(String title, String function, boolean area) {
+    public XYSeries addDataset(String title, String function, boolean area, ChartColor color) {
         Plotfunction plotfun = new Plotfunction(title, area);
         plotfun.setFunctionstring(function);
         functions.add(plotfun);
@@ -106,10 +108,12 @@ public class DrawFrame extends JFrame {
         else{
             renderer = new XYLineAndShapeRenderer(true, false);
         }
+        renderer.setSeriesPaint(0, color);
         double x = x_Min;
+        double step = (x_Max - x_Min)/200;
         while(x<=x_Max){
             series.add(x,calc.calcYfromX(x));
-            x += 0.1;
+            x += step;
         }
         XYSeriesCollection col = new XYSeriesCollection(series);
 
@@ -136,7 +140,7 @@ public class DrawFrame extends JFrame {
         this.pack();
         chartCount++;
     }
-    public XYSeries addListDataset(String title, List<List<Double>> function, boolean area){
+    public XYSeries addListDataset(String title, List<List<Double>> function, boolean area, ChartColor color){
         Plotfunction plotfun = new Plotfunction(title, area);
         plotfun.setFunction(function);
         functions.add(plotfun);
@@ -148,6 +152,7 @@ public class DrawFrame extends JFrame {
         else{
             renderer = new XYLineAndShapeRenderer(true, false);
         }
+        renderer.setSeriesPaint(0, color);
         for(List<Double> element: function){
             series.add(element.get(0), element.get(1));
         }
@@ -164,7 +169,7 @@ public class DrawFrame extends JFrame {
         return series;
     }
 
-    public XYSeries addParamDataset(String title, String xfunction, String yfunction, boolean area){
+    public XYSeries addParamDataset(String title, String xfunction, String yfunction, boolean area, ChartColor color){
         Plotfunction plotfun = new Plotfunction(title, area);
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
@@ -179,6 +184,7 @@ public class DrawFrame extends JFrame {
         else{
             renderer = new XYLineAndShapeRenderer(true, false);
         }
+        renderer.setSeriesPaint(0, color);
         for(double x=-50; x<=50;x+=0.1){
             series.add(xcalc.calcYfromX(x),ycalc.calcYfromX(x));
         }
@@ -229,6 +235,16 @@ public class DrawFrame extends JFrame {
 
         public String getFunctionstring() {
             return functionstring;
+        }
+
+        private ChartColor color;
+
+        public ChartColor getColor() {
+            return color;
+        }
+
+        public void setColor(ChartColor color) {
+            this.color = color;
         }
 
         public void setFunctionstring(String functionstring) {

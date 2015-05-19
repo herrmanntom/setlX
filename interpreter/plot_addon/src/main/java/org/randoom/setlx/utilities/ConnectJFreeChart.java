@@ -122,8 +122,8 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void modScale(Canvas canvas, double xMin, double xMax, double yMin, double yMax) {
-        canvas.getFrame().modyScale(yMax, yMin);
-        canvas.getFrame().modxScale(xMax, xMin);
+        canvas.getFrame().modyScale(yMin, yMax);
+        canvas.getFrame().modxScale(xMin, xMax);
     }
 
     @Override
@@ -133,20 +133,20 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void modScaleType(Canvas canvas, String xType, String yType) {
-        System.out.println(xType+" "+yType);
-        if(xType.equalsIgnoreCase("\"log\"")){
+
+        if(xType.equalsIgnoreCase("log")){
             canvas.getFrame().setxAxis(new LogAxis());
         }
-        else if(xType.equalsIgnoreCase("\"num\"")){
+        else if(xType.equalsIgnoreCase("num")){
             canvas.getFrame().setxAxis(new NumberAxis());
         }
         else{
             System.out.println("Wrong x-Axis type, use log or num");
         }
-        if(yType.equalsIgnoreCase("\"log\"")){
+        if(yType.equalsIgnoreCase("log")){
             canvas.getFrame().setyAxis(new LogAxis());
         }
-        else if(yType.equalsIgnoreCase("\"num\"")){
+        else if(yType.equalsIgnoreCase("num")){
             canvas.getFrame().setyAxis(new NumberAxis());
         }
         else{

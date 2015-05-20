@@ -2,9 +2,16 @@ package org.randoom.setlx.utilities;
 
 
 import org.jfree.chart.ChartColor;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.chart.axis.*;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class ConnectJFreeChart implements SetlXPlot {
@@ -14,6 +21,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Canvas createCanvas() {
+
         DrawFrame frame = new DrawFrame("Graphic output");
         frame.setVisible(true);
         return new Canvas(frame);
@@ -21,86 +29,77 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Canvas createCanvas(String titel) {
-        return null;
+    public Canvas createCanvas(String title) {
+        DrawFrame frame = new DrawFrame(title);
+        frame.setVisible(true);
+        return new Canvas(frame);
+
     }
 
     @Override
     public Graph addGraph(Canvas canvas, String function) {
-        XYSeries data = canvas.getFrame().addDataset("function", function, false, new ChartColor(0, 0 ,0));
-        return new Graph(data);
+        return canvas.getFrame().addDataset("function", function, false, new Color(0, 0, 0));
+
     }
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name) {
-        XYSeries data = canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0 ,0));
-
-        return new Graph(data);
+        return canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0 ,0));
     }
 
     //TODO: at plotArea possibility
     @Override
     public Graph addGraph(Canvas canvas, String function, boolean plotArea, List<Integer> color) {
-        XYSeries data = canvas.getFrame().addDataset("function", function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addDataset("function", function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
 
-        return new Graph(data);
     }
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name, boolean plotArea, List<Integer> color) {
-        XYSeries data = canvas.getFrame().addDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
-
-        return new Graph(data);
+        return canvas.getFrame().addDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
     @Override
     public Graph addListGraph(Canvas canvas, List<List<Double>> function) {
-        XYSeries data = canvas.getFrame().addListDataset("function", function, false, new ChartColor(0, 0,0));
+        return canvas.getFrame().addListDataset("function", function, false, new ChartColor(0, 0, 0));
 
-        return new Graph(data);
     }
 
     @Override
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color) {
-        XYSeries data = canvas.getFrame().addListDataset(name, function, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addListDataset(name, function, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
 
-        return new Graph(data);
     }
 
     @Override
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, boolean plotArea, List<Integer> color) {
-        XYSeries data = canvas.getFrame().addListDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addListDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
 
-        return new Graph(data);
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction) {
-        XYSeries data = canvas.getFrame().addParamDataset("function", xfunction, yfunction, false, new ChartColor(0, 0 ,0));
+        return canvas.getFrame().addParamDataset("function", xfunction, yfunction, false, new ChartColor(0, 0, 0));
 
-        return new Graph(data);
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color) {
-        XYSeries data = canvas.getFrame().addParamDataset(name,xfunction,yfunction, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
 
-        return new Graph(data);
     }
 
     //TODO:plotArea
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, Boolean plotArea, List<Integer> color) {
-        XYSeries data = canvas.getFrame().addParamDataset("function",xfunction,yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addParamDataset("function", xfunction, yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
 
-        return new Graph(data);
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, Boolean plotArea, List<Integer> color) {
-        XYSeries data = canvas.getFrame().addParamDataset(name,xfunction,yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
 
-        return new Graph(data);
     }
 
     @Override
@@ -131,7 +130,12 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void legendVisible(Canvas canvas, Boolean visible) {
-
+        if(visible){
+            canvas.getFrame().plot.setFixedLegendItems(null);
+        }
+        else{
+            canvas.getFrame().plot.setFixedLegendItems(new LegendItemCollection());
+        }
     }
 
     @Override
@@ -142,7 +146,15 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void exportCanvas(Canvas canvas, String path) {
-
+        DrawFrame frame = canvas.getFrame();
+        BufferedImage image = new BufferedImage(frame.getWidth(), frame.getHeight(), BufferedImage.TYPE_INT_RGB);
+        //Graphics2D graphics2D = image.createGraphics();
+        //frame.jPanel.paint(graphics2D);
+        try {
+            ImageIO.write(image, "png", new File(path));
+        }catch (IOException e){
+            System.out.println("something went horribly wrong");
+        }
     }
 
     @Override

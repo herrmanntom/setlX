@@ -1,24 +1,89 @@
 package org.randoom.setlx.utilities;
 
-
-import org.jfree.data.xy.XYSeries;
 import org.randoom.setlx.types.Value;
+
+import java.awt.*;
+import java.util.List;
 
 public class Graph extends Value {
 
-
-    private XYSeries series;
-    public Graph(XYSeries series) {
-        this.series = series;
+    public boolean isArea() {
+        return area;
     }
 
-    public XYSeries getSeries() {
-        return series;
+    private boolean area;
+
+    public String getTitle() {
+        return title;
     }
+
+    public Graph(String title, boolean area) {
+        this.title = title;
+        this.area = area;
+    }
+
+    public String getXfunction() {
+        return xfunction;
+    }
+
+    public List<List<Double>> getFunction() {
+        return function;
+    }
+
+    public String getYfunction() {
+        return yfunction;
+    }
+
+    private String title;
+
+    private String functionstring = "";
+
+    public String getFunctionstring() {
+        return functionstring;
+    }
+
+    private Color color;
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void setFunctionstring(String functionstring) {
+        this.functionstring = functionstring;
+    }
+
+    public void setFunction(List<List<Double>> function) {
+        this.function = function;
+    }
+
+    public void setXfunction(String xfunction) {
+        this.xfunction = xfunction;
+    }
+
+    public void setYfunction(String yfunction) {
+        this.yfunction = yfunction;
+    }
+
+    private List<List<Double>> function = null;
+
+    private String xfunction = "";
+
+    private String yfunction = "";
+
 
     @Override
     public Value clone() {
-        return new Graph(this.series);
+        Graph gra = new Graph(this.title, this.area);
+        gra.setYfunction(this.yfunction);
+        gra.setXfunction(this.xfunction);
+        gra.setFunction(this.function);
+        gra.setColor(this.color);
+        gra.setFunctionstring(this.functionstring);
+        return gra;
     }
 
     @Override

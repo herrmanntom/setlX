@@ -19,16 +19,17 @@ import java.util.List;
 
 
 public class DrawFrame extends JFrame {
+    private XYSeriesCollection dataset = new XYSeriesCollection();
     private double x_Min;
     private double x_Max;
     private double y_Min;
     private double y_Max;
 
-    private List<Graph> functions = new ArrayList<>();
+    private List<Plotfunction> functions = new ArrayList<>();
     private ValueAxis xAxis;
     private ValueAxis yAxis;
     private JPanel jPanel;
-     XYPlot plot;
+    private XYPlot plot;
     private int chartCount;
     private JFreeChart chart;
     private ChartPanel chartPanel;
@@ -49,9 +50,9 @@ public class DrawFrame extends JFrame {
         if(chartCount != 0) {
             chartCount = 0;
             jPanel.remove(chartPanel);
-            List<Graph> func = new ArrayList<>(functions);
+            List<Plotfunction> func = new ArrayList<>(functions);
             functions.clear();
-            for(Graph item:func){
+            for(Plotfunction item:func){
                 if(!item.getFunctionstring().isEmpty()){
                     this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
                 }
@@ -80,24 +81,22 @@ public class DrawFrame extends JFrame {
     }
     public DrawFrame(String title) {
         super(title);
-        this.setTitle(title);
         chartCount = 0;
-        //jPanel = new JPanel();
-        //jPanel.setName(title);
-        //add(jPanel, BorderLayout.CENTER);
-        //this.setSize(640, 480);
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setLocationRelativeTo(null);
+        jPanel = new JPanel();
+        jPanel.setName(title);
+        add(jPanel, BorderLayout.CENTER);
+        setSize(640, 480);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
         x_Min = -10.0;
         x_Max = 10.0;
         xAxis = new NumberAxis("x");
         yAxis = new NumberAxis("y");
         plot = null;
     }
-    
-    public Graph addDataset(String title, String function, boolean area, Color color) {
-        System.out.println("penis2");
-        Graph plotfun = new Graph(title, area);
+
+    public XYSeries addDataset(String title, String function, boolean area, ChartColor color) {
+        Plotfunction plotfun = new Plotfunction(title, area);
         plotfun.setFunctionstring(function);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, true, false);
@@ -109,9 +108,7 @@ public class DrawFrame extends JFrame {
         else{
             renderer = new XYLineAndShapeRenderer(true, false);
         }
-
-        renderer.setSeriesPaint(0, Color.BLACK);
-
+        renderer.setSeriesPaint(0, color);
         double x = x_Min;
         double step = (x_Max - x_Min)/200;
         while(x<=x_Max){
@@ -127,26 +124,24 @@ public class DrawFrame extends JFrame {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
         }
-        plot.getRendererForDataset(col).setSeriesPaint(0, Color.black);
-        System.out.println("penis");
         this.redraw();
-        return plotfun;
+        return series;
     }
+
     private void redraw(){
         if(chartCount != 0) {
-            this.remove(chartPanel);
-            // jPanel.remove(chartPanel);
+            jPanel.remove(chartPanel);
         }
-        System.out.println("penis2");
         chart = new JFreeChart("title", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
         chartPanel = new ChartPanel(chart, true, true, true, true, true);
-        //jPanel.add(chartPanel);
-        this.add(chartPanel, BorderLayout.CENTER);
+
+        jPanel.add(chartPanel);
+
         this.pack();
         chartCount++;
     }
-    public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color){
-        Graph plotfun = new Graph(title, area);
+    public XYSeries addListDataset(String title, List<List<Double>> function, boolean area, ChartColor color){
+        Plotfunction plotfun = new Plotfunction(title, area);
         plotfun.setFunction(function);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, false, true);
@@ -171,11 +166,11 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
-        return plotfun;
+        return series;
     }
 
-    public Graph addParamDataset(String title, String xfunction, String yfunction, boolean area, Color color){
-        Graph plotfun = new Graph(title, area);
+    public XYSeries addParamDataset(String title, String xfunction, String yfunction, boolean area, ChartColor color){
+        Plotfunction plotfun = new Plotfunction(title, area);
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
         functions.add(plotfun);
@@ -189,6 +184,7 @@ public class DrawFrame extends JFrame {
         else{
             renderer = new XYLineAndShapeRenderer(true, false);
         }
+        renderer.setSeriesPaint(0, color);
         for(double x=-50; x<=50;x+=0.1){
             series.add(xcalc.calcYfromX(x),ycalc.calcYfromX(x));
         }
@@ -201,11 +197,10 @@ public class DrawFrame extends JFrame {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
         }
-        plot.getRendererForDataset(plot.getDataset(chartCount)).setSeriesPaint(0, color);
         this.redraw();
-        return plotfun;
+        return series;
     }
-    /*
+
     private class Plotfunction{
         public boolean isArea() {
             return area;
@@ -274,5 +269,4 @@ public class DrawFrame extends JFrame {
 
         private String yfunction = "";
     }
-    */
 }

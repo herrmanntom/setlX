@@ -7,7 +7,7 @@ import org.randoom.setlx.utilities.*;
 import java.util.HashMap;
 import java.util.List;
 
-public class PD_addListGraph extends PreDefinedProcedure {
+public class PD_plot_addListGraph extends PreDefinedProcedure {
 
 
     private final static ParameterDef
@@ -22,9 +22,9 @@ public class PD_addListGraph extends PreDefinedProcedure {
             PLOTAREA = createOptionalParameter("plotarea", Rational.ONE);
 
     public final static PreDefinedProcedure
-            DEFINITION = new PD_addListGraph();
+            DEFINITION = new PD_plot_addListGraph();
 
-    private PD_addListGraph() {
+    private PD_plot_addListGraph() {
         super();
         addParameter(CANVAS);
         addParameter(VALUELIST);

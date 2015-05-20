@@ -11,14 +11,14 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
-public class PD_legendVisible extends PreDefinedProcedure {
+public class PD_plot_legendVisible extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef VISIBLE = createParameter("visible");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_legendVisible();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_legendVisible();
 
-    private PD_legendVisible(){
+    private PD_plot_legendVisible(){
         super();
         addParameter(CANVAS);
         addParameter(VISIBLE);

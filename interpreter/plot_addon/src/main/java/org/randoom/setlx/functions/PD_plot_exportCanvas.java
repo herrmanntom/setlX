@@ -10,13 +10,13 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
-public class PD_exportCanvas extends PreDefinedProcedure {
+public class PD_plot_exportCanvas extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef PATH = createParameter("path");
-    public final static PreDefinedProcedure DEFINITION = new PD_exportCanvas();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_exportCanvas();
 
-    private PD_exportCanvas() {
+    private PD_plot_exportCanvas() {
         super();
         addParameter(CANVAS);
         addParameter(PATH);

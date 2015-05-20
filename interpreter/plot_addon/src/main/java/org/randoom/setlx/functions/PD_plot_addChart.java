@@ -14,14 +14,14 @@ import org.randoom.setlx.utilities.ConvertSetlTypes;
 import java.util.HashMap;
 import java.util.List;
 
-public class PD_addChart extends PreDefinedProcedure {
+public class PD_plot_addChart extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef CHARTTYPE = createParameter("chartType");
     private final static ParameterDef VALUES = createParameter("values");
     private final static ParameterDef NAME = createOptionalParameter("name", Rational.ONE);
-    public final static PreDefinedProcedure DEFINITION = new PD_addChart();
-    private PD_addChart(){
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_addChart();
+    private PD_plot_addChart(){
         super();
         addParameter(CANVAS);
         addParameter(CHARTTYPE);

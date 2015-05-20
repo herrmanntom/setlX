@@ -10,15 +10,15 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
-public class PD_modScaleType extends PreDefinedProcedure {
+public class PD_plot_modScaleType extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("Canvas");
     private final static ParameterDef XTYPE = createParameter("xType");
     private final static ParameterDef YTYPE = createParameter("yType");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_modScaleType();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_modScaleType();
 
-    private PD_modScaleType(){
+    private PD_plot_modScaleType(){
         super();
         addParameter(CANVAS);
         addParameter(XTYPE);

@@ -10,15 +10,15 @@ import org.randoom.setlx.utilities.*;
 import java.util.HashMap;
 import java.util.List;
 
-public class PD_addBullet extends PreDefinedProcedure {
+public class PD_plot_addBullet extends PreDefinedProcedure {
 
 
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef XYTUPEL = createParameter("xyTupel");
     private final static ParameterDef RGBLIST = createParameter("RGBList");
-    public final static PreDefinedProcedure DEFINITION = new PD_addBullet();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_addBullet();
 
-    private PD_addBullet() {
+    private PD_plot_addBullet() {
         super();
         addParameter(CANVAS);
         addParameter(XYTUPEL);

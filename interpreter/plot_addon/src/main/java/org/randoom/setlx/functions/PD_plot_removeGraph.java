@@ -7,12 +7,12 @@ import org.randoom.setlx.utilities.*;
 
 import java.util.HashMap;
 
-public class PD_removeGraph extends PreDefinedProcedure {
+public class PD_plot_removeGraph extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef GRAPH = createParameter("graph");
-    public final static PreDefinedProcedure DEFINITION = new PD_removeGraph();
-    private PD_removeGraph(){
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_removeGraph();
+    private PD_plot_removeGraph(){
         super();
         addParameter(CANVAS);
         addParameter(GRAPH);

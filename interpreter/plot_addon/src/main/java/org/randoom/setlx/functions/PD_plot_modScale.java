@@ -12,14 +12,14 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
-public class PD_modScale extends PreDefinedProcedure {
+public class PD_plot_modScale extends PreDefinedProcedure {
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef XMINMAX = createParameter("xMinMax");
     private final static ParameterDef YMINMAX = createParameter("yMinMax");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_modScale();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_modScale();
 
-    private PD_modScale(){
+    private PD_plot_modScale(){
         super();
         addParameter(CANVAS);
         addParameter(XMINMAX);

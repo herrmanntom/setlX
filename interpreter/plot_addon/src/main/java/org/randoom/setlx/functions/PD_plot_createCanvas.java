@@ -8,13 +8,13 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
-public class PD_createCanvas extends PreDefinedProcedure {
+public class PD_plot_createCanvas extends PreDefinedProcedure {
 
 
     public final static PreDefinedProcedure
-            DEFINITION = new PD_createCanvas();
+            DEFINITION = new PD_plot_createCanvas();
 
-    private PD_createCanvas() {
+    private PD_plot_createCanvas() {
         super();
     }
 

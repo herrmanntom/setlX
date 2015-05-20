@@ -1,23 +1,19 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.Rational;
-import org.randoom.setlx.types.SetlBoolean;
-import org.randoom.setlx.types.SetlString;
-import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJFreeChart;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.types.*;
+import org.randoom.setlx.utilities.*;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class PD_addParamGraph extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef XFUNCTION = createParameter("xFunction");
     private final static ParameterDef YFUNCTION = createParameter("yFunction");
-    private final static ParameterDef GRAPHNAME = createOptionalParameter("graphname", Rational.ONE);
+    private final static ParameterDef GRAPHNAME = createParameter("graphname");
+    private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor", Rational.ONE);
     private final static ParameterDef PLOTAREA = createOptionalParameter("plotArea", Rational.ONE);
     public final static PreDefinedProcedure DEFINITION = new PD_addParamGraph();
     private PD_addParamGraph(){
@@ -26,6 +22,7 @@ public class PD_addParamGraph extends PreDefinedProcedure {
         addParameter(XFUNCTION);
         addParameter(YFUNCTION);
         addParameter(GRAPHNAME);
+        addParameter(GRAPHCOLOR);
         addParameter(PLOTAREA);
     }
 
@@ -40,12 +37,21 @@ public class PD_addParamGraph extends PreDefinedProcedure {
         // function comes as ""sin(x)"" so i have to replace the quotation marks
         String xFunction = xFunctionDefinition.toString().replace("\"", "");
         String yFunction = yFunctionDefinition.toString().replace("\"", "");
-        Value functionName = args.get(GRAPHNAME);
+        Value graphNameV = args.get(GRAPHNAME);
+        SetlString graphNameS = (SetlString) graphNameV;
+        String graphName = graphNameS.toString().replace("\"", "");
+
+        Value graphColorV = args.get(GRAPHCOLOR);
         Value plotarea = args.get(PLOTAREA);
 
-        // if functionName and plotArea are set
-        if (!functionName.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
-            SetlString graphNameString = (SetlString) functionName;
+        // if graphcolor and plotArea are set
+        if (!graphColorV.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
+            SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
+            if(!graphColorS.equalTo(Rational.ONE)){
+                return new SetlString("Parameter graphcolor have to consits of exact three values");
+            }
+            List graphColor = ConvertSetlTypes.convertSetlList(graphColorS);
+
             SetlBoolean plotAreaBool = (SetlBoolean) plotarea;
             boolean area;
             if (plotAreaBool.equalTo(SetlBoolean.TRUE)) {
@@ -53,28 +59,21 @@ public class PD_addParamGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphNameString.toString().replace("\"", ""), area, "black");
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, area);
         }
 
-        //if only the functionName is set
-        if (!functionName.equalTo(Rational.ONE)) {
-            SetlString graphNameString = (SetlString) functionName;
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphNameString.toString().replace("\"", ""), );
-        }
-
-        //if only the plotarea is set
-        if (!plotarea.equalTo(Rational.ONE)) {
-            SetlBoolean plotAreaBool = (SetlBoolean) plotarea;
-            boolean area;
-            if (plotAreaBool.equalTo(SetlBoolean.TRUE)) {
-                area = true;
-            } else {
-                area = false;
+        //if only the graphcolor is set
+        if (!graphColorV.equalTo(Rational.ONE)) {
+            SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
+            if(!graphColorS.equalTo(Rational.ONE)){
+                return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, area, "black");
+            List graphColor = ConvertSetlTypes.convertSetlList(graphColorS);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor);
         }
+
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction);
+        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName);
     }
 }

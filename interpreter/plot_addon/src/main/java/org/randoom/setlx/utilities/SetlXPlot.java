@@ -16,14 +16,6 @@ public interface SetlXPlot {
 
 
     public Canvas createCanvas(String titel);
-    /**
-     * adds a function as graph to the given canvas
-     *
-     * @param canvas
-     * @param function
-     * @return Graph object, identifier of the graph
-     */
-    public Graph addGraph(Canvas canvas, String function);
 
     /**
      * adds a function as graph to the given canvas and give it a name
@@ -36,6 +28,17 @@ public interface SetlXPlot {
     public Graph addGraph(Canvas canvas, String function, String name);
 
     /**
+     * adds a function as graph to the canvas, give it a name and plots the integral if plotArea is true
+     *
+     * @param canvas
+     * @param function
+     * @param name
+     * @param color
+     * @return
+     */
+    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color);
+
+    /**
      * adds a function as graph to the given canvas and plots the area to the y-axis (integral) if plotArea ist true
      *
      * @param canvas
@@ -44,19 +47,7 @@ public interface SetlXPlot {
      * @param color
      * @return
      */
-    public Graph addGraph(Canvas canvas, String function, boolean plotArea, List<Integer> color);
-
-    /**
-     * adds a function as graph to the canvas, give it a name and plots the integral if plotArea is true
-     *
-     * @param canvas
-     * @param function
-     * @param name
-     * @param plotArea
-     * @param color
-     * @return
-     */
-    public Graph addGraph(Canvas canvas, String function, String name, boolean plotArea, List<Integer> color);
+    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color, boolean plotArea);
 
     /**
      * adds a graph consisting of single points
@@ -65,7 +56,7 @@ public interface SetlXPlot {
      * @param function list of points to be plotted
      * @return
      */
-    public Graph addListGraph(Canvas canvas, List<List<Double>> function);
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name);
 
     /**
      * adds a graph consisting of single points and a name for the graph
@@ -78,15 +69,13 @@ public interface SetlXPlot {
      */
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color);
 
-    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, boolean plotArea, List<Integer> color);
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea);
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name);
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color);
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, Boolean plotArea, List<Integer> color);
-
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, Boolean plotArea, List<Integer> color);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea);
 
     public Graph addChart(Canvas canvas, String chartType, List values);
 

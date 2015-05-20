@@ -13,7 +13,7 @@ public class ConvertSetlTypes {
 
     public static List convertSetlList(SetlList setlList) throws SetlException {
 
-        List returnList = new ArrayList<>();
+        List returnList = new ArrayList();
         Value member;
         for(int i =1; i<setlList.size()+1; i++){
             member = setlList.getMember(i);

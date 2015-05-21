@@ -7,6 +7,7 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
+import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYSeries;
@@ -59,7 +60,11 @@ public class DrawFrame extends JFrame {
                     this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor());
                 }
                 else if(item.getFunction() != null){
-                    this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
+                    if(item.isBullets()){
+                        this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
+                    }else{
+                        this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
+                    }
                 }
             }
         }
@@ -141,7 +146,9 @@ public class DrawFrame extends JFrame {
     public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color){
         Graph plotfun = new Graph(title, area);
         plotfun.setFunction(function);
+        plotfun.setBullets(false);
         functions.add(plotfun);
+
         XYSeries series = new XYSeries(title, false, true);
         XYItemRenderer renderer;
         if(area){
@@ -166,7 +173,35 @@ public class DrawFrame extends JFrame {
         this.redraw();
         return plotfun;
     }
+    public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color){
+        System.out.println("add Bulletset");
+        Graph plotfun = new Graph(title, false);
+        plotfun.setFunction(bullets);
+        plotfun.setBullets(true);
+        functions.add(plotfun);
+        System.out.println("newSeries");
+        XYSeries series = new XYSeries(title, false, true);
+        XYItemRenderer renderer;
+        renderer = new XYDotRenderer();
+        System.out.println("renderer");
+        renderer.setSeriesPaint(0, color);
+        for(List<Double> element: bullets){
+            series.add(element.get(0), element.get(1));
+        }
+        XYSeriesCollection col = new XYSeriesCollection(series);
 
+        if(plot == null){
+            plot = new XYPlot(col, xAxis, yAxis, renderer);
+        }
+        else{
+            plot.setDataset(chartCount, col);
+            plot.setRenderer(chartCount, renderer);
+        }
+        System.out.println("redraw");
+        this.redraw();
+        System.out.println("return");
+        return plotfun;
+    }
     public Graph addParamDataset(String title, String xfunction, String yfunction, boolean area, Color color){
         Graph plotfun = new Graph(title, area);
         plotfun.setXfunction(xfunction);

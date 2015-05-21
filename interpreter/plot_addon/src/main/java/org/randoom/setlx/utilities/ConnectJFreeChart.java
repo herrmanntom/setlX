@@ -2,9 +2,9 @@ package org.randoom.setlx.utilities;
 
 
 import org.jfree.chart.ChartColor;
-import org.jfree.data.xy.XYSeries;
 import org.jfree.chart.axis.*;
 
+import java.awt.*;
 import java.util.List;
 
 public class ConnectJFreeChart implements SetlXPlot {
@@ -148,8 +148,13 @@ public class ConnectJFreeChart implements SetlXPlot {
 
 
     @Override
-    public void addBullet(Canvas canvas, double x, double y, List<Integer> color) {
+    public Graph addBullet(Canvas canvas, List<List<Double>> bullets, List<Integer> color) {
+        System.out.println("add Bullet");
+        System.out.print(color.get(0));
+        System.out.print(color.get(1));
+        System.out.print(color.get(2));
 
+        return canvas.getFrame().addBulletDataset("bullets", bullets, new Color(color.get(0), color.get(1), color.get(2)));
     }
 
     public static ConnectJFreeChart getInstance() {

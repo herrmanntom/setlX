@@ -126,9 +126,8 @@ public interface SetlXPlot {
     /**
      * add a single bullet to the canvas at the given x and y coordinates
      * @param canvas
-     * @param x
-     * @param y
+     * @param bullets
      * @param color
      */
-    public void addBullet(Canvas canvas, double x, double y, List<Integer> color);
+    public Graph addBullet(Canvas canvas, List<List<Double>> bullets, List<Integer> color);
 }

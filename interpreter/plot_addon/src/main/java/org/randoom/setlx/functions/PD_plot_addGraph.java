@@ -49,7 +49,7 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
         // if graphcolor and plotArea are set
         if (!colorListValue.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
             SetlList colorListSetl = (SetlList) colorListValue;
-            List colorList = ConvertSetlTypes.convertSetlList(colorListSetl);
+            List colorList = ConvertSetlTypes.convertSetlListAsInteger(colorListSetl);
             SetlBoolean plotAreaBool = (SetlBoolean) plotarea;
             boolean area;
             if (plotAreaBool.equalTo(SetlBoolean.TRUE)) {
@@ -63,7 +63,7 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
         //if graphcolor is set
         if (!colorListValue.equalTo(Rational.ONE)) {
             SetlList colorListSetl = (SetlList) colorListValue;
-            List colorList = ConvertSetlTypes.convertSetlList(colorListSetl);
+            List colorList = ConvertSetlTypes.convertSetlListAsInteger(colorListSetl);
             return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, colorList);
         }
 

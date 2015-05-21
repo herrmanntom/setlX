@@ -34,7 +34,7 @@ public class PD_plot_addChart extends PreDefinedProcedure {
         SetlString chartType = (SetlString)args.get(CHARTTYPE);
         String chartTypeString = chartType.toString().replace("\"", "");;
         SetlList values = (SetlList)args.get(VALUES);
-        List valuesList = ConvertSetlTypes.convertSetlList(values);
+        List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);
         Value name = args.get(NAME);
 
         if(!name.equalTo(Rational.ONE)){

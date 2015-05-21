@@ -28,7 +28,7 @@ public class PD_test extends PreDefinedProcedure {
         CalcFunction cf = new CalcFunction("sin(x)");
         p(cf.calcYfromX(8.8));
         SetlList l = (SetlList)args.get(PARAM);
-        List asdf = ConvertSetlTypes.convertSetlList(l);
+        List asdf = ConvertSetlTypes.convertSetlListAsDouble(l);
 
         l = null;
         return new SetlString("String");

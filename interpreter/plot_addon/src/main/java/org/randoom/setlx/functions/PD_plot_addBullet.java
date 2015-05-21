@@ -1,7 +1,6 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
@@ -34,9 +33,9 @@ public class PD_plot_addBullet extends PreDefinedProcedure {
             return new SetlString("Paramter RGBLIST must have exactly three entrys");
         }
 
-        List bulletList = ConvertSetlTypes.convertSetlList(xylist);
+        List bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist);
 
-        List rgblist = ConvertSetlTypes.convertSetlList(rgblistSetl);
+        List rgblist = ConvertSetlTypes.convertSetlListAsInteger(rgblistSetl);
 
 
         return ConnectJFreeChart.getInstance().addBullet((Canvas) args.get(CANVAS), bulletList, rgblist);

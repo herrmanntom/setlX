@@ -130,4 +130,5 @@ public interface SetlXPlot {
      * @param color
      */
     public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color);
+
 }

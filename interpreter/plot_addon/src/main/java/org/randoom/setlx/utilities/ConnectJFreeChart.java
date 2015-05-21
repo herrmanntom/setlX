@@ -3,8 +3,10 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartPanel;
+
 import org.jfree.chart.axis.*;
 
+import java.awt.*;
 import java.util.List;
 
 public class ConnectJFreeChart implements SetlXPlot {

@@ -50,7 +50,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             if(!graphColorS.equalTo(Rational.ONE)){
                 return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
-            List graphColor = ConvertSetlTypes.convertSetlList(graphColorS);
+            List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
 
             SetlBoolean plotAreaBool = (SetlBoolean) plotarea;
             boolean area;
@@ -68,7 +68,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             if(!graphColorS.equalTo(Rational.ONE)){
                 return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
-            List graphColor = ConvertSetlTypes.convertSetlList(graphColorS);
+            List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
             return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor);
         }
 

@@ -1,7 +1,6 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
@@ -30,33 +29,14 @@ public class PD_plot_addBullet extends PreDefinedProcedure {
         SetlList xylist = (SetlList) args.get(XYTUPEL);
         SetlList rgblistSetl = (SetlList) args.get(RGBLIST);
 
-        if (!(xylist.size() == 2)) {
-            return new SetlString("Parameter XYTUPEL must have exactly two entrys");
-        }
         if(!(rgblistSetl.size()==3)){
             return new SetlString("Paramter RGBLIST must have exactly three entrys");
         }
 
-        Value xV = xylist.firstMember();
-        Value yV = xylist.lastMember();
-        double xD;
-        double yD;
+        List bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist);
 
-        if (xV.isInteger().equalTo(SetlBoolean.TRUE)) {
-            xD = (double) xV.jIntValue();
-        } else {
-            xD = xV.jDoubleValue();
-        }
-        if (yV.isInteger().equalTo(SetlBoolean.TRUE)) {
-            yD = (double) yV.jIntValue();
-        } else {
-            yD = yV.jDoubleValue();
-        }
+        List rgblist = ConvertSetlTypes.convertSetlListAsInteger(rgblistSetl);
 
-
-        List rgblist = ConvertSetlTypes.convertSetlList(rgblistSetl);
-
-        ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), xD, rgblist);
-        return new SetlString("Added Bullet (" + xD + "," + yD + ") to Canvas " + args.get(CANVAS));
+        return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList, rgblist);
     }
 }

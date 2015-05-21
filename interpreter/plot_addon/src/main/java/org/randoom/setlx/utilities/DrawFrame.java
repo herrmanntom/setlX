@@ -95,6 +95,7 @@ public class DrawFrame extends JFrame {
     }
 
     public Graph addDataset(String title, String function, boolean area, Color color) {
+
         Graph plotfun = new Graph(title, area);
         plotfun.setFunctionstring(function);
         functions.add(plotfun);
@@ -115,7 +116,6 @@ public class DrawFrame extends JFrame {
             x += step;
         }
         XYSeriesCollection col = new XYSeriesCollection(series);
-
         if(plot == null){
             plot = new XYPlot(col, xAxis, yAxis, renderer);
         }
@@ -124,19 +124,23 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
+        System.out.println("return");
         return plotfun;
     }
     private void redraw(){
+        System.out.println("redraw");
         if(chartCount != 0) {
             jPanel.remove(chartPanel);
         }
         chart = new JFreeChart("title", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+
         chartPanel = new ChartPanel(chart, true, true, true, true, true);
 
         jPanel.add(chartPanel);
 
         this.pack();
         chartCount++;
+        System.out.println("redraw end");
     }
     public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color){
         Graph plotfun = new Graph(title, area);

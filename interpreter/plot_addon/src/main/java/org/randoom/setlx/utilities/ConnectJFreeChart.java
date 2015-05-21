@@ -33,6 +33,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name) {
+        System.out.println("addGraph");
         return canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0 ,0));
 
     }

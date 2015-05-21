@@ -74,6 +74,17 @@ public class Graph extends Value {
 
     private String yfunction = "";
 
+    public boolean isBullet() {
+        return bullet;
+    }
+
+    public void setBullet(boolean bullet) {
+        this.bullet = bullet;
+    }
+
+    private boolean bullet;
+
+
     @Override
     public Value clone() {
         return null;

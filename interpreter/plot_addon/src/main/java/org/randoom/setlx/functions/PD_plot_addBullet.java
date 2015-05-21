@@ -56,7 +56,7 @@ public class PD_plot_addBullet extends PreDefinedProcedure {
 
         List rgblist = ConvertSetlTypes.convertSetlList(rgblistSetl);
 
-        ConnectJFreeChart.getInstance().addBullet((Canvas) args.get(CANVAS), xD, yD, rgblist);
+        ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), xD, rgblist);
         return new SetlString("Added Bullet (" + xD + "," + yD + ") to Canvas " + args.get(CANVAS));
     }
 }

@@ -19,13 +19,12 @@ import java.util.List;
 
 
 public class DrawFrame extends JFrame {
-    private XYSeriesCollection dataset = new XYSeriesCollection();
     private double x_Min;
     private double x_Max;
     private double y_Min;
     private double y_Max;
 
-    private List<Plotfunction> functions = new ArrayList<>();
+    private List<Graph> functions = new ArrayList<>();
     private ValueAxis xAxis;
     private ValueAxis yAxis;
     private JPanel jPanel;
@@ -50,9 +49,9 @@ public class DrawFrame extends JFrame {
         if(chartCount != 0) {
             chartCount = 0;
             jPanel.remove(chartPanel);
-            List<Plotfunction> func = new ArrayList<>(functions);
+            List<Graph> func = new ArrayList<>(functions);
             functions.clear();
-            for(Plotfunction item:func){
+            for(Graph item:func){
                 if(!item.getFunctionstring().isEmpty()){
                     this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
                 }
@@ -95,8 +94,8 @@ public class DrawFrame extends JFrame {
         plot = null;
     }
 
-    public XYSeries addDataset(String title, String function, boolean area, ChartColor color) {
-        Plotfunction plotfun = new Plotfunction(title, area);
+    public Graph addDataset(String title, String function, boolean area, Color color) {
+        Graph plotfun = new Graph(title, area);
         plotfun.setFunctionstring(function);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, true, false);
@@ -125,9 +124,8 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
-        return series;
+        return plotfun;
     }
-
     private void redraw(){
         if(chartCount != 0) {
             jPanel.remove(chartPanel);
@@ -140,8 +138,8 @@ public class DrawFrame extends JFrame {
         this.pack();
         chartCount++;
     }
-    public XYSeries addListDataset(String title, List<List<Double>> function, boolean area, ChartColor color){
-        Plotfunction plotfun = new Plotfunction(title, area);
+    public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color){
+        Graph plotfun = new Graph(title, area);
         plotfun.setFunction(function);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, false, true);
@@ -166,11 +164,11 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
-        return series;
+        return plotfun;
     }
 
-    public XYSeries addParamDataset(String title, String xfunction, String yfunction, boolean area, ChartColor color){
-        Plotfunction plotfun = new Plotfunction(title, area);
+    public Graph addParamDataset(String title, String xfunction, String yfunction, boolean area, Color color){
+        Graph plotfun = new Graph(title, area);
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
         functions.add(plotfun);
@@ -198,75 +196,11 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
-        return series;
+        return plotfun;
     }
 
-    private class Plotfunction{
-        public boolean isArea() {
-            return area;
-        }
-
-        private boolean area;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public Plotfunction(String title, boolean area) {
-            this.title = title;
-            this.area = area;
-        }
-
-        public String getXfunction() {
-            return xfunction;
-        }
-
-        public List<List<Double>> getFunction() {
-            return function;
-        }
-
-        public String getYfunction() {
-            return yfunction;
-        }
-
-        private String title;
-
-        private String functionstring = "";
-
-        public String getFunctionstring() {
-            return functionstring;
-        }
-
-        private ChartColor color;
-
-        public ChartColor getColor() {
-            return color;
-        }
-
-        public void setColor(ChartColor color) {
-            this.color = color;
-        }
-
-        public void setFunctionstring(String functionstring) {
-            this.functionstring = functionstring;
-        }
-
-        public void setFunction(List<List<Double>> function) {
-            this.function = function;
-        }
-
-        public void setXfunction(String xfunction) {
-            this.xfunction = xfunction;
-        }
-
-        public void setYfunction(String yfunction) {
-            this.yfunction = yfunction;
-        }
-
-        private List<List<Double>> function = null;
-
-        private String xfunction = "";
-
-        private String yfunction = "";
+    public void removeGraph(Graph graph){
+        functions.remove(graph);
+        this.modxScale(this.x_Min, this.x_Max);
     }
 }

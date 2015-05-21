@@ -40,19 +40,16 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color) {
         return canvas.getFrame().addDataset(name, function, false, new ChartColor(color.get(0), color.get(1) ,color.get(2)));
-
     }
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color, boolean plotArea) {
         return canvas.getFrame().addDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1) ,color.get(2)));
-
     }
 
     @Override
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) {
         return canvas.getFrame().addListDataset(name, function, false, new ChartColor(0,0,0));
-
     }
 
     @Override
@@ -64,13 +61,11 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea) {
         return canvas.getFrame().addListDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
-
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) {
         return canvas.getFrame().addParamDataset(name,xfunction,yfunction, false, new ChartColor(0,0,0));
-
     }
 
 

@@ -30,6 +30,6 @@ public class PD_plot_insertLabel extends PreDefinedProcedure {
         Value xLabel = args.get(XLABEL);
         Value yLabel = args.get(YLABEL);
         ConnectJFreeChart.getInstance().insertLabel((Canvas)canvas, xLabel.toString().replace("\"", ""), yLabel.toString().replace("\"", ""));
-        return new SetlString("Added xLabel \""+xLabel+"\" and yLabel \""+yLabel+"\" to Canvas"+canvas);
+        return new SetlString("Added xLabel \""+xLabel+"\" and yLabel \""+yLabel+"\" to Canvas");
     }
 }

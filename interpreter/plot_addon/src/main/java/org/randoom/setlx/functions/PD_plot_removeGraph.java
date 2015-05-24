@@ -22,6 +22,6 @@ public class PD_plot_removeGraph extends PreDefinedProcedure {
         Canvas c = (Canvas)args.get(CANVAS);
         Graph g = (Graph)args.get(GRAPH);
         ConnectJFreeChart.getInstance().removeGraph(c, g);
-        return new SetlString("Removed "+g+" from "+c);
+        return new SetlString("Removed graph from canvas");
     }
 }

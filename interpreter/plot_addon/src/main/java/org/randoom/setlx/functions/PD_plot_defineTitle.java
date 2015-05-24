@@ -25,6 +25,6 @@ public class PD_plot_defineTitle extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         ConnectJFreeChart.getInstance().defineTitle((Canvas) args.get(CANVAS), args.get(TITLE).toString().replace("\"", ""));
-        return new SetlString("Added Title \""+args.get(TITLE)+"\" to "+args.get(CANVAS));
+        return new SetlString("Added Title \""+args.get(TITLE));
     }
 }

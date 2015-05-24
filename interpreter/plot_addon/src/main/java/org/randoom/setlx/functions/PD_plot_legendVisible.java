@@ -37,6 +37,11 @@ public class PD_plot_legendVisible extends PreDefinedProcedure {
         }
 
         ConnectJFreeChart.getInstance().legendVisible((Canvas)canvas, setVisible);
-        return new SetlString(String.valueOf(args.entrySet()));
+        if(setVisible){
+            return new SetlString("Showing legend");
+        }else{
+            return new SetlString("Hiding legend");
+        }
+
     }
 }

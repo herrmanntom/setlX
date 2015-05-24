@@ -62,6 +62,6 @@ public class PD_plot_modScale extends PreDefinedProcedure {
         }
 
         ConnectJFreeChart.getInstance().modScale((Canvas)args.get(CANVAS), xMinD, xMaxD, yMinD, yMaxD);
-        return new SetlString("Set Scale to xMinMax: ("+xMinD+","+xMaxD+") and yMinMax: ("+yMinD+","+yMaxD+")");
+        return new SetlString("Set Scale to xMin,xMax: ("+xMinD+","+xMaxD+") and yMin,yMax: ("+yMinD+","+yMaxD+")");
     }
 }

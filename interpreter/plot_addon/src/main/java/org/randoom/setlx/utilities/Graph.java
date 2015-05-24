@@ -7,42 +7,59 @@ import java.awt.*;
 import java.util.List;
 
 public class Graph extends Value {
-    public boolean isArea() {
-        return area;
-    }
-
     private boolean area;
-
-    public String getTitle() {
-        return title;
-    }
+    private String title;
+    private String functionstring = "";
+    private Color color;
+    private List<List<Double>> function = null;
+    private String xfunction = "";
+    private String yfunction = "";
+    private boolean bullets;
 
     public Graph(String title, boolean area) {
         this.title = title;
         this.area = area;
     }
 
+    public boolean isArea() {
+        return area;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
     public String getXfunction() {
         return xfunction;
+    }
+
+    public void setXfunction(String xfunction) {
+        this.xfunction = xfunction;
     }
 
     public List<List<Double>> getFunction() {
         return function;
     }
 
+    public void setFunction(List<List<Double>> function) {
+        this.function = function;
+    }
+
     public String getYfunction() {
         return yfunction;
     }
 
-    private String title;
-
-    private String functionstring = "";
+    public void setYfunction(String yfunction) {
+        this.yfunction = yfunction;
+    }
 
     public String getFunctionstring() {
         return functionstring;
     }
 
-    private Color color;
+    public void setFunctionstring(String functionstring) {
+        this.functionstring = functionstring;
+    }
 
     public Color getColor() {
         return color;
@@ -52,28 +69,6 @@ public class Graph extends Value {
         this.color = color;
     }
 
-    public void setFunctionstring(String functionstring) {
-        this.functionstring = functionstring;
-    }
-
-    public void setFunction(List<List<Double>> function) {
-        this.function = function;
-    }
-
-    public void setXfunction(String xfunction) {
-        this.xfunction = xfunction;
-    }
-
-    public void setYfunction(String yfunction) {
-        this.yfunction = yfunction;
-    }
-
-    private List<List<Double>> function = null;
-
-    private String xfunction = "";
-
-    private String yfunction = "";
-
     public boolean isBullets() {
         return bullets;
     }
@@ -82,11 +77,17 @@ public class Graph extends Value {
         this.bullets = bullets;
     }
 
-    private boolean bullets;
-
     @Override
     public Value clone() {
-        return null;
+        Graph clone = new Graph(this.title, this.area);
+        clone.setFunction(this.function);
+        clone.setFunctionstring(this.functionstring);
+        clone.setColor(this.color);
+        clone.setXfunction(this.xfunction);
+        clone.setYfunction(this.yfunction);
+        clone.setBullets(this.bullets);
+
+        return clone;
     }
 
     @Override
@@ -105,12 +106,35 @@ public class Graph extends Value {
     }
 
     @Override
-    public int hashCode() {
-        return 0;
+    public boolean equalTo(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Graph)) return false;
+        if (!super.equals(o)) return false;
+
+        Graph graph = (Graph) o;
+
+        if (area != graph.area) return false;
+        if (bullets != graph.bullets) return false;
+        if (title != null ? !title.equals(graph.title) : graph.title != null) return false;
+        if (functionstring != null ? !functionstring.equals(graph.functionstring) : graph.functionstring != null)
+            return false;
+        if (color != null ? !color.equals(graph.color) : graph.color != null) return false;
+        if (function != null ? !function.equals(graph.function) : graph.function != null) return false;
+        if (xfunction != null ? !xfunction.equals(graph.xfunction) : graph.xfunction != null) return false;
+        return !(yfunction != null ? !yfunction.equals(graph.yfunction) : graph.yfunction != null);
+
     }
 
     @Override
-    public boolean equalTo(Object other) {
-        return false;
+    public int hashCode() {
+        int result = (area ? 1 : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        result = 31 * result + (functionstring != null ? functionstring.hashCode() : 0);
+        result = 31 * result + (color != null ? color.hashCode() : 0);
+        result = 31 * result + (function != null ? function.hashCode() : 0);
+        result = 31 * result + (xfunction != null ? xfunction.hashCode() : 0);
+        result = 31 * result + (yfunction != null ? yfunction.hashCode() : 0);
+        result = 31 * result + (bullets ? 1 : 0);
+        return result;
     }
 }

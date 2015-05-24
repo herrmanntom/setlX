@@ -10,14 +10,14 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
-public class PD_plot_insertTitel extends PreDefinedProcedure {
+public class PD_plot_defineTitle extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef TITLE = createParameter("titel");
+    private final static ParameterDef TITLE = createParameter("title");
 
-    public final static PreDefinedProcedure DEFINITION = new PD_plot_insertTitel();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_defineTitle();
 
-    private PD_plot_insertTitel(){
+    private PD_plot_defineTitle(){
         super();
         addParameter(CANVAS);
         addParameter(TITLE);

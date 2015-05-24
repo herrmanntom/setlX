@@ -3,16 +3,23 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.axis.LogAxis;
+import org.jfree.chart.axis.NumberAxis;
+import org.randoom.setlx.exceptions.SetlException;
 
-import org.jfree.chart.axis.*;
-
-import java.awt.*;
 import java.util.List;
 
 public class ConnectJFreeChart implements SetlXPlot {
 
 
     private static ConnectJFreeChart connector;
+
+    public static ConnectJFreeChart getInstance() {
+        if (connector == null) {
+            connector = new ConnectJFreeChart();
+        }
+        return connector;
+    }
 
     @Override
     public Canvas createCanvas() {
@@ -31,28 +38,26 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     }
 
-
-
     @Override
-    public Graph addGraph(Canvas canvas, String function, String name) {
+    public Graph addGraph(Canvas canvas, String function, String name) throws SetlException {
         System.out.println("addGraph");
-        Graph graph =  canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0 ,0));
+        Graph graph = canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0, 0));
         return graph;
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color) {
-        return canvas.getFrame().addDataset(name, function, false, new ChartColor(color.get(0), color.get(1) ,color.get(2)));
+    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color) throws SetlException {
+        return canvas.getFrame().addDataset(name, function, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color, boolean plotArea) {
-        return canvas.getFrame().addDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1) ,color.get(2)));
+    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color, boolean plotArea) throws SetlException {
+        return canvas.getFrame().addDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
     @Override
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) {
-        return canvas.getFrame().addListDataset(name, function, false, new ChartColor(0,0,0));
+        return canvas.getFrame().addListDataset(name, function, false, new ChartColor(0, 0, 0));
     }
 
     @Override
@@ -67,19 +72,18 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) {
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) throws SetlException {
         return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(0, 0, 0));
     }
 
-
     @Override
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color) {
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color) throws SetlException {
         return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
 
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea) {
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea) throws SetlException {
         return canvas.getFrame().addParamDataset(name, xfunction, yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
@@ -93,9 +97,8 @@ public class ConnectJFreeChart implements SetlXPlot {
         return null;
     }
 
-
     @Override
-    public void removeGraph(Canvas canvas, Graph graph) {
+    public void removeGraph(Canvas canvas, Graph graph) throws SetlException {
         canvas.getFrame().removeGraph(graph);
     }
 
@@ -112,19 +115,18 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public void legendVisible(Canvas canvas, Boolean visible) {
         ChartPanel chartPanel = canvas.getFrame().chartPanel;
-        if(visible){
-            if(chartPanel.getChart().getLegend() == null){
+        if (visible) {
+            if (chartPanel.getChart().getLegend() == null) {
                 chartPanel.getChart().addLegend(canvas.getFrame().legend);
             }
-        }
-        else{
+        } else {
             canvas.getFrame().legend = chartPanel.getChart().getLegend();
             chartPanel.getChart().removeLegend();
         }
-        }
+    }
 
     @Override
-    public void modScale(Canvas canvas, double xMin, double xMax, double yMin, double yMax) {
+    public void modScale(Canvas canvas, double xMin, double xMax, double yMin, double yMax) throws SetlException {
         canvas.getFrame().modyScale(yMin, yMax);
         canvas.getFrame().modxScale(xMin, xMax);
     }
@@ -137,37 +139,25 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public void modScaleType(Canvas canvas, String xType, String yType) {
 
-        if(xType.equalsIgnoreCase("log")){
+        if (xType.equalsIgnoreCase("log")) {
             canvas.getFrame().setxAxis(new LogAxis());
-        }
-        else if(xType.equalsIgnoreCase("num")){
+        } else if (xType.equalsIgnoreCase("num")) {
             canvas.getFrame().setxAxis(new NumberAxis());
-        }
-        else{
+        } else {
             System.out.println("Wrong x-Axis type, use log or num");
         }
-        if(yType.equalsIgnoreCase("log")){
+        if (yType.equalsIgnoreCase("log")) {
             canvas.getFrame().setyAxis(new LogAxis());
-        }
-        else if(yType.equalsIgnoreCase("num")){
+        } else if (yType.equalsIgnoreCase("num")) {
             canvas.getFrame().setyAxis(new NumberAxis());
-        }
-        else{
+        } else {
             System.out.println("Wrong y-Axis type, use log or num");
         }
 
     }
 
-
     @Override
     public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color) {
         return canvas.getFrame().addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)));
-    }
-
-    public static ConnectJFreeChart getInstance() {
-        if (connector == null) {
-            connector = new ConnectJFreeChart();
-        }
-        return connector;
     }
 }

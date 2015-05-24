@@ -1,5 +1,7 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.SetlException;
+
 import java.util.List;
 
 /**
@@ -25,7 +27,7 @@ public interface SetlXPlot {
      * @param name     of the graphe
      * @return identifier of the graph
      */
-    public Graph addGraph(Canvas canvas, String function, String name);
+    public Graph addGraph(Canvas canvas, String function, String name) throws SetlException;
 
     /**
      * adds a function as graph to the canvas, give it a name and plots the integral if plotArea is true
@@ -36,18 +38,18 @@ public interface SetlXPlot {
      * @param color
      * @return
      */
-    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color);
+    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color) throws SetlException;
 
     /**
      * adds a function as graph to the given canvas and plots the area to the y-axis (integral) if plotArea ist true
      *
      * @param canvas
      * @param function
-     * @param plotArea draw integral if true
      * @param color
+     * @param plotArea draw integral if true
      * @return
      */
-    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color, boolean plotArea);
+    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color, boolean plotArea) throws SetlException;
 
     /**
      * adds a graph consisting of single points
@@ -71,17 +73,17 @@ public interface SetlXPlot {
 
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea);
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) throws SetlException;
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color) throws SetlException;
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea) throws SetlException;
 
     public Graph addChart(Canvas canvas, String chartType, List values);
 
     public Graph addChart(Canvas canvas, String chartType, List values, String name);
 
-    public void removeGraph(Canvas canvas, Graph graph);
+    public void removeGraph(Canvas canvas, Graph graph) throws SetlException;
 
     public void insertLabel(Canvas canvas, String xLabel, String yLabel);
 
@@ -104,7 +106,7 @@ public interface SetlXPlot {
      * @param yMin
      * @param yMax
      */
-    public void modScale(Canvas canvas, double xMin, double xMax, double yMin, double yMax);
+    public void modScale(Canvas canvas, double xMin, double xMax, double yMin, double yMax) throws SetlException;
 
     /**
      * exports the canvas as image file to the path
@@ -125,6 +127,7 @@ public interface SetlXPlot {
 
     /**
      * add a single bullet to the canvas at the given x and y coordinates
+     *
      * @param canvas
      * @param bullets
      * @param color

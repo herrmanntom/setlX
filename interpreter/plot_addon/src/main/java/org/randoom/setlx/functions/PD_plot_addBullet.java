@@ -30,6 +30,11 @@ public class PD_plot_addBullet extends PreDefinedProcedure {
         SetlList xylist = (SetlList) args.get(XYTUPEL);
         List bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist);
 
+        //simple check to reminde user of list of lists
+        if(!(bulletList.get(0) instanceof List)){
+            return new SetlString("Parameter xyTupel has to be a list of lists eq [[1,2], [3,4]]");
+        }
+
         //if the color parameter is set
         if(!args.get(RGBLIST).equalTo(Rational.ONE)){
             SetlList rgblistSetl = (SetlList) args.get(RGBLIST);

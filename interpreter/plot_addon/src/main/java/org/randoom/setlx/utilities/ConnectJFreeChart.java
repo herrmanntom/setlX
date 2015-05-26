@@ -158,9 +158,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Graph addBullets(Canvas canvas, List<List<Double>> bullets){
-        //TODO implement
-        //return canvas.getFrame().addBulletDataset("Bullets", bullets);
-        return null;
+        return canvas.getFrame().addBulletDataset("Bullets", bullets, new ChartColor(0,0,0));
     }
 
     @Override

@@ -23,7 +23,7 @@ public class CalcFunction {
      */
     public Double calcYfromX(Double x) throws SetlException {
         String s = x.toString();
-        String localFunction = function.replace("x", s);
+        String localFunction = function.replace("x", "("+s+")");
 
         Expr expr = ParseSetlX.parseStringToExpr(state, localFunction);
         Value v = expr.eval(state);

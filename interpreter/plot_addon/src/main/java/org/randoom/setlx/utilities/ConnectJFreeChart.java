@@ -108,7 +108,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Graph addLabel(Canvas canvas, List<Double> coordinates, String text) {
-        return null;
+        return canvas.getFrame().addTextLabel(coordinates, text);
     }
 
     @Override

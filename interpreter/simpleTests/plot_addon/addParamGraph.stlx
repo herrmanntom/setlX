@@ -1,0 +1,4 @@
+c := plot_createCanvas();
+g1 := plot_addParamGraph(c, "x+1", "x*x", "simple paramgraph");
+g2 := plot_addParamGraph(c, "(-x)+1", "x*x", "paramgraph with color", [0, 255, 0]);
+g3 := plot_addParamGraph(c, "x+1", "x*x", "paramgraph with color and area", [0, 255, 0], true);

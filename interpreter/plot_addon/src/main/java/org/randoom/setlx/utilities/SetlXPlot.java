@@ -85,7 +85,9 @@ public interface SetlXPlot {
 
     public void removeGraph(Canvas canvas, Graph graph) throws SetlException;
 
-    public void insertLabel(Canvas canvas, String xLabel, String yLabel);
+    public void labelAxis(Canvas canvas, String xLabel, String yLabel);
+
+    public Graph addLabel(Canvas canvas, List<Double> coordinates, String text);
 
     public void defineTitle(Canvas canvas, String title);
 

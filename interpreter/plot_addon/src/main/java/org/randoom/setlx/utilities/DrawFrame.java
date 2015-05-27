@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -23,14 +24,12 @@ public class DrawFrame extends JFrame {
     LegendTitle legend;
     private double x_Min;
     private double x_Max;
-    private double y_Min;
-    private double y_Max;
-    private List<Graph> functions = new ArrayList<>();
+    private List<Graph> functions = new ArrayList<Graph>();
     private ValueAxis xAxis;
     private ValueAxis yAxis;
     private JPanel jPanel;
     private int chartCount;
-    private JFreeChart chart;
+    private String title = "title";
 
     public DrawFrame(String title) {
         super(title);
@@ -39,7 +38,8 @@ public class DrawFrame extends JFrame {
         jPanel.setName(title);
         add(jPanel, BorderLayout.CENTER);
         setSize(640, 480);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
         x_Min = -10.0;
         x_Max = 10.0;
@@ -49,7 +49,10 @@ public class DrawFrame extends JFrame {
     }
 
     public void setTitle(String title) {
-        chartPanel.setName(title);
+        this.title = title;
+        if(chartPanel != null){
+            chartPanel.setName(title);
+        }
     }
 
     public void setLabel(String xLabel, String yLabel) {
@@ -70,33 +73,39 @@ public class DrawFrame extends JFrame {
         ValueAxis axis = plot.getDomainAxis();
         axis.setLowerBound(this.x_Min);
         axis.setUpperBound(this.x_Max);
-        if (chartCount != 0) {
-            chartCount = 0;
-            jPanel.remove(chartPanel);
-            List<Graph> func = new ArrayList<>(functions);
-            functions.clear();
-            for (Graph item : func) {
-                if (!item.getFunctionstring().isEmpty()) {
-                    this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
-                } else if (!item.getXfunction().isEmpty()) {
-                    this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor());
-                } else if (item.getFunction() != null) {
-                    if (item.isBullets()) {
-                        this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
-                    } else {
-                        this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
-                    }
+        remakeFunctions();
+    }
+
+    private void remakeFunctions() throws SetlException{
+
+        plot = new XYPlot(new XYSeriesCollection(), xAxis, yAxis, new XYLineAndShapeRenderer());
+        this.redraw();
+        ArrayList<Graph> func = new ArrayList<Graph>(functions);
+        functions.clear();
+        for (Graph item : func) {
+            if (!item.getFunctionstring().isEmpty()) {
+                this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
+            } else if (!item.getXfunction().isEmpty()) {
+                System.out.println("Param " + item.getTitle());
+                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor());
+            } else if (item.getFunction() != null) {
+                System.out.println("List " + item.getTitle());
+                if (item.isBullets()) {
+                    this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
+                } else {
+                    this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
                 }
             }
         }
+        this.redraw();
+        chartCount--;
     }
 
+
     public void modyScale(double y_Min, double y_Max) {
-        this.y_Max = y_Max;
-        this.y_Min = y_Min;
         ValueAxis axis = plot.getRangeAxis();
-        axis.setLowerBound(this.y_Min);
-        axis.setUpperBound(this.y_Max);
+        axis.setLowerBound(y_Min);
+        axis.setUpperBound(y_Max);
     }
 
     public void setyAxis(ValueAxis yAxis) {
@@ -115,7 +124,8 @@ public class DrawFrame extends JFrame {
         CalcFunction calc = new CalcFunction(function);
         XYItemRenderer renderer;
         if (area) {
-            renderer = new XYDifferenceRenderer();
+            renderer = new XYAreaRenderer(XYAreaRenderer.AREA);
+            ((XYAreaRenderer) renderer).setOutline(true);
         } else {
             renderer = new XYLineAndShapeRenderer(true, false);
         }
@@ -134,16 +144,14 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
-        System.out.println("return");
         return plotfun;
     }
 
     private void redraw() {
-        System.out.println("redraw");
         if (chartCount != 0) {
             jPanel.remove(chartPanel);
         }
-        chart = new JFreeChart("title", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 
         chartPanel = new ChartPanel(chart, true, true, true, true, true);
 
@@ -151,7 +159,6 @@ public class DrawFrame extends JFrame {
 
         this.pack();
         chartCount++;
-        System.out.println("redraw end");
     }
 
     public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color) {
@@ -163,9 +170,9 @@ public class DrawFrame extends JFrame {
         XYSeries series = new XYSeries(title, false, true);
         XYItemRenderer renderer;
         if (area) {
-            renderer = new XYDifferenceRenderer();
+            renderer = new XYSplineRenderer(1, XYSplineRenderer.FillType.TO_ZERO);
         } else {
-            renderer = new XYSplineRenderer();
+            renderer = new XYSplineRenderer(1);
         }
         renderer.setSeriesPaint(0, color);
         for (List<Double> element : function) {
@@ -182,19 +189,26 @@ public class DrawFrame extends JFrame {
         this.redraw();
         return plotfun;
     }
-
+    public Graph addTextLabel(List<Double> coordinates, String text){
+        Graph labelGraph = new Graph(text, false);
+        labelGraph.setLabel(true);
+        XYTextAnnotation label = new XYTextAnnotation(text, coordinates.get(0), coordinates.get(1));
+        plot.addAnnotation(label);
+        this.redraw();
+        return labelGraph;
+    }
     public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color) {
-        System.out.println("add Bulletset");
+
         Graph plotfun = new Graph(title, false);
         plotfun.setFunction(bullets);
         plotfun.setBullets(true);
         functions.add(plotfun);
-        System.out.println("newSeries");
         XYSeries series = new XYSeries(title, false, true);
-        XYItemRenderer renderer;
-        renderer = new XYDotRenderer();
-        System.out.println("renderer");
+        XYDotRenderer renderer = new XYDotRenderer();
+        renderer.setDotHeight(5);
+        renderer.setDotWidth(5);
         renderer.setSeriesPaint(0, color);
+        renderer.setSeriesVisibleInLegend(0, false);
         for (List<Double> element : bullets) {
             series.add(element.get(0), element.get(1));
         }
@@ -206,6 +220,7 @@ public class DrawFrame extends JFrame {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
         }
+
 
         this.redraw();
         return plotfun;
@@ -242,7 +257,10 @@ public class DrawFrame extends JFrame {
     }
 
     public void removeGraph(Graph graph) throws SetlException {
-        functions.remove(graph);
-        this.modxScale(this.x_Min, this.x_Max);
+        boolean ispresent = functions.remove(graph);
+        if(!ispresent){
+            System.out.println("nicht gelöscht");
+        }
+        remakeFunctions();
     }
 }

@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
@@ -123,7 +124,8 @@ public class DrawFrame extends JFrame {
         CalcFunction calc = new CalcFunction(function);
         XYItemRenderer renderer;
         if (area) {
-            renderer = new XYDifferenceRenderer();
+            renderer = new XYAreaRenderer(XYAreaRenderer.AREA);
+            ((XYAreaRenderer) renderer).setOutline(true);
         } else {
             renderer = new XYLineAndShapeRenderer(true, false);
         }
@@ -168,9 +170,9 @@ public class DrawFrame extends JFrame {
         XYSeries series = new XYSeries(title, false, true);
         XYItemRenderer renderer;
         if (area) {
-            renderer = new XYDifferenceRenderer();
+            renderer = new XYSplineRenderer(1, XYSplineRenderer.FillType.TO_ZERO);
         } else {
-            renderer = new XYSplineRenderer();
+            renderer = new XYSplineRenderer(1);
         }
         renderer.setSeriesPaint(0, color);
         for (List<Double> element : function) {
@@ -187,7 +189,14 @@ public class DrawFrame extends JFrame {
         this.redraw();
         return plotfun;
     }
-
+    public Graph addTextLabel(List<Double> coordinates, String text){
+        Graph labelGraph = new Graph(text, false);
+        labelGraph.setLabel(true);
+        XYTextAnnotation label = new XYTextAnnotation(text, coordinates.get(0), coordinates.get(1));
+        plot.addAnnotation(label);
+        this.redraw();
+        return labelGraph;
+    }
     public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color) {
 
         Graph plotfun = new Graph(title, false);

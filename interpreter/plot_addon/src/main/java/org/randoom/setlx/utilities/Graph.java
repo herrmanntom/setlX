@@ -16,10 +16,22 @@ public class Graph extends Value {
     private String yfunction = "";
     private boolean bullets;
 
+    public boolean isLabel() {
+        return label;
+    }
+
+    public void setLabel(boolean label) {
+        this.label = label;
+    }
+
+    private boolean label;
+
     public Graph(String title, boolean area) {
         this.title = title;
         this.area = area;
+        this.label = false;
     }
+
 
     public boolean isArea() {
         return area;

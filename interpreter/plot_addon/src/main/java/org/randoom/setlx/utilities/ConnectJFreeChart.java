@@ -7,6 +7,7 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.randoom.setlx.exceptions.SetlException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectJFreeChart implements SetlXPlot {
@@ -101,8 +102,13 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void insertLabel(Canvas canvas, String xLabel, String yLabel) {
+    public void labelAxis(Canvas canvas, String xLabel, String yLabel) {
         canvas.getFrame().setLabel(xLabel, yLabel);
+    }
+
+    @Override
+    public Graph addLabel(Canvas canvas, List<Double> coordinates, String text) {
+        return null;
     }
 
     @Override

@@ -28,6 +28,7 @@ public class DrawFrame extends JFrame {
     private ValueAxis yAxis;
     private JPanel jPanel;
     private int chartCount;
+    private String title = "title";
 
     public DrawFrame(String title) {
         super(title);
@@ -68,26 +69,34 @@ public class DrawFrame extends JFrame {
         ValueAxis axis = plot.getDomainAxis();
         axis.setLowerBound(this.x_Min);
         axis.setUpperBound(this.x_Max);
-        if (chartCount != 0) {
-            chartCount = 0;
-            jPanel.remove(chartPanel);
-            List<Graph> func = new ArrayList<Graph>(functions);
-            functions.clear();
-            for (Graph item : func) {
-                if (!item.getFunctionstring().isEmpty()) {
-                    this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
-                } else if (!item.getXfunction().isEmpty()) {
-                    this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor());
-                } else if (item.getFunction() != null) {
-                    if (item.isBullets()) {
-                        this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
-                    } else {
-                        this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
-                    }
+        remakeFunctions();
+    }
+
+    private void remakeFunctions() throws SetlException{
+
+        plot = new XYPlot(new XYSeriesCollection(), xAxis, yAxis, new XYLineAndShapeRenderer());
+        this.redraw();
+        ArrayList<Graph> func = new ArrayList<Graph>(functions);
+        functions.clear();
+        for (Graph item : func) {
+            if (!item.getFunctionstring().isEmpty()) {
+                this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
+            } else if (!item.getXfunction().isEmpty()) {
+                System.out.println("Param " + item.getTitle());
+                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor());
+            } else if (item.getFunction() != null) {
+                System.out.println("List " + item.getTitle());
+                if (item.isBullets()) {
+                    this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
+                } else {
+                    this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
                 }
             }
         }
+        this.redraw();
+        chartCount--;
     }
+
 
     public void modyScale(double y_Min, double y_Max) {
         ValueAxis axis = plot.getRangeAxis();
@@ -137,7 +146,7 @@ public class DrawFrame extends JFrame {
         if (chartCount != 0) {
             jPanel.remove(chartPanel);
         }
-        JFreeChart chart = new JFreeChart("title", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 
         chartPanel = new ChartPanel(chart, true, true, true, true, true);
 
@@ -236,7 +245,10 @@ public class DrawFrame extends JFrame {
     }
 
     public void removeGraph(Graph graph) throws SetlException {
-        functions.remove(graph);
-        this.modxScale(this.x_Min, this.x_Max);
+        boolean ispresent = functions.remove(graph);
+        if(!ispresent){
+            System.out.println("nicht gelöscht");
+        }
+        remakeFunctions();
     }
 }

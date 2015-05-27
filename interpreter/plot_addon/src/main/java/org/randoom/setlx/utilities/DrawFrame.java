@@ -134,12 +134,10 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
-        System.out.println("return");
         return plotfun;
     }
 
     private void redraw() {
-        System.out.println("redraw");
         if (chartCount != 0) {
             jPanel.remove(chartPanel);
         }
@@ -151,7 +149,6 @@ public class DrawFrame extends JFrame {
 
         this.pack();
         chartCount++;
-        System.out.println("redraw end");
     }
 
     public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color) {
@@ -184,16 +181,15 @@ public class DrawFrame extends JFrame {
     }
 
     public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color) {
-        System.out.println("add Bulletset");
         Graph plotfun = new Graph(title, false);
         plotfun.setFunction(bullets);
         plotfun.setBullets(true);
         functions.add(plotfun);
-        System.out.println("newSeries");
         XYSeries series = new XYSeries(title, false, true);
-        XYItemRenderer renderer;
-        renderer = new XYDotRenderer();
-        System.out.println("renderer");
+
+        XYDotRenderer renderer = new XYDotRenderer();
+        renderer.setDotWidth(3);
+        renderer.setDotHeight(3);
         renderer.setSeriesPaint(0, color);
         for (List<Double> element : bullets) {
             series.add(element.get(0), element.get(1));
@@ -242,6 +238,7 @@ public class DrawFrame extends JFrame {
     }
 
     public void removeGraph(Graph graph) throws SetlException {
+
         functions.remove(graph);
         this.modxScale(this.x_Min, this.x_Max);
     }

@@ -32,7 +32,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public Canvas createCanvas(String titel) {
 
-        DrawFrame frame = new DrawFrame("Graphic output");
+        DrawFrame frame = new DrawFrame(titel);
         frame.setVisible(true);
         return new Canvas(frame);
 
@@ -41,8 +41,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public Graph addGraph(Canvas canvas, String function, String name) throws SetlException {
         System.out.println("addGraph");
-        Graph graph = canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0, 0));
-        return graph;
+        return canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0, 0));
     }
 
     @Override

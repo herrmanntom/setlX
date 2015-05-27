@@ -23,14 +23,11 @@ public class DrawFrame extends JFrame {
     LegendTitle legend;
     private double x_Min;
     private double x_Max;
-    private double y_Min;
-    private double y_Max;
-    private List<Graph> functions = new ArrayList<>();
+    private List<Graph> functions = new ArrayList<Graph>();
     private ValueAxis xAxis;
     private ValueAxis yAxis;
     private JPanel jPanel;
     private int chartCount;
-    private JFreeChart chart;
 
     public DrawFrame(String title) {
         super(title);
@@ -73,7 +70,7 @@ public class DrawFrame extends JFrame {
         if (chartCount != 0) {
             chartCount = 0;
             jPanel.remove(chartPanel);
-            List<Graph> func = new ArrayList<>(functions);
+            List<Graph> func = new ArrayList<Graph>(functions);
             functions.clear();
             for (Graph item : func) {
                 if (!item.getFunctionstring().isEmpty()) {
@@ -92,11 +89,9 @@ public class DrawFrame extends JFrame {
     }
 
     public void modyScale(double y_Min, double y_Max) {
-        this.y_Max = y_Max;
-        this.y_Min = y_Min;
         ValueAxis axis = plot.getRangeAxis();
-        axis.setLowerBound(this.y_Min);
-        axis.setUpperBound(this.y_Max);
+        axis.setLowerBound(y_Min);
+        axis.setUpperBound(y_Max);
     }
 
     public void setyAxis(ValueAxis yAxis) {
@@ -134,16 +129,14 @@ public class DrawFrame extends JFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
-        System.out.println("return");
         return plotfun;
     }
 
     private void redraw() {
-        System.out.println("redraw");
         if (chartCount != 0) {
             jPanel.remove(chartPanel);
         }
-        chart = new JFreeChart("title", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
+        JFreeChart chart = new JFreeChart("title", JFreeChart.DEFAULT_TITLE_FONT, plot, true);
 
         chartPanel = new ChartPanel(chart, true, true, true, true, true);
 
@@ -151,7 +144,6 @@ public class DrawFrame extends JFrame {
 
         this.pack();
         chartCount++;
-        System.out.println("redraw end");
     }
 
     public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color) {
@@ -184,17 +176,17 @@ public class DrawFrame extends JFrame {
     }
 
     public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color) {
-        System.out.println("add Bulletset");
+
         Graph plotfun = new Graph(title, false);
         plotfun.setFunction(bullets);
         plotfun.setBullets(true);
         functions.add(plotfun);
-        System.out.println("newSeries");
         XYSeries series = new XYSeries(title, false, true);
-        XYItemRenderer renderer;
-        renderer = new XYDotRenderer();
-        System.out.println("renderer");
+        XYDotRenderer renderer = new XYDotRenderer();
+        renderer.setDotHeight(5);
+        renderer.setDotWidth(5);
         renderer.setSeriesPaint(0, color);
+        renderer.setSeriesVisibleInLegend(0, false);
         for (List<Double> element : bullets) {
             series.add(element.get(0), element.get(1));
         }
@@ -206,6 +198,7 @@ public class DrawFrame extends JFrame {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
         }
+
 
         this.redraw();
         return plotfun;

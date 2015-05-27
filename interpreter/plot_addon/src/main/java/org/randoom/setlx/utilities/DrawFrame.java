@@ -36,7 +36,8 @@ public class DrawFrame extends JFrame {
         jPanel.setName(title);
         add(jPanel, BorderLayout.CENTER);
         setSize(640, 480);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
         x_Min = -10.0;
         x_Max = 10.0;

@@ -34,6 +34,7 @@ public class DrawFrame extends JFrame {
 
     public DrawFrame(String title) {
         super(title);
+        System.out.println("penis");
         chartCount = 0;
         jPanel = new JPanel();
         jPanel.setName(title);

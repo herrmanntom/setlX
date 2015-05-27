@@ -109,7 +109,6 @@ public class Graph extends Value {
     public boolean equalTo(Object o) {
         if (this == o) return true;
         if (!(o instanceof Graph)) return false;
-        if (!super.equals(o)) return false;
 
         Graph graph = (Graph) o;
 

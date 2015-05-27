@@ -48,7 +48,10 @@ public class DrawFrame extends JFrame {
     }
 
     public void setTitle(String title) {
-        chartPanel.setName(title);
+        this.title = title;
+        if(chartPanel != null){
+            chartPanel.setName(title);
+        }
     }
 
     public void setLabel(String xLabel, String yLabel) {

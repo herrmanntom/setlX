@@ -94,10 +94,8 @@ public class DrawFrame extends JFrame {
             if (!item.getFunctionstring().isEmpty()) {
                 this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
             } else if (!item.getXfunction().isEmpty()) {
-                System.out.println("Param " + item.getTitle());
-                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor(), );
+                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor(), item.getCoordinates());
             } else if (item.getFunction() != null) {
-                System.out.println("List " + item.getTitle());
                 if (item.isBullets()) {
                     this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
                 } else {
@@ -247,6 +245,7 @@ public class DrawFrame extends JFrame {
         Graph plotfun = new Graph(title, area);
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
+        plotfun.setCoordinates(limits);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, true, false);
         CalcFunction xcalc = new CalcFunction(xfunction);

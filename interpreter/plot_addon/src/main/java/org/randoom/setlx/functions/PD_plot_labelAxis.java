@@ -10,14 +10,14 @@ import org.randoom.setlx.utilities.State;
 
 import java.util.HashMap;
 
-public class PD_plot_insertLabel extends PreDefinedProcedure {
+public class PD_plot_labelAxis extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef XLABEL = createParameter("xLabel");
     private final static ParameterDef YLABEL = createParameter("yLabel");
-    public final static PreDefinedProcedure DEFINITION = new PD_plot_insertLabel();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_labelAxis();
 
-    private PD_plot_insertLabel() {
+    private PD_plot_labelAxis() {
         super();
         addParameter(CANVAS);
         addParameter(XLABEL);

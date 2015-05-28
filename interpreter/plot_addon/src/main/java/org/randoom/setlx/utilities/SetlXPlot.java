@@ -127,6 +127,8 @@ public interface SetlXPlot {
      */
     public void modScaleType(Canvas canvas, String xType, String yType);
 
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets);
+
     /**
      * add a single bullet to the canvas at the given x and y coordinates
      *

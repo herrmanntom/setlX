@@ -1,0 +1,3 @@
+c := plot_createCanvas();
+g := plot_addGraph(c, "x", "graph to show");
+plot_labelAxis(c, "X-Axis", "y-Axis");

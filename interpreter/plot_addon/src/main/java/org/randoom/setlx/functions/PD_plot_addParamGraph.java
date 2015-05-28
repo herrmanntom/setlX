@@ -13,7 +13,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
     private final static ParameterDef XFUNCTION = createParameter("xFunction");
     private final static ParameterDef YFUNCTION = createParameter("yFunction");
     private final static ParameterDef GRAPHNAME = createParameter("graphname");
-    private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor", Rational.ONE);
+    private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor (RGB)", Rational.ONE);
     private final static ParameterDef PLOTAREA = createOptionalParameter("plotArea", Rational.ONE);
     public final static PreDefinedProcedure DEFINITION = new PD_plot_addParamGraph();
     private PD_plot_addParamGraph(){
@@ -48,7 +48,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         if (!graphColorV.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
             SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
             if(!graphColorS.equalTo(Rational.ONE)){
-                return new SetlString("Parameter graphcolor have to consits of exact three values");
+                return new SetlString("Parameter graphcolor have to consits of exact three values (RGB)");
             }
             List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
 

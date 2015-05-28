@@ -4,6 +4,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,6 +45,10 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         Value graphColorV = args.get(GRAPHCOLOR);
         Value plotarea = args.get(PLOTAREA);
 
+        //TODO: remove dummyList
+        List<Double> dummyList = new ArrayList<Double>();
+        dummyList.add(0.0);
+        dummyList.add(1.0);
         // if graphcolor and plotArea are set
         if (!graphColorV.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
             SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
@@ -59,7 +64,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, area, );
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, area, dummyList);
         }
 
         //if only the graphcolor is set
@@ -69,11 +74,11 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
                 return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
             List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, );
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, dummyList);
         }
 
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, );
+        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, dummyList);
     }
 }

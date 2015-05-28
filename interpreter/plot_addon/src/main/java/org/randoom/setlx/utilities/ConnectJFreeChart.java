@@ -7,7 +7,6 @@ import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.randoom.setlx.exceptions.SetlException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ConnectJFreeChart implements SetlXPlot {
@@ -108,7 +107,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Graph addLabel(Canvas canvas, List<Double> coordinates, String text) {
-        return null;
+        return canvas.getFrame().addTextLabel(coordinates, text);
     }
 
     @Override

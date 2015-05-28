@@ -193,6 +193,11 @@ public class DrawFrame extends JFrame {
         Graph labelGraph = new Graph(text, false);
         labelGraph.setLabel(true);
         XYTextAnnotation label = new XYTextAnnotation(text, coordinates.get(0), coordinates.get(1));
+        if (plot == null) {
+            plot = new XYPlot();
+            plot.setDomainAxis(xAxis);
+            plot.setRangeAxis(yAxis);
+        }
         plot.addAnnotation(label);
         this.redraw();
         return labelGraph;

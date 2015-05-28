@@ -31,6 +31,7 @@
     </path>
     <path id="classpath-j1.6">
         <path refid="setlX-jar-j1.6"/>
+        <path refid="plotlib-jar"/>
         <pathelement path="${classes.dir}"/>
     </path>
 
@@ -112,6 +113,7 @@
             <format property="timeAndDate.str" pattern="yyyy-MM-dd HH:mm:ss"/>
         </tstamp>
         <jar destfile="${interpreter.dir}/${ant.project.name}-j1.6.jar" basedir="${classes.dir}" index="true">
+            <zipgroupfileset dir="lib" includes="*.jar"/>
             <manifest>
                 <attribute name="Built-By"                value="${user.name} on ${timeAndDate.str}" />
                 <attribute name="Implementation-Version"  value="${git.version}" />

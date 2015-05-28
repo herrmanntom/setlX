@@ -16,20 +16,20 @@ public class Graph extends Value {
     private String yfunction = "";
     private boolean bullets;
 
-    public boolean isLabel() {
-        return label;
+    public List<Double> getCoordinates() {
+        return coordinates;
     }
 
-    public void setLabel(boolean label) {
-        this.label = label;
+    public void setCoordinates(List<Double> coordinates) {
+        this.coordinates = coordinates;
     }
 
-    private boolean label;
+    private List<Double> coordinates = null;
+
 
     public Graph(String title, boolean area) {
         this.title = title;
         this.area = area;
-        this.label = false;
     }
 
 

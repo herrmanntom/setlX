@@ -31,6 +31,14 @@ public class DrawFrame extends JFrame {
     private int chartCount;
     private String title = "title";
 
+    public ValueAxis getyAxis() {
+        return yAxis;
+    }
+
+    public ValueAxis getxAxis() {
+        return xAxis;
+    }
+
     public DrawFrame(String title) {
         super(title);
         chartCount = 0;
@@ -95,6 +103,10 @@ public class DrawFrame extends JFrame {
                 } else {
                     this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
                 }
+            } else if(item.getCoordinates() != null){
+                this.addTextLabel(item.getCoordinates(), item.getTitle());
+            } else{
+                System.out.println("Something went horribly wrong. \n If you get the error, contact us, get a coffee and wait for a solution");
             }
         }
         this.redraw();
@@ -191,7 +203,8 @@ public class DrawFrame extends JFrame {
     }
     public Graph addTextLabel(List<Double> coordinates, String text){
         Graph labelGraph = new Graph(text, false);
-        labelGraph.setLabel(true);
+        labelGraph.setCoordinates(coordinates);
+        functions.add(labelGraph);
         XYTextAnnotation label = new XYTextAnnotation(text, coordinates.get(0), coordinates.get(1));
         if (plot == null) {
             plot = new XYPlot();
@@ -225,7 +238,6 @@ public class DrawFrame extends JFrame {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
         }
-
 
         this.redraw();
         return plotfun;

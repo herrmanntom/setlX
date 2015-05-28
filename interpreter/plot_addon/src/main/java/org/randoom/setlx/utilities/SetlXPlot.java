@@ -1,5 +1,6 @@
 package org.randoom.setlx.utilities;
 
+import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.SetlException;
 
 import java.util.List;
@@ -116,7 +117,7 @@ public interface SetlXPlot {
      * @param canvas
      * @param path
      */
-    public void exportCanvas(Canvas canvas, String path);
+    public void exportCanvas(Canvas canvas, String path) throws FileNotWritableException;
 
     /**
      * modulate the type (eq. linear or logarithmic) of the axis

@@ -3,10 +3,16 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartColor;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.axis.LogAxis;
+import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.SetlException;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class ConnectJFreeChart implements SetlXPlot {
@@ -135,7 +141,17 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void exportCanvas(Canvas canvas, String path) {
+    public void exportCanvas(Canvas canvas, String path) throws FileNotWritableException {
+        System.out.println("test");
+        BufferedImage image = new BufferedImage(canvas.getFrame().getWidth(), canvas.getFrame().getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D= image.createGraphics();
+        canvas.getFrame().paint(graphics2D);
+        try {
+            ImageIO.write(image, "png", new File(path));
+        }
+        catch (IOException except){
+            throw new FileNotWritableException("write couldnt be completed", except);
+        }
 
     }
 
@@ -143,16 +159,16 @@ public class ConnectJFreeChart implements SetlXPlot {
     public void modScaleType(Canvas canvas, String xType, String yType) {
 
         if (xType.equalsIgnoreCase("log")) {
-            canvas.getFrame().setxAxis(new LogAxis());
+            canvas.getFrame().setxAxis(new LogarithmicAxis(canvas.getFrame().getxAxis().getLabel()));
         } else if (xType.equalsIgnoreCase("num")) {
-            canvas.getFrame().setxAxis(new NumberAxis());
+            canvas.getFrame().setxAxis(new NumberAxis(canvas.getFrame().getxAxis().getLabel()));
         } else {
             System.out.println("Wrong x-Axis type, use log or num");
         }
         if (yType.equalsIgnoreCase("log")) {
-            canvas.getFrame().setyAxis(new LogAxis());
+            canvas.getFrame().setyAxis(new LogarithmicAxis(canvas.getFrame().getyAxis().getLabel()));
         } else if (yType.equalsIgnoreCase("num")) {
-            canvas.getFrame().setyAxis(new NumberAxis());
+            canvas.getFrame().setyAxis(new NumberAxis(canvas.getFrame().getyAxis().getLabel()));
         } else {
             System.out.println("Wrong y-Axis type, use log or num");
         }

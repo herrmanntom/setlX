@@ -74,11 +74,11 @@ public interface SetlXPlot {
 
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea);
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) throws SetlException;
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Double> limits) throws SetlException;
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color) throws SetlException;
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, List<Double> limits) throws SetlException;
 
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea) throws SetlException;
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException;
 
     public Graph addChart(Canvas canvas, String chartType, List values);
 

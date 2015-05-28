@@ -59,7 +59,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, area);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, area, );
         }
 
         //if only the graphcolor is set
@@ -69,11 +69,11 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
                 return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
             List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, );
         }
 
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName);
+        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, );
     }
 }

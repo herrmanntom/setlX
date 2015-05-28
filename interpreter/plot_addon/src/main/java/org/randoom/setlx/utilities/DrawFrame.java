@@ -95,7 +95,7 @@ public class DrawFrame extends JFrame {
                 this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
             } else if (!item.getXfunction().isEmpty()) {
                 System.out.println("Param " + item.getTitle());
-                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor());
+                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor(), );
             } else if (item.getFunction() != null) {
                 System.out.println("List " + item.getTitle());
                 if (item.isBullets()) {
@@ -243,7 +243,7 @@ public class DrawFrame extends JFrame {
         return plotfun;
     }
 
-    public Graph addParamDataset(String title, String xfunction, String yfunction, boolean area, Color color) throws SetlException {
+    public Graph addParamDataset(String title, String xfunction, String yfunction, boolean area, Color color, List<Double> limits) throws SetlException {
         Graph plotfun = new Graph(title, area);
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
@@ -258,7 +258,8 @@ public class DrawFrame extends JFrame {
             renderer = new XYLineAndShapeRenderer(true, false);
         }
         renderer.setSeriesPaint(0, color);
-        for (double x = -50; x <= 50; x += 0.1) {
+        double step = (limits.get(1)- limits.get(0))/200;
+        for (double x = limits.get(0); x <= limits.get(1); x += step) {
             series.add(xcalc.calcYfromX(x), ycalc.calcYfromX(x));
         }
         XYSeriesCollection col = new XYSeriesCollection(series);

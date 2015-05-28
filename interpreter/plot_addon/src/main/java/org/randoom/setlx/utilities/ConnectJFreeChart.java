@@ -77,18 +77,18 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name) throws SetlException {
-        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(0, 0, 0));
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(0, 0, 0), );
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color) throws SetlException {
-        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(color.get(0), color.get(1), color.get(2)), );
 
     }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea) throws SetlException {
-        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)), );
     }
 
     @Override

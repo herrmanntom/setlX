@@ -147,7 +147,7 @@ public class ConnectJFreeChart implements SetlXPlot {
         Graphics2D graphics2D= image.createGraphics();
         canvas.getFrame().paint(graphics2D);
         try {
-            ImageIO.write(image, "png", new File(path));
+            ImageIO.write(image, "png", new File(path+".png"));
         }
         catch (IOException except){
             throw new FileNotWritableException("write couldnt be completed", except);

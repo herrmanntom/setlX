@@ -77,6 +77,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Double> limits) throws SetlException {
+
         return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(0, 0, 0), limits);
     }
 

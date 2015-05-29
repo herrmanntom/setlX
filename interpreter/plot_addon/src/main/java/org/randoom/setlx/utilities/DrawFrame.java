@@ -242,12 +242,13 @@ public class DrawFrame extends JFrame {
     }
 
     public Graph addParamDataset(String title, String xfunction, String yfunction, boolean area, Color color, List<Double> limits) throws SetlException {
+
         Graph plotfun = new Graph(title, area);
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
         plotfun.setCoordinates(limits);
         functions.add(plotfun);
-        XYSeries series = new XYSeries(title, true, false);
+        XYSeries series = new XYSeries(title, false, true);
         CalcFunction xcalc = new CalcFunction(xfunction);
         CalcFunction ycalc = new CalcFunction(yfunction);
         XYItemRenderer renderer;

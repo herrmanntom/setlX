@@ -52,7 +52,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         // if graphcolor and plotArea are set
         if (!graphColorV.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
             SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
-            if(!graphColorS.equalTo(Rational.ONE)){
+            if(!(graphColorS.size()==3)){
                 return new SetlString("Parameter graphcolor have to consits of exact three values (RGB)");
             }
             List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
@@ -70,7 +70,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         //if only the graphcolor is set
         if (!graphColorV.equalTo(Rational.ONE)) {
             SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
-            if(!graphColorS.equalTo(Rational.ONE)){
+            if(!(graphColorS.size()==3)){
                 return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
             List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);

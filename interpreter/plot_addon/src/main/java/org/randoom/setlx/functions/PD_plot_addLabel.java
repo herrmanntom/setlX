@@ -27,7 +27,7 @@ public class PD_plot_addLabel extends PreDefinedProcedure {
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         Canvas canvas = (Canvas)args.get(CANVAS);
         SetlList xyTupel = (SetlList)args.get(XYTUPEL);
-        List list = ConvertSetlTypes.convertSetlListAsDouble(xyTupel);
+        List<Double> list = ConvertSetlTypes.convertSetlListAsDouble(xyTupel);
         SetlString label = (SetlString)args.get(LABEL);
         String stringLabel = label.toString().replace("\"", "");
 

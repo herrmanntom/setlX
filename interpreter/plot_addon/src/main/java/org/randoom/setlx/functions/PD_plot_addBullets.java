@@ -28,7 +28,7 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         SetlList xylist = (SetlList) args.get(XYTUPEL);
-        List bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist);
+        List<List<Double>> bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist);
 
         //simple check to reminde user of list of lists
         if(!(bulletList.get(0) instanceof List)){
@@ -41,7 +41,7 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
             if(!(rgblistSetl.size()==3)){
                 return new SetlString("Paramter RGBLIST must have exactly three entrys");
             }
-            List rgblist = ConvertSetlTypes.convertSetlListAsInteger(rgblistSetl);
+            List<Integer> rgblist = ConvertSetlTypes.convertSetlListAsInteger(rgblistSetl);
             return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList, rgblist);
         }
 

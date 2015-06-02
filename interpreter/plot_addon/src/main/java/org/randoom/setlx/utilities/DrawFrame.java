@@ -58,7 +58,7 @@ public class DrawFrame extends JFrame {
 
     public void setTitle(String title) {
         this.title = title;
-        if(chartPanel != null){
+        if (chartPanel != null) {
             chartPanel.setName(title);
         }
     }
@@ -84,7 +84,7 @@ public class DrawFrame extends JFrame {
         remakeFunctions();
     }
 
-    private void remakeFunctions() throws SetlException{
+    private void remakeFunctions() throws SetlException {
 
         plot = new XYPlot(new XYSeriesCollection(), xAxis, yAxis, new XYLineAndShapeRenderer());
         this.redraw();
@@ -92,7 +92,7 @@ public class DrawFrame extends JFrame {
         functions.clear();
         for (Graph item : func) {
             if (!item.getFunctionstring().isEmpty()) {
-                this.addDataset(item.getTitle(), item.getFunctionstring(), item.getInterpreterState() , item.isArea(), item.getColor());
+                this.addDataset(item.getTitle(), item.getFunctionstring(), item.getInterpreterState(), item.isArea(), item.getColor());
             } else if (!item.getXfunction().isEmpty()) {
                 this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.getInterpreterState(), item.isArea(), item.getColor(), item.getCoordinates());
             } else if (item.getFunction() != null) {
@@ -101,9 +101,9 @@ public class DrawFrame extends JFrame {
                 } else {
                     this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
                 }
-            } else if(item.getCoordinates() != null){
+            } else if (item.getCoordinates() != null) {
                 this.addTextLabel(item.getCoordinates(), item.getTitle());
-            } else{
+            } else {
                 System.out.println("Something went horribly wrong. \n If you get the error, contact us, get a coffee and wait for a solution");
             }
         }
@@ -199,7 +199,8 @@ public class DrawFrame extends JFrame {
         this.redraw();
         return plotfun;
     }
-    public Graph addTextLabel(List<Double> coordinates, String text){
+
+    public Graph addTextLabel(List<Double> coordinates, String text) {
         Graph labelGraph = new Graph(text, false, new State());
         labelGraph.setCoordinates(coordinates);
         functions.add(labelGraph);
@@ -213,6 +214,7 @@ public class DrawFrame extends JFrame {
         this.redraw();
         return labelGraph;
     }
+
     public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color) {
 
         Graph plotfun = new Graph(title, false, new State());
@@ -247,9 +249,11 @@ public class DrawFrame extends JFrame {
         plotfun.setYfunction(yfunction);
         plotfun.setCoordinates(limits);
         functions.add(plotfun);
+
         XYSeries series = new XYSeries(title, true, false);
         CalcFunction xcalc = new CalcFunction(xfunction, interpreterState);
         CalcFunction ycalc = new CalcFunction(yfunction, interpreterState);
+
         XYItemRenderer renderer;
         if (area) {
             renderer = new XYDifferenceRenderer();
@@ -257,7 +261,7 @@ public class DrawFrame extends JFrame {
             renderer = new XYLineAndShapeRenderer(true, false);
         }
         renderer.setSeriesPaint(0, color);
-        double step = (limits.get(1)- limits.get(0))/200;
+        double step = (limits.get(1) - limits.get(0)) / 200;
         for (double x = limits.get(0); x <= limits.get(1); x += step) {
             series.add(xcalc.calcYfromX(x), ycalc.calcYfromX(x));
         }
@@ -275,7 +279,7 @@ public class DrawFrame extends JFrame {
 
     public void removeGraph(Graph graph) throws SetlException {
         boolean ispresent = functions.remove(graph);
-        if(!ispresent){
+        if (!ispresent) {
             System.out.println("nicht gelöscht");
         }
         remakeFunctions();

@@ -144,12 +144,11 @@ public class ConnectJFreeChart implements SetlXPlot {
     public void exportCanvas(Canvas canvas, String path) throws FileNotWritableException {
         System.out.println("test");
         BufferedImage image = new BufferedImage(canvas.getFrame().getWidth(), canvas.getFrame().getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D= image.createGraphics();
+        Graphics2D graphics2D = image.createGraphics();
         canvas.getFrame().paint(graphics2D);
         try {
-            ImageIO.write(image, "png", new File(path+".png"));
-        }
-        catch (IOException except){
+            ImageIO.write(image, "png", new File(path + ".png"));
+        } catch (IOException except) {
             throw new FileNotWritableException("write couldnt be completed", except);
         }
 
@@ -176,8 +175,8 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Graph addBullets(Canvas canvas, List<List<Double>> bullets){
-        return canvas.getFrame().addBulletDataset("Bullets", bullets, new ChartColor(0,0,0));
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets) {
+        return canvas.getFrame().addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0));
     }
 
     @Override

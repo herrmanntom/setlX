@@ -11,8 +11,9 @@ public class CalcFunction {
     String function = "x";
     State state = new State();
 
-    public CalcFunction(String function) {
+    public CalcFunction(String function, State pState) {
         this.setFunction(function);
+        this.state = pState;
     }
 
     /**

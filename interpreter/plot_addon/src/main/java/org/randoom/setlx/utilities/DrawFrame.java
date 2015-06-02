@@ -92,9 +92,9 @@ public class DrawFrame extends JFrame {
         functions.clear();
         for (Graph item : func) {
             if (!item.getFunctionstring().isEmpty()) {
-                this.addDataset(item.getTitle(), item.getFunctionstring(), item.isArea(), item.getColor());
+                this.addDataset(item.getTitle(), item.getFunctionstring(), item.getInterpreterState() , item.isArea(), item.getColor());
             } else if (!item.getXfunction().isEmpty()) {
-                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.isArea(), item.getColor(), item.getCoordinates());
+                this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.getInterpreterState(), item.isArea(), item.getColor(), item.getCoordinates());
             } else if (item.getFunction() != null) {
                 if (item.isBullets()) {
                     this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
@@ -125,13 +125,13 @@ public class DrawFrame extends JFrame {
         }
     }
 
-    public Graph addDataset(String title, String function, boolean area, Color color) throws SetlException {
+    public Graph addDataset(String title, String function, State interpreterState, boolean area, Color color) throws SetlException {
 
-        Graph plotfun = new Graph(title, area);
+        Graph plotfun = new Graph(title, area, interpreterState);
         plotfun.setFunctionstring(function);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, true, false);
-        CalcFunction calc = new CalcFunction(function);
+        CalcFunction calc = new CalcFunction(function, interpreterState);
         XYItemRenderer renderer;
         if (area) {
             renderer = new XYAreaRenderer(XYAreaRenderer.AREA);
@@ -172,7 +172,7 @@ public class DrawFrame extends JFrame {
     }
 
     public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color) {
-        Graph plotfun = new Graph(title, area);
+        Graph plotfun = new Graph(title, area, new State());
         plotfun.setFunction(function);
         plotfun.setBullets(false);
         functions.add(plotfun);
@@ -200,7 +200,7 @@ public class DrawFrame extends JFrame {
         return plotfun;
     }
     public Graph addTextLabel(List<Double> coordinates, String text){
-        Graph labelGraph = new Graph(text, false);
+        Graph labelGraph = new Graph(text, false, new State());
         labelGraph.setCoordinates(coordinates);
         functions.add(labelGraph);
         XYTextAnnotation label = new XYTextAnnotation(text, coordinates.get(0), coordinates.get(1));
@@ -215,7 +215,7 @@ public class DrawFrame extends JFrame {
     }
     public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color) {
 
-        Graph plotfun = new Graph(title, false);
+        Graph plotfun = new Graph(title, false, new State());
         plotfun.setFunction(bullets);
         plotfun.setBullets(true);
         functions.add(plotfun);
@@ -241,15 +241,15 @@ public class DrawFrame extends JFrame {
         return plotfun;
     }
 
-    public Graph addParamDataset(String title, String xfunction, String yfunction, boolean area, Color color, List<Double> limits) throws SetlException {
-        Graph plotfun = new Graph(title, area);
+    public Graph addParamDataset(String title, String xfunction, String yfunction, State interpreterState, boolean area, Color color, List<Double> limits) throws SetlException {
+        Graph plotfun = new Graph(title, area, interpreterState);
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
         plotfun.setCoordinates(limits);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, true, false);
-        CalcFunction xcalc = new CalcFunction(xfunction);
-        CalcFunction ycalc = new CalcFunction(yfunction);
+        CalcFunction xcalc = new CalcFunction(xfunction, interpreterState);
+        CalcFunction ycalc = new CalcFunction(yfunction, interpreterState);
         XYItemRenderer renderer;
         if (area) {
             renderer = new XYDifferenceRenderer();

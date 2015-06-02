@@ -25,7 +25,7 @@ public class PD_test extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        CalcFunction cf = new CalcFunction("sin(x)");
+        CalcFunction cf = new CalcFunction("sin(x)", state);
         p(cf.calcYfromX(8.8));
         SetlList l = (SetlList)args.get(PARAM);
         List asdf = ConvertSetlTypes.convertSetlListAsDouble(l);

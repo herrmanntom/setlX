@@ -15,6 +15,7 @@ public class Graph extends Value {
     private String xfunction = "";
     private String yfunction = "";
     private boolean bullets;
+    private State interpreterState;
 
     public List<Double> getCoordinates() {
         return coordinates;
@@ -27,9 +28,10 @@ public class Graph extends Value {
     private List<Double> coordinates = null;
 
 
-    public Graph(String title, boolean area) {
+    public Graph(String title, boolean area, State pState) {
         this.title = title;
         this.area = area;
+        this.interpreterState = pState;
     }
 
 
@@ -39,6 +41,10 @@ public class Graph extends Value {
 
     public String getTitle() {
         return title;
+    }
+
+    public State getInterpreterState(){
+        return this.interpreterState;
     }
 
     public String getXfunction() {
@@ -91,7 +97,7 @@ public class Graph extends Value {
 
     @Override
     public Value clone() {
-        Graph clone = new Graph(this.title, this.area);
+        Graph clone = new Graph(this.title, this.area, this.interpreterState);
         clone.setFunction(this.function);
         clone.setFunctionstring(this.functionstring);
         clone.setColor(this.color);

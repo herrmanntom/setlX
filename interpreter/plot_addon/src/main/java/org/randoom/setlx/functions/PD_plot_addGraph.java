@@ -57,17 +57,17 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, colorList, area);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state , colorList, area);
         }
 
         //if graphcolor is set
         if (!colorListValue.equalTo(Rational.ONE)) {
             SetlList colorListSetl = (SetlList) colorListValue;
             List<Integer> colorList = ConvertSetlTypes.convertSetlListAsInteger(colorListSetl);
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, colorList);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state , colorList);
         }
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString);
+        return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state );
     }
 }

@@ -4,7 +4,6 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, area, limitsList);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, area, limitsList);
         }
 
         //if only the graphcolor is set
@@ -74,11 +73,11 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
                 return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
             List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, limitsList);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, limitsList);
         }
 
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, limitsList);
+        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, limitsList);
     }
 }

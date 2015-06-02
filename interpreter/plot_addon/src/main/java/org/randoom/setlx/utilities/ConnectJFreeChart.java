@@ -45,18 +45,18 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, String function, String name) throws SetlException {
-        return canvas.getFrame().addDataset(name, function, false, new ChartColor(0, 0, 0));
+    public Graph addGraph(Canvas canvas, String function, String name, State interpreterState) throws SetlException {
+        return canvas.getFrame().addDataset(name, function, interpreterState, false, new ChartColor(0, 0, 0));
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color) throws SetlException {
-        return canvas.getFrame().addDataset(name, function, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
+    public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color) throws SetlException {
+        return canvas.getFrame().addDataset(name, function, interpreterState, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
     @Override
-    public Graph addGraph(Canvas canvas, String function, String name, List<Integer> color, boolean plotArea) throws SetlException {
-        return canvas.getFrame().addDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
+    public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException {
+        return canvas.getFrame().addDataset(name, function, interpreterState, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
     @Override
@@ -76,19 +76,19 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Double> limits) throws SetlException {
-        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(0, 0, 0), limits);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Double> limits) throws SetlException {
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, interpreterState, false, new ChartColor(0, 0, 0), limits);
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, List<Double> limits) throws SetlException {
-        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, false, new ChartColor(color.get(0), color.get(1), color.get(2)), limits);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, List<Double> limits) throws SetlException {
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, interpreterState, false, new ChartColor(color.get(0), color.get(1), color.get(2)), limits);
 
     }
 
     @Override
-    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException {
-        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)), limits);
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException {
+        return canvas.getFrame().addParamDataset(name, xfunction, yfunction, interpreterState, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)), limits);
     }
 
     @Override

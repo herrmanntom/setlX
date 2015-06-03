@@ -10,6 +10,7 @@ import org.jfree.chart.renderer.xy.*;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
 
 import javax.swing.*;
@@ -205,6 +206,7 @@ public class DrawFrame extends JFrame {
         labelGraph.setCoordinates(coordinates);
         functions.add(labelGraph);
         XYTextAnnotation label = new XYTextAnnotation(text, coordinates.get(0), coordinates.get(1));
+        label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
         if (plot == null) {
             plot = new XYPlot();
             plot.setDomainAxis(xAxis);

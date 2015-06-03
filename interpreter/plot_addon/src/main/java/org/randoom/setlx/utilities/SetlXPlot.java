@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 
 import java.util.List;
 
@@ -81,7 +82,7 @@ public interface SetlXPlot {
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException;
 
-    public Graph addChart(Canvas canvas, String chartType, List values);
+    public Graph addChart(Canvas canvas, String chartType, List values) throws UndefinedOperationException;
 
     public Graph addChart(Canvas canvas, String chartType, List values, String name);
 

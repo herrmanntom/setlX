@@ -7,6 +7,7 @@ import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -92,7 +93,17 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Graph addChart(Canvas canvas, String chartType, List values) {
+    public Graph addChart(Canvas canvas, String chartType, List values) throws UndefinedOperationException {
+        if(chartType.equalsIgnoreCase("bar")){
+
+        }else if(chartType.equalsIgnoreCase("pie")){
+
+        }else if(chartType.equalsIgnoreCase("box")){
+            
+        }else{
+            throw new UndefinedOperationException("Chart type not supported. Use bar, pie or box as Chart Type");
+        }
+
         return null;
     }
 

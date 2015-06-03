@@ -40,7 +40,7 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
         // initialise parameter canvas, value list and functionName
         Canvas canvas = (Canvas) args.get(CANVAS);
         SetlList valueSetlList = (SetlList) args.get(VALUELIST);
-        List valueList = ConvertSetlTypes.convertSetlListAsDouble(valueSetlList);
+        List<List<Double>> valueList = ConvertSetlTypes.convertSetlListAsDouble(valueSetlList);
         Value functionName = args.get(GRAPHNAME);
         SetlString graphNameSetl = (SetlString) functionName;
         String graphNameString = graphNameSetl.toString().replace("\"", "");
@@ -65,7 +65,7 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
                 area = false;
             }
 
-            List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
+            List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
 
             return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, graphNameString, graphColor, area);
         }
@@ -79,7 +79,7 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
                 return new SetlString("Parameter GRAPHCOLOR must have exactly three entrys");
             }
 
-            List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
+            List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
 
             return ConnectJFreeChart.getInstance().addListGraph(canvas, valueList, graphNameString, graphColor);
         }

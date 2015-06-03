@@ -11,9 +11,12 @@ public class CalcFunction {
     String function = "x";
     State state = new State();
 
-    public CalcFunction(String function) {
+    public CalcFunction(String function, State pState) {
         this.setFunction(function);
+        this.state = pState;
     }
+
+
 
     /**
      * evaluates the value of the function with the given parameter using setlx interpreter
@@ -22,9 +25,8 @@ public class CalcFunction {
      * @return
      */
     public Double calcYfromX(Double x) throws SetlException {
-        String s = x.toString();
-        String localFunction = function.replace("x", s);
-
+        String value = x.toString();
+        String localFunction = "closure(x) { return "+function+";}("+value+")";
         Expr expr = ParseSetlX.parseStringToExpr(state, localFunction);
         Value v = expr.eval(state);
         if (v.isDouble().equalTo(SetlBoolean.TRUE)) {

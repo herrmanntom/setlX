@@ -13,7 +13,8 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
     private final static ParameterDef XFUNCTION = createParameter("xFunction");
     private final static ParameterDef YFUNCTION = createParameter("yFunction");
     private final static ParameterDef GRAPHNAME = createParameter("graphname");
-    private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor", Rational.ONE);
+    private final static ParameterDef PARAMBOUND = createParameter("ParameterBounds");
+    private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor (RGB)", Rational.ONE);
     private final static ParameterDef PLOTAREA = createOptionalParameter("plotArea", Rational.ONE);
     public final static PreDefinedProcedure DEFINITION = new PD_plot_addParamGraph();
     private PD_plot_addParamGraph(){
@@ -22,6 +23,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         addParameter(XFUNCTION);
         addParameter(YFUNCTION);
         addParameter(GRAPHNAME);
+        addParameter(PARAMBOUND);
         addParameter(GRAPHCOLOR);
         addParameter(PLOTAREA);
     }
@@ -40,6 +42,8 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         Value graphNameV = args.get(GRAPHNAME);
         SetlString graphNameS = (SetlString) graphNameV;
         String graphName = graphNameS.toString().replace("\"", "");
+        SetlList limitsV = (SetlList)args.get(PARAMBOUND);
+        List<Double> limitsList = ConvertSetlTypes.convertSetlListAsDouble(limitsV);
 
         Value graphColorV = args.get(GRAPHCOLOR);
         Value plotarea = args.get(PLOTAREA);
@@ -47,10 +51,10 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         // if graphcolor and plotArea are set
         if (!graphColorV.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
             SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
-            if(!graphColorS.equalTo(Rational.ONE)){
-                return new SetlString("Parameter graphcolor have to consits of exact three values");
+            if(!(graphColorS.size()==3)){
+                return new SetlString("Parameter graphcolor have to consits of exact three values (RGB)");
             }
-            List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
+            List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
 
             SetlBoolean plotAreaBool = (SetlBoolean) plotarea;
             boolean area;
@@ -59,21 +63,21 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor, area);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, area, limitsList);
         }
 
         //if only the graphcolor is set
         if (!graphColorV.equalTo(Rational.ONE)) {
             SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
-            if(!graphColorS.equalTo(Rational.ONE)){
+            if(!(graphColorS.size()==3)){
                 return new SetlString("Parameter graphcolor have to consits of exact three values");
             }
-            List graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, graphColor);
+            List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, limitsList);
         }
 
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName);
+        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, limitsList);
     }
 }

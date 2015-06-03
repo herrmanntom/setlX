@@ -15,11 +15,25 @@ public class Graph extends Value {
     private String xfunction = "";
     private String yfunction = "";
     private boolean bullets;
+    private State interpreterState;
 
-    public Graph(String title, boolean area) {
+    public List<Double> getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(List<Double> coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    private List<Double> coordinates = null;
+
+
+    public Graph(String title, boolean area, State pState) {
         this.title = title;
         this.area = area;
+        this.interpreterState = pState;
     }
+
 
     public boolean isArea() {
         return area;
@@ -27,6 +41,10 @@ public class Graph extends Value {
 
     public String getTitle() {
         return title;
+    }
+
+    public State getInterpreterState(){
+        return this.interpreterState;
     }
 
     public String getXfunction() {
@@ -79,7 +97,7 @@ public class Graph extends Value {
 
     @Override
     public Value clone() {
-        Graph clone = new Graph(this.title, this.area);
+        Graph clone = new Graph(this.title, this.area, this.interpreterState);
         clone.setFunction(this.function);
         clone.setFunctionstring(this.functionstring);
         clone.setColor(this.color);
@@ -109,7 +127,6 @@ public class Graph extends Value {
     public boolean equalTo(Object o) {
         if (this == o) return true;
         if (!(o instanceof Graph)) return false;
-        if (!super.equals(o)) return false;
 
         Graph graph = (Graph) o;
 

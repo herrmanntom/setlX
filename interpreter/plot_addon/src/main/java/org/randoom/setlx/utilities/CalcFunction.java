@@ -16,6 +16,8 @@ public class CalcFunction {
         this.state = pState;
     }
 
+
+
     /**
      * evaluates the value of the function with the given parameter using setlx interpreter
      *
@@ -24,8 +26,7 @@ public class CalcFunction {
      */
     public Double calcYfromX(Double x) throws SetlException {
         String value = x.toString();
-        String localFunction = "(x |-> "+function+")("+value+")";
-
+        String localFunction = "closure(x) { return "+function+";}("+value+")";
         Expr expr = ParseSetlX.parseStringToExpr(state, localFunction);
         Value v = expr.eval(state);
         if (v.isDouble().equalTo(SetlBoolean.TRUE)) {

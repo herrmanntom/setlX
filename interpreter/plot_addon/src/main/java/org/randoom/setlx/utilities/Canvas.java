@@ -3,16 +3,48 @@ package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.types.Value;
 
+import javax.swing.*;
+
 
 public class Canvas extends Value {
-    private DrawFrame frame;
+    public void setFrame(AbstractFrame frame) {
+        this.frame = frame;
+    }
 
-    public Canvas(DrawFrame frame){
+    private AbstractFrame frame;
+    public static final int DRAW_FRAME = 1;
+    public static final int BAR_FRAME = 2;
+    public static final int PIE_FRAME = 3;
+    public static final int BOX_FRAME = 4;
+    public static final int VIRGIN_FRAME = 0;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    private String title;
+
+
+    public int getFrameType() {
+        return this.frameType;
+    }
+
+    public void setFrameType(int frameType) {
+        this.frameType = frameType;
+    }
+
+    private int frameType = VIRGIN_FRAME;
+
+    public Canvas(AbstractFrame frame){
         this.frame = frame;
     }
 
 
-    public DrawFrame getFrame(){
+    public AbstractFrame getFrame(){
         return this.frame;
     }
 

@@ -1,13 +1,10 @@
 package org.randoom.setlx.utilities;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.*;
-import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.TextAnchor;
@@ -19,57 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class DrawFrame extends JFrame {
+public class DrawFrame extends AbstractFrame {
     XYPlot plot;
-    ChartPanel chartPanel;
-    LegendTitle legend;
-    private double x_Min;
-    private double x_Max;
-    private List<Graph> functions = new ArrayList<Graph>();
-    private ValueAxis xAxis;
-    private ValueAxis yAxis;
-    private JPanel jPanel;
-    private int chartCount;
-    private String title = "title";
 
-    public ValueAxis getyAxis() {
-        return yAxis;
-    }
-
-    public ValueAxis getxAxis() {
-        return xAxis;
-    }
-
-    public DrawFrame(String title) {
-        super(title);
-        System.out.println("penis");
-        chartCount = 0;
-        jPanel = new JPanel();
-        jPanel.setName(title);
-        add(jPanel, BorderLayout.CENTER);
-        setSize(640, 480);
-
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        x_Min = -10.0;
-        x_Max = 10.0;
-        xAxis = new NumberAxis("x");
-        yAxis = new NumberAxis("y");
-        plot = null;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-        if (chartPanel != null) {
-            chartPanel.setName(title);
-        }
-    }
-
-    public void setLabel(String xLabel, String yLabel) {
-        plot.getDomainAxis().setLabel(xLabel);
-        plot.getRangeAxis().setLabel(yLabel);
-    }
-
+    protected List<Graph> functions = new ArrayList<Graph>();
     public void setxAxis(ValueAxis xAxis) {
         this.xAxis = xAxis;
         if (plot != null) {
@@ -86,8 +36,37 @@ public class DrawFrame extends JFrame {
         remakeFunctions();
     }
 
-    private void remakeFunctions() throws SetlException {
+    public void modyScale(double y_Min, double y_Max) {
+        ValueAxis axis = plot.getRangeAxis();
+        axis.setLowerBound(y_Min);
+        axis.setUpperBound(y_Max);
+    }
 
+    public void setyAxis(ValueAxis yAxis) {
+        this.yAxis = yAxis;
+        if (plot != null) {
+            plot.setRangeAxis(this.yAxis);
+        }
+    }
+
+    public DrawFrame(String title) {
+        super(title);
+        chartCount = 0;
+        jPanel = new JPanel();
+        jPanel.setName(title);
+        add(jPanel, BorderLayout.CENTER);
+        setSize(640, 480);
+
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        setLocationRelativeTo(null);
+        x_Min = -10.0;
+        x_Max = 10.0;
+        xAxis = new NumberAxis("x");
+        yAxis = new NumberAxis("y");
+        plot = null;
+    }
+
+    protected void remakeFunctions() throws SetlException {
         plot = new XYPlot(new XYSeriesCollection(), xAxis, yAxis, new XYLineAndShapeRenderer());
         this.redraw();
         ArrayList<Graph> func = new ArrayList<Graph>(functions);
@@ -111,20 +90,6 @@ public class DrawFrame extends JFrame {
         }
         this.redraw();
         chartCount--;
-    }
-
-
-    public void modyScale(double y_Min, double y_Max) {
-        ValueAxis axis = plot.getRangeAxis();
-        axis.setLowerBound(y_Min);
-        axis.setUpperBound(y_Max);
-    }
-
-    public void setyAxis(ValueAxis yAxis) {
-        this.yAxis = yAxis;
-        if (plot != null) {
-            plot.setRangeAxis(this.yAxis);
-        }
     }
 
     public Graph addDataset(String title, String function, State interpreterState, boolean area, Color color) throws SetlException {
@@ -159,20 +124,6 @@ public class DrawFrame extends JFrame {
         return plotfun;
     }
 
-    private void redraw() {
-        if (chartCount != 0) {
-            jPanel.remove(chartPanel);
-        }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
-
-        chartPanel = new ChartPanel(chart, true, true, true, true, true);
-
-        jPanel.add(chartPanel);
-
-        this.pack();
-        chartCount++;
-    }
-
     public Graph addListDataset(String title, List<List<Double>> function, boolean area, Color color) {
         Graph plotfun = new Graph(title, area, new State());
         plotfun.setFunction(function);
@@ -200,6 +151,11 @@ public class DrawFrame extends JFrame {
         }
         this.redraw();
         return plotfun;
+    }
+
+    public void setLabel(String xLabel, String yLabel) {
+        plot.getDomainAxis().setLabel(xLabel);
+        plot.getRangeAxis().setLabel(yLabel);
     }
 
     public Graph addTextLabel(List<Double> coordinates, String text) {
@@ -279,11 +235,4 @@ public class DrawFrame extends JFrame {
         return plotfun;
     }
 
-    public void removeGraph(Graph graph) throws SetlException {
-        boolean ispresent = functions.remove(graph);
-        if (!ispresent) {
-            System.out.println("nicht gelöscht");
-        }
-        remakeFunctions();
-    }
 }

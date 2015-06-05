@@ -82,9 +82,9 @@ public interface SetlXPlot {
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException;
 
-    public Graph addChart(Canvas canvas, String chartType, List values) throws UndefinedOperationException;
+    public Chart addChart(Canvas canvas, String chartType, List values) throws UndefinedOperationException;
 
-    public Graph addChart(Canvas canvas, String chartType, List values, String name);
+    public Chart addChart(Canvas canvas, String chartType, List values, String name);
 
     public void removeGraph(Canvas canvas, Graph graph) throws SetlException;
 

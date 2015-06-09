@@ -2,10 +2,29 @@ package org.randoom.setlx.utilities;
 
 
 import org.randoom.setlx.types.Value;
+
+import java.util.List;
+
 /**
  * Created by arne on 03.06.15.
  */
 public class Chart extends Value {
+    private List<Double> values;
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public List<Double> getValues() {
+        return values;
+    }
+
+    private List<String> categories;
+
+    public Chart(List<Double> values, List<String> categories){
+        this.values = values;
+        this.categories = categories;
+    }
     @Override
     public Value clone() {
         return null;

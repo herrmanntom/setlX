@@ -176,7 +176,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             if(canvas.getFrameType() == Canvas.VIRGIN_FRAME){
                 canvas.setFrame(new BarFrame(canvas.getTitle()));
             }
-            returnChart = ((BarFrame)canvas.getFrame()).addBarChart(values);
+            returnChart = ((BarFrame)canvas.getFrame()).addBarChart(values, categories);
         }else if(chartType.equalsIgnoreCase("pie")){
             if(canvas.getFrameType() == Canvas.BOX_FRAME || canvas.getFrameType() == Canvas.BAR_FRAME){
                 System.out.println("Wrong Diagram type. This Canvas is for PieCharts");
@@ -185,7 +185,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             if(canvas.getFrameType() == Canvas.VIRGIN_FRAME){
                 canvas.setFrame(new PieFrame(canvas.getTitle()));
             }
-            returnChart = ((PieFrame)canvas.getFrame()).addPieChart(values);
+            returnChart = ((PieFrame)canvas.getFrame()).addPieChart(values, );
         }else if(chartType.equalsIgnoreCase("box")){
             if(canvas.getFrameType() == Canvas.BAR_FRAME || canvas.getFrameType() == Canvas.PIE_FRAME){
                 System.out.println("Wrong Diagram type. This Canvas is for BoxCharts");

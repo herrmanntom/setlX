@@ -37,7 +37,6 @@ public class PD_plot_addChart extends PreDefinedProcedure {
         Canvas canvas = (Canvas) args.get(CANVAS);
         SetlString chartType = (SetlString) args.get(CHARTTYPE);
         String chartTypeString = chartType.toString().replace("\"", "");
-        ;
         SetlList values = (SetlList) args.get(VALUES);
         SetlList categories = (SetlList) args.get(CATEGORIES);
         List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);

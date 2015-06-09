@@ -41,9 +41,9 @@ public class PD_plot_addChart extends PreDefinedProcedure {
             SetlString nameSetlString = (SetlString)name;
             String nameString = nameSetlString.toString();
 
-            return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList, nameString);
+            return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList, nameString, );
         }
 
-        return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList);
+        return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList, );
     }
 }

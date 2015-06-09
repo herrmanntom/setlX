@@ -1,0 +1,5 @@
+c := plot_createCanvas();
+g1 := plot_addGraph(c, "x*x", "Parabel");
+g2 := plot_addGraph(c, "x", "Winkelhalbierende");
+l1 := plot_addLabel(c, [0,0], "Nullpunkt");
+l2 := plot_addLabel(c, [1,1], "Schnittpunkt mit Winkelhalbierenden");

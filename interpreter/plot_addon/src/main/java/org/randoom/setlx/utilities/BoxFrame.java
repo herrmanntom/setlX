@@ -1,5 +1,7 @@
 package org.randoom.setlx.utilities;
 
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.randoom.setlx.exceptions.SetlException;
 
 import java.util.List;
@@ -15,6 +17,20 @@ public class BoxFrame extends AbstractFrame {
 
     public BoxFrame(String title) {
         super(title);
+    }
+
+    protected void redraw() {
+        if (chartCount != 0) {
+            jPanel.remove(chartPanel);
+        }
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.plot, true);
+
+        chartPanel = new ChartPanel(chart, true, true, true, true, true);
+
+        jPanel.add(chartPanel);
+
+        this.pack();
+        chartCount++;
     }
 
     @Override

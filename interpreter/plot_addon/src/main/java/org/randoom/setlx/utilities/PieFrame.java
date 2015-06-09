@@ -1,6 +1,9 @@
 package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PiePlot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.randoom.setlx.exceptions.SetlException;
 
@@ -25,6 +28,20 @@ public class PieFrame extends AbstractFrame {
         this.title = title;
     }
 
+    protected void redraw() {
+        if (chartCount != 0) {
+            jPanel.remove(chartPanel);
+        }
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.plot, true);
+
+        chartPanel = new ChartPanel(chart, true, true, true, true, true);
+
+        jPanel.add(chartPanel);
+
+        this.pack();
+        chartCount++;
+    }
+
     @Override
     protected void remakeFunctions() throws SetlException {
 
@@ -32,14 +49,13 @@ public class PieFrame extends AbstractFrame {
 
     public Chart addPieChart(List<Double> values, List<String> categories) {
         for(int i = 0; i < values.size(); i++){
-            dataset.addValue(values.get(i), "series"+seriescount.toString(), categories.get(i));
+            dataset.setValue(categories.get(i), values.get(i));
         }
         Chart chart = new Chart(values, categories);
         if (plot == null) {
-            plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
+            plot = new PiePlot(dataset);
         } else {
-            ((CategoryPlot)plot).setDataset(chartCount, dataset);
-            ((CategoryPlot)plot).setRenderer(chartCount, renderer);
+            ((PiePlot)plot).setDataset(dataset);
         }
         functions.add(chart);
         chartCount++;

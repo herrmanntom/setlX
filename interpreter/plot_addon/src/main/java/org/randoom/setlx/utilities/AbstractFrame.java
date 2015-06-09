@@ -41,6 +41,7 @@ public abstract class AbstractFrame extends JFrame {
 
     public AbstractFrame(String title){
         super(title);
+        this.setVisible(true);
     }
 
     public void setTitle(String title) {
@@ -52,19 +53,7 @@ public abstract class AbstractFrame extends JFrame {
 
     protected abstract void remakeFunctions() throws SetlException;
 
-    protected void redraw() {
-        if (chartCount != 0) {
-            jPanel.remove(chartPanel);
-        }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, plot, true);
-
-        chartPanel = new ChartPanel(chart, true, true, true, true, true);
-
-        jPanel.add(chartPanel);
-
-        this.pack();
-        chartCount++;
-    }
+    protected abstract void redraw();
 
     public void removeGraph(Graph graph) throws SetlException {
         boolean ispresent = functions.remove(graph);

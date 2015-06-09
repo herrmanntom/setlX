@@ -27,7 +27,7 @@ public class Chart extends Value {
     }
     @Override
     public Value clone() {
-        return null;
+        return new Chart(this.values, this.categories);
     }
 
     @Override
@@ -47,11 +47,22 @@ public class Chart extends Value {
 
     @Override
     public int hashCode() {
-        return 0;
+
+        int result = (values != null ? values.hashCode() : 0);
+        result = 42 * result + (categories != null ? categories.hashCode() : 0);
+
+        return result;
     }
 
     @Override
-    public boolean equalTo(Object other) {
-        return false;
+    public boolean equalTo(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Graph)) return false;
+
+        Chart c = (Chart) o;
+
+        if(this.values != c.values){return false;}
+        if(this.categories != c.categories){return false;}
+        return true;
     }
 }

@@ -175,8 +175,9 @@ public class ConnectJFreeChart implements SetlXPlot {
             }
             if(canvas.getFrameType() == Canvas.VIRGIN_FRAME){
                 canvas.setFrame(new BarFrame(canvas.getTitle()));
+                canvas.setFrameType(Canvas.BAR_FRAME);
+                returnChart = ((BarFrame)canvas.getFrame()).addBarChart(values, categories);
             }
-            returnChart = ((BarFrame)canvas.getFrame()).addBarChart(values, categories);
         }else if(chartType.equalsIgnoreCase("pie")){
             if(canvas.getFrameType() == Canvas.BOX_FRAME || canvas.getFrameType() == Canvas.BAR_FRAME){
                 System.out.println("Wrong Diagram type. This Canvas is for PieCharts");

@@ -9,6 +9,8 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.randoom.setlx.exceptions.SetlException;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +27,12 @@ public class BarFrame extends AbstractFrame {
         this.xAxis = new CategoryAxis();
         this.yAxis = new NumberAxis();
         this.chartCount = 0;
+        jPanel = new JPanel();
+        jPanel.setName(title);
+        add(jPanel, BorderLayout.CENTER);
+        setSize(640, 480);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        setLocationRelativeTo(null);
 
     }
 
@@ -70,7 +78,7 @@ public class BarFrame extends AbstractFrame {
             ((CategoryPlot)plot).setRenderer(chartCount, renderer);
         }
         functions.add(chart);
-        chartCount++;
+        this.redraw();
         return chart;
     }
 }

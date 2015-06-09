@@ -2,6 +2,7 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.Axis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.title.LegendTitle;
@@ -22,19 +23,19 @@ public abstract class AbstractFrame extends JFrame {
     protected double x_Min;
     protected double x_Max;
     protected List<Value> functions = new ArrayList<Value>();
-    protected ValueAxis xAxis;
-    protected ValueAxis yAxis;
+    protected Axis xAxis;
+    protected Axis yAxis;
     protected JPanel jPanel;
     protected int chartCount;
     protected String title = "title";
 
     public abstract Graph addTextLabel(List<Double> coordinates, String text);
 
-    public ValueAxis getyAxis() {
+    public Axis getyAxis() {
         return yAxis;
     }
 
-    public ValueAxis getxAxis() {
+    public Axis getxAxis() {
         return xAxis;
     }
 

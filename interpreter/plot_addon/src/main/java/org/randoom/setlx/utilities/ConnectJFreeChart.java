@@ -162,7 +162,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addChart(Canvas canvas, String chartType, List values) throws UndefinedOperationException {
+    public Chart addChart(Canvas canvas, String chartType, List<Double> values, List<String> categories) throws UndefinedOperationException {
         if(canvas.getFrameType() == Canvas.DRAW_FRAME){
             System.out.println("Canvas is used for Graphs. Not possible to insert Diagram.");
             return null;
@@ -203,7 +203,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addChart(Canvas canvas, String chartType, List values, String name) {
+    public Chart addChart(Canvas canvas, String chartType, List<Double> values, String name, List<String> categories) {
         return null;
     }
 

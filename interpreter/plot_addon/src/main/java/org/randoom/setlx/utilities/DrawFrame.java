@@ -23,7 +23,7 @@ public class DrawFrame extends AbstractFrame {
     public void setxAxis(ValueAxis xAxis) {
         this.xAxis = xAxis;
         if (plot != null) {
-            plot.setDomainAxis(this.xAxis);
+            plot.setDomainAxis((ValueAxis)this.xAxis);
         }
     }
 
@@ -45,7 +45,7 @@ public class DrawFrame extends AbstractFrame {
     public void setyAxis(ValueAxis yAxis) {
         this.yAxis = yAxis;
         if (plot != null) {
-            plot.setRangeAxis(this.yAxis);
+            plot.setRangeAxis((ValueAxis)this.yAxis);
         }
     }
 
@@ -67,7 +67,7 @@ public class DrawFrame extends AbstractFrame {
     }
 
     protected void remakeFunctions() throws SetlException {
-        plot = new XYPlot(new XYSeriesCollection(), xAxis, yAxis, new XYLineAndShapeRenderer());
+        plot = new XYPlot(new XYSeriesCollection(), (ValueAxis)xAxis, (ValueAxis)yAxis, new XYLineAndShapeRenderer());
         this.redraw();
         ArrayList<Graph> func = new ArrayList<Graph>(functions);
         functions.clear();
@@ -115,7 +115,7 @@ public class DrawFrame extends AbstractFrame {
         }
         XYSeriesCollection col = new XYSeriesCollection(series);
         if (plot == null) {
-            plot = new XYPlot(col, xAxis, yAxis, renderer);
+            plot = new XYPlot(col, (ValueAxis)xAxis, (ValueAxis)yAxis, renderer);
         } else {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
@@ -144,7 +144,7 @@ public class DrawFrame extends AbstractFrame {
         XYSeriesCollection col = new XYSeriesCollection(series);
 
         if (plot == null) {
-            plot = new XYPlot(col, xAxis, yAxis, renderer);
+            plot = new XYPlot(col, (ValueAxis)xAxis, (ValueAxis)yAxis, renderer);
         } else {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
@@ -166,8 +166,8 @@ public class DrawFrame extends AbstractFrame {
         label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
         if (plot == null) {
             plot = new XYPlot();
-            plot.setDomainAxis(xAxis);
-            plot.setRangeAxis(yAxis);
+            plot.setDomainAxis((ValueAxis)xAxis);
+            plot.setRangeAxis((ValueAxis)yAxis);
         }
         plot.addAnnotation(label);
         this.redraw();
@@ -191,7 +191,7 @@ public class DrawFrame extends AbstractFrame {
         XYSeriesCollection col = new XYSeriesCollection(series);
 
         if (plot == null) {
-            plot = new XYPlot(col, xAxis, yAxis, renderer);
+            plot = new XYPlot(col, (ValueAxis)xAxis, (ValueAxis)yAxis, renderer);
         } else {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);
@@ -226,7 +226,7 @@ public class DrawFrame extends AbstractFrame {
         XYSeriesCollection col = new XYSeriesCollection(series);
 
         if (plot == null) {
-            plot = new XYPlot(col, xAxis, yAxis, renderer);
+            plot = new XYPlot(col, (ValueAxis)xAxis, (ValueAxis)yAxis, renderer);
         } else {
             plot.setDataset(chartCount, col);
             plot.setRenderer(chartCount, renderer);

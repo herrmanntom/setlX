@@ -26,7 +26,7 @@ public interface SetlXPlot {
      *
      * @param canvas
      * @param function
-     * @param name of the graphe
+     * @param name             of the graphe
      * @param interpreterState
      * @return identifier of the graph
      */

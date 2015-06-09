@@ -1,5 +1,4 @@
 <project name="setlX" basedir="." default="jar">
-    <setproxy proxyhost="192.168.1.112" proxyport="3128" />
     <!-- variables which determine paths and other information used later -->
     <property name="buildTools.dir" value="${basedir}/buildTools"/>
     <property name="j16rt.dir"      value="${buildTools.dir}/java_1_6"/>

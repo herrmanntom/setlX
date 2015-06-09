@@ -26,7 +26,7 @@ public interface SetlXPlot {
      *
      * @param canvas
      * @param function
-     * @param name     of the graphe
+     * @param name             of the graphe
      * @param interpreterState
      * @return identifier of the graph
      */
@@ -39,7 +39,8 @@ public interface SetlXPlot {
      * @param function
      * @param name
      * @param interpreterState
-     *@param color  @return
+     * @param color
+     * @return
      */
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color) throws SetlException;
 
@@ -49,8 +50,8 @@ public interface SetlXPlot {
      * @param canvas
      * @param function
      * @param interpreterState
-     *@param color
-     * @param plotArea draw integral if true   @return
+     * @param color
+     * @param plotArea         draw integral if true   @return
      */
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException;
 

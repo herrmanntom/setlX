@@ -45,4 +45,21 @@ public class ConvertSetlTypes {
         return returnList;
     }
 
+    public static List convertSetlListAsString(SetlList setlList) throws SetlException {
+        List returnList = new ArrayList();
+        Value member;
+        for (int i = 1; i < setlList.size() + 1; i++) {
+            member = setlList.getMember(i);
+            if (member instanceof SetlList) {
+                returnList.add(convertSetlListAsString((SetlList) member));
+            } else {
+
+                String m = member.toString().replace("\"", "");
+
+                returnList.add(m);
+            }
+        }
+        return returnList;
+    }
+
 }

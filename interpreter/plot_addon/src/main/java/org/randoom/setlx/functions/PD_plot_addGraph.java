@@ -10,15 +10,11 @@ import java.util.List;
 public class PD_plot_addGraph extends PreDefinedProcedure {
 
 
-    private final static ParameterDef
-            CANVAS = createParameter(" canvas ");
-    private final static ParameterDef
-            FUNCTIONDEFINITION = createParameter(" functiondefinition ");
-    private final static ParameterDef
-            GRAPHNAME = createParameter(" graphname ");
+    private final static ParameterDef CANVAS = createParameter(" canvas ");
+    private final static ParameterDef FUNCTIONDEFINITION = createParameter(" functiondefinition ");
+    private final static ParameterDef GRAPHNAME = createParameter(" graphname ");
     private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor", Rational.ONE);
-    private final static ParameterDef
-            PLOTAREA = createOptionalParameter(" plotarea ", Rational.ONE);
+    private final static ParameterDef PLOTAREA = createOptionalParameter(" plotarea ", Rational.ONE);
 
     public final static PreDefinedProcedure
             DEFINITION = new PD_plot_addGraph();
@@ -57,17 +53,17 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
             } else {
                 area = false;
             }
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state , colorList, area);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state, colorList, area);
         }
 
         //if graphcolor is set
         if (!colorListValue.equalTo(Rational.ONE)) {
             SetlList colorListSetl = (SetlList) colorListValue;
             List<Integer> colorList = ConvertSetlTypes.convertSetlListAsInteger(colorListSetl);
-            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state , colorList);
+            return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state, colorList);
         }
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state );
+        return ConnectJFreeChart.getInstance().addGraph(canvas, function, graphNameString, state);
     }
 }

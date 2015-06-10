@@ -12,7 +12,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
 
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +20,12 @@ import java.util.List;
 public class DrawFrame extends AbstractFrame {
     XYPlot plot;
 
-    protected List<Graph> functions = new ArrayList<Graph>();
+
+    protected List<Graph> functions = new ArrayList<>();
     public void setxAxis(ValueAxis xAxis) {
         this.xAxis = xAxis;
         if (plot != null) {
-            plot.setDomainAxis((ValueAxis)this.xAxis);
+            plot.setDomainAxis(xAxis);
         }
     }
 
@@ -47,8 +47,9 @@ public class DrawFrame extends AbstractFrame {
     public void setyAxis(ValueAxis yAxis) {
         this.yAxis = yAxis;
         if (plot != null) {
-            plot.setRangeAxis((ValueAxis)this.yAxis);
+            plot.setRangeAxis(yAxis);
         }
+        this.redraw();
     }
 
     public DrawFrame(String title) {
@@ -75,7 +76,7 @@ public class DrawFrame extends AbstractFrame {
     protected void remakeFunctions() throws SetlException {
         plot = new XYPlot(new XYSeriesCollection(), (ValueAxis)xAxis, (ValueAxis)yAxis, new XYLineAndShapeRenderer());
         this.redraw();
-        ArrayList<Graph> func = new ArrayList<Graph>(functions);
+        ArrayList<Graph> func = new ArrayList<>(functions);
         functions.clear();
         for (Graph item : func) {
             if (!item.getFunctionstring().isEmpty()) {
@@ -102,6 +103,7 @@ public class DrawFrame extends AbstractFrame {
 
         Graph plotfun = new Graph(title, area, interpreterState);
         plotfun.setFunctionstring(function);
+        plotfun.setColor(color);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, true, false);
         CalcFunction calc = new CalcFunction(function, interpreterState);
@@ -134,6 +136,7 @@ public class DrawFrame extends AbstractFrame {
         Graph plotfun = new Graph(title, area, new State());
         plotfun.setFunction(function);
         plotfun.setBullets(false);
+        plotfun.setColor(color);
         functions.add(plotfun);
 
         XYSeries series = new XYSeries(title, false, true);
@@ -212,15 +215,18 @@ public class DrawFrame extends AbstractFrame {
         plotfun.setXfunction(xfunction);
         plotfun.setYfunction(yfunction);
         plotfun.setCoordinates(limits);
+        plotfun.setColor(color);
+
         functions.add(plotfun);
 
-        XYSeries series = new XYSeries(title, true, false);
+        XYSeries series = new XYSeries(title, false, true);
         CalcFunction xcalc = new CalcFunction(xfunction, interpreterState);
         CalcFunction ycalc = new CalcFunction(yfunction, interpreterState);
 
         XYItemRenderer renderer;
         if (area) {
-            renderer = new XYDifferenceRenderer();
+            renderer = new XYAreaRenderer(XYAreaRenderer.AREA);
+            ((XYAreaRenderer) renderer).setOutline(true);
         } else {
             renderer = new XYLineAndShapeRenderer(true, false);
         }
@@ -242,3 +248,4 @@ public class DrawFrame extends AbstractFrame {
     }
 
 }
+

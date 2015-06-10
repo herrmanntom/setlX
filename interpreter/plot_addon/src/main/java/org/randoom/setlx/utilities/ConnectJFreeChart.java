@@ -228,7 +228,10 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void defineTitle(Canvas canvas, String title) {
-        canvas.getFrame().getFrame().setTitle(title);
+        canvas.setTitle(title);
+        if(canvas.getFrame().getFrame() != null) {
+            canvas.getFrame().getFrame().setTitle(title);
+        }
     }
 
     @Override

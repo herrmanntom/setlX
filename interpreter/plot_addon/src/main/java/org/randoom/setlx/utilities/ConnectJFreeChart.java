@@ -274,7 +274,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             ((DrawFrame)canvas.getFrame().getFrame()).setxAxis(log);
         } else if (xType.equalsIgnoreCase("num")) {
             ((DrawFrame)canvas.getFrame().getFrame()).setxAxis(new NumberAxis(canvas.getFrame().getFrame().getxAxis().getLabel()));
-        } else {igit 
+        } else {
             System.out.println("Wrong x-Axis type, use log or num");
         }
         if (yType.equalsIgnoreCase("log")) {

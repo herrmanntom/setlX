@@ -21,7 +21,7 @@ public class DrawFrame extends AbstractFrame {
     XYPlot plot;
 
 
-    protected List<Graph> functions = new ArrayList<>();
+    protected List<Graph> functions = new ArrayList();
     public void setxAxis(ValueAxis xAxis) {
         this.xAxis = xAxis;
         if (plot != null) {
@@ -76,7 +76,7 @@ public class DrawFrame extends AbstractFrame {
     protected void remakeFunctions() throws SetlException {
         plot = new XYPlot(new XYSeriesCollection(), (ValueAxis)xAxis, (ValueAxis)yAxis, new XYLineAndShapeRenderer());
         this.redraw();
-        ArrayList<Graph> func = new ArrayList<>(functions);
+        ArrayList<Graph> func = new ArrayList(functions);
         functions.clear();
         for (Graph item : func) {
             if (!item.getFunctionstring().isEmpty()) {

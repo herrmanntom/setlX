@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class PieFrame extends AbstractFrame {
     private DefaultPieDataset dataset = new DefaultPieDataset();
-    private List<Chart> functions = new ArrayList<Chart>();
+    private List<Chart> functions = new ArrayList();
     @Override
     public Graph addTextLabel(List<Double> coordinates, String text) {
         return null;

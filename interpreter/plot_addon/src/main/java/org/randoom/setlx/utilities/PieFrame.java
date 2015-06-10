@@ -55,7 +55,6 @@ public class PieFrame extends AbstractFrame {
             ((PiePlot)plot).setDataset(dataset);
         }
         functions.add(chart);
-        chartCount++;
         this.redraw();
         return chart;
     }

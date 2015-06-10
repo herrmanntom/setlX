@@ -167,7 +167,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             System.out.println("Canvas is used for Graphs. Not possible to insert Diagram.");
             return null;
         }
-        Chart returnChart = null;
+        Chart returnChart;
         if(chartType.equalsIgnoreCase("bar")){
             if(canvas.getFrame().getFrameType() == FrameWrapper.BOX_FRAME || canvas.getFrame().getFrameType() == FrameWrapper.PIE_FRAME){
                 System.out.println("Wrong Diagram type. This Canvas is for BarCharts");
@@ -176,8 +176,8 @@ public class ConnectJFreeChart implements SetlXPlot {
             if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
                 canvas.getFrame().setFrame(new BarFrame(canvas.getTitle()));
                 canvas.getFrame().setFrameType(FrameWrapper.BAR_FRAME);
-                returnChart = ((BarFrame)canvas.getFrame().getFrame()).addBarChart(values, categories);
             }
+            returnChart = ((BarFrame)canvas.getFrame().getFrame()).addBarChart(values, categories);
         }else if(chartType.equalsIgnoreCase("pie")){
             if(canvas.getFrame().getFrameType() == FrameWrapper.BOX_FRAME || canvas.getFrame().getFrameType() == FrameWrapper.BAR_FRAME){
                 System.out.println("Wrong Diagram type. This Canvas is for PieCharts");
@@ -185,6 +185,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             }
             if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
                 canvas.getFrame().setFrame(new PieFrame(canvas.getTitle()));
+                canvas.getFrame().setFrameType(FrameWrapper.PIE_FRAME);
             }
             returnChart = ((PieFrame)canvas.getFrame().getFrame()).addPieChart(values, categories);
         }else if(chartType.equalsIgnoreCase("box")){
@@ -194,8 +195,9 @@ public class ConnectJFreeChart implements SetlXPlot {
             }
             if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
                 canvas.getFrame().setFrame(new BoxFrame(canvas.getTitle()));
+                canvas.getFrame().setFrameType(FrameWrapper.BOX_FRAME);
             }
-            returnChart = ((BoxFrame)canvas.getFrame().getFrame()).addBoxChart(values);
+            returnChart = ((BoxFrame)canvas.getFrame().getFrame()).addBoxChart(values, categories);
         }else{
             throw new UndefinedOperationException("Chart type not supported. Use bar, pie or box as Chart Type");
         }

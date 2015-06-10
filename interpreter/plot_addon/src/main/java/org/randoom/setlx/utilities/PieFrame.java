@@ -15,9 +15,7 @@ import java.util.List;
  */
 public class PieFrame extends AbstractFrame {
     private DefaultPieDataset dataset = new DefaultPieDataset();
-    private Integer seriescount = 0;
     private List<Chart> functions = new ArrayList<Chart>();
-    private String title;
     @Override
     public Graph addTextLabel(List<Double> coordinates, String text) {
         return null;
@@ -25,7 +23,6 @@ public class PieFrame extends AbstractFrame {
 
     public PieFrame(String title) {
         super(title);
-        this.title = title;
     }
 
     protected void redraw() {
@@ -59,6 +56,7 @@ public class PieFrame extends AbstractFrame {
         }
         functions.add(chart);
         chartCount++;
+        this.redraw();
         return chart;
     }
 }

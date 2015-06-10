@@ -39,11 +39,6 @@ public class Canvas extends Value {
 
     private int frameType = VIRGIN_FRAME;
 
-    public Canvas(AbstractFrame frame){
-        this.frame = frame;
-    }
-
-
     public AbstractFrame getFrame(){
         return this.frame;
     }
@@ -51,7 +46,11 @@ public class Canvas extends Value {
 
     @Override
     public Value clone() {
-        return new Canvas(this.frame);
+        Canvas result = new Canvas();
+        result.setFrameType(this.frameType);
+        result.setTitle(this.title);
+        result.setFrame(this.frame);
+        return result;
     }
 
     @Override
@@ -70,16 +69,22 @@ public class Canvas extends Value {
 
     @Override
     public int hashCode() {
-        if(frame != null) {
-            return 37*frame.hashCode();
-        }else{
-            return 0;
-        }
+        int result = (title != null ? title.hashCode() : 0);
+        result = 36 * result + (frameType);
+        result = 36 * result + (frame != null ? frame.hashCode() : 0);
+        return result;
     }
 
     @Override
-    public boolean equalTo(Object other) {
-        //equal defined as the same class
-        return other.getClass() == this.getClass();
+    public boolean equalTo(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Graph)) return false;
+
+        Canvas c = (Canvas) o;
+
+        if(this.title != c.getTitle()){ return false;}
+        if(this.frame != c.getFrame()){return false;}
+        return (this.frameType == c.getFrameType());
+
     }
 }

@@ -53,14 +53,6 @@ public class DrawFrame extends AbstractFrame {
 
     public DrawFrame(String title) {
         super(title);
-        chartCount = 0;
-        jPanel = new JPanel();
-        jPanel.setName(title);
-        add(jPanel, BorderLayout.CENTER);
-        setSize(640, 480);
-
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
         x_Min = -10.0;
         x_Max = 10.0;
         xAxis = new NumberAxis("x");
@@ -68,7 +60,7 @@ public class DrawFrame extends AbstractFrame {
         plot = null;
     }
     protected void redraw() {
-        if (chartCount != 0) {
+        if(chartCount != 0) {
             jPanel.remove(chartPanel);
         }
         JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.plot, true);

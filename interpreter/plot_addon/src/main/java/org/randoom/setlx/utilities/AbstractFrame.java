@@ -10,6 +10,7 @@ import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +43,13 @@ public abstract class AbstractFrame extends JFrame {
     public AbstractFrame(String title){
         super(title);
         this.setVisible(true);
+        this.chartCount = 0;
+        jPanel = new JPanel();
+        jPanel.setName(title);
+        add(jPanel, BorderLayout.CENTER);
+        setSize(640, 480);
+        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        setLocationRelativeTo(null);
     }
 
     public void setTitle(String title) {

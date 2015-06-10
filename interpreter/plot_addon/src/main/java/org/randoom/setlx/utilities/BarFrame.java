@@ -26,14 +26,6 @@ public class BarFrame extends AbstractFrame {
         super(title);
         this.xAxis = new CategoryAxis();
         this.yAxis = new NumberAxis();
-        this.chartCount = 0;
-        jPanel = new JPanel();
-        jPanel.setName(title);
-        add(jPanel, BorderLayout.CENTER);
-        setSize(640, 480);
-        setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
-        setLocationRelativeTo(null);
-
     }
 
     protected void redraw() {

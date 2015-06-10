@@ -30,25 +30,25 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public Canvas createCanvas() {
-        Canvas canvas = new Canvas(null);
+        Canvas canvas = new Canvas();
         canvas.setTitle("Graphic output");
         return canvas;
     }
 
     @Override
     public Canvas createCanvas(String title) {
-        Canvas canvas = new Canvas(null);
+        Canvas canvas = new Canvas();
         canvas.setTitle(title);
         return canvas;
     }
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState) throws SetlException {
-        if(canvas.getFrameType() == Canvas.VIRGIN_FRAME){
+        if(canvas.getFrame() == null){
             canvas.setFrameType(Canvas.DRAW_FRAME);
             canvas.setFrame(new DrawFrame(canvas.getTitle()));
         }
-        else if(canvas.getFrameType() >= Canvas.BAR_FRAME){
+        else if(!(canvas.getFrame() instanceof DrawFrame) ){
             System.out.println("Canvas is used for Diagrams. Not possible to insert Graph");
             return null;
         }

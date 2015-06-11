@@ -43,12 +43,11 @@ public class PieFrame extends AbstractFrame {
 
     }
 
-    public Chart addPieChart(List<Double> values, List<String> categories, String name) {
+    public Chart addPieChart(List<Double> values, List<String> categories) {
         for(int i = 0; i < values.size(); i++){
             dataset.setValue(categories.get(i), values.get(i));
         }
-        this.title = name;
-        Chart chart = new Chart(values, categories, name);
+        Chart chart = new Chart(values, categories, "series"+chartCount);
         if (plot == null) {
             plot = new PiePlot(dataset);
         } else {

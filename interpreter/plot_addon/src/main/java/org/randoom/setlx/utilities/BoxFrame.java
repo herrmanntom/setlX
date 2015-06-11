@@ -61,11 +61,15 @@ public class BoxFrame extends AbstractFrame {
 
 
 
-    public Chart addBoxChart(List<Double> values, List<String> categories, String name) {
-        dataset.add(values, name, categories.get(0));
-        Chart chart = new Chart(values, categories, name);
-        plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
+    public Chart addBoxChart(List<List<Double>> values, List<String> categories, String name) {
 
+        Chart chart = new Chart(values, categories, name);
+        int i = 0;
+        for(List<Double> item : values) {
+            dataset.add(item, name, categories.get(i));
+            plot = new CategoryPlot(dataset, (CategoryAxis) xAxis, (NumberAxis) yAxis, renderer);
+            i++;
+        }
         functions.add(chart);
         this.redraw();
         return chart;

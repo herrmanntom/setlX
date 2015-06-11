@@ -9,13 +9,13 @@ import java.util.List;
  * Created by arne on 03.06.15.
  */
 public class Chart extends Value {
-    private List<Double> values;
+    private List values;
 
     public List<String> getCategories() {
         return categories;
     }
 
-    public List<Double> getValues() {
+    public List getValues() {
         return values;
     }
 
@@ -27,7 +27,7 @@ public class Chart extends Value {
         return name;
     }
 
-    public Chart(List<Double> values, List<String> categories, String name){
+    public Chart(List values, List<String> categories, String name){
         this.values = values;
         this.categories = categories;
         this.name = name;

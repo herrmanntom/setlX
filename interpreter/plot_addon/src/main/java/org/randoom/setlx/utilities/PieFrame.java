@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
@@ -44,11 +43,12 @@ public class PieFrame extends AbstractFrame {
 
     }
 
-    public Chart addPieChart(List<Double> values, List<String> categories) {
+    public Chart addPieChart(List<Double> values, List<String> categories, String name) {
         for(int i = 0; i < values.size(); i++){
             dataset.setValue(categories.get(i), values.get(i));
         }
-        Chart chart = new Chart(values, categories);
+        this.title = name;
+        Chart chart = new Chart(values, categories, name);
         if (plot == null) {
             plot = new PiePlot(dataset);
         } else {

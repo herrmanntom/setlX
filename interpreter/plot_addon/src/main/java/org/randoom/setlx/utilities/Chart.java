@@ -21,13 +21,23 @@ public class Chart extends Value {
 
     private List<String> categories;
 
-    public Chart(List<Double> values, List<String> categories){
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public Chart(List<Double> values, List<String> categories, String name){
         this.values = values;
         this.categories = categories;
+        this.name = name;
     }
+
+
+
     @Override
     public Value clone() {
-        return new Chart(this.values, this.categories);
+        return new Chart(this.values, this.categories, this.name);
     }
 
     @Override
@@ -50,7 +60,7 @@ public class Chart extends Value {
 
         int result = (values != null ? values.hashCode() : 0);
         result = 42 * result + (categories != null ? categories.hashCode() : 0);
-
+        result = 42 * result + (name != "" ? name.hashCode() : 0);
         return result;
     }
 
@@ -61,8 +71,9 @@ public class Chart extends Value {
 
         Chart c = (Chart) o;
 
-        if(this.values != c.values){return false;}
-        if(this.categories != c.categories){return false;}
+        if(this.values != c.getValues()){return false;}
+        if(this.categories != c.getCategories()){return false;}
+        if(this.name != c.getName()){return false;}
         return true;
     }
 }

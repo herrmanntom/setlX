@@ -30,6 +30,9 @@ public abstract class AbstractFrame extends JFrame {
     protected int chartCount;
     protected String title = "title";
 
+    public int getChartCount(){
+        return this.chartCount;
+    }
     public abstract Graph addTextLabel(List<Double> coordinates, String text);
 
     public Axis getyAxis() {

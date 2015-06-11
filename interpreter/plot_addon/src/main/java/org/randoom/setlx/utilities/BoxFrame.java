@@ -5,9 +5,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.randoom.setlx.exceptions.SetlException;
 
@@ -56,16 +54,16 @@ public class BoxFrame extends AbstractFrame {
     protected void remakeFunctions() throws SetlException {
         dataset.clear();
         for(Chart item: functions){
-            this.addBoxChart(item.getValues(), item.getCategories());
+            this.addBoxChart(item.getValues(), item.getCategories(), item.getName());
         }
 
     }
 
 
 
-    public Chart addBoxChart(List<Double> values, List<String> categories) {
-        dataset.add(values, categories.get(0), categories.get(1));
-        Chart chart = new Chart(values, categories);
+    public Chart addBoxChart(List<Double> values, List<String> categories, String name) {
+        dataset.add(values, name, categories.get(0));
+        Chart chart = new Chart(values, categories, name);
         plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
 
         functions.add(chart);

@@ -9,8 +9,6 @@ import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.randoom.setlx.exceptions.SetlException;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +18,6 @@ import java.util.List;
 public class BarFrame extends AbstractFrame {
         private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         private final BarRenderer renderer = new BarRenderer();
-
         private List<Chart> functions = new ArrayList<Chart>();
     public BarFrame(String title) {
         super(title);
@@ -53,16 +50,16 @@ public class BarFrame extends AbstractFrame {
         ArrayList<Chart> func = new ArrayList<Chart>(functions);
         functions.clear();
         for(Chart chart: func){
-            this.addBarChart(chart.getValues(), chart.getCategories());
+            this.addBarChart(chart.getValues(), chart.getCategories(), chart.getName());
         }
     }
 
-    public Chart addBarChart(List<Double> values, List<String> categories) {
+    public Chart addBarChart(List<Double> values, List<String> categories, String name) {
 
         for(int i = 0; i < values.size(); i++){
-            dataset.addValue(values.get(i), "series"+((Integer)chartCount).toString(), categories.get(i));
+            dataset.addValue(values.get(i), name, categories.get(i));
         }
-        Chart chart = new Chart(values, categories);
+        Chart chart = new Chart(values, categories, name);
         if (plot == null) {
             plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
         } else {

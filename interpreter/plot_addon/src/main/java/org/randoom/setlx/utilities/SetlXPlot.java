@@ -85,7 +85,7 @@ public interface SetlXPlot {
 
     public Chart addChart(Canvas canvas, String chartType, List<Double> values, List<String> categories) throws UndefinedOperationException;
 
-    public Chart addChart(Canvas canvas, String chartType, List<Double> values, String name, List<String> categories);
+    public Chart addChart(Canvas canvas, String chartType, List<Double> values, String name, List<String> categories) throws UndefinedOperationException;
 
     public void removeGraph(Canvas canvas, Graph graph) throws SetlException;
 

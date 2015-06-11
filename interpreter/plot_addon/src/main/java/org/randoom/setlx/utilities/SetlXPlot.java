@@ -84,13 +84,13 @@ public interface SetlXPlot {
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException;
 
 
-    public Chart addBarChart(Canvas canvas, String chartType, List<Double> values, List<String> categories);
-    public Chart addBarChart(Canvas canvas, String chartType, List<Double> values, List<String> categories, String name);
+    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories);
+    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories, String name);
 
-    public Chart addPieChart(Canvas canvas, String chartType, List<Double> values, List<String> categories);
+    public Chart addPieChart(Canvas canvas, List<Double> values, List<String> categories);
 
-    public Chart addBoxChart(Canvas canvas, String chartType, List<List<Double>> values, List<String> categories);
-    public Chart addBoxChart(Canvas canvas, String chartType, List<List<Double>> values, List<String> categories,String name);
+    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories);
+    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories, String name);
 
     public void removeGraph(Canvas canvas, Graph graph) throws SetlException;
 

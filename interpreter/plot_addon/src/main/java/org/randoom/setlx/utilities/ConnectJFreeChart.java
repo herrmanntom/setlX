@@ -161,7 +161,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBarChart(Canvas canvas, String chartType, List<Double> values, List<String> categories) {
+    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories) {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             System.out.println("Canvas is used for Graphs. Not possible to insert Diagram.");
             return null;
@@ -179,7 +179,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBarChart(Canvas canvas, String chartType, List<Double> values, List<String> categories, String name) {
+    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories, String name) {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             System.out.println("Canvas is used for Graphs. Not possible to insert Diagram.");
             return null;
@@ -197,7 +197,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addPieChart(Canvas canvas, String chartType, List<Double> values, List<String> categories) {
+    public Chart addPieChart(Canvas canvas, List<Double> values, List<String> categories) {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             System.out.println("Canvas is used for Graphs. Not possible to insert Diagram.");
             return null;
@@ -215,7 +215,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBoxChart(Canvas canvas, String chartType, List<List<Double>> values, List<String> categories) {
+    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories) {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             System.out.println("Canvas is used for Graphs. Not possible to insert Diagram.");
             return null;
@@ -233,7 +233,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Chart addBoxChart(Canvas canvas, String chartType, List<List<Double>> values, List<String> categories, String name) {
+    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories, String name) {
         if(canvas.getFrame().getFrameType() == FrameWrapper.DRAW_FRAME){
             System.out.println("Canvas is used for Graphs. Not possible to insert Diagram.");
             return null;

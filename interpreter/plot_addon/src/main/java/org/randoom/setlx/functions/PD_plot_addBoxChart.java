@@ -41,7 +41,7 @@ public class PD_plot_addBoxChart extends PreDefinedProcedure {
 
         if (!name.equalTo(Rational.ONE)) {
             SetlString nameSetlString = (SetlString) name;
-            String nameString = nameSetlString.toString();
+            String nameString = nameSetlString.toString().replace("\"", "");
 
             return ConnectJFreeChart.getInstance().addBoxChart(canvas, valuesList, categorieList, nameString);
         }

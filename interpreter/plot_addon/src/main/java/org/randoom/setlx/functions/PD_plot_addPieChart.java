@@ -37,15 +37,7 @@ public class PD_plot_addPieChart extends PreDefinedProcedure {
         SetlList categories = (SetlList) args.get(CATEGORIES);
         List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);
         List categorieList = ConvertSetlTypes.convertSetlListAsString(categories);
-        //Value name = args.get(NAME);
-        /*
-        if (!name.equalTo(Rational.ONE)) {
-            SetlString nameSetlString = (SetlString) name;
-            String nameString = nameSetlString.toString();
 
-            return ConnectJFreeChart.getInstance().addPieChart(canvas, valuesList, categorieList, nameString);
-        }
-        */
         return ConnectJFreeChart.getInstance().addPieChart(canvas, valuesList, categorieList);
     }
 }

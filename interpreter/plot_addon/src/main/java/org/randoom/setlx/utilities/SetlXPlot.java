@@ -3,6 +3,7 @@ package org.randoom.setlx.utilities;
 import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
+import org.randoom.setlx.types.Value;
 
 import java.util.List;
 
@@ -92,7 +93,7 @@ public interface SetlXPlot {
     public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories);
     public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories, String name);
 
-    public void removeGraph(Canvas canvas, Graph graph) throws SetlException;
+    public void removeGraph(Canvas canvas, Value value) throws SetlException;
 
     public void labelAxis(Canvas canvas, String xLabel, String yLabel);
 

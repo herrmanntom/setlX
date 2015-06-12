@@ -5,6 +5,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.randoom.setlx.exceptions.SetlException;
@@ -17,10 +18,33 @@ import java.util.List;
  */
 public class BoxFrame extends AbstractFrame {
 
+    private CategoryPlot plot;
+
+    @Override
+    protected Plot getPlot() {
+        return plot;
+    }
+
+    @Override
+    protected void setPlot(Plot plot) {
+        this.plot = (CategoryPlot)plot;
+    }
     private DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
     private final BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
 
     private List<Chart> functions = new ArrayList<Chart>();
+
+
+    @Override
+    protected List getFunctions() {
+        return this.functions;
+    }
+
+    @Override
+    protected void setFunctions(List fun) {
+        this.functions = fun;
+    }
+
     @Override
     public Graph addTextLabel(List<Double> coordinates, String text) {
         return null;

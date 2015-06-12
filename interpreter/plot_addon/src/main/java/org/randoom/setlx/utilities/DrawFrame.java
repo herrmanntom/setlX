@@ -5,6 +5,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.*;
 import org.jfree.data.xy.XYSeries;
@@ -19,9 +20,31 @@ import java.util.List;
 
 public class DrawFrame extends AbstractFrame {
     XYPlot plot;
+    @Override
+    protected Plot getPlot() {
+        return this.plot;
+    }
+
+    @Override
+    protected void setPlot(Plot plot) {
+        this.plot = (XYPlot)plot;
+    }
 
 
     protected List<Graph> functions = new ArrayList();
+
+
+
+    @Override
+    protected List getFunctions() {
+        return this.functions;
+    }
+
+    @Override
+    protected void setFunctions(List fun) {
+        this.functions = fun;
+    }
+
     public void setxAxis(ValueAxis xAxis) {
         this.xAxis = xAxis;
         if (plot != null) {
@@ -60,19 +83,7 @@ public class DrawFrame extends AbstractFrame {
         yAxis = new NumberAxis("y");
         plot = null;
     }
-    protected void redraw() {
-        if(chartCount != 0) {
-            jPanel.remove(chartPanel);
-        }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.plot, true);
 
-        chartPanel = new ChartPanel(chart, true, true, true, true, true);
-
-        jPanel.add(chartPanel);
-
-        this.pack();
-        chartCount++;
-    }
     protected void remakeFunctions() throws SetlException {
         plot = new XYPlot(new XYSeriesCollection(), (ValueAxis)xAxis, (ValueAxis)yAxis, new XYLineAndShapeRenderer());
         this.redraw();

@@ -19,17 +19,24 @@ import java.util.List;
  */
 public abstract class AbstractFrame extends JFrame {
     Plot plot;
+
+    protected abstract Plot getPlot();
+    protected abstract void setPlot(Plot plot);
     ChartPanel chartPanel;
     LegendTitle legend;
     protected double x_Min;
     protected double x_Max;
-    protected List<Value> functions = new ArrayList<Value>();
     protected Axis xAxis;
     protected Axis yAxis;
     protected JPanel jPanel;
     protected int chartCount;
-    protected String title = "title";
+    protected String title;
 
+
+
+    protected List<Value> functions;
+    protected abstract List getFunctions();
+    protected abstract void setFunctions(List fun);
     public int getChartCount(){
         return this.chartCount;
     }
@@ -64,13 +71,28 @@ public abstract class AbstractFrame extends JFrame {
 
     protected abstract void remakeFunctions() throws SetlException;
 
-    protected abstract void redraw();
+    protected void redraw() {
+        if(chartCount != 0) {
+            jPanel.remove(chartPanel);
+        }
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.getPlot(), true);
 
-    public void removeGraph(Graph graph) throws SetlException {
-        boolean ispresent = functions.remove(graph);
+        chartPanel = new ChartPanel(chart, true, true, true, true, true);
+
+        jPanel.add(chartPanel);
+
+        this.pack();
+        chartCount++;
+    }
+
+    public void removeGraph(Value value) throws SetlException {
+        List func = this.getFunctions();
+
+        boolean ispresent = func.remove(value);
         if (!ispresent) {
             System.out.println("nicht gelöscht");
         }
+
         remakeFunctions();
     }
 

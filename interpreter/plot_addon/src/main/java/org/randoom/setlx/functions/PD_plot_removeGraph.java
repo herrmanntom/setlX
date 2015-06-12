@@ -10,18 +10,18 @@ import java.util.HashMap;
 public class PD_plot_removeGraph extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef GRAPH = createParameter("graph");
+    private final static ParameterDef VALUE = createParameter("value");
     public final static PreDefinedProcedure DEFINITION = new PD_plot_removeGraph();
     private PD_plot_removeGraph(){
         super();
         addParameter(CANVAS);
-        addParameter(GRAPH);
+        addParameter(VALUE);
     }
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         Canvas c = (Canvas)args.get(CANVAS);
-        Graph g = (Graph)args.get(GRAPH);
-        ConnectJFreeChart.getInstance().removeGraph(c, g);
+        Value v = args.get(VALUE);
+        ConnectJFreeChart.getInstance().removeGraph(c, v);
         return new SetlString("Removed graph from canvas");
     }
 }

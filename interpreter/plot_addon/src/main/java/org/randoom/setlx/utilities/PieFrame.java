@@ -3,6 +3,7 @@ package org.randoom.setlx.utilities;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.Plot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.randoom.setlx.exceptions.SetlException;
 
@@ -13,8 +14,28 @@ import java.util.List;
  * Created by arne on 03.06.15.
  */
 public class PieFrame extends AbstractFrame {
+    private PiePlot plot;
+    @Override
+    protected Plot getPlot() {
+        return this.plot;
+    }
+
+    @Override
+    protected void setPlot(Plot plot) {
+        this.plot = (PiePlot)plot;
+    }
     private DefaultPieDataset dataset = new DefaultPieDataset();
     private List<Chart> functions = new ArrayList();
+    @Override
+    protected List getFunctions() {
+        return this.functions;
+    }
+
+    @Override
+    protected void setFunctions(List fun) {
+        this.functions = fun;
+    }
+
     @Override
     public Graph addTextLabel(List<Double> coordinates, String text) {
         return null;
@@ -40,7 +61,15 @@ public class PieFrame extends AbstractFrame {
 
     @Override
     protected void remakeFunctions() throws SetlException {
-
+        chartCount = functions.size();
+        dataset.clear();
+        plot = null;
+        ArrayList<Chart> func = new ArrayList<Chart>(functions);
+        functions.clear();
+        for(Chart chart: func){
+            this.addPieChart(chart.getValues(), chart.getCategories());
+        }
+        this.redraw();
     }
 
     public Chart addPieChart(List<Double> values, List<String> categories) {
@@ -51,7 +80,7 @@ public class PieFrame extends AbstractFrame {
         if (plot == null) {
             plot = new PiePlot(dataset);
         } else {
-            ((PiePlot)plot).setDataset(dataset);
+            plot.setDataset(dataset);
         }
         functions.add(chart);
         this.redraw();

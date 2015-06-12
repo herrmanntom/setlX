@@ -7,6 +7,7 @@ import org.jfree.chart.axis.LogarithmicAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.randoom.setlx.exceptions.FileNotWritableException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Value;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -251,9 +252,9 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public void removeGraph(Canvas canvas, Graph graph) throws SetlException {
+    public void removeGraph(Canvas canvas, Value value) throws SetlException {
 
-        canvas.getFrame().getFrame().removeGraph(graph);
+        canvas.getFrame().getFrame().removeGraph(value);
     }
 
     @Override

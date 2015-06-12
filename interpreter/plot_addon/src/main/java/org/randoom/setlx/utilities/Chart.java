@@ -67,7 +67,7 @@ public class Chart extends Value {
     @Override
     public boolean equalTo(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Graph)) return false;
+        if (!(o instanceof Chart)) return false;
 
         Chart c = (Chart) o;
 

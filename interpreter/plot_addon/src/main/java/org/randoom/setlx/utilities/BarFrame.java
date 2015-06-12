@@ -5,6 +5,7 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.randoom.setlx.exceptions.SetlException;
@@ -16,9 +17,32 @@ import java.util.List;
  * Created by arne on 03.06.15.
  */
 public class BarFrame extends AbstractFrame {
-        private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        private final BarRenderer renderer = new BarRenderer();
-        private List<Chart> functions = new ArrayList<Chart>();
+    private CategoryPlot plot;
+    @Override
+    protected Plot getPlot() {
+        return plot;
+    }
+
+    @Override
+    protected void setPlot(Plot plot) {
+        this.plot = (CategoryPlot)plot;
+    }
+
+    private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+    private final BarRenderer renderer = new BarRenderer();
+
+
+    private List<Chart> functions = new ArrayList<Chart>();
+    @Override
+    protected List getFunctions() {
+        return this.functions;
+    }
+
+    @Override
+    protected void setFunctions(List fun) {
+        this.functions = fun;
+    }
+
     public BarFrame(String title) {
         super(title);
         this.xAxis = new CategoryAxis();
@@ -38,6 +62,8 @@ public class BarFrame extends AbstractFrame {
         this.pack();
         chartCount++;
     }
+
+
     @Override
     public Graph addTextLabel(List<Double> coordinates, String text) {
         return null;
@@ -45,13 +71,16 @@ public class BarFrame extends AbstractFrame {
 
     @Override
     protected void remakeFunctions() throws SetlException {
+        chartCount = functions.size();
+        dataset.clear();
         plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
-        this.redraw();
         ArrayList<Chart> func = new ArrayList<Chart>(functions);
         functions.clear();
         for(Chart chart: func){
             this.addBarChart(chart.getValues(), chart.getCategories(), chart.getName());
         }
+        this.redraw();
+
     }
 
     public Chart addBarChart(List<Double> values, List<String> categories, String name) {
@@ -60,12 +89,8 @@ public class BarFrame extends AbstractFrame {
             dataset.addValue(values.get(i), name, categories.get(i));
         }
         Chart chart = new Chart(values, categories, name);
-        if (plot == null) {
-            plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
-        } else {
-            ((CategoryPlot)plot).setDataset(chartCount, dataset);
-            ((CategoryPlot)plot).setRenderer(chartCount, renderer);
-        }
+        plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
+
         functions.add(chart);
         this.redraw();
         return chart;

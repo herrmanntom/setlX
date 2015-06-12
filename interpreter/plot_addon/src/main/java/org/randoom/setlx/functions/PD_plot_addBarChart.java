@@ -14,19 +14,17 @@ import org.randoom.setlx.utilities.ConvertSetlTypes;
 import java.util.HashMap;
 import java.util.List;
 
-public class PD_plot_addChart extends PreDefinedProcedure {
+public class PD_plot_addBarChart extends PreDefinedProcedure {
 
     private final static ParameterDef CANVAS = createParameter("canvas");
-    private final static ParameterDef CHARTTYPE = createParameter("chartType");
     private final static ParameterDef VALUES = createParameter("values");
     private final static ParameterDef CATEGORIES = createParameter("categories");
     private final static ParameterDef NAME = createOptionalParameter("name", Rational.ONE);
-    public final static PreDefinedProcedure DEFINITION = new PD_plot_addChart();
+    public final static PreDefinedProcedure DEFINITION = new PD_plot_addBarChart();
 
-    private PD_plot_addChart() {
+    private PD_plot_addBarChart() {
         super();
         addParameter(CANVAS);
-        addParameter(CHARTTYPE);
         addParameter(VALUES);
         addParameter(CATEGORIES);
         addParameter(NAME);
@@ -35,8 +33,6 @@ public class PD_plot_addChart extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
         Canvas canvas = (Canvas) args.get(CANVAS);
-        SetlString chartType = (SetlString) args.get(CHARTTYPE);
-        String chartTypeString = chartType.toString().replace("\"", "");
         SetlList values = (SetlList) args.get(VALUES);
         SetlList categories = (SetlList) args.get(CATEGORIES);
         List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);
@@ -47,9 +43,9 @@ public class PD_plot_addChart extends PreDefinedProcedure {
             SetlString nameSetlString = (SetlString) name;
             String nameString = nameSetlString.toString();
 
-            return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList, nameString, categorieList);
+            return ConnectJFreeChart.getInstance().addBarChart(canvas, valuesList, categorieList, nameString);
         }
 
-        return ConnectJFreeChart.getInstance().addChart(canvas, chartTypeString, valuesList, categorieList);
+        return ConnectJFreeChart.getInstance().addBarChart(canvas, valuesList, categorieList);
     }
 }

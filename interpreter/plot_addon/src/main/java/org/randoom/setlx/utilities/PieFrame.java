@@ -6,6 +6,8 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.SetlString;
+import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +39,8 @@ public class PieFrame extends AbstractFrame {
     }
 
     @Override
-    public Graph addTextLabel(List<Double> coordinates, String text) {
-        return null;
+    public Value addTextLabel(List<Double> coordinates, String text) {
+        return new SetlString("Text label are not supported in PieCharts");
     }
 
     public PieFrame(String title) {
@@ -76,7 +78,7 @@ public class PieFrame extends AbstractFrame {
         for(int i = 0; i < values.size(); i++){
             dataset.setValue(categories.get(i), values.get(i));
         }
-        Chart chart = new Chart(values, categories, "series"+chartCount);
+        Chart chart = new Chart(values, categories, "series"+chartCount, false);
         if (plot == null) {
             plot = new PiePlot(dataset);
         } else {

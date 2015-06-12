@@ -2,13 +2,16 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.CategoryTextAnnotation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +68,14 @@ public class BarFrame extends AbstractFrame {
 
 
     @Override
-    public Graph addTextLabel(List<Double> coordinates, String text) {
-        return null;
+    public Value addTextLabel(List<Double> coordinates, String text) {
+        Chart chart = new Chart(coordinates, null, text, true);
+        CategoryTextAnnotation label = new CategoryTextAnnotation(text,dataset.getColumnKey(coordinates.get(0).intValue()-1) ,coordinates.get(1));
+        label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
+        functions.add(chart);
+        plot.addAnnotation(label);
+        return chart;
+
     }
 
     @Override
@@ -88,7 +97,7 @@ public class BarFrame extends AbstractFrame {
         for(int i = 0; i < values.size(); i++){
             dataset.addValue(values.get(i), name, categories.get(i));
         }
-        Chart chart = new Chart(values, categories, name);
+        Chart chart = new Chart(values, categories, name, false);
         plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
 
         functions.add(chart);

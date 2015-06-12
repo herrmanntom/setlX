@@ -2,13 +2,16 @@ package org.randoom.setlx.utilities;
 
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.annotations.CategoryTextAnnotation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
+import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +49,13 @@ public class BoxFrame extends AbstractFrame {
     }
 
     @Override
-    public Graph addTextLabel(List<Double> coordinates, String text) {
-        return null;
+    public Value addTextLabel(List<Double> coordinates, String text) {
+        Chart chart = new Chart(coordinates, null, text, true);
+        CategoryTextAnnotation label = new CategoryTextAnnotation(text,dataset.getColumnKey(coordinates.get(0).intValue()-1) ,coordinates.get(1));
+        label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
+        functions.add(chart);
+        plot.addAnnotation(label);
+        return chart;
     }
 
     public BoxFrame(String title) {
@@ -77,6 +85,7 @@ public class BoxFrame extends AbstractFrame {
     @Override
     protected void remakeFunctions() throws SetlException {
         dataset.clear();
+
         for(Chart item: functions){
             this.addBoxChart(item.getValues(), item.getCategories(), item.getName());
         }
@@ -87,13 +96,13 @@ public class BoxFrame extends AbstractFrame {
 
     public Chart addBoxChart(List<List<Double>> values, List<String> categories, String name) {
 
-        Chart chart = new Chart(values, categories, name);
+        Chart chart = new Chart(values, categories, name, false);
         int i = 0;
         for(List<Double> item : values) {
             dataset.add(item, name, categories.get(i));
-            plot = new CategoryPlot(dataset, (CategoryAxis) xAxis, (NumberAxis) yAxis, renderer);
             i++;
         }
+        plot = new CategoryPlot(dataset, (CategoryAxis) xAxis, (NumberAxis) yAxis, renderer);
         functions.add(chart);
         this.redraw();
         return chart;

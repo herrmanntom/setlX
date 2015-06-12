@@ -27,17 +27,24 @@ public class Chart extends Value {
         return name;
     }
 
-    public Chart(List values, List<String> categories, String name){
+    private boolean label;
+
+    public boolean getLabel() {
+        return label;
+    }
+
+    public Chart(List values, List<String> categories, String name, boolean label){
         this.values = values;
         this.categories = categories;
         this.name = name;
+        this.label = label;
     }
 
 
 
     @Override
     public Value clone() {
-        return new Chart(this.values, this.categories, this.name);
+        return new Chart(this.values, this.categories, this.name, this.label);
     }
 
     @Override
@@ -61,6 +68,7 @@ public class Chart extends Value {
         int result = (values != null ? values.hashCode() : 0);
         result = 42 * result + (categories != null ? categories.hashCode() : 0);
         result = 42 * result + (name != "" ? name.hashCode() : 0);
+        result = 42 * result + (label ? 1 : 0);
         return result;
     }
 
@@ -74,6 +82,7 @@ public class Chart extends Value {
         if(this.values != c.getValues()){return false;}
         if(this.categories != c.getCategories()){return false;}
         if(this.name != c.getName()){return false;}
-        return true;
+        return this.label == c.getLabel();
     }
+
 }

@@ -97,7 +97,7 @@ public interface SetlXPlot {
 
     public void labelAxis(Canvas canvas, String xLabel, String yLabel);
 
-    public Graph addLabel(Canvas canvas, List<Double> coordinates, String text);
+    public Value addLabel(Canvas canvas, List<Double> coordinates, String text);
 
     public void defineTitle(Canvas canvas, String title);
 

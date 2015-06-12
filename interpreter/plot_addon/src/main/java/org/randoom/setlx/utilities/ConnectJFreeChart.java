@@ -263,7 +263,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Graph addLabel(Canvas canvas, List<Double> coordinates, String text) {
+    public Value addLabel(Canvas canvas, List<Double> coordinates, String text) {
         return canvas.getFrame().getFrame().addTextLabel(coordinates, text);
     }
 

@@ -1,7 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.XYTextAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -12,6 +10,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.Value;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -178,7 +177,7 @@ public class DrawFrame extends AbstractFrame {
         plot.getRangeAxis().setLabel(yLabel);
     }
 
-    public Graph addTextLabel(List<Double> coordinates, String text) {
+    public Value addTextLabel(List<Double> coordinates, String text) {
         Graph labelGraph = new Graph(text, false, new State());
         labelGraph.setCoordinates(coordinates);
         functions.add(labelGraph);

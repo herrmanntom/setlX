@@ -3,11 +3,7 @@ package org.randoom.setlx.functions;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.*;
-import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJFreeChart;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.State;
-import org.randoom.setlx.utilities.ConvertSetlTypes;
+import org.randoom.setlx.utilities.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -35,36 +31,36 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         SetlList categories;
 
         //First Parameter must be a Canvas object
-        try {
-            canvas = (Canvas) args.get(CANVAS);
-        } catch (ClassCastException cce) {
+        if(!CheckType.isCanvas(args.get(CANVAS))){
             throw new UndefinedOperationException("First parameter has to be a canvas object. (eq. created with plot_createCanvas() )");
         }
+
         //second parameter has to be a list
-        if (!(args.get(VALUES).isList().equalTo(SetlBoolean.TRUE))) {
+        if (!(CheckType.isSetlList(args.get(VALUES)))) {
             throw new UndefinedOperationException("Second parameter values has to be a List. (eq. [1,2,3])");
         }
 
         //third parameter has to be a list
-        if (!(args.get(CATEGORIES).isList().equalTo(SetlBoolean.TRUE))) {
+        if (!(CheckType.isSetlList(args.get(CATEGORIES)))) {
             throw new UndefinedOperationException("Third parameter categories has to be a List. (eq. [\"one\", \"two\", \"three\"])");
         }
 
         //cast to right datatype
+        canvas = (Canvas) args.get(CANVAS);
         values = (SetlList) args.get(VALUES);
         categories = (SetlList) args.get(CATEGORIES);
 
         //check if datatypes in list are correct
         //for second parameter either double or boolean
         for (Value v : values) {
-            if (!((v.isDouble().equalTo(SetlBoolean.TRUE)) || (v.isInteger().equalTo(SetlBoolean.TRUE)))) {
+            if (!(CheckType.isSetlNumber(v))) {
                 throw new UndefinedOperationException("Members in list of the second parameter have to be Integer or Double values");
             }
         }
 
         //for third parameter string
-        for (Value v : values) {
-            if (!(categories.isString().equalTo(SetlBoolean.TRUE))) {
+        for (Value v : categories) {
+            if (!(CheckType.isSetlString(v))) {
                 throw new UndefinedOperationException("Members in list of the third parameter have to be String values");
             }
         }
@@ -73,7 +69,7 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);
         List categorieList = ConvertSetlTypes.convertSetlListAsString(categories);
 
-        if (!(valuesList.size() == categorieList.size())) {
+        if (!(CheckType.sameSize(valuesList, categorieList))) {
             throw new UndefinedOperationException("The lists in the second and third parameter have to be of equal length");
         }
 
@@ -81,7 +77,7 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         Value name = args.get(NAME);
         if (!name.equalTo(Rational.ONE)) {
             //check if forth parameter is a string
-            if (!(name.isString().equalTo(SetlBoolean.TRUE))) {
+            if (!(CheckType.isSetlString(name))) {
                 throw new UndefinedOperationException("Forth parameter name has to be a String. (eq. \"name of the bar chart\" ");
             }
             SetlString nameSetlString = (SetlString) name;

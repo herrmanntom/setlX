@@ -31,7 +31,7 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         SetlList categories;
 
         //First Parameter must be a Canvas object
-        if(!CheckType.isCanvas(args.get(CANVAS))){
+        if (!CheckType.isCanvas(args.get(CANVAS))) {
             throw new UndefinedOperationException("First parameter has to be a canvas object. (eq. created with plot_createCanvas() )");
         }
 
@@ -52,18 +52,17 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
 
         //check if datatypes in list are correct
         //for second parameter either double or boolean
-        for (Value v : values) {
-            if (!(CheckType.isSetlNumber(v))) {
-                throw new UndefinedOperationException("Members in list of the second parameter have to be Integer or Double values");
-            }
+
+        if (!CheckType.isSetlListWithNumbers(values)) {
+            throw new UndefinedOperationException("Members in list of the second parameter have to be Integer or Double values");
         }
 
+
         //for third parameter string
-        for (Value v : categories) {
-            if (!(CheckType.isSetlString(v))) {
+            if (!CheckType.isSetlListWithStrings(categories)) {
                 throw new UndefinedOperationException("Members in list of the third parameter have to be String values");
             }
-        }
+
 
         //convert setllists to native java lists
         List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);

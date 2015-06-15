@@ -148,4 +148,6 @@ public interface SetlXPlot {
      */
     public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color);
 
+
+    public void modSize(Canvas canvas, List<Double> size);
 }

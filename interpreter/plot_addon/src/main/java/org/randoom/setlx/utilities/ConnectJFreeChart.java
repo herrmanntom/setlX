@@ -353,4 +353,9 @@ public class ConnectJFreeChart implements SetlXPlot {
         }
         return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
+
+    @Override
+    public void modSize(Canvas canvas, List<Double> size) {
+        canvas.getFrame().getFrame().setSize(size.get(0).intValue(), size.get(1).intValue());
+    }
 }

@@ -5,7 +5,9 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.Plot;
 import org.jfree.data.general.DefaultPieDataset;
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 
@@ -72,6 +74,10 @@ public class PieFrame extends AbstractFrame {
             this.addPieChart(chart.getValues(), chart.getCategories());
         }
         this.redraw();
+    }
+    @Override
+    public void setLabel(String xLabel, String yLabel) throws IllegalRedefinitionException {
+        throw new IllegalRedefinitionException("Pie Charts doesnt have Axis Labels.");
     }
 
     public Chart addPieChart(List<Double> values, List<String> categories) {

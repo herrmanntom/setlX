@@ -92,7 +92,13 @@ public class BoxFrame extends AbstractFrame {
 
     }
 
-
+    @Override
+    public void setLabel(String xLabel, String yLabel) {
+        plot.getDomainAxis().setLabel(xLabel);
+        plot.getRangeAxis().setLabel(yLabel);
+        xAxis.setLabel(xLabel);
+        yAxis.setLabel(yLabel);
+    }
 
     public Chart addBoxChart(List<List<Double>> values, List<String> categories, String name) {
 

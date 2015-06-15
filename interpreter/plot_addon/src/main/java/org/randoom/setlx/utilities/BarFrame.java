@@ -79,6 +79,14 @@ public class BarFrame extends AbstractFrame {
     }
 
     @Override
+    public void setLabel(String xLabel, String yLabel) {
+        plot.getDomainAxis().setLabel(xLabel);
+        plot.getRangeAxis().setLabel(yLabel);
+        xAxis.setLabel(xLabel);
+        yAxis.setLabel(yLabel);
+    }
+
+    @Override
     protected void remakeFunctions() throws SetlException {
         chartCount = functions.size();
         dataset.clear();

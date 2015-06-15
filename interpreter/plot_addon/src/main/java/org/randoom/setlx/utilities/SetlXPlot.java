@@ -1,6 +1,7 @@
 package org.randoom.setlx.utilities;
 
 import org.randoom.setlx.exceptions.FileNotWritableException;
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.Value;
@@ -63,7 +64,7 @@ public interface SetlXPlot {
      * @param function list of points to be plotted
      * @return
      */
-    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name);
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) throws IllegalRedefinitionException;
 
     /**
      * adds a graph consisting of single points and a name for the graph
@@ -74,9 +75,9 @@ public interface SetlXPlot {
      * @param color
      * @return
      */
-    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color);
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color) throws IllegalRedefinitionException;
 
-    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea);
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea) throws IllegalRedefinitionException;
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Double> limits) throws SetlException;
 
@@ -85,17 +86,17 @@ public interface SetlXPlot {
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException;
 
 
-    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories);
-    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories, String name);
+    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException;
+    public Chart addBarChart(Canvas canvas, List<Double> values, List<String> categories, String name) throws IllegalRedefinitionException;
 
-    public Chart addPieChart(Canvas canvas, List<Double> values, List<String> categories);
+    public Chart addPieChart(Canvas canvas, List<Double> values, List<String> categories) throws IllegalRedefinitionException;
 
-    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories);
-    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories, String name);
+    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories) throws IllegalRedefinitionException;
+    public Chart addBoxChart(Canvas canvas, List<List<Double>> values, List<String> categories, String name) throws IllegalRedefinitionException;
 
     public void removeGraph(Canvas canvas, Value value) throws SetlException;
 
-    public void labelAxis(Canvas canvas, String xLabel, String yLabel);
+    public void labelAxis(Canvas canvas, String xLabel, String yLabel) throws IllegalRedefinitionException;
 
     public Value addLabel(Canvas canvas, List<Double> coordinates, String text);
 
@@ -135,9 +136,9 @@ public interface SetlXPlot {
      * @param xType
      * @param yType
      */
-    public void modScaleType(Canvas canvas, String xType, String yType);
+    public void modScaleType(Canvas canvas, String xType, String yType) throws UndefinedOperationException, IllegalRedefinitionException;
 
-    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, Double bulletSize);
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, Double bulletSize) throws IllegalRedefinitionException;
 
     /**
      * add a single bullet to the canvas at the given x and y coordinates
@@ -147,7 +148,7 @@ public interface SetlXPlot {
      * @param color
      * @param bulletSize
      */
-    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color, Double bulletSize);
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color, Double bulletSize) throws IllegalRedefinitionException;
 
 
     public void modSize(Canvas canvas, List<Double> size);

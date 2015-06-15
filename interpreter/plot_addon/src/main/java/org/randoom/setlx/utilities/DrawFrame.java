@@ -176,6 +176,8 @@ public class DrawFrame extends AbstractFrame {
     public void setLabel(String xLabel, String yLabel) {
         plot.getDomainAxis().setLabel(xLabel);
         plot.getRangeAxis().setLabel(yLabel);
+        xAxis.setLabel(xLabel);
+        yAxis.setLabel(yLabel);
     }
 
     public Value addTextLabel(List<Double> coordinates, String text) {

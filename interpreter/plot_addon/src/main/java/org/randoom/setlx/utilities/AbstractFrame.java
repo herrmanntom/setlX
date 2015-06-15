@@ -6,6 +6,7 @@ import org.jfree.chart.axis.Axis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.title.LegendTitle;
+import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.Value;
@@ -42,6 +43,8 @@ public abstract class AbstractFrame extends JFrame {
         return this.chartCount;
     }
     public abstract Value addTextLabel(List<Double> coordinates, String text);
+
+    public abstract void setLabel(String xLabel, String yLabel) throws IllegalRedefinitionException;
 
     public Axis getyAxis() {
         return yAxis;

@@ -152,9 +152,10 @@ public class DrawFrame extends AbstractFrame {
         XYSeries series = new XYSeries(title, false, true);
         XYItemRenderer renderer;
         if (area) {
-            renderer = new XYSplineRenderer(1, XYSplineRenderer.FillType.TO_ZERO);
+            renderer = new XYAreaRenderer(XYAreaRenderer.AREA);
+            ((XYAreaRenderer) renderer).setOutline(true);
         } else {
-            renderer = new XYSplineRenderer(1);
+            renderer = new XYLineAndShapeRenderer(true, false);
         }
         renderer.setSeriesPaint(0, color);
         for (List<Double> element : function) {

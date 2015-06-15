@@ -95,7 +95,7 @@ public class DrawFrame extends AbstractFrame {
                 this.addParamDataset(item.getTitle(), item.getXfunction(), item.getYfunction(), item.getInterpreterState(), item.isArea(), item.getColor(), item.getCoordinates());
             } else if (item.getFunction() != null) {
                 if (item.isBullets()) {
-                    this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor());
+                    this.addBulletDataset(item.getTitle(), item.getFunction(), item.getColor(), 5);
                 } else {
                     this.addListDataset(item.getTitle(), item.getFunction(), item.isArea(), item.getColor());
                 }
@@ -194,15 +194,15 @@ public class DrawFrame extends AbstractFrame {
         return labelGraph;
     }
 
-    public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color) {
+    public Graph addBulletDataset(String title, List<List<Double>> bullets, Color color, int bulletSize) {
         Graph plotfun = new Graph(title, false, new State());
         plotfun.setFunction(bullets);
         plotfun.setBullets(true);
         functions.add(plotfun);
         XYSeries series = new XYSeries(title, false, true);
         XYDotRenderer renderer = new XYDotRenderer();
-        renderer.setDotHeight(5);
-        renderer.setDotWidth(5);
+        renderer.setDotHeight(bulletSize);
+        renderer.setDotWidth(bulletSize);
         renderer.setSeriesPaint(0, color);
         renderer.setSeriesVisibleInLegend(0, false);
         for (List<Double> element : bullets) {

@@ -328,21 +328,14 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     }
 
+
     @Override
-    public Graph addBullets(Canvas canvas, List<List<Double>> bullets) {
-        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
-            canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
-        }
-        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
-            System.out.println("Canvas is used for Diagramms. Not possible to insert Graph");
-            return null;
-        }
-        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0));
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color, Double BulletSize) {
+        return null;
     }
 
     @Override
-    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color) {
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, Double bulletSize) {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
             canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
@@ -351,8 +344,9 @@ public class ConnectJFreeChart implements SetlXPlot {
             System.out.println("Canvas is used for Diagramms. Not possible to insert Graph");
             return null;
         }
-        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)));
+        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0), bulletSize.intValue());
     }
+
 
     @Override
     public void modSize(Canvas canvas, List<Double> size) {

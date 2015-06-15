@@ -42,10 +42,12 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
                 return new SetlString("Paramter RGBLIST must have exactly three entrys");
             }
             List<Integer> rgblist = ConvertSetlTypes.convertSetlListAsInteger(rgblistSetl);
-            return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList, rgblist);
+            //TODO: change bulletSize to Parameter
+            return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList, rgblist, 5.0);
         }
 
         //if the color parameter is not set
-        return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList);
+        //TODO: change bulletSize to Parameter
+        return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList, 5.0);
     }
 }

@@ -137,7 +137,7 @@ public interface SetlXPlot {
      */
     public void modScaleType(Canvas canvas, String xType, String yType);
 
-    public Graph addBullets(Canvas canvas, List<List<Double>> bullets);
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, Double bulletSize);
 
     /**
      * add a single bullet to the canvas at the given x and y coordinates
@@ -145,8 +145,9 @@ public interface SetlXPlot {
      * @param canvas
      * @param bullets
      * @param color
+     * @param bulletSize
      */
-    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color);
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color, Double bulletSize);
 
 
     public void modSize(Canvas canvas, List<Double> size);

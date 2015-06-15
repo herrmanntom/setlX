@@ -7,6 +7,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.Plot;
 import org.jfree.chart.title.LegendTitle;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.Value;
 
 import javax.swing.*;
@@ -90,7 +91,7 @@ public abstract class AbstractFrame extends JFrame {
 
         boolean ispresent = func.remove(value);
         if (!ispresent) {
-            System.out.println("nicht gelöscht");
+            throw new UndefinedOperationException("the Graph or Chart you wanted to delete, does not exist");
         }
 
         remakeFunctions();

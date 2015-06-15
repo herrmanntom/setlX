@@ -1,7 +1,10 @@
 package org.randoom.setlx.utilities;
 
 
+import org.randoom.setlx.exceptions.IncompatibleTypeException;
+import org.randoom.setlx.exceptions.NumberToLargeException;
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
 
@@ -60,6 +63,10 @@ public class ConvertSetlTypes {
             }
         }
         return returnList;
+    }
+
+    public static double convertNumberToDouble(Value v) throws IncompatibleTypeException, NumberToLargeException {
+        return v.jDoubleValue();
     }
 
 }

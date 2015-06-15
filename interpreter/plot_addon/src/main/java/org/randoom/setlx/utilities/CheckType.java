@@ -50,10 +50,30 @@ public class CheckType {
         return returnValue;
     }
 
+    public static boolean isSetlListWithTupel(SetlList p){
+        SetlList tempList;
+        for(Value v: p){
+            if(!isSetlList(v)){
+                return false;
+            }
+            tempList = (SetlList)v;
+            if(tempList.size() != 2){
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public static boolean isSetlNumber(Value p){
         return ((p.isDouble().equalTo(SetlBoolean.TRUE)) || (p.isInteger().equalTo(SetlBoolean.TRUE)));
     }
+
+    public static boolean isSetlDouble(Value p){
+        return (p.isDouble().equalTo(SetlBoolean.TRUE));
+    }
+
+
 
     public static boolean isSetlString(Value p){
         return (p.isString().equalTo(SetlBoolean.TRUE));

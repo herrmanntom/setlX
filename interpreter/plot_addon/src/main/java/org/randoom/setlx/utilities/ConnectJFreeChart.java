@@ -358,6 +358,6 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void modSize(Canvas canvas, List<Double> size) {
-        canvas.getFrame().getFrame().setSize(size.get(0).intValue(), size.get(1).intValue());
+        canvas.getFrame().getFrame().modSize(size.get(0), size.get(1));
     }
 }

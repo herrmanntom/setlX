@@ -13,6 +13,7 @@ import org.randoom.setlx.types.Value;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,18 @@ public abstract class AbstractFrame extends JFrame {
 
 
 
+    public void modSize(double x, double y){
+
+        Dimension dim = new Dimension();
+        dim.setSize(x,y);
+        setPreferredSize(dim);
+        jPanel.setPreferredSize(dim);
+        chartPanel.setPreferredSize(dim);
+        this.redraw();
+        chartCount--;
+    }
+
+
     protected List<Value> functions;
     protected abstract List getFunctions();
     protected abstract void setFunctions(List fun);
@@ -57,9 +70,11 @@ public abstract class AbstractFrame extends JFrame {
     public AbstractFrame(String title){
         super(title);
         this.setVisible(true);
+        setLayout(new BorderLayout());
         this.chartCount = 0;
         jPanel = new JPanel();
         jPanel.setName(title);
+        jPanel.setLayout(new BorderLayout());
         add(jPanel, BorderLayout.CENTER);
         setSize(640, 480);
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);

@@ -15,7 +15,7 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
     private final static ParameterDef CANVAS = createParameter("canvas");
     private final static ParameterDef XYTUPEL = createParameter("xyTupel");
     private final static ParameterDef RGBLIST = createOptionalParameter("RGBList", Rational.ONE);
-    private final static ParameterDef BULLETSIZE = createOptionalParameter("Bulletsize", SetlDouble.ONE);
+    private final static ParameterDef BULLETSIZE = createOptionalParameter("Bulletsize", SetlDouble.FIVE);
     public final static PreDefinedProcedure DEFINITION = new PD_plot_addBullets();
 
     private PD_plot_addBullets() {

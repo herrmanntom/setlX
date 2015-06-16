@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.statements.Check;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.*;
 
@@ -42,19 +41,19 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
         Value colorListValue;
         SetlBoolean plotArea;
 
-        if (!CheckType.isCanvas(args.get(CANVAS))) {
+        if (!PlotCheckType.isCanvas(args.get(CANVAS))) {
             throw new UndefinedOperationException("First parameter canvas has to be a Canvas object (eg. created with plot_createCanvas() )");
         }
 
-        if (!CheckType.isSetlString(args.get(FUNCTIONDEFINITION))) {
+        if (!PlotCheckType.isSetlString(args.get(FUNCTIONDEFINITION))) {
             throw new UndefinedOperationException("Second parameter functiondefinition has to be a Function of type String (eq. \"sin(x)*x\" )");
         }
 
-        if (!CheckType.isSetlString(args.get(GRAPHNAME))) {
+        if (!PlotCheckType.isSetlString(args.get(GRAPHNAME))) {
             throw new UndefinedOperationException("Third parameter graphname has to be of type String (eq. \"Name of the Graph\" )");
         }
 
-        if (!CheckType.isSetlBoolean(args.get(PLOTAREA))) {
+        if (!PlotCheckType.isSetlBoolean(args.get(PLOTAREA))) {
             throw new UndefinedOperationException("Fifth paramter plotarea (optional) has to be of type boolean (eq. ");
         }
 
@@ -76,7 +75,7 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
         //if graphcolor is set
         if (!colorListValue.equalTo(Rational.ONE)) {
 
-            if(!CheckType.isSetlList(colorListValue)){
+            if(!PlotCheckType.isSetlList(colorListValue)){
                 throw new UndefinedOperationException("Forth parameter graphcolor (optional) has to be of type SetlList with three entries (eq. [0,0,0] )");
             }
             SetlList colorListSetl = (SetlList) colorListValue;
@@ -85,7 +84,7 @@ public class PD_plot_addGraph extends PreDefinedProcedure {
                 throw new UndefinedOperationException("Forth parameter graphcolor (optional) must have three entries (eq. [0,0,0] ");
             }
 
-            if(!CheckType.isSetlListWithInteger(colorListSetl)){
+            if(!PlotCheckType.isSetlListWithInteger(colorListSetl)){
                 throw new UndefinedOperationException("Forth parameter graphcolor (optional) must contain only Integers (eq. [0,0,0] ");
             }
 

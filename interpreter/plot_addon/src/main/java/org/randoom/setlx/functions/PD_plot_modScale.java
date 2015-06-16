@@ -2,7 +2,6 @@ package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
-import org.randoom.setlx.statements.Check;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
@@ -28,26 +27,26 @@ public class PD_plot_modScale extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
 
-        if(!CheckType.isCanvas(args.get(CANVAS))){
+        if(!PlotCheckType.isCanvas(args.get(CANVAS))){
             throw new UndefinedOperationException("First parameter has to be of object Canvas");
         }
 
-        if(!CheckType.isSetlList(args.get(XMINMAX))){
+        if(!PlotCheckType.isSetlList(args.get(XMINMAX))){
             throw new UndefinedOperationException("Second parameter xMinMax has to be a Tupel (eq. [2, 3])");
         }
 
-        if(!CheckType.isSetlList(args.get(YMINMAX))){
+        if(!PlotCheckType.isSetlList(args.get(YMINMAX))){
             throw new UndefinedOperationException("Third parameter yMinMax has to be a Tupel (eq. [2, 3])");
         }
 
         SetlList xList = (SetlList) args.get(XMINMAX);
         SetlList yList = (SetlList) args.get(YMINMAX);
 
-        if(!CheckType.isSetlListWithNumbers(xList)){
+        if(!PlotCheckType.isSetlListWithNumbers(xList)){
             throw new UndefinedOperationException("Second parameter xMinMax has to be a Tupel with Numbers (eq. [2,3])");
         }
 
-        if(!CheckType.isSetlListWithNumbers(yList)){
+        if(!PlotCheckType.isSetlListWithNumbers(yList)){
             throw new UndefinedOperationException("Third parameter xMinMax has to be a Tupel with Numbers (eq. [2,3])");
         }
 

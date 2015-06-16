@@ -22,11 +22,11 @@ public class PD_plot_exportCanvas extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        if(!CheckType.isCanvas(args.get(CANVAS))){
+        if(!PlotCheckType.isCanvas(args.get(CANVAS))){
             throw new UndefinedOperationException("First parameter has to be of object Canvas");
         }
 
-        if(!CheckType.isSetlString(args.get(PATH))){
+        if(!PlotCheckType.isSetlString(args.get(PATH))){
             throw new UndefinedOperationException("Second parameter has to be a String");
         }
 

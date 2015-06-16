@@ -26,16 +26,16 @@ public class PD_plot_modScaleType extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
 
-        if (!CheckType.isCanvas(args.get(CANVAS))) {
+        if (!PlotCheckType.isCanvas(args.get(CANVAS))) {
             throw new UndefinedOperationException("First parameter has to be of object Canvas");
         }
 
 
-        if (!CheckType.isSetlString(args.get(XTYPE))) {
+        if (!PlotCheckType.isSetlString(args.get(XTYPE))) {
             throw new UndefinedOperationException("Second parameter xType has to be a String");
         }
 
-        if (!CheckType.isSetlString(args.get(YTYPE))) {
+        if (!PlotCheckType.isSetlString(args.get(YTYPE))) {
             throw new UndefinedOperationException("Third parameter yType has to be a String");
         }
 

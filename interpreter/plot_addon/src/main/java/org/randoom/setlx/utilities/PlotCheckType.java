@@ -6,7 +6,7 @@ import org.randoom.setlx.types.Value;
 
 import java.util.List;
 
-public class CheckType {
+public class PlotCheckType {
 
     public static boolean isCanvas(Object p) {
         return (p instanceof Canvas);

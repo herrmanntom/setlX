@@ -25,11 +25,11 @@ public class PD_plot_legendVisible extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
 
-        if(!CheckType.isCanvas(args.get(CANVAS))){
+        if(!PlotCheckType.isCanvas(args.get(CANVAS))){
             throw new UndefinedOperationException("First parameter has to be of object Canvas");
         }
 
-        if(!CheckType.isSetlBoolean(args.get(VISIBLE))){
+        if(!PlotCheckType.isSetlBoolean(args.get(VISIBLE))){
             throw new UndefinedOperationException("Second parameter visible has to be a Boolean");
         }
 

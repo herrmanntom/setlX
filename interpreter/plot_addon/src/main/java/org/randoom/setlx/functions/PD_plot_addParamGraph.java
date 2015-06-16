@@ -34,27 +34,27 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
 
-        if (!CheckType.isCanvas(args.get(CANVAS))) {
+        if (!PlotCheckType.isCanvas(args.get(CANVAS))) {
             throw new UndefinedOperationException("First parameter canvas has to be a Canvas object (eg. created with plot_createCanvas() )");
         }
 
-        if (!CheckType.isSetlString(args.get(XFUNCTION))) {
+        if (!PlotCheckType.isSetlString(args.get(XFUNCTION))) {
             throw new UndefinedOperationException("Second parameter xFunction has to be a String (eq. \"x+2\")");
         }
 
-        if (!CheckType.isSetlString(args.get(YFUNCTION))) {
+        if (!PlotCheckType.isSetlString(args.get(YFUNCTION))) {
             throw new UndefinedOperationException("Third parameter yFunction has to be a String (eq. \"x+2\")");
         }
 
-        if (!CheckType.isSetlString(args.get(GRAPHNAME))) {
+        if (!PlotCheckType.isSetlString(args.get(GRAPHNAME))) {
             throw new UndefinedOperationException("Fourth parameter graphname has to be a String (eq. \"Name of the Graph\" )");
         }
 
-        if (!CheckType.isSetlList(args.get(PARAMBOUND))) {
+        if (!PlotCheckType.isSetlList(args.get(PARAMBOUND))) {
             throw new UndefinedOperationException("Fifth parameter ParameterBounds has to be a List (eq. [-2, 3])");
         }
 
-        if (!CheckType.isSetlBoolean(args.get(PLOTAREA))) {
+        if (!PlotCheckType.isSetlBoolean(args.get(PLOTAREA))) {
             throw new UndefinedOperationException("Seventh parameter plotarea has to be a Boolean (eq. true)");
         }
 
@@ -73,7 +73,7 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             throw new UndefinedOperationException("Fifth parameter ParameterBounds has to be a Tupel (eq. [-2, 3])");
         }
 
-        if (!CheckType.isSetlListWithNumbers(limitsV)) {
+        if (!PlotCheckType.isSetlListWithNumbers(limitsV)) {
             throw new UndefinedOperationException("Fifth parameter ParameterBounds has to consist of Numbers (eq. [-1, 3])");
         }
 
@@ -88,13 +88,13 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         }
         //if only the graphcolor is set
         if (!graphColorV.equalTo(Rational.ONE)) {
-            if (!CheckType.isSetlList(graphColorV)) {
+            if (!PlotCheckType.isSetlList(graphColorV)) {
                 throw new UndefinedOperationException("Sixth parameter graphcolor has to be a List (eq. [0,0,0])");
             }
 
             SetlList graphColorS = (SetlList) graphColorV;
 
-            if (!CheckType.isSetlListWithInteger(graphColorS)) {
+            if (!PlotCheckType.isSetlListWithInteger(graphColorS)) {
                 throw new UndefinedOperationException("Sixth parameter graphcolor has to consist of Integer values (eq. [0,0,0])");
             }
 

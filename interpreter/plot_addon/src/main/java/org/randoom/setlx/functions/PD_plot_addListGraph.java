@@ -32,19 +32,19 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
 
-        if (!CheckType.isCanvas(args.get(CANVAS))) {
+        if (!PlotCheckType.isCanvas(args.get(CANVAS))) {
             throw new UndefinedOperationException("First parameter canvas has to be a Canvas object (eg. created with plot_createCanvas() )");
         }
 
-        if(!CheckType.isSetlListofSetlList(args.get(VALUELIST))){
+        if(!PlotCheckType.isSetlListofSetlList(args.get(VALUELIST))){
             throw new UndefinedOperationException("Second parameter valuelist has to be a List of Lists (eq. [[1,2],[3,4],[5,6]])");
         }
 
-        if(!CheckType.isSetlString(args.get(GRAPHNAME))){
+        if(!PlotCheckType.isSetlString(args.get(GRAPHNAME))){
             throw new UndefinedOperationException("Third parameter graphname has to be a String (eq. \"Name of the Graph\" )");
         }
 
-        if(!CheckType.isSetlBoolean(args.get(PLOTAREA))){
+        if(!PlotCheckType.isSetlBoolean(args.get(PLOTAREA))){
             throw new UndefinedOperationException("Fifth parameter plotarea has to be a Boolean (eq. true)");
         }
 
@@ -53,7 +53,7 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
         SetlString graphNameSetl = (SetlString)args.get(GRAPHNAME);
         String graphNameString = graphNameSetl.toString().replace("\"", "");
 
-        if(!CheckType.isSetlListofSetlListWithNumbers(valueSetlList)){
+        if(!PlotCheckType.isSetlListofSetlListWithNumbers(valueSetlList)){
             throw new UndefinedOperationException("Second parameter valuelist has to be a List of Lists with Numbers (eq. [[1,2],[3,4],[5,6]])");
         }
 
@@ -69,13 +69,13 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
         //if graphcolor is set
         if (!graphColorV.equalTo(Rational.ONE)) {
 
-            if(!CheckType.isSetlList(graphColorV)){
+            if(!PlotCheckType.isSetlList(graphColorV)){
                 throw new UndefinedOperationException("Fourth parameter graphcolor has to be a List (eq. [0,0,0])");
             }
 
             SetlList graphColorS = (SetlList) graphColorV;
 
-            if(!CheckType.isSetlListWithInteger(graphColorS)){
+            if(!PlotCheckType.isSetlListWithInteger(graphColorS)){
                 throw new UndefinedOperationException("Fourth parameter graphcolor has to consist of Integer values (eq. [0,0,0])");
             }
 

@@ -1,6 +1,5 @@
 package org.randoom.setlx.functions;
 
-import jdk.nashorn.internal.runtime.Undefined;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlList;
@@ -28,15 +27,15 @@ public class PD_plot_addLabel extends PreDefinedProcedure {
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
 
-        if(!CheckType.isCanvas(args.get(CANVAS))){
+        if(!PlotCheckType.isCanvas(args.get(CANVAS))){
             throw new UndefinedOperationException("First parameter has to be a Canvas object");
         }
 
-        if(!CheckType.isSetlList(args.get(XYTUPEL))){
+        if(!PlotCheckType.isSetlList(args.get(XYTUPEL))){
             throw new UndefinedOperationException("Second parameter has to be a SetlList (eq: [1,2]) ");
         }
 
-        if(!CheckType.isSetlString(args.get(LABEL))){
+        if(!PlotCheckType.isSetlString(args.get(LABEL))){
             throw new UndefinedOperationException("Third parameter hast do be a String (eq: \"Text on Label\")");
         }
 
@@ -47,7 +46,7 @@ public class PD_plot_addLabel extends PreDefinedProcedure {
             throw new UndefinedOperationException("Second parameter has to be a Tupel of Numbers (eq: [1,2]) ");
         }
 
-        if(!CheckType.isSetlListWithNumbers(xyTupel)){
+        if(!PlotCheckType.isSetlListWithNumbers(xyTupel)){
             throw new UndefinedOperationException("Second parameter has to be a Tupel of Numbers (eq: [1,2]) ");
         }
 

@@ -38,11 +38,11 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
             throw new UndefinedOperationException("First parameter canvas has to be a Canvas object (eg. created with plot_createCanvas() )");
         }
 
-        if (!CheckType.isSetlListofSetlList(args.get(XFUNCTION))) {
+        if (!CheckType.isSetlString(args.get(XFUNCTION))) {
             throw new UndefinedOperationException("Second parameter xFunction has to be a String (eq. \"x+2\")");
         }
 
-        if (!CheckType.isSetlListofSetlList(args.get(YFUNCTION))) {
+        if (!CheckType.isSetlString(args.get(YFUNCTION))) {
             throw new UndefinedOperationException("Third parameter yFunction has to be a String (eq. \"x+2\")");
         }
 
@@ -89,17 +89,17 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         //if only the graphcolor is set
         if (!graphColorV.equalTo(Rational.ONE)) {
             if (!CheckType.isSetlList(graphColorV)) {
-                throw new UndefinedOperationException("Fourth parameter graphcolor has to be a List (eq. [0,0,0])");
+                throw new UndefinedOperationException("Sixth parameter graphcolor has to be a List (eq. [0,0,0])");
             }
 
             SetlList graphColorS = (SetlList) graphColorV;
 
             if (!CheckType.isSetlListWithInteger(graphColorS)) {
-                throw new UndefinedOperationException("Fourth parameter graphcolor has to consist of Integer values (eq. [0,0,0])");
+                throw new UndefinedOperationException("Sixth parameter graphcolor has to consist of Integer values (eq. [0,0,0])");
             }
 
             if (!(graphColorS.size() == 3)) {
-                throw new UndefinedOperationException("Fourth parameter graphcolor has to consist of exactly three values (eq. [0,0,0])");
+                throw new UndefinedOperationException("Sixth parameter graphcolor has to consist of exactly three values (eq. [0,0,0])");
             }
 
             List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);

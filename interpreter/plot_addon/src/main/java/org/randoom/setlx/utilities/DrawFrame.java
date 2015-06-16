@@ -74,8 +74,9 @@ public class DrawFrame extends AbstractFrame {
         this.redraw();
     }
 
-    public DrawFrame(String title) {
-        super(title);
+    public DrawFrame(String title, double width, double height) {
+        super(title, width, height );
+
         x_Min = -10.0;
         x_Max = 10.0;
         xAxis = new NumberAxis("x");

@@ -7,7 +7,6 @@ import org.jfree.chart.plot.Plot;
 import org.jfree.data.general.DefaultPieDataset;
 import org.randoom.setlx.exceptions.IllegalRedefinitionException;
 import org.randoom.setlx.exceptions.SetlException;
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
 
@@ -45,8 +44,8 @@ public class PieFrame extends AbstractFrame {
         return new SetlString("Text label are not supported in PieCharts");
     }
 
-    public PieFrame(String title) {
-        super(title);
+    public PieFrame(String title, double width, double height) {
+        super(title,width ,height );
     }
 
     protected void redraw() {

@@ -24,9 +24,6 @@ public class Canvas extends Value {
     private String title;
 
 
-
-
-
     public FrameWrapper getFrame(){
         return this.frame;
     }

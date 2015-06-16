@@ -16,6 +16,26 @@ public class FrameWrapper {
     private AbstractFrame frame;
 
 
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+    private double height = 460;
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    private double width = 640;
+
     public static final int DRAW_FRAME = 1;
     public static final int BAR_FRAME = 2;
     public static final int PIE_FRAME = 3;
@@ -33,7 +53,7 @@ public class FrameWrapper {
     private int frameType;
 
     public int hashCode(){
-        return frame.hashCode();
+        return frame.hashCode() + 32* ((Double) height).intValue() + 32*((Double) width).intValue() ;
     }
 
 }

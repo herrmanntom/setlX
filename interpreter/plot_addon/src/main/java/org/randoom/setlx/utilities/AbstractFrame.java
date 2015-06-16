@@ -34,16 +34,15 @@ public abstract class AbstractFrame extends JFrame {
     protected JPanel jPanel;
     protected int chartCount;
     protected String title;
+    protected Dimension dim = new Dimension();
 
 
 
     public void modSize(double x, double y){
-
-        Dimension dim = new Dimension();
         dim.setSize(x,y);
         setPreferredSize(dim);
         jPanel.setPreferredSize(dim);
-        chartPanel.setPreferredSize(dim);
+        //chartPanel.setPreferredSize(dim);
         this.redraw();
         chartCount--;
     }
@@ -67,16 +66,18 @@ public abstract class AbstractFrame extends JFrame {
         return xAxis;
     }
 
-    public AbstractFrame(String title){
+    public AbstractFrame(String title, double width, double height){
         super(title);
+        dim.setSize(width, height);
         this.setVisible(true);
         setLayout(new BorderLayout());
         this.chartCount = 0;
         jPanel = new JPanel();
         jPanel.setName(title);
         jPanel.setLayout(new BorderLayout());
+        jPanel.setPreferredSize(dim);
         add(jPanel, BorderLayout.CENTER);
-        setSize(640, 480);
+        setPreferredSize(dim);
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         setLocationRelativeTo(null);
     }

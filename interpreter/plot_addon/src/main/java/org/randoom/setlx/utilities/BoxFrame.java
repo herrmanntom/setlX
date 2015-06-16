@@ -58,8 +58,8 @@ public class BoxFrame extends AbstractFrame {
         return chart;
     }
 
-    public BoxFrame(String title) {
-        super(title);
+    public BoxFrame(String title, double width, double height) {
+        super(title, width, height);
         this.xAxis = new CategoryAxis();
         this.yAxis = new NumberAxis();
         ((NumberAxis)yAxis).setAutoRangeIncludesZero(false);

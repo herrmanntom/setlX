@@ -46,8 +46,8 @@ public class BarFrame extends AbstractFrame {
         this.functions = fun;
     }
 
-    public BarFrame(String title) {
-        super(title);
+    public BarFrame(String title, double width, double height) {
+        super(title,width , height);
         this.xAxis = new CategoryAxis();
         this.yAxis = new NumberAxis();
     }

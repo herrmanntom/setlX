@@ -48,7 +48,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(canvas.getFrame().DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME ){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -60,7 +60,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(canvas.getFrame().DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -73,7 +73,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(canvas.getFrame().DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -86,7 +86,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -99,7 +99,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -113,7 +113,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -126,7 +126,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Double> limits) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -139,7 +139,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, List<Double> limits) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -153,7 +153,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -171,7 +171,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             throw new IllegalRedefinitionException("This canvas is defined for BarCharts. Create a new canvas to draw another type of charts");
         }
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
-            canvas.getFrame().setFrame(new BarFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new BarFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
             canvas.getFrame().setFrameType(FrameWrapper.BAR_FRAME);
         }
         return ((BarFrame)canvas.getFrame().getFrame()).addBarChart(values, categories, "series"+canvas.getFrame().getFrame().getChartCount());
@@ -188,7 +188,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
         }
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
-            canvas.getFrame().setFrame(new BarFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new BarFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
             canvas.getFrame().setFrameType(FrameWrapper.BAR_FRAME);
         }
         return ((BarFrame)canvas.getFrame().getFrame()).addBarChart(values, categories, name);
@@ -205,7 +205,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
         }
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
-            canvas.getFrame().setFrame(new PieFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new PieFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
             canvas.getFrame().setFrameType(FrameWrapper.PIE_FRAME);
         }
         return ((PieFrame)canvas.getFrame().getFrame()).addPieChart(values, categories);
@@ -222,7 +222,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
         }
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
-            canvas.getFrame().setFrame(new BoxFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new BoxFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
             canvas.getFrame().setFrameType(FrameWrapper.BOX_FRAME);
         }
         return ((BoxFrame)canvas.getFrame().getFrame()).addBoxChart(values, categories,  "series"+canvas.getFrame().getFrame().getChartCount() );
@@ -239,7 +239,7 @@ public class ConnectJFreeChart implements SetlXPlot {
 
         }
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
-            canvas.getFrame().setFrame(new BoxFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new BoxFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
             canvas.getFrame().setFrameType(FrameWrapper.BOX_FRAME);
         }
         return ((BoxFrame)canvas.getFrame().getFrame()).addBoxChart(values, categories, name );
@@ -335,7 +335,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addBullets(Canvas canvas, List<List<Double>> bullets, List<Integer> color, Double bulletSize) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -347,7 +347,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     public Graph addBullets(Canvas canvas, List<List<Double>> bullets, Double bulletSize) throws IllegalRedefinitionException {
         if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
             canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
-            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle()));
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
         }
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
@@ -358,6 +358,11 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void modSize(Canvas canvas, List<Double> size) {
-        canvas.getFrame().getFrame().modSize(size.get(0), size.get(1));
+        canvas.getFrame().setWidth(size.get(0));
+        canvas.getFrame().setHeight(size.get(1));
+        if(!(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME)){
+            canvas.getFrame().getFrame().modSize(size.get(0), size.get(1));
+        }
+
     }
 }

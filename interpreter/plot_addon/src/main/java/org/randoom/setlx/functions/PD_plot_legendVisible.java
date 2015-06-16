@@ -1,13 +1,11 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJFreeChart;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.*;
 
 import java.util.HashMap;
 
@@ -26,6 +24,15 @@ public class PD_plot_legendVisible extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+
+        if(!CheckType.isCanvas(args.get(CANVAS))){
+            throw new UndefinedOperationException("First parameter has to be of object Canvas");
+        }
+
+        if(!CheckType.isSetlBoolean(args.get(VISIBLE))){
+            throw new UndefinedOperationException("Second parameter visible has to be a Boolean");
+        }
+
         Value canvas = args.get(CANVAS);
         Value visible = args.get(VISIBLE);
         boolean setVisible;

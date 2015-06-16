@@ -1,6 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.Value;
@@ -50,6 +49,17 @@ public class CheckType {
         return returnValue;
     }
 
+
+    public static boolean isSetlListWithDouble(SetlList l) {
+        boolean returnValue = isSetlList(l);
+        for (Value v : l) {
+            if (!(isSetlDouble(v))) {
+                returnValue = false;
+            }
+        }
+        return returnValue;
+    }
+
     public static boolean isSetlListWithStrings(SetlList l) {
         boolean returnValue = isSetlList(l);
         for (Value v : l) {
@@ -82,6 +92,7 @@ public class CheckType {
     public static boolean isSetlDouble(Value p) {
         return (p.isDouble().equalTo(SetlBoolean.TRUE));
     }
+
     public static boolean isSetlInteger(Value p) {
         return (p.isInteger().equalTo(SetlBoolean.TRUE));
     }

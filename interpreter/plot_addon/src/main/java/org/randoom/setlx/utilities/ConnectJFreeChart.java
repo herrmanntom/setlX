@@ -274,6 +274,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public void legendVisible(Canvas canvas, Boolean visible) {
         ChartPanel chartPanel = canvas.getFrame().getFrame().chartPanel;
+        canvas.getFrame().getFrame().setLegendVisible(visible);
         if (visible) {
             if (chartPanel.getChart().getLegend() == null) {
                 chartPanel.getChart().addLegend(canvas.getFrame().getFrame().legend);
@@ -282,6 +283,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             canvas.getFrame().getFrame().legend = chartPanel.getChart().getLegend();
             chartPanel.getChart().removeLegend();
         }
+
     }
 
     @Override

@@ -24,7 +24,6 @@ public abstract class AbstractFrame extends JFrame {
     Plot plot;
 
     protected abstract Plot getPlot();
-    protected abstract void setPlot(Plot plot);
     ChartPanel chartPanel;
     LegendTitle legend;
     protected double x_Min;
@@ -35,6 +34,16 @@ public abstract class AbstractFrame extends JFrame {
     protected int chartCount;
     protected String title;
     protected Dimension dim = new Dimension();
+
+    public boolean isLegendVisible() {
+        return legendVisible;
+    }
+
+    public void setLegendVisible(boolean legendVisible) {
+        this.legendVisible = legendVisible;
+    }
+
+    protected boolean legendVisible = true;
 
 
 
@@ -68,6 +77,7 @@ public abstract class AbstractFrame extends JFrame {
 
     public AbstractFrame(String title, double width, double height){
         super(title);
+        this.title = title;
         dim.setSize(width, height);
         this.setVisible(true);
         setLayout(new BorderLayout());
@@ -87,6 +97,8 @@ public abstract class AbstractFrame extends JFrame {
         if (chartPanel != null) {
             chartPanel.setName(title);
         }
+        redraw();
+        chartCount--;
     }
 
     protected abstract void remakeFunctions() throws SetlException;
@@ -95,7 +107,7 @@ public abstract class AbstractFrame extends JFrame {
         if(chartCount != 0) {
             jPanel.remove(chartPanel);
         }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.getPlot(), true);
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.getPlot(), legendVisible);
 
         chartPanel = new ChartPanel(chart, true, true, true, true, true);
 

@@ -1,0 +1,3 @@
+c := plot_createCanvas();
+ch1 := plot_addBoxChart(c, [[1,2,1,2,1,1,1,1],[3,4,3,3,3,4,3,3]], ["a","b"], "Dataset 1");
+ch2 := plot_addBoxChart(c, [[6,5,4,4,5,4,5,4],[1,2,1,1,1,2,1,1]], ["a","c"], "Dataset 2");

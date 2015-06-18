@@ -1,9 +1,11 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.*;
 import org.randoom.setlx.utilities.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,9 +17,10 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
     private final static ParameterDef GRAPHNAME = createParameter("graphname");
     private final static ParameterDef PARAMBOUND = createParameter("ParameterBounds");
     private final static ParameterDef GRAPHCOLOR = createOptionalParameter("graphcolor (RGB)", Rational.ONE);
-    private final static ParameterDef PLOTAREA = createOptionalParameter("plotArea", Rational.ONE);
+    private final static ParameterDef PLOTAREA = createOptionalParameter("plotArea", SetlBoolean.FALSE);
     public final static PreDefinedProcedure DEFINITION = new PD_plot_addParamGraph();
-    private PD_plot_addParamGraph(){
+
+    private PD_plot_addParamGraph() {
         super();
         addParameter(CANVAS);
         addParameter(XFUNCTION);
@@ -30,7 +33,30 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
-        // addParamGraph(Canvas canvas, String: xFunction, String: yFunction, [String: functionName], [Boolean: plotArea] )
+
+        if (!PlotCheckType.isCanvas(args.get(CANVAS))) {
+            throw new UndefinedOperationException("First parameter canvas has to be a Canvas object (eg. created with plot_createCanvas() )");
+        }
+
+        if (!PlotCheckType.isSetlString(args.get(XFUNCTION))) {
+            throw new UndefinedOperationException("Second parameter xFunction has to be a String (eq. \"x+2\")");
+        }
+
+        if (!PlotCheckType.isSetlString(args.get(YFUNCTION))) {
+            throw new UndefinedOperationException("Third parameter yFunction has to be a String (eq. \"x+2\")");
+        }
+
+        if (!PlotCheckType.isSetlString(args.get(GRAPHNAME))) {
+            throw new UndefinedOperationException("Fourth parameter graphname has to be a String (eq. \"Name of the Graph\" )");
+        }
+
+        if (!PlotCheckType.isSetlList(args.get(PARAMBOUND))) {
+            throw new UndefinedOperationException("Fifth parameter ParameterBounds has to be a List (eq. [-2, 3])");
+        }
+
+        if (!PlotCheckType.isSetlBoolean(args.get(PLOTAREA))) {
+            throw new UndefinedOperationException("Seventh parameter plotarea has to be a Boolean (eq. true)");
+        }
 
         // initialise parameter canvas, xFunction, yFunction, functionName and plotArea
         Canvas canvas = (Canvas) args.get(CANVAS);
@@ -39,45 +65,53 @@ public class PD_plot_addParamGraph extends PreDefinedProcedure {
         // function comes as ""sin(x)"" so i have to replace the quotation marks
         String xFunction = xFunctionDefinition.toString().replace("\"", "");
         String yFunction = yFunctionDefinition.toString().replace("\"", "");
-        Value graphNameV = args.get(GRAPHNAME);
-        SetlString graphNameS = (SetlString) graphNameV;
+        SetlString graphNameS = (SetlString) args.get(GRAPHNAME);
         String graphName = graphNameS.toString().replace("\"", "");
-        SetlList limitsV = (SetlList)args.get(PARAMBOUND);
+        SetlList limitsV = (SetlList) args.get(PARAMBOUND);
+
+        if (limitsV.size() != 2) {
+            throw new UndefinedOperationException("Fifth parameter ParameterBounds has to be a Tupel (eq. [-2, 3])");
+        }
+
+        if (!PlotCheckType.isSetlListWithNumbers(limitsV)) {
+            throw new UndefinedOperationException("Fifth parameter ParameterBounds has to consist of Numbers (eq. [-1, 3])");
+        }
+
         List<Double> limitsList = ConvertSetlTypes.convertSetlListAsDouble(limitsV);
 
         Value graphColorV = args.get(GRAPHCOLOR);
-        Value plotarea = args.get(PLOTAREA);
+        Value plotArea = args.get(PLOTAREA);
 
-        // if graphcolor and plotArea are set
-        if (!graphColorV.equalTo(Rational.ONE) && !plotarea.equalTo(Rational.ONE)) {
-            SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
-            if(!(graphColorS.size()==3)){
-                return new SetlString("Parameter graphcolor have to consits of exact three values (RGB)");
-            }
-            List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
-
-            SetlBoolean plotAreaBool = (SetlBoolean) plotarea;
-            boolean area;
-            if (plotAreaBool.equalTo(SetlBoolean.TRUE)) {
-                area = true;
-            } else {
-                area = false;
-            }
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, area, limitsList);
+        boolean area = false;
+        if (plotArea.equalTo(SetlBoolean.TRUE)) {
+            area = true;
         }
-
         //if only the graphcolor is set
         if (!graphColorV.equalTo(Rational.ONE)) {
-            SetlList graphColorS = (SetlList) args.get(GRAPHCOLOR);
-            if(!(graphColorS.size()==3)){
-                return new SetlString("Parameter graphcolor have to consits of exact three values");
+            if (!PlotCheckType.isSetlList(graphColorV)) {
+                throw new UndefinedOperationException("Sixth parameter graphcolor has to be a List (eq. [0,0,0])");
             }
+
+            SetlList graphColorS = (SetlList) graphColorV;
+
+            if (!PlotCheckType.isSetlListWithInteger(graphColorS)) {
+                throw new UndefinedOperationException("Sixth parameter graphcolor has to consist of Integer values (eq. [0,0,0])");
+            }
+
+            if (!(graphColorS.size() == 3)) {
+                throw new UndefinedOperationException("Sixth parameter graphcolor has to consist of exactly three values (eq. [0,0,0])");
+            }
+
             List<Integer> graphColor = ConvertSetlTypes.convertSetlListAsInteger(graphColorS);
-            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, limitsList);
+            return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, area, limitsList);
         }
 
 
         //if no optional parameter is set
-        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, limitsList);
+        List<Integer> graphColor = new ArrayList();
+        graphColor.add(0);
+        graphColor.add(0);
+        graphColor.add(0);
+        return ConnectJFreeChart.getInstance().addParamGraph(canvas, xFunction, yFunction, graphName, state, graphColor, area, limitsList);
     }
 }

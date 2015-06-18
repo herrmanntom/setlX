@@ -31,17 +31,17 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         SetlList categories;
 
         //First Parameter must be a Canvas object
-        if (!CheckType.isCanvas(args.get(CANVAS))) {
+        if (!PlotCheckType.isCanvas(args.get(CANVAS))) {
             throw new UndefinedOperationException("First parameter has to be a canvas object. (eq. created with plot_createCanvas() )");
         }
 
         //second parameter has to be a list
-        if (!(CheckType.isSetlList(args.get(VALUES)))) {
+        if (!(PlotCheckType.isSetlList(args.get(VALUES)))) {
             throw new UndefinedOperationException("Second parameter values has to be a List. (eq. [1,2,3])");
         }
 
         //third parameter has to be a list
-        if (!(CheckType.isSetlList(args.get(CATEGORIES)))) {
+        if (!(PlotCheckType.isSetlList(args.get(CATEGORIES)))) {
             throw new UndefinedOperationException("Third parameter categories has to be a List. (eq. [\"one\", \"two\", \"three\"])");
         }
 
@@ -53,13 +53,13 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         //check if datatypes in list are correct
         //for second parameter either double or boolean
 
-        if (!CheckType.isSetlListWithNumbers(values)) {
+        if (!PlotCheckType.isSetlListWithNumbers(values)) {
             throw new UndefinedOperationException("Members in list of the second parameter have to be Integer or Double values");
         }
 
 
         //for third parameter string
-            if (!CheckType.isSetlListWithStrings(categories)) {
+            if (!PlotCheckType.isSetlListWithStrings(categories)) {
                 throw new UndefinedOperationException("Members in list of the third parameter have to be String values");
             }
 
@@ -68,7 +68,7 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);
         List categorieList = ConvertSetlTypes.convertSetlListAsString(categories);
 
-        if (!(CheckType.sameSize(valuesList, categorieList))) {
+        if (!(PlotCheckType.sameSize(valuesList, categorieList))) {
             throw new UndefinedOperationException("The lists in the second and third parameter have to be of equal length");
         }
 
@@ -76,7 +76,7 @@ public class PD_plot_addBarChart extends PreDefinedProcedure {
         Value name = args.get(NAME);
         if (!name.equalTo(Rational.ONE)) {
             //check if forth parameter is a string
-            if (!(CheckType.isSetlString(name))) {
+            if (!(PlotCheckType.isSetlString(name))) {
                 throw new UndefinedOperationException("Forth parameter name has to be a String. (eq. \"name of the bar chart\" ");
             }
             SetlString nameSetlString = (SetlString) name;

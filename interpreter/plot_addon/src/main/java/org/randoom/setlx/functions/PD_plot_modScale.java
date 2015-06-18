@@ -1,14 +1,12 @@
 package org.randoom.setlx.functions;
 
 import org.randoom.setlx.exceptions.SetlException;
+import org.randoom.setlx.exceptions.UndefinedOperationException;
 import org.randoom.setlx.types.SetlBoolean;
 import org.randoom.setlx.types.SetlList;
 import org.randoom.setlx.types.SetlString;
 import org.randoom.setlx.types.Value;
-import org.randoom.setlx.utilities.Canvas;
-import org.randoom.setlx.utilities.ConnectJFreeChart;
-import org.randoom.setlx.utilities.ParameterDef;
-import org.randoom.setlx.utilities.State;
+import org.randoom.setlx.utilities.*;
 
 import java.util.HashMap;
 
@@ -28,8 +26,37 @@ public class PD_plot_modScale extends PreDefinedProcedure {
 
     @Override
     protected Value execute(State state, HashMap<ParameterDef, Value> args) throws SetlException {
+
+        if(!PlotCheckType.isCanvas(args.get(CANVAS))){
+            throw new UndefinedOperationException("First parameter has to be of object Canvas");
+        }
+
+        if(!PlotCheckType.isSetlList(args.get(XMINMAX))){
+            throw new UndefinedOperationException("Second parameter xMinMax has to be a Tupel (eq. [2, 3])");
+        }
+
+        if(!PlotCheckType.isSetlList(args.get(YMINMAX))){
+            throw new UndefinedOperationException("Third parameter yMinMax has to be a Tupel (eq. [2, 3])");
+        }
+
         SetlList xList = (SetlList) args.get(XMINMAX);
         SetlList yList = (SetlList) args.get(YMINMAX);
+
+        if(!PlotCheckType.isSetlListWithNumbers(xList)){
+            throw new UndefinedOperationException("Second parameter xMinMax has to be a Tupel with Numbers (eq. [2,3])");
+        }
+
+        if(!PlotCheckType.isSetlListWithNumbers(yList)){
+            throw new UndefinedOperationException("Third parameter xMinMax has to be a Tupel with Numbers (eq. [2,3])");
+        }
+
+        if(xList.size() != 2){
+            throw new UndefinedOperationException("Second parameter xMinMax has to be a Tupel (eq. [2,3])");
+        }
+
+        if(yList.size() != 2){
+            throw new UndefinedOperationException("Third parameter yMinMax has to be a Tupel (eq. [2,3])");
+        }
 
         Value xMinV = xList.firstMember();
         Value xMaxV = xList.lastMember();
@@ -59,6 +86,14 @@ public class PD_plot_modScale extends PreDefinedProcedure {
             yMinD = (double) yMinV.jIntValue();
         } else {
             yMinD = yMinV.jDoubleValue();
+        }
+
+        if(xMaxD < xMinD){
+            throw new UndefinedOperationException("Second parameter: first element in Tupel has to be smaller than the second element");
+        }
+
+        if(yMaxD < yMinD){
+            throw new UndefinedOperationException("Third parameter: first element in Tupel has to be smaller than the second element");
         }
 
         ConnectJFreeChart.getInstance().modScale((Canvas)args.get(CANVAS), xMinD, xMaxD, yMinD, yMaxD);

@@ -45,6 +45,17 @@ public abstract class AbstractFrame extends JFrame {
 
     protected boolean legendVisible = true;
 
+    protected Color getNewColor(){
+        switch(chartCount % 6){
+            case 0: return Color.red;
+            case 1: return Color.blue;
+            case 2: return Color.green;
+            case 3: return Color.cyan;
+            case 4: return Color.orange;
+            default: return Color.magenta;
+        }
+
+    }
 
 
     public void modSize(double x, double y){

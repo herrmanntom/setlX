@@ -91,6 +91,7 @@ public class BoxFrame extends AbstractFrame {
         }
         plot = new CategoryPlot(dataset, (CategoryAxis) xAxis, (NumberAxis) yAxis, renderer);
         functions.add(chart);
+        renderer.setSeriesPaint(chartCount, getNewColor());
         this.redraw();
         chartCount++;
         return chart;

@@ -313,11 +313,12 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void modScaleType(Canvas canvas, String xType, String yType) throws UndefinedOperationException, IllegalRedefinitionException {
-        LogarithmicAxis log = new LogarithmicAxis(canvas.getFrame().getFrame().getyAxis().getLabel());
-        log.setAllowNegativesFlag(true);
+
         if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
         }
+        LogarithmicAxis log = new LogarithmicAxis(canvas.getFrame().getFrame().getyAxis().getLabel());
+        log.setAllowNegativesFlag(true);
         if (xType.equalsIgnoreCase("log")) {
             ((DrawFrame)canvas.getFrame().getFrame()).setxAxis(log);
         } else if (xType.equalsIgnoreCase("num")) {

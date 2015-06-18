@@ -121,7 +121,7 @@ public abstract class AbstractFrame extends JFrame {
         if (!ispresent) {
             throw new UndefinedOperationException("the Graph or Chart you wanted to delete, does not exist");
         }
-
+        chartCount = 0;
         remakeFunctions();
     }
 

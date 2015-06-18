@@ -345,7 +345,7 @@ public class ConnectJFreeChart implements SetlXPlot {
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
         }
-        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)), bulletSize.intValue());
+        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)), bulletSize);
     }
 
     @Override
@@ -357,7 +357,7 @@ public class ConnectJFreeChart implements SetlXPlot {
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
         }
-        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0), bulletSize.intValue());
+        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0), bulletSize);
     }
 
 

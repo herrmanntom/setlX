@@ -71,9 +71,9 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
 
         //if the color parameter is not set
         List colorList = new ArrayList();
-        colorList.add(0.0);
-        colorList.add(0.0);
-        colorList.add(0.0);
+        colorList.add(0);
+        colorList.add(0);
+        colorList.add(0);
         return ConnectJFreeChart.getInstance().addBullets((Canvas) args.get(CANVAS), bulletList, colorList , bSize);
     }
 }

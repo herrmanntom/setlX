@@ -26,10 +26,6 @@ public class BarFrame extends AbstractFrame {
         return plot;
     }
 
-    @Override
-    protected void setPlot(Plot plot) {
-        this.plot = (CategoryPlot)plot;
-    }
 
     private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
     private final BarRenderer renderer = new BarRenderer();
@@ -63,7 +59,6 @@ public class BarFrame extends AbstractFrame {
         jPanel.add(chartPanel);
 
         this.pack();
-        chartCount++;
     }
 
 
@@ -74,6 +69,8 @@ public class BarFrame extends AbstractFrame {
         label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
         functions.add(chart);
         plot.addAnnotation(label);
+        this.redraw();
+        chartCount++;
         return chart;
 
     }
@@ -96,7 +93,6 @@ public class BarFrame extends AbstractFrame {
         for(Chart chart: func){
             this.addBarChart(chart.getValues(), chart.getCategories(), chart.getName());
         }
-        this.redraw();
 
     }
 
@@ -110,6 +106,7 @@ public class BarFrame extends AbstractFrame {
 
         functions.add(chart);
         this.redraw();
+        chartCount++;
         return chart;
     }
 }

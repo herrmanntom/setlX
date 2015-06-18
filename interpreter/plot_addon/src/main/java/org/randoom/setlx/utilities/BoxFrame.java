@@ -28,10 +28,6 @@ public class BoxFrame extends AbstractFrame {
         return plot;
     }
 
-    @Override
-    protected void setPlot(Plot plot) {
-        this.plot = (CategoryPlot)plot;
-    }
     private DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
     private final BoxAndWhiskerRenderer renderer = new BoxAndWhiskerRenderer();
 
@@ -55,6 +51,7 @@ public class BoxFrame extends AbstractFrame {
         label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
         functions.add(chart);
         plot.addAnnotation(label);
+        chartCount++;
         return chart;
     }
 
@@ -65,22 +62,6 @@ public class BoxFrame extends AbstractFrame {
         ((NumberAxis)yAxis).setAutoRangeIncludesZero(false);
         renderer.setFillBox(false);
     }
-
-    protected void redraw() {
-        if (chartCount != 0) {
-            jPanel.remove(chartPanel);
-        }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.plot, true);
-
-        chartPanel = new ChartPanel(chart, true, true, true, true, true);
-
-        jPanel.add(chartPanel);
-
-        this.pack();
-        chartCount++;
-    }
-
-
 
     @Override
     protected void remakeFunctions() throws SetlException {
@@ -111,6 +92,7 @@ public class BoxFrame extends AbstractFrame {
         plot = new CategoryPlot(dataset, (CategoryAxis) xAxis, (NumberAxis) yAxis, renderer);
         functions.add(chart);
         this.redraw();
+        chartCount++;
         return chart;
     }
 }

@@ -259,7 +259,10 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Value addLabel(Canvas canvas, List<Double> coordinates, String text) {
+    public Value addLabel(Canvas canvas, List<Double> coordinates, String text) throws UndefinedOperationException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            throw new UndefinedOperationException("label cannot be added, if no Graph or Chart is defined. Please add a Graph or Chart first");
+        }
         return canvas.getFrame().getFrame().addTextLabel(coordinates, text);
     }
 

@@ -98,7 +98,7 @@ public interface SetlXPlot {
 
     public void labelAxis(Canvas canvas, String xLabel, String yLabel) throws IllegalRedefinitionException;
 
-    public Value addLabel(Canvas canvas, List<Double> coordinates, String text);
+    public Value addLabel(Canvas canvas, List<Double> coordinates, String text) throws UndefinedOperationException;
 
     public void defineTitle(Canvas canvas, String title);
 

@@ -24,15 +24,7 @@ public class DrawFrame extends AbstractFrame {
         return this.plot;
     }
 
-    @Override
-    protected void setPlot(Plot plot) {
-        this.plot = (XYPlot)plot;
-    }
-
-
     protected List<Graph> functions = new ArrayList();
-
-
 
     @Override
     protected List getFunctions() {
@@ -107,7 +99,6 @@ public class DrawFrame extends AbstractFrame {
             }
         }
         this.redraw();
-        chartCount--;
     }
 
     public Graph addDataset(String title, String function, State interpreterState, boolean area, Color color) throws SetlException {
@@ -140,6 +131,7 @@ public class DrawFrame extends AbstractFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
+        chartCount++;
         return plotfun;
     }
 
@@ -171,6 +163,7 @@ public class DrawFrame extends AbstractFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
+        chartCount++;
         return plotfun;
     }
 
@@ -194,6 +187,7 @@ public class DrawFrame extends AbstractFrame {
         }
         plot.addAnnotation(label);
         this.redraw();
+        chartCount++;
         return labelGraph;
     }
 
@@ -221,6 +215,7 @@ public class DrawFrame extends AbstractFrame {
         }
 
         this.redraw();
+        chartCount++;
         return plotfun;
     }
 
@@ -258,6 +253,7 @@ public class DrawFrame extends AbstractFrame {
             plot.setRenderer(chartCount, renderer);
         }
         this.redraw();
+        chartCount++;
         return plotfun;
     }
 

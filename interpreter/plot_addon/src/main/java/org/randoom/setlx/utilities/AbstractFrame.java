@@ -53,7 +53,6 @@ public abstract class AbstractFrame extends JFrame {
         jPanel.setPreferredSize(dim);
         //chartPanel.setPreferredSize(dim);
         this.redraw();
-        chartCount--;
     }
 
 
@@ -98,7 +97,6 @@ public abstract class AbstractFrame extends JFrame {
             chartPanel.setName(title);
         }
         redraw();
-        chartCount--;
     }
 
     protected abstract void remakeFunctions() throws SetlException;
@@ -114,7 +112,6 @@ public abstract class AbstractFrame extends JFrame {
         jPanel.add(chartPanel);
 
         this.pack();
-        chartCount++;
     }
 
     public void removeGraph(Value value) throws SetlException {

@@ -259,7 +259,10 @@ public class ConnectJFreeChart implements SetlXPlot {
     }
 
     @Override
-    public Value addLabel(Canvas canvas, List<Double> coordinates, String text) {
+    public Value addLabel(Canvas canvas, List<Double> coordinates, String text) throws UndefinedOperationException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            throw new UndefinedOperationException("label cannot be added, if no Graph or Chart is defined. Please add a Graph or Chart first");
+        }
         return canvas.getFrame().getFrame().addTextLabel(coordinates, text);
     }
 
@@ -274,6 +277,7 @@ public class ConnectJFreeChart implements SetlXPlot {
     @Override
     public void legendVisible(Canvas canvas, Boolean visible) {
         ChartPanel chartPanel = canvas.getFrame().getFrame().chartPanel;
+        canvas.getFrame().getFrame().setLegendVisible(visible);
         if (visible) {
             if (chartPanel.getChart().getLegend() == null) {
                 chartPanel.getChart().addLegend(canvas.getFrame().getFrame().legend);
@@ -282,6 +286,7 @@ public class ConnectJFreeChart implements SetlXPlot {
             canvas.getFrame().getFrame().legend = chartPanel.getChart().getLegend();
             chartPanel.getChart().removeLegend();
         }
+
     }
 
     @Override
@@ -308,11 +313,12 @@ public class ConnectJFreeChart implements SetlXPlot {
 
     @Override
     public void modScaleType(Canvas canvas, String xType, String yType) throws UndefinedOperationException, IllegalRedefinitionException {
-        LogarithmicAxis log = new LogarithmicAxis(canvas.getFrame().getFrame().getyAxis().getLabel());
-        log.setAllowNegativesFlag(true);
+
         if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
         }
+        LogarithmicAxis log = new LogarithmicAxis(canvas.getFrame().getFrame().getyAxis().getLabel());
+        log.setAllowNegativesFlag(true);
         if (xType.equalsIgnoreCase("log")) {
             ((DrawFrame)canvas.getFrame().getFrame()).setxAxis(log);
         } else if (xType.equalsIgnoreCase("num")) {
@@ -340,7 +346,7 @@ public class ConnectJFreeChart implements SetlXPlot {
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
         }
-        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)), bulletSize.intValue());
+        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)), bulletSize);
     }
 
     @Override
@@ -352,7 +358,7 @@ public class ConnectJFreeChart implements SetlXPlot {
         else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
             throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
         }
-        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0), bulletSize.intValue());
+        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0), bulletSize);
     }
 
 

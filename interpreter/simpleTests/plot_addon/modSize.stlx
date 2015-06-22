@@ -1,0 +1,3 @@
+c := plot_createCanvas();
+plot_modSize(c, [1024,768]);
+g1 := plot_addGraph(can, "x", "x in bigger Canvas");

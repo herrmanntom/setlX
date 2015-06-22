@@ -24,7 +24,6 @@ public abstract class AbstractFrame extends JFrame {
     Plot plot;
 
     protected abstract Plot getPlot();
-    protected abstract void setPlot(Plot plot);
     ChartPanel chartPanel;
     LegendTitle legend;
     protected double x_Min;
@@ -36,6 +35,27 @@ public abstract class AbstractFrame extends JFrame {
     protected String title;
     protected Dimension dim = new Dimension();
 
+    public boolean isLegendVisible() {
+        return legendVisible;
+    }
+
+    public void setLegendVisible(boolean legendVisible) {
+        this.legendVisible = legendVisible;
+    }
+
+    protected boolean legendVisible = true;
+
+    protected Color getNewColor(){
+        switch(chartCount % 6){
+            case 0: return Color.red;
+            case 1: return Color.blue;
+            case 2: return Color.green;
+            case 3: return Color.cyan;
+            case 4: return Color.orange;
+            default: return Color.magenta;
+        }
+
+    }
 
 
     public void modSize(double x, double y){
@@ -44,7 +64,6 @@ public abstract class AbstractFrame extends JFrame {
         jPanel.setPreferredSize(dim);
         //chartPanel.setPreferredSize(dim);
         this.redraw();
-        chartCount--;
     }
 
 
@@ -68,6 +87,7 @@ public abstract class AbstractFrame extends JFrame {
 
     public AbstractFrame(String title, double width, double height){
         super(title);
+        this.title = title;
         dim.setSize(width, height);
         this.setVisible(true);
         setLayout(new BorderLayout());
@@ -87,6 +107,7 @@ public abstract class AbstractFrame extends JFrame {
         if (chartPanel != null) {
             chartPanel.setName(title);
         }
+        redraw();
     }
 
     protected abstract void remakeFunctions() throws SetlException;
@@ -95,14 +116,13 @@ public abstract class AbstractFrame extends JFrame {
         if(chartCount != 0) {
             jPanel.remove(chartPanel);
         }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.getPlot(), true);
+        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.getPlot(), legendVisible);
 
         chartPanel = new ChartPanel(chart, true, true, true, true, true);
 
         jPanel.add(chartPanel);
 
         this.pack();
-        chartCount++;
     }
 
     public void removeGraph(Value value) throws SetlException {
@@ -112,7 +132,7 @@ public abstract class AbstractFrame extends JFrame {
         if (!ispresent) {
             throw new UndefinedOperationException("the Graph or Chart you wanted to delete, does not exist");
         }
-
+        chartCount = 0;
         remakeFunctions();
     }
 

@@ -13,6 +13,7 @@ import org.jfree.ui.TextAnchor;
 import org.randoom.setlx.exceptions.SetlException;
 import org.randoom.setlx.types.Value;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +27,6 @@ public class BarFrame extends AbstractFrame {
         return plot;
     }
 
-    @Override
-    protected void setPlot(Plot plot) {
-        this.plot = (CategoryPlot)plot;
-    }
 
     private DefaultCategoryDataset dataset = new DefaultCategoryDataset();
     private final BarRenderer renderer = new BarRenderer();
@@ -52,21 +49,6 @@ public class BarFrame extends AbstractFrame {
         this.yAxis = new NumberAxis();
     }
 
-    protected void redraw() {
-        if (chartCount != 0) {
-            jPanel.remove(chartPanel);
-        }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.plot, true);
-
-        chartPanel = new ChartPanel(chart, true, true, true, true, true);
-
-        jPanel.add(chartPanel);
-
-        this.pack();
-        chartCount++;
-    }
-
-
     @Override
     public Value addTextLabel(List<Double> coordinates, String text) {
         Chart chart = new Chart(coordinates, null, text, true);
@@ -74,6 +56,8 @@ public class BarFrame extends AbstractFrame {
         label.setTextAnchor(TextAnchor.BOTTOM_LEFT);
         functions.add(chart);
         plot.addAnnotation(label);
+        this.redraw();
+        chartCount++;
         return chart;
 
     }
@@ -96,7 +80,6 @@ public class BarFrame extends AbstractFrame {
         for(Chart chart: func){
             this.addBarChart(chart.getValues(), chart.getCategories(), chart.getName());
         }
-        this.redraw();
 
     }
 
@@ -105,11 +88,14 @@ public class BarFrame extends AbstractFrame {
         for(int i = 0; i < values.size(); i++){
             dataset.addValue(values.get(i), name, categories.get(i));
         }
+        renderer.setSeriesPaint(chartCount, getNewColor());
         Chart chart = new Chart(values, categories, name, false);
         plot = new CategoryPlot(dataset, (CategoryAxis)xAxis, (NumberAxis)yAxis, renderer);
 
         functions.add(chart);
         this.redraw();
+        chartCount++;
         return chart;
     }
+
 }

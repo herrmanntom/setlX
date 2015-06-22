@@ -23,10 +23,6 @@ public class PieFrame extends AbstractFrame {
         return this.plot;
     }
 
-    @Override
-    protected void setPlot(Plot plot) {
-        this.plot = (PiePlot)plot;
-    }
     private DefaultPieDataset dataset = new DefaultPieDataset();
     private List<Chart> functions = new ArrayList();
     @Override
@@ -46,20 +42,6 @@ public class PieFrame extends AbstractFrame {
 
     public PieFrame(String title, double width, double height) {
         super(title,width ,height );
-    }
-
-    protected void redraw() {
-        if (chartCount != 0) {
-            jPanel.remove(chartPanel);
-        }
-        JFreeChart chart = new JFreeChart(title, JFreeChart.DEFAULT_TITLE_FONT, this.plot, true);
-
-        chartPanel = new ChartPanel(chart, true, true, true, true, true);
-
-        jPanel.add(chartPanel);
-
-        this.pack();
-        chartCount++;
     }
 
     @Override
@@ -90,6 +72,7 @@ public class PieFrame extends AbstractFrame {
 
         functions.add(chart);
         this.redraw();
+        chartCount++;
         return chart;
     }
 }

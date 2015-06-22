@@ -1,0 +1,4 @@
+c := plot_createCanvas();
+ch1 := plot_addBarChart(c, [1,2], ["a","b"], "Dataset 1");
+ch2 := plot_addBarChart(c, [2,1], ["a","b"], "Dataset 2");
+ch3 := plot_addBarChart(c, [3,4], ["c","d"], "Dataset 3");

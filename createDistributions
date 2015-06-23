@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set overrides for setlX launcher script
-export OVERRIDE_setlXJarDirectory="$PWD/interpreter/"
+export OVERRIDE_setlXJarDirectory="$PWD/interpreter"
 
 # other locations for tests
 setlXlaunchScript="$OVERRIDE_setlXJarDirectory/setlX"
@@ -10,17 +10,17 @@ cd "$OVERRIDE_setlXJarDirectory"
 
 # clean the interpreter source
 echo "=> Cleaning the setlX interpreter's source ..."
-ant dist-clean
+ant -autoproxy dist-clean
 
 # build the binary version
 echo "=> Rebuilding the setlX interpreter ..."
-ant jar-j1.6
+ant -autoproxy jar-j1.6
 if [[ -f "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" && "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" && "$OVERRIDE_setlXJarDirectory/setlX-plot-j1.6.jar" ]]; then
     mv "$OVERRIDE_setlXJarDirectory/setlX-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX.jar"
     mv "$OVERRIDE_setlXJarDirectory/setlX-gfx-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX-gfx.jar"
     mv "$OVERRIDE_setlXJarDirectory/setlX-plot-j1.6.jar" "$OVERRIDE_setlXJarDirectory/setlX-plot.jar"
     # clean it up again (does not remove the jar)
-    ant clean
+    ant -autoproxy clean
     echo "=> The setlX interpreter was build correctly."
 else
     echo "=> Building the setlX interpreter failed ..."

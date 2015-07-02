@@ -1,7 +1,5 @@
 package org.randoom.setlx.utilities;
 
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.annotations.CategoryTextAnnotation;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -89,9 +87,10 @@ public class BoxFrame extends AbstractFrame {
             dataset.add(item, name, categories.get(i));
             i++;
         }
+        renderer.setSeriesPaint(chartCount, getNewColor());
+        renderer.setMeanVisible(false);
         plot = new CategoryPlot(dataset, (CategoryAxis) xAxis, (NumberAxis) yAxis, renderer);
         functions.add(chart);
-        renderer.setSeriesPaint(chartCount, getNewColor());
         this.redraw();
         chartCount++;
         return chart;

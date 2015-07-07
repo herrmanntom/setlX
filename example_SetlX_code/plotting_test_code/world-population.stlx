@@ -12,7 +12,7 @@ worldPopulation := procedure(data) {
     years   := data[1][2..];
     regions := [line[1] : line in data[2..] ];
     for (i in [1..#years]) {
-        population := [line[i+1] : line in data[2..]];
+        population := [region[i+1] : region in data[2..]];
         plot_addBarChart(c, population, regions, "Population in $years[i]$");
     }
     plot_defineTitle(c, "The population of the world.");

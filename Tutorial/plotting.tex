@@ -486,7 +486,7 @@ We will present each of these charts in a separate subsection.
 Table \ref{tab:world-population} on page \pageref{tab:world-population} shows the population of
 different regions of the world for various years.  This data is more easily comprehensible when
 presented as a bar char.  Figure \ref{fig:world-population.stlx} presents a \setlx-program that
-converts these data into a bar chart-  We proceed to discuss this program line by line.
+converts these data into a bar chart.  We proceed to discuss this program line by line.
 The bar chart produced by this program is shown in Figure \ref{fig:world-population.eps} on page
 \pageref{fig:world-population.eps}.
 
@@ -516,7 +516,7 @@ The bar chart produced by this program is shown in Figure \ref{fig:world-populat
         years   := data[1][2..];
         regions := [line[1]: line in data[2..]];
         for (i in [1..#years]) {
-            population := [line[i+1] : line in data[2..]];
+            population := [region[i+1] : region in data[2..]];
             plot_addBarChart(c, population, regions, "Population in $years[i]$");
         }
     };
@@ -528,7 +528,7 @@ The bar chart produced by this program is shown in Figure \ref{fig:world-populat
 \end{figure}
 
 \begin{enumerate}
-\item Line 1 to line 8 define the data that is to be displayed.  The data is stored in a list of
+\item Line 1 to line 8 define the data that is to be displayed.  The data is stored as a list of
       lists.  The first list specifies the years corresponding to the population counts.
       The remaining lists each specify the population counts for a specific geographical region.
 \item The function \texttt{worldPopulation} has one parameter.  This parameter is of the form of the
@@ -537,14 +537,14 @@ The bar chart produced by this program is shown in Figure \ref{fig:world-populat
 \item Line 11 extracts the years.
 \item Line 12 extract the regions from the first column of \texttt{data}.
 \item Since our intention is to present the data of the different regions combined by the years, 
-      we select these data in the list \texttt{population} in line 14.  Here, \texttt{line} over the
-      different regions in \texttt{data}, while \texttt{line[i+1]} selects the data for the $i$th
+      we select these data in the list \texttt{population} in line 14.  Here, \texttt{region} iterates
+      over the different regions in \texttt{data}, while \texttt{region[i+1]} selects the data for the $i$th
       year in the table.
 \item The function \texttt{plot\_addBarChart} plots the bar chart. The arguments to this function 
       are as follows:
       \begin{enumerate}
       \item \texttt{c} specifies  the canvas.
-      \item \texttt{population} is a list of numbers.  for every number in this list, the function 
+      \item \texttt{population} is a list of numbers.  For every number in this list, the function 
             \texttt{plot\_addBarChart} plots a line of the corresponding height into each of the
             groups.  The groups are labeled by the list \texttt{regions}.  The lines plotted by one
             invocation of \texttt{plot\_addBarChart} all have the same unique color.  This color is
@@ -554,8 +554,8 @@ The bar chart produced by this program is shown in Figure \ref{fig:world-populat
             \texttt{plot\_addBarChart}.
       \end{enumerate}
 \end{enumerate}
-In order to understand what is plotted where, it is easiest to compare the data defined in Figure
-\ref{fig:world-population.stlx} to the plot in Figure \ref{fig:world-population.eps}.
+In order to understand what is plotted where, it is easiest to compare the variable \texttt{data} defined in Figure
+\ref{fig:world-population.stlx} to the plot in Figure \ref{fig:world-population.eps}
 
 
 \begin{figure}[!ht]
@@ -563,6 +563,96 @@ In order to understand what is plotted where, it is easiest to compare the data 
   \epsfig{file=world-population.eps, scale=0.5}
   \caption{A Bar chart showing the world population in different years and regions.}
   \label{fig:world-population.eps}
+\end{figure}
+
+\subsection{Pie Charts}
+Table \ref{tab:race-prison} on Page \pageref{tab:race-prison} shows the distribution of
+different races in the Texan population and in  the population of Texan prisons.  In order to
+further our understanding of the data, let us visualize it via two pie charts.  The visualization is
+achieved using the \setlx-program shown in Figure \ref{fig:race-and-incarceration.stlx} on page
+\pageref{fig:race-and-incarceration.stlx}.  The resulting pie charts are shown in Figure 
+\ref{fig:race-prison} on page \pageref{fig:race-prison}.  We proceed to discuss the \setlx-program.
+
+
+\begin{table}[!hb]
+  \centering
+  \begin{tabular}{|l|r|r|}
+    \hline
+    Race  & Population & Prison Population \\
+    \hline
+    \hline
+     white & 10933313 & 38396 \\
+    \hline
+    black  &  2404566 & 51649 \\
+    \hline
+    latino &  6669666 & 35028 \\
+    \hline
+    other  &   844275 &   582 \\
+    \hline
+  \end{tabular}
+  \caption{The race distribution in the population vs. prison population.}
+  \label{tab:race-prison}
+\end{table}
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    data := [ ["white", 10933313, 38396],
+              ["black",  2404566, 51649],
+              ["latino", 6669666, 35028],
+              ["other",   844275,   582]
+        ];
+    prisonPopulation := procedure(data) {
+        c1 := plot_createCanvas("Race disdribution in Texas.");
+        c2 := plot_createCanvas("Race disdribution in Texan prisons.");
+        races      := [line[1]: line in data];
+        population := [line[2]: line in data];
+        inmates    := [line[3]: line in data];
+        plot_addPieChart(c1, population, races);
+        plot_addPieChart(c2, inmates,    races);
+        plot_exportCanvas(c1, "race-population");
+        plot_exportCanvas(c2, "race-incarceration");
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A program to generate two pie charts.}
+\label{fig:race-and-incarceration.stlx}
+\end{figure}
+
+\begin{enumerate}
+\item The data are defined in line 1 to 5 as a list of list.  Each list in \texttt{data} corresponds
+      to a different race. 
+\item The procedure \texttt{prisonPopulation} takes this data as its sole input.
+\item Line 7 and 8 create two different canvases for the two pie charts.
+\item Line 9 extracts the different races stored in the table \texttt{data}.
+\item Line 10 is defined as list containing the number of people of the various races living in
+      Texas.
+\item Line 11 is the corresponding list containing the number of prison inmates of each race.
+\item Line 12 draws the pie chart showing the Texan race distribution via a call of the function
+      \texttt{plot\_addPieChart}.
+      \begin{enumerate}
+      \item The first parameter specifies the canvas on which the pie chart is to be drawn.
+      \item The secons parameter is a list of numbers.
+      \item The final parameter is a list of labels.
+      \end{enumerate}
+\item Line 13 draws the pie chart showing the  race distribution of Texan inmates.
+\item The last two lines save the generated charts as \texttt{png} files.
+\end{enumerate}
+
+\begin{figure}[!ht]
+  \centering
+  \epsfig{file=race-population.eps, scale=0.6}
+  \epsfig{file=race-incarceration.eps, scale=0.6}
+  \caption{The race distribution in Texas and in Texan prisons.}
+  \label{fig:race-prison}
 \end{figure}
 
 

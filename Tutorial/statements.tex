@@ -11,8 +11,8 @@ features offered by \setlx\ to steer the control flow in a program.
 \end{enumerate}
 
 \section{Assignment Statements}
-The most basic command is the assignment.  In contrast to the programming languages \texttt{C}
-and \textsl{Java}, \setlx\ uses the operator ``\texttt{:=}'' for assignments.  For example, the statement
+The most basic command is the assignment statement.  In contrast to the programming languages \texttt{C}
+and \textsl{Java}, \setlx\ uses the operator ``\texttt{:=}'' to assign a value to a variable.  For example, the statement
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{x := 2/3;}
@@ -30,10 +30,11 @@ This feature can be used to swap the values of two variables:  The statement
 \texttt{[x, y] := [y, x];}
 \\[0.2cm]
 swaps the values of $x$ and $y$.  If we do not need to assign all the values of a list, we
-can use the underscore ``\texttt{\_}'' as an anonymous variable.  For example,
+can use the underscore ``\texttt{\_}'' as an anonymous variable.  For example, if
+the list \texttt{l} happens to have the value \texttt{[1,2,3]}, then the statement
 \\[0.2cm]
 \hspace*{1.3cm}
-\texttt{[x, \_, z] := [1, 2, 3];} 
+\texttt{[x, \_, z] := l;} 
 \\[0.2cm]
 assigns the number \texttt{1} to the variable \texttt{x} and the variable \texttt{z} is
 is set to \texttt{3}.

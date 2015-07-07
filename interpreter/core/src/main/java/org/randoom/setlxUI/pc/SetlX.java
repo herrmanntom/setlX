@@ -17,7 +17,7 @@ import java.util.List;
  * Class containing main-function and other glue for the PC version of the setlX interpreter.
  */
 public class SetlX {
-    private final static String  VERSION                = "2.3.4";
+    private final static String  VERSION                = "2.4.0";
     private final static String  SETLX_URL              = "http://setlX.randoom.org/";
     private final static String  C_YEARS                = "2011-2015";
     private final static String  VERSION_PREFIX         = "v";
@@ -485,7 +485,7 @@ public class SetlX {
             "  -n, --noExecution\n" +
             "      Load and check code for syntax errors, but do not execute it.\n" +
             "  -r, --predictableRandom\n" +
-            "      Always use same random sequence (debugging).\n" +
+            "      Always use the same sequence of random numbers (useful for debugging).\n" +
             "  -p <argument> ..., --params <argument> ...\n" +
             "      Pass all following arguments to executed program via `params' variable.\n" +
             "  -e <expression>, --eval <expression>\n" +
@@ -498,11 +498,11 @@ public class SetlX {
             "  --doubleScientific\n" +
             "  --doubleEngineering\n" +
             "  --doublePlain\n" +
-            "      Sets how the exponent of doubles is printed.\n" +
+            "      Sets how the exponent of a floating point number is printed.\n" +
             "  -h, --harshWelcome\n" +
             "      Interactive mode: Reduce welcome message to a bare minimum.\n" +
             "  -m, --multiLineMode\n" +
-            "      Interactive mode: Only accept input after additional new line.\n" +
+            "      Interactive mode: Input is only processed after an additional new line.\n" +
             "  --version\n" +
             "      Display interpreter version and terminate.\n"
         );

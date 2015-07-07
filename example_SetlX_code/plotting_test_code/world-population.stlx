@@ -1,0 +1,23 @@
+// The data are available at https://en.wikipedia.org/wiki/World_population.
+data := [ ["Year"            , 1990, 1950, 1999, 2008, 2010],
+          ["Northern America",   82,  172,  307,  337,  345],
+          ["Oceania"         ,    6,   13,   30,   34,   37],
+          ["Latin America"   ,   74,  167,  511,  577,  590],
+          ["Europe"          ,  408,  547,  729,  732,  738], 
+          ["Africa"          ,  133,  221,  767,  973, 1022], 
+          ["Asia"            ,  947, 1402, 3634, 4054, 4164],
+          ["World"           , 1650, 2521, 5978, 6707, 6896] ];
+worldPopulation := procedure(data) {
+    c       := plot_createCanvas();
+    years   := data[1][2..];
+    regions := [line[1] : line in data[2..] ];
+    for (i in [1..#years]) {
+        population := [line[i+1] : line in data[2..]];
+        plot_addBarChart(c, population, regions, "Population in $years[i]$");
+    }
+    plot_defineTitle(c, "The population of the world.");
+    plot_modSize(c, [900, 600]);
+    plot_exportCanvas(c, "world-population");
+};
+worldPopulation(data);
+get("Press <Enter> to continue");

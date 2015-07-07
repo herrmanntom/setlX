@@ -51,7 +51,7 @@ public class PD_plot_addBullets extends PreDefinedProcedure {
             throw new UndefinedOperationException("Tupel in second parameter have to be Numbers (Integer or Doubles) ");
         }
 
-        List<List<Double>> bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist);
+        List<List<Double>> bulletList = ConvertSetlTypes.convertSetlListAsDouble(xylist, state);
         double bSize = ConvertSetlTypes.convertNumberToDouble(args.get(BULLETSIZE));
 
 

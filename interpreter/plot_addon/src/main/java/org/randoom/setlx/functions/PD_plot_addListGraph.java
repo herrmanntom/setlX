@@ -57,7 +57,7 @@ public class PD_plot_addListGraph extends PreDefinedProcedure {
             throw new UndefinedOperationException("Second parameter valuelist has to be a List of Lists with Numbers (eq. [[1,2],[3,4],[5,6]])");
         }
 
-        List<List<Double>> valueList = ConvertSetlTypes.convertSetlListAsDouble(valueSetlList);
+        List<List<Double>> valueList = ConvertSetlTypes.convertSetlListAsDouble(valueSetlList, state);
         Value graphColorV = args.get(GRAPHCOLOR);
         Value plotArea = args.get(PLOTAREA);
 

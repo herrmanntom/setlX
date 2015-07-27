@@ -40,7 +40,7 @@ public class PD_plot_modSize extends PreDefinedProcedure {
             throw new UndefinedOperationException("Second parameter has to be a Tupel (eq. [800, 600])");
         }
 
-        List size = ConvertSetlTypes.convertSetlListAsDouble(sizeV);
+        List size = ConvertSetlTypes.convertSetlListAsDouble(sizeV, state);
 
         ConnectJFreeChart.getInstance().modSize(canvas, size);
         return new SetlString("Set Framesize to " + size.get(0) + " x " + size.get(1));

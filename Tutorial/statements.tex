@@ -236,8 +236,8 @@ $x*x$ can be defined as
 \\[0.2cm]
 A definition of this form is called a \emph{lambda definition}.
 If the function takes more than one arguments, the argument list has to be enclosed in square
-brackets.  For example, the function \texttt{hyp} that computes the hypotenuse of a rectangular triangle
-can be defined as follows:
+brackets.  For example, the function \texttt{hyp} that computes the length of the hypotenuse of a
+rectangular triangle can be defined as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{hyp := [x, y] |-> sqrt(x*x + y*y);}
@@ -281,7 +281,7 @@ have  used a lambda definition.
 \end{figure}
 
 \noindent
-Of course, it is much easier to build the list of the first 10 squares using the statement
+Of course, it would be much easier to build the list of the first 10 squares using the following statement:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{t := [x*x : $\hspace*{-0.3cm}$x in [1..10]];}
@@ -310,9 +310,10 @@ is equivalent to the expression
 $f(a_1, \cdots, a_n)$.
 \\[0.2cm]
 Later, when we discuss functional programming in Chapter \ref{chapter:closures}, we will see that
-this is very handy.  The reason is that this technique permits us to write second order functions
-that take procedures as inputs and modify these procedures.  Even though we will not know the number
-of parameters that the procedures given as input take, we will still be able to modify them.
+this can be very convenient.  The reason is that this technique permits us to write second order functions
+that take procedures as inputs and that then modify these procedures.  Even though we will not know the number
+of parameters that the procedures given as input take, we will still be able to modify the procedure
+given as argument.
 
 \subsection{Memoization}
 The function $\textsl{fib}: \mathbb{N} \rightarrow
@@ -538,11 +539,9 @@ natural number that is less or equal to its argument $x$.
     toBin := procedure(n) {
         if (n < 2) {
             return str(n);
-        } else {
-            r := n % 2;
-            n := floor(n / 2);
-            return toBin(n) + toBin(r);
         }
+        [r, n] := [n % 2, n \ 2];
+        return toBin(n) + toBin(r);
     };
 \end{Verbatim}
 \vspace*{-0.3cm}

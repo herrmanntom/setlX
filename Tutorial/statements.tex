@@ -595,12 +595,14 @@ This example shows how \texttt{if-then-else} statements can be cascaded.
 
 Figure \ref{fig:sort3switch.stlx} on page \pageref{fig:sort3switch.stlx} 
 shows an equivalent program that uses a \texttt{switch} statement instead of an
-\texttt{if-then-else} statement to sort a list of three elements.  Although this implementation is
-easier to understand, it is less efficient than the 
-previous version.  The reason is that some of the tests are redundant.  This is most obvious for the
+\texttt{if-then-else} statement to sort a list of three elements.  Note that this implementation is
+much easier to understand than the program using \texttt{if-then-else} statements.  
+\footnote{
+However, we should also mention that the version using \texttt{switch} is less efficient than the 
+version using \texttt{if-then-else}.  The reason is that some of the tests are redundant.  This is most obvious for the
 last case in line 9 since at the time when control arrives in line 9 it is already known that $z$ must be
 less or equal than $y$ and that, furthermore, $y$ must be less or equal than $x$, since all other
-cases are already covered.
+cases have already been covered.}
 
 \begin{figure}[!ht]
 \centering
@@ -646,19 +648,18 @@ Here, \textsl{boolExpr} is a Boolean expression and \textsl{block} represents a 
 
 In contrast to the programming languages \texttt{C} and \textsl{Java}, the \texttt{switch}
 statement in \setlx\ doesn't have a fall through.  Therefore, we don't need a \texttt{break} statement in the
-block of statements following a case condition.  
+block of statements following the Boolean expression.  
 There are two other important distinction between the \texttt{switch} statement in
 \textsl{Java} and the \texttt{switch} statement in \setlx:  
 \begin{enumerate}
-\item In \textsc{SetlX}, the keyword switch is not followed by a value and
-\item the conditions following the keyword \texttt{case} have to be Boolean values.  
+\item In \textsc{SetlX}, the keyword switch is not followed by a value.
+\item The expressions following the keyword \texttt{case} have to produce Boolean values when evaluated.  
 \end{enumerate}
-There is a another type of switching
-statements that is much more powerful than the \texttt{switch} statement.  This is called
-\emph{matching} and will be discussed in the next section.
+There is a another type of a branching statement that is much more powerful than the \texttt{switch}
+statement.  This branching statement is the \emph{matching statement} and is discussed in the next section.
 
 \section{Matching}
-One of the most powerful branching construct is \emph{matching}.  Although the syntax for the
+The most powerful branching construct is \emph{matching}.  Although the syntax for the
 matching statement is always the same, there are really four different variants of matching for each of the
 data types that support matching.  Matching has been implemented for the data types
  \emph{strings}, \emph{lists}, \emph{sets}, and \emph{terms}.  We discuss \emph{string matching} first.

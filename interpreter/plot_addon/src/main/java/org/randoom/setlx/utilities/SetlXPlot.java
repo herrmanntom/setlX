@@ -24,14 +24,36 @@ public interface SetlXPlot {
     public Canvas createCanvas(String titel);
 
     /**
-     * adds a function as graph to the given canvas and plots the area to the y-axis (integral) if plotArea ist true
-     ** @param canvas
+     * adds a function as graph to the given canvas and give it a name
+     *
+     * @param canvas
      * @param function
      * @param name             of the graphe
      * @param interpreterState
-     * @param color
-     * @param plotArea         draw integral if true
      * @return identifier of the graph
+     */
+    public Graph addGraph(Canvas canvas, String function, String name, State interpreterState) throws SetlException;
+
+    /**
+     * adds a function as graph to the canvas, give it a name and plots the integral if plotArea is true
+     *
+     * @param canvas
+     * @param function
+     * @param name
+     * @param interpreterState
+     * @param color
+     * @return
+     */
+    public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color) throws SetlException;
+
+    /**
+     * adds a function as graph to the given canvas and plots the area to the y-axis (integral) if plotArea ist true
+     *
+     * @param canvas
+     * @param function
+     * @param interpreterState
+     * @param color
+     * @param plotArea         draw integral if true   @return
      */
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException;
 
@@ -42,9 +64,24 @@ public interface SetlXPlot {
      * @param function list of points to be plotted
      * @return
      */
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) throws IllegalRedefinitionException;
+
+    /**
+     * adds a graph consisting of single points and a name for the graph
+     *
+     * @param canvas
+     * @param function list of points to be plotted
+     * @param name
+     * @param color
+     * @return
+     */
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color) throws IllegalRedefinitionException;
 
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea) throws IllegalRedefinitionException;
 
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Double> limits) throws SetlException;
+
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, List<Double> limits) throws SetlException;
 
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException;
 
@@ -100,6 +137,8 @@ public interface SetlXPlot {
      * @param yType
      */
     public void modScaleType(Canvas canvas, String xType, String yType) throws UndefinedOperationException, IllegalRedefinitionException;
+
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, Double bulletSize) throws IllegalRedefinitionException;
 
     /**
      * add a single bullet to the canvas at the given x and y coordinates

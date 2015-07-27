@@ -1,0 +1,18 @@
+toNormal := procedure(n, k) {
+    resetRandom();
+    c      := plot_createCanvas("Convergence to Normal Distribution");
+    m      := 1;
+    all    := [];
+    labels := [];
+    for (i in [1..k]) {
+        numbers   := [ (+/[random() : j in [1..m]])/m : l in [1..n] ];
+        all[i]    := numbers;
+        labels[i] := "sums of $m$ randoms";
+        m *= 4;
+    }
+    plot_addBoxChart(c, all, labels, "Convergence of standard deviation");
+    plot_modSize(c, [1000, 600]);
+    plot_exportCanvas(c, "box-plots");
+};
+toNormal(200, 5);
+get("Press <ENTER> to continue.");

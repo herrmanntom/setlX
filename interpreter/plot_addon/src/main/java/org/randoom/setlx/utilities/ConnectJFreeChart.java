@@ -44,6 +44,30 @@ public class ConnectJFreeChart implements SetlXPlot {
         return canvas;
     }
 
+    @Override
+    public Graph addGraph(Canvas canvas, String function, String name, State interpreterState) throws SetlException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            canvas.getFrame().setFrameType(canvas.getFrame().DRAW_FRAME);
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
+        }
+        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME ){
+            throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
+        }
+        return ((DrawFrame) canvas.getFrame().getFrame()).addDataset(name, function, interpreterState, false, new ChartColor(0, 0, 0));
+    }
+
+    @Override
+    public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color) throws SetlException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            canvas.getFrame().setFrameType(canvas.getFrame().DRAW_FRAME);
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
+        }
+        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
+            throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
+
+        }
+        return ((DrawFrame) canvas.getFrame().getFrame()).addDataset(name, function, interpreterState, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
+    }
 
     @Override
     public Graph addGraph(Canvas canvas, String function, String name, State interpreterState, List<Integer> color, boolean plotArea) throws SetlException {
@@ -58,6 +82,32 @@ public class ConnectJFreeChart implements SetlXPlot {
         return ((DrawFrame) canvas.getFrame().getFrame()).addDataset(name, function, interpreterState, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
+    @Override
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name) throws IllegalRedefinitionException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
+        }
+        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
+            throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
+
+        }
+        return ((DrawFrame)canvas.getFrame().getFrame()).addListDataset(name, function, false, new ChartColor(0, 0, 0));
+    }
+
+    @Override
+    public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color) throws IllegalRedefinitionException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
+        }
+        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
+            throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
+
+        }
+        return ((DrawFrame)canvas.getFrame().getFrame()).addListDataset(name, function, false, new ChartColor(color.get(0), color.get(1), color.get(2)));
+
+    }
 
     @Override
     public Graph addListGraph(Canvas canvas, List<List<Double>> function, String name, List<Integer> color, boolean plotArea) throws IllegalRedefinitionException {
@@ -72,6 +122,32 @@ public class ConnectJFreeChart implements SetlXPlot {
         return ((DrawFrame)canvas.getFrame().getFrame()).addListDataset(name, function, plotArea, new ChartColor(color.get(0), color.get(1), color.get(2)));
     }
 
+    @Override
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Double> limits) throws SetlException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
+        }
+        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
+            throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
+
+        }
+        return ((DrawFrame)canvas.getFrame().getFrame()).addParamDataset(name, xfunction, yfunction, interpreterState, false, new ChartColor(0, 0, 0), limits);
+    }
+
+    @Override
+    public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, List<Double> limits) throws SetlException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
+        }
+        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
+            throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
+
+        }
+        return ((DrawFrame)canvas.getFrame().getFrame()).addParamDataset(name, xfunction, yfunction, interpreterState, false, new ChartColor(color.get(0), color.get(1), color.get(2)), limits);
+
+    }
 
     @Override
     public Graph addParamGraph(Canvas canvas, String xfunction, String yfunction, String name, State interpreterState, List<Integer> color, Boolean plotArea, List<Double> limits) throws SetlException {
@@ -272,6 +348,19 @@ public class ConnectJFreeChart implements SetlXPlot {
         }
         return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(color.get(0), color.get(1), color.get(2)), bulletSize);
     }
+
+    @Override
+    public Graph addBullets(Canvas canvas, List<List<Double>> bullets, Double bulletSize) throws IllegalRedefinitionException {
+        if(canvas.getFrame().getFrameType() == FrameWrapper.VIRGIN_FRAME){
+            canvas.getFrame().setFrameType(FrameWrapper.DRAW_FRAME);
+            canvas.getFrame().setFrame(new DrawFrame(canvas.getTitle(), canvas.getFrame().getWidth(), canvas.getFrame().getHeight()));
+        }
+        else if(canvas.getFrame().getFrameType() >= FrameWrapper.BAR_FRAME){
+            throw new IllegalRedefinitionException("This Canvas can only be used for Graphs, not for Charts. Create a new Canvas, to draw Graphs");
+        }
+        return ((DrawFrame)canvas.getFrame().getFrame()).addBulletDataset("Bullets", bullets, new ChartColor(0, 0, 0), bulletSize);
+    }
+
 
     @Override
     public void modSize(Canvas canvas, List<Double> size) {

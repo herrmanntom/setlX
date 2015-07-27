@@ -7,7 +7,7 @@ features offered by \setlx\ to steer the control flow in a program.
 \item the looping statements \texttt{for} and \texttt{while} together with \texttt{break} and
       \texttt{continue}, 
 \item \texttt{try-catch} statements to deal with exceptions,
-\item the \texttt{backtrack} statement to support backtracking.
+\item the \texttt{backtrack} statement to support a limited form of backtracking.
 \end{enumerate}
 
 \section{Assignment Statements}
@@ -23,14 +23,14 @@ assignments to multiple variables via lists.  For example, the statement
 \hspace*{1.3cm}
 \texttt{[x, y, z] := [1, 2, 3];}
 \\[0.2cm]
-simultaneously binds the variables \texttt{x} to $1$, \texttt{y} to $2$ and \texttt{z} to $3$.
-This feature can be used to swap the values of two variables:  The statement
+simultaneously binds the variables \texttt{x} to $1$, \texttt{y} to $2$, and \texttt{z} to $3$.
+This feature can be used to swap the values of two variables. For example,  the statement
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[x, y] := [y, x];}
 \\[0.2cm]
 swaps the values of $x$ and $y$.  If we do not need to assign all the values of a list, we
-can use the underscore ``\texttt{\_}'' as an anonymous variable.  For example, if
+can use the underscore ``\texttt{\_}'' as a so called \emph{anonymous variable}.  For example, if
 the list \texttt{l} happens to have the value \texttt{[1,2,3]}, then the statement
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -69,15 +69,15 @@ The code shown in figure
 \ref{fig:primes-slim.stlx} on page \pageref{fig:primes-slim.stlx} shows a simple program
 to compute \href{http://en.wikipedia.org/wiki/Prime_number}{\emph{prime numbers}}.  
 It defines two functions.  The function \texttt{factors} takes a
-natural number \texttt{p} as its first argument and computes the set of all factors of \texttt{p}.  Here, a number
+natural number \texttt{p} as its first argument and computes the set of all \emph{factors} of \texttt{p}.  Here, a number
 \texttt{f} is a factor of \texttt{p} iff dividing \texttt{p} by \texttt{f} leaves no remainder, that is 
 the expression \texttt{p \symbol{37} f} is equal to \texttt{0}.
-The second function \texttt{primes} takes a natural number \texttt{n} as an argument and computes the
+The second function \texttt{primes} takes a natural number \texttt{n} as its sole argument and computes the
 set of all those numbers \texttt{p} less or equal to \texttt{n} that have only the trivial factors
 \texttt{1} and \texttt{p}.  These numbers are, by definition, prime numbers.
 
 Note that, as \setlx\ is a functional language, the functions that are defined by the
-keyword \texttt{procedure} are assigned to variables.  As already mentioned n the previous chapter,
+keyword \texttt{procedure} are assigned to variables.  As already mentioned in the previous chapter,
 these functions can be used like any other values.
 
 \begin{figure}[!ht]
@@ -100,7 +100,7 @@ these functions can be used like any other values.
     print(primes(100));
 \end{Verbatim}
 \vspace*{-0.3cm}
-\caption{A naive program to compute primes.}
+\caption{A naive program to compute prime numbers.}
 \label{fig:primes-slim.stlx}
 \end{figure}
 

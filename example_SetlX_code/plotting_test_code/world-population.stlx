@@ -1,5 +1,5 @@
 // The data are available at https://en.wikipedia.org/wiki/World_population.
-data := [ ["Year"            , 1990, 1950, 1999, 2008, 2010],
+data := [ ["Year"            , 1900, 1950, 1999, 2008, 2010],
           ["Northern America",   82,  172,  307,  337,  345],
           ["Oceania"         ,    6,   13,   30,   34,   37],
           ["Latin America"   ,   74,  167,  511,  577,  590],

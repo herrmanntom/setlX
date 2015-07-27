@@ -1,53 +1,66 @@
 \chapter{Plotting}
-The plotting library in \setlx\ can be used for two different purposes:
+\setlx\ provides a small plotting library which is based on \href{http://www.jfree.org/jfreechart/}{JFreeChart}.
+The \setlx-interface to \textsl{JFreeChart} has been implemented by Arne Röcke and Fabian Wohriska.
+The plotting library in \setlx\ supports three different kinds of plots:
 \begin{enumerate}
-\item The library can be used to plot curves.  Essentially, when it comes to curves, there are two kind of curves:
+\item The library can be used to plot curves.  Essentially, when it comes to curves, there are two kinds of curves:
       \begin{enumerate}
-      \item Curves that are given as the graph of a function.  In this case, the $y$-coordinate is
-            given as an expression involving the $x$-coordinate.  For example, the parabola
-            satisfies the equation $y = x^2$. 
+      \item Curves that are given as the
+            \href{https://en.wikipedia.org/wiki/Graph_of_a_function}{\emph{graph of a function}}.  In
+            this case, the $y$-coordinate is given as an expression involving the $x$-coordinate.  For example, the 
+            \href{https://en.wikipedia.org/wiki/Parabola}{\emph{parabola}} satisfies the equation $y = x^2$. 
       \item Curves that are given via a 
             \href{https://en.wikipedia.org/wiki/Parametric_equation}{\emph{parametric equations}}.
-            For example, the unit circle can be specified via the parametric equations 
+            For example, a \href{https://en.wikipedia.org/wiki/Circle}{\emph{circle}} of radius 1
+            can be specified via the parametric equations 
             \\[0.2cm]
             \hspace*{1.3cm}
             $x = \cos(t)$ \quad and \quad $y = \sin(t)$, \quad where $t \in [0, 2 \cdot \pi]$.
+            \\[0.2cm]
+            These equations specify a circle because $x^2 + y^2 = \cos^2(x) + \sin^2(x) = 1$.
       \end{enumerate}
-\item The library can be used for scatter plots.
-\item The library can be used to plot various types of statistical charts. 
+      Both of these types of curves can be plotted by \setlx.
+\item The library can be used for \href{https://en.wikipedia.org/wiki/Scatter_plot}{\emph{scatter plots}}.
+\item The library can be used to plot \href{https://en.wikipedia.org/wiki/Chart}{\emph{statistical charts}} as either 
+      \href{https://en.wikipedia.org/wiki/Bar_chart}{\emph{bar charts}} or 
+      \href{https://en.wikipedia.org/wiki/Pie_chart}{\emph{pie charts}}.
 \end{enumerate}
-We will discuss the plotting of curves and charts in different sections.
+We will discuss the plotting of curves, scatter plots, and charts in different sections.
 
-It should be noted that the plots presented in this tutorial had to be scaled down to fit the paper
-size.  This scaling has resulted in a considerable loss of the artistic quality of the plots.
+It should be noted that the figures presented in this tutorial had to be scaled down to fit the paper
+size.  This scaling has resulted in a considerable loss of their artistic quality.
 
 \section{Plotting Curves}
 In this section, we discuss the plotting of mathematical curves.  The section is structured as
 follows.
 \begin{enumerate}
 \item First, we discuss curves that are given as the graph of a function.
-      As a first example, we show how to plot the parabola.  A second, extended example discusses
-      the visualization of the \href{https://en.wikipedia.org/wiki/Secant_method}{\emph{secant method}}
-      for finding the root of a function.
-\item Next, we discuss curves that are specified via parametric equations.
+      As an example, we show how to plot the parabola.  
+\item Next, we discuss curves that are specified via parametric equations.  As a simple example, we show how to
+      plot a circle.  A second example discusses the plotting of a
+      \href{https://en.wikipedia.org/wiki/Hypotrochoid}{\emph{hypotrochoid}}. 
 \end{enumerate}
 \subsection{Plotting the Parabola}
-\setlx\ provides a plotting library that makes it easy to create basic plots. In order to start
-plotting, we first have to create a canvas on which we can draw plots.  This is achieved with
+In order to start drawing, we first have to create a canvas on which we can draw  something.  This is achieved with
 the command
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{c := plot\_createCanvas();}
 \\[0.2cm]
 Note that all functions related to plotting start with the prefix ``\texttt{plot\_}''.  The
-function ``\texttt{plot\_createCanvas}'' takes one optional argument, which is a string.  This
-string adds a title to the canvas.  For example, the command 
+function
+\\[0.2cm]
+\hspace*{1.3cm}
+ ``\texttt{plot\_createCanvas}'' 
+\\[0.2cm]
+takes one optional argument, which is a string.  This string adds a title to the canvas.  For example, the command 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{c := plot\_createCanvas(\symbol{34}The Parabola\symbol{34});} 
 \\[0.2cm]
-creates a canvas with the title ``\textsl{The Parabola}''.  However, as long as nothing is
-plotted on the canvas, the canvas remains invisible.  Let us draw a parabola on the canvas
+creates a canvas with the title ``\textsl{The Parabola}'' and returns a reference to this canvas.
+However, as long as nothing is
+painted on the canvas, the canvas remains invisible.  Let us draw a parabola on the canvas
 created previously.  This is done using the command
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -56,16 +69,17 @@ created previously.  This is done using the command
 The resulting figure is shown in Figure \ref{fig:parabola1.eps} on page \pageref{fig:parabola1.eps}.
 The arguments provided to the function \texttt{plot\_addGraph} are interpreted as follows:
 \begin{enumerate}
-\item \texttt{c} is the canvas on which the specified function is to be plotted.
-\item \texttt{\qote{x*x}} specifies the function that is plotted.  The string given as argument
-      is evaluated for different values of the variable $x$ and the resulting function is the
+\item \texttt{c} refers to the canvas on which the specified function is to be drawn.
+\item \texttt{\qote{x*x}} specifies the function.  The string given as argument
+      is evaluated for different values of the variable $x$ and the resulting function is then
       plotted. 
-\item \texttt{\qote{f(x) = x*x}} is the string that is used as legend in the plot.  This string
+\item \texttt{\qote{f(x) = x*x}} is the string that is used as the legend of the plot.  This string
       is printed verbatim below the plot.
-\item \texttt{[0, 0, 255]} specifies the color of the function to be plotted via the 
-      \href{https://en.wikipedia.org/wiki/RGB_color_model}{RGB color model}.
+\item \texttt{[0, 0, 255]} specifies the color used to plot the specified function.  This
+      color is specified via the \href{https://en.wikipedia.org/wiki/RGB_color_model}{RGB color model}.
+      Hence, in this case the parabola is plotted using the color blue.
 
-      This parameter is optional.  If it is not specified, the graph will be plotted black.
+      This parameter is optional.  If it is not specified, the curve will be plotted in black.
 \item There is a final optional parameter to the function \texttt{plot\_addGraph} that is not
       used in this example.  This parameter needs to be a Boolean value.  If this value is
       \texttt{true}, then the area under the curve is filled with the specified color.
@@ -78,15 +92,16 @@ The arguments provided to the function \texttt{plot\_addGraph} are interpreted a
   \label{fig:parabola1.eps}
 \end{figure}
 
-Suppose that we would prefer to draw the parabola in region where $x$ runs from $-4$ to $+4$.
-We can use the function \texttt{plot\_modscale} to achieve this as follows:
+In Figure \ref{fig:parabola1.eps} the parabola is plotted for arguments ranging from $x = -10$ up to
+$x = 10$.  Suppose that we would prefer to draw the parabola in the region where $x$ runs from $-4$
+to $+4$.  We can use the function \texttt{plot\_modscale} to achieve this as follows:
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{plot\_modScale(c, [-4, 4], [-1,17]);}
 \\[0.2cm]
 The parameters used by \texttt{plot\_modScale} are as follows:
 \begin{enumerate}
-\item \texttt{c} specifies the canvas whose scale is to be changed.
+\item \texttt{c} specifies the canvas whose scale is to be modified.
 \item \texttt{[-4, 4]} specifies that the $x$-coordinate is to be varied between $-4$ and $+4$.
 \item \texttt{[-1, 17]} specifies that the $y$-coordinate extends from $-1$ to $+17$.
 \end{enumerate}
@@ -99,7 +114,7 @@ The resulting parabola is shown in Figure \ref{fig:parabola2.eps} on page \pager
   \label{fig:parabola2.eps}
 \end{figure}
 
-Lets assume we want to make the $x$-axis and the $y$-axis visible.  For this purpose, the
+Let us assume we want both the $x$-axis and the $y$-axis to be visible.  For this purpose, the
 function \texttt{plot\_addListGraph} comes in handy.  To plot the $x$-axis we use the command
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -109,7 +124,9 @@ Here, the parameters are as follows:
 \begin{enumerate}
 \item \texttt{c} specifies the canvas where we want to draw the line.
 \item \texttt{[[-4,0], [4,0]]} is a list of points.  Each point is specified as a pair of $x$-
-      and $y$-coordinates.  These points are the connected by straight lines.
+      and $y$-coordinates.  These points are then connected by straight lines.  In this case, as there is only one
+      pair of points there is only one line.
+\item \qote{x-axis} specifies the legend that is used for this line.
 \item \texttt{[0,0,0]} specifies the color of the line.  This parameter is optional.
       If the color is not specified, then black is the default.
 \end{enumerate}
@@ -124,7 +141,7 @@ at this point is given by the formula
 \hspace*{1.3cm}
 $x \mapsto 2 \cdot(x-1) + 1$,
 \\[0.2cm]
-the tangent line passes the points $\pair(-4, -9)$ and $\pair(4,7)$, this can be done
+the tangent line passes the points $\pair(-4, -9)$ and $\pair(4,7)$, Therefore, we can plot the tangent
 using the command
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -140,6 +157,7 @@ This command accepts four parameters.
 \item \textrm{c} specifies the canvas.
 \item \texttt{[[1,1]]} is a list of points.  Each point itself is specified as a pair of $x$- and $y$-
       coordinates. The function plots a square at the location of each of the points.
+\item \texttt{[255,0,0]} specifies the color.
 \item The last parameter specifies the size of each box.  This parameter is optional and
       defaults to $5.0$.  Note that this parameter has to be specified as a floating point number.
 \end{enumerate}
@@ -174,8 +192,7 @@ discussed.
 \item Finally, we have to prevent the \setlx\ interpreter from exiting after it has finished
       displaying the parabola.  This is achieved via the invocation of \texttt{get} in line 10.
       The command \texttt{get} waits for the user to enter any string.  Therefore, as long as the
-      user does not press \texttt{$\langle$Enter$\rangle$}, the window showing the parabola is
-      displayed. 
+      user does not press \texttt{$\langle$Enter$\rangle$}, the window showing the parabola remains visible. 
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -206,7 +223,7 @@ discussed.
 \end{figure}
 
 \subsection{Plotting Parametric Curves}
-Next, we show how to plot a parametric curve.  As a first example, we show how to plot a circle.
+Next, we show how to plot a parametric curve.  
 As a first example, we show how to plot a circle of radius 1.  Figure \ref{fig:circle.stlx} on page
 \pageref{fig:circle.stlx} shows a \setlx\ program that can be used to plot a circle.  The resulting
 circle is shown in Figure \ref{fig:circle.eps} on page \pageref{fig:circle.eps}.
@@ -283,11 +300,11 @@ We proceed to discuss the program shown in Figure \ref{fig:circle.stlx} line by 
       and form $y=-1.2$ to $y=1.2$ vertically. 
 \item Line 9 changes the size of the plot.  By default, a canvas is $800$ pixels wide and $600$
       pixels high.  Plotting a circle on a canvas with these dimensions would distort the circle and
-      make it look like an ellipse.  In order to plot a proper circle we therefore have to ensure
+      make it look like an \href{https://en.wikipedia.org/wiki/Ellipse}{\emph{ellipse}}.  In order to plot a proper circle we therefore have to ensure
       that the canvas is quadratic.  Hence we change the plotting area to be $600$ pixels wide and
       $600$ pixels high. 
 \item Line 10 saves the generated plot into a file.
-\item line 11 prevents the program from finishing prematurely.
+\item Line 11 prevents the program from finishing prematurely.
 \end{enumerate}
 
 
@@ -339,9 +356,9 @@ by the equations
 \hspace*{1.3cm}
 $\displaystyle x = (R - r) \cdot \cos(\varphi) + d \cdot \cos\Bigl(\varphi \cdot
 \frac{R-r}{r}\Bigr)$ \quad and \quad
-$\displaystyle x = (R - r) \cdot \sin(\varphi) - d \cdot \sin\Bigl(\varphi \cdot\frac{R-r}{r}\Bigr)$.
+$\displaystyle y = (R - r) \cdot \sin(\varphi) - d \cdot \sin\Bigl(\varphi \cdot\frac{R-r}{r}\Bigr)$.
 \\[0.2cm]
-Here, $\varphi$ has to run form $0$ up to a number $\Phi$ such that $\Phi$ is a multiple of $2\cdot\pi$
+Here, $\varphi$ has to run form $0$ up to some number $\Phi$ such that $\Phi$ is a multiple of $2\cdot\pi$
 and, furthermore, 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -356,6 +373,13 @@ on page \pageref{fig:hypotrochoid.eps} shows the hypotrochoid where $R=5$, $r=3$
   \caption{A plot of the hypotrochoid satisfying  $R = 5$, $r=3$, $d = 5$.}
   \label{fig:hypotrochoid.eps}
 \end{figure}
+
+
+\vspace*{\fill}
+\pagebreak
+
+\vspace*{\fill}
+\pagebreak
 
 \section{Scatter Plots}
 In order to generate a \href{https://en.wikipedia.org/wiki/Scatter_plot}{scatter plot}, we can use
@@ -426,10 +450,10 @@ function \texttt{fatherAndSons}.
                 ]
     fatherAndSons := procedure() {
         data  := readFile("fathers-and-sons.txt");
-        fsStr := [ split(line, " "): line in data];
+        fsStr := [ split(line, " "): line in data ];
         fs    := [ [double(x), double(y)] : [x,y] in fsStr ];
         c     := plot_createCanvas("Heights of Fathers vs. Heights of Sons.");
-        plot_addBullets(c, fs[1..1000], [0,0,255], 2.0);
+        plot_addBullets(c, fs, [0,0,255], 2.0);
         plot_modScale(c, [58, 80], [58, 80]);
         plot_modSize(c, [1000, 1000]);
         plot_labelAxis(c, "heights of fathers in inches", 
@@ -449,10 +473,13 @@ function \texttt{fatherAndSons}.
   \label{fig:fathers-and-sons.eps}
 \end{figure}
 
+\vspace*{\fill}
+\pagebreak
+
+
 \section{Plotting Statistical Charts}
-\setlx\ is able to draw \href{https://en.wikipedia.org/wiki/Bar_chart}{\emph{bar charts}},
-\href{https://en.wikipedia.org/wiki/Pie_chart}{\emph{pie charts}}, 
-as well as \href{https://en.wikipedia.org/wiki/Box_plot}{\emph{box and whisker plots}}.
+\setlx\ is able to draw \href{https://en.wikipedia.org/wiki/Bar_chart}{\emph{bar charts}} and
+\href{https://en.wikipedia.org/wiki/Pie_chart}{\emph{pie charts}}.
 We will present each of these charts in a separate subsection.
 
 \subsection{Bar Charts}
@@ -460,7 +487,7 @@ We will present each of these charts in a separate subsection.
   \centering
   \begin{tabular}{|l|r|r|r|r|r|}
     \hline                                                     
-    \diagbox{Region}{Year} & 1990 & 1950 & 1999 & 2008 & 2010 \\
+    \diagbox{Region}{Year} & 1900 & 1950 & 1999 & 2008 & 2010 \\
     \hline                                                     
     \hline                                                     
     Northern America       &    82 &   172 &   307 &   337 &   345 \\
@@ -503,7 +530,7 @@ The bar chart produced by this program is shown in Figure \ref{fig:world-populat
                   xleftmargin   = 0.0cm,
                   xrightmargin  = 0.0cm,
                 ]
-    data := [ ["Year"            , 1990, 1950, 1999, 2008, 2010],
+    data := [ ["Year"            , 1900, 1950, 1999, 2008, 2010],
               ["Northern America",   82,  172,  307,  337,  345],
               ["Oceania"         ,    6,   13,   30,   34,   37],
               ["Latin America"   ,   74,  167,  511,  577,  590],
@@ -640,7 +667,7 @@ achieved using the \setlx-program shown in Figure \ref{fig:race-and-incarceratio
       \texttt{plot\_addPieChart}.
       \begin{enumerate}
       \item The first parameter specifies the canvas on which the pie chart is to be drawn.
-      \item The secons parameter is a list of numbers.
+      \item The second parameter is a list of numbers.
       \item The final parameter is a list of labels.
       \end{enumerate}
 \item Line 13 draws the pie chart showing the  race distribution of Texan inmates.
@@ -654,6 +681,7 @@ achieved using the \setlx-program shown in Figure \ref{fig:race-and-incarceratio
   \caption{The race distribution in Texas and in Texan prisons.}
   \label{fig:race-prison}
 \end{figure}
+
 
 
 %%% Local Variables:

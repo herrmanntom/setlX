@@ -63,7 +63,7 @@ public class PD_plot_addPieChart extends PreDefinedProcedure {
         }
 
         //convert setllists to native java lists
-        List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values, state);
+        List valuesList = ConvertSetlTypes.convertSetlListAsDouble(values);
         List categorieList = ConvertSetlTypes.convertSetlListAsString(categories);
 
         if (!(PlotCheckType.sameSize(valuesList, categorieList))) {

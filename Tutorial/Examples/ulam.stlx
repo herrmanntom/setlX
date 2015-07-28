@@ -1,5 +1,5 @@
 f := procedure(n) {
-    if (n == 0) {
+    if (n <= 1) {
         return 1;   
     }
     s := 0;

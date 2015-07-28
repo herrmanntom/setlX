@@ -2,16 +2,16 @@
 \href{http://en.wikipedia.org/wiki/Regular_expression}{\emph{Regular expressions}}
 are a very powerful tool when processing strings.
 Therefore, most modern programming languages support them.  \setlx\ is no exception.  
-As the \setlx\ interpreter is implemented in \textsl{Java}, the syntax of the regular expressions supported by
-\setlx\ is the same as the syntax of regular expressions in \textsl{Java}.  Therefore, 
-we will not to describe the syntax of regular expressions in this document.  The
-documentation of the \textsl{Java} class \texttt{java.util.regex.Pattern}, which can
+As the \setlx\ interpreter is implemented in \textsl{Java}, the syntax of the regular expressions
+supported by \setlx\ is the same as the syntax of regular expressions in \textsl{Java}.  For this
+reason, instead of discussing the syntax of regular expressions in detail, we refer the reader to
+the documentation of the \textsl{Java} class \texttt{java.util.regex.Pattern}, which can
 be found at
 \\[0.2cm]
 \hspace*{1.3cm}
-\href{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}{\texttt{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}},
+\href{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}{\texttt{http://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}}.
 \\[0.2cm]
-contains a concise description of the syntax and semantics of regular expressions.
+This documentation contains a concise description of the syntax and semantics of regular expressions.
 For a more general discussion of the use of regular expression, the book of Friedl
 \cite{friedl:2006} is an excellent choice.
 Here, we will confine ourselves to show how regular expressions can be used in
@@ -146,7 +146,7 @@ regular expressions that are not needed are matched against the anonymous variab
 ``\texttt{\_}''. 
 
 If a regular expression contains  nested groups of parentheses, then the order of
-the groups is determined by the left parenthesis of a group.  For example, the regular
+the groups is determined by the left parenthesis of the group.  For example, the regular
 expression 
 \\[0.2cm]
 \hspace*{1.3cm}
@@ -220,7 +220,7 @@ string ``\texttt{*/}''.  This regular expression is quite difficult to read for 
 reasons:
 \begin{enumerate}
 \item We have to precede the symbol ``\texttt{*}'' with a backslash in order to prevent it
-      from being interpreted as a quantifier.
+      from being interpreted as a regexp quantifier.
 \item We have to ensure that the string between  ``\texttt{/*}'' and ``\texttt{*/}'' does
       not contain the substring ``\texttt{*/}''.  The regular expression
       \\[0.2cm]
@@ -300,7 +300,7 @@ instead, then the function \texttt{printComments} will be called for all files e
 
 \subsection{Conditions in \texttt{match} Statements}
 A clause of a \texttt{match} statement can contain an optional Boolean condition that is
-separated from the regular expression by the string ``\texttt{|}''.   Figure
+separated from the regular expression by the condition operator ``\texttt{|}''.   Figure
 \ref{fig:find-palindrome.stlx} shows a program to search for 
 \href{http://en.wikipedia.org/wiki/Palindrome}{\emph{palindromes}} 
 in a given file.

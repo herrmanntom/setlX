@@ -902,14 +902,15 @@ a number into an ordered binary tree.  This implementation uses
 term matching instead of the functions ``\texttt{fct}'' and ``\texttt{args}'' that had been used in
 the previous implementation shown in Figure \ref{fig:binary-tree-no-matching.stlx} on page
 \pageref{fig:binary-tree-no-matching.stlx}.  In line 3 of Figure \ref{fig:binary-tree.stlx}, the
-\texttt{case} statement checks whether $m$ is the empty tree.  This is more straightforward than
+\texttt{case} statement checks whether the term $m$ is identical to the empty binary tree, which is
+represented by the Term \texttt{Nil}.  This is more straightforward than
 testing that the functor of $m$ is ``\texttt{Nil}'', as it is done in line 3 of Figure
 \ref{fig:binary-tree-no-matching.stlx}.  However, the real benefit of matching shows in line 5 of
 Figure \ref{fig:binary-tree.stlx} since the case statement in this line does not only check whether
-the functor of $m$ is ``\texttt{Node}'' but also assigns the variables \texttt{k2}, \texttt{l}, and
+the functor of the term $m$ is ``\texttt{Node}'' but also assigns the variables \texttt{k2}, \texttt{l}, and
 \texttt{r} to the respective subterms of $m$.  Compare this with line 5 and line 6 of Figure
 \ref{fig:binary-tree-no-matching.stlx} where we had to use a separate statement in line 6 to extract
-the arguments of $m$.
+the arguments of the term $m$.
 
 
 \begin{figure}[!ht]
@@ -964,16 +965,16 @@ the arguments of $m$.
             case t1 * t2 :
                 return diff(t1, x) * t2 + t1 * diff(t2, x);
             case t1 / t2 :
-                return ( diff(t1, x) * t2 - t1 * diff(t2, x) ) / t2 * t2;
+                return (diff(t1, x) * t2 - t1 * diff(t2, x)) / t2 * t2;
             case f ** g :
-                return diff( @exp(g * @ln(f)), x);
+                return diff(@exp(g * @ln(f)), x);
             case ln(a) :
                 return diff(a, x) / a;
             case exp(a) :
                 return diff(a, x) * @exp(a);
-            case ^variable(x) : // x is defined above as second argument
+            case ^variable(x) : // x is defined above as the second argument
                 return 1;
-            case ^variable(y) : // y is undefined, matches any other variable
+            case ^variable(y) : // y is undefined, matches any variable
                 return 0;
             case n | isNumber(n):   
                 return 0;  
@@ -992,8 +993,9 @@ Let us discuss a more complex example of matching.  The function \texttt{diff} s
 \item The first argument $t$ is a term that is interpreted as an arithmetic expression.
 \item The second argument $x$ is a string that is interpreted as  the name of a variable.
 \end{enumerate}
-The function \texttt{diff} interprets the term $t$ as a mathematical function and differentiates this
-function with respect to the variable $x$.  For example, in order to compute the derivative of the function
+The function \texttt{diff} interprets the term $t$ as a mathematical function and takes the
+derivative of this function with respect to the variable $x$.  For example, in order to compute the
+derivative of the function 
 \\[0.2cm]
 \hspace*{1.3cm}
 $x \mapsto x^x$
@@ -1012,18 +1014,21 @@ resulting terms have to be added.  For a more interesting example, consider line
 implements the product rule:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\frac{d\;}{dx} \bigl(t_1 \cdot t_2\bigr) = \frac{d\, t_1}{dx} \cdot t_2 + t_1 \cdot \frac{d\,t_2}{dx}$.
+$\displaystyle\frac{\mathrm{d}\;}{\mathrm{d}x} \bigl(t_1 \cdot t_2\bigr) = 
+ \frac{\mathrm{d}\, t_1}{\mathrm{d}x} \cdot t_2 + t_1 \cdot \frac{\mathrm{d}\,t_2}{\mathrm{d}x}
+$.
 \\[0.2cm]
 Note how the pattern 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{t1 * t2}
 \\[0.2cm]
-in line 7 extracts the two factors from a term that is a product.  Further, note that in line 12 and line 16
-we had to prefix the function symbols ``\texttt{exp}'' and ``\texttt{ln}'' with the character
-``\texttt{\symbol{64}}'' in order to convert these function symbols into functors.
+in line 7 extracts the two factors $t_1$ and $t_2$ from a term that happens to be a product.
+Further, note that in line 12 and line 16 we had to prefix the function symbols ``\texttt{exp}'' and
+``\texttt{ln}'' with the character ``\texttt{\symbol{64}}'' in order to convert these function
+symbols into functors. 
 
-In order to understand this example in Figure \ref{fig:diff.stlx} in more
+In order to understand the example in Figure \ref{fig:diff.stlx} in more
 detail, we have to discuss how the function \texttt{parse} converts a string into a term.  The
 function \texttt{parse} needs to represent all operator symbols and it also needs to represent
 variables.  A variable of the form \texttt{\symbol{34}x\symbol{34}} is parsed as a
@@ -1075,8 +1080,9 @@ Line 21 shows how a condition can be attached to a pattern:  The pattern
 \hspace*{1.3cm}
 \texttt{case n:}
 \\[0.2cm]
-would match anything.  However, we want to match only numbers here.  Therefore, we have used
-the pattern
+would match anything.  However, we want to match only numbers here.  Therefore, we have attached
+the condition \texttt{isNumber(n)} via the condition operator ``\texttt{|}'' to this pattern and
+hence have written 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{case n | isNumber(n):}
@@ -1084,7 +1090,7 @@ the pattern
 in order to ensure that \texttt{n} is indeed a number.
 
 \subsection{Term Decomposition via List Assignment}
-Similar to strings, terms can be decomposed via list assignment.  For example, after the assignment
+As a syntactical convenience, terms can be decomposed via list assignment.  For example, after the assignment
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{[x,y,z] := F(1, G(2), \{2,3\});}
@@ -1104,8 +1110,10 @@ Of course, the function \texttt{args} achieves a similar effect.  We have that
 \texttt{do-while} loops.  The \texttt{while} loops are the most general loops.  Therefore, we discuss them first.  
 
 \subsection{\texttt{while} Loops}
-The syntax and semantics of \texttt{while} loops in \setlx\ is really the same as in the programming
-language \texttt{C}.  To demonstrate a \texttt{while} loop,
+The syntax of \texttt{while} loops in \setlx\ is similar to the syntax of
+\texttt{while} loops in the programming language \texttt{C}.  The only difference is that in \setlx,
+the body of a \texttt{while} loop has to be enclosed in curly braces even if it only consists of a single line.
+To demonstrate a \texttt{while} loop,
 let us implement a function testing the 
 \href{http://en.wikipedia.org/wiki/Collatz_conjecture}{\emph{Collatz conjecture}}:  Define the function
 \\[0.2cm]
@@ -1140,7 +1148,7 @@ Figure \ref{fig:ulam.stlx} shows an implementation of the function $f$ in \setlx
                   xrightmargin  = 0.8cm,
                 ]
     f := procedure(n) {
-        if (n == 0) {
+        if (n <= 1) {
             return 1;   
         }
         while (n != 1) {
@@ -1223,25 +1231,12 @@ Similar to the language \texttt{C}, \setlx\ supports the \texttt{do-while} loop.
 between a \texttt{do-while} loop and an ordinary \texttt{while} loop is that 
 sometimes the body of a loop needs to execute at least once, regardless of the condition
 controlling the loop.  For example, imagine you want to implement the following guessing game:  The computer
-thinks of a natural number between 0 and 100 inclusive and the player has to guess it.  Every time the
+generates a random natural number between 0 and 100 inclusive and the player has to guess it.  Every time the
 player enters some number, the computer informs the player whether the number was too big, too
 small, or whether the player has correctly guessed the secret number.  In this guessing game, the
 player always has to enter at least one number.  Therefore, the most natural way to implement this
 game is to use a \texttt{do-while} loop.  Figure \ref{fig:guessNumber.stlx} shows an implementation
 of the guessing game.  The implementation works as follows:
-\begin{enumerate}
-\item In line 2, the secret number is generated as a random number.  This is the number that has to
-      be guessed by the player.
-\item The variable \texttt{count} is used to count the number of guessing attempts.
-      This variable is initialized in line 3.
-\item Since the user has to enter at least one number, we use a \texttt{do-while} loop that loops as
-      long as the user has not yet guessed the secret number.
-
-      In line 6, the user is asked to guess the secret number.  If this number is either too small
-      or too big, an appropriate message is printed.  The loop terminates in line 14 if the number
-      that has been guessed is identical to the secret number.
-\end{enumerate}
-
 
 \begin{figure}[!ht]
 \centering
@@ -1276,6 +1271,19 @@ of the guessing game.  The implementation works as follows:
 \label{fig:guessNumber.stlx}
 \end{figure}
 
+\begin{enumerate}
+\item In line 2, the secret number is generated using the function \texttt{rnd} which picks a random
+      element from the set given as argument.  This number has to be guessed by the player.
+\item The variable \texttt{count} is used to count the number of guessing attempts.
+      This variable is initialized in line 3.
+\item Since the user has to enter at least one number, we use a \texttt{do-while} loop that loops as
+      long as the user has not yet guessed the secret number.
+
+      In line 6, the user is asked to guess the secret number.  If this number is either too small
+      or too big, an appropriate message is printed.  The loop terminates in line 14 if the number
+      that has been guessed is identical to the secret number.
+\end{enumerate}
+
 \noindent
 The syntax of a \texttt{do-while} loop is given by the following grammar rule:
 \\[0.2cm]
@@ -1289,7 +1297,9 @@ Here, \textsl{boolExpr} is a Boolean expression returning either \texttt{true} o
 The syntactical variable \textsl{block} denotes a sequence of statements.  Note that, 
 in contrast to the programming languages \texttt{C} and \textsl{Java}, the
 block of statements always has to be enclosed in curly braces, even if it consists only of a
-single statement.  Furthermore, note that a \texttt{do-while} loop has to be terminated with a semicolon.
+single statement.  Furthermore, note that a \texttt{do-while} loop has to be terminated with a
+semicolon.  This is a notable difference to \texttt{while} loops and \texttt{for} loops, which are
+not terminated by a semicolon.
 
 The semantics of a \texttt{do-while} loop is the same as in \texttt{C}:
 The body of the loop is executed once.  Then, if the guard is false, execution terminates.  Otherwise,
@@ -1298,13 +1308,15 @@ to abort an iteration of the loop prematurely, the commands \texttt{continue} an
 \texttt{break} can be used.  These commands work in the same way as in a \texttt{while} loop.
 
 \subsection{\texttt{for} Loops}
-In order to perform a list of commands a predefined number of times, a \texttt{for} loop should  be
+In order to either perform a group of commands a predefined number of times, or to iterate over a
+set, list or string, a \texttt{for} loop should  be
 used.  Figure \ref{fig:multiplication-table.stlx} on page \pageref{fig:multiplication-table.stlx}
 shows some \setlx\ code that prints a multiplication table.  The output of this program is
 shown in Figure \ref{fig:multiplication-table} on page \pageref{fig:multiplication-table}.
 
 In the program in Figure \ref{fig:multiplication-table.stlx}, the printing is done in the two nested
-loops that start in line 8.  In line 8, the counting variable \texttt{i} iterates over all values
+\texttt{for} loops that start in line 8 and line 9, respectively.  In line 8, the counting variable
+\texttt{i} iterates over all values 
 from $1$ to $10$.  Similarly, the counting variable \texttt{j} in line 9 iterates over the same values.
 The product \texttt{i * j} is computed in line 10 and printed without a newline using the
 function \texttt{nPrint}.
@@ -1372,7 +1384,8 @@ characters.
 The general syntax of a \texttt{for} loop is given by the following \textsc{Ebnf} rule:
 \\[0.2cm]
 \hspace*{1.3cm}
-$\textsl{statement} \rightarrow \quoted{for} \quoted{(} \textsl{iterator} \;(\squoted{,}\; \textsl{iterator})^* \quoted{)}
+$\textsl{statement} \rightarrow \quoted{for} \quoted{(} \textsl{iterator} \;(\squoted{,}\;
+\textsl{iterator})^* \;(\squoted{|}\; \textsl{condition})? \quoted{)}
   \quoted{\{} \textsl{block} \;\squoted{\}}
 $.
 \\[0.2cm]
@@ -1404,7 +1417,7 @@ a tuple is
 \hspace*{1.3cm}
  $[x_1, \cdots, x_n] \quoted{in} s$.
 \\[0.2cm]
-Here, $s$ must be either a set or a list that contains lists of length $n$ as elements. 
+Here, $s$ must be either a set or a list whose elements are lists of length $n$. 
 Figure \ref{fig:relational-product-for.stlx} on page \pageref{fig:relational-product-for.stlx}
 shows a procedure that computes the relational product 
 of two binary relations $r_1$ and $r_2$.  In set theory, the relational product $r_1 \circ r_2$
@@ -1414,7 +1427,7 @@ is defined as
 $r_1 \circ r_2 := \{ \pair(x,z) \mid \pair(x,y) \in r_1 \wedge \pair(y,z) \in r_2 \}$.
 \\[0.2cm]
 The \texttt{for} loop in line 3 iterates over the two relations \texttt{r1} and \texttt{r2}.
-The following \texttt{if} statement selects those pairs of pairs of numbers such that the second
+The condition ``\texttt{y1 == y2}'' selects those pairs of numbers such that the second
 component of the first pair is identical to the first component of the second pair.
 
 \begin{figure}[!ht]
@@ -1430,10 +1443,8 @@ component of the first pair is identical to the first component of the second pa
                 ]
     product := procedure(r1, r2) {
         r := {};
-        for ([x, y1] in r1, [y2, z] in r2) {
-            if (y1 == y2) {
-                r += { [x, z] };
-            }
+        for ([x, y1] in r1, [y2, z] in r2 | y1 == y2) {
+            r += { [x, z] };
         }
         return r;
     };
@@ -1443,13 +1454,41 @@ component of the first pair is identical to the first component of the second pa
 \label{fig:relational-product-for.stlx}
 \end{figure}
 
+The \texttt{for} loop in line 3 can be simplified as shown in Figure
+\ref{fig:relational-product-for-1.stlx} on page \pageref{fig:relational-product-for-1.stlx}.  Here,
+we have forced the second component of the pair \texttt{[x,y]} to be equal to the first component of
+the pair \texttt{[y,z]} by using the same variable name for both components.
+
+\begin{figure}[!ht]
+\centering
+\begin{Verbatim}[ frame         = lines, 
+                  framesep      = 0.3cm, 
+                  firstnumber   = 1,
+                  labelposition = bottomline,
+                  numbers       = left,
+                  numbersep     = -0.2cm,
+                  xleftmargin   = 0.8cm,
+                  xrightmargin  = 0.8cm,
+                ]
+    product := procedure(r1, r2) {
+        r := {};
+        for ([x, y] in r1, [y, z] in r2) {
+            r += { [x, z] };
+        }
+        return r;
+    };
+\end{Verbatim}
+\vspace*{-0.3cm}
+\caption{A program to compute the relational product of two binary relations.}
+\label{fig:relational-product-for-1.stlx}
+\end{figure}
+
 Of course, in \setlx\ the relational product can be computed more easily via set comprehension.
 Figure \ref{fig:relational-product.stlx} on page \pageref{fig:relational-product.stlx} shows
-an implementation that is based on set comprehension.  It is a bit shorter as the test in
-line 4 of Figure \ref{fig:relational-product-for.stlx} is essentially integrated in the
-definition of the set in line 2 of Figure \ref{fig:relational-product.stlx}.
+an implementation that is based on set comprehension.  
 In general, most occurrences of \texttt{for} loops can be replaced by equivalent set
-definitions. Our experience shows that the resulting code will be both shorter and easier to understand.
+comprehensions. Our experience shows that the resulting code is often both shorter as well as easier to
+understand. 
 
 
 \begin{figure}[!ht]
@@ -1472,7 +1511,7 @@ definitions. Our experience shows that the resulting code will be both shorter a
 \label{fig:relational-product.stlx}
 \end{figure}
 
-Iterators can be even more complex, since the tuples can be nested, so something like
+Iterators can be even more complex, since the tuples can be nested, so a \texttt{for} loop of the form
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{for ([[x,y],z] in s) \{ $\cdots$ \}}
@@ -1482,10 +1521,10 @@ is possible.  However, as this feature is rarely needed, we won't discuss it in 
 
 A \texttt{for} loop creates a 
 \href{http://en.wikipedia.org/wiki/Variable_scope}{\emph{local scope} }
-for the iteration variable.  This means that changes to the variable \texttt{x} that occur in the
+for its iteration variables.  This means that changes to an iteration variable that occur in the
 \texttt{for} loop are not visible outside of the \texttt{for} loop.
-Therefore, the last
-line of the program shown in Figure \ref{fig:scope-for-loop.stlx} prints the message
+Therefore, the last line of the program shown in Figure \ref{fig:scope-for-loop.stlx} prints the
+message 
 \\[0.2cm]
 \hspace*{1.3cm}
 \texttt{x = 1.}
